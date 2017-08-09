@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/hiw_single_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_height="wrap_content"
+        android:text="Video 1"
+        android:gravity="center"
+        android:padding="@dimen/_8sdp"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/_16sdp"
+        app:fontName="MuseoSans_1.otf"/>
+
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/_8sdp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="match_parent"
+            android:layout_toLeftOf="@+id/ivPlayIcon"
+            android:text="App ka Jaiza"
+            android:gravity="right"
+            android:padding="@dimen/_8sdp"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="MuseoSans_1.otf"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/ivPlayIcon"
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher"/>
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="match_parent"
+            android:text="App Overview"
+            android:gravity="left"
+            android:padding="@dimen/_8sdp"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="MuseoSans_1.otf"
+            android:layout_centerInParent="true"
+            android:layout_toRightOf="@+id/ivPlayIcon"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_4sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:background="@color/secondaryColorLight"/>
+
+</LinearLayout>

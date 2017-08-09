@@ -1,0 +1,112 @@
+<resources>
+    <!--Elevation size-->
+    <dimen name="elevation.toolbar">8dp</dimen>
+    <dimen name="elevation.button.mappin">8dp</dimen>
+
+    <!--Text size-->
+    <dimen name="textsize.headline">@dimen/_24sdp</dimen>
+    <dimen name="textsize.tiny">@dimen/_8sdp</dimen>
+    <dimen name="textsize.small">@dimen/_10sdp</dimen>
+    <dimen name="textsize.small.medium">@dimen/_12sdp</dimen>
+    <dimen name="textsize.normal">@dimen/_14sdp</dimen>
+    <dimen name="textsize.medium">@dimen/_16sdp</dimen>
+    <dimen name="textsize.large">@dimen/_20sdp</dimen>
+    <dimen name="textsize.xlarge">@dimen/_24sdp</dimen>
+    <dimen name="textsize.xxlarge">@dimen/_30sdp</dimen>
+    <dimen name="textsize.title">@dimen/_18sdp</dimen>
+    <dimen name="textsize.subheading">@dimen/_16sdp</dimen>
+    <dimen name="textsize.body1">@dimen/_14sdp</dimen>
+    <dimen name="textsize.body2">@dimen/_14sdp</dimen>
+    <dimen name="textsize.caption">@dimen/_12sdp</dimen>
+    <dimen name="textsize.button">@dimen/_14sdp</dimen>
+    <dimen name="textsize.display1">@dimen/_34sdp</dimen>
+    <dimen name="textsize.display2">@dimen/_45sdp</dimen>
+    <dimen name="textsize.display3">@dimen/_46sdp</dimen>
+    <dimen name="textsize.display4">112sp</dimen>
+
+
+    <!--Views Width-->
+    <dimen name="top.logo.width">@dimen/_70sdp</dimen>
+    <dimen name="toolbar.view.width">@dimen/_56sdp</dimen>
+    <dimen name="button.login.width">@dimen/_200sdp</dimen>
+    <dimen name="button.logout.width">@dimen/_200sdp</dimen>
+    <dimen name="button.next.width">@dimen/_200sdp</dimen>
+    <dimen name="button.call.width">@dimen/_200sdp</dimen>
+    <dimen name="button.mappin.width">@dimen/_48sdp</dimen>
+    <dimen name="button.mappin.height">@dimen/_48sdp</dimen>
+    <dimen name="country.name.width">@dimen/_210sdp</dimen>
+    <dimen name="country.code.width">@dimen/_100sdp</dimen>
+    <dimen name="phone.number.width">@dimen/_230sdp</dimen>
+
+
+    <!--Views Height-->
+    <dimen name="top.logo.height">@dimen/_70sdp</dimen>
+    <dimen name="button.login.height">@dimen/_36sdp</dimen>
+    <dimen name="button.logout.height">@dimen/_36sdp</dimen>
+    <dimen name="button.next.height">@dimen/_36sdp</dimen>
+    <dimen name="textview.height">@dimen/_36sdp</dimen>
+    <dimen name="edittext.height">@dimen/_36sdp</dimen>
+    <dimen name="edittext.signup.height">@dimen/_30sdp</dimen>
+    <dimen name="button.call.height">@dimen/_48sdp</dimen>
+    <dimen name="layout.source_destination">@dimen/_92sdp</dimen>
+    <dimen name="places_lv_divider_hight">0.5dp</dimen>
+    <dimen name="dialog.country.height">@dimen/_250sdp</dimen>
+    <dimen name="dialog.charges.height">@dimen/_180sdp</dimen>
+    <dimen name="height.tiny">@dimen/_4sdp</dimen>
+    <dimen name="height.small">@dimen/_8sdp</dimen>
+    <dimen name="height.normal">@dimen/_16sdp</dimen>
+    <dimen name="height.medium">@dimen/_24sdp</dimen>
+    <dimen name="height.large">@dimen/_30sdp</dimen>
+    <dimen name="height.large.medium">@dimen/_40sdp</dimen>
+    <dimen name="height.xlarge">@dimen/_48sdp</dimen>
+    <dimen name="height.xxlarge">@dimen/_64sdp</dimen>
+    <dimen name="height.xxxlarge">@dimen/_92sdp</dimen>
+    <dimen name="height.xxxxlarge">@dimen/_124sdp</dimen>
+
+    <dimen name="width.tiny">@dimen/_4sdp</dimen>
+    <dimen name="width.small">@dimen/_8sdp</dimen>
+    <dimen name="width.normal">@dimen/_16sdp</dimen>
+    <dimen name="width.medium">@dimen/_24sdp</dimen>
+    <dimen name="width.large">@dimen/_30sdp</dimen>
+    <dimen name="width.large.medium">@dimen/_40sdp</dimen>
+    <dimen name="width.xlarge">@dimen/_48sdp</dimen>
+    <dimen name="width.xxlarge">@dimen/_64sdp</dimen>
+    <dimen name="width.xxxlarge">@dimen/_92sdp</dimen>
+    <dimen name="width.xxxxlarge">@dimen/_124sdp</dimen>
+
+    <!--Margins-->
+    <dimen name="margin.tiny">@dimen/_4sdp</dimen>
+    <dimen name="margin.small">@dimen/_8sdp</dimen>
+    <dimen name="margin.normal">@dimen/_16sdp</dimen>
+    <dimen name="margin.medium">@dimen/_24sdp</dimen>
+    <dimen name="margin.large">@dimen/_32sdp</dimen>
+    <dimen name="margin.xlarge">@dimen/_48sdp</dimen>
+    <dimen name="margin.xxlarge">@dimen/_64sdp</dimen>
+
+    <!--Paddings-->
+    <dimen name="padding.tiny">@dimen/_4sdp</dimen>
+    <dimen name="padding.small">@dimen/_8sdp</dimen>
+    <dimen name="padding.normal">@dimen/_16sdp</dimen>
+    <dimen name="padding.medium">@dimen/_24sdp</dimen>
+    <dimen name="padding.large">@dimen/_32sdp</dimen>
+    <dimen name="padding.xlarge">@dimen/_48sdp</dimen>
+    <dimen name="padding.xxlarge">@dimen/_64sdp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!--EDITTEXT DRAWABLES SIZE-->
+    <dimen name="left.drawable.width">@dimen/_24sdp</dimen>
+    <dimen name="left.drawable.height">@dimen/_24sdp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="textsize.wallet">@dimen/_14sdp</dimen>
+    <dimen name="textsize.wallet.item">@dimen/_10sdp</dimen>
+    <dimen name="textsize.wallet.item_1">@dimen/_14sdp</dimen>
+    <dimen name="textsize.wallet.item_2">@dimen/_12sdp</dimen>
+    <dimen name="textsize.wallet.amount">@dimen/_24sdp</dimen>
+    <dimen name="map.padding.bottom">@dimen/_50sdp</dimen>
+    <dimen name="audio_icon_size">@dimen/_24sdp</dimen>
+
+
+</resources>

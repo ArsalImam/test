@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/_250sdp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/country_dialog_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_apka_account_band_hai" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/titleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:gravity="center"
+            android:text="ACCOUNT BLOCKED"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.title"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="Please call BYKEA"
+            android:textColor="@color/textColorSecondaryDark"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="roboto_regular.ttf" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/positiveBtn"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_height="@dimen/height.xlarge"
+        android:background="@drawable/button_square_red">
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/phone_icon"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:padding="@dimen/_8sdp"
+            app:srcCompat="@drawable/ic_call_karein"
+            android:textColor="@color/buttonTextColor"
+            android:textSize="@dimen/textsize.title"/>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

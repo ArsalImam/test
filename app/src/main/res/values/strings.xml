@@ -1,0 +1,162 @@
+<resources>
+    <!--<string name="app_name">Bykea Partner</string>-->
+    <string name="app_name">بائیکیا پارٹنر</string>
+    <!--            GOOGLE API KEY                          -->
+    <string name="google.api.client.key">AIzaSyDRo33cwg4KXS6KK2ibsZ4_40_3fsWGCeE</string>
+    <!--  Live   <string name="google.api.serverkey">AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA</string>-->
+    <!--<string name="google.api.serverkey">AIzaSyD-PS71WvtMUAusr3NKn7iw62tPdCQGacQ</string>-->
+    <string name="google.api.serverkey">AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY</string>
+
+    <!--                BUTTON STRINGS HERE                 -->
+    <string name="button.text.login">login</string>
+    <string name="button.text.register">Create New Account</string>
+    <string name="button.text.logout">logout</string>
+    <string name="button.text.send">Send</string>
+    <string name="button.text.update">Update</string>
+    <string name="button.text.send_you_message">SEND YOU MESSAGE</string>
+    <string name="button.text.next">Next</string>
+    <string name="button.text.arrived">ARRIVED</string>
+    <string name="button.text.start">START</string>
+    <string name="button.text.finish">FINISH</string>
+    <string name="button.text.done">Done</string>
+    <string name="button.text.save">UPDATE</string>
+    <string name="button.text.ok">OK</string>
+    <string name="button.text.add">Add New</string>
+    <string name="button.text.yes">Yes</string>
+    <string name="button.text.cancel">Cancel</string>
+    <string name="button.text.camera">Camera</string>
+    <string name="button.text.gallery">Gallery</string>
+    <string name="button.text.begin_trip">Begin Trip</string>
+    <string name="button.text.end_trip">End Trip</string>
+    <string name="button.text.forgotPassword">Forgot Pin Code?</string>
+    <string name="button.text.skipNow">Skip Now</string>
+    <string name="button.text.sendCode">SEND ME VERIFICATION CODE</string>
+
+
+    <!--                TEXTVIEWS STRINGS HERE                 -->
+    <string name="textview.text.login">LOGIN</string>
+    <string name="textview.text.expiryDate">Expiry Date</string>
+    <string name="textview.text.login_note">Make The Change Today and Start Earning!</string>
+    <string name="textview.text.forgotPassword">Forgot Pin Code</string>
+    <string name="textview.text.resendCode">Resend Code</string>
+
+
+    <!--                HINTS STRINGS HERE                 -->
+    <string name="hint.companyName">Company Name</string>
+
+
+    <!--                ERROR STRINGS HERE                  -->
+    <string name="error.internet.connectivity">Please check your internet connection.</string>
+    <string name="error.email.format">Invalid Email.</string>
+    <string name="error.phone.number">Invalid Number.</string>
+    <string name="error.phone.number.1">Please enter correct mobile number</string>
+    <string name="error.field.empty">required</string>
+    <string name="error.vehicle_type.empty">Select vehicle type</string>
+    <string name="error.password.length">Password length must be greater than 7.</string>
+    <string name="error.password.alpha">Password must contain alphabet.</string>
+    <string name="error.password.numeric">Password must contain numbers.</string>
+    <string name="error.password.format">Invalid password format.</string>
+    <string name="error.password.not_match">Password not match.</string>
+    <string name="error.license.expired">Expire date should be greater than current date</string>
+    <string name="error.license.upload_images">Also upload image of that document.</string>
+    <string name="error.license.set_expiry">Also set document Expiry date</string>
+    <string name="error.license.set_name">Also provide document name</string>
+    <string name="error.picture.not_selected">Profile picture not selected.</string>
+    <string name="error_try_again">Something went wrong. Please try again later.</string>
+    <string name="error.ride.destination">Please select destination</string>
+
+    <string name="dialog.offline">By going offline you will not be able to accept
+        any further jobs.</string>
+    <string name="dialog.offline_msg">Would you like to go offline?</string>
+    <string name="dialog.online_msg">Do you want to stay online?</string>
+    <string name="dialog.offline_location">Seems you are relaxing.</string>
+    <string name="dialog.confirmation">CONFIRMATION</string>
+    <string name="dialog.internet.error">Problem in internet connectivity. Check your internet connection.</string>
+    <string name="dialog.logout.message">Are you sure you want to logout?</string>
+    <string name="dialog.inactive.message">This option will not get calls from users.
+        do you want to make it inactive?</string>
+
+    <string name="permissions.required">Permission Required</string>
+    <string name="permissions.camera">You need to allow access to camera permission to upload profile picture</string>
+    <string name="permissions.location">For the best experience, Bykea needs to use your current location
+    to find closest pilot to you. Do you want to share your location?</string>
+    <string name="permissions.storage">You need to allow access to storage permission to upload your license documents</string>
+    <string name="permissions.phone">You need to allow access to phone permission to call your
+    passenger during trip</string>
+
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="navDrawerItems">
+        <item>Home</item>
+        <item>Trip History</item>
+        <item>Wallet</item>
+        <item>How it works</item>
+        <item>Emergency</item>
+        <item>Contact Us</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <string-array name="navDrawerIcons">
+        <item>@drawable/home</item>
+        <item>@drawable/tafseel</item>
+        <item>@drawable/batwa</item>
+        <item>@drawable/tareeqa_kaar</item>
+        <item>@drawable/emergency</item>
+        <item>@drawable/rabtha</item>
+    </string-array>
+    <!--
+    <string-array name="navDrawerIcons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_history_urdu</item>
+        <item>@drawable/ic_batwa</item>
+        <item>@drawable/ic_tareqa_kaar_urdu</item>
+        <item>@drawable/ic_emergency_urdu</item>
+        <item>@drawable/ic_raabta_urdu</item>
+    </string-array>-->
+
+    <declare-styleable name="DonutProgress">
+        <attr name="donut_progress" format="integer" />
+        <attr name="donut_max" format="integer" />
+        <attr name="donut_unfinished_color" format="color" />
+        <attr name="donut_finished_color" format="color" />
+        <attr name="donut_finished_stroke_width" format="dimension" />
+        <attr name="donut_unfinished_stroke_width" format="dimension" />
+        <attr name="donut_tick_stroke_width" format="dimension" />
+        <attr name="donut_text_size" format="dimension" />
+        <attr name="donut_text_color" format="color" />
+        <attr name="donut_prefix_text" format="string" />
+        <attr name="donut_suffix_text" format="string" />
+        <attr name="donut_background_color" format="color" />
+        <attr name="donut_inner_bottom_text" format="string" />
+        <attr name="donut_inner_bottom_text_size" format="dimension" />
+        <attr name="donut_inner_bottom_text_color" format="color" />
+    </declare-styleable>
+    <declare-styleable name="Themes">
+        <attr name="circleProgressStyle" format="reference" />
+        <attr name="donutProgressStyle" format="reference" />
+        <attr name="arcProgressStyle" format="reference" />
+    </declare-styleable>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_change_pin">ChangePinActivity</string>
+
+    <string name="hint.emailAddress">Phone Number</string>
+    <string name="hint.full.name">Full Name</string>
+    <string name="hint.email">Email (optional)</string>
+    <string name="hint.password"><font size="16">Pin Code</font></string>
+    <string name="hint.promo">Referral Code (Optional)</string>
+    <string name="hint.phone.number"><font size="16">11 Digit Mobile Number</font></string>
+    <string name="hint.phone.number.14"><font size="14">11 Digit Mobile Number</font></string>
+    <string name="search_hint">Search Address</string>
+    <string name="toolbar.title.mobile.msg">Enter Your Mobile Number</string>
+    <string name="button.text.submit">Submit</string>
+    <string name="button.text.help">HELP?</string>
+    <string name="button.text.submit.a.request">Submit a Request</string>
+    <string name="label.text.logout.confirmation.message">Are you sure you want to logout?</string>
+    <string name="error.field.pin">Pin Code must be 4 digits</string>
+    <string name="destination_not_selected_msg">Passenger will guide me</string>
+    <string name="internet_error">Problem in internet connectivity. Check your internet connection.</string>
+
+</resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/_250sdp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/country_dialog_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/titleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin.normal"
+            android:gravity="center"
+            android:text="Confirm Arrival"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.title"
+            app:fontName="roboto_bold.ttf" />
+
+        <ImageView
+            android:id="@+id/messageTv"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height.xxxlarge"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/margin.large"
+            android:layout_marginTop="@dimen/margin.small"
+            android:gravity="center"
+            app:srcCompat="@drawable/ic_confirm_arrival_urdu" />
+
+    </LinearLayout>
+
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/positiveBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height.xlarge"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/button_square_red"
+        android:gravity="center"
+        android:text="Yes"
+        android:textColor="@color/buttonTextColor"
+        android:textSize="@dimen/textsize.title"
+        app:fontName="MuseoSans_1.otf" />
+
+
+</LinearLayout>

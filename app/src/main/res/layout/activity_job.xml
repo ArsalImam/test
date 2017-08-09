@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_job"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48sdp"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/_12sdp"
+            android:paddingRight="@dimen/_12sdp"
+            android:visibility="visible">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tvTripId"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.7"
+                android:gravity="center|left"
+                android:textAllCaps="true"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/_20sdp" />
+
+            <LinearLayout
+                android:id="@+id/llTopRight"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center|right"
+                android:orientation="vertical">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvCodAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom|right"
+                    android:text="COD    5,000"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="visible" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvPWalletAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="top|right"
+                    android:textAllCaps="false"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/toolbarLine"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_2sdp"
+            android:background="@drawable/toolbar_bottom_shadow_gray" />
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/startAddressTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/secondaryColorLight"
+            android:gravity="left|center_vertical"
+            android:paddingBottom="@dimen/_2sdp"
+            android:paddingLeft="@dimen/_12sdp"
+            android:paddingRight="@dimen/_2sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:text="Street Address"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textsize.small.medium"
+            app:fontName="roboto_light.ttf" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin.tiny">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center"
+                android:layout_marginRight="@dimen/margin.small">
+
+                <ImageView
+                    android:id="@+id/callbtn"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:layout_gravity="left|center"
+                    android:layout_marginRight="@dimen/_12sdp"
+                    android:padding="@dimen/_4sdp"
+                    app:srcCompat="@drawable/ic_call_icon" />
+
+                <ImageView
+                    android:id="@+id/chatBtn"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/voice_icon" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:background="@drawable/white_bg_square"
+                android:gravity="center"
+                android:orientation="vertical">
+
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/callerNameTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:gravity="left"
+                    android:maxLines="1"
+                    android:maxWidth="@dimen/_180sdp"
+                    android:text="Muhammad Haris"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.title"
+                    app:fontName="roboto_bold.ttf" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/TimeTv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="00"
+                            android:textColor="@color/urduTextColor"
+                            android:textSize="@dimen/textsize.medium"
+                            app:fontName="roboto_bold.ttf" />
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin.tiny"
+                            android:text=" mins" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin.normal"
+                        android:gravity="center_vertical">
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/distanceTv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="00.0"
+                            android:textColor="@color/urduTextColor"
+                            android:textSize="@dimen/textsize.medium"
+                            app:fontName="roboto_bold.ttf" />
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin.tiny"
+                            android:text=" km" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_2sdp"
+            android:background="@color/colorPrimary" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/endAddressTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/secondaryColorLight"
+            android:drawablePadding="@dimen/padding.small"
+            android:drawableRight="@drawable/edit_icon"
+            android:gravity="left|center_vertical"
+            android:paddingBottom="@dimen/_2sdp"
+            android:paddingLeft="@dimen/_12sdp"
+            android:paddingRight="@dimen/_2sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:text="Drop Off Address"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.small.medium"
+            android:visibility="gone"
+            app:fontName="roboto_light.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvEstimation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/secondaryColorLight"
+            android:gravity="left|center_vertical"
+            android:padding="@dimen/_2sdp"
+            android:text="Estimated Distance Covered : 00.0 km\nEstimated Time Covered : 00 min"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            android:visibility="gone"
+            app:fontName="roboto_bold.ttf" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/jobMapFragment"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/buttonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/margin.small"
+            android:layout_marginLeft="@dimen/margin.small"
+            android:layout_marginRight="@dimen/margin.small">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/cancelBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height.large.medium"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/button_red"
+                android:gravity="center"
+                android:text="@string/button.text.cancel"
+                android:textAllCaps="true"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="@dimen/textsize.normal"
+                android:textStyle="bold"
+                app:fontName="MuseoSans_1.otf" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/jobBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height.large.medium"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/margin.tiny"
+                android:layout_weight="2"
+                android:background="@drawable/button_green"
+                android:gravity="center"
+                android:text="@string/button.text.arrived"
+                android:textAllCaps="true"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="@dimen/textsize.normal"
+                android:textStyle="bold"
+                app:fontName="MuseoSans_1.otf" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/currentLocIv"
+            android:layout_width="@dimen/_42sdp"
+            android:layout_height="@dimen/_42sdp"
+            android:layout_above="@+id/buttonLayout"
+            android:layout_alignEnd="@+id/buttonLayout"
+            android:layout_alignRight="@+id/buttonLayout"
+            android:layout_marginBottom="@dimen/_42sdp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:elevation="@dimen/_8sdp"
+            android:scaleType="fitXY"
+            android:src="@drawable/my_location_bg" />
+
+        <ImageView
+            android:id="@+id/currentLocationIv"
+            android:layout_width="@dimen/_42sdp"
+            android:layout_height="@dimen/_42sdp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:elevation="@dimen/_8sdp"
+            android:scaleType="fitXY"
+            android:src="@drawable/navigation_icon" />
+
+    </RelativeLayout>
+
+</LinearLayout>

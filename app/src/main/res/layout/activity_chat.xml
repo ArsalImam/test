@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:id="@+id/topLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/windowBackground"
+            android:orientation="vertical">
+
+            <!--  <include layout="@layout/toolbar" />-->
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:padding="@dimen/padding.small"
+                app:srcCompat="@drawable/ic_arrow_back_48px" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/titleTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Title"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/textsize.title" />
+
+            <View
+                android:id="@+id/toolbarLine"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_gravity="bottom"
+                android:background="@color/colorPrimary" />
+
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/topLayout"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+            <LinearLayout
+                android:id="@+id/textLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_56sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@color/windowBackground"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/padding.tiny"
+                android:paddingRight="@dimen/padding.tiny"
+                android:visibility="visible"
+                android:weightSum="3">
+
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3">
+
+                    <com.bykea.pk.partner.widgets.FontEditText
+                        android:id="@+id/messageEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/windowBackground"
+                        android:hint="Type your message ..."
+                        android:inputType="textLongMessage"
+                        android:lines="1"
+                        android:paddingLeft="@dimen/padding.small"
+                        android:visibility="visible" />
+
+                    <FrameLayout
+                        android:id="@+id/voiceMsgLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="@dimen/padding.small"
+                        android:visibility="gone">
+
+                        <Chronometer
+                            android:id="@+id/chronometer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left|center_vertical" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="@dimen/margin.small"
+                            android:src="@drawable/slide_to_cancel" />
+
+                    </FrameLayout>
+                </FrameLayout>
+
+
+                <ImageView
+                    android:id="@+id/chatSendButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/margin.small"
+                    android:padding="4dp"
+                    android:src="@drawable/chat_voice_btn_selector"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/messagesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/textLayout"
+                android:background="@color/secondaryColorLight"
+                android:clickable="false"
+                android:divider="@android:color/transparent"
+                android:listSelector="@android:color/transparent"
+                android:paddingBottom="@dimen/_4sdp"
+                android:scrollbars="none"
+                android:stackFromBottom="true" />
+
+            <ProgressBar
+                android:id="@+id/loader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin.normal"
+                android:visibility="invisible" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
+

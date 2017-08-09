@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_change_pin_code"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <include layout="@layout/toolbar" />
+
+    <View
+        android:id="@+id/toolbarLine"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_5sdp"
+        android:background="@drawable/toolbar_bottom_shadow_gray" />
+
+    <RelativeLayout
+        android:id="@+id/rlOldPinCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingLeft="@dimen/_8sdp"
+        android:paddingRight="@dimen/_8sdp"
+        android:paddingTop="@dimen/_15sdp">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/oldPinLabel"
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:padding="@dimen/_7sdp"
+            android:text="Old Pin Code"
+            android:textSize="@dimen/textsize.body2"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontEditText
+            android:id="@+id/tvOldPin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/oldPinLabel"
+            android:maxLength="4"
+            android:inputType="number"
+            android:background="@color/transparent"
+            android:gravity="center"
+            android:hint="1234"
+            android:maxWidth="@dimen/_220sdp"
+            android:padding="@dimen/_7sdp"
+            android:text=""
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="@color/secondaryColorLight"
+            android:textSize="@dimen/textsize.body2"
+            app:fontName="roboto_regular.ttf" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_below="@+id/tvOldPin"
+            android:background="@color/secondaryColorLight" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlNewPinCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingLeft="@dimen/_8sdp"
+        android:paddingRight="@dimen/_8sdp"
+        android:paddingTop="@dimen/_15sdp">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/newPinLabel"
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:padding="@dimen/_7sdp"
+            android:text="New Pin Code"
+            android:textSize="@dimen/textsize.body2"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontEditText
+            android:id="@+id/tvNewPin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/newPinLabel"
+            android:background="@color/transparent"
+            android:gravity="center"
+            android:hint="1234"
+            android:maxWidth="@dimen/_220sdp"
+            android:maxLength="4"
+            android:padding="@dimen/_7sdp"
+            android:text=""
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="@color/secondaryColorLight"
+            android:textSize="@dimen/textsize.body2"
+            app:fontName="roboto_regular.ttf" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_below="@+id/tvNewPin"
+            android:background="@color/secondaryColorLight" />
+    </RelativeLayout>
+
+    <com.bykea.pk.partner.widgets.FontButton
+        android:id="@+id/saveBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button.next.height"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/margin.normal"
+        android:layout_marginRight="@dimen/margin.normal"
+        android:layout_marginTop="@dimen/margin.normal"
+        android:background="@drawable/button_green"
+        android:text="@string/button.text.save"
+        android:textColor="@color/white" />
+
+</LinearLayout>

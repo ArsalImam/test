@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_bank_account"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activities.BankAccountActivity">
+
+
+    <include layout="@layout/toolbar" />
+
+    <View
+        android:id="@+id/toolbarLine"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height.xlarge"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:background="@color/windowBackground">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/padding.normal"
+            android:text="Bank"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/bankName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.8"
+            android:background="@color/transparent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/padding.small"
+            android:text=""
+            android:textColor="@color/textColorSecondary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="roboto_regular.ttf" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height.xlarge"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:background="@color/windowBackground">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/padding.normal"
+            android:text="Bank Account"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            android:maxLength="24"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/bankAccountNumber"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.8"
+            android:background="@color/transparent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/padding.small"
+            android:text=""
+            android:textColor="@color/textColorSecondary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="roboto_regular.ttf" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/divider" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin.medium"
+        android:gravity="center"
+        android:text="to change account, call customer care"
+        android:textAllCaps="true"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/textsize.small.medium"
+        app:fontName="roboto_regular.ttf" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/callbtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin.xlarge"
+        android:layout_marginLeft="@dimen/margin.large"
+        android:layout_marginRight="@dimen/margin.large"
+        android:background="@drawable/button_green"
+        android:gravity="center"
+        android:text="CALL"
+        android:textColor="@color/buttonTextColor"
+        android:textSize="@dimen/margin.normal"
+        app:fontName="roboto_bold.ttf" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin.medium"
+        android:gravity="center"
+        android:text="Normal call charges may apply"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/textsize.small"
+        app:fontName="roboto_regular.ttf" />
+
+</LinearLayout>

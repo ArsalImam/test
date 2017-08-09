@@ -1,0 +1,268 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.fragments.RegisterFragment">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_56sdp">
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="@dimen/width.xlarge"
+            android:layout_height="match_parent"
+            android:padding="@dimen/_10sdp"
+            app:srcCompat="@drawable/ic_arrow_back_48px" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/width.xxlarge"
+            android:layout_height="@dimen/height.xxlarge"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin.normal"
+            android:background="@drawable/green_square_bg"
+            app:srcCompat="@drawable/ic_personal_info_urdu" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin.normal"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:layout_marginTop="@dimen/margin.normal"
+            android:background="@drawable/edittext_bg"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/padding.tiny"
+            android:paddingLeft="@dimen/padding.tiny"
+            android:paddingRight="@dimen/padding.tiny">
+
+            <ImageView
+                android:layout_width="@dimen/width.xlarge"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_name_urdu" />
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/nameTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edittext.height"
+                android:background="@color/windowBackground"
+                android:drawablePadding="@dimen/padding.normal"
+                android:hint="Full Name"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:paddingLeft="@dimen/padding.normal"
+                android:textSize="14sp"
+                app:fontName="roboto_light.ttf" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin.normal"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:layout_marginTop="@dimen/margin.tiny"
+            android:background="@drawable/edittext_bg"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/padding.tiny"
+            android:paddingLeft="@dimen/padding.tiny"
+            android:paddingRight="@dimen/padding.tiny">
+
+            <ImageView
+                android:layout_width="@dimen/width.xlarge"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_email_urdu" />
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/emailAddressTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edittext.height"
+                android:background="@color/windowBackground"
+                android:drawablePadding="@dimen/padding.normal"
+                android:hint="Email Address (Optional)"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="@dimen/padding.normal"
+                android:textSize="14sp"
+                app:fontName="roboto_light.ttf" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin.normal"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:layout_marginTop="@dimen/margin.tiny"
+            android:background="@drawable/edittext_bg"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/padding.tiny"
+            android:paddingLeft="@dimen/padding.tiny"
+            android:paddingRight="@dimen/padding.tiny">
+
+            <ImageView
+                android:layout_width="@dimen/width.xlarge"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_password_urdu" />
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/pinCodeTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edittext.height"
+                android:background="@color/windowBackground"
+                android:drawablePadding="@dimen/padding.normal"
+                android:hint="pincode"
+                android:imeOptions="actionNext"
+                android:inputType="numberPassword"
+                android:maxLength="4"
+                android:paddingLeft="@dimen/padding.normal"
+                android:textSize="14sp"
+                app:fontName="roboto_light.ttf" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin.normal"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:layout_marginTop="@dimen/margin.tiny"
+            android:background="@drawable/edittext_bg"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/padding.tiny"
+            android:paddingLeft="@dimen/padding.tiny"
+            android:paddingRight="@dimen/padding.tiny">
+
+            <ImageView
+                android:layout_width="@dimen/width.xlarge"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_city_urdu" />
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/cityTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edittext.height"
+                android:background="@color/windowBackground"
+                android:drawablePadding="@dimen/padding.normal"
+                android:hint="City"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:paddingLeft="@dimen/padding.normal"
+                android:textSize="14sp"
+                app:fontName="roboto_light.ttf" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin.normal"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:layout_marginTop="@dimen/margin.tiny"
+            android:background="@drawable/edittext_bg"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/padding.tiny"
+            android:paddingLeft="@dimen/padding.tiny"
+            android:paddingRight="@dimen/padding.tiny">
+
+            <ImageView
+                android:layout_width="@dimen/width.xlarge"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_address_urdu" />
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/addressTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edittext.height"
+                android:background="@color/windowBackground"
+                android:drawablePadding="@dimen/padding.normal"
+                android:hint="Address"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:paddingLeft="@dimen/padding.normal"
+                android:textSize="14sp"
+                app:fontName="roboto_light.ttf" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height.medium"
+            android:layout_marginTop="@dimen/margin.tiny"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/termsCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/padding.normal"
+                android:text="I read and agreed "
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/textsize.small" />
+
+            <TextView
+                android:id="@+id/termsTv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="Terms"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/textsize.small"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text=" and "
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/textsize.small" />
+
+
+            <TextView
+                android:id="@+id/privacyPolicyTv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="Privacy policies"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/textsize.small"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/registerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button.next.height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/margin.normal"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:layout_marginTop="@dimen/margin.medium"
+            android:background="@drawable/button_green"
+            android:gravity="center"
+            android:text="@string/button.text.next"
+            android:textAllCaps="true"
+            android:textColor="@color/buttonTextColor"
+            android:textSize="@dimen/textsize.normal"
+            android:textStyle="bold"
+            app:fontName="MuseoSans_1.otf" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

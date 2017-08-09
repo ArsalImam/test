@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_confirm_destination"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activities.ConfirmDestinationActivity">
+
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/confirmMapFragment"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <RelativeLayout
+        android:id="@+id/rlFrom"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginBottom="40dp"
+        android:visibility="visible">
+
+        <View
+            android:id="@+id/bg"
+            android:layout_width="265dp"
+            android:layout_height="53dp"
+            android:background="@drawable/white_address_bar" />
+
+        <LinearLayout
+            android:id="@+id/chooseDropoff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/pickUpLl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/addressTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="43dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/margin.tiny"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:paddingRight="@dimen/padding.small"
+                    android:text=""
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="14dp"
+                    app:fontName="open_sans_regular.ttf" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/bg"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/green_down_arrow" />
+    </RelativeLayout>
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/confirmBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height.xlarge"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/margin.small"
+        android:layout_marginLeft="@dimen/margin.small"
+        android:layout_marginRight="@dimen/margin.small"
+        android:background="@drawable/button_green"
+        android:gravity="center"
+        android:text="Confirm"
+        android:textAllCaps="true"
+        android:textColor="@color/buttonTextColor"
+        android:textSize="@dimen/textsize.normal"
+        android:textStyle="bold"
+        app:fontName="MuseoSans_1.otf" />
+
+
+    <include layout="@layout/toolbar" />
+
+
+</FrameLayout>

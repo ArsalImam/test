@@ -1,0 +1,159 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:elevation="@dimen/elevation.toolbar"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/llTop"
+        layout="@layout/home_fragment_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:layout_below="@+id/llTop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:layout_above="@+id/llBottom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/homeMapFragment"
+                    android:name="com.google.android.gms.maps.MapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <ImageView
+                    android:id="@+id/mapPinIv"
+                    android:layout_width="@dimen/width.xlarge"
+                    android:layout_height="@dimen/height.xlarge"
+                    android:layout_marginBottom="66dp"
+                    android:layout_marginEnd="19dp"
+                    android:layout_marginRight="19dp"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/my_location_bg"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:id="@+id/llBottom"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height.xlarge"
+                android:background="@color/windowBackground"
+                android:layout_gravity="bottom"
+                android:orientation="vertical">
+
+                <View
+                    android:id="@+id/toolbarLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/colorPrimary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/padding.tiny"
+                        android:layout_weight="1">
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="ACCEPTANCE RATE"
+                            android:layout_marginLeft="@dimen/margin.small"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.small"
+                            app:fontName="roboto_bold.ttf" />
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/acceptanceRateTv"
+                            android:layout_width="0dp"
+                            android:layout_weight=".5"
+                            android:layout_height="match_parent"
+                            android:gravity="right|center_vertical"
+                            android:textColor="@color/colorAccent"
+                            app:fontName="roboto_bold.ttf"
+                            android:textSize="@dimen/textsize.title"
+                            android:text="0%" />
+
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="@dimen/_1sdp"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorPrimary" />
+
+                    <LinearLayout
+                        android:padding="@dimen/padding.tiny"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="VERIFIED TRIPS"
+                            android:layout_marginLeft="@dimen/margin.small"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.small"
+                            app:fontName="roboto_bold.ttf" />
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/verifiedTripsTv"
+                            android:layout_width="0dp"
+                            android:layout_weight=".5"
+                            android:layout_height="match_parent"
+                            android:gravity="right|center_vertical"
+                            android:textColor="@color/colorAccent"
+                            app:fontName="roboto_bold.ttf"
+                            android:textSize="@dimen/textsize.title"
+                            android:text="0" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+    </FrameLayout>
+    <RelativeLayout
+        android:id="@+id/rlInactiveImage"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/llTop"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@color/black.transparent.inactive"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/inactive_driver_screen"/>
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

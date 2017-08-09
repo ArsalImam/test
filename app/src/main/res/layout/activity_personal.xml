@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_personal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activities.PersonalActivity">
+
+
+    <include layout="@layout/toolbar" />
+
+    <View
+        android:id="@+id/toolbarLine"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/colorPrimary" />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/padding.small">
+
+                <com.bykea.pk.partner.widgets.CircularImageView
+                    android:id="@+id/pilotImage"
+                    android:layout_width="@dimen/width.xxxlarge"
+                    android:layout_height="@dimen/height.xxxlarge"
+                    android:src="@drawable/ic_place_holder"
+                    app:border_color="@color/colorAccent"
+                    app:border_width="@dimen/_2sdp" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin.normal"
+                    android:text=""
+                    android:textAllCaps="true"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.title"
+                    app:fontName="roboto_bold.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_4sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="Address"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotAddress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=""
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="City"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotCity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=""
+                    android:textAllCaps="true"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="CNIC"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotCnic"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=""
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="Mobile (BYKEA)"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotMobile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=""
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="Mobile (Personal 1)"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotMobile2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=""
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="Mobile (Personal 2)"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotMobile3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=""
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="Email"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=" ajna ja ja ja aj aja ja aj aa aja jaaj a"
+                    android:maxLines="2"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="Registered"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotRegisteredDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=""
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/windowBackground">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/_14sdp"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_14sdp"
+                    android:text="Verified"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pilotVerifiedDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.small"
+                    android:text=""
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>

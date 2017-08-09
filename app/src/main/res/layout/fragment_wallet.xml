@@ -1,0 +1,225 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:id="@+id/rlTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:paddingBottom="@dimen/_5sdp"
+        android:paddingTop="@dimen/_5sdp"
+        android:visibility="visible">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:padding="@dimen/_3sdp"
+            android:text="Balance"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize.wallet"
+            app:fontName="roboto_regular.ttf" />
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/totalAmountTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp"
+            android:padding="@dimen/_3sdp"
+            android:text="Rs 0"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize.wallet"
+            app:fontName="roboto_regular.ttf" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/llTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rlTop"
+        android:background="@color/secondaryColorLight"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:padding="@dimen/_8sdp"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:text="TITLE"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="roboto_bold.ttf" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:gravity="center"
+                android:text="AMOUNT"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="roboto_bold.ttf" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:gravity="center"
+                android:text="TRANSFER"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="roboto_bold.ttf" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2">
+
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:gravity="center"
+                android:text="BALANCE"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="roboto_bold.ttf" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+    <!--
+        <LinearLayout
+            android:background="@color/secondaryColorLight"
+            android:layout_below="@+id/rlTop"
+            android:id="@+id/llTitle"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/_8sdp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:text="TITLE"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.wallet.item_1"
+                    app:fontName="roboto_bold.ttf" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:gravity="center"
+                    android:text="AMOUNT"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.wallet.item_1"
+                    app:fontName="roboto_bold.ttf" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:gravity="center"
+                    android:text="TRANSFER"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.wallet.item_1"
+                    app:fontName="roboto_bold.ttf" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+        -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/llTitle">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/walletHistoryRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+
+    </FrameLayout>
+
+    <ProgressBar
+        android:id="@+id/loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rlTop"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="@dimen/margin.normal" />
+
+    <ImageView
+        android:id="@+id/noDataIv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rlTop"
+        android:layout_gravity="center"
+        android:src="@drawable/no_data"
+        android:visibility="gone" />
+
+</RelativeLayout>
+
+

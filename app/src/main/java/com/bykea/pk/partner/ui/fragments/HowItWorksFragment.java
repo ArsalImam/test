@@ -1,0 +1,88 @@
+package com.bykea.pk.partner.ui.fragments;
+
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.ModelVideoDemo;
+import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.activities.MyPlayerActivity;
+import com.bykea.pk.partner.ui.helpers.adapters.HowItWorksVideoAdapter;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
+
+import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+
+public class HowItWorksFragment extends Fragment {
+    private HomeActivity mCurrentActivity;
+
+
+    ArrayList<ModelVideoDemo> arrayDemo = new ArrayList<>();
+    ListView lvDemo;
+    String[] videoURLs = new String[]{"https://www.youtube.com/watch?v=D8-PCyUx3ic", "https://www.youtube.com/watch?v=cEC6sPC-fwg", "https://www.youtube.com/watch?v=N7g9JL4oJyg", "https://www.youtube.com/watch?v=D8-PCyUx3ic", "https://www.youtube.com/watch?v=cEC6sPC-fwg", "https://www.youtube.com/watch?v=N7g9JL4oJyg", "https://www.youtube.com/watch?v=D8-PCyUx3ic"};
+    String[] videoName = new String[]{"App Overview", "Best Practices", "Ride Process", "Ratings", "Wallet and Payments", "Parcel", "Registration"};
+    int[] videoNameImgs = new int[]{R.drawable.app_ka_jaiza, R.drawable.tareeqa_kaar, R.drawable.amal, R.drawable.rating, R.drawable.raqam_aur_adaigi, R.drawable.parcel, R.drawable.registration};
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.how_it_works_videos_fragment, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mCurrentActivity = (HomeActivity) getActivity();
+        mCurrentActivity.setToolbarTitle("How it works");
+        mCurrentActivity.hideToolbarLogo();
+
+        lvDemo = (ListView) view.findViewById(R.id.lvVideoDemo);
+        String[] videoLinks = AppPreferences.getSettings(mCurrentActivity).getSettings().getVideos().split(",");
+
+        for (int x = 0; x < videoLinks.length; x++) {
+            int m = x + 1;
+
+            ModelVideoDemo mDemo = new ModelVideoDemo();
+            mDemo.setImageName(R.mipmap.ic_launcher);
+            mDemo.setVideoName(x < videoName.length ? videoName[x] : videoName[1]);
+            mDemo.setVideoNumber("Video " + m);
+            mDemo.setImageName(x < videoNameImgs.length ? videoNameImgs[x] : videoNameImgs[1]);
+            mDemo.setVideoURL(videoLinks[x]);
+            arrayDemo.add(mDemo);
+        }
+
+        final HowItWorksVideoAdapter adapter = new HowItWorksVideoAdapter(mCurrentActivity, arrayDemo);
+
+        lvDemo.setAdapter(adapter);
+        lvDemo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    Intent intent = new Intent(mCurrentActivity, MyPlayerActivity.class);
+                    intent.putExtra("VIDEO_ID", arrayDemo.get(position).getVideoURL().split("v=")[1]);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ((HomeActivity) getActivity()).showToolbar();
+    }
+}

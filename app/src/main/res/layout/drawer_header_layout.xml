@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:background="@drawable/list_clickable_bg"
+    android:gravity="center"
+    android:padding="@dimen/padding.small"
+    android:paddingBottom="3dp">
+
+
+    <com.bykea.pk.partner.widgets.CircularImageView
+        android:id="@+id/driverImage"
+        android:layout_width="@dimen/top.logo.width"
+        android:layout_height="@dimen/top.logo.height"
+        android:src="@drawable/ic_place_holder" />
+
+    <LinearLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/driverImage"
+        android:layout_alignTop="@+id/driverImage"
+        android:layout_marginLeft="@dimen/_4sdp"
+        android:layout_toRightOf="@+id/driverImage"
+        android:gravity="left|center_vertical"
+        android:orientation="vertical">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/driverNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/_3sdp"
+            android:paddingStart="@dimen/_3sdp"
+            android:text="Driver Name "
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="roboto_regular.ttf" />
+
+
+        <RatingBar
+            android:id="@+id/driverRb"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_27sdp"
+            android:layout_gravity="start"
+            android:clickable="false"
+            android:focusableInTouchMode="true"
+            android:isIndicator="true"
+            android:max="5"
+            android:numStars="5"
+            android:progressDrawable="@drawable/custom_rating_bar_small"
+            android:rating="0.0"
+            android:stepSize="0.1" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        app:srcCompat="@drawable/settings_icon" />
+
+
+</RelativeLayout>

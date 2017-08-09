@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:gravity="center"
+    android:background="@drawable/country_dialog_bg"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/gift_icon"
+        android:padding="@dimen/_8sdp"
+        android:layout_gravity="center"/>
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Rs. 40"
+            android:textSize="@dimen/_18sdp"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="@dimen/_8sdp"
+        app:srcCompat="@drawable/ic_top_up_msg" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+
+        <com.bykea.pk.partner.widgets.FontButton
+            android:id="@+id/ivPositive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@drawable/button_green"
+            android:text="OK"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+</LinearLayout>

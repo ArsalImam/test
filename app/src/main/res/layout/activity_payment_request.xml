@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_payment_request"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
+
+    <View
+        android:id="@+id/toolbarLine"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_5sdp"
+        android:background="@drawable/toolbar_bottom_shadow_gray" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:src="@drawable/raqam_ki_wasooli" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.5"
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:paddingTop="@dimen/_15sdp">
+
+                <LinearLayout
+                    android:id="@+id/llBankName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="start"
+                        android:padding="@dimen/_7sdp"
+                        android:text="Bank Name"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_bold.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/etBankName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:gravity="start"
+                        android:inputType="text"
+                        android:hint="Standard Chartered Bank"
+                        android:maxWidth="@dimen/_220sdp"
+                        android:padding="@dimen/_7sdp"
+                        android:maxLength="75"
+                        android:text=""
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/secondaryColorLight"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_regular.ttf" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_below="@+id/llBankName"
+                    android:background="@color/secondaryColorLight" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.5"
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:paddingTop="@dimen/_15sdp">
+
+                <LinearLayout
+                    android:id="@+id/llAccountName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="start"
+                        android:padding="@dimen/_7sdp"
+                        android:text="Account Title"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_bold.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/etAccountName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:gravity="start"
+                        android:hint="Anwar Khalid"
+                        android:inputType="text"
+                        android:maxWidth="@dimen/_220sdp"
+                        android:padding="@dimen/_7sdp"
+                        android:maxLength="50"
+                        android:text=""
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/secondaryColorLight"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_regular.ttf" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_below="@+id/llAccountName"
+                    android:background="@color/secondaryColorLight" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.5"
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:paddingTop="@dimen/_15sdp">
+
+                <LinearLayout
+                    android:id="@+id/llIBAN"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="start"
+                        android:padding="@dimen/_7sdp"
+                        android:text="IBAN Number"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_bold.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/etIBAN"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:gravity="start"
+                        android:hint="DE8937444444444444"
+                        android:maxWidth="@dimen/_220sdp"
+                        android:maxLength="50"
+                        android:inputType="text"
+                        android:padding="@dimen/_7sdp"
+                        android:text=""
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/secondaryColorLight"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_regular.ttf" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_below="@+id/llIBAN"
+                    android:background="@color/secondaryColorLight" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.5"
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:paddingTop="@dimen/_15sdp">
+
+                <LinearLayout
+                    android:id="@+id/llCNIC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="start"
+                        android:padding="@dimen/_7sdp"
+                        android:text="CNIC"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_bold.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/etCNIC"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:gravity="start"
+                        android:hint="32134-22222222-2"
+                        android:inputType="number"
+                        android:maxWidth="@dimen/_220sdp"
+                        android:padding="@dimen/_7sdp"
+                        android:text=""
+                        android:maxLength="16"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/secondaryColorLight"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_regular.ttf" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_below="@+id/llCNIC"
+                    android:background="@color/secondaryColorLight" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.5"
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:paddingTop="@dimen/_15sdp">
+
+                <LinearLayout
+                    android:id="@+id/llMobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="start"
+                        android:padding="@dimen/_7sdp"
+                        android:text="Mobile Number"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_bold.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/etMobileNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:gravity="start"
+                        android:hint="03132222222"
+                        android:maxWidth="@dimen/_220sdp"
+                        android:padding="@dimen/_7sdp"
+                        android:text=""
+                        android:maxLength="15"
+                        android:inputType="phone"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/secondaryColorLight"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_regular.ttf" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_below="@+id/llMobile"
+                    android:background="@color/secondaryColorLight" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.5"
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:paddingTop="@dimen/_15sdp">
+
+                <LinearLayout
+                    android:id="@+id/llAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="start"
+                        android:padding="@dimen/_7sdp"
+                        android:text="Amount"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_bold.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/etAmmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:gravity="start"
+                        android:hint="Rs. "
+                        android:maxWidth="@dimen/_220sdp"
+                        android:padding="@dimen/_7sdp"
+                        android:text=""
+                        android:maxLength="20"
+                        android:inputType="number"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/secondaryColorLight"
+                        android:textSize="@dimen/textsize.body1"
+                        app:fontName="roboto_regular.ttf" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_below="@+id/llAmount"
+                    android:background="@color/secondaryColorLight" />
+            </RelativeLayout>
+
+
+
+
+            <com.bykea.pk.partner.widgets.FontButton
+                android:id="@+id/submitBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button.next.height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/margin.normal"
+                android:layout_marginRight="@dimen/margin.normal"
+                android:layout_marginTop="@dimen/margin.normal"
+                android:background="@drawable/button_green"
+                android:text="@string/button.text.submit.a.request"
+                android:textAllCaps="false"
+                android:textSize="@dimen/_20sdp"
+                android:textColor="@color/white" />
+
+
+            <com.bykea.pk.partner.widgets.FontButton
+                android:id="@+id/helpBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button.next.height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/_46sdp"
+                android:layout_marginRight="@dimen/_46sdp"
+                android:layout_marginTop="@dimen/margin.normal"
+                android:layout_marginBottom="@dimen/margin.normal"
+                android:background="@drawable/button_greyhot"
+                android:textSize="@dimen/_24sdp"
+                android:text="@string/button.text.help"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+</LinearLayout>

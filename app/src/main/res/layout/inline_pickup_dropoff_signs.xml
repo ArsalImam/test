@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_9sdp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/green_circle_shape"/>
+        <com.bykea.pk.partner.widgets.DashedLine
+            android:layout_width="@dimen/_1sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:id="@+id/dotted_line"
+            android:layout_gravity="center_horizontal"
+            app:orientation="vertical"
+            app:dashLength="@dimen/_2sdp"
+            app:dashGap = "@dimen/_1sdp"
+            app:dashColor = "@color/Color_Gray"
+            android:layerType="software"
+            app:dashThickness="@dimen/_1sdp" />
+        <ImageView
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:id="@+id/ic_pin"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/drop_off_map"/>
+
+    </LinearLayout>
+</LinearLayout>
