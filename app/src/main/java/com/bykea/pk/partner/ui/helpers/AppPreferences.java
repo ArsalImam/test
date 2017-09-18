@@ -209,18 +209,6 @@ public class AppPreferences {
         ed.commit();
     }
 
-    public static boolean getVerifiedStatus(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.VERIFIED_STATUS, false);
-    }
-
-    public static void setVerifiedStatus(Context context, boolean status) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.VERIFIED_STATUS, status);
-        ed.commit();
-    }
-
     public static boolean getAvailableStatus(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getBoolean(Keys.AVAILABLE_STATUS, false);
@@ -648,7 +636,6 @@ public class AppPreferences {
     public static void clearTripDistanceData(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor ed = sp.edit();
-        setPrevDistanceLatLng(context, 0.0, 0.0);
         ed.putFloat(Keys.DISTANCE_COVERED, 0f);
         ed.putString(Keys.LATITUDE_PREV_DISTANCE, "0.0");
         ed.putString(Keys.LONGITUDE_PREV_DISTANCE, "0.0");
@@ -676,6 +663,17 @@ public class AppPreferences {
             ed.putString(Keys.LATITUDE_PREV_DISTANCE, lat + "");
             ed.putString(Keys.LONGITUDE_PREV_DISTANCE, lon + "");
             ed.putLong(Keys.TIME_PREV_DISTANCE, System.currentTimeMillis());
+        }
+        ed.commit();
+    }
+
+    public static void setPrevDistanceLatLng(Context context, double lat, double lon, long time) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor ed = sp.edit();
+        if (lat != 0.0 && lon != 0.0) {
+            ed.putString(Keys.LATITUDE_PREV_DISTANCE, lat + "");
+            ed.putString(Keys.LONGITUDE_PREV_DISTANCE, lon + "");
+            ed.putLong(Keys.TIME_PREV_DISTANCE, time);
         }
         ed.commit();
     }
@@ -734,12 +732,14 @@ public class AppPreferences {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor ed = sp.edit();
         ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip(context);
-        prevLatLngList.addAll(index, routeLatLngList);
-        String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
-        }.getType());
-        Utils.redLog("InTripLoc", value);
-        ed.putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value);
-        ed.commit();
+        if (index < prevLatLngList.size()) {
+            prevLatLngList.addAll(index, routeLatLngList);
+            String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
+            }.getType());
+            Utils.redLog("InTripLoc", value);
+            ed.putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value);
+            ed.commit();
+        }
     }
 
 
@@ -916,5 +916,16 @@ public class AppPreferences {
         return sp.getString(Keys.WALLET_ERROR, "Your Current balance is not sufficient for Bykea Service, Please contact Support");
     }
 
+    public static void setSettingsVersion(Context context, String value) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString(Keys.SETTINGS_VERSION, value);
+        ed.apply();
+    }
+
+    public static String getSettingsVersion(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(Keys.SETTINGS_VERSION, StringUtils.EMPTY);
+    }
 
 }

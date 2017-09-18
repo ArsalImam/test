@@ -9,10 +9,6 @@ public class ContactNumbersResponse extends CommonResponse {
         return data;
     }
 
-    public void setData(Contacts data) {
-        this.data = data;
-    }
-
     public class Contacts {
 
         Finance finance;
@@ -22,16 +18,8 @@ public class ContactNumbersResponse extends CommonResponse {
             return finance;
         }
 
-        public void setFinance(Finance finance) {
-            this.finance = finance;
-        }
-
         public Support getSupports() {
             return supports;
-        }
-
-        public void setSupports(Support supports) {
-            this.supports = supports;
         }
     }
 
@@ -45,25 +33,14 @@ public class ContactNumbersResponse extends CommonResponse {
             return email;
         }
 
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
         public String getCall() {
             return call;
-        }
-
-        public void setCall(String call) {
-            this.call = call;
         }
 
         public String getWhatsapp() {
             return whatsapp;
         }
 
-        public void setWhatsapp(String whatsapp) {
-            this.whatsapp = whatsapp;
-        }
     }
 
     public class Support {
@@ -75,24 +52,13 @@ public class ContactNumbersResponse extends CommonResponse {
             return email;
         }
 
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
         public String getCall() {
             return call;
-        }
-
-        public void setCall(String call) {
-            this.call = call;
         }
 
         public String getWhatsapp() {
             return whatsapp;
         }
 
-        public void setWhatsapp(String whatsapp) {
-            this.whatsapp = whatsapp;
-        }
     }
 }

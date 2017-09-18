@@ -30,13 +30,12 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Utils;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     public static boolean isRegisterFragment = false;
     private PilotData pilotData;
     private GoogleApiClient mGoogleApiClient;
     private LoginActivity mCurrentActivity;
-    private ProgressDialog progressDialog;
 
 
     @Override
@@ -54,51 +53,22 @@ public class LoginActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.containerView, mainFragment, null);
         fragmentTransaction.commit();
         getLocation();
-        progressDialog = new ProgressDialog(mCurrentActivity);
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage(getString(R.string.internet_error));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        intentFilter.addAction("android.location.GPS_ENABLED_CHANGE");
-        registerReceiver(networkChangeListener, intentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(networkChangeListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        dismissProgressDialog();
     }
-
-    private NetworkChangeListener networkChangeListener = new NetworkChangeListener() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase("android.location.GPS_ENABLED_CHANGE")) {
-                if (!Utils.isGpsEnable(mCurrentActivity)) {
-                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
-                } else {
-                    Dialogs.INSTANCE.dismissDialog();
-                }
-            } else {
-                if (Connectivity.isConnectedFast(context)) {
-                    dismissProgressDialog();
-                } else {
-                    showProgressDialog();
-                }
-            }
-        }
-    };
 
     @Override
     public void onBackPressed() {
@@ -110,23 +80,6 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void dismissProgressDialog() {
-        try {
-            if (progressDialog != null) {
-                progressDialog.dismiss();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showProgressDialog() {
-        try {
-            progressDialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void getLocation() {
         if (ActivityCompat.checkSelfPermission(this,

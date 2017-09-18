@@ -22,25 +22,14 @@ public class PilotData {
     private String vendor_id;
     private boolean is_vendor;
     private City city;
-    private String address;
-    @SerializedName("i_agree")
-    private boolean termsAndConditions;
     @SerializedName("plate_no")
     private String plateNo;
-    @SerializedName("driver_license_number")
-    private String licenseNo;
-    @SerializedName("dirver_license_image_id")
-    private String licenseImage;
     @SerializedName("license_expire")
     private String licenseExpiry;
     @SerializedName("vehicle_type")
     private String vehicleType;
-    private String cnic;
-    private String picture;
     @SerializedName("is_available")
     private boolean available;
-    @SerializedName("status")
-    private boolean verified;
 
     private String rating;
     private String service_type;
@@ -81,22 +70,6 @@ public class PilotData {
 
     public void setPilotImage(String pilotImage) {
         this.pilotImage = pilotImage;
-    }
-
-    public String getLicenseImage() {
-        return licenseImage;
-    }
-
-    public void setLicenseImage(String licenseImage) {
-        this.licenseImage = licenseImage;
-    }
-
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
     }
 
     public boolean isAvailable() {
@@ -163,21 +136,6 @@ public class PilotData {
         this.city = city;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public boolean isTermsAndConditions() {
-        return termsAndConditions;
-    }
-
-    public void setTermsAndConditions(boolean termsAndConditions) {
-        this.termsAndConditions = termsAndConditions;
-    }
 
     public String getPlateNo() {
         return plateNo;
@@ -187,13 +145,6 @@ public class PilotData {
         this.plateNo = plateNo;
     }
 
-    public String getLicenseNo() {
-        return licenseNo;
-    }
-
-    public void setLicenseNo(String licenseNo) {
-        this.licenseNo = licenseNo;
-    }
 
     public String getLicenseExpiry() {
         return licenseExpiry;
@@ -211,21 +162,6 @@ public class PilotData {
         this.vehicleType = vehicleType;
     }
 
-    public String getCnic() {
-        return cnic;
-    }
-
-    public void setCnic(String cnic) {
-        this.cnic = cnic;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
 
     public String getAcceptance_rate() {
         return acceptance_rate;
@@ -280,7 +216,7 @@ public class PilotData {
         }
 
         public String getName() {
-            return name;
+            return StringUtils.isNotBlank(name) ? name : StringUtils.EMPTY;
         }
 
         public void setName(String name) {

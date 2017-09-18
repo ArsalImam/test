@@ -63,6 +63,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         CircularImageView driverImage;
         FontTextView driverName;
         RatingBar driverRb;
+        FontTextView tvRating;
 
         Context context;
 
@@ -84,6 +85,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                 driverImage = (CircularImageView) itemView.findViewById(R.id.driverImage);
                 driverName = (FontTextView) itemView.findViewById(R.id.driverNameTv);
                 driverRb = (RatingBar) itemView.findViewById(R.id.driverRb);
+                tvRating = (FontTextView) itemView.findViewById(R.id.tvRating);
             }
         }
 
@@ -141,21 +143,13 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
                 case 5:
                     if (HomeActivity.visibleFragmentNumber != 5) {
-                        EmergencyContactsFragment helpFragment = new EmergencyContactsFragment();
-                        fragmentTransaction.replace(R.id.containerView, helpFragment);
+                        ContactUsFragment contactUsFragment = new ContactUsFragment();
+                        fragmentTransaction.replace(R.id.containerView, contactUsFragment);
                         fragmentTransaction.commit();
                         HomeActivity.visibleFragmentNumber = 5;
                     }
                     break;
-                case 6:
-                    if (HomeActivity.visibleFragmentNumber != 6) {
-                        ContactUsFragment contactUsFragment = new ContactUsFragment();
-                        fragmentTransaction.replace(R.id.containerView, contactUsFragment);
-                        fragmentTransaction.commit();
-                        HomeActivity.visibleFragmentNumber = 6;
-                    }
-                    break;
-                case 7://this case is for logout footer part click.
+                case 6://this case is for logout footer part click.
                     Dialogs.INSTANCE.showLogoutDialog(context, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -222,6 +216,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             holder.driverName.setText(((HomeActivity) context).getPilotData().getFullName());
             if (StringUtils.isNotBlank(((HomeActivity) context).getPilotData().getRating())) {
                 holder.driverRb.setRating(Float.parseFloat(((HomeActivity) context).getPilotData().getRating()));
+                String rating = Utils.formatDecimalPlaces(((HomeActivity) context).getPilotData().getRating());
+                if (rating.equalsIgnoreCase("0")) {
+                    holder.tvRating.setText("Rating N/A");
+                } else {
+                    holder.tvRating.setText("Rating " + rating);
+                }
             }
             if (AppPreferences.isProfileUpdated(context)
                     && StringUtils.isNotBlank(AppPreferences.getPilotData(context).getPilotImage())) {

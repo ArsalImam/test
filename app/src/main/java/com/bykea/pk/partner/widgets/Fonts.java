@@ -13,7 +13,9 @@ public enum Fonts {
     Signika_Regular("signika_regular.ttf"),
     Museo_Sans("MuseoSans_1.otf"),
     Roboto_Bold("roboto_bold.ttf"),
-    Open_Sans_light("open_sans_light.ttf");
+    Open_Sans_light("open_sans_light.ttf"),
+    Jameel_Noori_Nastaleeq("jameel_noori_nastaleeq.ttf");
+
 
     private final String name;
 

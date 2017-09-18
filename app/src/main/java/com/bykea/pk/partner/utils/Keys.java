@@ -130,5 +130,6 @@ public class Keys {
     public static final String LAST_ACK_TRIP_ID = "LAST_ACK_TRIP_ID";
     public static final String ONE_SIGNAL_PALYER_ID = "ONE_SIGNAL_PALYER_ID";
     public static final String WALLET_ERROR = "WALLET_ERROR";
+    public static final String SETTINGS_VERSION = "SETTINGS_VERSION";
 
 }

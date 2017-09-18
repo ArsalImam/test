@@ -12,19 +12,15 @@ public class ApiTags {
 
     //STAGING PRO
 //    public static final String BASE_SERVER_URL = "http://staging.bykea.net:3000";
-//    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
+    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3001";
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3002";
 
 //    phase 2 live
-    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
+//    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
 
 //    phase 2 live Test
 //    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3001";
-
-    // Production URL
-//    public static final String BASE_SERVER_URL = "http://secure.bykea.net:3000";
-//    public static final String SOCKET_BASE_SERVER_URL = "http://secure.bykea.net:3003";
 
     public static final String GOOGLE_API_BASE_URL = "https://maps.googleapis.com/";
     public static final String PLACES_GEOCODER_EXT_URL = "maps/api/geocode/json";

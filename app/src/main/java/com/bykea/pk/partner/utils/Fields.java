@@ -18,6 +18,9 @@ public class Fields {
         public static final String DEVICE_TYPE = "devicetype";
         public static final String USER_STATUS = "user_status";
         public static final String REG_ID = "regid";
+        public static final String LAT = "lat";
+        public static final String LNG = "lng";
+        public static final String IMEI_NUMBER = "imei";
         public static final String APP_VERSION = "app_version";
         public static final String ADID = "advertising_id";
         public static final String ONE_SIGNAL_PLAYER_ID = "one_signal_p_id";

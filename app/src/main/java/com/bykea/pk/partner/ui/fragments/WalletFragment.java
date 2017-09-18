@@ -140,7 +140,9 @@ public class WalletFragment extends Fragment {
 
 
     private void getHistory() {
-        loader.setVisibility(View.VISIBLE);
+        if (loader != null) {
+            loader.setVisibility(View.VISIBLE);
+        }
         repository.requestWalletHistory(mCurrentActivity, callbackHandler, nextPage + "");
     }
 

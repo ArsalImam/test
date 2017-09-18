@@ -11,15 +11,8 @@ public class LocationResponse extends CommonResponse {
         return data;
     }
 
-    public void setData(UpdatedLocation data) {
-        this.data = data;
-    }
-
     public long getTimestampserver() {
         return timestampserver;
     }
 
-    public void setTimestampserver(long timestampserver) {
-        this.timestampserver = timestampserver;
-    }
 }

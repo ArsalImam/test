@@ -1,7 +1,10 @@
 package com.bykea.pk.partner.models.data;
 
-public class Settings
-{
+import com.google.gson.annotations.SerializedName;
+
+import org.apache.commons.lang3.StringUtils;
+
+public class Settings {
     private String cancel_time;
     private String hospital;
     private String fire_brigade;
@@ -10,8 +13,17 @@ public class Settings
     private String videos;
     private String heatmap_refresh_timer;
 
-    public String getCancel_time ()
-    {
+    @SerializedName("trip_support_link_driver")
+    private String trip_support_link;
+
+    @SerializedName("trip_support_max_days_driver")
+    private String trip_support_max_days;
+    private String demand;
+    private String notice;
+    private String top_up_limit;
+    private String amount_limit;
+
+    public String getCancel_time() {
         return cancel_time;
     }
 
@@ -39,4 +51,29 @@ public class Settings
         return heatmap_refresh_timer;
     }
 
+    public String getTrip_support_link() {
+        return StringUtils.isNotBlank(trip_support_link) ? trip_support_link : "http://www.bykea.com/issues/partner.php?";
+    }
+
+    public int getTrip_support_max_days() {
+        return StringUtils.isNotBlank(trip_support_max_days) ? Integer.parseInt(trip_support_max_days) : 10;
+    }
+
+    public String getDemand() {
+        return StringUtils.isNotBlank(demand) ? demand : "http://www.bykea.com";
+
+    }
+
+    public String getNotice() {
+        return StringUtils.isNotBlank(notice) ? notice : "http://www.bykea.com";
+
+    }
+
+    public int getTop_up_limit() {
+        return StringUtils.isNotBlank(top_up_limit) ? Integer.parseInt(top_up_limit) : 500;
+    }
+
+    public int getAmount_limit() {
+        return StringUtils.isNotBlank(amount_limit) ? Integer.parseInt(amount_limit) : 35000;
+    }
 }

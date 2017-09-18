@@ -29,6 +29,7 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
+import com.bykea.pk.partner.utils.Constants;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
@@ -50,7 +51,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.maps.GeoApiContext;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
@@ -79,8 +79,11 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.maps.android.PolyUtil;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,6 +146,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
     private JobActivity mCurrentActivity;
     private NormalCallData callData;
     private UserRepository dataRepository;
+    private String cancelReason = StringUtils.EMPTY;
     public static boolean isWazeCheck = true;
     public static boolean isGoogleCheck;
     public static int cancelRequest = 0;
@@ -176,8 +180,10 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
 
     private GoogleMap mGoogleMap;
     private MapView mapView;
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialogJobActivity;
     private LatLng lastPolyLineLatLng, lastApiCallLatLng;
+    private MixpanelAPI mixpanelAPI;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +198,6 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         AppPreferences.setStatsApiCallRequired(mCurrentActivity, true);
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
-        GeoApiContext mGeoContext = new GeoApiContext().setApiKey(getString(R.string.google_api_serverkey));
         mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
                 .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
                 .addApi(Places.GEO_DATA_API)
@@ -211,6 +216,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
+        mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
     }
 
 
@@ -387,7 +393,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                                 }
                             });
                         } else {
-                            Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
+                            Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Dialogs.INSTANCE.dismissDialog();
@@ -398,12 +404,12 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                                 public void onClick(View v) {
                                     Dialogs.INSTANCE.dismissDialog();
                                 }
-                            }, "Confirmation", "Are you sure you have reached the Pick Up Point?");
+                            }, "ARRIVED?");
                         }
                     }
                     //CHECK FOR BEGIN TRIP BUTTON CLICK
                     else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start))) {
-                        Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
+                        Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
@@ -418,9 +424,9 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                             }
-                        }, "Confirmation", "Are you sure you want to Start Job?");
+                        }, "START?");
                     } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish))) {
-                        Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
+                        Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
@@ -432,7 +438,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                             }
-                        }, "Confirmation", "Are you sure you want to Finish Job?");
+                        }, "FINISH?");
                     }
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
@@ -487,11 +493,13 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         }
     }
 
+
     private void cancelReasonDialog() {
         Dialogs.INSTANCE.showCancelDialog(mCurrentActivity, new StringCallBack() {
             @Override
             public void onCallBack(String msg) {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                cancelReason = msg;
                 dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler,
                         msg);
             }
@@ -521,6 +529,8 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
         intentFilter.addCategory("android.intent.category.DEFAULT");
         registerReceiver(networkChangeListener, intentFilter);
+        checkGps();
+        checkConnectivity(mCurrentActivity);
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
         LocationService.setContext(JobActivity.this);
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
@@ -532,7 +542,6 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
 
     @Override
     protected void onPause() {
-        unregisterReceiver(networkChangeListener);
         mapView.onPause();
         super.onPause();
     }
@@ -554,13 +563,14 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
 
     @Override
     protected void onDestroy() {
-        progressDialog.dismiss();
+        progressDialogJobActivity.dismiss();
         AppPreferences.setJobActivityOnForeground(mCurrentActivity, false);
         AppPreferences.setLastDirectionsApiCallTime(mCurrentActivity, 0);
         // Unregister here due to some reasons.
         ActivityStackManager.getInstance(mCurrentActivity).stopLocationService("JobActivity");
         unregisterReceiver(locationReceiver);
         unregisterReceiver(cancelRideReceiver);
+        unregisterReceiver(networkChangeListener);
         mapView.onDestroy();
         super.onDestroy();
     }
@@ -585,11 +595,11 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
      * METHODS FOR SETTING CALL DATA ACCORDING TO THE TRIP STATE
      ****************************************************************************************/
     private void setInitialData() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(mCurrentActivity);
-            progressDialog.setCancelable(false);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.internet_error));
+        if (progressDialogJobActivity == null) {
+            progressDialogJobActivity = new ProgressDialog(mCurrentActivity);
+            progressDialogJobActivity.setCancelable(false);
+            progressDialogJobActivity.setIndeterminate(true);
+            progressDialogJobActivity.setMessage(getString(R.string.internet_error));
         }
         AppPreferences.setIsOnTrip(mCurrentActivity, true);
         mLocBearing = AppPreferences.getBearing(mCurrentActivity) + "";
@@ -877,7 +887,10 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                 float rot;
 
                 @Override
-                public void run() {if(target == null || startLatLng == null){return;}
+                public void run() {
+                    if (target == null || startLatLng == null) {
+                        return;
+                    }
                     elapsed = SystemClock.uptimeMillis() - start;
                     t = interpolator.getInterpolation((float) elapsed / duration);
                     double lng = t * target.longitude + (1 - t) * startLatLng.longitude;
@@ -1332,14 +1345,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                         }
                         if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
                             Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
-                            callData = AppPreferences.getCallData(mCurrentActivity);
-                            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                                setStartedState();
-                                updateDropOff(callData.getEndAddress(), callData.getEndLat(), callData.getEndLng());
-                            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-                                setArrivedState();
-                                updateDropOff(callData.getEndAddress(), callData.getEndLat(), callData.getEndLng());
-                            }
+                            updateDropOffUI();
                         }
                     }
                 });
@@ -1347,6 +1353,22 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
             }
         }
     };
+
+    private void updateDropOffUI() {
+        callData = AppPreferences.getCallData(mCurrentActivity);
+        if (StringUtils.isNotBlank(callData.getEndAddress())
+                && StringUtils.isNotBlank(callData.getEndLat())
+                && StringUtils.isNotBlank(callData.getEndLng())) {
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                setStartedState();
+                updateDropOff(callData.getEndAddress(), callData.getEndLat(), callData.getEndLng());
+            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+                setArrivedState();
+                updateDropOff(callData.getEndAddress(), callData.getEndLat(), callData.getEndLng());
+            }
+        }
+
+    }
 
 
     private void cancelByPassenger(boolean isCanceledByAdmin) {
@@ -1412,6 +1434,27 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
                     if (cancelRideResponse.isSuccess()) {
+                        try {
+                            JSONObject data = new JSONObject();
+                            data.put("DriverLocation", AppPreferences.getLatitude(mCurrentActivity) + "," + AppPreferences.getLongitude(mCurrentActivity));
+                            data.put("timestamp", Utils.getIsoDate());
+                            data.put("CancelBy", "Driver");
+                            data.put("TripID", callData.getTripId());
+                            data.put("TripNo", callData.getTripNo());
+                            data.put("PassengerName", callData.getPassName());
+                            data.put("PassengerID", callData.getPassId());
+                            data.put("DriverID", AppPreferences.getPilotData(mCurrentActivity).getId());
+                            data.put("DriverName", AppPreferences.getPilotData(mCurrentActivity).getFullName());
+                            data.put("CancelBeforeAcceptance", "No");
+                            data.put("CancelReason", cancelReason);
+                            mixpanelAPI.identify(callData.getPassId());
+                            mixpanelAPI.getPeople().identify(callData.getPassId());
+                            mixpanelAPI.track(Constants.CANCEL_TRIP, data);
+                            mixpanelAPI.flush();
+                            Utils.logFireBaseEvent(mCurrentActivity, callData.getPassId(), Constants.CANCEL_TRIP, data);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         Utils.appToast(mCurrentActivity, cancelRideResponse.getMessage());
                         Utils.setCallIncomingState(mCurrentActivity);
                         /*dataRepository.requestLocationUpdate(mCurrentActivity);*/ // Required to reduce availability status delay
@@ -1481,21 +1524,14 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
 //                    jobBtn.setEnabled(true);
                     Dialogs.INSTANCE.dismissDialog();
                     if (beginRideResponse.isSuccess()) {
-
-//                        endAddressTv.setEnabled(false);
-                        //startFakeTrip();
-
-//                        AppPreferences.resetTotalDistanceMeters(mCurrentActivity);
-//                        disablePlaceView();
                         hideButtonOnArrived();
-//                        jobBtn.setVisibility(View.INVISIBLE);
                         currentLocationIv.setVisibility(View.VISIBLE);
                         jobBtn.setText(getString(R.string.button_text_finish));
                         callData = AppPreferences.getCallData(mCurrentActivity);
                         callData.setStatus(TripStatus.ON_START_TRIP);
                         AppPreferences.setCallData(mCurrentActivity, callData);
-                        AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_START_TRIP);
                         AppPreferences.setStartTripTime(mCurrentActivity, System.currentTimeMillis());
+                        AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_START_TRIP);
                         // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
                         changeDriverMarker();
                         showEstimatedDistTime();
@@ -1524,20 +1560,17 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
     private NetworkChangeListener networkChangeListener = new NetworkChangeListener() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase("android.location.PROVIDERS_CHANGED")) {
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
-                else
-                    Dialogs.INSTANCE.dismissDialog();
+            if (intent.getAction().equalsIgnoreCase("android.location.GPS_ENABLED_CHANGE") ||
+                    intent.getAction().equalsIgnoreCase("android.location.PROVIDERS_CHANGED")) {
+                checkGps();
             } else {
                 if (Connectivity.isConnectedFast(context)) {
-                    if (null != progressDialog) {
-                        progressDialog.dismiss();
+                    if (null != progressDialogJobActivity) {
+                        progressDialogJobActivity.dismiss();
                         new UserRepository().requestRunningTrip(mCurrentActivity, handler);
                     }
                 } else {
-                    progressDialog.show();
+                    progressDialogJobActivity.show();
                 }
             }
         }
@@ -1554,8 +1587,9 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             if (response.getMessage().equalsIgnoreCase("Trip Not Found")) {
                                 cancelByPassenger(false);
                             } else {
-//                                AppPreferences.setCallData(mCurrentActivity, response.getData());
+                                AppPreferences.setCallData(mCurrentActivity, response.getData());
                                 AppPreferences.setTripStatus(mCurrentActivity, response.getData().getStatus());
+                                updateDropOffUI();
                             }
                         } catch (NullPointerException e) {
 

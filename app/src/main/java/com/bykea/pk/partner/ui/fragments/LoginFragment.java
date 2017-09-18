@@ -54,9 +54,7 @@ public class LoginFragment extends Fragment {
     @Bind(R.id.loginBtn)
     FontButton loginBtn;
     @Bind(R.id.forgotPassTv)
-    FontTextView forgotPassTv;
-    @Bind(R.id.registerBtn)
-    Button registerBtn;/*
+    FontTextView forgotPassTv;/*
     @Bind(R.id.countryCodeEt)
     FontEditText countryCodeEt;*/
     @Bind(R.id.phoneNumberEt)
@@ -98,7 +96,7 @@ public class LoginFragment extends Fragment {
         ButterKnife.unbind(this);
     }
 
-    @OnClick({R.id.loginBtn, R.id.forgotPassTv, R.id.registerBtn})
+    @OnClick({R.id.loginBtn, R.id.forgotPassTv})
     public void onClick(View view) {
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         switch (view.getId()) {
@@ -124,14 +122,6 @@ public class LoginFragment extends Fragment {
                         R.anim.fade_out);
                 fragmentTransaction.replace(R.id.containerView, forgotPasswordFragment, null);
                 fragmentTransaction.addToBackStack("forgotPassword");
-                fragmentTransaction.commit();
-                break;
-            case R.id.registerBtn:
-                NumberVerificationFragment numberVerificationFragment = new NumberVerificationFragment();
-                fragmentTransaction.setCustomAnimations(R.anim.fade_in,
-                        R.anim.fade_out);
-                fragmentTransaction.replace(R.id.containerView, numberVerificationFragment, null);
-                fragmentTransaction.addToBackStack("numberVerification");
                 fragmentTransaction.commit();
                 break;
         }
@@ -189,7 +179,7 @@ public class LoginFragment extends Fragment {
                             ActivityStackManager.getInstance(getActivity()).startLocationService();
                             AppPreferences.setPilotData(getActivity(), loginResponse.getUser());
                             AppPreferences.setAvailableStatus(getActivity(), loginResponse.getUser().isAvailable());
-                            AppPreferences.setVerifiedStatus(getActivity(), loginResponse.getUser().isVerified());
+//                            AppPreferences.setVerifiedStatus(getActivity(), loginResponse.getUser().isVerified());
                             AppPreferences.saveLoginStatus(getActivity(), true);
                             Instabug.setUserData(loginResponse.getUser().getFullName() + " " + loginResponse.getUser().getPhoneNo());
                             Instabug.setUserEmail(loginResponse.getUser().getPhoneNo());
@@ -197,7 +187,7 @@ public class LoginFragment extends Fragment {
                             Utils.setOneSignalTag("city", loginResponse.getUser().getCity().getName().toLowerCase());
                             Utils.setOneSignalTag("type", loginResponse.getUser().is_vendor() ? "vendor" : "normal");
                             Utils.setOneSignalTag("tag", "driver");
-                            Utils.setOneSignalTag("driver id", loginResponse.getUser().getId());
+                            Utils.setOneSignalTag("driver_id", loginResponse.getUser().getId());
                             ActivityStackManager.getInstance(getActivity()).startHomeActivity(true);
                             // Connect socket
                             ((DriverApp) mCurrentActivity.getApplicationContext()).connect("Login Activity");

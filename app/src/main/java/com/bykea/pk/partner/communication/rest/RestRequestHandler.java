@@ -54,16 +54,12 @@ public class RestRequestHandler {
 
     public void sendUserLogin(Context context, final IResponseCallback onResponseCallBack, String email, String password,
                               String deviceType, String userStatus, String regID) {
-        Utils.printUrl("UrlLogin", ApiTags.USER_LOGIN_API + "&email=" + email +
-                "&password=" + password +
-                "&deviceType=" + deviceType +
-                "&gcmId=" + regID);
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
         Call<LoginResponse> restCall = mRestClient.login(email, password,
-                deviceType, userStatus, regID, Utils.getVersion(context),
-                AppPreferences.getOneSignalPlayerId(mContext), AppPreferences.getADID(context));
+                deviceType, userStatus, regID, "" + AppPreferences.getLatitude(context), "" + AppPreferences.getLongitude(context), Utils.getVersion(context),
+                AppPreferences.getOneSignalPlayerId(mContext), AppPreferences.getADID(context), Utils.getDeviceId(context));
         restCall.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {
@@ -124,41 +120,6 @@ public class RestRequestHandler {
 
     }
 
-    public void registerUser(Context context, final IResponseCallback onResponseCallBack, PilotData data) {
-
-        this.mResponseCallBack = onResponseCallBack;
-        mContext = context;
-        mRestClient = RestClient.getClient(mContext);
-        Call<RegisterResponse> restCall = mRestClient.register(data.getPhoneNo(),
-                data.getPincode(), "android", AppPreferences.getRegId(mContext), data.getFullName(), data.getCity().getName(),
-                data.getAddress(), data.isTermsAndConditions() + "", data.getPlateNo(), data.getLicenseNo(),
-                data.getLicenseExpiry(), data.getVehicleType(), data.getCnic(), data.getEmail(),
-                data.getLicenseImage(), data.getLat(), data.getLng(), data.getPilotImage());
-        restCall.enqueue(new Callback<RegisterResponse>() {
-            @Override
-            public void onResponse(Response<RegisterResponse> response, Retrofit retrofit) {
-                // Got success from server
-                if (response.body().isSuccess()) {
-                    if (null != mResponseCallBack) {
-                        mResponseCallBack.onResponse(response.body());
-                    }
-
-                } else {
-                    //this is case for error
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Utils.infoLog("REGISTER RESPONSE", t.getMessage() + " ");
-                mResponseCallBack.onError(0, getErrorMessage(t));
-            }
-        });
-
-
-    }
-
     public void updateProfile(Context context, final IResponseCallback onResponseCallBack,
                               String fullName, String city, String address, String email, String pincode) {
 
@@ -196,7 +157,6 @@ public class RestRequestHandler {
     // This method will get you a verification code
     public void sendPhoneNumberVerificationRequest(Context context, final IResponseCallback onResponseCallBack,
                                                    String phoneNumber, int userStatus) {
-        Utils.printUrl("UrlPhoneVerification", ApiTags.PHONE_NUMBER_VERIFICATION_API + "&phone=" + phoneNumber);
         this.mResponseCallBack = onResponseCallBack;
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
@@ -230,7 +190,6 @@ public class RestRequestHandler {
     // This method will authenticate the code
     public void sendCodeVerificationRequest(Context context, final IResponseCallback onResponseCallBack,
                                             String code, String phoneNumber) {
-        Utils.printUrl("CodeVerification", ApiTags.CODE_VERIFICATION_API + "&code=" + code + "&phone=" + phoneNumber);
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
@@ -506,10 +465,15 @@ public class RestRequestHandler {
     }
 
     public void getSettings(Context context, final IResponseCallback onResponseCallBack) {
+        if (!AppPreferences.isLoggedIn(context) || AppPreferences.getPilotData(context) == null
+                || AppPreferences.getPilotData(context).getCity() == null) {
+            return;
+        }
         mContext = context;
         mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(context);
-        Call<SettingsResponse> requestCall = mRestClient.getSettings("d", AppPreferences.getPilotData(mContext).getCity().getName());
+        Call<SettingsResponse> requestCall = mRestClient.getSettings("d",
+                AppPreferences.getPilotData(mContext).getCity().getName(), AppPreferences.getSettingsVersion(mContext));
         requestCall.enqueue(new Callback<SettingsResponse>() {
             @Override
             public void onResponse(Response<SettingsResponse> response, Retrofit retrofit) {

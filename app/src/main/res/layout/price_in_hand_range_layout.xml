@@ -1,0 +1,85 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:weightSum="5">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="500"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="1,000"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="1,500"
+            app:fontName="roboto_bold.ttf"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_12sdp" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="2,000"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="roboto_bold.ttf" />
+
+    </LinearLayout>
+
+    <com.bykea.pk.partner.widgets.MyRangeBar
+        android:id="@+id/myRangeBar"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:barHeightPercent=".2"
+        app:emptyColor="@color/white"
+        app:filledColor="@color/colorAccent"
+        app:filledStrokeColor="@color/colorAccent"
+        app:filledStrokeWidth="1"
+        app:rangeCount="5"
+        app:ripple="false"
+        app:sliderRadiusPercent=".25"
+        app:slider_color="@color/colorPrimaryDark"
+        app:slotRadiusPercent=".20"
+        app:stroke_color="@color/secondaryColor"
+        app:stroke_width="1" />
+
+
+</FrameLayout>

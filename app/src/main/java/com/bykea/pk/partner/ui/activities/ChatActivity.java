@@ -49,6 +49,7 @@ import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.thefinestartist.Base;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -60,7 +61,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseActivity {
 
     @Bind(R.id.messageEdit)
     FontEditText messageEdit;
@@ -181,7 +182,7 @@ public class ChatActivity extends AppCompatActivity {
                     loader.setVisibility(View.INVISIBLE);
                     if (response.isSuccess() &&
                             null != response.getData() && response.getData().size() > 0) {
-                        messageList.clear();
+//                        messageList.clear();
                         messageList.addAll(response.getData());
                         chatAdapter.notifyDataSetChanged();
                         scrollDown();

@@ -3,9 +3,11 @@ package com.bykea.pk.partner.ui.activities;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.bykea.pk.partner.R;
@@ -15,10 +17,12 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class HistoryDetailActivity extends BaseActivity {
 
@@ -42,9 +46,9 @@ public class HistoryDetailActivity extends BaseActivity {
     FontTextView totalAmountTv;
 
     @Bind(R.id.rlFeedbackMsg1)
-    RelativeLayout rlFeedbackMsg1;
+    LinearLayout rlFeedbackMsg1;
     @Bind(R.id.rlFeedbackMsg2)
-    RelativeLayout rlFeedbackMsg2;
+    LinearLayout rlFeedbackMsg2;
 
 
     @Bind(R.id.tvMsg1)
@@ -78,6 +82,8 @@ public class HistoryDetailActivity extends BaseActivity {
     @Bind(R.id.passengerRb)
     RatingBar passengerRb;
 
+    @Bind(R.id.btnProblem)
+    FontTextView btnProblem;
 
     private String tripNo;
     private String startAddress;
@@ -182,10 +188,25 @@ public class HistoryDetailActivity extends BaseActivity {
                 populatePredefineMsgs();
 
             }
+            if (Utils.getDaysInBetween(System.currentTimeMillis(), new SimpleDateFormat(CURRENT_DATE_FORMAT).parse(time).getTime()) >= AppPreferences.getSettings(mCurrentActivity).getSettings().getTrip_support_max_days()) {
+                btnProblem.setVisibility(View.GONE);
+            }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    @OnClick({R.id.btnProblem})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnProblem:
+                String params = "name=" + AppPreferences.getPilotData(mCurrentActivity).getFullName() + "&booking=" + tripNo + "&phone=" + AppPreferences.getPilotData(mCurrentActivity).getPhoneNo();
+                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getTrip_support_link() + params, tripNo);
+                break;
+        }
     }
 
     private void populatePredefineMsgs() {

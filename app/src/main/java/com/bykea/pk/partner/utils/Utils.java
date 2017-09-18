@@ -15,8 +15,10 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -38,11 +40,13 @@ import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -53,6 +57,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
@@ -64,7 +70,9 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -78,26 +86,13 @@ public class Utils {
 
     public static void infoLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            System.out.println(Constants.APP_NAME + " " + tag + " : " + message);
+            Log.i(Constants.APP_NAME + " " + tag, "" + message);
         }
     }
 
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.e(Constants.APP_NAME + " " + tag + " : ", message + ".");
-        }
-    }
-
-    public static void printUrl(String tag, String url) {
-        if (BuildConfig.DEBUG) {
-            Log.e("", "");
-            System.out.println(Constants.APP_NAME + " " + tag + " : " + ApiTags.BASE_SERVER_URL + url);
-        }
-    }
-
-    public static void printUrl(String baseUrl, String tag, String url) {
-        if (BuildConfig.DEBUG) {
-            System.out.println(Constants.APP_NAME + " " + tag + " : " + baseUrl + url);
         }
     }
 
@@ -170,6 +165,14 @@ public class Utils {
         SimpleDateFormat inFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         inFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         return inFormatter.format(new Date());
+    }
+
+    public static String getIsoDate(long date) {
+        SimpleDateFormat inFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        inFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        return inFormatter.format(calendar.getTime());
     }
 
     public static String getTimeDifference(String dateStr, String format) {
@@ -955,18 +958,17 @@ public class Utils {
 
 
     /*
-    * - if same location coordinates don't consider these lat lng
-    * - if distance less than 6 meter don't consider these lat lng to avoid coordinate fluctuation
-    * - if distance is more than 200 meters then check if it's last coordinate time difference is
+    * - if same location coordinates then don't consider these lat lng
+    * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
+    * - Check if its time difference w.r.t last coordinate is
     * greater than minimum time a bike should take to cover that distance if that bike is traveling
-    * at 80KM/H to avoid bad coordinate
+    * at max 80KM/H to avoid bad/fake coordinates
     * */
     public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
             float distance = calculateDistance(newLat, newLon, prevLat, prevLon);
             if (distance > 6) {
-//                if (distance > 200) {
                 long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime(DriverApp.getContext()));
                 long minTime = (long) ((distance) / (80 * 1000) * 3600);
                 if (timeDifference > minTime) {
@@ -975,10 +977,6 @@ public class Utils {
                 } else {
                     return false;
                 }
-//                } else {
-//                    AppPreferences.setDistanceCoveredInMeters(DriverApp.getContext(), distance);
-//                    return true;
-//                }
             } else {
                 AppPreferences.setPrevDistanceTime(DriverApp.getContext());
                 return false;
@@ -1108,4 +1106,50 @@ public class Utils {
         }
         return dimension;
     }
+
+
+    public static void logFireBaseEvent(Context context, String userId, String EVENT, JSONObject data) {
+        EVENT = EVENT.toLowerCase().replace("-", "_").replace(" ", "_");
+        if (EVENT.length() > 40) {
+            EVENT = EVENT.substring(EVENT.length() - 40, EVENT.length());
+        }
+        Bundle bundle = new Bundle();
+        Iterator iterator = data.keys();
+        while (iterator.hasNext()) {
+            String key = (String) iterator.next();
+            String value = null;
+            try {
+                value = data.getString(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            key = key.toLowerCase().replace("-", "_").replace(" ", "_");
+            bundle.putString(key, value);
+        }
+        FirebaseAnalytics.getInstance(context).setUserId(userId);
+        FirebaseAnalytics.getInstance(context).logEvent(EVENT, bundle);
+    }
+
+    public static void startCustomWebViewActivity(AppCompatActivity context, String link, String title) {
+        if (Connectivity.isConnected(context)) {
+            if (StringUtils.isNotBlank(link)) {
+                new FinestWebViewBuilder.Builder(context).showIconMenu(false).showUrl(false)
+                        .toolbarScrollFlags(0)
+                        .toolbarColor(ContextCompat.getColor(context, R.color.white))
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                        .showIconForward(false).showIconBack(false)
+                        .updateTitleFromHtml(false)
+                        .titleDefault(StringUtils.capitalize(title))
+                        .show(link);
+            }
+        } else {
+            appToast(context, context.getResources().getString(R.string.internet_error));
+        }
+    }
+
+    public static int getDaysInBetween(long newerDate, long olderDate) {
+        return Math.round((newerDate - olderDate)
+                / (1000 * 60 * 60 * 24));
+    }
+
 }

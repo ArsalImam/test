@@ -5,7 +5,7 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.bykea.pk.partner"
-        manifestPlaceholders = [onesignal_app_id: "65d93e99-8ef5-44b1-b6cd-d2de64b59cf4"
+        manifestPlaceholders = [onesignal_app_id               : "65d93e99-8ef5-44b1-b6cd-d2de64b59cf4"
                                 /*for testing  ->*//*"efb89186-0b1b-4060-8985-fa8533a8b401"*/,
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "REMOTE"]
@@ -17,6 +17,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
     }
+
     signingConfigs {
         debug {
             keyAlias 'android'
@@ -33,13 +34,22 @@ android {
     }
     buildTypes {
         release {
-//            minifyEnabled true
-            shrinkResources true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            // to remove unused resources. This will reduce APK size.
+            shrinkResources true
+            //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
+            minifyEnabled true
+            // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
         }
         debug {
             signingConfig signingConfigs.debug
+            shrinkResources true // to remove unused resources. This will reduce APK size.
+//            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+//                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
+
         }
     }
     dexOptions {
@@ -49,6 +59,16 @@ android {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
+    }
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '25.2.0'
+                }
+            }
+        }
     }
 }
 
@@ -61,6 +81,7 @@ repositories {
     jcenter();
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     maven { url "https://jitpack.io" }
+    maven { url "https://maven.google.com" }
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -69,7 +90,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
-    compile('com.instabug.library:instabug:4.0.6') {
+    compile('com.instabug.library:instabug:4.2.7') {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'com.google.android.gms:play-services-gcm:9.4.0'
@@ -79,16 +100,16 @@ dependencies {
     compile 'com.android.support:cardview-v7:25.2.0'
     compile 'com.android.support:customtabs:25.2.0'
     compile 'com.android.support:design:25.2.0'
-    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.intuit.sdp:sdp-android:1.0.2'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'com.google.android.gms:play-services:10.2.0'
-    compile 'com.google.firebase:firebase-core:10.2.0'
-    compile 'com.google.firebase:firebase-messaging:10.2.0'
+    compile 'com.google.android.gms:play-services:11.0.4'
+    compile 'com.google.firebase:firebase-core:11.0.4'
+    compile 'com.google.firebase:firebase-messaging:11.0.4'
     compile 'com.google.maps:google-maps-services:0.1.6'
     compile 'com.google.maps.android:android-maps-utils:0.3.4'
     compile 'com.android.support:multidex:1.0.1'
@@ -106,11 +127,13 @@ dependencies {
     /*compile('com.afollestad:easyvideoplayer:0.3.0') {
         exclude group: 'com.android.support'
     }*/
-    compile ('com.onesignal:OneSignal:[3.5.3,4.0.0)') {
+    compile('com.onesignal:OneSignal:[3.5.3,4.0.0)') {
         exclude group: 'com.google.android.gms'
     }
     testCompile 'junit:junit:4.12'
     compile 'org.jsoup:jsoup:1.10.1'
+    compile 'me.grantland:autofittextview:0.2.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }
 
 

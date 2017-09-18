@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
+import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.JobActivity;
@@ -130,6 +132,12 @@ public class ActivityStackManager {
 
     public void startMissedCallsActivity() {
         Intent intent = new Intent(mContext, HistoryMissedCallsActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    public void startCancelDetailsActivity(TripHistoryData data) {
+        Intent intent = new Intent(mContext, HistoryCancelDetailsActivity.class);
+        intent.putExtra("TRIP_DETAILS", data);
         mContext.startActivity(intent);
     }
 }

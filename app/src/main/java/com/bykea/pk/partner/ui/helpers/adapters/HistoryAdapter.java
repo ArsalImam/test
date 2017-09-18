@@ -47,29 +47,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
     public void onBindViewHolder(ItemHolder holder, int position) {
 
         TripHistoryData data = mHistoryList.get(position);
-        Utils.redLog("Trip No", data.getTripNo());
-        if (data.getStatus().equalsIgnoreCase("cancelled")
-                || data.getStatus().equalsIgnoreCase("missed")) {
-            holder.detailsImage.setVisibility(View.INVISIBLE);
-            holder.dotted_line.setVisibility(View.GONE);
-            holder.ic_pin.setVisibility(View.GONE);
-            holder.endAddressTv.setVisibility(View.GONE);
-        } else {
-            holder.detailsImage.setVisibility(View.VISIBLE);
-            holder.dotted_line.setVisibility(View.VISIBLE);
-            holder.ic_pin.setVisibility(View.VISIBLE);
-            holder.endAddressTv.setVisibility(View.VISIBLE);
-        }
-
-        if (null != data.getPassRating() && StringUtils.isNotBlank(data.getPassRating().getRate())
-                && !data.getPassRating().getRate().equalsIgnoreCase("0")) {
-            holder.ratingValueTv.setText("Rating " + Utils.formatDecimalPlaces(data.getPassRating().getRate()));
-        } else {
-            holder.ratingValueTv.setText("Rating -");
-        }
-
-
-        String time[] = null;
         if (data.getStatus().equalsIgnoreCase("missed")) {
             holder.tripNoTv.setText(data.getTrip_id().getTrip_no());
         } else {
@@ -86,9 +63,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
                             ? data.getFinishTime() : data.getAcceptTime(), CURRENT_DATE_FORMAT,
                     REQUIRED_DATE_FORMAT));
         } else if (data.getStatus().equalsIgnoreCase("cancelled")) {
-            holder.status.setText(StringUtils.isNotBlank(data.getCancel_by()) ? data.getCancel_by() + " Cancelled" : "Admin Cancelled");
+            holder.status.setText(data.getCancel_by() + " Cancelled");
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.color_error));
-            holder.totalAmountTv.setVisibility(View.GONE);
+            holder.totalAmountTv.setVisibility(View.VISIBLE);
+            holder.totalAmountTv.setText("Rs. " + data.getCancel_fee());
             if (StringUtils.isNotBlank(data.getCancelTime())) {
                 holder.dateTv.setText(Utils.getFormattedDate(data.getCancelTime(), CURRENT_DATE_FORMAT,
                         REQUIRED_DATE_FORMAT));
@@ -113,27 +91,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
                     REQUIRED_DATE_FORMAT));
 
         }
-
-        if (data.is_verified()) {
-            holder.verifiedTv.setText("Verified");
-            holder.verifiedTv.setTextColor(ContextCompat.getColor(mContext, R.color.color_success));
-        } else {
-            holder.verifiedTv.setTextColor(ContextCompat.getColor(mContext, R.color.color_error));
-            holder.verifiedTv.setText("Unverified");
-        }
-        if (StringUtils.isBlank(data.getStartAddress())) {
-            holder.startAddressTv.setVisibility(View.GONE);
-            holder.green_dot.setVisibility(View.GONE);
-        } else {
-            holder.startAddressTv.setVisibility(View.VISIBLE);
-            holder.green_dot.setVisibility(View.VISIBLE);
-            holder.startAddressTv.setText(data.getStartAddress());
-        }
-        if (StringUtils.isBlank(data.getEndAddress())) {
-            holder.endAddressTv.setText("Passenger Guided.");
-        } else {
-            holder.endAddressTv.setText(data.getEndAddress());
-        }
     }
 
     @Override
@@ -151,43 +108,21 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         void onItemClickListener(int position, View view, TripHistoryData recentJob);
     }
 
-    public static class ItemHolder extends RecyclerView.ViewHolder {
-
+    static class ItemHolder extends RecyclerView.ViewHolder {
 
         FontTextView tripNoTv;
-        FontTextView ratingValueTv;
-        FontTextView startAddressTv;
-        FontTextView endAddressTv;
         FontTextView totalAmountTv;
         FontTextView status;
-        FontTextView timeTv;
         FontTextView dateTv;
-        FontTextView verifiedTv;
-        ImageView detailsImage;
-        ImageView ic_pin;
-        DashedLine dotted_line;
-        ImageView green_dot;
-       /* @Bind(R.id.callerRb)
-        RatingBar ratingBar;*/
 
 
-        public ItemHolder(final View itemView) {
+        ItemHolder(final View itemView) {
             super(itemView);
 
-            detailsImage = (ImageView) itemView.findViewById(R.id.ivRight);
-            tripNoTv = (FontTextView) itemView.findViewById(R.id.tripNoTv);
-            ratingValueTv = (FontTextView) itemView.findViewById(R.id.ratingValueTv);
-            startAddressTv = (FontTextView) itemView.findViewById(R.id.startAddressTv);
-            endAddressTv = (FontTextView) itemView.findViewById(R.id.endAddressTv);
-            totalAmountTv = (FontTextView) itemView.findViewById(R.id.totalAmountTv);
-            status = (FontTextView) itemView.findViewById(R.id.status);
-            timeTv = (FontTextView) itemView.findViewById(R.id.timeTv);
             dateTv = (FontTextView) itemView.findViewById(R.id.dateTv);
-            verifiedTv = (FontTextView) itemView.findViewById(R.id.verifiedTv);
-            ic_pin = (ImageView) itemView.findViewById(R.id.ic_pin);
-            dotted_line = (DashedLine) itemView.findViewById(R.id.dotted_line);
-            green_dot = (ImageView) itemView.findViewById(R.id.green_dot);
-
+            totalAmountTv = (FontTextView) itemView.findViewById(R.id.totalAmountTv);
+            tripNoTv = (FontTextView) itemView.findViewById(R.id.tripNoTv);
+            status = (FontTextView) itemView.findViewById(R.id.status);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

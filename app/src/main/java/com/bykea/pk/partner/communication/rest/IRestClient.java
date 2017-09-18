@@ -46,9 +46,12 @@ public interface IRestClient {
                               @Field(Fields.Login.DEVICE_TYPE) String deviceType,
                               @Field(Fields.Login.USER_STATUS) String userStatus,
                               @Field(Fields.Login.REG_ID) String gcmId,
+                              @Field(Fields.Login.LAT) String lat,
+                              @Field(Fields.Login.LNG) String lng,
                               @Field(Fields.Login.APP_VERSION) String version,
                               @Field(Fields.Login.ONE_SIGNAL_PLAYER_ID) String one_signal_p_id,
-                              @Field(Fields.Login.ADID) String advertising_id);
+                              @Field(Fields.Login.ADID) String advertising_id,
+                              @Field(Fields.Login.IMEI_NUMBER) String imei);
 
     @FormUrlEncoded
     @POST(ApiTags.LOGOUT_API)
@@ -74,7 +77,8 @@ public interface IRestClient {
 
     @GET(ApiTags.GET_SETTINGS)
     Call<SettingsResponse> getSettings(@Query(Fields.USER_TYPE) String userTyp,
-                                       @Query("city") String city);
+                                       @Query("city") String city,
+                                       @Query("s_ver") String settingsVersion);
 
 
     @FormUrlEncoded
@@ -178,6 +182,7 @@ public interface IRestClient {
     Call<GetProfileResponse> requestProfileData(@Query("_id") String _id,
                                                 @Query("token_id") String token_id,
                                                 @Query("user_type") String userType);
+
     @GET(ApiTags.GET_CITIES)
     Call<GetCitiesResponse> getCities();
 

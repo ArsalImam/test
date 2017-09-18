@@ -55,6 +55,7 @@ public enum Dialogs {
             e.printStackTrace();
         }
     }
+
     public void dismissAdminNotiDialog() {
         try {
             if (null != mAdminNotifiationDialog && mAdminNotifiationDialog.isShowing()) {
@@ -158,6 +159,19 @@ public enum Dialogs {
         ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(message);
         ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
 
+        showDialog();
+    }
+
+    public void showRideStatusDialog(Context context, View.OnClickListener positive,
+                                     View.OnClickListener negative, String title) {
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_ride_status);
+        mDialog.setCancelable(false);
+        mDialog.findViewById(R.id.negativeBtn).setOnClickListener(negative);
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
+        ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
         showDialog();
     }
 

@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,9 +18,11 @@ import android.widget.TextView;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -37,12 +40,18 @@ public class BaseActivity extends AppCompatActivity {
     private BaseActivity mCurrentActivity;
     private final EventBus mEventBus = EventBus.getDefault();
     private boolean isScreenInFront;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCurrentActivity = this;
         mEventBus.register(mCurrentActivity);
+        progressDialog = new ProgressDialog(mCurrentActivity);
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(getString(R.string.internet_error));
     }
 
     @Override
@@ -65,6 +74,63 @@ public class BaseActivity extends AppCompatActivity {
         intentFilter.addAction(Keys.UNAUTHORIZED_BROADCAST);
         intentFilter.addAction(Keys.MOCK_LOCATION);
         registerReceiver(myReceiver, intentFilter);
+        if (!(mCurrentActivity instanceof JobActivity)) {
+            IntentFilter intentFilterNetwork = new IntentFilter();
+            intentFilterNetwork.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+            intentFilterNetwork.addAction("android.location.GPS_ENABLED_CHANGE");
+            intentFilterNetwork.addAction("android.location.PROVIDERS_CHANGED");
+            registerReceiver(networkChangeListener, intentFilterNetwork);
+            checkGps();
+            checkConnectivity(mCurrentActivity);
+        }
+    }
+
+    private BroadcastReceiver networkChangeListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equalsIgnoreCase("android.location.GPS_ENABLED_CHANGE") ||
+                    intent.getAction().equalsIgnoreCase("android.location.PROVIDERS_CHANGED")) {
+                checkGps();
+            } else {
+                checkConnectivity(context);
+            }
+            mEventBus.post(Keys.CONNECTION_BROADCAST);
+        }
+    };
+
+    public void checkConnectivity(Context context) {
+        if (Connectivity.isConnectedFast(context)) {
+            dismissProgressDialog();
+        } else {
+            showProgressDialog();
+        }
+    }
+
+    public void checkGps() {
+        if (!Utils.isGpsEnable(mCurrentActivity)) {
+            Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+        }
+    }
+
+
+    private void dismissProgressDialog() {
+        try {
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showProgressDialog() {
+        try {
+            progressDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void checkNotification() {
@@ -74,7 +140,6 @@ public class BaseActivity extends AppCompatActivity {
                 public void run() {
                     if (StringUtils.isNotBlank(AppPreferences.getAdminMsg(mCurrentActivity)) && isScreenInFront
                             && !(mCurrentActivity instanceof CallingActivity) && !(mCurrentActivity instanceof SplashActivity)) {
-                        Dialogs.INSTANCE.dismissDialog();
                         Dialogs.INSTANCE.showAdminNotificationDialog(mCurrentActivity, AppPreferences.getAdminMsg(mCurrentActivity));
                         Notifications.removeAllNotifications(mCurrentActivity);
                     }
@@ -232,7 +297,13 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(myReceiver);
+        if (myReceiver != null) {
+            unregisterReceiver(myReceiver);
+        }
+        if (networkChangeListener != null && !(mCurrentActivity instanceof JobActivity)) {
+            unregisterReceiver(networkChangeListener);
+        }
+        dismissProgressDialog();
         if (mEventBus != null) {
             mEventBus.unregister(mCurrentActivity);
         }

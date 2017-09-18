@@ -1,8 +1,10 @@
 package com.bykea.pk.partner.utils;
 
 
+import com.bykea.pk.partner.BuildConfig;
+
 public class Constants {
-    public static final String MIX_PANEL_API_KEY = "b97eeebca45ee4e90b79b470ae28f2da";
+    public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
     public static final String GCM_KEY = "764640458585";// GOOGLE ACCOUNT Bykea PROJECT ID...
     public static final String APP_NAME = "BYKEA PARTNER";
 
@@ -37,13 +39,13 @@ public class Constants {
     public static final long MILISEC_IN_DAY = 86400000;
     public static final long MILISEC_IN_HALF_DAY = 43200000;
     public static final String REG_EX_DIGIT = "\\d+";
-    public static final int AMOUNT_LIMIT = 35000;
     // Partner Phase 2
     public static final String INSTA_BUG_BETA_KEY = "1a22f9efd3017c87f9fa8ad33645cafb";
     public static final String INSTA_BUG_LIVE_KEY = "36070216421223afd484f7b67802c146";
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
     public final static String RIDE_FARE = "Eyeball-Ride-Finish";
+    public final static String CANCEL_TRIP = "Ride-Cancel";
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
 
 }

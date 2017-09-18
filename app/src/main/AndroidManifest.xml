@@ -108,6 +108,9 @@
         <activity
             android:name=".ui.activities.HistoryMissedCallsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.HistoryCancelDetailsActivity"
+            android:screenOrientation="portrait" />
 
         <!-- NETWORK STATE BROADCAST LISTENER -->
         <!--
@@ -178,6 +181,10 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.helpers.webview.FinestWebViewCustomActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

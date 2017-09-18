@@ -100,17 +100,6 @@ public class WalletHistoryAdapter extends RecyclerView.Adapter<WalletHistoryAdap
             holder.tvBalance.setVisibility(View.INVISIBLE);
         }
 
-        if (StringUtils.isNotBlank(data.getBalance())) {
-            if (data.getBalance().equalsIgnoreCase("NaN")) {
-                holder.tvBalance.setText("0");
-            } else {
-                holder.tvBalance.setText(data.getBalance());
-            }
-            holder.tvBalance.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvBalance.setVisibility(View.INVISIBLE);
-        }
-
 
     }
 

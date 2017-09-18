@@ -170,17 +170,8 @@ public class ConfirmDestinationActivity extends BaseActivity {
 
     private void setLocation(double lat, double lng) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 16.0f);
-        mGoogleMap.animateCamera(cameraUpdate, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                mGoogleMap.setOnCameraIdleListener(onCameraIdleListener);
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-        });
+        mGoogleMap.moveCamera(cameraUpdate);
+        mGoogleMap.setOnCameraIdleListener(onCameraIdleListener);
     }
 
     private void reverseGeoCoding(double targetLat, double targetLng) {

@@ -216,7 +216,7 @@ public class LocationService extends Service {
                 mGoogleApiClient, mLocationUpdatesListener);
     }
 
-    public class LocationUpdatesListener implements LocationListener {
+    private class LocationUpdatesListener implements LocationListener {
 
         public void onLocationChanged(final Location location) {
             if (!Utils.isMockLocation(location, mContext)) {
@@ -277,12 +277,19 @@ public class LocationService extends Service {
                     if (lat != 0.0 && lon != 0.0 && Utils.isGpsEnable(mContext) && !isMock) {
                         String lastLat = AppPreferences.getPrevDistanceLatitude(mContext);
                         String lastLng = AppPreferences.getPrevDistanceLongitude(mContext);
+                        if (lastLat.equalsIgnoreCase("0.0") || lastLng.equalsIgnoreCase("0.0")) {
+                            if (AppPreferences.getCallData(mContext) != null) {
+                                lastLat = AppPreferences.getCallData(mContext).getStartLat();
+                                lastLng = AppPreferences.getCallData(mContext).getStartLng();
+                                AppPreferences.setPrevDistanceLatLng(mContext, Double.parseDouble(lastLat), Double.parseDouble(lastLng), AppPreferences.getStartTripTime(mContext));
+                            }
+                        }
                         if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
                             if (Utils.isValidLocation(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng))) {
 //                            if (true) {
                                 AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
                                 AppPreferences.setPrevDistanceLatLng(mContext, lat, lon);
-                                if (Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng)) > 3000) {
+                                if (Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng)) > 1000) {
                                     if (!isDirectionApiRunning) {
                                         getRouteLatLng(lat, lon, lastLat, lastLng);
                                     }

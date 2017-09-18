@@ -88,12 +88,6 @@ public class UserRepository {
 
     }
 
-    public void requestUserRegister(Context context, IUserDataHandler handler, PilotData data) {
-        mContext = context;
-        mUserCallback = handler;
-
-        mRestRequestHandler.registerUser(context, mDataCallback, data);
-    }
 
     public void requestUpdateProfile(Context context, IUserDataHandler handler,
                                      String fullName, String city, String address, String email, String pincode) {
@@ -264,9 +258,6 @@ public class UserRepository {
                 jsonObject.put("passenger_id", AppPreferences.getCallData(mContext).getPassId());
                 jsonObject.put("trip_id", AppPreferences.getCallData(mContext).getTripId());
                 jsonObject.put("inCall", true);
-//                jsonObject.put("end_lat", AppPreferences.getCallData(mContext).getEndLat());
-//                jsonObject.put("end_lng", AppPreferences.getCallData(mContext).getEndLng());
-//                jsonObject.put("end_address", AppPreferences.getCallData(mContext).getEndAddress());
             } else {
                 //to free driver after trip Finished
                 if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus(mContext))) {
@@ -282,7 +273,7 @@ public class UserRepository {
             Utils.redLog("isInCall", jsonObject.get("inCall") + "");
 
 
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
 
         }
 
@@ -315,7 +306,7 @@ public class UserRepository {
         try {
             jsonObject.put("token_id", AppPreferences.getAccessToken(context));
             jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("did", AppPreferences.getDriverId(context));
+//            jsonObject.put("did", AppPreferences.getDriverId(context));
             jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
             jsonObject.put("pid", AppPreferences.getCallData(context).getPassId());
             jsonObject.put("lat", AppPreferences.getLatitude(context) + "");
@@ -476,6 +467,14 @@ public class UserRepository {
 
             String endLatString = AppPreferences.getLatitude(context) + "";
             String endLngString = AppPreferences.getLongitude(context) + "";
+            String lastLat = AppPreferences.getPrevDistanceLatitude(mContext);
+            String lastLng = AppPreferences.getPrevDistanceLongitude(mContext);
+            if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
+                if (!Utils.isValidLocation(Double.parseDouble(endLatString), Double.parseDouble(endLngString), Double.parseDouble(lastLat), Double.parseDouble(lastLng))) {
+                    endLatString = lastLat;
+                    endLngString = lastLng;
+                }
+            }
             jsonObject.put("endlatitude", endLatString);
             jsonObject.put("endlongitude", endLngString);
 
@@ -485,7 +484,7 @@ public class UserRepository {
             LocCoordinatesInTrip startLatLng = new LocCoordinatesInTrip();
             startLatLng.setLat(AppPreferences.getCallData(context).getStartLat());
             startLatLng.setLng(AppPreferences.getCallData(context).getStartLng());
-            startLatLng.setDate(Utils.getIsoDate());
+            startLatLng.setDate(Utils.getIsoDate(AppPreferences.getStartTripTime(context)));
 
             LocCoordinatesInTrip endLatLng = new LocCoordinatesInTrip();
             endLatLng.setLat(endLatString);
@@ -723,7 +722,10 @@ public class UserRepository {
             } else if (object instanceof SettingsResponse) {
                 if (null != mUserCallback) {
                     SettingsResponse settingsResponse = (SettingsResponse) object;
-                    AppPreferences.saveSettingsData(mContext, settingsResponse.getData());
+                    if (settingsResponse.getData() != null && settingsResponse.getData().getSettings() != null) {
+                        AppPreferences.setSettingsVersion(mContext, settingsResponse.getSetting_version());
+                        AppPreferences.saveSettingsData(mContext, settingsResponse.getData());
+                    }
                 }
             } else if (object instanceof GetCitiesResponse) {
                 if (null != mUserCallback) {

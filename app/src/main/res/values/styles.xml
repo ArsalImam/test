@@ -53,6 +53,7 @@
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="windowActionModeOverlay">true</item>
     </style>
+
     <style name="spinner_style">
         <item name="android:background">@drawable/spinner_selector</item>
         <item name="android:layout_marginRight">@dimen/_5sdp</item>

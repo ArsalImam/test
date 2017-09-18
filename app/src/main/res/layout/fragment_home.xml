@@ -12,14 +12,16 @@
         android:layout_height="wrap_content" />
 
     <FrameLayout
-        android:layout_below="@+id/llTop"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/llBottom"
+        android:layout_below="@+id/llTop">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <RelativeLayout
-                android:layout_above="@+id/llBottom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -34,26 +36,26 @@
                     android:id="@+id/mapPinIv"
                     android:layout_width="@dimen/width.xlarge"
                     android:layout_height="@dimen/height.xlarge"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:layout_marginBottom="66dp"
                     android:layout_marginEnd="19dp"
                     android:layout_marginRight="19dp"
                     android:padding="@dimen/_4sdp"
-                    android:src="@drawable/my_location_bg"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
+                    android:src="@drawable/my_location_bg" />
 
             </RelativeLayout>
 
 
             <LinearLayout
-                android:id="@+id/llBottom"
-                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height.xlarge"
-                android:background="@color/windowBackground"
+                android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom"
-                android:orientation="vertical">
+                android:background="@color/windowBackground"
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <View
                     android:id="@+id/toolbarLine"
@@ -68,16 +70,16 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:padding="@dimen/padding.tiny"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:padding="@dimen/padding.tiny">
 
                         <com.bykea.pk.partner.widgets.FontTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/margin.small"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="ACCEPTANCE RATE"
-                            android:layout_marginLeft="@dimen/margin.small"
                             android:textColor="@color/textColorPrimary"
                             android:textSize="@dimen/textsize.small"
                             app:fontName="roboto_bold.ttf" />
@@ -85,13 +87,13 @@
                         <com.bykea.pk.partner.widgets.FontTextView
                             android:id="@+id/acceptanceRateTv"
                             android:layout_width="0dp"
-                            android:layout_weight=".5"
                             android:layout_height="match_parent"
+                            android:layout_weight=".5"
                             android:gravity="right|center_vertical"
+                            android:text="0%"
                             android:textColor="@color/colorAccent"
-                            app:fontName="roboto_bold.ttf"
                             android:textSize="@dimen/textsize.title"
-                            android:text="0%" />
+                            app:fontName="roboto_bold.ttf" />
 
 
                     </LinearLayout>
@@ -102,18 +104,18 @@
                         android:background="@color/colorPrimary" />
 
                     <LinearLayout
-                        android:padding="@dimen/padding.tiny"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:padding="@dimen/padding.tiny">
 
                         <com.bykea.pk.partner.widgets.FontTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/margin.small"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="VERIFIED TRIPS"
-                            android:layout_marginLeft="@dimen/margin.small"
                             android:textColor="@color/textColorPrimary"
                             android:textSize="@dimen/textsize.small"
                             app:fontName="roboto_bold.ttf" />
@@ -121,13 +123,13 @@
                         <com.bykea.pk.partner.widgets.FontTextView
                             android:id="@+id/verifiedTripsTv"
                             android:layout_width="0dp"
-                            android:layout_weight=".5"
                             android:layout_height="match_parent"
+                            android:layout_weight=".5"
                             android:gravity="right|center_vertical"
+                            android:text="0"
                             android:textColor="@color/colorAccent"
-                            app:fontName="roboto_bold.ttf"
                             android:textSize="@dimen/textsize.title"
-                            android:text="0" />
+                            app:fontName="roboto_bold.ttf" />
 
                     </LinearLayout>
 
@@ -140,20 +142,42 @@
 
 
     </FrameLayout>
-    <RelativeLayout
+
+    <include
+        android:id="@+id/llBottom"
+        layout="@layout/price_in_hand_range_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height.xlarge"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@color/windowBackground" />
+
+    <LinearLayout
         android:id="@+id/rlInactiveImage"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/llBottom"
         android:layout_below="@+id/llTop"
-        android:gravity="center"
-        android:visibility="gone"
         android:background="@color/black.transparent.inactive"
-        android:layout_height="match_parent">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/inactive_driver_screen"/>
-    </RelativeLayout>
+        android:gravity="top|center"
+        android:orientation="vertical"
+        android:visibility="visible">
 
+        <ImageView
+            android:layout_marginTop="@dimen/_38sdp"
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="@dimen/_140sdp"
+            android:src="@drawable/ic_inactive_icon" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/inactive_msg"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_24sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+    </LinearLayout>
 
 
 </RelativeLayout>

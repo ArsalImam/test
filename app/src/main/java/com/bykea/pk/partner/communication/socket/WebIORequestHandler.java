@@ -48,7 +48,7 @@ import io.socket.emitter.Emitter;
 public class WebIORequestHandler {
 
     private static Context mContext;
-    private String mSocket;
+    //    private String mSocket;
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
     //    private static AdvanceCallListener advanceCallListener = new AdvanceCallListener();
 //    private static JobCallListener jobCallListener = new JobCallListener();
@@ -81,116 +81,101 @@ public class WebIORequestHandler {
     }
 
     public synchronized void requestHeatmap(final JSONObject jsonObject, IResponseCallback onResponseCallBack) {
-        mSocket = ApiTags.SOCKET_GET_HEATMAP_DATA;
-        emitWithJObject(new MyGenericListener(mSocket, HeatMapResponse.class, onResponseCallBack),
+        emitWithJObject(ApiTags.SOCKET_GET_HEATMAP_DATA, new MyGenericListener(ApiTags.SOCKET_GET_HEATMAP_DATA, HeatMapResponse.class, onResponseCallBack),
                 jsonObject);
     }
 
     public synchronized void requestLocationUpdate(final JSONObject jsonObject, IResponseCallback onResponseCallBack) {
-        mSocket = ApiTags.SOCKET_UPDATE_DRIVER_LOC;
-        emitWithJObject(mSocket, new LocationUpdateListener(mSocket, LocationResponse.class, onResponseCallBack),
+        emitWithJObject(ApiTags.SOCKET_UPDATE_DRIVER_LOC, new LocationUpdateListener(ApiTags.SOCKET_UPDATE_DRIVER_LOC, LocationResponse.class, onResponseCallBack),
                 jsonObject);
     }
 
     public void requestFreePilot(final JSONObject jsonObject, IResponseCallback onResponseCallBack) {
-        mSocket = ApiTags.SOCKET_FREE_PILOT;
-        emitWithJObject(new MyGenericListener(mSocket, FreeDriverResponse.class,
+        emitWithJObject(ApiTags.SOCKET_FREE_PILOT, new MyGenericListener(ApiTags.SOCKET_FREE_PILOT, FreeDriverResponse.class,
                 onResponseCallBack), jsonObject);
     }
 
     public void acceptNormalCall(JSONObject acceptCallData, IResponseCallback responseCallBack) {
-        mSocket = ApiTags.SOCKET_ACCEPT_CALL;
-        emitWithJObject(new MyGenericListener(mSocket, AcceptCallResponse.class,
+        emitWithJObject(ApiTags.SOCKET_ACCEPT_CALL, new MyGenericListener(ApiTags.SOCKET_ACCEPT_CALL, AcceptCallResponse.class,
                 responseCallBack), acceptCallData);
     }
 
     public void ackCall(JSONObject acceptCallData, IResponseCallback responseCallBack) {
-        emitOnceWithJObject(ApiTags.ACK_CALL, new MyGenericListener(ApiTags.ACK_CALL, AckCallResponse.class,
+        emitWithJObject(ApiTags.ACK_CALL, new MyGenericListener(ApiTags.ACK_CALL, AckCallResponse.class,
                 responseCallBack), acceptCallData);
     }
 
     public void rejectNormalCall(JSONObject rejectCallData, IResponseCallback responseCallBack) {
-        mSocket = ApiTags.SOCKET_REJECT_CALL;
-        emitWithJObject(new MyGenericListener(mSocket, RejectCallResponse.class,
+        emitWithJObject(ApiTags.SOCKET_REJECT_CALL, new MyGenericListener(ApiTags.SOCKET_REJECT_CALL, RejectCallResponse.class,
                 responseCallBack), rejectCallData);
     }
 
     public void driverArrived(JSONObject driverArrivedObject, IResponseCallback responseCallBack) {
-        mSocket = ApiTags.SOCKET_ARRIVED;
-        emitWithJObject(new MyGenericListener(mSocket, ArrivedResponse.class,
+        emitWithJObject(ApiTags.SOCKET_ARRIVED, new MyGenericListener(ApiTags.SOCKET_ARRIVED, ArrivedResponse.class,
                 responseCallBack), driverArrivedObject);
     }
 
     public void beginRide(JSONObject beginTripData, IResponseCallback responseCallBack) {
-        mSocket = ApiTags.SOCKET_BEGIN_TRIP;
-        emitWithJObject(new MyGenericListener(mSocket, BeginRideResponse.class,
+        emitWithJObject(ApiTags.SOCKET_BEGIN_TRIP, new MyGenericListener(ApiTags.SOCKET_BEGIN_TRIP, BeginRideResponse.class,
                 responseCallBack), beginTripData);
     }
 
     public void cancelRide(JSONObject cancelRideObject, IResponseCallback responseCallBack) {
-        mSocket = ApiTags.SOCKET_CANCEL_RIDE_DRIVER;
         Utils.redLog(Constants.APP_NAME + " CancelRideEmit ", cancelRideObject.toString());
-        emitWithJObject(new MyGenericListener(mSocket, CancelRideResponse.class, responseCallBack),
+        emitWithJObject(ApiTags.SOCKET_CANCEL_RIDE_DRIVER, new MyGenericListener(ApiTags.SOCKET_CANCEL_RIDE_DRIVER, CancelRideResponse.class, responseCallBack),
                 cancelRideObject);
     }
 
     public void endRide(JSONObject endRideData, IResponseCallback responseCallBack) {
-        mSocket = ApiTags.SOCKET_END_TRIP;
         Utils.redLog(Constants.APP_NAME + " FinishRideEmit ", endRideData.toString());
-        emitWithJObject(new MyGenericListener(mSocket, EndRideResponse.class, responseCallBack),
+        emitWithJObject(ApiTags.SOCKET_END_TRIP, new MyGenericListener(ApiTags.SOCKET_END_TRIP, EndRideResponse.class, responseCallBack),
                 endRideData);
     }
 
     public void feedback(JSONObject feedbackData, IResponseCallback responseCallBack) {
-        mSocket = ApiTags.SOCKET_DRIVER_FEEDBACK;
         Utils.redLog(Constants.APP_NAME + " FinishRideEmit ", feedbackData.toString());
-        emitWithJObject(new MyGenericListener(mSocket, FeedbackResponse.class, responseCallBack),
+        emitWithJObject(ApiTags.SOCKET_DRIVER_FEEDBACK, new MyGenericListener(ApiTags.SOCKET_DRIVER_FEEDBACK, FeedbackResponse.class, responseCallBack),
                 feedbackData);
     }
 
 
     public void getConversationChat(final IResponseCallback mResponseCallBack,
                                     JSONObject jsonObject) {
-        mSocket = ApiTags.SOCKET_GET_CONVERSATION;
+
         Utils.redLog(Constants.APP_NAME + " getConversationChat ", jsonObject.toString());
-        emitWithJObject(new MyGenericListener(mSocket, ConversationChatResponse.class, mResponseCallBack)
+        emitWithJObject(ApiTags.SOCKET_GET_CONVERSATION, new MyGenericListener(ApiTags.SOCKET_GET_CONVERSATION, ConversationChatResponse.class, mResponseCallBack)
                 , jsonObject);
     }
 
     public void updatePilotStatus(final IResponseCallback mResponseCallBack,
                                   JSONObject jsonObject) {
-        mSocket = ApiTags.SOCKET_UPDATE_STATUS;
         Utils.redLog(Constants.APP_NAME + " updateStatus ", jsonObject.toString());
-        emitWithJObject(new MyGenericListener(mSocket, PilotStatusResponse.class, mResponseCallBack)
+        emitWithJObject(ApiTags.SOCKET_UPDATE_STATUS, new MyGenericListener(ApiTags.SOCKET_UPDATE_STATUS, PilotStatusResponse.class, mResponseCallBack)
                 , jsonObject);
     }
 
     public void getConversationId(final IResponseCallback mResponseCallBack,
                                   JSONObject jsonObject) {
-        mSocket = ApiTags.SOCKET_GET_CONVERSATION_ID;
         Utils.redLog(Constants.APP_NAME + " getConversationId ", jsonObject.toString());
-        emitWithJObject(new MyGenericListener(mSocket, GetConversationIdResponse.class, mResponseCallBack)
+        emitWithJObject(ApiTags.SOCKET_GET_CONVERSATION_ID, new MyGenericListener(ApiTags.SOCKET_GET_CONVERSATION_ID, GetConversationIdResponse.class, mResponseCallBack)
                 , jsonObject);
     }
 
     public void sendMessage(final IResponseCallback mResponseCallBack, JSONObject jsonObject) {
-        mSocket = ApiTags.SOCKET_SEND_CHAT_MESSAGE;
         Utils.redLog(Constants.APP_NAME + " sendMessage ", jsonObject.toString());
-        emitWithJObject(new MyGenericListener(mSocket, SendMessageResponse.class, mResponseCallBack)
+        emitWithJObject(ApiTags.SOCKET_SEND_CHAT_MESSAGE, new MyGenericListener(ApiTags.SOCKET_SEND_CHAT_MESSAGE, SendMessageResponse.class, mResponseCallBack)
                 , jsonObject);
     }
 
     public void getDriverStats(final IResponseCallback mResponseCallBack, JSONObject jsonObject) {
-        mSocket = ApiTags.SOCKET_GET_DRIVER_STATS;
         Utils.redLog(ApiTags.SOCKET_GET_DRIVER_STATS, jsonObject.toString());
-        emitWithJObject(new MyGenericListener(mSocket, DriverStatsResponse.class, mResponseCallBack)
+        emitWithJObject(ApiTags.SOCKET_GET_DRIVER_STATS, new MyGenericListener(ApiTags.SOCKET_GET_DRIVER_STATS, DriverStatsResponse.class, mResponseCallBack)
                 , jsonObject);
     }
 
 
     public void updateDropOff(final IResponseCallback mResponseCallBack, JSONObject jsonObject) {
-        mSocket = ApiTags.UPDATE_DROP_OFF;
-        emitWithJObject(new MyGenericListener(ApiTags.UPDATE_DROP_OFF, UpdateDropOffResponse.class, mResponseCallBack),
+        emitWithJObject(ApiTags.UPDATE_DROP_OFF, new MyGenericListener(ApiTags.UPDATE_DROP_OFF, UpdateDropOffResponse.class, mResponseCallBack),
                 jsonObject);
     }
 
@@ -219,51 +204,28 @@ public class WebIORequestHandler {
         }
     }
 
-    private void emitWithJObject(MyGenericListener myGenericListener, final JSONObject json) {
-        Utils.redLog("Request at" + mSocket, json.toString());
-        WebIO.getInstance().on(mSocket, myGenericListener);
-        if (!WebIO.getInstance().emit(mSocket, json)) {
+    private void emitWithJObject(final String eventName, MyGenericListener myGenericListener, final JSONObject json) {
+        Utils.redLog("Request at" + eventName, json.toString());
+        WebIO.getInstance().on(eventName, myGenericListener);
+        if (!WebIO.getInstance().emit(eventName, json)) {
             WebIO.getInstance().onConnect(new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     try {
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken(DriverApp.getContext()))) {
-                            WebIO.getInstance().emit(mSocket, json);
+                            WebIO.getInstance().emit(eventName, json);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Utils.redLog(mSocket + " Socket Was disconnected and connect again" +
+                    Utils.redLog(eventName + " Socket Was disconnected and connect again" +
                             " to emit json object : , generice emition completed..... ", json.toString());
                 }
             });
         } else {
-            Utils.redLog(mSocket + " Socket connected , generice emition completed..... ", json.toString());
+            Utils.redLog(eventName + " Socket connected , generice emition completed..... ", json.toString());
 
-        }
-    }
-
-    private void emitOnceWithJObject(final String socketEvent, MyGenericListener myGenericListener, final JSONObject json) {
-        WebIO.getInstance().on(socketEvent, myGenericListener);
-        if (!WebIO.getInstance().emit(socketEvent, json)) {
-            WebIO.getInstance().onConnect(new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    try {
-                        //To avoid previous calls with wrong token_id
-                        if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken(DriverApp.getContext()))) {
-                            WebIO.getInstance().emit(socketEvent, json);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Utils.redLog(socketEvent + " Socket Was disconnected and connect again" +
-                            " to emit json object : , generice emition completed..... ", json.toString());
-                }
-            });
-        } else {
-            Utils.redLog(socketEvent + " Socket connected , generice emition completed..... ", json.toString());
         }
     }
 

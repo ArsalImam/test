@@ -56,7 +56,6 @@ public class NormalCallData extends CommonResponse {
     private String rating;
     @SerializedName("total")
     private String totalFare;
-    private String event_id;
     private String pass_socket_id;
 
     @SerializedName("km")
@@ -82,10 +81,6 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("is_cod")
     private boolean isCod;
 
-    @SerializedName("pass_cur_lat")
-    private String passLat;
-    @SerializedName("pass_cur_lng")
-    private String passLng;
     private String details;
 
     public String getDistanceCovered() {
@@ -110,16 +105,6 @@ public class NormalCallData extends CommonResponse {
 
     public void setTotalAmount(String totalAmount) {
         this.totalAmount = totalAmount;
-    }
-
-    private boolean draw;
-
-    public boolean isDraw() {
-        return draw;
-    }
-
-    public void setDraw(boolean draw) {
-        this.draw = draw;
     }
 
     public String getStatus() {
@@ -290,13 +275,6 @@ public class NormalCallData extends CommonResponse {
         this.passImage = passImage;
     }
 
-    public String getEvent_id() {
-        return event_id;
-    }
-
-    public void setEvent_id(String event_id) {
-        this.event_id = event_id;
-    }
 
     public String getPass_socket_id() {
         return pass_socket_id;
@@ -353,23 +331,6 @@ public class NormalCallData extends CommonResponse {
     public void setPromo_deduction(String promo_deduction) {
         this.promo_deduction = promo_deduction;
     }
-
-    public String getPassLat() {
-        return passLat;
-    }
-
-    public void setPassLat(String passLat) {
-        this.passLat = passLat;
-    }
-
-    public String getPassLng() {
-        return passLng;
-    }
-
-    public void setPassLng(String passLng) {
-        this.passLng = passLng;
-    }
-
 
     public String getCodAmount() {
         return StringUtils.isNotBlank(codAmount)

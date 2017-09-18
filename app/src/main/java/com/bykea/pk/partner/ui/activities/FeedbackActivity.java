@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.RatingBar;
 
@@ -38,6 +40,7 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 
 public class FeedbackActivity extends BaseActivity {
 
@@ -73,7 +76,8 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView feedbackBtn;
 
     private FeedbackActivity mCurrentActivity;
-    ProgressDialog progressDialog;
+    private String totalCharges;
+    private int TOP_UP_LIMIT, AMOUNT_LIMIT;
 
 
     private MixpanelAPI mixpanelAPI;
@@ -92,18 +96,34 @@ public class FeedbackActivity extends BaseActivity {
         mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
     }
 
+    @OnTextChanged(value = R.id.receivedAmountEt,
+            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    void afterTextChanged(Editable editable) {
+        if (StringUtils.isNotBlank(editable)) {
+            if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
+                if (Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
+                    receivedAmountEt.setError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
+                    receivedAmountEt.requestFocus();
+                } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
+                    receivedAmountEt.setError("Amount can't be more than " + AMOUNT_LIMIT);
+                    receivedAmountEt.requestFocus();
+                }
+            } else {
+                Utils.appToast(mCurrentActivity, "Please enter valid amount.");
+            }
+        }
+    }
+
     private void initViews() {
         mCurrentActivity = this;
-
-        progressDialog = new ProgressDialog(mCurrentActivity);
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage(getString(R.string.internet_error));
 
         NormalCallData callData = AppPreferences.getCallData(mCurrentActivity);
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
-        totalAmountTv.setText("Rs. " + callData.getTotalFare());
+        totalCharges = callData.getTotalFare();
+        TOP_UP_LIMIT = AppPreferences.getSettings(mCurrentActivity).getSettings().getTop_up_limit();
+        AMOUNT_LIMIT = AppPreferences.getSettings(mCurrentActivity).getSettings().getAmount_limit();
+        totalAmountTv.setText("Rs. " + totalCharges);
         startAddressTv.setText(callData.getStartAddress());
         tvTotalDistance.setText(callData.getDistanceCovered() + " km");
         tvTotalTime.setText(callData.getTotalMins() + " mins");
@@ -146,6 +166,7 @@ public class FeedbackActivity extends BaseActivity {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             try {
                 NormalCallData callData = AppPreferences.getCallData(mCurrentActivity);
+                mixpanelAPI.identify(callData.getPassId());
                 mixpanelAPI.getPeople().identify(callData.getPassId());
                 JSONObject revenue = new JSONObject();
                 revenue.put("$time", Utils.getUTCCurrentDate());
@@ -154,6 +175,7 @@ public class FeedbackActivity extends BaseActivity {
                 revenue.put("PassengerID", callData.getPassId());
                 revenue.put("DriverID", AppPreferences.getPilotData(mCurrentActivity).getId());
                 mixpanelAPI.getPeople().trackCharge(Double.parseDouble(callData.getTrip_charges()), revenue);
+                mixpanelAPI.getPeople().increment("Total Trips", 1L);
                 JSONObject properties = new JSONObject();
                 properties.put("TripID", callData.getTripId());
                 properties.put("TripNo", callData.getTripNo());
@@ -163,6 +185,24 @@ public class FeedbackActivity extends BaseActivity {
                 properties.put("AmountEntered", receivedAmountEt.getText().toString());
                 properties.put("Time", callData.getTotalMins() + "");
                 properties.put("KM", callData.getDistanceCovered());
+                properties.put("type", callData.getCallType());
+                properties.put("timestamp", Utils.getIsoDate());
+
+                //Firebase can have max 10 TEXT properties
+                Utils.logFireBaseEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_FARE, properties);
+
+                properties.put("PassengerName", callData.getPassName());
+                properties.put("DriverName", AppPreferences.getPilotData(mCurrentActivity).getFullName());
+                if (StringUtils.isNotBlank(callData.getPromo_deduction())) {
+                    properties.put("PromoDeduction", callData.getPromo_deduction());
+                } else {
+                    properties.put("PromoDeduction", "0");
+                }
+                if (StringUtils.isNotBlank(callData.getWallet_deduction())) {
+                    properties.put("WalletDeduction", callData.getWallet_deduction());
+                } else {
+                    properties.put("WalletDeduction", "0");
+                }
                 mixpanelAPI.track(Constants.RIDE_FARE, properties);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -216,15 +256,24 @@ public class FeedbackActivity extends BaseActivity {
             receivedAmountEt.setError("Invalid amount");
             receivedAmountEt.requestFocus();
             return false;
-        } else if (Integer.parseInt(receivedAmountEt.getText().toString()) > Constants.AMOUNT_LIMIT) {
-            receivedAmountEt.setError("Amount can't be more than " + Constants.AMOUNT_LIMIT);
+        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
+                && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)) {
+            receivedAmountEt.setError("Amount can't be less than Total Charges");
+            receivedAmountEt.requestFocus();
+            return false;
+        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
+                && Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
+            receivedAmountEt.setError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
+            receivedAmountEt.requestFocus();
+            return false;
+        } else if (Integer.parseInt(receivedAmountEt.getText().toString()) > AMOUNT_LIMIT) {
+            receivedAmountEt.setError("Amount can't be more than " + AMOUNT_LIMIT);
             receivedAmountEt.requestFocus();
             return false;
         } else if (callerRb.getRating() <= 0.0) {
             Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, "Please Rate Passenger.");
             return false;
         } else if (StringUtils.isNotBlank(receivedAmountEt.getText().toString())) {
-            //todo: here we should check price entered should be only numbers.
             try {
                 int receivedPrice = Integer.parseInt(receivedAmountEt.getText().toString());
                 if (receivedPrice < 0) {
@@ -249,23 +298,17 @@ public class FeedbackActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        intentFilter.addAction("android.location.GPS_ENABLED_CHANGE");
-        registerReceiver(networkChangeListener, intentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(networkChangeListener);
     }
 
     @Override
     protected void onDestroy() {
         mixpanelAPI.flush();
         super.onDestroy();
-        progressDialog.dismiss();
 
     }
 
@@ -282,24 +325,4 @@ public class FeedbackActivity extends BaseActivity {
             }
         }
     }
-
-    private NetworkChangeListener networkChangeListener = new NetworkChangeListener() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase("android.location.GPS_ENABLED_CHANGE")) {
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
-                else
-                    Dialogs.INSTANCE.dismissDialog();
-            } else {
-                if (Connectivity.isConnectedFast(context)) {
-                    if (null != progressDialog)
-                        progressDialog.dismiss();
-                } else {
-                    progressDialog.show();
-                }
-            }
-        }
-    };
 }

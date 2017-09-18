@@ -21,7 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -33,6 +33,8 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.widgets.AutoFitFontTextView;
+import com.bykea.pk.partner.widgets.MyRangeBar;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -74,29 +76,31 @@ import butterknife.OnClick;
 public class HomeFragment extends Fragment {
 
     @Bind(R.id.rlInactiveImage)
-    RelativeLayout rlInactiveImage;
+    LinearLayout rlInactiveImage;
     @Bind(R.id.mapPinIv)
     ImageView mapPinIv;
     @Bind(R.id.statusTv)
-    FontTextView statusTv;
-    @Bind(R.id.driverNameTv)
-    FontTextView driverNameTv;
-    @Bind(R.id.driverRating)
-    FontTextView driverRating;
-    @Bind(R.id.cityTv)
-    FontTextView cityTv;
+    FontTextView statusTv;/*
+        @Bind(R.id.driverNameTv)
+        FontTextView driverNameTv;
+        @Bind(R.id.driverRating)
+        FontTextView driverRating;
+        @Bind(R.id.cityTv)
+        FontTextView cityTv;*/
     @Bind(R.id.tvConnectionStatus)
     FontTextView tvConnectionStatus;
     @Bind(R.id.tvFenceError)
-    FontTextView tvFenceError;
+    AutoFitFontTextView tvFenceError;
     @Bind(R.id.acceptanceRateTv)
     FontTextView acceptanceRateTv;
     @Bind(R.id.verifiedTripsTv)
-    FontTextView verifiedTripsTv;
+    FontTextView verifiedTripsTv;/*
     @Bind(R.id.plateNoTv)
-    FontTextView plateNoTv;
+    FontTextView plateNoTv;*/
     @Bind(R.id.statusCheck)
     ImageView statusCheck;
+    @Bind(R.id.myRangeBar)
+    MyRangeBar myRangeBar;
 
     private UserRepository repository;
     private HomeActivity mCurrentActivity;
@@ -108,6 +112,7 @@ public class HomeFragment extends Fragment {
     private Location mPrevLocToShow;
     private String currentVersion, latestVersion;
     private boolean isScreenInFront;
+    int[] cashInHand = {0, 500, 1000, 1500, 2000};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -146,36 +151,21 @@ public class HomeFragment extends Fragment {
         if (Utils.isLicenceExpired(mCurrentActivity.getPilotData().getLicenseExpiry())) {
             onUnauthorizedLicenceExpire();
         }
-        driverNameTv.setText(mCurrentActivity.getPilotData().getFullName());
-        if (StringUtils.isNotBlank(mCurrentActivity.getPilotData().getRating())) {
-            String rating = Utils.formatDecimalPlaces(mCurrentActivity.getPilotData().getRating());
-            if (rating.equalsIgnoreCase("0")) {
-                driverRating.setText("Rating N/A");
-            } else {
-                driverRating.setText("Rating " + Utils.formatDecimalPlaces(mCurrentActivity.getPilotData().getRating()));
-            }
-        } else {
-            driverRating.setText("Rating N/A");
-        }
         if (StringUtils.isNotBlank(mCurrentActivity.getPilotData().getAcceptance_rate())) {
             acceptanceRateTv.setText(Math.round(Double.parseDouble(mCurrentActivity.getPilotData().getAcceptance_rate())) + "%");
         }
         if (StringUtils.isNotBlank(mCurrentActivity.getPilotData().getVerified_trips())) {
             verifiedTripsTv.setText(mCurrentActivity.getPilotData().getVerified_trips());
         }
-        String plateNo = mCurrentActivity.getPilotData().getPlateNo().replaceAll("[^A-Za-z0-9 ]", "").replaceAll("\\s+", "");
-        if (StringUtils.isNotBlank(plateNo)) {
-            String city = plateNo.replaceAll("\\d+", "");
-            if (StringUtils.isNotBlank(city)) {
-                cityTv.setText(city);
-            }
-            String plate = plateNo.replaceAll("[a-zA-Z]+", "");
-            if (StringUtils.isNotBlank(plate)) {
-                plateNoTv.setText(plate);
-            }
-        }
         setStatusBtn();
         setConnectionStatus();
+        myRangeBar.setCurrentIndex(0);
+        myRangeBar.setOnSlideListener(new MyRangeBar.OnSlideListener() {
+            @Override
+            public void onSlide(int index) {
+                Utils.redLog("Cash In Hand", "" + cashInHand[index]);
+            }
+        });
     }
 
     /*
@@ -344,13 +334,19 @@ public class HomeFragment extends Fragment {
         super.onDestroy();
     }
 
-    @OnClick({R.id.mapPinIv, R.id.statusCheck, R.id.rlInactiveImage})
+    @OnClick({R.id.mapPinIv, R.id.statusCheck, R.id.rlInactiveImage, R.id.tvNotice, R.id.tvDemand})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rlInactiveImage:
                 break;
             case R.id.mapPinIv:
                 setDriverLocation();
+                break;
+            case R.id.tvDemand:
+                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getDemand(), "Demand");
+                break;
+            case R.id.tvNotice:
+                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice(), "Notice");
                 break;
             case R.id.statusCheck:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
@@ -468,10 +464,12 @@ public class HomeFragment extends Fragment {
             statusCheck.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.inactive_icon));
             statusTv.setText("Inactive");
             rlInactiveImage.setVisibility(View.VISIBLE);
+            myRangeBar.setEnabled(true);
         } else {
             statusCheck.setImageResource(R.drawable.active_icon);
             statusTv.setText("Active");
             rlInactiveImage.setVisibility(View.GONE);
+            myRangeBar.setEnabled(false);
         }
 
         if (AppPreferences.isWalletAmountIncreased(mCurrentActivity)) {
@@ -503,13 +501,13 @@ public class HomeFragment extends Fragment {
                             if (StringUtils.isNotBlank(response.getData().getAcceptance_rate())) {
                                 acceptanceRateTv.setText(Math.round(Double.parseDouble(response.getData().getAcceptance_rate())) + "%");
                             }
-                            String rating = response.getData().getRating();
+                            /*String rating = response.getData().getRating();
                             if (rating.equalsIgnoreCase("0")) {
                                 driverRating.setText("Rating N/A");
                             } else {
                                 driverRating.setText("Rating " + Utils.formatDecimalPlaces(rating));
-                            }
-                            if (StringUtils.isNotBlank(rating)
+                            }*/
+                            if (StringUtils.isNotBlank(response.getData().getRating())
                                     && StringUtils.isNotBlank(response.getData().getAcceptance_rate())
                                     && StringUtils.isNotBlank(response.getData().getVerified_trips())) {
                                 PilotData data = AppPreferences.getPilotData(mCurrentActivity);
@@ -613,15 +611,15 @@ public class HomeFragment extends Fragment {
                                 for (HeatmapLatlng heatmapLatlng : heatMapResponse.getData()) {
                                     latLngs.add(new LatLng(heatmapLatlng.getLat(), heatmapLatlng.getLng()));
                                 }
-                                HeatmapTileProvider mHeatmapProvider = new HeatmapTileProvider.Builder().data(latLngs).build();
-                                mHeatmapProvider.setRadius(HeatmapTileProvider.DEFAULT_RADIUS);
+                                HeatmapTileProvider heatmapTileProvider = new HeatmapTileProvider.Builder().data(latLngs).build();
+                                heatmapTileProvider.setRadius(30);
                                 if (null != mHeatmapOverlay) {
                                     mHeatmapOverlay.clearTileCache();
                                 }
                                 if (mGoogleMap != null) {
                                     mGoogleMap.clear();
                                 }
-                                mHeatmapOverlay = mGoogleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mHeatmapProvider));
+                                mHeatmapOverlay = mGoogleMap.addTileOverlay(new TileOverlayOptions().tileProvider(heatmapTileProvider));
                             } else {
                                 if (null != mHeatmapOverlay) {
                                     mHeatmapOverlay.clearTileCache();

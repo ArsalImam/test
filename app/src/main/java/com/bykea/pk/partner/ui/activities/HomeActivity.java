@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,7 +34,6 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
-import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 
@@ -61,7 +61,6 @@ public class HomeActivity extends BaseActivity {
     RecyclerView recyclerView;
     @Bind(R.id.drawerMainActivity)
     public DrawerLayout drawerLayout;
-    ProgressDialog progressDialog;
     private boolean isDialogShown;
 
     @Override
@@ -110,11 +109,6 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        intentFilter.addAction("android.location.GPS_ENABLED_CHANGE");
-        intentFilter.addAction("android.location.PROVIDERS_CHANGED");
-        registerReceiver(networkChangeListener, intentFilter);
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
         LocationService.setContext(HomeActivity.this);
         ActivityStackManager.activities = 1;
@@ -125,13 +119,12 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(networkChangeListener);
     }
 
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(Gravity.LEFT); //CLOSE Nav Drawer!
+            drawerLayout.closeDrawer(Gravity.START); //CLOSE Nav Drawer!
         } else {
             if (visibleFragmentNumber == 1) {
                 super.onBackPressed();
@@ -155,16 +148,10 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        dismissProgressDialog();
         Dialogs.INSTANCE.dismissDialog();
     }
 
     private void initViews() {
-
-        progressDialog = new ProgressDialog(mCurrentActivity);
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage(getString(R.string.internet_error));
         Utils.keepScreenOn(mCurrentActivity);
 
         visibleFragmentNumber = 1;//FOR NAVIGATION DRAWER FRAGMENT
@@ -202,24 +189,6 @@ public class HomeActivity extends BaseActivity {
         recyclerViewAdapter.notifyDataSetChanged();
     }
 
-    private void dismissProgressDialog() {
-        try {
-            if (progressDialog != null) {
-                progressDialog.dismiss();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showProgressDialog() {
-        try {
-            progressDialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     void setupDrawerToggle() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, getToolbar(),
                 R.string.app_name, R.string.app_name) {
@@ -255,27 +224,6 @@ public class HomeActivity extends BaseActivity {
     public void setPilotData(PilotData data) {
         pilotData = data;
     }
-
-    private NetworkChangeListener networkChangeListener = new NetworkChangeListener() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase("android.location.GPS_ENABLED_CHANGE") ||
-                    intent.getAction().equalsIgnoreCase("android.location.PROVIDERS_CHANGED")) {
-                if (!Utils.isGpsEnable(mCurrentActivity)) {
-                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
-                } else {
-                    Dialogs.INSTANCE.dismissDialog();
-                }
-            } else {
-                if (Connectivity.isConnectedFast(context)) {
-                    dismissProgressDialog();
-                } else {
-                    showProgressDialog();
-                }
-            }
-            mBus.post(Keys.CONNECTION_BROADCAST);
-        }
-    };
 
 
     public boolean isDialogShown() {

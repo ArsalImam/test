@@ -138,6 +138,8 @@ public class TripHistoryFragment extends Fragment {
                     }
                     startActivity(intent);
                     HomeActivity.visibleFragmentNumber = 2;
+                } else {
+                    ActivityStackManager.getInstance(mCurrentActivity).startCancelDetailsActivity(historyData);
                 }
 
             }
