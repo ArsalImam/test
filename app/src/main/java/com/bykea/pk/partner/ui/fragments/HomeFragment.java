@@ -30,7 +30,6 @@ import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
@@ -61,8 +60,6 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -80,23 +77,11 @@ public class HomeFragment extends Fragment {
     @Bind(R.id.mapPinIv)
     ImageView mapPinIv;
     @Bind(R.id.statusTv)
-    FontTextView statusTv;/*
-        @Bind(R.id.driverNameTv)
-        FontTextView driverNameTv;
-        @Bind(R.id.driverRating)
-        FontTextView driverRating;
-        @Bind(R.id.cityTv)
-        FontTextView cityTv;*/
+    FontTextView statusTv;
     @Bind(R.id.tvConnectionStatus)
     FontTextView tvConnectionStatus;
     @Bind(R.id.tvFenceError)
     AutoFitFontTextView tvFenceError;
-    @Bind(R.id.acceptanceRateTv)
-    FontTextView acceptanceRateTv;
-    @Bind(R.id.verifiedTripsTv)
-    FontTextView verifiedTripsTv;/*
-    @Bind(R.id.plateNoTv)
-    FontTextView plateNoTv;*/
     @Bind(R.id.statusCheck)
     ImageView statusCheck;
     @Bind(R.id.myRangeBar)
@@ -151,19 +136,23 @@ public class HomeFragment extends Fragment {
         if (Utils.isLicenceExpired(mCurrentActivity.getPilotData().getLicenseExpiry())) {
             onUnauthorizedLicenceExpire();
         }
-        if (StringUtils.isNotBlank(mCurrentActivity.getPilotData().getAcceptance_rate())) {
-            acceptanceRateTv.setText(Math.round(Double.parseDouble(mCurrentActivity.getPilotData().getAcceptance_rate())) + "%");
-        }
-        if (StringUtils.isNotBlank(mCurrentActivity.getPilotData().getVerified_trips())) {
-            verifiedTripsTv.setText(mCurrentActivity.getPilotData().getVerified_trips());
-        }
         setStatusBtn();
         setConnectionStatus();
-        myRangeBar.setCurrentIndex(0);
+
+        int currentIndex = 0;
+        int value = AppPreferences.getCashInHands(mCurrentActivity);
+        for (int i = 0; i < cashInHand.length; i++) {
+            if (cashInHand[i] == value) {
+                currentIndex = i;
+                break;
+            }
+        }
+        myRangeBar.setCurrentIndex(currentIndex);
         myRangeBar.setOnSlideListener(new MyRangeBar.OnSlideListener() {
             @Override
             public void onSlide(int index) {
                 Utils.redLog("Cash In Hand", "" + cashInHand[index]);
+                AppPreferences.setCashInHands(mCurrentActivity, cashInHand[index]);
             }
         });
     }
@@ -495,25 +484,13 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void run() {
                         if (response.isSuccess() && response.getData() != null && getView() != null) {
-                            if (StringUtils.isNotBlank(response.getData().getVerified_trips())) {
-                                verifiedTripsTv.setText(response.getData().getVerified_trips());
-                            }
-                            if (StringUtils.isNotBlank(response.getData().getAcceptance_rate())) {
-                                acceptanceRateTv.setText(Math.round(Double.parseDouble(response.getData().getAcceptance_rate())) + "%");
-                            }
-                            /*String rating = response.getData().getRating();
-                            if (rating.equalsIgnoreCase("0")) {
-                                driverRating.setText("Rating N/A");
-                            } else {
-                                driverRating.setText("Rating " + Utils.formatDecimalPlaces(rating));
-                            }*/
                             if (StringUtils.isNotBlank(response.getData().getRating())
-                                    && StringUtils.isNotBlank(response.getData().getAcceptance_rate())
-                                    && StringUtils.isNotBlank(response.getData().getVerified_trips())) {
+                                    && StringUtils.isNotBlank(response.getData().getAcceptanceRate())
+                                    && StringUtils.isNotBlank(response.getData().getTrips())) {
                                 PilotData data = AppPreferences.getPilotData(mCurrentActivity);
                                 data.setRating(response.getData().getRating());
-                                data.setAcceptance_rate(Math.round(Double.parseDouble(response.getData().getAcceptance_rate())) + "");
-                                data.setVerified_trips(response.getData().getVerified_trips());
+                                data.setAcceptance_rate(Math.round(Double.parseDouble(response.getData().getAcceptanceRate())) + "");
+                                data.setVerified_trips(response.getData().getTrips());
                                 AppPreferences.setPilotData(mCurrentActivity, data);
                                 AppPreferences.setStatsApiCallRequired(mCurrentActivity, false);
                                 AppPreferences.setLastStatsApiCallTime(mCurrentActivity, System.currentTimeMillis());
@@ -746,12 +723,10 @@ public class HomeFragment extends Fragment {
                             } else {
                                 AppPreferences.setVersionCheckTime(mCurrentActivity, System.currentTimeMillis());
                             }
-
                         }
                     }
                 });
             }
-
             super.onPostExecute(jsonObject);
         }
     }

@@ -179,6 +179,7 @@ public class LoginFragment extends Fragment {
                             ActivityStackManager.getInstance(getActivity()).startLocationService();
                             AppPreferences.setPilotData(getActivity(), loginResponse.getUser());
                             AppPreferences.setAvailableStatus(getActivity(), loginResponse.getUser().isAvailable());
+                            AppPreferences.setCashInHands(mCurrentActivity, loginResponse.getUser().getCashInHand());
 //                            AppPreferences.setVerifiedStatus(getActivity(), loginResponse.getUser().isVerified());
                             AppPreferences.saveLoginStatus(getActivity(), true);
                             Instabug.setUserData(loginResponse.getUser().getFullName() + " " + loginResponse.getUser().getPhoneNo());

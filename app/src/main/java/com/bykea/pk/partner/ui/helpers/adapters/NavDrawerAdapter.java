@@ -16,6 +16,7 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
 import com.bykea.pk.partner.ui.fragments.EmergencyContactsFragment;
 import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
+import com.bykea.pk.partner.ui.fragments.PerformanceFragment;
 import com.bykea.pk.partner.ui.fragments.ProfileFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.R;
@@ -36,11 +37,11 @@ import org.apache.commons.lang3.StringUtils;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
     String[] titles;
-    TypedArray icons;
+    String[] icons;
     Context context;
 
     // The default constructor to receive titles,icons and context from MainActivity.
-    public NavDrawerAdapter(String[] titles, TypedArray icons, Context context) {
+    public NavDrawerAdapter(String[] titles, String[] icons, Context context) {
 
         this.titles = titles;
         this.icons = icons;
@@ -57,9 +58,8 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        FontTextView navTitle;
-        FontTextView logoutTv;
-        ImageView navIcon, logoutIv;
+        FontTextView navTitle, navIcon;
+        ImageView logoutIv;
         CircularImageView driverImage;
         FontTextView driverName;
         RatingBar driverRb;
@@ -75,11 +75,10 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
             if (itemType == 1) {
                 navTitle = (FontTextView) itemView.findViewById(R.id.tv_NavTitle);
-                navIcon = (ImageView) itemView.findViewById(R.id.iv_NavIcon);
+                navIcon = (FontTextView) itemView.findViewById(R.id.iv_NavIcon);
             } else if (itemType == 2)//footer Logout grey_square_bg_img
             {
                 logoutIv = (ImageView) itemView.findViewById(R.id.logoutIv);
-//                logoutTv = (FontTextView) itemView.findViewById(R.id.logoutTv);
             } else if (itemType == 0)//Header driver info
             {
                 driverImage = (CircularImageView) itemView.findViewById(R.id.driverImage);
@@ -135,21 +134,29 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
                 case 4:
                     if (HomeActivity.visibleFragmentNumber != 4) {
-                        HowItWorksFragment howItWorksFragment = new HowItWorksFragment();
-                        fragmentTransaction.replace(R.id.containerView, howItWorksFragment);
+                        PerformanceFragment performanceFragment = new PerformanceFragment();
+                        fragmentTransaction.replace(R.id.containerView, performanceFragment);
                         fragmentTransaction.commit();
                         HomeActivity.visibleFragmentNumber = 4;
                     }
                     break;
                 case 5:
                     if (HomeActivity.visibleFragmentNumber != 5) {
-                        ContactUsFragment contactUsFragment = new ContactUsFragment();
-                        fragmentTransaction.replace(R.id.containerView, contactUsFragment);
+                        HowItWorksFragment howItWorksFragment = new HowItWorksFragment();
+                        fragmentTransaction.replace(R.id.containerView, howItWorksFragment);
                         fragmentTransaction.commit();
                         HomeActivity.visibleFragmentNumber = 5;
                     }
                     break;
-                case 6://this case is for logout footer part click.
+                case 6:
+                    if (HomeActivity.visibleFragmentNumber != 6) {
+                        ContactUsFragment contactUsFragment = new ContactUsFragment();
+                        fragmentTransaction.replace(R.id.containerView, contactUsFragment);
+                        fragmentTransaction.commit();
+                        HomeActivity.visibleFragmentNumber = 6;
+                    }
+                    break;
+                case 7://this case is for logout footer part click.
                     Dialogs.INSTANCE.showLogoutDialog(context, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -210,7 +217,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                 holder.navTitle.setTextColor(ContextCompat.getColor(context, R.color.textColorPrimary));
             }
             holder.navTitle.setText(titles[position - 1]);
-            holder.navIcon.setImageResource(icons.getResourceId(position - 1, -1));
+            holder.navIcon.setText(icons[position - 1]);
 
         } else if (position == 0) {
             holder.driverName.setText(((HomeActivity) context).getPilotData().getFullName());

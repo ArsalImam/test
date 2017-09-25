@@ -57,6 +57,7 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
+        Utils.redLog("IMEI NUMBER", Utils.getDeviceId(context));
         Call<LoginResponse> restCall = mRestClient.login(email, password,
                 deviceType, userStatus, regID, "" + AppPreferences.getLatitude(context), "" + AppPreferences.getLongitude(context), Utils.getVersion(context),
                 AppPreferences.getOneSignalPlayerId(mContext), AppPreferences.getADID(context), Utils.getDeviceId(context));

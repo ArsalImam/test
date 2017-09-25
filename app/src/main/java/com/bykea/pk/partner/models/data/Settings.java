@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 
 public class Settings {
+    @SerializedName("cancel_time_driver")
     private String cancel_time;
     private String hospital;
     private String fire_brigade;

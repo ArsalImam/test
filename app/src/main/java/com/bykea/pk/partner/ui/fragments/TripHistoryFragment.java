@@ -72,7 +72,7 @@ public class TripHistoryFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
-        mCurrentActivity.setToolbarTitle("Trip History");
+        mCurrentActivity.setToolbarTitle("Booking History");
         mCurrentActivity.hideToolbarLogo();
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 

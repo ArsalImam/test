@@ -131,5 +131,7 @@ public class Keys {
     public static final String ONE_SIGNAL_PALYER_ID = "ONE_SIGNAL_PALYER_ID";
     public static final String WALLET_ERROR = "WALLET_ERROR";
     public static final String SETTINGS_VERSION = "SETTINGS_VERSION";
+    public static final String CASH_IN_HANDS = "CASH_IN_HANDS";
+    public static final String CASH_IN_HANDS_INDEX = "CASH_IN_HANDS_INDEX";
 
 }

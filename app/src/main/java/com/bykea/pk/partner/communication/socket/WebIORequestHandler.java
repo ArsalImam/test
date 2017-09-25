@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.utils.HTTPStatus;
@@ -230,25 +231,42 @@ public class WebIORequestHandler {
     }
 
 
-    private class MyGenericListener implements Emitter.Listener, SetDataModel {
+    private class MyGenericListener implements Emitter.Listener {
         private Class<?> dataModelClass;
         private String mSocketName;
         private IResponseCallback mOnResponseCallBack;
 
-        public MyGenericListener(String socketName, Class<?> a, IResponseCallback onResponseCallBack) {
-            setDataModel(a);
+        MyGenericListener(String socketName, Class<?> a, IResponseCallback onResponseCallBack) {
+            dataModelClass = a;
             mOnResponseCallBack = onResponseCallBack;
             mSocketName = socketName;
         }
 
         @Override
         public void call(Object... args) {
-            String serverResponse = args[0].toString();
-            Utils.redLog("RESPONSE at " + mSocketName, serverResponse);
+            String serverResponseJsonString = args[0].toString();
+            Utils.redLog("RESPONSE at " + mSocketName, serverResponseJsonString);
             Gson gson = new Gson();
             try {
-                Object commonResponse = gson.fromJson(serverResponse, dataModelClass);
-                if (commonResponse instanceof AcceptCallResponse) {
+                Object serverResponse = gson.fromJson(serverResponseJsonString, dataModelClass);
+                if (serverResponse instanceof CommonResponse) {
+                    CommonResponse commonResponse = (CommonResponse) serverResponse;
+                    if (commonResponse.isSuccess() || serverResponse instanceof PilotStatusResponse) {
+                        mOnResponseCallBack.onResponse(serverResponse);
+                        if (serverResponse instanceof AcceptCallResponse) {
+                            registerChatListener();
+                        } else if (serverResponse instanceof EndRideResponse) {
+                            unRegisterChatListener();
+                        }
+                    } else {
+                        mOnResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                    }
+                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
+                }
+
+
+
+              /*  if (commonResponse instanceof AcceptCallResponse) {
                     Utils.infoLog(" ACCEPT CALL RESPONSE....", serverResponse);
                     AcceptCallResponse response = (AcceptCallResponse) commonResponse;
                     if (response.isSuccess()) {
@@ -267,7 +285,7 @@ public class WebIORequestHandler {
                         mOnResponseCallBack.onError(response.getCode(), response.getMessage());
                     }
                     WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof FreeDriverResponse) {
+                } else  if (commonResponse instanceof FreeDriverResponse) {
                     Utils.infoLog(" FREE DRIVER RESPONSE....", serverResponse);
                     FreeDriverResponse response = (FreeDriverResponse) commonResponse;
                     if (response.isSuccess()) {
@@ -303,7 +321,8 @@ public class WebIORequestHandler {
                         mOnResponseCallBack.onError(response.getCode(), response.getMessage());
                     }
                     WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof EndRideResponse) {
+                } else
+                if (commonResponse instanceof EndRideResponse) {
                     Utils.infoLog("END RIDE RESPONSE....", serverResponse);
                     EndRideResponse response = (EndRideResponse) commonResponse;
                     if (response.isSuccess()) {
@@ -385,13 +404,11 @@ public class WebIORequestHandler {
                         mOnResponseCallBack.onError(response.getCode(), response.getMessage());
                     }
                     WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof PilotStatusResponse) {
+                } else
+                if (commonResponse instanceof PilotStatusResponse) {
                     Utils.infoLog("Update STATUS....", serverResponse);
                     PilotStatusResponse response = (PilotStatusResponse) commonResponse;
                     mOnResponseCallBack.onResponse(response);
-                     /*else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }*/
                     WebIO.getInstance().off(mSocketName, MyGenericListener.this);
                 } else if (commonResponse instanceof DriverStatsResponse) {
                     Utils.infoLog("Updated STATS....", serverResponse);
@@ -410,27 +427,20 @@ public class WebIORequestHandler {
                         mOnResponseCallBack.onError(response.getCode(), response.getMessage());
                     }
                     WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                }
+                }*/
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-        @Override
-        public void setDataModel(Class<?> a) {
-            dataModelClass = a;
-        }
     }
 
 
-    private class LocationUpdateListener implements Emitter.Listener, SetDataModel {
-        private Class<?> dataModelClass;
+    private class LocationUpdateListener implements Emitter.Listener {
         private String mSocketName;
         private IResponseCallback mOnResponseCallBack;
 
-        public LocationUpdateListener(String socketName, Class<?> a, IResponseCallback onResponseCallBack) {
-            setDataModel(a);
+        LocationUpdateListener(String socketName, Class<?> a, IResponseCallback onResponseCallBack) {
             mOnResponseCallBack = onResponseCallBack;
             mSocketName = socketName;
         }
@@ -474,11 +484,6 @@ public class WebIORequestHandler {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-
-        @Override
-        public void setDataModel(Class<?> a) {
-            dataModelClass = a;
         }
     }
 
@@ -564,19 +569,21 @@ public class WebIORequestHandler {
                     }*/
                 } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING Socket");
-                    if (normalCallData.isSuccess() /*&& AppPreferences.isOnTrip(mContext)*/) {
-                        Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
-                        intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
-                        intent.putExtra("msg", normalCallData.getMessage());
-                        Utils.setCallIncomingState(mContext);
-                        if (AppPreferences.isJobActivityOnForeground(mContext) ||
-                                AppPreferences.isCallingActivityOnForeground(mContext)) {
-                            mContext.sendBroadcast(intent);
-                        } else {
-                            mContext.sendBroadcast(intent);
-                            Notifications.createCancelNotification(mContext, "Passenger has cancelled the Trip", 23);
+                    if (normalCallData.isSuccess()) {
+                        if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip(mContext)) {
+                            Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
+                            intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
+                            intent.putExtra("msg", normalCallData.getMessage());
+                            Utils.setCallIncomingState(mContext);
+                            if (AppPreferences.isJobActivityOnForeground(mContext) ||
+                                    AppPreferences.isCallingActivityOnForeground(mContext)) {
+                                mContext.sendBroadcast(intent);
+                            } else {
+                                mContext.sendBroadcast(intent);
+                                Notifications.createCancelNotification(mContext, "Passenger has cancelled the Trip", 23);
+                            }
+                            getInstance().unRegisterChatListener();
                         }
-                        getInstance().unRegisterChatListener();
                     } else {
                         Utils.appToastDebug(mContext, normalCallData.getMessage());
                     }

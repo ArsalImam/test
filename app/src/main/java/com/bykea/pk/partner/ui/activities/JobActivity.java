@@ -295,8 +295,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                 callData.setEndLng(AppPreferences.getDropOffLng(mCurrentActivity));
                 callData.setEndAddress(AppPreferences.getDropOffAddress(mCurrentActivity));
                 AppPreferences.setCallData(mCurrentActivity, callData);
-                updateDropOffToServer(AppPreferences.getDropOffAddress(mCurrentActivity),
-                        AppPreferences.getDropOffLat(mCurrentActivity), AppPreferences.getDropOffLng(mCurrentActivity));
+                updateDropOffToServer();
 
             }
 
@@ -311,31 +310,29 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         }
     }
 
-    private void updateDropOffToServer(String dropOffAddress, String lat, String lng) {
+    private void updateDropOffToServer() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        endAddressTv.setText(dropOffAddress);
-        lastApiCallLatLng = null;
-        AppPreferences.setLastDirectionsApiCallTime(mCurrentActivity, 0);
-        if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
-            mRouteLatLng.clear();
-        }
-        drawRouteToDropOff();
-        mGoogleDesLatLng = lat + "," + lng;
-        updatePickupMarker(callData.getEndLat(), callData.getEndLng());
+        updateDropOff();
         dataRepository.updateDropOff(driversDataHandler, mCurrentActivity, callData.getTripId(),
-                dropOffAddress, lat + "", lng + "");
+                callData.getEndAddress(), callData.getEndLat() + "", callData.getEndLng() + "");
     }
 
-    private void updateDropOff(String dropOffAddress, String lat, String lng) {
-        endAddressTv.setText(dropOffAddress);
-        lastApiCallLatLng = null;
-        AppPreferences.setLastDirectionsApiCallTime(mCurrentActivity, 0);
-        if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
-            mRouteLatLng.clear();
+    private void updateDropOff() {
+        if (StringUtils.isNotBlank(callData.getEndAddress())
+                && StringUtils.isNotBlank(callData.getEndLat())
+                && StringUtils.isNotBlank(callData.getEndLng())) {
+            endAddressTv.setText(callData.getEndAddress());
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                lastApiCallLatLng = null;
+                AppPreferences.setLastDirectionsApiCallTime(mCurrentActivity, 0);
+                if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
+                    mRouteLatLng.clear();
+                }
+                drawRouteToDropOff();
+                mGoogleDesLatLng = callData.getEndLat() + "," + callData.getEndLng();
+                updatePickupMarker(callData.getEndLat(), callData.getEndLng());
+            }
         }
-        drawRouteToDropOff();
-        mGoogleDesLatLng = lat + "," + lng;
-        updatePickupMarker(callData.getEndLat(), callData.getEndLng());
     }
 
     private void hideButtonOnArrived() {
@@ -413,7 +410,6 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             @Override
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
-                                setOnStartData();
                                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                                 AppPreferences.clearTripDistanceData(mCurrentActivity);
                                 dataRepository.requestBeginRide(mCurrentActivity, driversDataHandler,
@@ -1345,7 +1341,8 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                         }
                         if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
                             Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
-                            updateDropOffUI();
+                            callData = AppPreferences.getCallData(mCurrentActivity);
+                            updateDropOff();
                         }
                     }
                 });
@@ -1361,10 +1358,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                 && StringUtils.isNotBlank(callData.getEndLng())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 setStartedState();
-                updateDropOff(callData.getEndAddress(), callData.getEndLat(), callData.getEndLng());
-            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-                setArrivedState();
-                updateDropOff(callData.getEndAddress(), callData.getEndLat(), callData.getEndLng());
+                updateDropOff();
             }
         }
 
@@ -1525,8 +1519,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                     Dialogs.INSTANCE.dismissDialog();
                     if (beginRideResponse.isSuccess()) {
                         hideButtonOnArrived();
-                        currentLocationIv.setVisibility(View.VISIBLE);
-                        jobBtn.setText(getString(R.string.button_text_finish));
+                        setStartedState();
                         callData = AppPreferences.getCallData(mCurrentActivity);
                         callData.setStatus(TripStatus.ON_START_TRIP);
                         AppPreferences.setCallData(mCurrentActivity, callData);
@@ -1535,6 +1528,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                         // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
                         changeDriverMarker();
                         showEstimatedDistTime();
+                        updateDropOff();
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, beginRideResponse.getMessage());
                     }
@@ -1589,9 +1583,11 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             } else {
                                 AppPreferences.setCallData(mCurrentActivity, response.getData());
                                 AppPreferences.setTripStatus(mCurrentActivity, response.getData().getStatus());
-                                updateDropOffUI();
+                                callData = response.getData();
+                                updateDropOff();
+
                             }
-                        } catch (NullPointerException e) {
+                        } catch (NullPointerException ignored) {
 
                         }
                     }

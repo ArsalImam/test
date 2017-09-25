@@ -38,7 +38,13 @@ public class PilotData {
     private String lng;
 
     private String verified_trips;
+
+    private String tripCount;
+    private String timeCount;
     private String acceptance_rate;
+
+    @SerializedName("cih")
+    private String cashInHand;
 
     public String getRating() {
         return rating;
@@ -201,6 +207,30 @@ public class PilotData {
 
     public void setVendor_id(String vendor_id) {
         this.vendor_id = vendor_id;
+    }
+
+    public String getTripCount() {
+        return tripCount;
+    }
+
+    public void setTripCount(String tripCount) {
+        this.tripCount = tripCount;
+    }
+
+    public String getTimeCount() {
+        return timeCount;
+    }
+
+    public void setTimeCount(String timeCount) {
+        this.timeCount = timeCount;
+    }
+
+    public int getCashInHand() {
+        return StringUtils.isNoneBlank(cashInHand) ? Integer.parseInt(cashInHand) : 0;
+    }
+
+    public void setCashInHand(String cashInHand) {
+        this.cashInHand = cashInHand;
     }
 
     public class City {

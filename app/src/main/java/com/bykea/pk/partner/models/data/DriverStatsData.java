@@ -1,16 +1,22 @@
 package com.bykea.pk.partner.models.data;
 
-public class DriverStatsData {
-    private String acceptance_rate;
-    private String rating;
-    private String verified_trips;
+import com.google.gson.annotations.SerializedName;
 
-    public String getAcceptance_rate() {
-        return acceptance_rate;
+public class DriverStatsData {
+    @SerializedName("accRate")
+    private String acceptanceRate;
+    private String rating;
+    @SerializedName("rides")
+    private String trips;
+    private String date;
+    private String time;
+
+    public String getAcceptanceRate() {
+        return acceptanceRate;
     }
 
-    public void setAcceptance_rate(String acceptance_rate) {
-        this.acceptance_rate = acceptance_rate;
+    public void setAcceptanceRate(String acceptanceRate) {
+        this.acceptanceRate = acceptanceRate;
     }
 
     public String getRating() {
@@ -21,11 +27,23 @@ public class DriverStatsData {
         this.rating = rating;
     }
 
-    public String getVerified_trips() {
-        return verified_trips;
+    public String getTrips() {
+        return trips;
     }
 
-    public void setVerified_trips(String verified_trips) {
-        this.verified_trips = verified_trips;
+    public void setTrips(String trips) {
+        this.trips = trips;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

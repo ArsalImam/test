@@ -615,6 +615,7 @@ public class UserRepository {
             jsonObject.put("token_id", AppPreferences.getAccessToken(context));
             jsonObject.put("lat", AppPreferences.getLatitude(context));
             jsonObject.put("lng", AppPreferences.getLongitude(context));
+            jsonObject.put("cih", AppPreferences.getCashInHands(context));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package com.bykea.pk.partner;
 
 import android.content.Intent;
 
+import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -26,12 +27,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FCM Messaging Service";
     private Notifications notifications;
     private EventBus mBus = EventBus.getDefault();
+    private MyFirebaseMessagingService mContext;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage == null) {
             return;
         }
+        mContext = this;
         Gson gson = new Gson();
         //if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated.
@@ -49,30 +52,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NormalCallData callData = gson.fromJson(remoteMessage.getData().get("data"), NormalCallData.class);
                 if (StringUtils.isNotBlank(callData.getStatus()) &&
                         callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                    Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
-                    Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
+                    if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip(mContext)) {
+                        Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
+                        Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
 //                    if (remoteMessage.getData().get("cancel_by").equalsIgnoreCase("admin"))
-                    intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
+                        intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
 //                    else
 //                        intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
-                    intent.putExtra("msg", callData.getMessage());
-                    if (AppPreferences.isJobActivityOnForeground(MyFirebaseMessagingService.this) ||
-                            AppPreferences.isCallingActivityOnForeground(MyFirebaseMessagingService.this)) {
-                        MyFirebaseMessagingService.this.sendBroadcast(intent);
-                    } else {
-                        Utils.setCallIncomingState(this);
-                        Notifications.createCancelNotification(MyFirebaseMessagingService.this, callData.getMessage(), 23);
+                        intent.putExtra("msg", callData.getMessage());
+                        if (AppPreferences.isJobActivityOnForeground(mContext) ||
+                                AppPreferences.isCallingActivityOnForeground(mContext)) {
+                            mContext.sendBroadcast(intent);
+                        } else {
+                            Utils.setCallIncomingState(this);
+                            Notifications.createCancelNotification(mContext, callData.getMessage(), 23);
+                        }
                     }
                 } else if (StringUtils.isNotBlank(callData.getStatus()) &&
                         callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP)) {
                     Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
                     intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
                     intent.putExtra("msg", callData.getMessage());
-                    if (AppPreferences.isJobActivityOnForeground(MyFirebaseMessagingService.this)) {
-                        MyFirebaseMessagingService.this.sendBroadcast(intent);
+                    if (AppPreferences.isJobActivityOnForeground(mContext)) {
+                        mContext.sendBroadcast(intent);
                     } else {
                         Utils.setCallIncomingState(this);
-                        Notifications.createNotification(MyFirebaseMessagingService.this, callData.getMessage(), 23);
+                        Notifications.createNotification(mContext, callData.getMessage(), 23);
                     }
                 } else {
                     if (AppPreferences.getAvailableStatus(this) && Utils.isGpsEnable(this)
@@ -123,14 +128,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
             } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("4"))) {
                 if (AppPreferences.isLoggedIn(this)) {
-                    CommonResponse adminNotification = gson.fromJson(remoteMessage.getData().get("data"), CommonResponse.class);
+                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
                     AppPreferences.setAdminMsg(this, adminNotification.getMessage());
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
+                    if (AppPreferences.getAvailableStatus(this)
+                            != adminNotification.isActive()) {
+                        AppPreferences.setAvailableStatus(getApplicationContext(), adminNotification.isActive());
+                        mBus.post("INACTIVE-PUSH");
+                    }
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
-            } else {
-                /*Notifications.createNotification(getApplicationContext(),
-                        "Testing", Notifications.NOTIFICATION_ID);*/
             }
         }
 

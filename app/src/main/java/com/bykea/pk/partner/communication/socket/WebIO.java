@@ -101,9 +101,7 @@ public class WebIO {
             WebIO.getInstance().getSocket().connect();
         } catch (Exception e) {
             e.printStackTrace();
-
         }
-
     }
 
 

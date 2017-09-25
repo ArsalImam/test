@@ -928,4 +928,17 @@ public class AppPreferences {
         return sp.getString(Keys.SETTINGS_VERSION, StringUtils.EMPTY);
     }
 
+    public static void setCashInHands(Context context, int value) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putInt(Keys.CASH_IN_HANDS, value);
+        ed.apply();
+    }
+
+    public static int getCashInHands(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getInt(Keys.CASH_IN_HANDS, 0);
+    }
+
+
 }

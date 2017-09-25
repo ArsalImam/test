@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_56sdp"
+    android:layout_height="@dimen/_48sdp"
     android:background="@drawable/list_clickable_bg"
     android:gravity="center_vertical"
     android:orientation="vertical">
@@ -18,19 +18,23 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/_12sdp">
+        android:orientation="horizontal">
 
 
-        <ImageView
+        <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/iv_NavIcon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="3"
+            android:gravity="center|start"
+            android:paddingEnd="@dimen/_6sdp"
             android:paddingRight="@dimen/_6sdp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/batwa" />
+            android:text="طریقہ کار"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/_14sdp"
+            android:textStyle="bold"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
         <com.bykea.pk.partner.widgets.FontTextView

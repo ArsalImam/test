@@ -78,6 +78,7 @@ public class FeedbackActivity extends BaseActivity {
     private FeedbackActivity mCurrentActivity;
     private String totalCharges;
     private int TOP_UP_LIMIT, AMOUNT_LIMIT;
+    private boolean isRideType;
 
 
     private MixpanelAPI mixpanelAPI;
@@ -101,7 +102,7 @@ public class FeedbackActivity extends BaseActivity {
     void afterTextChanged(Editable editable) {
         if (StringUtils.isNotBlank(editable)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
-                if (Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
+                if (isRideType && Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
                     receivedAmountEt.setError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
                     receivedAmountEt.requestFocus();
                 } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
@@ -118,6 +119,7 @@ public class FeedbackActivity extends BaseActivity {
         mCurrentActivity = this;
 
         NormalCallData callData = AppPreferences.getCallData(mCurrentActivity);
+        isRideType = StringUtils.containsIgnoreCase(callData.getCallType(), "Ride");
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
         totalCharges = callData.getTotalFare();
@@ -261,7 +263,7 @@ public class FeedbackActivity extends BaseActivity {
             receivedAmountEt.setError("Amount can't be less than Total Charges");
             receivedAmountEt.requestFocus();
             return false;
-        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
+        } else if (isRideType && totalCharges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
             receivedAmountEt.setError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
             receivedAmountEt.requestFocus();

@@ -137,7 +137,7 @@
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
                     android:gravity="left|center_vertical"
-                    android:text="Passenger Name"
+                    android:text="Customer Name"
                     android:textColor="@color/finestBlack"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />

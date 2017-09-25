@@ -95,7 +95,7 @@
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
                     android:gravity="left|center_vertical"
-                    android:text="Passenger Name"
+                    android:text="Customer Name"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
@@ -564,7 +564,7 @@
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
                     android:gravity="left|center_vertical"
-                    android:text="Rating By Passenger"
+                    android:text="Rating By Customer"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="roboto_regular.ttf" />

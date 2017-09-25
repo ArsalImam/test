@@ -90,7 +90,6 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
                     centerLine.setVisibility(View.VISIBLE);
                     endAddressTv.setText(data.getEndAddress());
                 }
-                nameTv.setText(data.getPassenger().getName());
                 timeTv.setText(Utils.getFormattedDate(data.getCancelTime(), CURRENT_DATE_FORMAT,
                         REQUIRED_DATE_FORMAT));
                 serviceTypeTv.setText(StringUtils.capitalize(data.getTrip_type()));
@@ -112,12 +111,11 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
                 }
 
 
-
                 tvCancelBy.setText(data.getCancel_by());
                 if (Utils.getDaysInBetween(System.currentTimeMillis(), new SimpleDateFormat(CURRENT_DATE_FORMAT).parse(data.getCancelTime()).getTime()) >= AppPreferences.getSettings(mCurrentActivity).getSettings().getTrip_support_max_days()) {
                     btnProblem.setVisibility(View.GONE);
                 }
-
+                nameTv.setText(data.getPassenger().getName());
 
             } catch (Exception e) {
                 e.printStackTrace();

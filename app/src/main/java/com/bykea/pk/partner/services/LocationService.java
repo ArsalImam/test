@@ -189,7 +189,7 @@ public class LocationService extends Service {
             if (mGoogleApiClient.isConnected()) {
                 prevLocation = LocationServices.FusedLocationApi
                         .getLastLocation(mGoogleApiClient);
-                if (null != prevLocation && (prevLocation.getAccuracy() < 80f || AppPreferences.getLatitude(this) == 0.0)) {
+                if (prevLocation != null && (prevLocation.getAccuracy() < 80f || AppPreferences.getLatitude(this) == 0.0)) {
                     if (!Utils.isMockLocation(prevLocation, mContext)) {
                         AppPreferences.saveLocation(mContext, new LatLng(prevLocation.getLatitude(),
                                 prevLocation.getLongitude()), "0.0", prevLocation.getAccuracy(), Utils.isMockLocation(prevLocation, mContext));
@@ -256,54 +256,50 @@ public class LocationService extends Service {
         }
     };
 
+    public void updateTripRouteList(double lat, double lon) {
+        if (AppPreferences.getTripStatus(mContext).equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            synchronized (this) {
+                String lastLat = AppPreferences.getPrevDistanceLatitude(mContext);
+                String lastLng = AppPreferences.getPrevDistanceLongitude(mContext);
+                if (lastLat.equalsIgnoreCase("0.0") || lastLng.equalsIgnoreCase("0.0")) {
+                    if (AppPreferences.getCallData(mContext) != null) {
+                        lastLat = AppPreferences.getCallData(mContext).getStartLat();
+                        lastLng = AppPreferences.getCallData(mContext).getStartLng();
+                        AppPreferences.setPrevDistanceLatLng(mContext, Double.parseDouble(lastLat), Double.parseDouble(lastLng), AppPreferences.getStartTripTime(mContext));
+                    }
+                }
+                if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
+                    if (Utils.isValidLocation(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng))) {
+//                            if (true) {
+                        AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
+                        AppPreferences.setPrevDistanceLatLng(mContext, lat, lon);
+                        if (Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng)) > 1000) {
+                            if (!isDirectionApiRunning) {
+                                getRouteLatLng(lat, lon, lastLat, lastLng);
+                            }
+                        }
+                    }
+                } else {
+                    AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
+                    AppPreferences.setPrevDistanceLatLng(mContext, lat, lon);
+                }
+            }
+        }
+    }
+
 
     private CountDownTimer mCountDownTimer = new CountDownTimer(20000, 4990) {
         @Override
         public void onTick(long millisUntilFinished) {
 
-            if (!WebIO.getInstance().isSocketConnected()) {
-                //Internet Check
-                if (Connectivity.isConnectedFast(mContext)) {
-                    ((DriverApp) getApplicationContext()).connect("From the Service");
-                }
+            if (!WebIO.getInstance().isSocketConnected() && Connectivity.isConnectedFast(mContext)) {
+                ((DriverApp) getApplicationContext()).connect("From the Service");
             }
             updateLastKnowLocation();
-            if (AppPreferences.isLoggedIn(mContext) && (AppPreferences.getAvailableStatus(mContext) ||
-                    AppPreferences.isOutOfFence(mContext)) && AppPreferences.getTripStatus(mContext).equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                synchronized (this) {
-                    double lat = AppPreferences.getLatitude(mContext);
-                    double lon = AppPreferences.getLongitude(mContext);
-                    boolean isMock = AppPreferences.isFromMockLocation(mContext);
-                    if (lat != 0.0 && lon != 0.0 && Utils.isGpsEnable(mContext) && !isMock) {
-                        String lastLat = AppPreferences.getPrevDistanceLatitude(mContext);
-                        String lastLng = AppPreferences.getPrevDistanceLongitude(mContext);
-                        if (lastLat.equalsIgnoreCase("0.0") || lastLng.equalsIgnoreCase("0.0")) {
-                            if (AppPreferences.getCallData(mContext) != null) {
-                                lastLat = AppPreferences.getCallData(mContext).getStartLat();
-                                lastLng = AppPreferences.getCallData(mContext).getStartLng();
-                                AppPreferences.setPrevDistanceLatLng(mContext, Double.parseDouble(lastLat), Double.parseDouble(lastLng), AppPreferences.getStartTripTime(mContext));
-                            }
-                        }
-                        if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
-                            if (Utils.isValidLocation(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng))) {
-//                            if (true) {
-                                AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
-                                AppPreferences.setPrevDistanceLatLng(mContext, lat, lon);
-                                if (Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng)) > 1000) {
-                                    if (!isDirectionApiRunning) {
-                                        getRouteLatLng(lat, lon, lastLat, lastLng);
-                                    }
-                                }
-                            }
-                        } else {
-                            AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
-                            AppPreferences.setPrevDistanceLatLng(mContext, lat, lon);
-                        }
-                    }
-                }
-            }
+
 
         }
+
 
         @Override
         public void onFinish() {
@@ -319,6 +315,7 @@ public class LocationService extends Service {
                     if (lat != 0.0 && lon != 0.0 && Utils.isGpsEnable(mContext)
                             && !isMock && Connectivity.isConnectedFast(mContext)) {
                         mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                        updateTripRouteList(lat, lon);
                     }
                 }
             }
@@ -406,7 +403,6 @@ public class LocationService extends Service {
     private void handleLocationUpdate(Location location) {
 
         // Save this location for further use
-        Utils.infoLog("LocationUpdate", "Gps Location Changed." + location.toString());
         if (AppPreferences.isLoggedIn(mContext)/* && AppPreferences.getAvailableStatus(mContext)*/) {
             if (AppPreferences.isOnTrip(mContext)) {
                     /*IF ON RESUME TRIP THEN CHECK DRIVER LOCATION IS NULL OR NOT
@@ -441,7 +437,6 @@ public class LocationService extends Service {
         locationIntent.putExtra("lat", location.getLatitude());
         locationIntent.putExtra("location", location);
         if (null != prevLocation) {
-            Utils.infoLog("LocationUpdate", "Gps Location bearing." + prevLocation.bearingTo(location) + "");
             locationIntent.putExtra("bearing", prevLocation.bearingTo(location) + "");
         }
         sendBroadcast(locationIntent);

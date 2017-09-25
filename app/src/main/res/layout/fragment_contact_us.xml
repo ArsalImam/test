@@ -7,8 +7,8 @@
 
     <com.bykea.pk.partner.widgets.FontTextView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height.large"
-        android:layout_marginTop="@dimen/margin.normal"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
         android:gravity="center"
         android:text="Support"
         android:textColor="@color/colorAccent"
@@ -18,7 +18,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin.normal">
+        android:layout_marginTop="@dimen/_8sdp">
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/supportCall"
@@ -66,7 +66,7 @@
     <com.bykea.pk.partner.widgets.FontTextView
         android:layout_width="match_parent"
         android:layout_height="@dimen/height.large"
-        android:layout_marginTop="@dimen/margin.normal"
+        android:layout_marginTop="@dimen/_8sdp"
         android:gravity="center"
         android:text="Finance"
         android:textColor="@color/colorAccent"
@@ -76,7 +76,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin.normal">
+        android:layout_marginTop="@dimen/_8sdp">
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/financeCall"
@@ -124,7 +124,7 @@
     <com.bykea.pk.partner.widgets.FontTextView
         android:layout_width="match_parent"
         android:layout_height="@dimen/height.large"
-        android:layout_marginTop="@dimen/margin.normal"
+        android:layout_marginTop="@dimen/_8sdp"
         android:gravity="center"
         android:text="Bank Account"
         android:textColor="@color/colorAccent"
@@ -134,7 +134,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin.normal"
+        android:layout_marginTop="@dimen/_8sdp"
         android:gravity="center">
 
 
@@ -147,5 +147,14 @@
 
     </LinearLayout>
 
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/_14sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:gravity="center"
+        android:padding="@dimen/_6sdp"
+        android:text="@string/complain_msg"/>
 
 </LinearLayout>

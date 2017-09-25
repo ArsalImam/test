@@ -88,8 +88,9 @@
     <!-- Nav Drawer Menu Items -->
     <string-array name="navDrawerItems">
         <item>Home</item>
-        <item>Trip History</item>
+        <item>Booking History</item>
         <item>Wallet</item>
+        <item>Performance</item>
         <item>How it works</item>
         <item>Contact Us</item>
     </string-array>
@@ -97,11 +98,12 @@
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <string-array name="navDrawerIcons">
-        <item>@drawable/home</item>
-        <item>@drawable/tafseel</item>
-        <item>@drawable/batwa</item>
-        <item>@drawable/tareeqa_kaar</item>
-        <item>@drawable/rabtha</item>
+        <item>ہوم</item>
+        <item>تفصیل‎</item>
+        <item>بٹوا‎</item>
+        <item>کارکردگی</item>
+        <item>طریقہ کار</item>
+        <item>رابطہ‎</item>
     </string-array>
     <!--
     <string-array name="navDrawerIcons">
@@ -157,5 +159,7 @@
     <string name="destination_not_selected_msg">Passenger will guide me</string>
     <string name="internet_error">Problem in internet connectivity. Check your internet connection.</string>
     <string name="inactive_msg">آن لائن ہو کر درخواست لیں</string>
+    <string name="complain_msg">Booking History main Booking Details pay \nclick ker ke apni complaints register karain</string>
+
 
 </resources>
