@@ -140,7 +140,7 @@ public class ProfileFragment extends Fragment {
         repository.getProfileData(mCurrentActivity, callbackHandler);
     }
 
-    @OnClick({R.id.personalInfoTv, R.id.pinCodeTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv, R.id.bankAccDetailsTv})
+    @OnClick({R.id.personalInfoTv, R.id.termsTv, R.id.pinCodeTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv, R.id.bankAccDetailsTv})
     public void onClick(View view) {
         if (mPersonalInfo != null) {
             switch (view.getId()) {
@@ -166,6 +166,12 @@ public class ProfileFragment extends Fragment {
                     Intent intent4 = new Intent(mCurrentActivity, BankAccountActivity.class);
                     intent4.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent4);
+                    break;
+                case R.id.termsTv:
+                    if (AppPreferences.getSettings(mCurrentActivity) != null) {
+                        Utils.startCustomWebViewActivity(mCurrentActivity,
+                                AppPreferences.getSettings(mCurrentActivity).getSettings().getTerms(), "Terms of Services");
+                    }
                     break;
             }
         }
@@ -193,6 +199,7 @@ public class ProfileFragment extends Fragment {
                             PilotData data = AppPreferences.getPilotData(mCurrentActivity);
                             data.setFullName(mPersonalInfo.getFull_name());
                             data.setPilotImage(mPersonalInfo.getImg_id());
+                            data.setLicenseExpiry(mPersonalInfo.getLicense_expire());
                             mCurrentActivity.setPilotData(data);
                             AppPreferences.setPilotData(mCurrentActivity, data);
                             AppPreferences.setProfileUpdated(mCurrentActivity, true);

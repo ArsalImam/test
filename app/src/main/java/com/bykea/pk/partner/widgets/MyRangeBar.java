@@ -20,6 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 
 import com.bykea.pk.partner.R;
@@ -153,23 +156,28 @@ public class MyRangeBar extends View {
         ripplePaint.setStrokeWidth(2.0f);
         ripplePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        getViewTreeObserver().addOnPreDrawListener(new
-                                                           ViewTreeObserver.OnPreDrawListener() {
-                                                               @Override
-                                                               public boolean onPreDraw() {
-                                                                   getViewTreeObserver().removeOnPreDrawListener(this);
+        getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                getViewTreeObserver().removeOnPreDrawListener(this);
 
-                                                                   // Update radius after we got new height
-                                                                   updateRadius(getHeight());
+                updateUI();
 
-                                                                   // Compute drawing position again
-                                                                   preComputeDrawingPosition();
-
-                                                                   // Ready to draw now
-                                                                   return true;
-                                                               }
-                                                           });
+                // Ready to draw now
+                return true;
+            }
+        });
         currentIndex = 0;
+    }
+
+
+    public void updateUI() {
+        if (barHeight == 0) {
+            // Update radius after we got new height
+            updateRadius(getHeight());
+            // Compute drawing position again
+            preComputeDrawingPosition();
+        }
     }
 
     private void updateRadius(int height) {

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -114,6 +115,16 @@ public class HomeActivity extends BaseActivity {
         ActivityStackManager.activities = 1;
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         AppPreferences.setProfileUpdated(mCurrentActivity, true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override

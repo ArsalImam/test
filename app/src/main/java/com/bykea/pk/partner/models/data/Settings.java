@@ -23,6 +23,8 @@ public class Settings {
     private String notice;
     private String top_up_limit;
     private String amount_limit;
+    @SerializedName("terms_driver")
+    private String terms;
 
     public String getCancel_time() {
         return cancel_time;
@@ -77,4 +79,10 @@ public class Settings {
     public int getAmount_limit() {
         return StringUtils.isNotBlank(amount_limit) ? Integer.parseInt(amount_limit) : 35000;
     }
+
+    public String getTerms() {
+        return StringUtils.isNotBlank(terms) ? terms : "https://www.bykea.com/terms.html";
+    }
+
+
 }

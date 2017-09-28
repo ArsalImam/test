@@ -67,12 +67,6 @@ public class HistoryMissedCallsActivity extends BaseActivity {
         mHistoryList = new ArrayList<>();
 
         mHistoryAdapter = new HistoryMissedCallsAdapter(mCurrentActivity, mHistoryList);
-        mHistoryAdapter.setMyOnItemClickListener(new HistoryMissedCallsAdapter.MyOnItemClickListener() {
-            @Override
-            public void onItemClickListener(int position, View view, TripHistoryData historyData) {
-                //do nothing
-            }
-        });
         mLayoutManager = new LinearLayoutManager(mCurrentActivity);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

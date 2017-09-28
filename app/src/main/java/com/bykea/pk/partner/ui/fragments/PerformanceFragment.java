@@ -128,13 +128,16 @@ public class PerformanceFragment extends Fragment {
                                 userData.setTimeCount(responseData.getTime());
                                 tvTime.setText(responseData.getTime());
                             }
-                            if (StringUtils.isNotBlank(responseData.getRating())) {
-                                userData.setRating(responseData.getRating());
-                                if (responseData.getRating().equalsIgnoreCase("0")) {
+                            if (StringUtils.isNotBlank(responseData.getDailyRating())) {
+                                String rating = Utils.formatDecimalPlaces(responseData.getDailyRating());
+                                if (rating.equalsIgnoreCase("0")) {
                                     tvRating.setText("N/A");
                                 } else {
-                                    tvRating.setText(responseData.getRating());
+                                    tvRating.setText(rating);
                                 }
+                            }
+                            if (StringUtils.isNotBlank(responseData.getRating())) {
+                                userData.setRating(responseData.getRating());
                             }
 
                             AppPreferences.setPilotData(mCurrentActivity, userData);

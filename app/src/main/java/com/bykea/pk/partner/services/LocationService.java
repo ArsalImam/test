@@ -261,19 +261,12 @@ public class LocationService extends Service {
             synchronized (this) {
                 String lastLat = AppPreferences.getPrevDistanceLatitude(mContext);
                 String lastLng = AppPreferences.getPrevDistanceLongitude(mContext);
-                if (lastLat.equalsIgnoreCase("0.0") || lastLng.equalsIgnoreCase("0.0")) {
-                    if (AppPreferences.getCallData(mContext) != null) {
-                        lastLat = AppPreferences.getCallData(mContext).getStartLat();
-                        lastLng = AppPreferences.getCallData(mContext).getStartLng();
-                        AppPreferences.setPrevDistanceLatLng(mContext, Double.parseDouble(lastLat), Double.parseDouble(lastLng), AppPreferences.getStartTripTime(mContext));
-                    }
-                }
                 if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
-                    if (Utils.isValidLocation(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng))) {
-//                            if (true) {
+                    float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
+                    if (Utils.isValidLocation(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), distance)) {
                         AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
                         AppPreferences.setPrevDistanceLatLng(mContext, lat, lon);
-                        if (Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng)) > 1000) {
+                        if (distance > 1000) {
                             if (!isDirectionApiRunning) {
                                 getRouteLatLng(lat, lon, lastLat, lastLng);
                             }

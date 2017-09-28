@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -126,6 +128,28 @@ public class HomeFragment extends Fragment {
         }
         mapView.getMapAsync(mapReadyCallback);
         Utils.checkGooglePlayServicesVersion(mCurrentActivity);
+        initRangeBar();
+    }
+
+    private void initRangeBar() {
+        int currentIndex = 0;
+        int value = AppPreferences.getCashInHands(mCurrentActivity);
+        for (int i = 0; i < cashInHand.length; i++) {
+            if (cashInHand[i] == value) {
+                currentIndex = i;
+                break;
+            }
+        }
+        myRangeBar.refreshDrawableState();
+        myRangeBar.invalidate();
+        myRangeBar.setCurrentIndex(currentIndex);
+        myRangeBar.setOnSlideListener(new MyRangeBar.OnSlideListener() {
+            @Override
+            public void onSlide(int index) {
+                Utils.redLog("Cash In Hand", "" + cashInHand[index]);
+                AppPreferences.setCashInHands(mCurrentActivity, cashInHand[index]);
+            }
+        });
     }
 
     private void initViews() {
@@ -138,21 +162,12 @@ public class HomeFragment extends Fragment {
         }
         setStatusBtn();
         setConnectionStatus();
-
-        int currentIndex = 0;
-        int value = AppPreferences.getCashInHands(mCurrentActivity);
-        for (int i = 0; i < cashInHand.length; i++) {
-            if (cashInHand[i] == value) {
-                currentIndex = i;
-                break;
-            }
-        }
-        myRangeBar.setCurrentIndex(currentIndex);
-        myRangeBar.setOnSlideListener(new MyRangeBar.OnSlideListener() {
+        myRangeBar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
-            public void onSlide(int index) {
-                Utils.redLog("Cash In Hand", "" + cashInHand[index]);
-                AppPreferences.setCashInHands(mCurrentActivity, cashInHand[index]);
+            public boolean onPreDraw() {
+                myRangeBar.getViewTreeObserver().removeOnPreDrawListener(this);
+                myRangeBar.updateUI();
+                return true;
             }
         });
     }
@@ -280,7 +295,7 @@ public class HomeFragment extends Fragment {
         intentFilter.addAction(Keys.LOCATION_UPDATE_BROADCAST);
         mCurrentActivity.registerReceiver(myReceiver, intentFilter);
         if (AppPreferences.isLoggedIn(mCurrentActivity)) {
-//            checkNotification();
+
             initViews();
             if (Utils.isStatsApiCallRequired(mCurrentActivity)) {
                 repository.requestDriverStats(mCurrentActivity, handler);
@@ -289,6 +304,7 @@ public class HomeFragment extends Fragment {
         repository.requestRunningTrip(mCurrentActivity, handler);
         super.onResume();
     }
+
 
     @Override
     public void onPause() {
@@ -301,7 +317,6 @@ public class HomeFragment extends Fragment {
         if (mapView != null) {
             mapView.onPause();
         }
-
     }
 
     @Override
@@ -310,6 +325,10 @@ public class HomeFragment extends Fragment {
         super.onStop();
     }
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
 
     @Override
     public void onDestroyView() {
@@ -637,18 +656,11 @@ public class HomeFragment extends Fragment {
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    /*if (action.equalsIgnoreCase(Constants.ON_NEW_NOTIFICATION)) {
-                        checkNotification();
-                    }*/
-                    if (action.equalsIgnoreCase("INACTIVE-PUSH")) {
-                        setStatusBtn();
-                        //TODO Alert Dialog
-                    }
-                    if (action.equalsIgnoreCase("INACTIVE-FENCE")) {
-                        setStatusBtn();
-                    }
                     if (action.equalsIgnoreCase(Keys.CONNECTION_BROADCAST)) {
                         setConnectionStatus();
+                    } else if (action.equalsIgnoreCase("INACTIVE-PUSH") || action.equalsIgnoreCase("INACTIVE-FENCE")) {
+                        setStatusBtn();
+                        //TODO Alert Dialog
                     }
                 }
             });

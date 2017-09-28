@@ -191,7 +191,7 @@ public class FeedbackActivity extends BaseActivity {
                 properties.put("timestamp", Utils.getIsoDate());
 
                 //Firebase can have max 10 TEXT properties
-                Utils.logFireBaseEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_FARE, properties);
+                Utils.logFireBaseEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_FARE.replace("_R_", callData.getCallType()), properties);
 
                 properties.put("PassengerName", callData.getPassName());
                 properties.put("DriverName", AppPreferences.getPilotData(mCurrentActivity).getFullName());
@@ -205,7 +205,7 @@ public class FeedbackActivity extends BaseActivity {
                 } else {
                     properties.put("WalletDeduction", "0");
                 }
-                mixpanelAPI.track(Constants.RIDE_FARE, properties);
+                mixpanelAPI.track(Constants.RIDE_FARE.replace("_R_", callData.getCallType()), properties);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -222,8 +222,9 @@ public class FeedbackActivity extends BaseActivity {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, "Your trip is successfully completed.");
+                    Dialogs.INSTANCE.showToast(mCurrentActivity, feedbackResponse.getMessage());
                     Utils.setCallIncomingState(mCurrentActivity);
+                    AppPreferences.setAvailableStatus(mCurrentActivity, feedbackResponse.isAvailable());
                     ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
                     finish();
                 }

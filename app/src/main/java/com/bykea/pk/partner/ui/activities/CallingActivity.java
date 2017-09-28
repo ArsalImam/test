@@ -336,24 +336,25 @@ public class CallingActivity extends BaseActivity {
 
 
     private Integer getServiceIcon(NormalCallData callData) {
-        if (callData.getCallType().equalsIgnoreCase("parcel")) {
-            return R.drawable.bhejdo;
-        } else if (callData.getCallType().equalsIgnoreCase("send")) {
-            return R.drawable.bhejdo;
-        } else if (callData.getCallType().equalsIgnoreCase("bring")) {
-            return R.drawable.lay_ao;
-        } else if (callData.getCallType().equalsIgnoreCase("ride")) {
-            return R.drawable.ride;
-        } else if (callData.getCallType().equalsIgnoreCase("Top-Up")) {
-            return R.drawable.top_up;
-        } else if (callData.getCallType().equalsIgnoreCase("Utility Bill")) {
-            return R.drawable.bill;
-        } else if (callData.getCallType().equalsIgnoreCase("Deposit")) {
-            return R.drawable.lay_ao_copy_1;
-        } else if (callData.getCallType().equalsIgnoreCase("Carry Van")) {
-            return R.drawable.carry_van;
-        } else {
-            return R.drawable.ride;
+        String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
+        switch (callType) {
+            case "parcel":
+            case "send":
+                return R.drawable.bhejdo;
+            case "bring":
+                return R.drawable.lay_ao;
+            case "ride":
+                return R.drawable.ride;
+            case "top-up":
+                return R.drawable.top_up;
+            case "utilitybill":
+                return R.drawable.bill;
+            case "deposit":
+                return R.drawable.lay_ao_copy_1;
+            case "carryvan":
+                return R.drawable.carry_van;
+            default:
+                return R.drawable.ride;
         }
     }
 
@@ -371,7 +372,6 @@ public class CallingActivity extends BaseActivity {
                                 AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_FREE);
                                 stopSound();
                                 ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(false);
-                                stopSound();
                                 mCurrentActivity.finish();
                             }
                         }

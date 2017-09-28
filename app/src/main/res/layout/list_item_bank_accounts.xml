@@ -6,37 +6,59 @@
     android:orientation="vertical"
     android:padding="@dimen/padding.small">
 
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/bankName"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MCb bank"
-        android:textColor="@color/textColorPrimary"
-        android:textAllCaps="true"
-        android:textSize="@dimen/textsize.medium"
-        app:fontName="roboto_bold.ttf" />
+        android:orientation="horizontal">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/bankName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:maxWidth="@dimen/_210sdp"
+            android:text="MCb bank"
+            android:textAllCaps="true"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.medium"
+            android:textStyle="bold"
+            app:fontName="roboto_bold.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tv_nearBy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            android:padding="@dimen/_10sdp"
+            android:text="قریبی"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/textsize.medium"
+            android:textStyle="bold"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+    </LinearLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/textColorPrimary"
             android:text="Account Title"
+            android:textColor="@color/grey"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_light.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/accountTitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorPrimary"
-            android:layout_weight="1"
             android:text="bykea tech"
+            android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_light.ttf" />
 
@@ -44,34 +66,32 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:orientation="vertical">
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Account Number"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="@color/grey"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_light.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/accountNumber"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/textColorPrimary"
             android:text="PK00Fay0390382383"
+            android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_light.ttf" />
 
     </LinearLayout>
-
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
         android:layout_marginTop="@dimen/margin.small"
         android:background="@color/divider" />
-
 </LinearLayout>

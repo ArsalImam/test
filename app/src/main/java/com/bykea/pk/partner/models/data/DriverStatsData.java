@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 public class DriverStatsData {
     @SerializedName("accRate")
     private String acceptanceRate;
+    @SerializedName("dRating")
+    private String dailyRating;
     private String rating;
     @SerializedName("rides")
     private String trips;
@@ -45,5 +47,9 @@ public class DriverStatsData {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getDailyRating() {
+        return dailyRating;
     }
 }

@@ -381,4 +381,5 @@ public class NormalCallData extends CommonResponse {
     public void setIcon(String icon) {
         this.icon = icon;
     }
+
 }

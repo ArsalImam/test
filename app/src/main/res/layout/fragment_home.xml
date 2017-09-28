@@ -18,37 +18,57 @@
         android:layout_below="@+id/llTop">
 
         <RelativeLayout
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/homeMapFragment"
+                android:name="com.google.android.gms.maps.MapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent" />
 
-
-                <com.google.android.gms.maps.MapView
-                    android:id="@+id/homeMapFragment"
-                    android:name="com.google.android.gms.maps.MapFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:id="@+id/mapPinIv"
-                    android:layout_width="@dimen/width.xlarge"
-                    android:layout_height="@dimen/height.xlarge"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="66dp"
-                    android:layout_marginEnd="19dp"
-                    android:layout_marginRight="19dp"
-                    android:padding="@dimen/_4sdp"
-                    android:src="@drawable/my_location_bg" />
-
-            </RelativeLayout>
-
+            <ImageView
+                android:id="@+id/mapPinIv"
+                android:layout_width="@dimen/width.xlarge"
+                android:layout_height="@dimen/height.xlarge"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="66dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginRight="19dp"
+                android:padding="@dimen/_4sdp"
+                android:src="@drawable/my_location_bg" />
 
         </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/rlInactiveImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black.transparent.inactive"
+            android:gravity="top|center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/_140sdp"
+                android:layout_height="@dimen/_140sdp"
+                android:layout_marginTop="@dimen/_38sdp"
+                android:src="@drawable/ic_inactive_icon" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/inactive_msg"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_24sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+        </LinearLayout>
 
 
     </FrameLayout>
@@ -61,33 +81,6 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@color/windowBackground" />
-
-    <LinearLayout
-        android:id="@+id/rlInactiveImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/llBottom"
-        android:layout_below="@+id/llTop"
-        android:background="@color/black.transparent.inactive"
-        android:gravity="top|center"
-        android:orientation="vertical"
-        android:visibility="visible">
-
-        <ImageView
-            android:layout_marginTop="@dimen/_38sdp"
-            android:layout_width="@dimen/_140sdp"
-            android:layout_height="@dimen/_140sdp"
-            android:src="@drawable/ic_inactive_icon" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/inactive_msg"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_24sdp"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-    </LinearLayout>
 
 
 </RelativeLayout>

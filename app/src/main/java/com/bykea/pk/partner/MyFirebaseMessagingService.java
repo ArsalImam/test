@@ -132,8 +132,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     AppPreferences.setAdminMsg(this, adminNotification.getMessage());
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
                     if (AppPreferences.getAvailableStatus(this)
-                            != adminNotification.isActive()) {
+                            != adminNotification.isActive() && !AppPreferences.isOutOfFence(mContext)) {
                         AppPreferences.setAvailableStatus(getApplicationContext(), adminNotification.isActive());
+                        AppPreferences.setWalletAmountIncreased(getApplicationContext(), !adminNotification.isActive());
                         mBus.post("INACTIVE-PUSH");
                     }
                     mBus.post(Constants.ON_NEW_NOTIFICATION);

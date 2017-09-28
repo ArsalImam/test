@@ -171,7 +171,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
     private String mLocBearing = "0.0";
     private String mpreLocBearing = "0";
     private boolean isDriverUpdated;
-    private boolean animationStart = false;
+    private boolean animationStart = false, isFirstTime = true;
 
     //HANDLING RESUME CASE.
 //    private NormalCallData resumeTripData;
@@ -1451,6 +1451,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                         }
                         Utils.appToast(mCurrentActivity, cancelRideResponse.getMessage());
                         Utils.setCallIncomingState(mCurrentActivity);
+                        AppPreferences.setAvailableStatus(mCurrentActivity, cancelRideResponse.isAvailable());
                         /*dataRepository.requestLocationUpdate(mCurrentActivity);*/ // Required to reduce availability status delay
                         ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
                         finish();
@@ -1522,8 +1523,11 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                         setStartedState();
                         callData = AppPreferences.getCallData(mCurrentActivity);
                         callData.setStatus(TripStatus.ON_START_TRIP);
+                        long startTripTime = System.currentTimeMillis();
+                        AppPreferences.setStartTripTime(mCurrentActivity, startTripTime);
+                        AppPreferences.setPrevDistanceLatLng(mCurrentActivity, Double.parseDouble(callData.getStartLat()),
+                                Double.parseDouble(callData.getStartLng()), startTripTime);
                         AppPreferences.setCallData(mCurrentActivity, callData);
-                        AppPreferences.setStartTripTime(mCurrentActivity, System.currentTimeMillis());
                         AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_START_TRIP);
                         // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
                         changeDriverMarker();
@@ -1559,9 +1563,11 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                 checkGps();
             } else {
                 if (Connectivity.isConnectedFast(context)) {
-                    if (null != progressDialogJobActivity) {
+                    if (null != progressDialogJobActivity && !isFirstTime) {
                         progressDialogJobActivity.dismiss();
                         new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                    } else {
+                        isFirstTime = false;
                     }
                 } else {
                     progressDialogJobActivity.show();

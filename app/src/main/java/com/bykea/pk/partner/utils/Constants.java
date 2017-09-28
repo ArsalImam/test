@@ -44,7 +44,7 @@ public class Constants {
     public static final String INSTA_BUG_LIVE_KEY = "36070216421223afd484f7b67802c146";
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
-    public final static String RIDE_FARE = "Eyeball-Ride-Finish";
+    public static String RIDE_FARE = "Eyeball-_R_-Finish";
     public final static String CANCEL_TRIP = "Ride-Cancel";
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
 

@@ -987,6 +987,28 @@ public class Utils {
         }
     }
 
+    public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon, float distance) {
+        boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
+        if (shouldConsiderLatLng) {
+            if (distance > 6) {
+                long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime(DriverApp.getContext()));
+                long minTime = (long) ((distance) / (80 * 1000) * 3600);
+                if (timeDifference > minTime) {
+                    AppPreferences.setDistanceCoveredInMeters(DriverApp.getContext(), distance);
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                AppPreferences.setPrevDistanceTime(DriverApp.getContext());
+                return false;
+            }
+        } else {
+            AppPreferences.setPrevDistanceTime(DriverApp.getContext());
+            return false;
+        }
+    }
+
     public static double calculateDistance(List<LatLng> mRouteLatLng) {
         double distance = 0d;
         LatLng lastLatLng = null;

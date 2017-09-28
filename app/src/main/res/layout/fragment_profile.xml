@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/windowBackground"
-    tools:context=".ui.fragments.RegisterFragment">
+    android:background="@color/windowBackground">
 
     <ProgressBar
         android:id="@+id/loader"
@@ -138,13 +137,13 @@
 
                     <ImageView
                         android:id="@+id/ivHomePin"
-                        android:visibility="invisible"
                         android:layout_width="@dimen/_10sdp"
                         android:layout_height="@dimen/_10sdp"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:paddingRight="@dimen/_4sdp"
-                        android:src="@drawable/pickup_small" />
+                        android:src="@drawable/pickup_small"
+                        android:visibility="invisible" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/driverLatLngTv"
@@ -172,7 +171,7 @@
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/personalInfoTv"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height.xlarge"
+            android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
             android:drawableRight="@drawable/right_arrow_green"
             android:gravity="center_vertical"
@@ -191,7 +190,7 @@
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/pinCodeTv"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height.xlarge"
+            android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
             android:drawableRight="@drawable/right_arrow_green"
             android:gravity="center_vertical"
@@ -208,9 +207,28 @@
             android:background="@color/divider" />
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/termsTv"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:background="@drawable/clickable_bg"
+            android:drawableRight="@drawable/right_arrow_green"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/padding.normal"
+            android:paddingRight="@dimen/padding.small"
+            android:text="Terms of Services"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="roboto_regular.ttf" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/divider" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/licenseInfoTv"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height.xlarge"
+            android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
             android:drawableRight="@drawable/right_arrow_green"
             android:gravity="center_vertical"
@@ -229,7 +247,7 @@
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/motorbikeInfoTv"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height.xlarge"
+            android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
             android:drawableRight="@drawable/right_arrow_green"
             android:gravity="center_vertical"
@@ -248,7 +266,7 @@
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/bankAccDetailsTv"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height.xlarge"
+            android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
             android:drawableRight="@drawable/right_arrow_green"
             android:gravity="center_vertical"
@@ -262,11 +280,11 @@
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/tvVersion"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_4sdp"
             android:gravity="end"
             android:text=""
-            android:layout_marginRight="@dimen/_4sdp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"/>
+            android:textColor="@color/colorAccent" />
     </LinearLayout>
 
 
