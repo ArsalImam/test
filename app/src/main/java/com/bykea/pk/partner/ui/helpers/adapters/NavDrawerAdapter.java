@@ -114,6 +114,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                         fragmentTransaction.replace(R.id.containerView, homeFragment);
                         fragmentTransaction.commit();
                         HomeActivity.visibleFragmentNumber = 1;
+//                        updateCurrentFragment(new HomeFragment(),1);
                     }
                     break;
                 case 2:

@@ -220,7 +220,8 @@ public class HomeFragment extends Fragment {
 
     private long getHeatMapTimer() {
         long timer = 5;
-        if (AppPreferences.getSettings(DriverApp.getContext()) != null && AppPreferences.getSettings(DriverApp.getContext()).getSettings() != null
+        if (AppPreferences.getSettings(DriverApp.getContext()) != null
+                && AppPreferences.getSettings(DriverApp.getContext()).getSettings() != null
                 && StringUtils.isNotBlank(AppPreferences.getSettings(DriverApp.getContext()).getSettings().getHeatmap_refresh_timer())) {
             timer = (long) Math.ceil(Double.parseDouble(AppPreferences.getSettings(DriverApp.getContext()).getSettings().getHeatmap_refresh_timer()));
         }
@@ -229,9 +230,7 @@ public class HomeFragment extends Fragment {
 
     private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
         @Override
-        public void onTick(long millisUntilFinished) {
-
-        }
+        public void onTick(long millisUntilFinished) {}
 
         @Override
         public void onFinish() {
@@ -377,8 +376,8 @@ public class HomeFragment extends Fragment {
             case R.id.tvDemand:
                 Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getDemand(), "Demand");
                 break;
-            case R.id.tvNotice:
-                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice(), "Notice");
+            case R.id.tvNotice:                             //AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice()
+                Utils.startCustomWebViewActivity(mCurrentActivity,AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice(), "Notice");
                 break;
             case R.id.statusCheck:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {

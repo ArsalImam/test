@@ -1160,6 +1160,9 @@ public class Utils {
                         .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                         .showIconForward(false).showIconBack(false)
                         .updateTitleFromHtml(false)
+                        .showSwipeRefreshLayout(false)
+                        .webViewSupportZoom(true)
+                        .webViewBuiltInZoomControls(true)
                         .titleDefault(StringUtils.capitalize(title))
                         .show(link);
             }

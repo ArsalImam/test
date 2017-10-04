@@ -151,7 +151,6 @@ public class HomeActivity extends BaseActivity {
                 fragmentTransaction.commit();
                 recyclerViewAdapter.notifyDataSetChanged();
                 visibleFragmentNumber = 1;
-
             }
         }
     }
@@ -188,8 +187,6 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });
-
-
     }
 
     public void hideToolbar() {
@@ -212,23 +209,24 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                Utils.hideKeyboard(mCurrentActivity);
+                recyclerViewAdapter.notifyDataSetChanged();
 //                recyclerViewAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                recyclerViewAdapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                Utils.hideKeyboard(mCurrentActivity);
             }
         };
 
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.addDrawerListener(drawerToggle);
         //This is necessary to change the icon of the Drawer Toggle upon state change.
         drawerToggle.syncState();
 

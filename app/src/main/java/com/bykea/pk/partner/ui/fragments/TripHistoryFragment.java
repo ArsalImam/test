@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.fragments;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -48,7 +47,6 @@ public class TripHistoryFragment extends Fragment {
     private LinearLayoutManager mLayoutManager;
     private ArrayList<TripHistoryData> mHistoryList;
 
-
     private int page = 1;
     private int pages;
     private int previousTotal = 0;
@@ -57,7 +55,6 @@ public class TripHistoryFragment extends Fragment {
     int firstVisibleItem, visibleItemCount, totalItemCount;
 
     private HomeActivity mCurrentActivity;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -141,14 +138,12 @@ public class TripHistoryFragment extends Fragment {
                 } else {
                     ActivityStackManager.getInstance(mCurrentActivity).startCancelDetailsActivity(historyData);
                 }
-
             }
         });
         mLayoutManager = new LinearLayoutManager(mCurrentActivity);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mHistoryAdapter);
-
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -171,7 +166,6 @@ public class TripHistoryFragment extends Fragment {
                     // End has been reached
                     page++;
                     getHistory();
-
                     loading = true;
                 }
             }
@@ -254,7 +248,6 @@ public class TripHistoryFragment extends Fragment {
                     }
                 });
             }
-
         }
     };
 }
