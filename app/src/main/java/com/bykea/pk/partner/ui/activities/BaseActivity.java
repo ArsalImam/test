@@ -1,13 +1,17 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -24,7 +29,11 @@ import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -41,6 +50,7 @@ public class BaseActivity extends AppCompatActivity {
     private final EventBus mEventBus = EventBus.getDefault();
     private boolean isScreenInFront;
     private ProgressDialog progressDialog;
+    private Dialog notificationDialog;
 
 
     @Override
@@ -53,6 +63,7 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(getString(R.string.internet_error));
     }
+
 
     @Override
     protected void onPause() {
@@ -140,8 +151,15 @@ public class BaseActivity extends AppCompatActivity {
                 public void run() {
                     if (StringUtils.isNotBlank(AppPreferences.getAdminMsg(mCurrentActivity)) && isScreenInFront
                             && !(mCurrentActivity instanceof CallingActivity) && !(mCurrentActivity instanceof SplashActivity)) {
-                        Dialogs.INSTANCE.showAdminNotificationDialog(mCurrentActivity, AppPreferences.getAdminMsg(mCurrentActivity));
-                        Notifications.removeAllNotifications(mCurrentActivity);
+                        try {
+                            NotificationData notificationData = new Gson().fromJson(AppPreferences.getAdminMsg(mCurrentActivity), NotificationData.class);
+                            if (StringUtils.isNotBlank(notificationData.getImageLink())) {
+                                showImageNotification(notificationData);
+                            } else if (!(mCurrentActivity instanceof SplashActivity)) {
+                                showMessageNotification(notificationData);
+                            }
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             });
@@ -313,6 +331,83 @@ public class BaseActivity extends AppCompatActivity {
     public void onEvent(final String action) {
         if (action.equalsIgnoreCase(Constants.ON_NEW_NOTIFICATION)) {
             checkNotification();
+        }
+    }
+
+
+    private void showMessageNotification(NotificationData notificationData) {
+        dismissNotificationDialog();
+        notificationDialog = new Dialog(mCurrentActivity, R.style.actionSheetTheme);
+        notificationDialog.setContentView(R.layout.admin_notification_dialog);
+        FontTextView msg = (FontTextView) notificationDialog.findViewById(R.id.tvMessage);
+        FontTextView title = (FontTextView) notificationDialog.findViewById(R.id.title);
+        msg.setText(notificationData.getMessage());
+        title.setText(notificationData.getTitle());
+        FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppPreferences.setAdminMsg(mCurrentActivity, null);
+                dismissNotificationDialog();
+            }
+        });
+        notificationDialog.setCancelable(false);
+        showNotificationDialog();
+    }
+
+    private void showImageNotification(final NotificationData notificationData) {
+        dismissNotificationDialog();
+        notificationDialog = new Dialog(mCurrentActivity, R.style.actionSheetTheme1);
+        notificationDialog.setContentView(R.layout.admin_notification_dialog_image);
+        final ImageView imageView = (ImageView) notificationDialog.findViewById(R.id.ivNotification);
+        FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppPreferences.setAdminMsg(mCurrentActivity, null);
+                dismissNotificationDialog();
+            }
+        });
+        notificationDialog.setCancelable(false);
+        final Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                imageView.setImageBitmap(bitmap);
+                if (!(mCurrentActivity instanceof SplashActivity)) {
+                    showNotificationDialog();
+                }
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                Utils.redLog("Error", "onBitmapFailed");
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+        imageView.setTag(target);
+        Picasso.with(mCurrentActivity).load(notificationData.getImageLink()).into(target);
+    }
+
+    private void showNotificationDialog() {
+        try {
+            notificationDialog.show();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        Notifications.removeAllNotifications(mCurrentActivity);
+    }
+
+    private void dismissNotificationDialog() {
+        try {
+            if (notificationDialog != null) {
+                notificationDialog.dismiss();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

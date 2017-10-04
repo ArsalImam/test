@@ -49,18 +49,13 @@ import io.socket.emitter.Emitter;
 public class WebIORequestHandler {
 
     private static Context mContext;
-    //    private String mSocket;
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
-    //    private static AdvanceCallListener advanceCallListener = new AdvanceCallListener();
-//    private static JobCallListener jobCallListener = new JobCallListener();
     private static ChatMessageListener chatMessageListener = new ChatMessageListener();
 
     public static WebIORequestHandler getInstance() {
         if (null == mWebIORequestHandler) {
             mWebIORequestHandler = new WebIORequestHandler();
         }
-//        if (null == advanceCallListener) advanceCallListener = new AdvanceCallListener();
-//        if (null == jobCallListener) jobCallListener = new JobCallListener();
         return mWebIORequestHandler;
     }
 
@@ -253,182 +248,16 @@ public class WebIORequestHandler {
                     CommonResponse commonResponse = (CommonResponse) serverResponse;
                     if (commonResponse.isSuccess() || serverResponse instanceof PilotStatusResponse) {
                         mOnResponseCallBack.onResponse(serverResponse);
-                        if (serverResponse instanceof AcceptCallResponse) {
+                       /* if (serverResponse instanceof AcceptCallResponse) {
                             registerChatListener();
                         } else if (serverResponse instanceof EndRideResponse) {
                             unRegisterChatListener();
-                        }
+                        }*/
                     } else {
                         mOnResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
                     }
                     WebIO.getInstance().off(mSocketName, MyGenericListener.this);
                 }
-
-
-
-              /*  if (commonResponse instanceof AcceptCallResponse) {
-                    Utils.infoLog(" ACCEPT CALL RESPONSE....", serverResponse);
-                    AcceptCallResponse response = (AcceptCallResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                        registerChatListener();
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof RejectCallResponse) {
-                    Utils.infoLog(" REJECT CALL RESPONSE....", serverResponse);
-                    RejectCallResponse response = (RejectCallResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else  if (commonResponse instanceof FreeDriverResponse) {
-                    Utils.infoLog(" FREE DRIVER RESPONSE....", serverResponse);
-                    FreeDriverResponse response = (FreeDriverResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof HeatMapResponse) {
-                    Utils.infoLog("HEAT MAP DATA RESPONSE....", serverResponse);
-                    HeatMapResponse response = (HeatMapResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof ArrivedResponse) {
-                    Utils.infoLog("ARRIVED RESPONSE....", serverResponse);
-                    ArrivedResponse response = (ArrivedResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof BeginRideResponse) {
-                    Utils.infoLog("BEGIN RIDE RESPONSE....", serverResponse);
-                    BeginRideResponse response = (BeginRideResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else
-                if (commonResponse instanceof EndRideResponse) {
-                    Utils.infoLog("END RIDE RESPONSE....", serverResponse);
-                    EndRideResponse response = (EndRideResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                        getInstance().unRegisterChatListener();
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof FeedbackResponse) {
-                    Utils.infoLog("FEEDBACK RESPONSE....", serverResponse);
-                    FeedbackResponse response = (FeedbackResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof ConversationResponse) {
-                    Utils.infoLog("GET ALL CONVERSATION RESPONSE....", serverResponse);
-                    ConversationResponse response = (ConversationResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof SendMessageResponse) {
-                    Utils.infoLog("SEND MESSAGE RESPONSE....", serverResponse);
-                    SendMessageResponse response = (SendMessageResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof ConversationChatResponse) {
-                    Utils.infoLog("CONVERSATION CHAT RESPONSE....", serverResponse);
-                    ConversationChatResponse response = (ConversationChatResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof UpdateConversationStatusResponse) {
-                    Utils.infoLog("UPDATE CONVERSATION RESPONSE....", serverResponse);
-                    UpdateConversationStatusResponse response = (UpdateConversationStatusResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof GetConversationIdResponse) {
-                    Utils.infoLog("GET CONVERSATION ID RESPONSE....", serverResponse);
-                    GetConversationIdResponse response = (GetConversationIdResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof CancelRideResponse) {
-                    Utils.infoLog("CANCEL CALL RESPONSE....", serverResponse);
-                    CancelRideResponse response = (CancelRideResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof AckCallResponse) {
-                    Utils.infoLog("Ack CALL RESPONSE....", serverResponse);
-                    AckCallResponse response = (AckCallResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else
-                if (commonResponse instanceof PilotStatusResponse) {
-                    Utils.infoLog("Update STATUS....", serverResponse);
-                    PilotStatusResponse response = (PilotStatusResponse) commonResponse;
-                    mOnResponseCallBack.onResponse(response);
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof DriverStatsResponse) {
-                    Utils.infoLog("Updated STATS....", serverResponse);
-                    DriverStatsResponse response = (DriverStatsResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                } else if (commonResponse instanceof UpdateDropOffResponse) {
-                    UpdateDropOffResponse response = (UpdateDropOffResponse) commonResponse;
-                    if (response.isSuccess()) {
-                        mOnResponseCallBack.onResponse(response);
-                    } else {
-                        mOnResponseCallBack.onError(response.getCode(), response.getMessage());
-                    }
-                    WebIO.getInstance().off(mSocketName, MyGenericListener.this);
-                }*/
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -492,7 +321,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.infoLog("CHAT MESSAGE RECEIVED....", serverResponse);
+            Utils.redLog("CHAT MESSAGE RECEIVED....", serverResponse);
 
             Gson gson = new Gson();
             if (null == mContext) {
@@ -554,19 +383,7 @@ public class WebIORequestHandler {
                 }
                 NormalCallData normalCallData = gson.fromJson(serverResponse, NormalCallData.class);
                 if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) && normalCallData.isSuccess()) {
-                    Utils.redLog(Constants.APP_NAME, " NORMAL CALLING....");
-                   /* if (AppPreferences.isIncomingCall(mContext)) {*/
-                    if (AppPreferences.getAvailableStatus(mContext) && Utils.isGpsEnable(mContext)
-                            && Utils.isNotDelayed(mContext, normalCallData.getData().getSentTime())) {
-                        AppPreferences.setCallType(mContext, Keys.NORMAL_CALL);
-                        AppPreferences.setIncomingCall(mContext, false);
-                        AppPreferences.setCallData(mContext, normalCallData.getData());
-                        ActivityStackManager.getInstance(mContext).startCallingActivity();
-                    }
-
-                   /* } else {
-                        Utils.redLog(ConstantKeys.TAG_CALL, "Already On Job ============");
-                    }*/
+                    ActivityStackManager.getInstance(mContext).startCallingActivity(normalCallData, false);
                 } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING Socket");
                     if (normalCallData.isSuccess()) {

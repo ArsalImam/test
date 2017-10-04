@@ -5,6 +5,7 @@ import android.support.multidex.MultiDexApplication;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -12,8 +13,15 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
 import com.instabug.library.invocation.InstabugInvocationEvent;
 import com.instabug.library.Instabug;
+import com.onesignal.OSNotification;
+import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
 import com.onesignal.OneSignalDbHelper;
+
+import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.socket.emitter.Emitter;
 
@@ -38,9 +46,12 @@ public class DriverApp extends MultiDexApplication {
                 .setInvocationEvent(InstabugInvocationEvent.SHAKE)
                 .setShakingThreshold(470)
                 .build();
+
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.InAppAlert)
                 .unsubscribeWhenNotificationsAreDisabled(true)
+                .setNotificationReceivedHandler(new OneSignalNotificationReceivedHandler())
+                .setNotificationOpenedHandler(new OneSignalNotificationOpenedHandler())
                 .filterOtherGCMReceivers(true)
                 .init();
     }
@@ -86,5 +97,34 @@ public class DriverApp extends MultiDexApplication {
         if (AppPreferences.isLoggedIn(context) && (AppPreferences.getAvailableStatus(mContext) || AppPreferences.isOutOfFence(mContext)))
             ActivityStackManager.getInstance(context).startLocationService();
     }
+
+
+    private class OneSignalNotificationOpenedHandler implements OneSignal.NotificationOpenedHandler {
+        // This fires when a notification is opened by tapping on it.
+        @Override
+        public void notificationOpened(OSNotificationOpenResult result) {
+            ActivityStackManager.getInstance(mContext).startLauncherActivity();
+        }
+    }
+
+
+    private class OneSignalNotificationReceivedHandler implements OneSignal.NotificationReceivedHandler {
+        @Override
+        public void notificationReceived(OSNotification notification) {
+            if (AppPreferences.isLoggedIn(mContext)) {
+                NotificationData notificationData = new NotificationData();
+                notificationData.setTitle(notification.payload.title);
+                notificationData.setMessage(notification.payload.body);
+                if (StringUtils.isNotBlank(notification.payload.bigPicture)) {
+                    notificationData.setImageLink(notification.payload.bigPicture);
+                }
+                AppPreferences.setAdminMsg(mContext, notificationData);
+                if (notification.isAppInFocus) {
+                    EventBus.getDefault().post(Constants.ON_NEW_NOTIFICATION);
+                }
+            }
+        }
+    }
+
 
 }

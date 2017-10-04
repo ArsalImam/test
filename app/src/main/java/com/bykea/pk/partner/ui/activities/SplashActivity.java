@@ -179,7 +179,6 @@ public class SplashActivity extends BaseActivity {
                             AppPreferences.saveLoginStatus(mCurrentActivity, false);
                             AppPreferences.setPilotData(mCurrentActivity, null);
                             HomeActivity.visibleFragmentNumber = 0;
-                            ActivityStackManager.activities = 0;
                             Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

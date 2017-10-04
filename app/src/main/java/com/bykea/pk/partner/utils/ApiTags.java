@@ -11,7 +11,6 @@ public class ApiTags {
 //    public static final String BASE_SERVER_URL = "http://192.168.8.103:3000";
 
     //STAGING PRO
-//    public static final String BASE_SERVER_URL = "http://staging.bykea.net:3000";
     public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3001";
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3002";

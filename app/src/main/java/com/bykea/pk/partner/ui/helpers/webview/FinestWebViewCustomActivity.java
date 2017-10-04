@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.helpers.webview;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -16,6 +17,7 @@ public class FinestWebViewCustomActivity extends FinestWebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCurrentActivity = this;
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         close.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ic_arrow_back_48px));
     }
 

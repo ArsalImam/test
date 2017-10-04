@@ -85,6 +85,10 @@
             android:name="com.onesignal.BadgeCount"
             android:value="DISABLE" />
 
+        <meta-data
+            android:name="com.onesignal.NotificationOpened.DEFAULT"
+            android:value="DISABLE" />
+
         <service
             android:name=".services.LocationService"
             android:enabled="true" />

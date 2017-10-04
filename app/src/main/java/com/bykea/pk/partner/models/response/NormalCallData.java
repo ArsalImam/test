@@ -338,6 +338,10 @@ public class NormalCallData extends CommonResponse {
                 : StringUtils.EMPTY;
     }
 
+    public String getCodAmountNotFormatted() {
+        return codAmount;
+    }
+
     public void setCodAmount(String codAmount) {
         this.codAmount = codAmount;
     }

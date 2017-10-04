@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.utils.Constants;
@@ -315,7 +316,6 @@ public class AppPreferences {
         SharedPreferences.Editor ed = sp.edit();
         ed.putBoolean(Keys.ON_TRIP, value);
         ed.commit();
-        Utils.infoLog(Constants.APP_NAME + " TripStatus", value + "");
     }
 
     public static boolean isOnTrip(Context context) {
@@ -331,13 +331,11 @@ public class AppPreferences {
         SharedPreferences.Editor ed = sp.edit();
         ed.putString(Keys.TRIP_STATUS, value);
         ed.commit();
-        Utils.redLog(Constants.APP_NAME + " TripStatus", value + "");
     }
 
     public static String getTripStatus(Context context) {
         SharedPreferences sp = PreferenceManager.
                 getDefaultSharedPreferences(context);
-        Utils.redLog(Constants.APP_NAME + " GetTripStatus", sp.getString(Keys.TRIP_STATUS, "") + "");
         return sp.getString(Keys.TRIP_STATUS, TripStatus.ON_FREE);
     }
 
@@ -425,31 +423,16 @@ public class AppPreferences {
         return sp.getString(Keys.LAST_MESSAGE_ID, StringUtils.EMPTY);
     }
 
-    public static void setAdminMsg(Context context, String msg) {
+    public static void setAdminMsg(Context context, NotificationData data) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.ADMIN_MSG, msg);
-        if (StringUtils.isNotBlank(msg)) {
-            ed.putString(Keys.ADMIN_MSG_READ, msg);
-        }
-        ed.commit();
-    }
-
-    public static void clearAdminMsgReadStatus(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.ADMIN_MSG_READ, StringUtils.EMPTY);
+        ed.putString(Keys.ADMIN_MSG, data != null ? new Gson().toJson(data) : StringUtils.EMPTY);
         ed.commit();
     }
 
     public static String getAdminMsg(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getString(Keys.ADMIN_MSG, StringUtils.EMPTY);
-    }
-
-    public static String getAdminMsgReadStatus(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.ADMIN_MSG_READ, StringUtils.EMPTY);
     }
 
     public static boolean isJobActivityOnForeground(Context context) {
@@ -656,13 +639,15 @@ public class AppPreferences {
         return sp.getLong(Keys.VERSION_CHECK_TIME, 0);
     }
 
-    public static void setPrevDistanceLatLng(Context context, double lat, double lon) {
+    public static void setPrevDistanceLatLng(Context context, double lat, double lon, boolean updatePrevTime) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor ed = sp.edit();
         if (lat != 0.0 && lon != 0.0) {
             ed.putString(Keys.LATITUDE_PREV_DISTANCE, lat + "");
             ed.putString(Keys.LONGITUDE_PREV_DISTANCE, lon + "");
-            ed.putLong(Keys.TIME_PREV_DISTANCE, System.currentTimeMillis());
+            if (updatePrevTime) {
+                ed.putLong(Keys.TIME_PREV_DISTANCE, System.currentTimeMillis());
+            }
         }
         ed.commit();
     }
@@ -913,7 +898,7 @@ public class AppPreferences {
 
     public static String getWalletIncreasedError(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.WALLET_ERROR, "Your Current balance is not sufficient for Bykea Service, Please contact Support");
+        return sp.getString(Keys.WALLET_ERROR, "Mazeed booking lainay kay liyay pehlay paisay jamma karein");
     }
 
     public static void setSettingsVersion(Context context, String value) {
@@ -938,6 +923,23 @@ public class AppPreferences {
     public static int getCashInHands(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getInt(Keys.CASH_IN_HANDS, 0);
+    }
+
+    public static void setCashInHandsRange(Context context, String value) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString(Keys.CASH_IN_HANDS_RANGE, value);
+        ed.apply();
+    }
+
+    public static int[] getCashInHandsRange(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String value = sp.getString(Keys.CASH_IN_HANDS_RANGE, StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(value)) {
+            return new Gson().fromJson(value, int[].class);
+        } else {
+            return new int[]{0, 500, 1000, 1500, 2000};
+        }
     }
 
 

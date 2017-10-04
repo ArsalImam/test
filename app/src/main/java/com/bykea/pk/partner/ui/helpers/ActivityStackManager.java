@@ -1,10 +1,15 @@
 package com.bykea.pk.partner.ui.helpers;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.content.IntentCompat;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.TripHistoryData;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivity;
@@ -17,11 +22,11 @@ import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
 
 public class ActivityStackManager {
-    public static int activities = 0;
     private static Context mContext;
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
 
@@ -39,7 +44,6 @@ public class ActivityStackManager {
     }
 
     public void startHomeActivity(boolean firstTime) {
-        activities = 1;
         Intent intent = new Intent(mContext, HomeActivity.class);
         if (firstTime) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
@@ -49,7 +53,6 @@ public class ActivityStackManager {
     }
 
     public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin) {
-        activities = 1;
         Intent intent = new Intent(mContext, HomeActivity.class);
         intent.putExtra("isCancelledTrip", true);
         intent.putExtra("isCanceledByAdmin", isCanceledByAdmin);
@@ -59,19 +62,16 @@ public class ActivityStackManager {
     }
 
     public void startJobActivity() {
-        activities = 1;
         Intent intent = new Intent(mContext, JobActivity.class);
         ((Activity) mContext).startActivity(intent);
     }
 
     public void startFeedbackActivity() {
-        activities = 1;
         Intent intent = new Intent(mContext, FeedbackActivity.class);
         ((Activity) mContext).startActivity(intent);
     }
 
     public void startFeedbackFromResume() {
-        activities = 1;
         Intent intent = new Intent(mContext, FeedbackActivity.class);
         ((Activity) mContext).startActivity(intent);
     }
@@ -96,27 +96,23 @@ public class ActivityStackManager {
         startLocationService();
     }
 
-    public void startCallingActivity() {
-        activities = 1;
-        Intent intent = new Intent(mContext, CallingActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        mContext.startActivity(intent);
-    }
-
-    public void stopLocationService(String activityName) {
-      /*  activities-=2;
-        Utils.redLog(activityName + " DESTROYED : ", activities + "");
-        Utils.redLog("TOTAL REMAINING ACTIVITIES : ", activities + "");
-
-        if (activities <= 0)
-            mContext.stopService(new Intent(mContext, LocationService.class));*/
-
+    public void startCallingActivity(NormalCallData callData, boolean isFromGcm) {
+        if (AppPreferences.getAvailableStatus(mContext) && Utils.isGpsEnable(mContext)
+                && AppPreferences.getTripStatus(mContext).equalsIgnoreCase(TripStatus.ON_FREE)
+                && Utils.isNotDelayed(mContext, callData.getData().getSentTime())) {
+            AppPreferences.setCallData(mContext, callData.getData());
+            Intent callIntent = new Intent(DriverApp.getContext(), CallingActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            if (isFromGcm) {
+                callIntent.putExtra("isGcm", true);
+            }
+            mContext.startActivity(callIntent);
+        }
     }
 
     public void startChatActivity(String title, String refId, boolean isChatEnable) {
-        activities = 1;
         Utils.redLog(Constants.APP_NAME + " CONVERSATION ID = ", refId);
         Intent intent = new Intent(mContext, ChatActivity.class);
         intent.putExtra(Keys.CHAT_CONVERSATION_ID, refId);
@@ -139,5 +135,13 @@ public class ActivityStackManager {
         Intent intent = new Intent(mContext, HistoryCancelDetailsActivity.class);
         intent.putExtra("TRIP_DETAILS", data);
         mContext.startActivity(intent);
+    }
+
+    public void startLauncherActivity() {
+        PackageManager packageManager = mContext.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(mContext.getPackageName());
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
+        mContext.startActivity(mainIntent);
     }
 }

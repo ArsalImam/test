@@ -239,7 +239,6 @@ public class Utils {
             AppPreferences.setRegId(context, FirebaseInstanceId.getInstance().getToken());
         }
         HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.activities = 0;
 
         ActivityStackManager.getInstance(context).startLoginActivity();
         ((Activity) context).finish();
@@ -987,26 +986,26 @@ public class Utils {
         }
     }
 
-    public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon, float distance) {
-        boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
-        if (shouldConsiderLatLng) {
-            if (distance > 6) {
-                long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime(DriverApp.getContext()));
-                long minTime = (long) ((distance) / (80 * 1000) * 3600);
-                if (timeDifference > minTime) {
-                    AppPreferences.setDistanceCoveredInMeters(DriverApp.getContext(), distance);
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                AppPreferences.setPrevDistanceTime(DriverApp.getContext());
-                return false;
-            }
+    public static boolean isValidLocation(/*double newLat, double newLon, double prevLat, double prevLon, */float distance) {
+//        boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
+//        if (shouldConsiderLatLng) {
+//            if (distance > 6) {
+        long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime(DriverApp.getContext()));
+        long minTime = (long) ((distance) / (80 * 1000) * 3600);
+        if (timeDifference > minTime) {
+            AppPreferences.setDistanceCoveredInMeters(DriverApp.getContext(), distance);
+            return true;
         } else {
-            AppPreferences.setPrevDistanceTime(DriverApp.getContext());
             return false;
         }
+//            } else {
+//                AppPreferences.setPrevDistanceTime(DriverApp.getContext());
+//                return false;
+//            }
+//        } else {
+//            AppPreferences.setPrevDistanceTime(DriverApp.getContext());
+//            return false;
+//        }
     }
 
     public static double calculateDistance(List<LatLng> mRouteLatLng) {
@@ -1174,4 +1173,7 @@ public class Utils {
                 / (1000 * 60 * 60 * 24));
     }
 
+    public static String getFormattedNumber(int number) {
+        return NumberFormat.getNumberInstance(Locale.US).format(number) + "";
+    }
 }

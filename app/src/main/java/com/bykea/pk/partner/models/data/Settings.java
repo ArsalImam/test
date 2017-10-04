@@ -14,6 +14,9 @@ public class Settings {
     private String videos;
     private String heatmap_refresh_timer;
 
+    @SerializedName("driver_app_version")
+    private String app_version;
+
     @SerializedName("trip_support_link_driver")
     private String trip_support_link;
 
@@ -25,6 +28,8 @@ public class Settings {
     private String amount_limit;
     @SerializedName("terms_driver")
     private String terms;
+    private String cih_range;
+
 
     public String getCancel_time() {
         return cancel_time;
@@ -84,5 +89,15 @@ public class Settings {
         return StringUtils.isNotBlank(terms) ? terms : "https://www.bykea.com/terms.html";
     }
 
+    public String getApp_version() {
+        return app_version;
+    }
 
+    public String getCih_range() {
+        return cih_range;
+    }
+
+    public void setCih_range(String cih_range) {
+        this.cih_range = cih_range;
+    }
 }

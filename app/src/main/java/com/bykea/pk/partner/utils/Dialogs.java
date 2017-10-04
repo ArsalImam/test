@@ -437,26 +437,6 @@ public enum Dialogs {
 
     }
 
-    public void showAdminNotificationDialog(final Context context, String msgToShow) {
-        dismissAdminNotiDialog();
-        mAdminNotifiationDialog = new Dialog(context, R.style.actionSheetTheme);
-        mAdminNotifiationDialog.setContentView(R.layout.admin_notification_dialog);
-
-        FontButton okIv = (FontButton) mAdminNotifiationDialog.findViewById(R.id.ivPositive);
-        FontTextView msg = (FontTextView) mAdminNotifiationDialog.findViewById(R.id.tvMessage);
-        msg.setText(msgToShow);
-        okIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppPreferences.setAdminMsg(context, StringUtils.EMPTY);
-                dismissAdminNotiDialog();
-            }
-        });
-        mAdminNotifiationDialog.setCancelable(false);
-        showAdminNotiDialog();
-    }
-
-
     public void showUpdateAppDialog(final Context context, String title, String message, final String link) {
         if (null == context) return;
         dismissDialog();

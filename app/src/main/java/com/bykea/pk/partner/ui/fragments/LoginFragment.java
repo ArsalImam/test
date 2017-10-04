@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -180,6 +181,7 @@ public class LoginFragment extends Fragment {
                             AppPreferences.setPilotData(getActivity(), loginResponse.getUser());
                             AppPreferences.setAvailableStatus(getActivity(), loginResponse.getUser().isAvailable());
                             AppPreferences.setCashInHands(mCurrentActivity, loginResponse.getUser().getCashInHand());
+//                            AppPreferences.setCashInHandsRange(mCurrentActivity, loginResponse.getUser().getCashInHandRange());
 //                            AppPreferences.setVerifiedStatus(getActivity(), loginResponse.getUser().isVerified());
                             AppPreferences.saveLoginStatus(getActivity(), true);
                             Instabug.setUserData(loginResponse.getUser().getFullName() + " " + loginResponse.getUser().getPhoneNo());

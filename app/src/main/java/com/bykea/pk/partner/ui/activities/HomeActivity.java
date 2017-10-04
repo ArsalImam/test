@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -112,7 +113,6 @@ public class HomeActivity extends BaseActivity {
         super.onResume();
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
         LocationService.setContext(HomeActivity.this);
-        ActivityStackManager.activities = 1;
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         AppPreferences.setProfileUpdated(mCurrentActivity, true);
     }
@@ -178,8 +178,14 @@ public class HomeActivity extends BaseActivity {
         UserRepository repository = new UserRepository();
         repository.requestSettings(mCurrentActivity, new UserDataHandler() {
             @Override
-            public void onGetSettingsResponse(SettingsResponse settingsResponse) {
-
+            public void onGetSettingsResponse(boolean isUpdated) {
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
+                if (currentFragment instanceof HomeFragment) {
+                    ((HomeFragment) currentFragment).getCurrentVersion();
+                    if (isUpdated) {
+                        ((HomeFragment) currentFragment).initRangeBar();
+                    }
+                }
             }
         });
 

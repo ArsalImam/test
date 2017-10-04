@@ -7,58 +7,63 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="@dimen/_3sdp"
+        android:orientation="horizontal"
         android:weightSum="5">
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvCihIndex1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="0"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_10sdp"
             app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvCihIndex2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="500"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_10sdp"
             app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvCihIndex3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="1,000"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_10sdp"
             app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvCihIndex4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="1,500"
-            app:fontName="roboto_bold.ttf"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_12sdp" />
+            android:textSize="@dimen/_10sdp"
+            app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvCihIndex5"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="2,000"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_10sdp"
             app:fontName="roboto_bold.ttf" />
 
     </LinearLayout>

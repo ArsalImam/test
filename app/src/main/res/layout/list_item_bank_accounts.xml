@@ -1,79 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/padding.small">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tv_nearBy"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/bankName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:maxWidth="@dimen/_210sdp"
-            android:text="MCb bank"
-            android:textAllCaps="true"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.medium"
-            android:textStyle="bold"
-            app:fontName="roboto_bold.ttf" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/tv_nearBy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center"
-            android:padding="@dimen/_10sdp"
-            android:text="قریبی"
-            android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/textsize.medium"
-            android:textStyle="bold"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-    </LinearLayout>
-
+        android:layout_alignParentRight="true"
+        android:paddingTop="@dimen/_5sdp"
+        android:paddingRight="@dimen/_15sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:paddingLeft="@dimen/_10sdp"
+        android:text="قریبی"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/textsize.medium"
+        android:textStyle="bold"
+        app:fontName="jameel_noori_nastaleeq.ttf" />
 
     <LinearLayout
+        android:id="@+id/text_lay"
+        android:padding="@dimen/_10sdp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/bankName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="@dimen/_210sdp"
+            android:text="MCb bank"
+            android:textAllCaps="true"
+            android:maxLines="1"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.medium"
+            android:textStyle="bold"
+            app:fontName="roboto_bold.ttf" />
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
             android:text="Account Title"
+            android:maxLines="1"
             android:textColor="@color/grey"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_light.ttf" />
+
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/accountTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="bykea tech"
+            android:maxLines="1"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_light.ttf" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:orientation="vertical">
-
         <com.bykea.pk.partner.widgets.FontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
             android:text="Account Number"
+            android:maxLines="1"
             android:textColor="@color/grey"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_light.ttf" />
@@ -86,12 +81,11 @@
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_light.ttf" />
-
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
+        android:layout_below="@+id/text_lay"
         android:layout_height="@dimen/_1sdp"
-        android:layout_marginTop="@dimen/margin.small"
         android:background="@color/divider" />
-</LinearLayout>
+</RelativeLayout>

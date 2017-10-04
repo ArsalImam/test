@@ -1,51 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="250dp"
+    android:layout_width="@dimen/_250sdp"
     android:layout_height="wrap_content"
     android:layout_marginBottom="15dp"
+    android:background="@color/white"
     android:gravity="center"
-    android:background="@drawable/country_dialog_bg"
     android:orientation="vertical">
 
 
     <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:minHeight="@dimen/_60sdp"
         android:padding="@dimen/_8sdp"
         android:text="Notification"
-        android:gravity="center"
-        android:textColor="@color/colorAccent"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
         android:textSize="@dimen/_20sdp"
-        android:layout_gravity="center"/>
+        app:fontName="roboto_bold.ttf" />
 
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/tvMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text=""
-            android:textSize="@dimen/_18sdp"
-            android:padding="@dimen/_8sdp"
-            android:textColor="@color/textColorPrimary" />
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:minHeight="@dimen/_100sdp"
+        android:padding="@dimen/_8sdp"
+        android:text="Rs. 40"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/_18sdp"
+        app:fontName="roboto_regular.ttf" />
 
 
-        <com.bykea.pk.partner.widgets.FontButton
-            android:id="@+id/ivPositive"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/button_green"
-            android:text="OK"
-            android:textColor="@color/white" />
-    </RelativeLayout>
+    <com.bykea.pk.partner.widgets.FontButton
+        android:id="@+id/ivPositive"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_38sdp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/_24sdp"
+        android:background="@drawable/button_green"
+        android:text="OK"
+        android:textColor="@color/white" />
 
 </LinearLayout>

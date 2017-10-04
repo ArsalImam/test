@@ -114,7 +114,7 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     @Override
-    public void onGetSettingsResponse(SettingsResponse settingsResponse) {
+    public void onGetSettingsResponse(boolean isUpdated) {
 
     }
 

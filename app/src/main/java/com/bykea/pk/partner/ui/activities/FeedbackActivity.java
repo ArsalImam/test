@@ -1,14 +1,11 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.RatingBar;
 
@@ -19,12 +16,10 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
-import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
@@ -78,7 +73,7 @@ public class FeedbackActivity extends BaseActivity {
     private FeedbackActivity mCurrentActivity;
     private String totalCharges;
     private int TOP_UP_LIMIT, AMOUNT_LIMIT;
-    private boolean isRideType;
+    private boolean isSendType, isBringType;
 
 
     private MixpanelAPI mixpanelAPI;
@@ -102,7 +97,7 @@ public class FeedbackActivity extends BaseActivity {
     void afterTextChanged(Editable editable) {
         if (StringUtils.isNotBlank(editable)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
-                if (isRideType && Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
+                if (Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
                     receivedAmountEt.setError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
                     receivedAmountEt.requestFocus();
                 } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
@@ -119,11 +114,22 @@ public class FeedbackActivity extends BaseActivity {
         mCurrentActivity = this;
 
         NormalCallData callData = AppPreferences.getCallData(mCurrentActivity);
-        isRideType = StringUtils.containsIgnoreCase(callData.getCallType(), "Ride");
+        isSendType = StringUtils.containsIgnoreCase(callData.getCallType(), "Send");
+        isBringType = StringUtils.containsIgnoreCase(callData.getCallType(), "Bring");
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
         totalCharges = callData.getTotalFare();
         TOP_UP_LIMIT = AppPreferences.getSettings(mCurrentActivity).getSettings().getTop_up_limit();
+        if (StringUtils.isNotBlank(callData.getCodAmountNotFormatted())) {
+            String amount = callData.getCodAmountNotFormatted();
+            if (isSendType) {
+                if (callData.isCod()) {
+                    TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
+                }
+            } else if (!isBringType) {
+                TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
+            }
+        }
         AMOUNT_LIMIT = AppPreferences.getSettings(mCurrentActivity).getSettings().getAmount_limit();
         totalAmountTv.setText("Rs. " + totalCharges);
         startAddressTv.setText(callData.getStartAddress());
@@ -224,6 +230,7 @@ public class FeedbackActivity extends BaseActivity {
                     Dialogs.INSTANCE.dismissDialog();
                     Dialogs.INSTANCE.showToast(mCurrentActivity, feedbackResponse.getMessage());
                     Utils.setCallIncomingState(mCurrentActivity);
+                    AppPreferences.setWalletAmountIncreased(getApplicationContext(), !feedbackResponse.isAvailable());
                     AppPreferences.setAvailableStatus(mCurrentActivity, feedbackResponse.isAvailable());
                     ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
                     finish();
@@ -264,7 +271,7 @@ public class FeedbackActivity extends BaseActivity {
             receivedAmountEt.setError("Amount can't be less than Total Charges");
             receivedAmountEt.requestFocus();
             return false;
-        } else if (isRideType && totalCharges.matches(Constants.REG_EX_DIGIT)
+        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
             receivedAmountEt.setError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
             receivedAmountEt.requestFocus();

@@ -191,7 +191,6 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         setContentView(R.layout.activity_job);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
-        ActivityStackManager.activities = 1;
         mCurrentActivity = this;
         dataRepository = new UserRepository();
         ButterKnife.bind(this);
@@ -563,7 +562,6 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         AppPreferences.setJobActivityOnForeground(mCurrentActivity, false);
         AppPreferences.setLastDirectionsApiCallTime(mCurrentActivity, 0);
         // Unregister here due to some reasons.
-        ActivityStackManager.getInstance(mCurrentActivity).stopLocationService("JobActivity");
         unregisterReceiver(locationReceiver);
         unregisterReceiver(cancelRideReceiver);
         unregisterReceiver(networkChangeListener);
@@ -1451,7 +1449,9 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                         }
                         Utils.appToast(mCurrentActivity, cancelRideResponse.getMessage());
                         Utils.setCallIncomingState(mCurrentActivity);
+                        AppPreferences.setWalletAmountIncreased(getApplicationContext(), !cancelRideResponse.isAvailable());
                         AppPreferences.setAvailableStatus(mCurrentActivity, cancelRideResponse.isAvailable());
+
                         /*dataRepository.requestLocationUpdate(mCurrentActivity);*/ // Required to reduce availability status delay
                         ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
                         finish();
@@ -1587,11 +1587,12 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             if (response.getMessage().equalsIgnoreCase("Trip Not Found")) {
                                 cancelByPassenger(false);
                             } else {
-                                AppPreferences.setCallData(mCurrentActivity, response.getData());
-                                AppPreferences.setTripStatus(mCurrentActivity, response.getData().getStatus());
-                                callData = response.getData();
-                                updateDropOff();
-
+                                if (shouldUpdateTripData(response.getData().getStatus())) {
+                                    AppPreferences.setCallData(mCurrentActivity, response.getData());
+                                    AppPreferences.setTripStatus(mCurrentActivity, response.getData().getStatus());
+                                    callData = response.getData();
+                                    updateDropOff();
+                                }
                             }
                         } catch (NullPointerException ignored) {
 
@@ -1601,5 +1602,17 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
             }
         }
     };
+
+    private boolean shouldUpdateTripData(String tripStatusRunningApi) {
+        if (callData == null) {
+            return true;
+        } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)
+                && (tripStatusRunningApi.equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
+                || tripStatusRunningApi.equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 }

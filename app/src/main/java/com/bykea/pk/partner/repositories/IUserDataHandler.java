@@ -63,13 +63,14 @@ public interface IUserDataHandler {
     void onGetServiceTypes(ServiceTypeResponse serviceTypeResponse);
 
     void onGetTripHistory(TripHistoryResponse tripHistoryResponse);
+
     void onGetMissedTripHistory(TripMissedHistoryResponse tripHistoryResponse);
 
     void onReverseGeocode(GeocoderApi response);
 
     void onUpdateStatus(PilotStatusResponse pilotStatusResponse);
 
-    void onGetSettingsResponse(SettingsResponse settingsResponse);
+    void onGetSettingsResponse(boolean isUpdated);
 
     void getHeatMap(HeatMapResponse heatMapResponse);
 
@@ -111,15 +112,21 @@ public interface IUserDataHandler {
     void onGetConversationChat(ConversationChatResponse response);
 
     void onGetConversationId(GetConversationIdResponse response);
+
     void onAck(String msg);
 
     void onUpdateConversationStatus(UpdateConversationStatusResponse response);
+
     void onGetProfileResponse(GetProfileResponse response);
+
     void onDriverStatsResponse(DriverStatsResponse response);
+
     void onUpdateDropOff(UpdateDropOffResponse response);
 
     void onCommonResponse(CommonResponse response);
+
     void onChangePinResponse(ChangePinResponse response);
+
     void onCitiesResponse(GetCitiesResponse response);
 
 

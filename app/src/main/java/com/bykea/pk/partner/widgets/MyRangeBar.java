@@ -1,16 +1,12 @@
 package com.bykea.pk.partner.widgets;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RadialGradient;
 import android.graphics.Region;
-import android.graphics.Shader;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
@@ -19,13 +15,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 
 import java.util.concurrent.TimeUnit;
 
@@ -85,6 +78,8 @@ public class MyRangeBar extends View {
     private float strokeWidth;
     private float filledStrokeWidth;
     private int filledStrokeColor;
+    private IViewTouchEvents mRangeBarTouch;
+
 
     public MyRangeBar(Context context) {
         this(context, null);
@@ -92,6 +87,10 @@ public class MyRangeBar extends View {
 
     public MyRangeBar(Context context, AttributeSet attrs) {
         this(context, attrs, -1);
+    }
+
+    public void init(IViewTouchEvents myRangeBarTouchEvent) {
+        mRangeBarTouch = myRangeBarTouchEvent;
     }
 
     @SuppressWarnings("ResourceType")
@@ -465,11 +464,13 @@ public class MyRangeBar extends View {
             final int action = event.getActionMasked();
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
+                    if (mRangeBarTouch != null) {
+                        mRangeBarTouch.onTouchDown();
+                    }
                     gotSlot = isInSelectedSlot(x, y);
                     if (!gotSlot) {
                         moveToIndex(y, x);
                     }
-
                     downX = x;
                     downY = y;
                     break;
@@ -484,6 +485,9 @@ public class MyRangeBar extends View {
                     currentSlidingX = x;
                     currentSlidingY = y;
                     updateCurrentIndex();
+                    if (mRangeBarTouch != null) {
+                        mRangeBarTouch.onTouchUp();
+                    }
                     //listener.onSlide(currentIndex);
                     //}
                     break;

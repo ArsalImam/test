@@ -10,7 +10,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -31,6 +30,7 @@ import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -62,9 +62,6 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
 
@@ -88,6 +85,16 @@ public class HomeFragment extends Fragment {
     ImageView statusCheck;
     @Bind(R.id.myRangeBar)
     MyRangeBar myRangeBar;
+    @Bind(R.id.tvCihIndex1)
+    FontTextView tvCihIndex1;
+    @Bind(R.id.tvCihIndex2)
+    FontTextView tvCihIndex2;
+    @Bind(R.id.tvCihIndex3)
+    FontTextView tvCihIndex3;
+    @Bind(R.id.tvCihIndex4)
+    FontTextView tvCihIndex4;
+    @Bind(R.id.tvCihIndex5)
+    FontTextView tvCihIndex5;
 
     private UserRepository repository;
     private HomeActivity mCurrentActivity;
@@ -99,7 +106,7 @@ public class HomeFragment extends Fragment {
     private Location mPrevLocToShow;
     private String currentVersion, latestVersion;
     private boolean isScreenInFront;
-    int[] cashInHand = {0, 500, 1000, 1500, 2000};
+    private int[] cashInHand;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -131,10 +138,18 @@ public class HomeFragment extends Fragment {
         initRangeBar();
     }
 
-    private void initRangeBar() {
+    public void initRangeBar() {
+        myRangeBar.init(mRangeBarTouch);
         int currentIndex = 0;
+        cashInHand = AppPreferences.getCashInHandsRange(mCurrentActivity);
+        tvCihIndex1.setText(Utils.getFormattedNumber(cashInHand[0]));
+        tvCihIndex2.setText(Utils.getFormattedNumber(cashInHand[1]));
+        tvCihIndex3.setText(Utils.getFormattedNumber(cashInHand[2]));
+        tvCihIndex4.setText(Utils.getFormattedNumber(cashInHand[3]));
+        tvCihIndex5.setText(Utils.getFormattedNumber(cashInHand[4]));
+        int length = cashInHand.length;
         int value = AppPreferences.getCashInHands(mCurrentActivity);
-        for (int i = 0; i < cashInHand.length; i++) {
+        for (int i = 0; i < length; i++) {
             if (cashInHand[i] == value) {
                 currentIndex = i;
                 break;
@@ -152,10 +167,19 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void initViews() {
-        if (Utils.isAppVersionCheckRequired(mCurrentActivity)) {
-            getCurrentVersion();
+    private IViewTouchEvents mRangeBarTouch = new IViewTouchEvents() {
+        @Override
+        public void onTouchDown() {
+            statusCheck.setClickable(false);
         }
+
+        @Override
+        public void onTouchUp() {
+            statusCheck.setClickable(true);
+        }
+    };
+
+    private void initViews() {
         mCurrentActivity.setPilotData(AppPreferences.getPilotData(mCurrentActivity));
         if (Utils.isLicenceExpired(mCurrentActivity.getPilotData().getLicenseExpiry())) {
             onUnauthorizedLicenceExpire();
@@ -436,7 +460,6 @@ public class HomeFragment extends Fragment {
         AppPreferences.saveLoginStatus(mCurrentActivity, false);
         AppPreferences.setPilotData(mCurrentActivity, null);
         HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.activities = 0;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
             @Override
             public void onCallBack(String msg) {
@@ -454,7 +477,6 @@ public class HomeFragment extends Fragment {
         AppPreferences.saveLoginStatus(mCurrentActivity, false);
         AppPreferences.setPilotData(mCurrentActivity, null);
         HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.activities = 0;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
             @Override
             public void onCallBack(String msg) {
@@ -677,69 +699,33 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void getCurrentVersion() {
+    public void getCurrentVersion() {
         if (mCurrentActivity != null && getView() != null) {
             PackageManager pm = mCurrentActivity.getPackageManager();
-            PackageInfo pInfo = null;
+            PackageInfo pInfo;
 
             try {
                 pInfo = pm.getPackageInfo(mCurrentActivity.getPackageName(), 0);
                 currentVersion = pInfo.versionName;
-                new GetLatestVersion().execute();
+                if (AppPreferences.getSettings(mCurrentActivity) != null
+                        && AppPreferences.getSettings(mCurrentActivity).getSettings() != null) {
+                    latestVersion = AppPreferences.getSettings(mCurrentActivity).getSettings().getApp_version();
+                }
+                if (StringUtils.isNotBlank(latestVersion) && StringUtils.isNotBlank(currentVersion)) {
+                    Utils.redLog("VERSION", "Current: " + currentVersion + " Play Store: " + latestVersion);
+                    if (!currentVersion.equalsIgnoreCase(latestVersion)) {
+                        if (!Dialogs.INSTANCE.isShowing()) {
+                            Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "Update App", "Latest Version Of Bykea is " +
+                                    "available on Play Store. Please Update the App for better Service. Thank You !", "https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
+
+                        }
+                    }
+                }
             } catch (PackageManager.NameNotFoundException e1) {
                 e1.printStackTrace();
             }
 
         }
 
-    }
-
-
-    private class GetLatestVersion extends AsyncTask<String, String, JSONObject> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected JSONObject doInBackground(String... params) {
-
-            try {
-//It retrieves the latest version by scraping the content of current version from play store at runtime
-                Document doc = Jsoup.connect("https://play.google.com/store/apps/details?id=com.bykea.pk.partner").get();
-                latestVersion = doc.getElementsByAttributeValue
-                        ("itemprop", "softwareVersion").first().text();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-
-            }
-
-            return new JSONObject();
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            if (mCurrentActivity != null && getView() != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (latestVersion != null) {
-                            Utils.redLog("VERSION", "Current: " + currentVersion + " Play Store: " + latestVersion);
-                            if (!currentVersion.equalsIgnoreCase(latestVersion)) {
-                                if (!Dialogs.INSTANCE.isShowing()) {
-                                    Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "Update App", "Latest Version Of Bykea is " +
-                                            "available on Play Store. Please Update the App for better Service. Thank You !", "https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
-                                }
-                            } else {
-                                AppPreferences.setVersionCheckTime(mCurrentActivity, System.currentTimeMillis());
-                            }
-                        }
-                    }
-                });
-            }
-            super.onPostExecute(jsonObject);
-        }
     }
 }

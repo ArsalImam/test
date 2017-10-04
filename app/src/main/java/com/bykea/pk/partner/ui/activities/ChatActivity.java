@@ -311,7 +311,6 @@ public class ChatActivity extends BaseActivity {
         if (chatAdapter != null) {
             chatAdapter.stopPlayingAudio();
         }
-        ActivityStackManager.getInstance(mCurrentActivity).stopLocationService("ChatActivity");
         super.onDestroy();
     }
 

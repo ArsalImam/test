@@ -39,15 +39,10 @@ import butterknife.OnClick;
 
 
 public class CallingActivity extends BaseActivity {
-
-    /*    @Bind(R.id.callerIv)
-        CircularImageView callerIv;*/
     @Bind(R.id.counterTv)
     FontTextView counterTv;
     @Bind(R.id.callerNameTv)
-    FontTextView callerNameTv;/*
-    @Bind(R.id.ratingValueTv)
-    FontTextView ratingValueTv;*/
+    FontTextView callerNameTv;
     @Bind(R.id.startAddressTv)
     FontTextView startAddressTv;
     @Bind(R.id.rejectCallBtn)
@@ -55,9 +50,7 @@ public class CallingActivity extends BaseActivity {
     @Bind(R.id.acceptCallBtn)
     FontTextView acceptCallBtn;
     @Bind(R.id.donut_progress)
-    DonutProgress donutProgress;/*
-    @Bind(R.id.callerRb)
-    RatingBar callerRb;*/
+    DonutProgress donutProgress;
     @Bind(R.id.distanceTv)
     FontTextView distanceTv;
     @Bind(R.id.timeTv)

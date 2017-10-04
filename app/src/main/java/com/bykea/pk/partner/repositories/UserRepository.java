@@ -456,14 +456,9 @@ public class UserRepository {
             totalTime = (int) (diff / (1000));
         }
         try {
-            jsonObject.put("driver_id", AppPreferences.getDriverId(context));
-            jsonObject.put("did", AppPreferences.getDriverId(context));
             jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("pid", AppPreferences.getCallData(context).getPassId());
             jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("trips_id", AppPreferences.getCallData(context).getTripId());
             jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("total_time", totalTime + "");
 
             String endLatString = AppPreferences.getLatitude(context) + "";
             String endLngString = AppPreferences.getLongitude(context) + "";
@@ -475,8 +470,6 @@ public class UserRepository {
                     endLngString = lastLng;
                 }
             }
-            jsonObject.put("endlatitude", endLatString);
-            jsonObject.put("endlongitude", endLngString);
 
             jsonObject.put("lat", endLatString);
             jsonObject.put("lng", endLngString);
@@ -498,6 +491,17 @@ public class UserRepository {
             }
             latLngList.add(endLatLng);
             jsonObject.put("routes", new Gson().toJson(latLngList));
+
+
+            /*//TODO remove below redundant data after api changes
+            jsonObject.put("total_time", totalTime + "");
+            jsonObject.put("driver_id", AppPreferences.getDriverId(context));
+            jsonObject.put("did", AppPreferences.getDriverId(context));
+            jsonObject.put("pid", AppPreferences.getCallData(context).getPassId());
+            jsonObject.put("trips_id", AppPreferences.getCallData(context).getTripId());
+            jsonObject.put("endlatitude", endLatString);
+            jsonObject.put("endlongitude", endLngString);*/
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -726,6 +730,12 @@ public class UserRepository {
                     if (settingsResponse.getData() != null && settingsResponse.getData().getSettings() != null) {
                         AppPreferences.setSettingsVersion(mContext, settingsResponse.getSetting_version());
                         AppPreferences.saveSettingsData(mContext, settingsResponse.getData());
+                        if (settingsResponse.getData().getSettings().getCih_range() != null) {
+                            AppPreferences.setCashInHandsRange(mContext, settingsResponse.getData().getSettings().getCih_range());
+                        }
+                        mUserCallback.onGetSettingsResponse(true);
+                    } else {
+                        mUserCallback.onGetSettingsResponse(false);
                     }
                 }
             } else if (object instanceof GetCitiesResponse) {
@@ -770,6 +780,7 @@ public class UserRepository {
             } else if (object instanceof VerifyNumberResponse) {
                 mUserCallback.onNumberVerification((VerifyNumberResponse) object);
             } else if (object instanceof AcceptCallResponse) {
+                WebIORequestHandler.getInstance().registerChatListener();
                 mUserCallback.onAcceptCall((AcceptCallResponse) object);
             } else if (object instanceof RejectCallResponse) {
                 mUserCallback.onRejectCall((RejectCallResponse) object);
@@ -778,6 +789,7 @@ public class UserRepository {
             } else if (object instanceof BeginRideResponse) {
                 mUserCallback.onBeginRide((BeginRideResponse) object);
             } else if (object instanceof EndRideResponse) {
+                WebIORequestHandler.getInstance().unRegisterChatListener();
                 mUserCallback.onEndRide((EndRideResponse) object);
             } else if (object instanceof FeedbackResponse) {
                 mUserCallback.onFeedback((FeedbackResponse) object);

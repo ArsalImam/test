@@ -56,6 +56,7 @@ public class LocationService extends Service {
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
+    private boolean shouldCallLocApi = true;
 
     private PowerManager.WakeLock wakeLock;
     private EventBus mBus = EventBus.getDefault();
@@ -257,31 +258,37 @@ public class LocationService extends Service {
     };
 
     public void updateTripRouteList(double lat, double lon) {
-        if (AppPreferences.getTripStatus(mContext).equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+        Utils.redLog("TripStatus", AppPreferences.getTripStatus(mContext));
+        if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus(mContext))) {
             synchronized (this) {
                 String lastLat = AppPreferences.getPrevDistanceLatitude(mContext);
                 String lastLng = AppPreferences.getPrevDistanceLongitude(mContext);
                 if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
                     float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
-                    if (Utils.isValidLocation(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), distance)) {
-                        AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
-                        AppPreferences.setPrevDistanceLatLng(mContext, lat, lon);
+                    if (Utils.isValidLocation(/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), */distance)) {
+                        addLatLng(lat, lon, true);
                         if (distance > 1000) {
                             if (!isDirectionApiRunning) {
                                 getRouteLatLng(lat, lon, lastLat, lastLng);
                             }
                         }
+                    } else {
+                        addLatLng(Double.parseDouble(lastLat), Double.parseDouble(lastLng), false);
                     }
                 } else {
-                    AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
-                    AppPreferences.setPrevDistanceLatLng(mContext, lat, lon);
+                    addLatLng(lat, lon, true);
                 }
             }
         }
     }
 
+    private void addLatLng(double lat, double lon, boolean updatePrevTime) {
+        AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
+        AppPreferences.setPrevDistanceLatLng(mContext, lat, lon, updatePrevTime);
+    }
 
-    private CountDownTimer mCountDownTimer = new CountDownTimer(20000, 4990) {
+
+    private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {
         @Override
         public void onTick(long millisUntilFinished) {
 
@@ -307,8 +314,15 @@ public class LocationService extends Service {
                     boolean isMock = AppPreferences.isFromMockLocation(mContext);
                     if (lat != 0.0 && lon != 0.0 && Utils.isGpsEnable(mContext)
                             && !isMock && Connectivity.isConnectedFast(mContext)) {
-                        mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                         updateTripRouteList(lat, lon);
+
+                        //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
+                        if (shouldCallLocApi) {
+                            shouldCallLocApi = false;
+                            mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                        } else {
+                            shouldCallLocApi = true;
+                        }
                     }
                 }
             }
