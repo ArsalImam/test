@@ -1179,4 +1179,11 @@ public class Utils {
     public static String getFormattedNumber(int number) {
         return NumberFormat.getNumberInstance(Locale.US).format(number) + "";
     }
+
+    public static void openLinkInBrowser(String link, Context context) {
+        if (StringUtils.isNotBlank(link)) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+            context.startActivity(browserIntent);
+        }
+    }
 }

@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
@@ -335,7 +334,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    private void showMessageNotification(NotificationData notificationData) {
+    private void showMessageNotification(final NotificationData notificationData) {
         dismissNotificationDialog();
         notificationDialog = new Dialog(mCurrentActivity, R.style.actionSheetTheme);
         notificationDialog.setContentView(R.layout.admin_notification_dialog);
@@ -344,11 +343,13 @@ public class BaseActivity extends AppCompatActivity {
         msg.setText(notificationData.getMessage());
         title.setText(notificationData.getTitle());
         FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
+        if (StringUtils.isNotBlank(notificationData.getLaunchUrl())) {
+            okIv.setText("VIEW DETAILS");
+        }
         okIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppPreferences.setAdminMsg(mCurrentActivity, null);
-                dismissNotificationDialog();
+                onNotificationOkClick(notificationData);
             }
         });
         notificationDialog.setCancelable(false);
@@ -361,11 +362,13 @@ public class BaseActivity extends AppCompatActivity {
         notificationDialog.setContentView(R.layout.admin_notification_dialog_image);
         final ImageView imageView = (ImageView) notificationDialog.findViewById(R.id.ivNotification);
         FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
+        if (StringUtils.isNotBlank(notificationData.getLaunchUrl())) {
+            okIv.setText("VIEW DETAILS");
+        }
         okIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppPreferences.setAdminMsg(mCurrentActivity, null);
-                dismissNotificationDialog();
+                onNotificationOkClick(notificationData);
             }
         });
         notificationDialog.setCancelable(false);
@@ -390,6 +393,12 @@ public class BaseActivity extends AppCompatActivity {
         };
         imageView.setTag(target);
         Picasso.with(mCurrentActivity).load(notificationData.getImageLink()).into(target);
+    }
+
+    private void onNotificationOkClick(NotificationData notificationData) {
+        Utils.openLinkInBrowser(notificationData.getLaunchUrl(), mCurrentActivity);
+        AppPreferences.setAdminMsg(mCurrentActivity, null);
+        dismissNotificationDialog();
     }
 
     private void showNotificationDialog() {

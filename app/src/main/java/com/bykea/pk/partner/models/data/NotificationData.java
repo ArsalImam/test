@@ -12,6 +12,7 @@ public class NotificationData {
     private String message;
     private String title;
     private String imageLink;
+    private String launchUrl;
 
     public boolean isActive() {
         return isActive;
@@ -39,5 +40,13 @@ public class NotificationData {
 
     public void setImageLink(String imageLink) {
         this.imageLink = imageLink;
+    }
+
+    public String getLaunchUrl() {
+        return launchUrl;
+    }
+
+    public void setLaunchUrl(String launchUrl) {
+        this.launchUrl = launchUrl;
     }
 }

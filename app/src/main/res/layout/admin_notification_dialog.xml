@@ -24,16 +24,14 @@
         android:textSize="@dimen/_20sdp"
         app:fontName="roboto_bold.ttf" />
 
-
     <com.bykea.pk.partner.widgets.FontTextView
         android:id="@+id/tvMessage"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
+        android:gravity="top|start"
         android:minHeight="@dimen/_100sdp"
-        android:padding="@dimen/_8sdp"
-        android:text="Rs. 40"
+        android:padding="@dimen/_16sdp"
         android:textColor="@color/textColorPrimary"
         android:textSize="@dimen/_18sdp"
         app:fontName="roboto_regular.ttf" />

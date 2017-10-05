@@ -115,6 +115,9 @@ public class DriverApp extends MultiDexApplication {
                 NotificationData notificationData = new NotificationData();
                 notificationData.setTitle(notification.payload.title);
                 notificationData.setMessage(notification.payload.body);
+                if (StringUtils.isNotBlank(notification.payload.launchURL)) {
+                    notificationData.setLaunchUrl(notification.payload.launchURL);
+                }
                 if (StringUtils.isNotBlank(notification.payload.bigPicture)) {
                     notificationData.setImageLink(notification.payload.bigPicture);
                 }

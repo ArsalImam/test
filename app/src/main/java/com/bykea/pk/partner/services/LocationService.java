@@ -113,23 +113,9 @@ public class LocationService extends Service {
         if (mCountDownTimer != null) {
             mCountDownTimer.cancel();
         }
-//        registerAlarm();
-//        Utils.appToastDebug(getApplicationContext(), "Location service Destroyed..");
         Utils.redLog("BYKEA LOCATION SERVICE ", "ON DESTROY CALLED...");
-
     }
 
-    private void registerAlarm() {
-        if (!AppPreferences.isStopServiceCalled(mContext)) {
-            AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent intentReceiver = new Intent(mContext, AlarmReceiver.class);
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, 0, intentReceiver, 0);
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + (4 * 1000)), alarmIntent);
-        } else {
-            AppPreferences.setStopService(mContext, false);
-        }
-
-    }
 
     private void init() {
         mUserRepository = new UserRepository();
@@ -312,14 +298,14 @@ public class LocationService extends Service {
                     double lat = AppPreferences.getLatitude(mContext);
                     double lon = AppPreferences.getLongitude(mContext);
                     boolean isMock = AppPreferences.isFromMockLocation(mContext);
-                    if (lat != 0.0 && lon != 0.0 && Utils.isGpsEnable(mContext)
-                            && !isMock && Connectivity.isConnectedFast(mContext)) {
+                    if (lat != 0.0 && lon != 0.0 && !isMock) {
                         updateTripRouteList(lat, lon);
-
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;
-                            mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                            }
                         } else {
                             shouldCallLocApi = true;
                         }
