@@ -140,6 +140,15 @@
         </service>
         <!-- ./Firebase Notifications -->
 
+
+        <service
+            android:name=".services.OneSignalNotificationExtenderService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.onesignal.NotificationExtender" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".ui.activities.ChatActivity"
             android:launchMode="singleTask"

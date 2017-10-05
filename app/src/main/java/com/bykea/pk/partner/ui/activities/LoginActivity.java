@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.bykea.pk.partner.ui.fragments.LoginFragment;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
@@ -52,6 +53,7 @@ public class LoginActivity extends BaseActivity {
                 R.anim.fade_out);
         fragmentTransaction.replace(R.id.containerView, mainFragment, null);
         fragmentTransaction.commit();
+        ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).restartLocationService();
         getLocation();
     }
 

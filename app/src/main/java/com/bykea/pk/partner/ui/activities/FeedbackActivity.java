@@ -195,6 +195,8 @@ public class FeedbackActivity extends BaseActivity {
                 properties.put("KM", callData.getDistanceCovered());
                 properties.put("type", callData.getCallType());
                 properties.put("timestamp", Utils.getIsoDate());
+                properties.put("City", AppPreferences.getPilotData(mCurrentActivity).getCity().getName());
+
 
                 //Firebase can have max 10 TEXT properties
                 Utils.logFireBaseEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_FARE.replace("_R_", callData.getCallType()), properties);

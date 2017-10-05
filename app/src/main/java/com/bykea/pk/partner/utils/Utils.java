@@ -233,7 +233,7 @@ public class Utils {
         AppPreferences.setTripStatus(context, "");
         AppPreferences.saveLoginStatus(context, false);
         AppPreferences.setPilotData(context, null);
-        AppPreferences.clear(context);
+//        AppPreferences.clear(context);
         if (StringUtils.isBlank(AppPreferences.getRegId(context))
                 && StringUtils.isNotBlank(FirebaseInstanceId.getInstance().getToken())) {
             AppPreferences.setRegId(context, FirebaseInstanceId.getInstance().getToken());

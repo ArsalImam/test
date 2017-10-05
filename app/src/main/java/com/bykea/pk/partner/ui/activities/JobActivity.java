@@ -1439,6 +1439,8 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             data.put("DriverName", AppPreferences.getPilotData(mCurrentActivity).getFullName());
                             data.put("CancelBeforeAcceptance", "No");
                             data.put("CancelReason", cancelReason);
+                            data.put("City", AppPreferences.getPilotData(mCurrentActivity).getCity().getName());
+
                             mixpanelAPI.identify(callData.getPassId());
                             mixpanelAPI.getPeople().identify(callData.getPassId());
                             mixpanelAPI.track(Constants.CANCEL_TRIP, data);

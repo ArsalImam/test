@@ -86,11 +86,11 @@ public class SplashActivity extends BaseActivity {
                                 AppPreferences.setRegId(mCurrentActivity, FirebaseInstanceId.getInstance().getToken());
                             }
                             Utils.infoLog("SPLASH FCM TOKEN : ", AppPreferences.getRegId(mCurrentActivity));
+                            ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).startLocationService();
                             if (AppPreferences.isLoggedIn(mCurrentActivity)) {
                                 // Connect socket
                                 ((DriverApp) getApplicationContext()).connect("Splash Activity");
                                 WebIORequestHandler.getInstance().setContext(mCurrentActivity);
-                                ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).startLocationService();
                                 if (AppPreferences.isOnTrip(mCurrentActivity)) {
                                     repository.requestRunningTrip(mCurrentActivity, handler);
                                 } else {
