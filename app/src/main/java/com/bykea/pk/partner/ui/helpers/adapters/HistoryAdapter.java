@@ -55,6 +55,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         if (data.getStatus().equalsIgnoreCase("completed")) {
             if (data.getInvoice() != null && StringUtils.isNotBlank(data.getInvoice().getTotal())) {
                 holder.totalAmountTv.setText("Rs. " + data.getInvoice().getTotal());
+            }else{
+                holder.totalAmountTv.setText("Rs. N/A");
             }
             holder.status.setText("Completed");
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
@@ -83,13 +85,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         } else if (data.getStatus().equalsIgnoreCase("feedback")) {
             if (data.getInvoice() != null && StringUtils.isNotBlank(data.getInvoice().getTotal())) {
                 holder.totalAmountTv.setText("Rs. " + data.getInvoice().getTotal());
+            }else {
+                holder.totalAmountTv.setText("Rs. N/A");
             }
             holder.status.setText("Completed");
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
             holder.totalAmountTv.setVisibility(View.VISIBLE);
             holder.dateTv.setText(Utils.getFormattedDate(data.getFinishTime(), CURRENT_DATE_FORMAT,
                     REQUIRED_DATE_FORMAT));
-
         }
     }
 

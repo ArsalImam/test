@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DashedLine;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -78,7 +79,7 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
     private void initViews() {
         if (null != getIntent()) {
             try {
-                data = (TripHistoryData) getIntent().getSerializableExtra("TRIP_DETAILS");
+                data = (TripHistoryData) getIntent().getSerializableExtra(Constants.Extras.TRIP_DETAILS);
                 setBackNavigation();
                 setToolbarTitle(data.getTripNo().toUpperCase());
                 hideToolbarLogo();

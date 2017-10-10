@@ -91,52 +91,13 @@ public class TripHistoryFragment extends Fragment {
         mHistoryAdapter.setMyOnItemClickListener(new HistoryAdapter.MyOnItemClickListener() {
             @Override
             public void onItemClickListener(int position, View view, TripHistoryData historyData) {
-
-                if (!historyData.getStatus().equalsIgnoreCase("cancelled")) {
-                    /*Intent intent = new Intent(mCurrentActivity, HistoryDetailActivity.class);
-                    intent.putExtra("historyData", historyData);
-                    startActivity(intent);*/
-
-                    Intent intent = new Intent(mCurrentActivity, HistoryDetailActivity.class);
-                    intent.putExtra("status", historyData.getStatus());
-                    intent.putExtra("trip_no", historyData.getTripNo());
-                    intent.putExtra("saddress", historyData.getStartAddress());
-                    intent.putExtra("eaddress", historyData.getEndAddress());
-                    intent.putExtra("name", historyData.getPassenger() != null && StringUtils.isNotBlank(historyData.getPassenger().getName())
-                            ? historyData.getPassenger().getName() : "N/A");
-                    intent.putExtra("time", historyData.getAcceptTime());
-                    if (historyData.getInvoice() != null) {
-                        intent.putExtra("total_distance", verifyData(historyData.getInvoice().getKm()));
-                        intent.putExtra("total_time", verifyData(historyData.getInvoice().getMinutes()));
-                        intent.putExtra("amount", verifyData(historyData.getInvoice().getTripCharges()));
-                        intent.putExtra("receivedAmount", verifyData(historyData.getInvoice().getTotal()));
-                        intent.putExtra("basefare", verifyData(historyData.getInvoice().getBaseFare()));
-                        intent.putExtra("pricePerMin", verifyData(historyData.getInvoice().getPricePerMin()));
-                        intent.putExtra("pricePerKm", verifyData(historyData.getInvoice().getPricePerKm()));
-                        intent.putExtra("promo", verifyData(historyData.getInvoice().getPromo_deduction()));
-                        intent.putExtra("wallet", verifyData(historyData.getInvoice().getWallet_deduction()));
-                        intent.putExtra("start_balance", verifyData(historyData.getInvoice().getStart_balance()));
+                if(historyData.getInvoice() != null){
+                    if (!historyData.getStatus().equalsIgnoreCase("cancelled")) {
+                        ActivityStackManager.getInstance(mCurrentActivity).startCompletedDetailsActivity(historyData);
+                        HomeActivity.visibleFragmentNumber = 2;
                     } else {
-                        return; // When there is no invoice data there's no need to show details. The data for this Trip is already invalid.
+                        ActivityStackManager.getInstance(mCurrentActivity).startCancelDetailsActivity(historyData);
                     }
-
-                    intent.putExtra("plate", historyData.getDriver().getPlate_no());
-                    intent.putExtra("type", historyData.getTrip_type());
-                    if (historyData.getDriverRating() != null && StringUtils.isNotBlank(historyData.getDriverRating().getRate())) {
-                        intent.putExtra("driverRating", historyData.getDriverRating().getRate());
-                    }
-                    if (historyData.getPassRating() != null && StringUtils.isNotBlank(historyData.getPassRating().getRate())) {
-                        intent.putExtra("passRating", historyData.getPassRating().getRate());
-                    }
-                    if (historyData.getPassRating() != null && historyData.getPassRating().getFeedback_message() != null
-                            && historyData.getPassRating().getFeedback_message().length > 0
-                            && StringUtils.isNotBlank(historyData.getPassRating().getFeedback_message()[0])) {
-                        intent.putExtra("feedbackComments", historyData.getPassRating().getFeedback_message()[0]);
-                    }
-                    startActivity(intent);
-                    HomeActivity.visibleFragmentNumber = 2;
-                } else {
-                    ActivityStackManager.getInstance(mCurrentActivity).startCancelDetailsActivity(historyData);
                 }
             }
         });

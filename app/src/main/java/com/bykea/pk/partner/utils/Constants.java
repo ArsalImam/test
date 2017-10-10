@@ -48,4 +48,12 @@ public class Constants {
     public final static String CANCEL_TRIP = "Ride-Cancel";
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
 
+
+
+    public static class Extras {
+        public static final String SELECTED_VEHICLE_DATA = "SELECTED_VEHICLE_DATA";
+        public static final String RIDE_VEHICLE_DATA = "RIDE_VEHICLE_DATA";
+        public static final String TRIP_DETAILS = "TRIP_DETAILS";
+    }
+
 }

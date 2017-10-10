@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.helpers;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +14,7 @@ import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
 import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
+import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.JobActivity;
@@ -40,7 +40,7 @@ public class ActivityStackManager {
 
     public void startLoginActivity() {
         Intent intent = new Intent(mContext, LoginActivity.class);
-        ((Activity) mContext).startActivity(intent);
+        mContext.startActivity(intent);
     }
 
     public void startHomeActivity(boolean firstTime) {
@@ -49,7 +49,7 @@ public class ActivityStackManager {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                     Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
-        ((Activity) mContext).startActivity(intent);
+        mContext.startActivity(intent);
     }
 
     public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin) {
@@ -58,22 +58,22 @@ public class ActivityStackManager {
         intent.putExtra("isCanceledByAdmin", isCanceledByAdmin);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        ((Activity) mContext).startActivity(intent);
+        mContext.startActivity(intent);
     }
 
     public void startJobActivity() {
         Intent intent = new Intent(mContext, JobActivity.class);
-        ((Activity) mContext).startActivity(intent);
+        mContext.startActivity(intent);
     }
 
     public void startFeedbackActivity() {
         Intent intent = new Intent(mContext, FeedbackActivity.class);
-        ((Activity) mContext).startActivity(intent);
+        mContext.startActivity(intent);
     }
 
     public void startFeedbackFromResume() {
         Intent intent = new Intent(mContext, FeedbackActivity.class);
-        ((Activity) mContext).startActivity(intent);
+        mContext.startActivity(intent);
     }
 
     public void startLocationService() {
@@ -133,7 +133,7 @@ public class ActivityStackManager {
 
     public void startCancelDetailsActivity(TripHistoryData data) {
         Intent intent = new Intent(mContext, HistoryCancelDetailsActivity.class);
-        intent.putExtra("TRIP_DETAILS", data);
+        intent.putExtra(Constants.Extras.TRIP_DETAILS, data);
         mContext.startActivity(intent);
     }
 
@@ -143,5 +143,11 @@ public class ActivityStackManager {
         ComponentName componentName = intent.getComponent();
         Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
         mContext.startActivity(mainIntent);
+    }
+
+    public void startCompletedDetailsActivity(TripHistoryData historyData) {
+        Intent intent = new Intent(mContext, HistoryDetailActivity.class);
+        intent.putExtra(Constants.Extras.TRIP_DETAILS, historyData);
+        mContext.startActivity(intent);
     }
 }

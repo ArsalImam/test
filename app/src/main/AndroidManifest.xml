@@ -17,14 +17,13 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <!--To start location service on mobile restart-->
+    <!-- To start location service on mobile restart -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.location.gps" />
-    <!--<uses-feature android:glEsVersion="0x00030001" />-->
+    <!-- <uses-feature android:glEsVersion="0x00030001" /> -->
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
@@ -80,11 +79,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.onesignal.BadgeCount"
             android:value="DISABLE" />
-
         <meta-data
             android:name="com.onesignal.NotificationOpened.DEFAULT"
             android:value="DISABLE" />
@@ -126,7 +123,6 @@
         </receiver>
         <receiver android:name=".services.AlarmReceiver" />
 
-
         <!-- Firebase Notifications -->
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
@@ -139,7 +135,6 @@
             </intent-filter>
         </service>
         <!-- ./Firebase Notifications -->
-
 
         <service
             android:name=".services.OneSignalNotificationExtenderService"
@@ -191,6 +186,8 @@
             android:name=".ui.helpers.webview.FinestWebViewCustomActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
+
+
     </application>
 
 </manifest>
