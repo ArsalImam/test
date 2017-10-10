@@ -341,6 +341,7 @@ public class UserRepository {
             jsonObject.put("pass_id", AppPreferences.getCallData(context).getPassId());
             //            jsonObject.put("event_id", AppPreferences.getCallData(context).getEvent_id());
             jsonObject.put("full_name", AppPreferences.getPilotData(context).getFullName());
+            jsonObject.put("delay", AppPreferences.getTripDelay(context));
             jsonObject.put("pass_socket_id", AppPreferences.getCallData(context).getPass_socket_id());
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -450,11 +451,11 @@ public class UserRepository {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         mContext = context;
-        int totalTime = 0;
+        /*int totalTime = 0;
         long diff = System.currentTimeMillis() - AppPreferences.getStartTripTime(mContext);
         if (diff > 0) {
             totalTime = (int) (diff / (1000));
-        }
+        }*/
         try {
             jsonObject.put("_id", AppPreferences.getDriverId(context));
             jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
@@ -505,7 +506,7 @@ public class UserRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Utils.infoLog("Ridetime", totalTime + " seconds");
+//        Utils.infoLog("Ridetime", totalTime + " seconds");
         mWebIORequestHandler.endRide(jsonObject, mDataCallback);
 
     }

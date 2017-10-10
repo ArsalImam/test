@@ -50,6 +50,7 @@ public class WebIO {
             options.query = "appName=Terminal&AppId=7002738&AppSecret=cI790Mf&user_type=p";
             options.timeout = 15 * 1000;
             options.secure = true;
+            options.forceNew = true;
             options.transports = new String[]{WebSocket.NAME, Polling.NAME};
             SSLContext sslContext = Utils.getSSLContext(DriverApp.getContext());
             if (sslContext != null) {
