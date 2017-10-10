@@ -943,4 +943,15 @@ public class AppPreferences {
     }
 
 
+    public static void setTripDelay(Context context, long value) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putLong(Keys.TRIP_DELAY, value);
+        ed.apply();
+    }
+
+    public static long getTripDelay(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getLong(Keys.TRIP_DELAY, 0);
+    }
 }

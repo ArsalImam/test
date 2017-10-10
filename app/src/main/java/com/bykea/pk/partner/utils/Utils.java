@@ -709,6 +709,7 @@ public class Utils {
         long diff = (System.currentTimeMillis() - AppPreferences.getServerTimeDifference(context))
                 - sentTime;
         Utils.redLog("Time Diff Call", "" + diff);
+        AppPreferences.setTripDelay(context, diff);
         return diff <= 6000;
     }
 
