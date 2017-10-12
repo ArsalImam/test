@@ -226,20 +226,19 @@ public class Utils {
     }
 
     public static void logout(Context context) {
-
         AppPreferences.saveLoginStatus(context, false);
         AppPreferences.setIncomingCall(context, false);
         AppPreferences.setCallData(context, null);
         AppPreferences.setTripStatus(context, "");
         AppPreferences.saveLoginStatus(context, false);
         AppPreferences.setPilotData(context, null);
-//        AppPreferences.clear(context);
-        if (StringUtils.isBlank(AppPreferences.getRegId(context))
-                && StringUtils.isNotBlank(FirebaseInstanceId.getInstance().getToken())) {
-            AppPreferences.setRegId(context, FirebaseInstanceId.getInstance().getToken());
-        }
+        String regId = AppPreferences.getRegId(context);
+        double currentLat = AppPreferences.getLatitude(context);
+        double currentLng = AppPreferences.getLongitude(context);
+        AppPreferences.clear(context);
+        AppPreferences.setRegId(context, regId);
+        AppPreferences.saveLocation(context, currentLat, currentLng);
         HomeActivity.visibleFragmentNumber = 0;
-
         ActivityStackManager.getInstance(context).startLoginActivity();
         ((Activity) context).finish();
     }
@@ -1053,6 +1052,11 @@ public class Utils {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         return simpleDateFormat.format(System.currentTimeMillis());
+    }
+    public static String getUTCDate(long time) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return simpleDateFormat.format(time);
     }
 
     public static void setOneSignalTag(String KEY, String VALUE) {

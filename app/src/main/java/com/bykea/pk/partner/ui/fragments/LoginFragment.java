@@ -31,7 +31,6 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontEditText;
@@ -80,11 +79,6 @@ public class LoginFragment extends Fragment {
         repository = new UserRepository();
         mCurrentActivity = (LoginActivity) getActivity();
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (!Permissions.hasLocationPermissions(getContext())) {
-                Permissions.getLocationPermissions(this);
-            }
-        }
         if (StringUtils.isBlank(AppPreferences.getRegId(mCurrentActivity))) {
             AppPreferences.setRegId(mCurrentActivity, FirebaseInstanceId.getInstance().getToken());
         }
@@ -240,18 +234,4 @@ public class LoginFragment extends Fragment {
         }
     };
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == Permissions.LOCATION_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            } else {
-                Permissions.getLocationPermissions(this);
-                Dialogs.INSTANCE.showWarningMessage(getActivity(), loginBtn, "Location permission is denied." +
-                        " Location is required for your ride");
-            }
-        }
-
-    }
 }

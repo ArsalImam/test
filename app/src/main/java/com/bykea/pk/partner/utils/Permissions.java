@@ -34,11 +34,10 @@ public class Permissions {
     public static boolean hasLocationPermissions(Context context) {
         if (Build.VERSION.SDK_INT >= 23) {
             String permission1 = "android.permission.ACCESS_FINE_LOCATION";
-            String permission2 = "android.permission.ACCESS_COARSE_LOCATION";
+//            String permission2 = "android.permission.ACCESS_COARSE_LOCATION";
             int res1 = context.checkCallingOrSelfPermission(permission1);
-            int res2 = context.checkCallingOrSelfPermission(permission2);
-            return (res1 == PackageManager.PERMISSION_GRANTED &&
-                    res2 == PackageManager.PERMISSION_GRANTED);
+//            int res2 = context.checkCallingOrSelfPermission(permission2);
+            return (res1 == PackageManager.PERMISSION_GRANTED);
         } else {
             return true;
         }
@@ -60,7 +59,7 @@ public class Permissions {
     }
 
     public static void getLocationPermissions(Fragment context) {
-        String[] permissions = {"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"};
+        String[] permissions = {"android.permission.ACCESS_FINE_LOCATION"};
         context.requestPermissions(permissions, LOCATION_PERMISSION);
     }
 

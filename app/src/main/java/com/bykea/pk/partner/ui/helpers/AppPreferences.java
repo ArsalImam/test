@@ -242,6 +242,18 @@ public class AppPreferences {
 
     }
 
+    public static void saveLocation(Context context, double latitude, double longitude) {
+        if (latitude != 0.0 && longitude != 0.0) {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor ed = sp.edit();
+            ed.putString(Keys.LATITUDE, latitude + "");
+            ed.putString(Keys.LONGITUDE, longitude + "");
+            ed.putBoolean(Keys.IS_MOCK_LOCATION, false);
+            ed.putFloat(Keys.LOCATION_ACCURACY, 10);
+            ed.commit();
+        }
+    }
+
     public static void saveLocationFromLogin(Context context, LatLng location, String bearing, float accuracy, boolean isMock) {
         if (location.latitude != 0.0 && location.longitude != 0.0 /*&& accuracy < 100f*/) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
@@ -624,6 +636,7 @@ public class AppPreferences {
         ed.putString(Keys.LONGITUDE_PREV_DISTANCE, "0.0");
         ed.putLong(Keys.TIME_PREV_DISTANCE, 0);
         ed.putString(Keys.IN_TRIP_LAT_LNG_ARRAY, StringUtils.EMPTY);
+        ed.putLong(Keys.TRIP_START_TIME, 0);
         ed.commit();
     }
 

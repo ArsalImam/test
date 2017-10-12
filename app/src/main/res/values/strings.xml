@@ -79,7 +79,7 @@
     <string name="permissions.required">Permission Required</string>
     <string name="permissions.camera">You need to allow access to camera permission to upload profile picture</string>
     <string name="permissions.location">For the best experience, Bykea needs to use your current location
-    to find closest pilot to you. Do you want to share your location?</string>
+    to find Jobs for you. Do you want to share your location?</string>
     <string name="permissions.storage">You need to allow access to storage permission to upload your license documents</string>
     <string name="permissions.phone">You need to allow access to phone permission to call your
     passenger during trip</string>

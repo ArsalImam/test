@@ -6,9 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +24,9 @@ import android.widget.TextView;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NotificationData;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -51,6 +56,8 @@ public class BaseActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private Dialog notificationDialog;
 
+    private final String ACCESS_FINE_LOCATION = "android.permission.ACCESS_FINE_LOCATION";
+    private final String PHONE_STATE = "android.permission.READ_PHONE_STATE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +68,7 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(getString(R.string.internet_error));
+        checkPermissions(false);
     }
 
 
@@ -73,6 +81,95 @@ public class BaseActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         isScreenInFront = false;
+    }
+
+    private boolean checkPermissions(boolean restartLocationService) {
+        boolean hasPermission = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+            int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), PHONE_STATE);
+            if (location != PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE}, 1010);
+            } else if (location == PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{PHONE_STATE}, 1010);
+            } else if (location != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{ACCESS_FINE_LOCATION}, 1010);
+            } else {
+                hasPermission = true;
+            }
+        } else {
+            hasPermission = true;
+        }
+        if (hasPermission) {
+            if (restartLocationService) {
+                Utils.redLog("BaseActivity", "restartLocationService");
+                ActivityStackManager.getInstance(mCurrentActivity).restartLocationService();
+            }
+            if (mCurrentActivity instanceof SplashActivity) {
+                mEventBus.post(Constants.ON_PERMISSIONS_GRANTED);
+            }
+        }
+        return hasPermission;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull String[] permissions, @NonNull final int[] grantResults) {
+        if (mCurrentActivity != null) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    switch (requestCode) {
+                        case 1010:
+                            if (grantResults.length > 1) {
+                                if (grantResults[0] != PackageManager.PERMISSION_GRANTED
+                                        || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                                    onPermissionResult();
+                                } else {
+                                    checkPermissions(true);
+                                }
+                            } else if (grantResults.length > 0) {
+                                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                                    onPermissionResult();
+                                } else {
+                                    checkPermissions(true);
+                                }
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+    }
+
+
+    private void onPermissionResult() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION) && shouldShowRequestPermissionRationale(PHONE_STATE)) {
+                Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
+                        new StringCallBack() {
+                            @Override
+                            public void onCallBack(String msg) {
+                                checkPermissions(true);
+                            }
+                        }, null, "Share Your Location"
+                        , getString(R.string.permissions_location));
+            } else {
+                Dialogs.INSTANCE.showPermissionSettings(mCurrentActivity,
+                        1010, "Permissions Required",
+                        "For the best Bykea experience, please enable Permission-> Location & Phone in the application settings.");
+            }
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1010) {
+            checkPermissions(false);
+        }
     }
 
     @Override
@@ -116,11 +213,15 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isLocSettingsDialogCalled;
+
     public void checkGps() {
         if (!Utils.isGpsEnable(mCurrentActivity)) {
+            isLocSettingsDialogCalled = true;
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
-        } else {
+        } else if (isLocSettingsDialogCalled) {
             Dialogs.INSTANCE.dismissDialog();
+            isLocSettingsDialogCalled = false;
         }
     }
 

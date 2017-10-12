@@ -230,7 +230,8 @@ public class HomeFragment extends Fragment {
 
     private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
         @Override
-        public void onTick(long millisUntilFinished) {}
+        public void onTick(long millisUntilFinished) {
+        }
 
         @Override
         public void onFinish() {
@@ -254,8 +255,7 @@ public class HomeFragment extends Fragment {
             if (mCurrentActivity != null && !Permissions.hasLocationPermissions(mCurrentActivity)) {
                 Permissions.getLocationPermissions(HomeFragment.this);
             } else {
-                if (ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -377,7 +377,7 @@ public class HomeFragment extends Fragment {
                 Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getDemand(), "Demand");
                 break;
             case R.id.tvNotice:                             //AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice()
-                Utils.startCustomWebViewActivity(mCurrentActivity,AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice(), "Notice");
+                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice(), "Notice");
                 break;
             case R.id.statusCheck:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
@@ -427,13 +427,8 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void run() {
                         if (null != intent && intent.getAction().equalsIgnoreCase(Keys.LOCATION_UPDATE_BROADCAST)) {
-
-                            Utils.redLog("LOCATION BROADCAST", "RECEIVED ==========================================================");
-                            if (null != intent.getExtras() && null != intent.getStringExtra("offline_location")
-                                    && intent.getStringExtra("offline_location").equalsIgnoreCase(Keys.LOCATION_NOT_UPDATE_BROADCAST)) {
-//                    showOfflineDialog();
-                            } else {
-                                Location location = (Location) intent.getParcelableExtra("location");
+                            if (intent.getExtras() != null) {
+                                Location location = intent.getParcelableExtra("location");
                                 //Move Map's Camera if there's significant change in Location
                                 if (mPrevLocToShow == null || location.distanceTo(mPrevLocToShow) > 30) {
                                     mPrevLocToShow = location;
@@ -442,7 +437,6 @@ public class HomeFragment extends Fragment {
                                             , 12.0f));
                                 }
                             }
-
                         }
                     }
                 });
@@ -549,11 +543,11 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
+                                /*if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
                                     AppPreferences.setStartTripTime(mCurrentActivity,
                                             AppPreferences.getServerTimeDifference(mCurrentActivity) +
                                                     Utils.getTimeInMiles(response.getData().getStarted_at()));
-                                }
+                                }*/
                                 AppPreferences.setCallData(mCurrentActivity, response.getData());
                                 AppPreferences.setTripStatus(mCurrentActivity, response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {

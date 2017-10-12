@@ -358,7 +358,12 @@ public enum Dialogs {
                     }
                 });
 
-        alertDialog.show();
+        try {
+            alertDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void showItems(Context context, String[] items, final IntegerCallBack listener) {

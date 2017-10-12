@@ -35,7 +35,6 @@ public class LoginActivity extends BaseActivity {
 
     public static boolean isRegisterFragment = false;
     private PilotData pilotData;
-    private GoogleApiClient mGoogleApiClient;
     private LoginActivity mCurrentActivity;
 
 
@@ -45,7 +44,6 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
-        buildGoogleApiClient();
         pilotData = new PilotData();
         LoginFragment mainFragment = new LoginFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -54,7 +52,6 @@ public class LoginActivity extends BaseActivity {
         fragmentTransaction.replace(R.id.containerView, mainFragment, null);
         fragmentTransaction.commit();
         ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).restartLocationService();
-        getLocation();
     }
 
     @Override
@@ -68,66 +65,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onBackPressed() {
         if (isRegisterFragment) {
             popLastTwoFragment();
         } else {
             super.onBackPressed();
         }
-
     }
-
-
-    public void getLocation() {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED) {
-            Location location = LocationServices.FusedLocationApi
-                    .getLastLocation(mGoogleApiClient);
-            if (null != location) {
-                pilotData.setLat(location.getLatitude() + "");
-                pilotData.setLng(location.getLongitude() + "");
-                AppPreferences.saveLocationFromLogin(mCurrentActivity, new LatLng(location.getLatitude(),
-                        location.getLongitude()), "", location.getAccuracy(), Utils.isMockLocation(location, mCurrentActivity));
-                Utils.infoLog("Current Device Location ", location.toString());
-            } else {
-                Utils.infoLog("Current Device Location ", "No Location Found.");
-            }
-        }
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(myConnectionCallbacks)
-                .addOnConnectionFailedListener(myConnectionFailedListener)
-                .addApi(LocationServices.API).build();
-        mGoogleApiClient.connect();
-    }
-
-    private GoogleApiClient.OnConnectionFailedListener myConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
-        @Override
-        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            mGoogleApiClient.connect();
-        }
-    };
-
-    private GoogleApiClient.ConnectionCallbacks myConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
-        @Override
-        public void onConnected(@Nullable Bundle bundle) {
-            getLocation();
-        }
-
-        @Override
-        public void onConnectionSuspended(int i) {
-            mGoogleApiClient.connect();
-        }
-    };
 
 
     private void popLastTwoFragment() {
@@ -141,8 +85,4 @@ public class LoginActivity extends BaseActivity {
         return pilotData;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 }

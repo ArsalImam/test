@@ -102,7 +102,7 @@ public class CallingActivity extends BaseActivity {
         super.onResume();
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
-        LocationService.setContext(CallingActivity.this);
+//        LocationService.setContext(CallingActivity.this);
         AppPreferences.setCallingActivityOnForeground(mCurrentActivity, true);
     }
 

@@ -112,7 +112,7 @@ public class HomeActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
-        LocationService.setContext(HomeActivity.this);
+//        LocationService.setContext(HomeActivity.this);
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         AppPreferences.setProfileUpdated(mCurrentActivity, true);
     }

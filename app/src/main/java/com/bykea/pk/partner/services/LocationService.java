@@ -1,19 +1,15 @@
 package com.bykea.pk.partner.services;
 
-import android.Manifest;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
@@ -23,10 +19,10 @@ import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.utils.TripStatus;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.bykea.pk.partner.DriverApp;
@@ -38,6 +34,8 @@ import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -48,18 +46,18 @@ import java.util.List;
 
 public class LocationService extends Service {
 
-    private LocationUpdatesListener mLocationUpdatesListener;
-    private static Context mContext;
+    private Context mContext;
     private UserRepository mUserRepository;
-    private Location prevLocation;
-
-    private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
     private boolean shouldCallLocApi = true;
 
     private PowerManager.WakeLock wakeLock;
     private EventBus mBus = EventBus.getDefault();
+
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    private LocationCallback mLocationCallback;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -69,10 +67,6 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-    }
-
-    public static void setContext(Context context) {
-        mContext = context;
     }
 
     @Override
@@ -85,54 +79,77 @@ public class LocationService extends Service {
             wakeLock.acquire();
         }
         init();
-        Utils.redLog("BYKEA LOCATION SERVICE ", "ONCREATE CALLED...");
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED) {
-            prevLocation = LocationServices.FusedLocationApi
-                    .getLastLocation(mGoogleApiClient);
-            Utils.infoLog("Current Device Location ", (null != prevLocation) ? prevLocation.toString() : "No Location");
-        }
-//        Utils.appToastDebug(getApplicationContext(), "Location service started..");
-        Utils.redLog("BYKEA LOCATION SERVICE ", "ON START COMMAND CALLED...");
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            stopLocationUpdates();
-            mGoogleApiClient.disconnect();
-        }
+        stopLocationUpdates();
         if (wakeLock != null) {
             wakeLock.release();
         }
         if (mCountDownTimer != null) {
             mCountDownTimer.cancel();
         }
-        Utils.redLog("BYKEA LOCATION SERVICE ", "ON DESTROY CALLED...");
     }
 
 
     private void init() {
         mUserRepository = new UserRepository();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                onNewLocation(locationResult.getLastLocation());
+            }
+        };
         createLocationRequest();
-        buildGoogleApiClient();
+        getLastLocation();
         startLocationUpdates();
-        mLocationUpdatesListener = new LocationUpdatesListener();
         mCountDownTimer.start();
     }
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(myConnectionCallbacks)
-                .addOnConnectionFailedListener(myConnectionFailedListener)
-                .addApi(LocationServices.API).build();
-        mGoogleApiClient.connect();
+
+    private void getLastLocation() {
+        try {
+            Utils.redLog("Location", " getLastLocation() called");
+            if (ActivityCompat.checkSelfPermission(this,
+                    "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
+                mFusedLocationClient.getLastLocation()
+                        .addOnCompleteListener(new OnCompleteListener<Location>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Location> task) {
+                                if (task.isSuccessful() && task.getResult() != null) {
+                                    onNewLocation(task.getResult());
+                                    Utils.redLog("Location", " getLastLocation() Success");
+                                } else {
+                                    Utils.redLog("Location", " getLastLocation() Error");
+                                }
+                            }
+                        });
+            }
+        } catch (SecurityException unlikely) {
+            Utils.redLog("Location", "Lost location permission." + unlikely);
+        }
     }
+
+    private void onNewLocation(Location location) {
+        if (location != null) {
+            if (!Utils.isMockLocation(location, mContext)) {
+                AppPreferences.saveLocation(mContext, new LatLng(location.getLatitude(),
+                        location.getLongitude()), "" + location.getBearing(), location.getAccuracy(), false);
+                sendLocationBroadcast(location);
+                Utils.redLog("Location", location.getLatitude() + "," + location.getLongitude() + "  (" + Utils.getUTCDate(location.getTime()) + ")");
+            } else {
+                Utils.redLog("Location", "Mock location Received...");
+                Intent intent = new Intent(Keys.MOCK_LOCATION);
+                sendBroadcast(intent);
+            }
+        }
+    }
+
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
@@ -141,107 +158,24 @@ public class LocationService extends Service {
         int FASTEST_INTERVAL = 5000;
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        int DISPLACEMENT = 1;
-        mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
+//        int DISPLACEMENT = 1;
+//        mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
     }
 
     protected void startLocationUpdates() {
-
         if (ActivityCompat.checkSelfPermission(this,
-                "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_COARSE_LOCATION") ==
-                        PackageManager.PERMISSION_GRANTED) {
-            if (mGoogleApiClient.isConnected()) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(
-                        mGoogleApiClient, mLocationRequest, mLocationUpdatesListener);
-                prevLocation = LocationServices.FusedLocationApi
-                        .getLastLocation(mGoogleApiClient);
-                if (null != prevLocation && !Utils.isMockLocation(prevLocation, mContext)) {
-                    AppPreferences.saveLocation(mContext, new LatLng(prevLocation.getLatitude(),
-                            prevLocation.getLongitude()), "0.0", prevLocation.getAccuracy(), Utils.isMockLocation(prevLocation, mContext));
-                    sendLocationBroadcast(prevLocation);
-                }
-            }
+                "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback, Looper.myLooper());
         }
-
-
-    }
-
-    public void updateLastKnowLocation() {
-
-        if (ActivityCompat.checkSelfPermission(this,
-                "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_COARSE_LOCATION") ==
-                        PackageManager.PERMISSION_GRANTED) {
-            if (mGoogleApiClient.isConnected()) {
-                prevLocation = LocationServices.FusedLocationApi
-                        .getLastLocation(mGoogleApiClient);
-                if (prevLocation != null && (prevLocation.getAccuracy() < 80f || AppPreferences.getLatitude(this) == 0.0)) {
-                    if (!Utils.isMockLocation(prevLocation, mContext)) {
-                        AppPreferences.saveLocation(mContext, new LatLng(prevLocation.getLatitude(),
-                                prevLocation.getLongitude()), "0.0", prevLocation.getAccuracy(), Utils.isMockLocation(prevLocation, mContext));
-                        sendLocationBroadcast(prevLocation);
-                    } else if (Utils.isGpsEnable(mContext)) {
-                        LocationServices.FusedLocationApi.requestLocationUpdates(
-                                mGoogleApiClient, mLocationRequest, mLocationUpdatesListener);
-                        Utils.infoLog("Location", "Mock location Received...");
-                        Intent intent = new Intent(Keys.MOCK_LOCATION);
-                        sendBroadcast(intent);
-                    }
-                } else if (Utils.isGpsEnable(mContext)) {
-                    LocationServices.FusedLocationApi.requestLocationUpdates(
-                            mGoogleApiClient, mLocationRequest, mLocationUpdatesListener);
-                }
-            }
-        }
-
-
     }
 
     protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, mLocationUpdatesListener);
-    }
-
-    private class LocationUpdatesListener implements LocationListener {
-
-        public void onLocationChanged(final Location location) {
-            if (!Utils.isMockLocation(location, mContext)) {
-                if (null != location && location.getLongitude() != 0.0 &&
-                        location.getLongitude() != 0.0) {
-                    handleLocationUpdate(location);
-                } else {
-                    Utils.redLog("LOCATION UPDATE" + " No location found Lat Lng: ", "" + location.getLatitude()
-                            + " , " + location.getLongitude());
-
-                }
-            } else if (Utils.isGpsEnable(mContext)) {
-                Utils.infoLog("Location", "Mock location Received...");
-                Intent intent = new Intent(Keys.MOCK_LOCATION);
-                sendBroadcast(intent);
-            }
-
+        try {
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        } catch (Exception ignored) {
         }
     }
-
-    private GoogleApiClient.OnConnectionFailedListener myConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
-        @Override
-        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            mGoogleApiClient.connect();
-        }
-    };
-
-    private GoogleApiClient.ConnectionCallbacks myConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
-        @Override
-        public void onConnected(@Nullable Bundle bundle) {
-            startLocationUpdates();
-        }
-
-        @Override
-        public void onConnectionSuspended(int i) {
-            mGoogleApiClient.connect();
-        }
-    };
 
     public void updateTripRouteList(double lat, double lon) {
         Utils.redLog("TripStatus", AppPreferences.getTripStatus(mContext));
@@ -277,21 +211,14 @@ public class LocationService extends Service {
     private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {
         @Override
         public void onTick(long millisUntilFinished) {
-
             if (!WebIO.getInstance().isSocketConnected() && Connectivity.isConnectedFast(mContext)) {
                 ((DriverApp) getApplicationContext()).connect("From the Service");
             }
-            updateLastKnowLocation();
-
-
         }
 
 
         @Override
         public void onFinish() {
-            /*
-            * We will do any processing only when user is logged In and Available status is true.
-            * */
             if (AppPreferences.isLoggedIn(mContext) && (AppPreferences.getAvailableStatus(mContext) ||
                     AppPreferences.isOutOfFence(mContext) || AppPreferences.isOnTrip(mContext))) {
                 synchronized (this) {
@@ -393,45 +320,12 @@ public class LocationService extends Service {
     };
 
 
-    private void handleLocationUpdate(Location location) {
-
-        // Save this location for further use
-        if (AppPreferences.isLoggedIn(mContext)/* && AppPreferences.getAvailableStatus(mContext)*/) {
-            if (AppPreferences.isOnTrip(mContext)) {
-                    /*IF ON RESUME TRIP THEN CHECK DRIVER LOCATION IS NULL OR NOT
-                    * AND ALSO PREFERENCE LATITUDE AND LONGITUDE */
-                if (AppPreferences.getLongitude(mContext) == 0.0 ||
-                        AppPreferences.getLatitude(mContext) == 0.0) {
-                    AppPreferences.saveLocation(mContext, new LatLng(location.getLatitude(),
-                            location.getLongitude()), "0.0", location.getAccuracy(), Utils.isMockLocation(location, mContext));
-                }
-            }
-            sendLocationBroadcast(location);
-
-            //SAVING LOCATION IN PREFERENCE FOR USAGE IN ACTIVITIES....
-            if (null != prevLocation)
-                AppPreferences.saveLocation(mContext,
-                        new LatLng(location.getLatitude(), location.getLongitude()),
-                        prevLocation.bearingTo(location) + "", location.getAccuracy(), Utils.isMockLocation(location, mContext));
-            prevLocation = location;
-
-
-        } /*else {
-            stopSelf();
-            Utils.infoLog("LocationUpdate", "Gps Location not found.");
-        }*/
-    }
-
     private void sendLocationBroadcast(Location location) {
-        if (null == location) return;
-                     /*SENDING LOCATION UPDATE BROADCAST TO JOB ACTIVITY FOR UPDATING DRIVER ICON.*/
         Intent locationIntent = new Intent(Keys.LOCATION_UPDATE_BROADCAST);
         locationIntent.putExtra("lng", location.getLongitude());
         locationIntent.putExtra("lat", location.getLatitude());
         locationIntent.putExtra("location", location);
-        if (null != prevLocation) {
-            locationIntent.putExtra("bearing", prevLocation.bearingTo(location) + "");
-        }
+        locationIntent.putExtra("bearing", location.bearingTo(location) + "");
         sendBroadcast(locationIntent);
     }
 
