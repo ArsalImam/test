@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
-import com.bykea.pk.partner.ui.fragments.EmergencyContactsFragment;
 import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
 import com.bykea.pk.partner.ui.fragments.PerformanceFragment;
 import com.bykea.pk.partner.ui.fragments.ProfileFragment;
@@ -162,7 +160,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                         @Override
                         public void onClick(View v) {
                             if (Connectivity.isConnectedFast(context)) {
-                                AppPreferences.setAvailableStatus(context, false);
+                                AppPreferences.setAvailableStatus(false);
                                 Dialogs.INSTANCE.dismissDialog();
                                 Dialogs.INSTANCE.showLoader(context);
                                 UserRepository repository = new UserRepository();
@@ -231,10 +229,10 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     holder.tvRating.setText("Rating " + rating);
                 }
             }
-            if (AppPreferences.isProfileUpdated(context)
-                    && StringUtils.isNotBlank(AppPreferences.getPilotData(context).getPilotImage())) {
+            if (AppPreferences.isProfileUpdated()
+                    && StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
                 Utils.loadImgPicasso(context, holder.driverImage, R.drawable.profile_pic,
-                        Utils.getImageLink(AppPreferences.getPilotData(context).getPilotImage()));
+                        Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 AppPreferences.setProfileUpdated(context, false);
             }
         } else if (position == getItemCount() - 1) {

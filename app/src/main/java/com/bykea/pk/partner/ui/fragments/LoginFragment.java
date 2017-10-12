@@ -12,9 +12,7 @@ import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -79,10 +77,10 @@ public class LoginFragment extends Fragment {
         repository = new UserRepository();
         mCurrentActivity = (LoginActivity) getActivity();
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
-        if (StringUtils.isBlank(AppPreferences.getRegId(mCurrentActivity))) {
-            AppPreferences.setRegId(mCurrentActivity, FirebaseInstanceId.getInstance().getToken());
+        if (StringUtils.isBlank(AppPreferences.getRegId())) {
+            AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
         }
-        Utils.setOneSignalPlayerId(mCurrentActivity);
+        Utils.setOneSignalPlayerId();
     }
 
     @Override
@@ -98,10 +96,10 @@ public class LoginFragment extends Fragment {
             case R.id.loginBtn:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt) && validate()) {
-                        if (StringUtils.isBlank(AppPreferences.getRegId(mCurrentActivity))) {
-                            AppPreferences.setRegId(mCurrentActivity, FirebaseInstanceId.getInstance().getToken());
+                        if (StringUtils.isBlank(AppPreferences.getRegId())) {
+                            AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
                         }
-                        AppPreferences.setStatsApiCallRequired(mCurrentActivity, true);
+                        AppPreferences.setStatsApiCallRequired(true);
                         Dialogs.INSTANCE.showLoader(getActivity());
                         repository.requestUserLogin(getActivity(), handler,
                                 Utils.phoneNumberForServer(phoneNumberEt.getText().toString()),
@@ -172,12 +170,12 @@ public class LoginFragment extends Fragment {
                         if (loginResponse.isSuccess()) {
                             Utils.redLog("token_id at Login", loginResponse.getUser().getAccessToken());
                             ActivityStackManager.getInstance(getActivity()).startLocationService();
-                            AppPreferences.setPilotData(getActivity(), loginResponse.getUser());
-                            AppPreferences.setAvailableStatus(getActivity(), loginResponse.getUser().isAvailable());
-                            AppPreferences.setCashInHands(mCurrentActivity, loginResponse.getUser().getCashInHand());
+                            AppPreferences.setPilotData(loginResponse.getUser());
+                            AppPreferences.setAvailableStatus(loginResponse.getUser().isAvailable());
+                            AppPreferences.setCashInHands(loginResponse.getUser().getCashInHand());
 //                            AppPreferences.setCashInHandsRange(mCurrentActivity, loginResponse.getUser().getCashInHandRange());
 //                            AppPreferences.setVerifiedStatus(getActivity(), loginResponse.getUser().isVerified());
-                            AppPreferences.saveLoginStatus(getActivity(), true);
+                            AppPreferences.saveLoginStatus(true);
                             Instabug.setUserData(loginResponse.getUser().getFullName() + " " + loginResponse.getUser().getPhoneNo());
                             Instabug.setUserEmail(loginResponse.getUser().getPhoneNo());
                             Instabug.setUsername(loginResponse.getUser().getFullName());

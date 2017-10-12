@@ -95,18 +95,18 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
         setToolbarTitle("Drop Off");
         hideToolbarLogo();
         setStatusButton("Cancel");
-        AppPreferences.setDropOffData(mCurrentActivity, StringUtils.EMPTY, 0.0, 0.0);
+        AppPreferences.setDropOffData(StringUtils.EMPTY, 0.0, 0.0);
         setBackNavigation();
 
         ArrayList<PlacesResult> cities = new ArrayList<>();
-        cities = Utils.getCities(mCurrentActivity);
+        cities = Utils.getCities();
 
 
         clearSearchBtn = (ImageView) findViewById(R.id.clearBtn);
         mAutocompleteView = (AutoCompleteTextView)
                 findViewById(R.id.autocomplete_places);
         tvCities = (FontTextView) findViewById(R.id.tvCities);
-        setCity(cities.get(Utils.getCurrentCityIndex(mCurrentActivity)));
+        setCity(cities.get(Utils.getCurrentCityIndex()));
 
     }
 

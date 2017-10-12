@@ -20,7 +20,6 @@ import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
-import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
@@ -31,7 +30,6 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
-import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -184,7 +182,7 @@ public class WebIORequestHandler {
                 public void call(Object... args) {
                     try {
                         //To avoid previous calls with wrong token_id
-                        if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken(DriverApp.getContext()))) {
+                        if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
                         }
                     } catch (JSONException e) {
@@ -209,7 +207,7 @@ public class WebIORequestHandler {
                 public void call(Object... args) {
                     try {
                         //To avoid previous calls with wrong token_id
-                        if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken(DriverApp.getContext()))) {
+                        if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emit(eventName, json);
                         }
                     } catch (JSONException e) {
@@ -285,23 +283,23 @@ public class WebIORequestHandler {
                 if (null == mContext) {
                     mContext = DriverApp.getContext();
                 }
-                if (AppPreferences.isLoggedIn(mContext) && locationResponse.getData() != null) {
+                if (AppPreferences.isLoggedIn() && locationResponse.getData() != null) {
                     if (StringUtils.isNotBlank(locationResponse.getData().getLat())
                             && StringUtils.isNotBlank(locationResponse.getData().getLng())) {
-                        AppPreferences.saveLastUpdatedLocation(mContext,
+                        AppPreferences.saveLastUpdatedLocation(
                                 new LatLng(Double.parseDouble(locationResponse.getData().getLat()),
                                         Double.parseDouble(locationResponse.getData().getLng())));
                     }
-                    Utils.saveServerTimeDifference(mContext, locationResponse.getTimestampserver());
+                    Utils.saveServerTimeDifference(locationResponse.getTimestampserver());
                 }
                 if (locationResponse.isSuccess()) {
-                    if (AppPreferences.isWalletAmountIncreased(mContext)) {
-                        AppPreferences.setWalletAmountIncreased(mContext, false);
-                        AppPreferences.setAvailableStatus(mContext, true);
+                    if (AppPreferences.isWalletAmountIncreased()) {
+                        AppPreferences.setWalletAmountIncreased(false);
+                        AppPreferences.setAvailableStatus(true);
                     }
-                    if (AppPreferences.isOutOfFence(mContext)) {
-                        AppPreferences.setOutOfFence(mContext, false);
-                        AppPreferences.setAvailableStatus(mContext, true);
+                    if (AppPreferences.isOutOfFence()) {
+                        AppPreferences.setOutOfFence(false);
+                        AppPreferences.setAvailableStatus(true);
                         mOnResponseCallBack.onError(HTTPStatus.FENCE_SUCCESS, locationResponse.getMessage());
                     } else {
                         mOnResponseCallBack.onResponse(locationResponse);
@@ -329,18 +327,18 @@ public class WebIORequestHandler {
             }
             ReceivedMessage receivedMessage = gson.fromJson(serverResponse, ReceivedMessage.class);
             try {
-                if (AppPreferences.isOnTrip(mContext)) {
+                if (AppPreferences.isOnTrip()) {
 
-                    if (!AppPreferences.getLastMessageID(mContext)
+                    if (!AppPreferences.getLastMessageID()
                             .equalsIgnoreCase(receivedMessage.getData().getMessageId())) {
-                        if (!AppPreferences.isChatActivityOnForeground(mContext)) {
+                        if (!AppPreferences.isChatActivityOnForeground()) {
                             Notifications.createChatNotification(mContext, receivedMessage);
                         }
                         Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
                         intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
                         intent.putExtra("msg", receivedMessage);
                         ((Activity) mContext).sendBroadcast(intent);
-                        AppPreferences.setLastMessageID(mContext, receivedMessage.getData().getMessageId());
+                        AppPreferences.setLastMessageID(receivedMessage.getData().getMessageId());
                     }
                 }
             } catch (Exception e) {
@@ -387,13 +385,13 @@ public class WebIORequestHandler {
                 } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING Socket");
                     if (normalCallData.isSuccess()) {
-                        if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip(mContext)) {
+                        if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("msg", normalCallData.getMessage());
-                            Utils.setCallIncomingState(mContext);
-                            if (AppPreferences.isJobActivityOnForeground(mContext) ||
-                                    AppPreferences.isCallingActivityOnForeground(mContext)) {
+                            Utils.setCallIncomingState();
+                            if (AppPreferences.isJobActivityOnForeground() ||
+                                    AppPreferences.isCallingActivityOnForeground()) {
                                 mContext.sendBroadcast(intent);
                             } else {
                                 mContext.sendBroadcast(intent);
@@ -405,13 +403,13 @@ public class WebIORequestHandler {
                         Utils.appToastDebug(mContext, normalCallData.getMessage());
                     }
                 } else if (StringUtils.isNotBlank(normalCallData.getData().getEndAddress()) &&
-                        !normalCallData.getData().getEndAddress().equalsIgnoreCase(AppPreferences.getCallData(mContext).getEndAddress())) {
-                    NormalCallData callData = AppPreferences.getCallData(mContext);
+                        !normalCallData.getData().getEndAddress().equalsIgnoreCase(AppPreferences.getCallData().getEndAddress())) {
+                    NormalCallData callData = AppPreferences.getCallData();
                     callData.setEndAddress(normalCallData.getData().getEndAddress());
                     callData.setEndLat(normalCallData.getData().getEndLat());
                     callData.setEndLng(normalCallData.getData().getEndLng());
                     callData.setStatus(normalCallData.getData().getStatus());
-                    AppPreferences.setCallData(mContext, callData);
+                    AppPreferences.setCallData(callData);
                     Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
                     intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
                     mContext.sendBroadcast(intent);

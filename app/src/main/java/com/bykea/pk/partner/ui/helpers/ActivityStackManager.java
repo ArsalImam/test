@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.helpers;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivity;
+import com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
 import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
@@ -83,7 +85,7 @@ public class ActivityStackManager {
     }
 
     public void stopLocationService() {
-        AppPreferences.setStopService(mContext, true);
+        AppPreferences.setStopService(true);
         if (Utils.isServiceRunning(mContext, LocationService.class)) {
             mContext.stopService(new Intent(mContext, LocationService.class));
         }
@@ -97,10 +99,10 @@ public class ActivityStackManager {
     }
 
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm) {
-        if (AppPreferences.getAvailableStatus(mContext) && Utils.isGpsEnable(mContext)
-                && AppPreferences.getTripStatus(mContext).equalsIgnoreCase(TripStatus.ON_FREE)
-                && Utils.isNotDelayed(mContext, callData.getData().getSentTime())) {
-            AppPreferences.setCallData(mContext, callData.getData());
+        if (AppPreferences.getAvailableStatus() && Utils.isGpsEnable(mContext)
+                && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
+                && Utils.isNotDelayed(callData.getData().getSentTime())) {
+            AppPreferences.setCallData(callData.getData());
             Intent callIntent = new Intent(DriverApp.getContext(), CallingActivity.class);
             callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             callIntent.setAction(Intent.ACTION_MAIN);
@@ -149,5 +151,14 @@ public class ActivityStackManager {
         Intent intent = new Intent(mContext, HistoryDetailActivity.class);
         intent.putExtra(Constants.Extras.TRIP_DETAILS, historyData);
         mContext.startActivity(intent);
+    }
+
+    public void startConfirmDestActivity(Activity mCurrentActivity,String toolBarTitle, String searchBoxTitle) {
+        Intent returndropoffIntent = new Intent(mContext, ConfirmDropOffAddressActivity.class);
+        returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+        returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE,toolBarTitle);
+        returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE,toolBarTitle);
+        mCurrentActivity.startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+
     }
 }

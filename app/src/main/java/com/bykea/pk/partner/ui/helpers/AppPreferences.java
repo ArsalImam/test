@@ -2,9 +2,9 @@ package com.bykea.pk.partner.ui.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.NotificationData;
@@ -29,22 +29,48 @@ import java.util.ArrayList;
 
 public class AppPreferences {
 
-    public static void clear(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.clear().commit();
+    private static SharedPreferences mSharedPreferences = DriverApp.getApplication().getBasicComponent().getSharedPref();
+
+    public static void clear() {
+        mSharedPreferences
+                .edit()
+                .clear()
+                .apply();
     }
 
-    public static void saveSettingsData(Context context, SettingsData data) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.SETTING_DATA, new Gson().toJson(data));
-        ed.commit();
+
+    public static void setApiKeyRequired(boolean status) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
+        ed.putBoolean(Keys.IS_API_KEY_REQUIRED, status);
+        if (status) {
+            if (getApiKeyCheckTime() == 0) {
+                ed.putLong(Keys.API_KEY_CHECK_TIME, System.currentTimeMillis());
+            }
+        } else {
+            ed.putLong(Keys.API_KEY_CHECK_TIME, 0);
+        }
+        ed.apply();
     }
 
-    public static SettingsData getSettings(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String data = sp.getString(Keys.SETTING_DATA, StringUtils.EMPTY);
+    public static long getApiKeyCheckTime() {
+        return mSharedPreferences
+                .getLong(Keys.API_KEY_CHECK_TIME, 0);
+    }
+
+    public static boolean isApiKeyRequired() {
+        return mSharedPreferences
+                .getBoolean(Keys.IS_API_KEY_REQUIRED, false);
+    }
+
+    public static void saveSettingsData(SettingsData data) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.SETTING_DATA, new Gson().toJson(data))
+                .apply();
+    }
+
+    public static SettingsData getSettings() {
+        String data = mSharedPreferences.getString(Keys.SETTING_DATA, StringUtils.EMPTY);
         SettingsData settingsData = null;
         if (StringUtils.isBlank(data)) {
             settingsData = new SettingsData();
@@ -54,31 +80,27 @@ public class AppPreferences {
         return settingsData;
     }
 
-    public static void setDropOffData(Context context, String address, double lat, double lng) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setDropOffData(String address, double lat, double lng) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putString("dropOffAddress", address);
         ed.putString("dropOffLat", lat + "");
         ed.putString("dropOffLng", lng + "");
-        ed.commit();
+        ed.apply();
     }
 
     public static String getDropOffAddress(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString("dropOffAddress", "");
+        return mSharedPreferences.getString("dropOffAddress", "");
     }
 
-    public static String getDropOffLat(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString("dropOffLat", "0");
+    public static String getDropOffLat() {
+        return mSharedPreferences.getString("dropOffLat", "0");
     }
 
     public static String getDropOffLng(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString("dropOffLng", "0");
+        return mSharedPreferences.getString("dropOffLng", "0");
     }
 
-    public static void setPilotData(Context context, PilotData user) {
+    public static void setPilotData(PilotData user) {
         Gson gson = new Gson();
         JSONObject userJson = null;
         if (null != user) {
@@ -88,30 +110,27 @@ public class AppPreferences {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            SharedPreferences.Editor ed = sp.edit();
+            SharedPreferences.Editor ed = mSharedPreferences.edit();
             ed.putString(Keys.EMAIL, user.getEmail());
             ed.putString(Keys.ACCESS_TOKEN, user.getAccessToken());
             ed.putString(Keys.DRIVER_ID, user.getId());
             ed.putString(Keys.PHONE_NUMBER, user.getPhoneNo());
             ed.putString(Keys.DRIVER_DATA, userJson.toString());
-            ed.commit();
+            ed.apply();
         } else {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            SharedPreferences.Editor ed = sp.edit();
+            SharedPreferences.Editor ed = mSharedPreferences.edit();
             ed.putString(Keys.EMAIL, "");
             ed.putString(Keys.ACCESS_TOKEN, "");
             ed.putString(Keys.DRIVER_ID, "");
             ed.putString(Keys.DRIVER_DATA, "");
             ed.clear();
-            ed.commit();
+            ed.apply();
         }
     }
 
-    public static PilotData getPilotData(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+    public static PilotData getPilotData() {
         Gson gson = new Gson();
-        String data = sp.getString(Keys.DRIVER_DATA, StringUtils.EMPTY);
+        String data = mSharedPreferences.getString(Keys.DRIVER_DATA, StringUtils.EMPTY);
         Utils.infoLog("Get Driver Profile: ", data);
         if (StringUtils.isNotBlank(data)) {
             return gson.fromJson(data, PilotData.class);
@@ -120,541 +139,485 @@ public class AppPreferences {
         }
     }
 
-    public static void setEta(Context context, String eta) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setEta(String eta) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putString("eta", eta);
         ed.putLong("etaTime", System.currentTimeMillis());
-        ed.commit();
+        ed.apply();
     }
 
-    public static String getEta(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString("eta", "0");
+    public static String getEta() {
+        return mSharedPreferences
+                .getString("eta", "0");
     }
 
-    public static long getEtaUpdatedTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong("etaTime", 0);
+    public static long getEtaUpdatedTime() {
+        return mSharedPreferences.getLong("etaTime", 0);
     }
 
-    public static void setEstimatedDistance(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("distance", value);
-        ed.commit();
+    public static void setEstimatedDistance(String value) {
+        mSharedPreferences
+                .edit()
+                .putString("distance", value)
+                .apply();
     }
 
-    public static String getEstimatedDistance(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString("distance", "0");
+    public static String getEstimatedDistance() {
+        return mSharedPreferences.getString("distance", "0");
     }
 
-    public static void setPhoneNumber(Context context, String phone) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setPhoneNumber(String phone) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         Utils.infoLog("Saving phone no", phone);
         ed.putString(Keys.PHONE_NUMBER, phone);
         ed.commit();
     }
 
-    public static String getPhoneNumber(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.PHONE_NUMBER, StringUtils.EMPTY);
+    public static String getPhoneNumber() {
+        return mSharedPreferences.getString(Keys.PHONE_NUMBER, StringUtils.EMPTY);
     }
 
-    public static String getDriverEmail(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.EMAIL, StringUtils.EMPTY);
+    public static String getDriverEmail() {
+        return mSharedPreferences.getString(Keys.EMAIL, StringUtils.EMPTY);
     }
 
-    public static String getDriverId(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.DRIVER_ID, StringUtils.EMPTY);
+    public static String getDriverId() {
+        return mSharedPreferences.getString(Keys.DRIVER_ID, StringUtils.EMPTY);
     }
 
-    public static void setRegId(Context context, String id) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.FCM_REGISTRATION_ID, id);
-        ed.commit();
+    public static void setRegId(String id) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.FCM_REGISTRATION_ID, id)
+                .apply();
     }
 
-    public static String getRegId(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.FCM_REGISTRATION_ID, "");
+    public static String getRegId() {
+        return mSharedPreferences.getString(Keys.FCM_REGISTRATION_ID, "");
     }
 
-    public static String getAccessToken(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.ACCESS_TOKEN, StringUtils.EMPTY);
+    public static String getAccessToken() {
+        return mSharedPreferences.getString(Keys.ACCESS_TOKEN, StringUtils.EMPTY);
     }
 
-    public static void savePhoneNumberVerified(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.PHONE_NUMBER_VERIFIED, value);
-        ed.commit();
+    public static void savePhoneNumberVerified(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.PHONE_NUMBER_VERIFIED, value)
+                .apply();
     }
 
-    public static boolean isPhoneNumberVerified(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.PHONE_NUMBER_VERIFIED, false);
+    public static boolean isPhoneNumberVerified() {
+        return mSharedPreferences.getBoolean(Keys.PHONE_NUMBER_VERIFIED, false);
     }
 
 
-    public static void setAvailableStatus(Context context, boolean status) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.AVAILABLE_STATUS, status);
-        ed.commit();
+    public static void setAvailableStatus(boolean status) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.AVAILABLE_STATUS, status)
+                .apply();
     }
 
-    public static boolean getAvailableStatus(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.AVAILABLE_STATUS, false);
+    public static boolean getAvailableStatus() {
+        return mSharedPreferences.getBoolean(Keys.AVAILABLE_STATUS, false);
     }
 
-    public static void saveLoginStatus(Context context, boolean isLoggedIn) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.LOGIN_STATUS, isLoggedIn);
-        ed.commit();
+    public static void saveLoginStatus(boolean isLoggedIn) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.LOGIN_STATUS, isLoggedIn)
+                .apply();
     }
 
-    public static boolean isLoggedIn(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.LOGIN_STATUS, false);
+    public static boolean isLoggedIn() {
+        return mSharedPreferences.getBoolean(Keys.LOGIN_STATUS, false);
     }
 
 
-    public static void saveLocation(Context context, LatLng location, String bearing, float accuracy, boolean isMock) {
+    public static void saveLocation(LatLng location, String bearing, float accuracy, boolean isMock) {
         if (location.latitude != 0.0 && location.longitude != 0.0 && accuracy < 100f) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            SharedPreferences.Editor ed = sp.edit();
+            SharedPreferences.Editor ed = mSharedPreferences.edit();
             ed.putString(Keys.LATITUDE, location.latitude + "");
             ed.putString(Keys.LONGITUDE, location.longitude + "");
             ed.putString(Keys.BEARING, bearing + "");
             ed.putBoolean(Keys.IS_MOCK_LOCATION, isMock);
             ed.putFloat(Keys.LOCATION_ACCURACY, accuracy);
-            ed.commit();
+            ed.apply();
         }
 
     }
 
-    public static void saveLocation(Context context, double latitude, double longitude) {
+    public static void saveLocation(double latitude, double longitude) {
         if (latitude != 0.0 && longitude != 0.0) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            SharedPreferences.Editor ed = sp.edit();
+            SharedPreferences.Editor ed = mSharedPreferences.edit();
             ed.putString(Keys.LATITUDE, latitude + "");
             ed.putString(Keys.LONGITUDE, longitude + "");
             ed.putBoolean(Keys.IS_MOCK_LOCATION, false);
             ed.putFloat(Keys.LOCATION_ACCURACY, 10);
-            ed.commit();
+            ed.apply();
         }
     }
 
     public static void saveLocationFromLogin(Context context, LatLng location, String bearing, float accuracy, boolean isMock) {
         if (location.latitude != 0.0 && location.longitude != 0.0 /*&& accuracy < 100f*/) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            SharedPreferences.Editor ed = sp.edit();
+            SharedPreferences.Editor ed = mSharedPreferences.edit();
             ed.putString(Keys.LATITUDE, location.latitude + "");
             ed.putString(Keys.LONGITUDE, location.longitude + "");
             ed.putString(Keys.BEARING, bearing + "");
             ed.putBoolean(Keys.IS_MOCK_LOCATION, isMock);
             ed.putFloat(Keys.LOCATION_ACCURACY, accuracy);
-            ed.commit();
+            ed.apply();
         }
 
     }
 
-    public static double getLatitude(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return Double.parseDouble(sp.getString(Keys.LATITUDE, "0.0"));
+    public static double getLatitude() {
+        return Double.parseDouble(mSharedPreferences.getString(Keys.LATITUDE, "0.0"));
     }
 
-    public static double getLongitude(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return Double.parseDouble(sp.getString(Keys.LONGITUDE, "0.0"));
+    public static double getLongitude() {
+        return Double.parseDouble(mSharedPreferences.getString(Keys.LONGITUDE, "0.0"));
     }
 
-    public static boolean isFromMockLocation(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return !BuildConfig.DEBUG && sp.getBoolean(Keys.IS_MOCK_LOCATION, false);
+    public static boolean isFromMockLocation() {
+        return !BuildConfig.DEBUG && mSharedPreferences.getBoolean(Keys.IS_MOCK_LOCATION, false);
     }
 
-    public static double getBearing(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String bearing = sp.getString(Keys.BEARING, "0.0");
+    public static double getBearing() {
+        String bearing = mSharedPreferences.getString(Keys.BEARING, "0.0");
         if (StringUtils.isBlank(bearing)) {
             bearing = "0.0";
         }
         return Double.parseDouble(bearing);
     }
 
-    public static void setCallData(Context context, NormalCallData callData) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setCallData(NormalCallData callData) {
         Utils.infoLog("Saving Calling object: ", new Gson().toJson(callData));
-        ed.putString(Keys.CALLDATA_OBJECT, new Gson().toJson(callData));
-        ed.commit();
+        mSharedPreferences
+                .edit()
+                .putString(Keys.CALLDATA_OBJECT, new Gson().toJson(callData))
+                .apply();
     }
 
-    public static void setRating(Context context, String rating) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setRating(String rating) {
         Utils.infoLog("Saving Rating : ", Float.parseFloat(rating) + "");
-        ed.putFloat(getDriverId(context) + "driverRating", Float.parseFloat(rating));
-        ed.commit();
+        mSharedPreferences
+                .edit()
+                .putFloat(getDriverId() + "driverRating", Float.parseFloat(rating))
+                .apply();
     }
 
-    public static float getRating(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Utils.infoLog("Saving Rating : ", sharedPreferences.getFloat("driverRating", 0) + "");
-        return sharedPreferences.getFloat(getDriverId(context) + "driverRating", 0);
+    public static float getRating() {
+        Utils.infoLog("Saving Rating : ", mSharedPreferences.getFloat("driverRating", 0) + "");
+        return mSharedPreferences.getFloat(getDriverId() + "driverRating", 0);
     }
 
 
-    public static NormalCallData getCallData(Context context) {
+    public static NormalCallData getCallData() {
         Gson gson = new Gson();
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return gson.fromJson(sp.getString(Keys.CALLDATA_OBJECT, StringUtils.EMPTY),
+        return gson.fromJson(mSharedPreferences.getString(Keys.CALLDATA_OBJECT, StringUtils.EMPTY),
                 NormalCallData.class);
     }
 
 
-    public static void setIsOnTrip(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.ON_TRIP, value);
-        ed.commit();
+    public static void setIsOnTrip(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.ON_TRIP, value)
+                .apply();
     }
 
-    public static boolean isOnTrip(Context context) {
-        SharedPreferences sp = PreferenceManager.
-                getDefaultSharedPreferences(context);
-
-        Utils.infoLog(Constants.APP_NAME + " isOnTrip", sp.getBoolean(Keys.ON_TRIP, false) + "");
-        return sp.getBoolean(Keys.ON_TRIP, false);
+    public static boolean isOnTrip() {
+        Utils.infoLog(Constants.APP_NAME + " isOnTrip", mSharedPreferences.getBoolean(Keys.ON_TRIP, false) + "");
+        return mSharedPreferences.getBoolean(Keys.ON_TRIP, false);
     }
 
-    public static void setTripStatus(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.TRIP_STATUS, value);
-        ed.commit();
+    public static void setTripStatus(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.TRIP_STATUS, value)
+                .apply();
     }
 
-    public static String getTripStatus(Context context) {
-        SharedPreferences sp = PreferenceManager.
-                getDefaultSharedPreferences(context);
-        return sp.getString(Keys.TRIP_STATUS, TripStatus.ON_FREE);
+    public static String getTripStatus() {
+        return mSharedPreferences.getString(Keys.TRIP_STATUS, TripStatus.ON_FREE);
     }
 
-    public static void setBeginTrip(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.ON_BEGIN_TRIP, value);
-        ed.commit();
+    public static void setBeginTrip(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.ON_BEGIN_TRIP, value)
+                .apply();
         Utils.redLog(Constants.APP_NAME + " BeginTripStatus", value + "");
     }
 
-    public static boolean isOnBeginTrip(Context context) {
-        SharedPreferences sp = PreferenceManager.
-                getDefaultSharedPreferences(context);
-        Utils.redLog(Constants.APP_NAME + " isOnBeginTripStatus", sp.getBoolean(Keys.ON_BEGIN_TRIP, false) + "");
-        return sp.getBoolean(Keys.ON_BEGIN_TRIP, false);
+    public static boolean isOnBeginTrip() {
+        Utils.redLog(Constants.APP_NAME + " isOnBeginTripStatus", mSharedPreferences.getBoolean(Keys.ON_BEGIN_TRIP, false) + "");
+        return mSharedPreferences.getBoolean(Keys.ON_BEGIN_TRIP, false);
     }
 
-    public static void setEndTrip(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setEndTrip(boolean value) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putBoolean(Keys.ON_END_TRIP, value);
-        ed.commit();
+        ed.apply();
         // Clear distance only on begin trip not on end trip
         if (value) {
             ed.putFloat(Keys.TRIP_TOTAL_DISTANCE, 0.0f);
         }
         // It makes sure that no time and distance is being added
-        AppPreferences.setBeginTrip(context, false);
+        AppPreferences.setBeginTrip(false);
         Utils.redLog(Constants.APP_NAME + " isOnEndTripStatus", value + "");
     }
 
-    public static boolean isOnEndTrip(Context context) {
-        SharedPreferences sp = PreferenceManager.
-                getDefaultSharedPreferences(context);
-        Utils.redLog(Constants.APP_NAME + " isOnEndTripStatus", sp.getBoolean(Keys.ON_END_TRIP, false) + "");
-        return sp.getBoolean(Keys.ON_END_TRIP, false);
+    public static boolean isOnEndTrip() {
+        Utils.redLog(Constants.APP_NAME + " isOnEndTripStatus", mSharedPreferences.getBoolean(Keys.ON_END_TRIP, false) + "");
+        return mSharedPreferences.getBoolean(Keys.ON_END_TRIP, false);
     }
 
-    public static long getStartTripTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.TRIP_START_TIME, 0);
+    public static long getStartTripTime() {
+        return mSharedPreferences.getLong(Keys.TRIP_START_TIME, 0);
     }
 
-    public static void setStartTripTime(Context context, long startTime) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putLong(Keys.TRIP_START_TIME, startTime);
-        ed.commit();
+    public static void setStartTripTime(long startTime) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.TRIP_START_TIME, startTime)
+                .apply();
     }
 
-    public static void setIncomingCall(Context context, boolean flag) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.INCOMING_CALL, flag);
-        ed.commit();
+    public static void setIncomingCall(boolean flag) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.INCOMING_CALL, flag)
+                .apply();
     }
 
-    public static boolean isIncomingCall(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.INCOMING_CALL, true);
+    public static boolean isIncomingCall() {
+        return mSharedPreferences.getBoolean(Keys.INCOMING_CALL, true);
     }
 
-    public static void setCallType(Context context, String callType) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.CALL_TYPE, callType);
-        ed.commit();
+    public static void setCallType(String callType) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.CALL_TYPE, callType)
+                .apply();
     }
 
-    public static String getCallType(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.CALL_TYPE, "");
+    public static String getCallType() {
+        return mSharedPreferences.getString(Keys.CALL_TYPE, "");
     }
 
-    public static void setLastMessageID(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.LAST_MESSAGE_ID, value);
-        ed.commit();
+    public static void setLastMessageID(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.LAST_MESSAGE_ID, value)
+                .apply();
     }
 
-    public static String getLastMessageID(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.LAST_MESSAGE_ID, StringUtils.EMPTY);
+    public static String getLastMessageID() {
+        return mSharedPreferences.getString(Keys.LAST_MESSAGE_ID, StringUtils.EMPTY);
     }
 
-    public static void setAdminMsg(Context context, NotificationData data) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.ADMIN_MSG, data != null ? new Gson().toJson(data) : StringUtils.EMPTY);
-        ed.commit();
+    public static void setAdminMsg(NotificationData data) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.ADMIN_MSG, data != null ? new Gson().toJson(data) : StringUtils.EMPTY)
+                .apply();
     }
 
-    public static String getAdminMsg(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.ADMIN_MSG, StringUtils.EMPTY);
+    public static String getAdminMsg() {
+        return mSharedPreferences.getString(Keys.ADMIN_MSG, StringUtils.EMPTY);
     }
 
-    public static boolean isJobActivityOnForeground(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.JOB_ACTIVITY_FOREGROUND, false);
+    public static boolean isJobActivityOnForeground() {
+        return mSharedPreferences.getBoolean(Keys.JOB_ACTIVITY_FOREGROUND, false);
     }
 
-    public static void setJobActivityOnForeground(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.JOB_ACTIVITY_FOREGROUND, value);
-        ed.commit();
+    public static void setJobActivityOnForeground(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.JOB_ACTIVITY_FOREGROUND, value)
+                .apply();
     }
 
-    public static boolean isChatActivityOnForeground(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.CHAT_ACTIVITY_FOREGROUND, false);
+    public static boolean isChatActivityOnForeground() {
+        return mSharedPreferences.getBoolean(Keys.CHAT_ACTIVITY_FOREGROUND, false);
     }
 
-    public static void setChatActivityOnForeground(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.CHAT_ACTIVITY_FOREGROUND, value);
-        ed.commit();
+    public static void setChatActivityOnForeground(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.CHAT_ACTIVITY_FOREGROUND, value)
+                .apply();
     }
 
-    public static boolean isHomeActivityOnForeground(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.HOME_ACTIVITY_FOREGROUND, false);
+    public static boolean isHomeActivityOnForeground() {
+        return mSharedPreferences.getBoolean(Keys.HOME_ACTIVITY_FOREGROUND, false);
     }
 
-    public static void setHomeActivityOnForeground(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.HOME_ACTIVITY_FOREGROUND, value);
-        ed.commit();
+    public static void setHomeActivityOnForeground(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.HOME_ACTIVITY_FOREGROUND, value)
+                .apply();
     }
 
-    public static boolean isCallingActivityOnForeground(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.CALLING_ACTIVITY_FOREGROUND, false);
+    public static boolean isCallingActivityOnForeground() {
+        return mSharedPreferences.getBoolean(Keys.CALLING_ACTIVITY_FOREGROUND, false);
     }
 
-    public static void setCallingActivityOnForeground(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.CALLING_ACTIVITY_FOREGROUND, value);
-        ed.commit();
+    public static void setCallingActivityOnForeground(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.CALLING_ACTIVITY_FOREGROUND, value)
+                .apply();
     }
 
-    public static void saveLastUpdatedLocation(Context context, LatLng location) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void saveLastUpdatedLocation(LatLng location) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         if (location.latitude != 0.0 && location.longitude != 0.0) {
             ed.putString(Keys.LATITUDE_LAST_UPDATED, location.latitude + "");
             ed.putString(Keys.LONGITUDE_LAST_UPDATED, location.longitude + "");
             ed.putString(Keys.TIME_LAST_UPDATED, "0");
         }
-        ed.commit();
+        ed.apply();
     }
 
-    public static String getLastUpdatedLatitude(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.LATITUDE_LAST_UPDATED, "0.0");
+    public static String getLastUpdatedLatitude() {
+        return mSharedPreferences.getString(Keys.LATITUDE_LAST_UPDATED, "0.0");
     }
 
-    public static String getLastUpdatedLongitude(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.LONGITUDE_LAST_UPDATED, "0.0");
+    public static String getLastUpdatedLongitude() {
+        return mSharedPreferences.getString(Keys.LONGITUDE_LAST_UPDATED, "0.0");
     }
 
-    public static String getLastUpdatedTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.TIME_LAST_UPDATED, "0");
+    public static String getLastUpdatedTime() {
+        return mSharedPreferences.getString(Keys.TIME_LAST_UPDATED, "0");
     }
 
-    public static void saveLocationAccuracy(Context context, LatLng location) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void saveLocationAccuracy(LatLng location) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         if (location.latitude != 0.0 && location.longitude != 0.0) {
             ed.putString(Keys.LATITUDE_LAST_UPDATED, location.latitude + "");
             ed.putString(Keys.LONGITUDE_LAST_UPDATED, location.longitude + "");
         }
-        ed.commit();
+        ed.apply();
     }
 
-    public static float getLocationAccuracy(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getFloat(Keys.LOCATION_ACCURACY, 200f);
+    public static float getLocationAccuracy() {
+        return mSharedPreferences.getFloat(Keys.LOCATION_ACCURACY, 200f);
     }
 
 
     /*
     * Sync Server Time with Device Time.
     * */
-    public static void setServerTimeDifference(Context context, long value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putLong(Keys.SERVER_TIME_DIFFERENCE, value);
+    public static void setServerTimeDifference(long value) {
         Utils.redLog("Time Difference", "" + value);
-        ed.commit();
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.SERVER_TIME_DIFFERENCE, value)
+                .apply();
     }
 
-    public static long getServerTimeDifference(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.SERVER_TIME_DIFFERENCE, 0);
+    public static long getServerTimeDifference() {
+        return mSharedPreferences.getLong(Keys.SERVER_TIME_DIFFERENCE, 0);
     }
 
-    public synchronized static void setLocationEmitTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putLong(Keys.LOCATION_EMIT_TIME, System.currentTimeMillis());
-        ed.commit();
+    public synchronized static void setLocationEmitTime() {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.LOCATION_EMIT_TIME, System.currentTimeMillis())
+                .apply();
     }
 
-    public static long getLocationEmitTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.LOCATION_EMIT_TIME, System.currentTimeMillis());
+    public static long getLocationEmitTime() {
+        return mSharedPreferences.getLong(Keys.LOCATION_EMIT_TIME, System.currentTimeMillis());
     }
 
-    public static boolean isOutOfFence(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.IS_OUT_OF_FENCE, false);
+    public static boolean isOutOfFence() {
+        return mSharedPreferences.getBoolean(Keys.IS_OUT_OF_FENCE, false);
     }
 
-    public static void setOutOfFence(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.IS_OUT_OF_FENCE, value);
-        ed.commit();
+    public static void setOutOfFence(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.IS_OUT_OF_FENCE, value)
+                .apply();
     }
 
 
-    public static boolean isWalletAmountIncreased(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.IS_WALLET_AMOUNT_INCREASED, false);
+    public static boolean isWalletAmountIncreased() {
+        return mSharedPreferences.getBoolean(Keys.IS_WALLET_AMOUNT_INCREASED, false);
     }
 
-    public static void setWalletAmountIncreased(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.IS_WALLET_AMOUNT_INCREASED, value);
-        ed.commit();
+    public static void setWalletAmountIncreased(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.IS_WALLET_AMOUNT_INCREASED, value)
+                .apply();
     }
 
     public static void setProfileUpdated(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.IS_PROFILE_UPDATED, value);
-        ed.commit();
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.IS_PROFILE_UPDATED, value)
+                .apply();
     }
 
-    public static boolean isProfileUpdated(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.IS_PROFILE_UPDATED, true);
-    }
-
-
-    public static void setLastDirectionsApiCallTime(Context context, long value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putLong(Keys.LAST_DIRECTIONS_API_CALL_TIME, value);
-        ed.commit();
+    public static boolean isProfileUpdated() {
+        return mSharedPreferences.getBoolean(Keys.IS_PROFILE_UPDATED, true);
     }
 
 
-    public static long getLastDirectionsApiCallTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.LAST_DIRECTIONS_API_CALL_TIME, 0);
+    public static void setLastDirectionsApiCallTime(long value) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.LAST_DIRECTIONS_API_CALL_TIME, value)
+                .apply();
     }
 
-    public static float getDistanceCoveredInMeters(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getFloat(Keys.DISTANCE_COVERED, 0);
+
+    public static long getLastDirectionsApiCallTime() {
+        return mSharedPreferences.getLong(Keys.LAST_DIRECTIONS_API_CALL_TIME, 0);
     }
 
-    public static void setDistanceCoveredInMeters(Context context, float value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putFloat(Keys.DISTANCE_COVERED, value + getDistanceCoveredInMeters(context));
-        ed.commit();
+    public static float getDistanceCoveredInMeters() {
+        return mSharedPreferences.getFloat(Keys.DISTANCE_COVERED, 0);
     }
 
-    public static void clearTripDistanceData(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setDistanceCoveredInMeters(float value) {
+        mSharedPreferences
+                .edit()
+                .putFloat(Keys.DISTANCE_COVERED, value + getDistanceCoveredInMeters())
+                .apply();
+    }
+
+    public static void clearTripDistanceData() {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putFloat(Keys.DISTANCE_COVERED, 0f);
         ed.putString(Keys.LATITUDE_PREV_DISTANCE, "0.0");
         ed.putString(Keys.LONGITUDE_PREV_DISTANCE, "0.0");
         ed.putLong(Keys.TIME_PREV_DISTANCE, 0);
         ed.putString(Keys.IN_TRIP_LAT_LNG_ARRAY, StringUtils.EMPTY);
         ed.putLong(Keys.TRIP_START_TIME, 0);
-        ed.commit();
+        ed.apply();
     }
 
-    public static void setVersionCheckTime(Context context, long value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putLong(Keys.VERSION_CHECK_TIME, value);
-        ed.commit();
+    public static void setVersionCheckTime(long value) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.VERSION_CHECK_TIME, value)
+                .apply();
     }
 
-    public static long getVersionCheckTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.VERSION_CHECK_TIME, 0);
+    public static long getVersionCheckTime() {
+        return mSharedPreferences.getLong(Keys.VERSION_CHECK_TIME, 0);
     }
 
-    public static void setPrevDistanceLatLng(Context context, double lat, double lon, boolean updatePrevTime) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setPrevDistanceLatLng(double lat, double lon, boolean updatePrevTime) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         if (lat != 0.0 && lon != 0.0) {
             ed.putString(Keys.LATITUDE_PREV_DISTANCE, lat + "");
             ed.putString(Keys.LONGITUDE_PREV_DISTANCE, lon + "");
@@ -662,89 +625,76 @@ public class AppPreferences {
                 ed.putLong(Keys.TIME_PREV_DISTANCE, System.currentTimeMillis());
             }
         }
-        ed.commit();
+        ed.apply();
     }
 
-    public static void setPrevDistanceLatLng(Context context, double lat, double lon, long time) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setPrevDistanceLatLng(double lat, double lon, long time) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         if (lat != 0.0 && lon != 0.0) {
             ed.putString(Keys.LATITUDE_PREV_DISTANCE, lat + "");
             ed.putString(Keys.LONGITUDE_PREV_DISTANCE, lon + "");
             ed.putLong(Keys.TIME_PREV_DISTANCE, time);
         }
-        ed.commit();
+        ed.apply();
     }
 
-    public static void setPrevDistanceTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putLong(Keys.TIME_PREV_DISTANCE, System.currentTimeMillis());
-        ed.commit();
+    public static void setPrevDistanceTime() {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.TIME_PREV_DISTANCE, System.currentTimeMillis())
+                .apply();
     }
 
-    public static String getPrevDistanceLatitude(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.LATITUDE_PREV_DISTANCE, "0.0");
+    public static String getPrevDistanceLatitude() {
+        return mSharedPreferences.getString(Keys.LATITUDE_PREV_DISTANCE, "0.0");
     }
 
-    public static String getPrevDistanceLongitude(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.LONGITUDE_PREV_DISTANCE, "0.0");
+    public static String getPrevDistanceLongitude() {
+        return mSharedPreferences.getString(Keys.LONGITUDE_PREV_DISTANCE, "0.0");
     }
 
-    public static long getPrevDistanceTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.TIME_PREV_DISTANCE, 0);
+    public static long getPrevDistanceTime() {
+        return mSharedPreferences.getLong(Keys.TIME_PREV_DISTANCE, 0);
     }
 
-    public static boolean isStopServiceCalled(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.IS_STOP_SERVICE_CALLED, false);
+    public static boolean isStopServiceCalled() {
+        return mSharedPreferences.getBoolean(Keys.IS_STOP_SERVICE_CALLED, false);
     }
 
-    public static void setStopService(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.IS_STOP_SERVICE_CALLED, value);
-        ed.commit();
+    public static void setStopService(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.IS_STOP_SERVICE_CALLED, value)
+                .apply();
     }
 
-    public static void addLocCoordinateInTrip(Context context, double lat, double lng) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void addLocCoordinateInTrip(double lat, double lng) {
         LocCoordinatesInTrip currentLatLng = new LocCoordinatesInTrip();
         currentLatLng.setDate("" + Utils.getIsoDate());
         currentLatLng.setLat("" + lat);
         currentLatLng.setLng("" + lng);
-        ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip(context);
+        ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip();
         prevLatLngList.add(currentLatLng);
         String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
         }.getType());
         Utils.redLog("InTripLoc", value);
-        ed.putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value);
-        ed.commit();
+        mSharedPreferences.edit().putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value).apply();
     }
 
-    public static void addLocCoordinateInTrip(Context context, ArrayList<LocCoordinatesInTrip> routeLatLngList, int index) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip(context);
+    public static void addLocCoordinateInTrip(ArrayList<LocCoordinatesInTrip> routeLatLngList, int index) {
+        ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip();
         if (index < prevLatLngList.size()) {
             prevLatLngList.addAll(index, routeLatLngList);
             String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
             }.getType());
             Utils.redLog("InTripLoc", value);
-            ed.putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value);
-            ed.commit();
+            mSharedPreferences.edit().putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value).apply();
         }
     }
 
 
-    public static ArrayList<LocCoordinatesInTrip> getLocCoordinatesInTrip(Context c) {
-
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
-        String placesJson = sp.getString(Keys.IN_TRIP_LAT_LNG_ARRAY, StringUtils.EMPTY);
+    public static ArrayList<LocCoordinatesInTrip> getLocCoordinatesInTrip() {
+        String placesJson = mSharedPreferences.getString(Keys.IN_TRIP_LAT_LNG_ARRAY, StringUtils.EMPTY);
         ArrayList<LocCoordinatesInTrip> latLngList = new ArrayList<>();
         if (StringUtils.isNotBlank(placesJson)) {
             latLngList = new Gson().fromJson(placesJson, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
@@ -753,41 +703,37 @@ public class AppPreferences {
         return latLngList;
     }
 
-    public static String getLocCoordinatesInTripString(Context c) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
-        return sp.getString(Keys.IN_TRIP_LAT_LNG_ARRAY, StringUtils.EMPTY);
+    public static String getLocCoordinatesInTripString() {
+        return mSharedPreferences.getString(Keys.IN_TRIP_LAT_LNG_ARRAY, StringUtils.EMPTY);
     }
 
-    public static void setLastStatsApiCallTime(Context context, long value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putLong(Keys.STATS_API_CALL_TIME, value);
-        ed.commit();
+    public static void setLastStatsApiCallTime(long value) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.STATS_API_CALL_TIME, value)
+                .apply();
     }
 
-    public static long getLastStatsApiCallTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.STATS_API_CALL_TIME, 0);
+    public static long getLastStatsApiCallTime() {
+        return mSharedPreferences.getLong(Keys.STATS_API_CALL_TIME, 0);
     }
 
-    public static void setStatsApiCallRequired(Context context, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(Keys.IS_STATS_API_CALL_REQUIRED, value);
-        ed.commit();
+    public static void setStatsApiCallRequired(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.IS_STATS_API_CALL_REQUIRED, value)
+                .apply();
     }
 
-    public static boolean isStatsApiCallRequired(Context c) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
-        return sp.getBoolean(Keys.IS_STATS_API_CALL_REQUIRED, true);
+    public static boolean isStatsApiCallRequired() {
+        return mSharedPreferences.getBoolean(Keys.IS_STATS_API_CALL_REQUIRED, true);
     }
 
-    public static void setGeoCoderApiKeyRequired(Context context, boolean status) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setGeoCoderApiKeyRequired(boolean status) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putBoolean(Keys.IS_GEO_CODER_API_KEY_REQUIRED, status);
         if (status) {
-            if (getGeoCoderApiKeyCheckTime(context) == 0) {
+            if (getGeoCoderApiKeyCheckTime() == 0) {
                 ed.putLong(Keys.API_KEY_CHECK_TIME_GEO_CODER, System.currentTimeMillis());
             }
         } else {
@@ -796,23 +742,20 @@ public class AppPreferences {
         ed.apply();
     }
 
-    public static long getGeoCoderApiKeyCheckTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.API_KEY_CHECK_TIME_GEO_CODER, 0);
+    public static long getGeoCoderApiKeyCheckTime() {
+        return mSharedPreferences.getLong(Keys.API_KEY_CHECK_TIME_GEO_CODER, 0);
     }
 
-    public static boolean isGeoCoderApiKeyRequired(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.IS_GEO_CODER_API_KEY_REQUIRED, false);
+    public static boolean isGeoCoderApiKeyRequired() {
+        return mSharedPreferences.getBoolean(Keys.IS_GEO_CODER_API_KEY_REQUIRED, false);
     }
 
 
-    public static void setDirectionsApiKeyRequired(Context context, boolean status) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setDirectionsApiKeyRequired(boolean status) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putBoolean(Keys.IS_DIRECTIONS_API_KEY_REQUIRED, status);
         if (status) {
-            if (getDirectionsApiKeyCheckTime(context) == 0) {
+            if (getDirectionsApiKeyCheckTime() == 0) {
                 ed.putLong(Keys.API_KEY_CHECK_TIME_DIRECTIONS, System.currentTimeMillis());
             }
         } else {
@@ -821,20 +764,17 @@ public class AppPreferences {
         ed.apply();
     }
 
-    public static long getDirectionsApiKeyCheckTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.API_KEY_CHECK_TIME_DIRECTIONS, 0);
+    public static long getDirectionsApiKeyCheckTime() {
+        return mSharedPreferences.getLong(Keys.API_KEY_CHECK_TIME_DIRECTIONS, 0);
     }
 
-    public static boolean isDirectionsApiKeyRequired(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(Keys.IS_DIRECTIONS_API_KEY_REQUIRED, false);
+    public static boolean isDirectionsApiKeyRequired() {
+        return mSharedPreferences.getBoolean(Keys.IS_DIRECTIONS_API_KEY_REQUIRED, false);
     }
 
 
-    public static void setAvailableCities(Context context, GetCitiesResponse response) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
+    public static void setAvailableCities(GetCitiesResponse response) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ArrayList<PlacesResult> placesResults = new ArrayList<>();
         for (CitiesData city : response.getData()) {
             PlacesResult placesResult = new PlacesResult(city.getName(), StringUtils.EMPTY,
@@ -848,14 +788,12 @@ public class AppPreferences {
         ed.apply();
     }
 
-    public static long getCitiesApiCallTime(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.AVAILABLE_CITIES_API_CALL_TIME, 0);
+    public static long getCitiesApiCallTime() {
+        return mSharedPreferences.getLong(Keys.AVAILABLE_CITIES_API_CALL_TIME, 0);
     }
 
-    public static ArrayList<PlacesResult> getAvailableCities(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String jsonString = sp.getString(Keys.AVAILABLE_CITIES, StringUtils.EMPTY);
+    public static ArrayList<PlacesResult> getAvailableCities() {
+        String jsonString = mSharedPreferences.getString(Keys.AVAILABLE_CITIES, StringUtils.EMPTY);
         ArrayList<PlacesResult> citiesData = new ArrayList<>();
         if (StringUtils.isNotBlank(jsonString)) {
             citiesData = new Gson().fromJson(jsonString, new TypeToken<ArrayList<PlacesResult>>() {
@@ -865,89 +803,83 @@ public class AppPreferences {
     }
 
 
-    public static void setADID(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.ADID, value);
-        ed.apply();
+    public static void setADID(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.ADID, value)
+                .apply();
     }
 
-    public static String getADID(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.ADID, StringUtils.EMPTY);
+    public static String getADID() {
+        return mSharedPreferences.getString(Keys.ADID, StringUtils.EMPTY);
     }
 
-    public static void setLastAckTripID(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.LAST_ACK_TRIP_ID, value);
-        ed.apply();
+    public static void setLastAckTripID(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.LAST_ACK_TRIP_ID, value)
+                .apply();
     }
 
-    public static String getLastAckTripID(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.LAST_ACK_TRIP_ID, StringUtils.EMPTY);
+    public static String getLastAckTripID() {
+        return mSharedPreferences.getString(Keys.LAST_ACK_TRIP_ID, StringUtils.EMPTY);
     }
 
 
-    public static void setOneSignalPlayerId(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.ONE_SIGNAL_PALYER_ID, value);
-        ed.apply();
+    public static void setOneSignalPlayerId(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.ONE_SIGNAL_PALYER_ID, value)
+                .apply();
     }
 
-    public static String getOneSignalPlayerId(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.ONE_SIGNAL_PALYER_ID, StringUtils.EMPTY);
+    public static String getOneSignalPlayerId() {
+        return mSharedPreferences.getString(Keys.ONE_SIGNAL_PALYER_ID, StringUtils.EMPTY);
     }
 
-    public static void setWalletIncreasedError(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.WALLET_ERROR, value);
-        ed.apply();
+    public static void setWalletIncreasedError(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.WALLET_ERROR, value)
+                .apply();
     }
 
-    public static String getWalletIncreasedError(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.WALLET_ERROR, "Mazeed booking lainay kay liyay pehlay paisay jamma karein");
+    public static String getWalletIncreasedError() {
+        return mSharedPreferences
+                .getString(Keys.WALLET_ERROR, "Mazeed booking lainay kay liyay pehlay paisay jamma karein");
     }
 
-    public static void setSettingsVersion(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.SETTINGS_VERSION, value);
-        ed.apply();
+    public static void setSettingsVersion(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.SETTINGS_VERSION, value)
+                .apply();
     }
 
-    public static String getSettingsVersion(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Keys.SETTINGS_VERSION, StringUtils.EMPTY);
+    public static String getSettingsVersion() {
+        return mSharedPreferences.getString(Keys.SETTINGS_VERSION, StringUtils.EMPTY);
     }
 
-    public static void setCashInHands(Context context, int value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putInt(Keys.CASH_IN_HANDS, value);
-        ed.apply();
+    public static void setCashInHands(int value) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.CASH_IN_HANDS, value)
+                .apply();
     }
 
-    public static int getCashInHands(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getInt(Keys.CASH_IN_HANDS, 0);
+    public static int getCashInHands() {
+        return mSharedPreferences.getInt(Keys.CASH_IN_HANDS, 0);
     }
 
-    public static void setCashInHandsRange(Context context, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString(Keys.CASH_IN_HANDS_RANGE, value);
-        ed.apply();
+    public static void setCashInHandsRange(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.CASH_IN_HANDS_RANGE, value)
+                .apply();
     }
 
-    public static int[] getCashInHandsRange(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String value = sp.getString(Keys.CASH_IN_HANDS_RANGE, StringUtils.EMPTY);
+    public static int[] getCashInHandsRange() {
+        String value = mSharedPreferences.getString(Keys.CASH_IN_HANDS_RANGE, StringUtils.EMPTY);
         if (StringUtils.isNotBlank(value)) {
             return new Gson().fromJson(value, int[].class);
         } else {
@@ -956,15 +888,14 @@ public class AppPreferences {
     }
 
 
-    public static void setTripDelay(Context context, long value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putLong(Keys.TRIP_DELAY, value);
-        ed.apply();
+    public static void setTripDelay(long value) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.TRIP_DELAY, value)
+                .apply();
     }
 
-    public static long getTripDelay(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong(Keys.TRIP_DELAY, 0);
+    public static long getTripDelay() {
+        return mSharedPreferences.getLong(Keys.TRIP_DELAY, 0);
     }
 }

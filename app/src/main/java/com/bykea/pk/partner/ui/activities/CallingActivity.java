@@ -77,9 +77,9 @@ public class CallingActivity extends BaseActivity {
         ButterKnife.bind(this);
         repository = new UserRepository();
         Utils.unlockScreen(mCurrentActivity);
-        AppPreferences.setStatsApiCallRequired(mCurrentActivity, true);
+        AppPreferences.setStatsApiCallRequired(true);
         //To inactive driver during passenger calling state
-        AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_IN_PROGRESS);
+        AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
         repository.requestLocationUpdate(mCurrentActivity, handler);
 
         donutProgress.setProgress(20);
@@ -103,7 +103,7 @@ public class CallingActivity extends BaseActivity {
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(CallingActivity.this);
-        AppPreferences.setCallingActivityOnForeground(mCurrentActivity, true);
+        AppPreferences.setCallingActivityOnForeground(true);
     }
 
     @Override
@@ -111,13 +111,13 @@ public class CallingActivity extends BaseActivity {
         super.onDestroy();
         stopSound();
         unregisterReceiver(cancelRideReceiver);
-        if (AppPreferences.isOnTrip(mCurrentActivity)) {
-            AppPreferences.setIncomingCall(mCurrentActivity, false);
+        if (AppPreferences.isOnTrip()) {
+            AppPreferences.setIncomingCall(false);
         } else {
-            AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_FREE);
-            AppPreferences.setIncomingCall(mCurrentActivity, true);
+            AppPreferences.setTripStatus(TripStatus.ON_FREE);
+            AppPreferences.setIncomingCall(true);
         }
-        AppPreferences.setCallingActivityOnForeground(mCurrentActivity, false);
+        AppPreferences.setCallingActivityOnForeground(false);
     }
 
     @Override
@@ -189,14 +189,14 @@ public class CallingActivity extends BaseActivity {
                         Dialogs.INSTANCE.showTempToast(mCurrentActivity,
                                 acceptCallResponse.getMessage());
                         if (acceptCallResponse.isSuccess()) {
-                            AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_ACCEPT_CALL);
-                            AppPreferences.setIsOnTrip(mCurrentActivity, true);
+                            AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
+                            AppPreferences.setIsOnTrip(true);
                             ActivityStackManager.getInstance(mCurrentActivity).startJobActivity();
                             stopSound();
                             mCurrentActivity.finish();
                         } else {
-                            AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_FREE);
-                            AppPreferences.setIsOnTrip(mCurrentActivity, false);
+                            AppPreferences.setTripStatus(TripStatus.ON_FREE);
+                            AppPreferences.setIsOnTrip(false);
                             Dialogs.INSTANCE.showToast(mCurrentActivity
                                     , acceptCallResponse.getMessage());
 
@@ -214,11 +214,11 @@ public class CallingActivity extends BaseActivity {
                     Dialogs.INSTANCE.showToast(mCurrentActivity,
                             rejectCallResponse.getMessage());
                     Dialogs.INSTANCE.dismissDialog();
-                    if (AppPreferences.isOnTrip(mCurrentActivity)) {
-                        AppPreferences.setIncomingCall(mCurrentActivity, false);
-                        AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_FREE);
+                    if (AppPreferences.isOnTrip()) {
+                        AppPreferences.setIncomingCall(false);
+                        AppPreferences.setTripStatus(TripStatus.ON_FREE);
                     } else {
-                        AppPreferences.setIncomingCall(mCurrentActivity, true);
+                        AppPreferences.setIncomingCall(true);
                     }
                     ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
                     stopSound();
@@ -293,7 +293,7 @@ public class CallingActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        AppPreferences.setCallingActivityOnForeground(mCurrentActivity, false);
+        AppPreferences.setCallingActivityOnForeground(false);
     }
 
     @Override
@@ -309,7 +309,7 @@ public class CallingActivity extends BaseActivity {
     }
 
     private void setInitialData() {
-        NormalCallData callData = AppPreferences.getCallData(mCurrentActivity);
+        NormalCallData callData = AppPreferences.getCallData();
         callerNameTv.setText(callData.getPassName());
         startAddressTv.setText(callData.getStartAddress());
         timeTv.setText(callData.getArivalTime() + " min");
@@ -361,8 +361,8 @@ public class CallingActivity extends BaseActivity {
                     public void run() {
                         if (null != intent && null != intent.getExtras()) {
                             if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)) {
-                                Utils.setCallIncomingState(mCurrentActivity);
-                                AppPreferences.setTripStatus(mCurrentActivity, TripStatus.ON_FREE);
+                                Utils.setCallIncomingState();
+                                AppPreferences.setTripStatus(TripStatus.ON_FREE);
                                 stopSound();
                                 ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(false);
                                 mCurrentActivity.finish();

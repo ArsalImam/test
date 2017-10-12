@@ -48,7 +48,7 @@ public class HowItWorksFragment extends Fragment {
         mCurrentActivity.hideToolbarLogo();
 
         lvDemo = (ListView) view.findViewById(R.id.lvVideoDemo);
-        String[] videoLinks = AppPreferences.getSettings(mCurrentActivity).getSettings().getVideos().split(",");
+        String[] videoLinks = AppPreferences.getSettings().getSettings().getVideos().split(",");
 
         for (int x = 0; x < videoLinks.length; x++) {
             int m = x + 1;

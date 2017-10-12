@@ -4,11 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
+import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.AccountNumbersResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -20,7 +21,6 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
-import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
@@ -30,11 +30,12 @@ import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
-import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,8 +60,8 @@ public class RestRequestHandler {
         mRestClient = RestClient.getClient(mContext);
         Utils.redLog("IMEI NUMBER", Utils.getDeviceId(context));
         Call<LoginResponse> restCall = mRestClient.login(email, password,
-                deviceType, userStatus, regID, "" + AppPreferences.getLatitude(context), "" + AppPreferences.getLongitude(context), Utils.getVersion(context),
-                AppPreferences.getOneSignalPlayerId(mContext), AppPreferences.getADID(context), Utils.getDeviceId(context));
+                deviceType, userStatus, regID, "" + AppPreferences.getLatitude(), "" + AppPreferences.getLongitude(), Utils.getVersion(context),
+                AppPreferences.getOneSignalPlayerId(), AppPreferences.getADID(), Utils.getDeviceId(context));
         restCall.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {
@@ -89,8 +90,8 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
-        Call<LogoutResponse> restCall = mRestClient.logout(AppPreferences.getDriverId(context),
-                AppPreferences.getAccessToken(context), AppPreferences.getDriverId(context));
+        Call<LogoutResponse> restCall = mRestClient.logout(AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(), AppPreferences.getDriverId());
         restCall.enqueue(new Callback<LogoutResponse>() {
             @Override
             public void onResponse(Response<LogoutResponse> response, Retrofit retrofit) {
@@ -128,8 +129,8 @@ public class RestRequestHandler {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
         Call<UpdateProfileResponse> restCall = mRestClient.updateProfile(fullName,
-                city, address, email, AppPreferences.getDriverId(context),
-                AppPreferences.getAccessToken(context), Constants.USER_TYPE, pincode);
+                city, address, email, AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(), Constants.USER_TYPE, pincode);
         restCall.enqueue(new Callback<UpdateProfileResponse>() {
             @Override
             public void onResponse(Response<UpdateProfileResponse> response, Retrofit retrofit) {
@@ -250,8 +251,8 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
-        Call<TripHistoryResponse> restCall = mRestClient.getTripHistory(AppPreferences.getDriverId(context),
-                AppPreferences.getAccessToken(context), Constants.USER_TYPE, pageNo);
+        Call<TripHistoryResponse> restCall = mRestClient.getTripHistory(AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(), Constants.USER_TYPE, pageNo);
         restCall.enqueue(new Callback<TripHistoryResponse>() {
             @Override
             public void onResponse(Response<TripHistoryResponse> response, Retrofit retrofit) {
@@ -278,8 +279,8 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
-        Call<TripMissedHistoryResponse> restCall = mRestClient.getMissedTripHistory(AppPreferences.getDriverId(context),
-                AppPreferences.getAccessToken(context), Constants.USER_TYPE, pageNo);
+        Call<TripMissedHistoryResponse> restCall = mRestClient.getMissedTripHistory(AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(), Constants.USER_TYPE, pageNo);
         restCall.enqueue(new Callback<TripMissedHistoryResponse>() {
             @Override
             public void onResponse(Response<TripMissedHistoryResponse> response, Retrofit retrofit) {
@@ -305,8 +306,8 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
-        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(AppPreferences.getDriverId(context),
-                AppPreferences.getAccessToken(context));
+        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken());
         restCall.enqueue(new Callback<CheckDriverStatusResponse>() {
             @Override
             public void onResponse(Response<CheckDriverStatusResponse> response, Retrofit retrofit) {
@@ -466,15 +467,15 @@ public class RestRequestHandler {
     }
 
     public void getSettings(Context context, final IResponseCallback onResponseCallBack) {
-        if (!AppPreferences.isLoggedIn(context) || AppPreferences.getPilotData(context) == null
-                || AppPreferences.getPilotData(context).getCity() == null) {
+        if (!AppPreferences.isLoggedIn() || AppPreferences.getPilotData() == null
+                || AppPreferences.getPilotData().getCity() == null) {
             return;
         }
         mContext = context;
         mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(context);
         Call<SettingsResponse> requestCall = mRestClient.getSettings("d",
-                AppPreferences.getPilotData(mContext).getCity().getName(), AppPreferences.getSettingsVersion(mContext));
+                AppPreferences.getPilotData().getCity().getName(), AppPreferences.getSettingsVersion());
         requestCall.enqueue(new Callback<SettingsResponse>() {
             @Override
             public void onResponse(Response<SettingsResponse> response, Retrofit retrofit) {
@@ -590,7 +591,8 @@ public class RestRequestHandler {
     public void requestChangePin(Context context, String newPin, String oldPin, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
-        Call<ChangePinResponse> requestCall = mRestClient.requestChangePin(AppPreferences.getDriverId(mContext), AppPreferences.getAccessToken(mContext),
+        Call<ChangePinResponse> requestCall = mRestClient.requestChangePin(AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
                 newPin, oldPin, "d");
         requestCall.enqueue(new GenericRetrofitCallBack<ChangePinResponse>(onResponseCallBack));
     }
@@ -598,7 +600,7 @@ public class RestRequestHandler {
     public void getProfileData(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
-        Call<GetProfileResponse> requestCall = mRestClient.requestProfileData(AppPreferences.getDriverId(mContext), AppPreferences.getAccessToken(mContext), "d");
+        Call<GetProfileResponse> requestCall = mRestClient.requestProfileData(AppPreferences.getDriverId(), AppPreferences.getAccessToken(), "d");
         requestCall.enqueue(new GenericRetrofitCallBack<GetProfileResponse>(onResponseCallBack));
     }
 
@@ -608,6 +610,7 @@ public class RestRequestHandler {
         Call<GetCitiesResponse> requestCall = mRestClient.getCities();
         requestCall.enqueue(new GenericRetrofitCallBack<GetCitiesResponse>(onResponseCallBack));
     }
+
 
 
     private class GenericRetrofitCallBack<T extends CommonResponse> implements Callback<T> {
@@ -636,6 +639,15 @@ public class RestRequestHandler {
         }
     }
 
+    public void requestDriverDropOff(Context context, IResponseCallback onResponseCallBack,
+                                     String lat, String lng, String address){
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<DriverDestResponse> requestCall = mRestClient.setDriverDroppOff(AppPreferences.getDriverId()
+                ,AppPreferences.getAccessToken(),lat,lng,address);
+        requestCall.enqueue(new GenericRetrofitCallBack<DriverDestResponse>(onResponseCallBack));
+    }
+
     @NonNull
     private String getErrorMessage(Throwable error) {
         String errorMsg;
@@ -652,5 +664,159 @@ public class RestRequestHandler {
         return errorMsg;
     }
 
+
+    public void callGeoCoderApi(final String latitude, final String longitude,
+                                final IResponseCallback mDataCallback, Context context) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+        Call<GeocoderApi> call = restClient.callGeoCoderApi(latitude + "," + longitude, Constants.GOOGLE_PLACE_SERVER_API_KEY);
+        call.enqueue(new Callback<GeocoderApi>() {
+            @Override
+            public void onResponse(Response<GeocoderApi> geocoderApiResponse, Retrofit retrofit) {
+                String add = StringUtils.EMPTY;
+                if (geocoderApiResponse != null && geocoderApiResponse.isSuccess()) {
+                    if (geocoderApiResponse.body() != null
+                            && geocoderApiResponse.body().getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
+                            && geocoderApiResponse.body().getResults().length > 0) {
+                        String address = StringUtils.EMPTY;
+                        String subLocality = StringUtils.EMPTY;
+//                        String postalCode = StringUtils.EMPTY;
+                        String cityName = StringUtils.EMPTY;
+                        String streetNumber = StringUtils.EMPTY;
+                        GeocoderApi.Address_components[] address_componentses = geocoderApiResponse.body().getResults()[0].getAddress_components();
+                        for (GeocoderApi.Address_components addressComponent : address_componentses) {
+                            String[] types = addressComponent.getTypes();
+                            for (String type : types) {
+
+                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_CITY)) {
+                                    cityName = addressComponent.getLong_name();
+//                                    setOneSignalTags(cityName, false);
+//                                    AppPreferences.setCityForNearByRequest(mContext, cityName);
+                                }
+                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_STREET_NUMBER)) {
+                                    streetNumber = addressComponent.getLong_name();
+                                }
+                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS)
+                                        || type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS_1)) {
+                                    address = addressComponent.getLong_name();
+                                }
+                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS_SUB_LOCALITY)) {
+                                    subLocality = addressComponent.getLong_name();
+                                }
+                                if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(address) && StringUtils.isNotBlank(subLocality)) {
+                                    break;
+                                }
+                            }
+                            if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(address) && StringUtils.isNotBlank(subLocality)) {
+                                break;
+                            }
+                        }
+                        if (StringUtils.isNotBlank(subLocality)) {
+                            if (StringUtils.isNotBlank(address)) {
+                                address = address + " " + subLocality;
+                            } else {
+                                address = subLocality;
+                            }
+                        }
+                        if (StringUtils.isNotBlank(address)) {
+                            add = address;
+                        }
+
+                        if (StringUtils.isNotBlank(address)) {
+                            add = address + ";" + cityName;
+                        }
+                        if (StringUtils.isNotBlank(add)) {
+                            mDataCallback.onResponse(add);
+                        } else {
+                            AppPreferences.setApiKeyRequired(true);
+                            mDataCallback.onError(0, "No Address Found");
+                        }
+                    } else {
+                        AppPreferences.setApiKeyRequired(true);
+                    }
+                } else {
+                    AppPreferences.setApiKeyRequired(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                AppPreferences.setApiKeyRequired(true);
+                Utils.redLog("GeoCode", t.getMessage() + "");
+            }
+        });
+    }
+
+    public void callGeoCoderApi2(final String latitude, final String longitude, final IResponseCallback mDataCallback, Context context) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+        Call<GeocoderApi> call = restClient.callGeoCoderApi(latitude + "," + longitude, Utils.getApiKey());
+        call.enqueue(new Callback<GeocoderApi>() {
+            @Override
+            public void onResponse(Response<GeocoderApi> geocoderApiResponse, Retrofit retrofit) {
+                if (geocoderApiResponse != null && geocoderApiResponse.isSuccess()) {
+                    if (geocoderApiResponse.body() != null
+                            && geocoderApiResponse.body().getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
+                            && geocoderApiResponse.body().getResults().length > 0) {
+                        String cityName = StringUtils.EMPTY;
+                        GeocoderApi.Address_components[] address_componentses = geocoderApiResponse.body().getResults()[0].getAddress_components();
+                        for (GeocoderApi.Address_components addressComponent : address_componentses) {
+                            String[] types = addressComponent.getTypes();
+                            for (String type : types) {
+
+                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_CITY)) {
+                                    cityName = addressComponent.getLong_name();
+                                }
+                                if (StringUtils.isNotBlank(cityName)) {
+                                    break;
+                                }
+                            }
+                            if (StringUtils.isNotBlank(cityName)) {
+                                break;
+                            }
+                        }
+                        mDataCallback.onResponse("Current city: " + cityName);
+                    } else {
+                        AppPreferences.setApiKeyRequired(true);
+                    }
+                } else {
+                    AppPreferences.setApiKeyRequired(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                AppPreferences.setApiKeyRequired(true);
+                Utils.redLog("GeoCode", t.getMessage() + "");
+            }
+        });
+    }
+
+    public void getDistanceMatriax(String origin, String destination, final IResponseCallback mDataCallback, Context context) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+        Call<GoogleDistanceMatrixApi> call = restClient.callDistanceMatrixApi(origin, destination, Utils.getApiKeyForDirections(mContext));
+        call.enqueue(new Callback<GoogleDistanceMatrixApi>() {
+            @Override
+            public void onResponse(Response<GoogleDistanceMatrixApi> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    mDataCallback.onResponse(response.body());
+                    if (Constants.INVALID_REQUEST.equalsIgnoreCase(response.body().getStatus()) ||
+                            Constants.OVER_QUERY_LIMIT.equalsIgnoreCase(response.body().getStatus())) {
+                        AppPreferences.setDirectionsApiKeyRequired(true);
+                    }
+                } else {
+                    AppPreferences.setDirectionsApiKeyRequired(true);
+                    mDataCallback.onError(0, "Could not get the distance matrix");
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                AppPreferences.setDirectionsApiKeyRequired(true);
+                mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + getErrorMessage(t));
+            }
+        });
+    }
 
 }

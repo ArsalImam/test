@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
@@ -32,8 +33,20 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textStyle="bold"
+                tool:visibility="visible"
                 android:visibility="visible"
                 app:srcCompat="@drawable/ic_home_top_logo" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tv_elaqa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|top"
+                android:text="علاقہ"
+                android:textSize="@dimen/_24sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/title"
@@ -52,11 +65,12 @@
         </FrameLayout>
 
 
-
         <RelativeLayout
             android:layout_width="@dimen/margin.xlarge"
             android:layout_gravity="center"
             android:layout_height="match_parent">
+
+
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/status"
                 android:layout_width="match_parent"
@@ -82,11 +96,6 @@
 
         </RelativeLayout>
 
-
-
-
-
     </LinearLayout>
-
 
 </android.support.v7.widget.Toolbar>

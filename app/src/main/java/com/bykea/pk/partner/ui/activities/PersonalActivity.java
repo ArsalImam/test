@@ -72,9 +72,9 @@ public class PersonalActivity extends BaseActivity {
             pilotMobile2.setText(Utils.phoneNumberToShow(data.getMobile_1()));
             pilotMobile3.setText(Utils.phoneNumberToShow(data.getMobile_2()));
 
-            if (StringUtils.isNotBlank(AppPreferences.getPilotData(mCurrentActivity).getPilotImage())) {
+            if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
                 Utils.loadImgPicasso(mCurrentActivity, pilotImage, R.drawable.profile_pic,
-                        Utils.getImageLink(AppPreferences.getPilotData(mCurrentActivity).getPilotImage()));
+                        Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
             }
             if(StringUtils.isNotBlank(data.getEmail())){
                 pilotEmail.setText(data.getEmail());

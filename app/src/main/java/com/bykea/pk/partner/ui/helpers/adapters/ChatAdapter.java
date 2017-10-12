@@ -267,7 +267,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
         if (chatMessages.get(position).getSenderId()
-                .equalsIgnoreCase(AppPreferences.getDriverId(context))) {
+                .equalsIgnoreCase(AppPreferences.getDriverId())) {
             return 1;
         } else {
             return 0;

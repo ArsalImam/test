@@ -33,6 +33,12 @@
     <string name="button.text.sendCode">SEND ME VERIFICATION CODE</string>
 
 
+    <!--Drop off for driver -->
+
+    <string name="fence_error">Non Service Area</string>
+    <string name="set_pickup_location">YOUR LOCATION</string>
+
+
     <!--                TEXTVIEWS STRINGS HERE                 -->
     <string name="textview.text.login">LOGIN</string>
     <string name="textview.text.expiryDate">Expiry Date</string>
@@ -160,6 +166,10 @@
     <string name="internet_error">Problem in internet connectivity. Check your internet connection.</string>
     <string name="inactive_msg">آن لائن ہو کر درخواست لیں</string>
     <string name="complain_msg">Booking History main Booking Details pay \nclick ker ke apni complaints register karain</string>
+
+   <!--Drop off driver-->
+    <string name="pick_up_point">Pick Up</string>
+    <string name="drop_off_point">Drop Off</string>
 
 
 </resources>

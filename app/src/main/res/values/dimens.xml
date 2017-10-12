@@ -3,6 +3,9 @@
     <dimen name="elevation.toolbar">8dp</dimen>
     <dimen name="elevation.button.mappin">8dp</dimen>
 
+    <!--Drop off for driver-->
+    <dimen name="textsize.body3">16sp</dimen>
+
     <!--Text size-->
     <dimen name="textsize.headline">@dimen/_24sdp</dimen>
     <dimen name="textsize.tiny">@dimen/_8sdp</dimen>

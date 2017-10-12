@@ -5,7 +5,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -174,7 +173,7 @@ public class HistoryDetailActivity extends BaseActivity {
                     }
                     if (Utils.getDaysInBetween(System.currentTimeMillis(),
                             new SimpleDateFormat(CURRENT_DATE_FORMAT).parse(data.getAcceptTime()).getTime()) >=
-                            AppPreferences.getSettings(mCurrentActivity).getSettings().getTrip_support_max_days()) {
+                            AppPreferences.getSettings().getSettings().getTrip_support_max_days()) {
                         btnProblem.setVisibility(View.GONE);
                     }
 
@@ -270,10 +269,10 @@ public class HistoryDetailActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnProblem:
-                String params = "name=" + AppPreferences.getPilotData(mCurrentActivity).getFullName() +
-                        "&booking=" + tripNo + "&phone=" + AppPreferences.getPilotData(mCurrentActivity).getPhoneNo();
+                String params = "name=" + AppPreferences.getPilotData().getFullName() +
+                        "&booking=" + tripNo + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
                 Utils.startCustomWebViewActivity(mCurrentActivity,
-                        AppPreferences.getSettings(mCurrentActivity).getSettings().getTrip_support_link() + params, tripNo);
+                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, tripNo);
                 break;
         }
     }

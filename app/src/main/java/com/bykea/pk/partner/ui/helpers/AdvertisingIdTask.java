@@ -50,7 +50,7 @@ public class AdvertisingIdTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String advertId) {
         if (StringUtils.isNotBlank(advertId)) {
-            AppPreferences.setADID(DriverApp.getContext(), advertId);
+            AppPreferences.setADID(advertId);
         }
     }
 }

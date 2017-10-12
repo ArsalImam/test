@@ -138,7 +138,7 @@ public class LocationService extends Service {
     private void onNewLocation(Location location) {
         if (location != null) {
             if (!Utils.isMockLocation(location, mContext)) {
-                AppPreferences.saveLocation(mContext, new LatLng(location.getLatitude(),
+                AppPreferences.saveLocation(new LatLng(location.getLatitude(),
                         location.getLongitude()), "" + location.getBearing(), location.getAccuracy(), false);
                 sendLocationBroadcast(location);
                 Utils.redLog("Location", location.getLatitude() + "," + location.getLongitude() + "  (" + Utils.getUTCDate(location.getTime()) + ")");
@@ -178,11 +178,11 @@ public class LocationService extends Service {
     }
 
     public void updateTripRouteList(double lat, double lon) {
-        Utils.redLog("TripStatus", AppPreferences.getTripStatus(mContext));
-        if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus(mContext))) {
+        Utils.redLog("TripStatus", AppPreferences.getTripStatus());
+        if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
             synchronized (this) {
-                String lastLat = AppPreferences.getPrevDistanceLatitude(mContext);
-                String lastLng = AppPreferences.getPrevDistanceLongitude(mContext);
+                String lastLat = AppPreferences.getPrevDistanceLatitude();
+                String lastLng = AppPreferences.getPrevDistanceLongitude();
                 if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
                     float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
                     if (Utils.isValidLocation(/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), */distance)) {
@@ -203,8 +203,8 @@ public class LocationService extends Service {
     }
 
     private void addLatLng(double lat, double lon, boolean updatePrevTime) {
-        AppPreferences.addLocCoordinateInTrip(mContext, lat, lon);
-        AppPreferences.setPrevDistanceLatLng(mContext, lat, lon, updatePrevTime);
+        AppPreferences.addLocCoordinateInTrip(lat, lon);
+        AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
     }
 
 
@@ -219,12 +219,12 @@ public class LocationService extends Service {
 
         @Override
         public void onFinish() {
-            if (AppPreferences.isLoggedIn(mContext) && (AppPreferences.getAvailableStatus(mContext) ||
-                    AppPreferences.isOutOfFence(mContext) || AppPreferences.isOnTrip(mContext))) {
+            if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() ||
+                    AppPreferences.isOutOfFence() || AppPreferences.isOnTrip())) {
                 synchronized (this) {
-                    double lat = AppPreferences.getLatitude(mContext);
-                    double lon = AppPreferences.getLongitude(mContext);
-                    boolean isMock = AppPreferences.isFromMockLocation(mContext);
+                    double lat = AppPreferences.getLatitude();
+                    double lon = AppPreferences.getLongitude();
+                    boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         updateTripRouteList(lat, lon);
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
@@ -248,7 +248,7 @@ public class LocationService extends Service {
 
     private synchronized void getRouteLatLng(double lat, double lon, String lastLat, String lastLng) {
         isDirectionApiRunning = true;
-        int index = AppPreferences.getLocCoordinatesInTrip(mContext).size();
+        int index = AppPreferences.getLocCoordinatesInTrip().size();
         index = index > 1 ? index - 1 : 0;
         Routing.Builder builder = new Routing.Builder();
         if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mContext))) {
@@ -280,7 +280,7 @@ public class LocationService extends Service {
                             currentLatLng.setLng("" + latLng.longitude);
                             locCoordinatesLatLng.add(currentLatLng);
                         }
-                        AppPreferences.addLocCoordinateInTrip(mContext, locCoordinatesLatLng, finalIndex);
+                        AppPreferences.addLocCoordinateInTrip(locCoordinatesLatLng, finalIndex);
                         isDirectionApiRunning = false;
                     }
 
@@ -301,19 +301,19 @@ public class LocationService extends Service {
                 Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
                 sendBroadcast(locationIntent);
             } else if (errorCode == HTTPStatus.FENCE_ERROR) {
-                AppPreferences.setOutOfFence(mContext, true);
-                AppPreferences.setAvailableStatus(mContext, false);
+                AppPreferences.setOutOfFence(true);
+                AppPreferences.setAvailableStatus(false);
                 mBus.post("INACTIVE-FENCE");
             } else if (errorCode == HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT) {
                 if (StringUtils.isNotBlank(errorMessage)) {
-                    AppPreferences.setWalletIncreasedError(mContext, errorMessage);
+                    AppPreferences.setWalletIncreasedError(errorMessage);
                 }
-                AppPreferences.setWalletAmountIncreased(mContext, true);
-                AppPreferences.setAvailableStatus(mContext, false);
+                AppPreferences.setWalletAmountIncreased(true);
+                AppPreferences.setAvailableStatus(false);
                 mBus.post("INACTIVE-FENCE");
             } else if (errorCode == HTTPStatus.FENCE_SUCCESS) {
-                AppPreferences.setOutOfFence(mContext, false);
-                AppPreferences.setAvailableStatus(mContext, true);
+                AppPreferences.setOutOfFence(false);
+                AppPreferences.setAvailableStatus(true);
                 mBus.post("INACTIVE-FENCE");
             }
         }

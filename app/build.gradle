@@ -45,7 +45,7 @@ android {
         }
         debug {
             signingConfig signingConfigs.debug
-            shrinkResources true // to remove unused resources. This will reduce APK size.
+            shrinkResources false // to remove unused resources. This will reduce APK size.
 //            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'),
 //                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
@@ -94,6 +94,15 @@ dependencies {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'com.google.android.gms:play-services-gcm:9.4.0'
+    //    compile 'com.devbrackets.android:exomedia:3.1.0'
+    /*compile('com.afollestad:easyvideoplayer:0.3.0') {
+        exclude group: 'com.android.support'
+    }*/
+    compile('com.onesignal:OneSignal:[3.5.3,4.0.0)') {
+        exclude group: 'com.google.android.gms'
+    }
+    //    compile 'org.jsoup:jsoup:1.10.1'
+    compile 'com.google.dagger:dagger:2.10'
     compile 'com.squareup.picasso:picasso:2.5.0'
     compile 'com.android.support:recyclerview-v7:25.2.0'
     compile 'com.android.support:appcompat-v7:25.2.0'
@@ -119,28 +128,13 @@ dependencies {
     compile 'com.theartofdev.edmodo:android-image-cropper:2.3.0'
     compile 'me.relex:circleindicator:1.2.1@aar'
     compile 'com.android.support:support-v4:25.2.0'
-//    compile 'com.devbrackets.android:exomedia:3.1.0'
     compile 'com.thefinestartist:finestwebview:1.2.7'
     compile 'com.mixpanel.android:mixpanel-android:5.1.4'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.3'
     compile 'org.greenrobot:eventbus:3.0.0'
-    /*compile('com.afollestad:easyvideoplayer:0.3.0') {
-        exclude group: 'com.android.support'
-    }*/
-    compile('com.onesignal:OneSignal:[3.5.3,4.0.0)') {
-        exclude group: 'com.google.android.gms'
-    }
-    testCompile 'junit:junit:4.12'
-//    compile 'org.jsoup:jsoup:1.10.1'
     compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
 }
-
-
-
-
-
-
-
-
 apply plugin: 'com.google.gms.google-services'

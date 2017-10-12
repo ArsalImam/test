@@ -44,17 +44,17 @@ public class SplashActivity extends BaseActivity {
         repository = new UserRepository();
         Utils.setFullScreen(mCurrentActivity);
         // Resets API Key requirement to "false" after 24 hours if there was any error while getting address via Reverse Geo Coding method without using API key.
-        if (AppPreferences.isGeoCoderApiKeyRequired(mCurrentActivity) && Utils.isGeoCoderApiKeyCheckRequired(mCurrentActivity)) {
-            AppPreferences.setGeoCoderApiKeyRequired(mCurrentActivity, false);
+        if (AppPreferences.isGeoCoderApiKeyRequired() && Utils.isGeoCoderApiKeyCheckRequired()) {
+            AppPreferences.setGeoCoderApiKeyRequired(false);
         }
-        if (Utils.isGetCitiesApiCallRequired(mCurrentActivity)) {
+        if (Utils.isGetCitiesApiCallRequired()) {
             repository.getCities(mCurrentActivity, handler);
         }
 
-        if (StringUtils.isBlank(AppPreferences.getADID(mCurrentActivity)) && !AppPreferences.isLoggedIn(mCurrentActivity)) {
+        if (StringUtils.isBlank(AppPreferences.getADID()) && !AppPreferences.isLoggedIn()) {
             new AdvertisingIdTask().execute();
         }
-        Utils.setOneSignalPlayerId(mCurrentActivity);
+        Utils.setOneSignalPlayerId();
     }
 
 
@@ -84,17 +84,17 @@ public class SplashActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                            if (StringUtils.isBlank(AppPreferences.getRegId(mCurrentActivity))
+                            if (StringUtils.isBlank(AppPreferences.getRegId())
                                     && StringUtils.isNotBlank(FirebaseInstanceId.getInstance().getToken())) {
-                                AppPreferences.setRegId(mCurrentActivity, FirebaseInstanceId.getInstance().getToken());
+                                AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
                             }
-                            Utils.infoLog("SPLASH FCM TOKEN : ", AppPreferences.getRegId(mCurrentActivity));
+                            Utils.infoLog("SPLASH FCM TOKEN : ", AppPreferences.getRegId());
                             ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).startLocationService();
-                            if (AppPreferences.isLoggedIn(mCurrentActivity)) {
+                            if (AppPreferences.isLoggedIn()) {
                                 // Connect socket
                                 ((DriverApp) getApplicationContext()).connect("Splash Activity");
                                 WebIORequestHandler.getInstance().setContext(mCurrentActivity);
-                                if (AppPreferences.isOnTrip(mCurrentActivity)) {
+                                if (AppPreferences.isOnTrip()) {
                                     repository.requestRunningTrip(mCurrentActivity, handler);
                                 } else {
                                     startHomeActivity();
@@ -131,8 +131,13 @@ public class SplashActivity extends BaseActivity {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                AppPreferences.setCallData(mCurrentActivity, response.getData());
-                                AppPreferences.setTripStatus(mCurrentActivity, response.getData().getStatus());
+                                if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
+                                    AppPreferences.setStartTripTime(
+                                            AppPreferences.getServerTimeDifference() +
+                                                    Utils.getTimeInMiles(response.getData().getStarted_at()));
+                                }
+                                AppPreferences.setCallData(response.getData());
+                                AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                     WebIORequestHandler.getInstance().registerChatListener();
                                     ActivityStackManager.getInstance(mCurrentActivity)
@@ -144,7 +149,7 @@ public class SplashActivity extends BaseActivity {
                                 finish();
                             } catch (NullPointerException e) {
                                 //If there is no pending trip free all states for new trip..
-                                Utils.setCallIncomingState(mCurrentActivity);
+                                Utils.setCallIncomingState();
                                 startHomeActivity();
                             }
                         } else {
@@ -152,7 +157,7 @@ public class SplashActivity extends BaseActivity {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
                                 //If there is no pending trip free all states for new trip..
-                                Utils.setCallIncomingState(mCurrentActivity);
+                                Utils.setCallIncomingState();
                                 startHomeActivity();
                             }
                         }
@@ -170,12 +175,12 @@ public class SplashActivity extends BaseActivity {
                     public void run() {
                         Utils.infoLog("CHECK RUNNING RESONSE ", errorMessage);
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                            AppPreferences.saveLoginStatus(mCurrentActivity, false);
-                            AppPreferences.setIncomingCall(mCurrentActivity, false);
-                            AppPreferences.setCallData(mCurrentActivity, null);
-                            AppPreferences.setTripStatus(mCurrentActivity, "");
-                            AppPreferences.saveLoginStatus(mCurrentActivity, false);
-                            AppPreferences.setPilotData(mCurrentActivity, null);
+                            AppPreferences.saveLoginStatus(false);
+                            AppPreferences.setIncomingCall(false);
+                            AppPreferences.setCallData(null);
+                            AppPreferences.setTripStatus("");
+                            AppPreferences.saveLoginStatus(false);
+                            AppPreferences.setPilotData(null);
                             HomeActivity.visibleFragmentNumber = 0;
                             Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
                                 @Override

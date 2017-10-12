@@ -17,7 +17,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
@@ -215,7 +214,7 @@ public enum Dialogs {
         mDialog.setContentView(R.layout.cancel_job_dialog);
         final RadioGroup radioGroup = (RadioGroup) mDialog.findViewById(R.id.optionBtn);
         RadioGroup.LayoutParams rprms;
-        ArrayList<String> cancelMessages = AppPreferences.getSettings(context).getPredefine_messages().getCancel();
+        ArrayList<String> cancelMessages = AppPreferences.getSettings().getPredefine_messages().getCancel();
         if (cancelMessages.size() > 0) {
             int id = 0;
             for (String msg : cancelMessages) {

@@ -1,14 +1,18 @@
 package com.bykea.pk.partner.communication.rest;
 
 
+import com.bykea.pk.partner.models.data.Place;
 import com.bykea.pk.partner.models.response.AccountNumbersResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
+import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
+import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
+import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -177,6 +181,14 @@ public interface IRestClient {
                                              @Field("oldPinCode") String oldPinCode,
                                              @Field("user_type") String userType);
 
+    @FormUrlEncoded
+    @POST(ApiTags.SET_DRIVER_DROP_OFF)
+    Call<DriverDestResponse>setDriverDroppOff(@Field("_id") String _id,
+                                              @Field("token_id") String token_id,
+                                              @Field("eLat") String lat,
+                                              @Field("eLng") String lng,
+                                              @Field("eAdd") String address);
+
 
     @GET(ApiTags.GET_PROFILE_API)
     Call<GetProfileResponse> requestProfileData(@Query("_id") String _id,
@@ -185,6 +197,13 @@ public interface IRestClient {
 
     @GET(ApiTags.GET_CITIES)
     Call<GetCitiesResponse> getCities();
+
+
+    @GET(ApiTags.PLACES_DISTANCEMATRIX_EXT_URL)
+    Call<GoogleDistanceMatrixApi> callDistanceMatrixApi(@Query(Fields.GoogleDirectionApi.ORIGIN) String origin,
+                                                        @Query(Fields.GoogleDirectionApi.DESTINATION) String destination,
+                                                        @Query(Fields.GoogleDirectionApi.KEY) String key);
+
 
 
   /*  @FormUrlEncoded

@@ -113,13 +113,13 @@ public class FeedbackActivity extends BaseActivity {
     private void initViews() {
         mCurrentActivity = this;
 
-        NormalCallData callData = AppPreferences.getCallData(mCurrentActivity);
+        NormalCallData callData = AppPreferences.getCallData();
         isSendType = StringUtils.containsIgnoreCase(callData.getCallType(), "Send");
         isBringType = StringUtils.containsIgnoreCase(callData.getCallType(), "Bring");
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
         totalCharges = callData.getTotalFare();
-        TOP_UP_LIMIT = AppPreferences.getSettings(mCurrentActivity).getSettings().getTop_up_limit();
+        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
         if (StringUtils.isNotBlank(callData.getCodAmountNotFormatted())) {
             String amount = callData.getCodAmountNotFormatted();
             if (isSendType) {
@@ -130,7 +130,7 @@ public class FeedbackActivity extends BaseActivity {
                 TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
             }
         }
-        AMOUNT_LIMIT = AppPreferences.getSettings(mCurrentActivity).getSettings().getAmount_limit();
+        AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
         totalAmountTv.setText("Rs. " + totalCharges);
         startAddressTv.setText(callData.getStartAddress());
         tvTotalDistance.setText(callData.getDistanceCovered() + " km");
@@ -173,7 +173,7 @@ public class FeedbackActivity extends BaseActivity {
         if (valid()) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             try {
-                NormalCallData callData = AppPreferences.getCallData(mCurrentActivity);
+                NormalCallData callData = AppPreferences.getCallData();
                 mixpanelAPI.identify(callData.getPassId());
                 mixpanelAPI.getPeople().identify(callData.getPassId());
                 JSONObject revenue = new JSONObject();
@@ -181,28 +181,28 @@ public class FeedbackActivity extends BaseActivity {
                 revenue.put("TripID", callData.getTripId());
                 revenue.put("TripNo", callData.getTripNo());
                 revenue.put("PassengerID", callData.getPassId());
-                revenue.put("DriverID", AppPreferences.getPilotData(mCurrentActivity).getId());
+                revenue.put("DriverID", AppPreferences.getPilotData().getId());
                 mixpanelAPI.getPeople().trackCharge(Double.parseDouble(callData.getTrip_charges()), revenue);
                 mixpanelAPI.getPeople().increment("Total Trips", 1L);
                 JSONObject properties = new JSONObject();
                 properties.put("TripID", callData.getTripId());
                 properties.put("TripNo", callData.getTripNo());
                 properties.put("PassengerID", callData.getPassId());
-                properties.put("DriverID", AppPreferences.getPilotData(mCurrentActivity).getId());
+                properties.put("DriverID", AppPreferences.getPilotData().getId());
                 properties.put("Amount", callData.getTrip_charges());
                 properties.put("AmountEntered", receivedAmountEt.getText().toString());
                 properties.put("Time", callData.getTotalMins() + "");
                 properties.put("KM", callData.getDistanceCovered());
                 properties.put("type", callData.getCallType());
                 properties.put("timestamp", Utils.getIsoDate());
-                properties.put("City", AppPreferences.getPilotData(mCurrentActivity).getCity().getName());
+                properties.put("City", AppPreferences.getPilotData().getCity().getName());
 
 
                 //Firebase can have max 10 TEXT properties
                 Utils.logFireBaseEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_FARE.replace("_R_", callData.getCallType()), properties);
 
                 properties.put("PassengerName", callData.getPassName());
-                properties.put("DriverName", AppPreferences.getPilotData(mCurrentActivity).getFullName());
+                properties.put("DriverName", AppPreferences.getPilotData().getFullName());
                 if (StringUtils.isNotBlank(callData.getPromo_deduction())) {
                     properties.put("PromoDeduction", callData.getPromo_deduction());
                 } else {
@@ -231,9 +231,9 @@ public class FeedbackActivity extends BaseActivity {
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
                     Dialogs.INSTANCE.showToast(mCurrentActivity, feedbackResponse.getMessage());
-                    Utils.setCallIncomingState(mCurrentActivity);
-                    AppPreferences.setWalletAmountIncreased(getApplicationContext(), !feedbackResponse.isAvailable());
-                    AppPreferences.setAvailableStatus(mCurrentActivity, feedbackResponse.isAvailable());
+                    Utils.setCallIncomingState();
+                    AppPreferences.setWalletAmountIncreased(!feedbackResponse.isAvailable());
+                    AppPreferences.setAvailableStatus(feedbackResponse.isAvailable());
                     ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
                     finish();
                 }

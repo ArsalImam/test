@@ -11,6 +11,7 @@ import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
+import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -42,6 +43,11 @@ import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 
 
 public class UserDataHandler implements IUserDataHandler {
+
+    @Override
+    public void onDropOffUpdated(DriverDestResponse commonResponse) {
+
+    }
 
     @Override
     public void onForgotPassword(ForgotPasswordResponse commonResponse) {

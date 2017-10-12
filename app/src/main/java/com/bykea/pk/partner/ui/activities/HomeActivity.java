@@ -1,16 +1,9 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.res.TypedArray;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -25,7 +18,6 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.response.SettingsResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.services.LocationService;
@@ -33,9 +25,7 @@ import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 
@@ -72,7 +62,7 @@ public class HomeActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(this);
-        pilotData = AppPreferences.getPilotData(mCurrentActivity);
+        pilotData = AppPreferences.getPilotData();
         setToolbarLogo();
         initViews();
         setupDrawerToggle();

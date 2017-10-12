@@ -44,10 +44,19 @@ public class Constants {
     public static final String INSTA_BUG_LIVE_KEY = "36070216421223afd484f7b67802c146";
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
+    public static final int CONFIRM_DROPOFF_REQUEST_CODE = 101;
+    public static final String TOOLBAR_TITLE = "toolbar_title";
+    public static final String SEARCHBOX_TITLE = "searchBox_title";
+
     public static String RIDE_FARE = "Eyeball-_R_-Finish";
     public final static String CANCEL_TRIP = "Ride-Cancel";
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
     public final static String ON_PERMISSIONS_GRANTED = "ON_PERMISSIONS_GRANTED";
+
+    public static final String INVALID_REQUEST = "INVALID_REQUEST";
+    public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
+    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+    public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
 
 

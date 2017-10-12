@@ -1,7 +1,6 @@
 package com.bykea.pk.partner;
 
 import android.content.Intent;
-import android.graphics.SurfaceTexture;
 
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
@@ -9,7 +8,6 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.ChatActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -41,7 +39,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Utils.redLog(TAG, "Notification Received : " + "--------------------------------------------------------------");
         Utils.redLog(TAG, "From: " + remoteMessage.getFrom());
 
-        if (!AppPreferences.isLoggedIn(this) || remoteMessage == null)
+        if (!AppPreferences.isLoggedIn() || remoteMessage == null)
             return;
 
 
@@ -52,7 +50,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NormalCallData callData = gson.fromJson(remoteMessage.getData().get("data"), NormalCallData.class);
                 if (StringUtils.isNotBlank(callData.getStatus())) {
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                        if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip(mContext)) {
+                        if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip()) {
                             Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
 //                    if (remoteMessage.getData().get("cancel_by").equalsIgnoreCase("admin"))
@@ -60,11 +58,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //                    else
 //                        intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("msg", callData.getMessage());
-                            if (AppPreferences.isJobActivityOnForeground(mContext) ||
-                                    AppPreferences.isCallingActivityOnForeground(mContext)) {
+                            if (AppPreferences.isJobActivityOnForeground() ||
+                                    AppPreferences.isCallingActivityOnForeground()) {
                                 mContext.sendBroadcast(intent);
                             } else {
-                                Utils.setCallIncomingState(this);
+                                Utils.setCallIncomingState();
                                 Notifications.createCancelNotification(mContext, callData.getMessage(), 23);
                             }
                         }
@@ -72,10 +70,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
                         intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
                         intent.putExtra("msg", callData.getMessage());
-                        if (AppPreferences.isJobActivityOnForeground(mContext)) {
+                        if (AppPreferences.isJobActivityOnForeground()) {
                             mContext.sendBroadcast(intent);
                         } else {
-                            Utils.setCallIncomingState(this);
+                            Utils.setCallIncomingState();
                             Notifications.createNotification(mContext, callData.getMessage(), 23);
                         }
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING)) {
@@ -83,7 +81,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                 }
             } else if (remoteMessage.getData().get("event").equalsIgnoreCase("2")) {
-                if (AppPreferences.isOnTrip(getApplicationContext())) {
+                if (AppPreferences.isOnTrip()) {
                     Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivity.class);
                     chatIntent.putExtra("chat", true);
                     chatIntent.putExtra("fromNotification", true);
@@ -93,37 +91,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     WebIORequestHandler.getInstance().registerChatListener();
                 }
             } else if (remoteMessage.getData().get("event").equalsIgnoreCase("7")) {//when server inactive any driver via Cron job
-                if (AppPreferences.isLoggedIn(getApplicationContext())) {
+                if (AppPreferences.isLoggedIn()) {
                     OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
                     /*
                     * Check Coordinates when there's any delay in FCM Push Notification and ignore
                     * this notification when there are different coordinates.
                     * */
                     if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
-                            && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude(getApplicationContext()))
-                            && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude(getApplicationContext()))) {
-                        AppPreferences.setAdminMsg(this, null);
-                        AppPreferences.setAvailableStatus(getApplicationContext(), false);
+                            && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
+                            && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude())) {
+                        AppPreferences.setAdminMsg(null);
+                        AppPreferences.setAvailableStatus(false);
                         mBus.post("INACTIVE-PUSH");
                         Notifications.generateAdminNotification(this, data.getMessage());
                     }
                 }
             } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("3"))) {
-                if (AppPreferences.isLoggedIn(this)) {
+                if (AppPreferences.isLoggedIn()) {
                     NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
-                    AppPreferences.setAdminMsg(this, adminNotification);
+                    AppPreferences.setAdminMsg(adminNotification);
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
             } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("4"))) {
-                if (AppPreferences.isLoggedIn(this)) {
+                if (AppPreferences.isLoggedIn()) {
                     NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
-                    AppPreferences.setAdminMsg(this, adminNotification);
+                    AppPreferences.setAdminMsg(adminNotification);
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
-                    if (AppPreferences.getAvailableStatus(this)
-                            != adminNotification.isActive() && !AppPreferences.isOutOfFence(mContext) && AppPreferences.getTripStatus(mContext).equalsIgnoreCase(TripStatus.ON_FREE)) {
-                        AppPreferences.setAvailableStatus(getApplicationContext(), adminNotification.isActive());
-                        AppPreferences.setWalletAmountIncreased(getApplicationContext(), !adminNotification.isActive());
+                    if (AppPreferences.getAvailableStatus()
+                            != adminNotification.isActive() && !AppPreferences.isOutOfFence() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
+                        AppPreferences.setAvailableStatus(adminNotification.isActive());
+                        AppPreferences.setWalletAmountIncreased(!adminNotification.isActive());
                         mBus.post("INACTIVE-PUSH");
                     }
                     mBus.post(Constants.ON_NEW_NOTIFICATION);

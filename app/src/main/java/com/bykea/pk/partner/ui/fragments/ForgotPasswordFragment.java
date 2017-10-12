@@ -55,8 +55,8 @@ public class ForgotPasswordFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         repository = new UserRepository();
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
-        if (StringUtils.isNotBlank(AppPreferences.getPhoneNumber(getActivity()))) {
-            phoneNumberEt.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber(getActivity())));
+        if (StringUtils.isNotBlank(AppPreferences.getPhoneNumber())) {
+            phoneNumberEt.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber()));
         }
     }
 

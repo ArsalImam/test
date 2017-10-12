@@ -101,20 +101,20 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setInfoUI() {
-        PilotData user = AppPreferences.getPilotData(mCurrentActivity);
+        PilotData user = AppPreferences.getPilotData();
 //        driverNameTv.setText(user.getFullName());
 //        driverAddressTv.setText(user.getAddress());
 //        driverCityTv.setText(user.getCity());
         //TODO Update Home Address When coordinates available in API (Also check visibility in xml)
 //        driverLatLngTv.setText(user.getLat() + "," + user.getLng());
 
-        if (StringUtils.isNotBlank(AppPreferences.getPilotData(mCurrentActivity).getPilotImage())) {
+        if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
            /* Picasso.with(mCurrentActivity).load(Utils.getImageLink(AppPreferences.getPilotData(mCurrentActivity).getPilotImage()))
                     .fit().centerInside()
                     .placeholder(R.drawable.profile_pic)
                     .into(driverImage);*/
             Utils.loadImgPicasso(mCurrentActivity, driverImage, R.drawable.profile_pic,
-                    Utils.getImageLink(AppPreferences.getPilotData(mCurrentActivity).getPilotImage()));
+                    Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
         }
         String appVersion = "v " + Utils.getVersion(mCurrentActivity);
         if (BuildConfig.DEBUG) {
@@ -168,9 +168,9 @@ public class ProfileFragment extends Fragment {
                     startActivity(intent4);
                     break;
                 case R.id.termsTv:
-                    if (AppPreferences.getSettings(mCurrentActivity) != null) {
+                    if (AppPreferences.getSettings() != null) {
                         Utils.startCustomWebViewActivity(mCurrentActivity,
-                                AppPreferences.getSettings(mCurrentActivity).getSettings().getTerms(), "Terms of Services");
+                                AppPreferences.getSettings().getSettings().getTerms(), "Terms of Services");
                     }
                     break;
             }
@@ -196,12 +196,12 @@ public class ProfileFragment extends Fragment {
                             motorbikeInfoTv.setEnabled(true);
                             bankAccDetailsTv.setEnabled(true);
                             mPersonalInfo = response.getData();
-                            PilotData data = AppPreferences.getPilotData(mCurrentActivity);
+                            PilotData data = AppPreferences.getPilotData();
                             data.setFullName(mPersonalInfo.getFull_name());
                             data.setPilotImage(mPersonalInfo.getImg_id());
                             data.setLicenseExpiry(mPersonalInfo.getLicense_expire());
                             mCurrentActivity.setPilotData(data);
-                            AppPreferences.setPilotData(mCurrentActivity, data);
+                            AppPreferences.setPilotData(data);
                             AppPreferences.setProfileUpdated(mCurrentActivity, true);
                             driverNameTv.setText(mPersonalInfo.getFull_name());
                             driverAddressTv.setText(mPersonalInfo.getAddress());

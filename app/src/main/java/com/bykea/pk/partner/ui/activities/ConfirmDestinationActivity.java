@@ -139,10 +139,10 @@ public class ConfirmDestinationActivity extends BaseActivity {
                             if (StringUtils.isNotBlank(add)) {
                                 addressTv.setText(add);
                             } else {
-                                AppPreferences.setGeoCoderApiKeyRequired(mCurrentActivity, true);
+                                AppPreferences.setGeoCoderApiKeyRequired(true);
                             }
                         } else {
-                            AppPreferences.setGeoCoderApiKeyRequired(mCurrentActivity, true);
+                            AppPreferences.setGeoCoderApiKeyRequired(true);
                         }
 
                     }
@@ -153,7 +153,7 @@ public class ConfirmDestinationActivity extends BaseActivity {
 
         @Override
         public void onError(int errorCode, String errorMessage) {
-            AppPreferences.setGeoCoderApiKeyRequired(mCurrentActivity, true);
+            AppPreferences.setGeoCoderApiKeyRequired(true);
             Dialogs.INSTANCE.showError(mCurrentActivity, confirmBtn, errorMessage);
         }
     };
@@ -162,7 +162,7 @@ public class ConfirmDestinationActivity extends BaseActivity {
     private void getIntentData() {
         if (null != getIntent() && null != getIntent().getExtras()) {
             addressTv.setText(getIntent().getStringExtra("address"));
-            AppPreferences.setDropOffData(mCurrentActivity, getIntent().getStringExtra("address"),
+            AppPreferences.setDropOffData(getIntent().getStringExtra("address"),
                     getIntent().getDoubleExtra("lat", 0.0), getIntent().getDoubleExtra("lng", 0.0));
             setLocation(getIntent().getDoubleExtra("lat", 0.0), getIntent().getDoubleExtra("lng", 0.0));
         }
@@ -196,7 +196,7 @@ public class ConfirmDestinationActivity extends BaseActivity {
     @OnClick(R.id.confirmBtn)
     public void onClick() {
 
-        AppPreferences.setDropOffData(mCurrentActivity, addressTv.getText().toString(),
+        AppPreferences.setDropOffData(addressTv.getText().toString(),
                 mGoogleMap.getCameraPosition().target.latitude,
                 mGoogleMap.getCameraPosition().target.longitude);
         Intent intent = new Intent();
@@ -209,7 +209,7 @@ public class ConfirmDestinationActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        AppPreferences.setDropOffData(mCurrentActivity, StringUtils.EMPTY, 0.0, 0.0);
+        AppPreferences.setDropOffData(StringUtils.EMPTY, 0.0, 0.0);
         super.onBackPressed();
     }
 

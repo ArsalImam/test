@@ -42,6 +42,7 @@ public class ApiTags {
     public static final String GET_SETTINGS = "/api/v1/common/settings";
     public static final String CHANGE_PIN = "/api/v1/common/changePin";
     public static final String GET_CITIES = "/api/v1/admin/cities";
+    public static final String SET_DRIVER_DROP_OFF = "/api/v1/driver/setDropoff";
 
 
     public static final String LOGOUT_API = "/api/v1/driver/logout";
@@ -72,4 +73,5 @@ public class ApiTags {
     public static final String SOCKET_RECEIVE_CHAT_MESSAGE = "chat-receiver";
     public static final String SOCKET_UPDATE_STATUS = "update-driver-status";
     public static final String UPDATE_DROP_OFF = "trip-endaddress";
+    public static final String PLACES_DISTANCEMATRIX_EXT_URL = "maps/api/distancematrix/json";
 }

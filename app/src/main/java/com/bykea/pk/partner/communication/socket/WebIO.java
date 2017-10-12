@@ -123,10 +123,10 @@ public class WebIO {
           /*if(BuildConfig.DEBUG){
               Log.d("emit","event:"+event+" params:"+params.toString());
           }*/
-        if (AppPreferences.isLoggedIn(DriverApp.getContext())
-                && (AppPreferences.getAvailableStatus(DriverApp.getContext()) ||
-                AppPreferences.isOutOfFence(DriverApp.getContext()))) {
-            AppPreferences.setLocationEmitTime(DriverApp.getContext());
+        if (AppPreferences.isLoggedIn()
+                && (AppPreferences.getAvailableStatus() ||
+                AppPreferences.isOutOfFence())) {
+            AppPreferences.setLocationEmitTime();
             WebIO.getInstance().getSocket().emit(event, params);
         }
         return true;
