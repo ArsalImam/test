@@ -19,6 +19,7 @@ import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
+import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -77,7 +78,7 @@ public class UserRepository {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.sendUserLogin(context, mDataCallback, email, password,
-                Constants.DEVICE_TYPE, "2", AppPreferences.getRegId(context));
+                Constants.DEVICE_TYPE, "2", AppPreferences.getRegId());
 
     }
 
@@ -86,6 +87,12 @@ public class UserRepository {
         mUserCallback = handler;
         mRestRequestHandler.sendLogout(context, mDataCallback);
 
+    }
+
+    public void requestDriverDropOff(Context context, IUserDataHandler handler,String lat, String lng, String address){
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestDriverDropOff(context,mDataCallback,lat,lng,address);
     }
 
 
@@ -171,15 +178,15 @@ public class UserRepository {
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            if (AppPreferences.getPilotData(context) != null) {
-                if (StringUtils.isNotBlank(AppPreferences.getPilotData(context).getService_type())) {
-                    jsonObject.put("service_type", AppPreferences.getPilotData(context).getService_type());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            if (AppPreferences.getPilotData() != null) {
+                if (StringUtils.isNotBlank(AppPreferences.getPilotData().getService_type())) {
+                    jsonObject.put("service_type", AppPreferences.getPilotData().getService_type());
                 }
-                if (AppPreferences.getPilotData(context).getCity() != null &&
-                        StringUtils.isNotBlank(AppPreferences.getPilotData(context).getCity().get_id()))
-                    jsonObject.put("city", AppPreferences.getPilotData(context).getCity().get_id());
+                if (AppPreferences.getPilotData().getCity() != null &&
+                        StringUtils.isNotBlank(AppPreferences.getPilotData().getCity().get_id()))
+                    jsonObject.put("city", AppPreferences.getPilotData().getCity().get_id());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -194,26 +201,26 @@ public class UserRepository {
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
         try {
-            Utils.redLog("token_id at Location", AppPreferences.getAccessToken(context));
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("lat", AppPreferences.getLatitude(mContext));
-            jsonObject.put("lng", AppPreferences.getLongitude(mContext));
-            jsonObject.put("status", AppPreferences.getTripStatus(mContext));
-            Utils.redLog("Status", AppPreferences.getTripStatus(mContext));
+            Utils.redLog("token_id at Location", AppPreferences.getAccessToken());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("lat", AppPreferences.getLatitude());
+            jsonObject.put("lng", AppPreferences.getLongitude());
+            jsonObject.put("status", AppPreferences.getTripStatus());
+            Utils.redLog("Status", AppPreferences.getTripStatus());
 
             // THIS CHECK IS FOR TRACKING DURING TRIP...
-            if (AppPreferences.isOnTrip(mContext)) {
-                jsonObject.put("eta", AppPreferences.getEta(mContext));
-                jsonObject.put("passenger_id", AppPreferences.getCallData(mContext).getPassId());
-                jsonObject.put("trip_id", AppPreferences.getCallData(mContext).getTripId());
+            if (AppPreferences.isOnTrip()) {
+                jsonObject.put("eta", AppPreferences.getEta());
+                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+                jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
                 jsonObject.put("inCall", true);
-                jsonObject.put("end_lat", AppPreferences.getCallData(mContext).getEndLat());
-                jsonObject.put("end_lng", AppPreferences.getCallData(mContext).getEndLng());
-                jsonObject.put("end_address", AppPreferences.getCallData(mContext).getEndAddress());
+                jsonObject.put("end_lat", AppPreferences.getCallData().getEndLat());
+                jsonObject.put("end_lng", AppPreferences.getCallData().getEndLng());
+                jsonObject.put("end_address", AppPreferences.getCallData().getEndAddress());
             } else {
                 //to free driver after trip Finished
-                if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus(mContext))) {
+                if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus())) {
                     jsonObject.put("inCall", true);
                 } else {
                     jsonObject.put("inCall", false);
@@ -238,9 +245,9 @@ public class UserRepository {
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
         try {
-            Utils.redLog("token_id at Location", AppPreferences.getAccessToken(context));
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            String driverId = AppPreferences.getDriverId(context);
+            Utils.redLog("token_id at Location", AppPreferences.getAccessToken());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            String driverId = AppPreferences.getDriverId();
             if (StringUtils.isBlank(driverId)) {
                 return;
             }
@@ -249,25 +256,25 @@ public class UserRepository {
             jsonObject.put("lng", lon + "");
             String tripStatus = StringUtils.EMPTY;
             // THIS CHECK IS FOR TRACKING DURING TRIP...
-            if (AppPreferences.isOnTrip(mContext)) {
-                tripStatus = AppPreferences.getCallData(mContext) != null
-                        && StringUtils.isNotBlank(AppPreferences.getCallData(mContext).getStatus())
-                        ? AppPreferences.getCallData(mContext).getStatus() : StringUtils.EMPTY;
-                jsonObject.put("eta", AppPreferences.getEta(mContext));
-                jsonObject.put("distance", AppPreferences.getEstimatedDistance(mContext));
-                jsonObject.put("passenger_id", AppPreferences.getCallData(mContext).getPassId());
-                jsonObject.put("trip_id", AppPreferences.getCallData(mContext).getTripId());
+            if (AppPreferences.isOnTrip()) {
+                tripStatus = AppPreferences.getCallData() != null
+                        && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
+                        ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
+                jsonObject.put("eta", AppPreferences.getEta());
+                jsonObject.put("distance", AppPreferences.getEstimatedDistance());
+                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+                jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
                 jsonObject.put("inCall", true);
             } else {
                 //to free driver after trip Finished
-                if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus(mContext))) {
+                if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus())) {
                     jsonObject.put("inCall", true);
                 } else {
                     jsonObject.put("inCall", false);
                 }
             }
             if (StringUtils.isBlank(tripStatus)) {
-                tripStatus = AppPreferences.getTripStatus(mContext);
+                tripStatus = AppPreferences.getTripStatus();
             }
             jsonObject.put("status", tripStatus);
             Utils.redLog("isInCall", jsonObject.get("inCall") + "");
@@ -286,12 +293,12 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("lat", AppPreferences.getLatitude(context) + "");
-            jsonObject.put("lng", AppPreferences.getLongitude(context) + "");
-            jsonObject.put("trip_id", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("pid", AppPreferences.getCallData(context).getPassId());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("lat", AppPreferences.getLatitude() + "");
+            jsonObject.put("lng", AppPreferences.getLongitude() + "");
+            jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -304,13 +311,13 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
 //            jsonObject.put("did", AppPreferences.getDriverId(context));
-            jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("pid", AppPreferences.getCallData(context).getPassId());
-            jsonObject.put("lat", AppPreferences.getLatitude(context) + "");
-            jsonObject.put("lng", AppPreferences.getLongitude(context) + "");
+            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
+            jsonObject.put("lat", AppPreferences.getLatitude() + "");
+            jsonObject.put("lng", AppPreferences.getLongitude() + "");
             jsonObject.put("accept_seconds", acceptedSecond + "");
 
             jsonObject.put("battery", Utils.getBatteryPercentage(context) + "");
@@ -326,23 +333,23 @@ public class UserRepository {
     }
 
     public void ackCall(Context context, IUserDataHandler handler) {
-        String tripID = AppPreferences.getCallData(context).getTripId();
-        if (tripID.equalsIgnoreCase(AppPreferences.getLastAckTripID(context))) {
+        String tripID = AppPreferences.getCallData().getTripId();
+        if (tripID.equalsIgnoreCase(AppPreferences.getLastAckTripID())) {
             return;
         }
-        AppPreferences.setLastAckTripID(mContext, tripID);
+        AppPreferences.setLastAckTripID(tripID);
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         mContext = context;
         try {
             jsonObject.put("trip_id", tripID);
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("pass_id", AppPreferences.getCallData(context).getPassId());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("pass_id", AppPreferences.getCallData().getPassId());
             //            jsonObject.put("event_id", AppPreferences.getCallData(context).getEvent_id());
-            jsonObject.put("full_name", AppPreferences.getPilotData(context).getFullName());
-            jsonObject.put("delay", AppPreferences.getTripDelay(context));
-            jsonObject.put("pass_socket_id", AppPreferences.getCallData(context).getPass_socket_id());
+            jsonObject.put("full_name", AppPreferences.getPilotData().getFullName());
+            jsonObject.put("delay", AppPreferences.getTripDelay());
+            jsonObject.put("pass_socket_id", AppPreferences.getCallData().getPass_socket_id());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -355,15 +362,15 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("driver_id", AppPreferences.getDriverId(context));
-            jsonObject.put("did", AppPreferences.getDriverId(context));
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("trips_id", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("passenger_id", AppPreferences.getCallData(context).getPassId());
-            jsonObject.put("pid", AppPreferences.getCallData(context).getPassId());
-            jsonObject.put("lat", AppPreferences.getLatitude(context));
-            jsonObject.put("lng", AppPreferences.getLongitude(context));
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("driver_id", AppPreferences.getDriverId());
+            jsonObject.put("did", AppPreferences.getDriverId());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
+            jsonObject.put("lat", AppPreferences.getLatitude());
+            jsonObject.put("lng", AppPreferences.getLongitude());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -376,15 +383,15 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("driver_id", AppPreferences.getDriverId(context));
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("driver_id", AppPreferences.getDriverId());
             jsonObject.put("message", message);
-            jsonObject.put("trips_id", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("passenger_id", AppPreferences.getCallData(context).getPassId());
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("lat", AppPreferences.getLatitude(context) + "");
-            jsonObject.put("lng", AppPreferences.getLongitude(context) + "");
+            jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+            jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("lat", AppPreferences.getLatitude() + "");
+            jsonObject.put("lng", AppPreferences.getLongitude() + "");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -398,14 +405,14 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("did", AppPreferences.getDriverId(context));
-            jsonObject.put("pid", AppPreferences.getCallData(context).getPassId());
-            jsonObject.put("trip_id", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("lat", AppPreferences.getLatitude(context) + "");
-            jsonObject.put("lng", AppPreferences.getLongitude(context) + "");
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("did", AppPreferences.getDriverId());
+            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
+            jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+            jsonObject.put("lat", AppPreferences.getLatitude() + "");
+            jsonObject.put("lng", AppPreferences.getLongitude() + "");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -420,26 +427,26 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
-            String startLat = AppPreferences.getLatitude(context) + "";
-            String startLng = AppPreferences.getLongitude(context) + "";
-            jsonObject.put("token_id", AppPreferences.getAccessToken(mContext));
-            jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("trip_id", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("_id", AppPreferences.getDriverId(mContext));
-            jsonObject.put("did", AppPreferences.getDriverId(mContext));
+            String startLat = AppPreferences.getLatitude() + "";
+            String startLng = AppPreferences.getLongitude() + "";
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+            jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("did", AppPreferences.getDriverId());
             jsonObject.put("startlatitude", startLat);
             jsonObject.put("startlongitude", startLng);
-            jsonObject.put("start_address", AppPreferences.getCallData(mContext).getStartAddress());
-            jsonObject.put("pid", AppPreferences.getCallData(mContext).getPassId());
+            jsonObject.put("start_address", AppPreferences.getCallData().getStartAddress());
+            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
             jsonObject.put("endlatitude", endLat);
             jsonObject.put("endlongitude", endLng);
             jsonObject.put("end_address", endAddress);
 
             //To update start latlng on App Side.
-            NormalCallData callData = AppPreferences.getCallData(context);
+            NormalCallData callData = AppPreferences.getCallData();
             callData.setStartLat(startLat);
             callData.setStartLng(startLng);
-            AppPreferences.setCallData(context, callData);
+            AppPreferences.setCallData(callData);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -457,14 +464,14 @@ public class UserRepository {
             totalTime = (int) (diff / (1000));
         }*/
         try {
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
 
-            String endLatString = AppPreferences.getLatitude(context) + "";
-            String endLngString = AppPreferences.getLongitude(context) + "";
-            String lastLat = AppPreferences.getPrevDistanceLatitude(mContext);
-            String lastLng = AppPreferences.getPrevDistanceLongitude(mContext);
+            String endLatString = AppPreferences.getLatitude() + "";
+            String endLngString = AppPreferences.getLongitude() + "";
+            String lastLat = AppPreferences.getPrevDistanceLatitude();
+            String lastLng = AppPreferences.getPrevDistanceLongitude();
             if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
                 if (!Utils.isValidLocation(Double.parseDouble(endLatString), Double.parseDouble(endLngString), Double.parseDouble(lastLat), Double.parseDouble(lastLng))) {
                     endLatString = lastLat;
@@ -476,15 +483,15 @@ public class UserRepository {
             jsonObject.put("lng", endLngString);
 
             LocCoordinatesInTrip startLatLng = new LocCoordinatesInTrip();
-            startLatLng.setLat(AppPreferences.getCallData(context).getStartLat());
-            startLatLng.setLng(AppPreferences.getCallData(context).getStartLng());
-            startLatLng.setDate(Utils.getIsoDate(AppPreferences.getStartTripTime(context)));
+            startLatLng.setLat(AppPreferences.getCallData().getStartLat());
+            startLatLng.setLng(AppPreferences.getCallData().getStartLng());
+            startLatLng.setDate(Utils.getIsoDate(AppPreferences.getStartTripTime()));
 
             LocCoordinatesInTrip endLatLng = new LocCoordinatesInTrip();
             endLatLng.setLat(endLatString);
             endLatLng.setLng(endLngString);
             endLatLng.setDate(Utils.getIsoDate());
-            ArrayList<LocCoordinatesInTrip> prevLatLngList = AppPreferences.getLocCoordinatesInTrip(context);
+            ArrayList<LocCoordinatesInTrip> prevLatLngList = AppPreferences.getLocCoordinatesInTrip();
             ArrayList<LocCoordinatesInTrip> latLngList = new ArrayList<>();
             latLngList.add(startLatLng);
             if (prevLatLngList != null && prevLatLngList.size() > 0) {
@@ -517,21 +524,21 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(mContext));
-            jsonObject.put("tid", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("trip_id", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("trips_id", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("_id", AppPreferences.getDriverId(mContext));
-            jsonObject.put("did", AppPreferences.getDriverId(mContext));
-            jsonObject.put("driver_id", AppPreferences.getDriverId(mContext));
-            jsonObject.put("pid", AppPreferences.getCallData(mContext).getPassId());
-            jsonObject.put("passenger_id", AppPreferences.getCallData(mContext).getPassId());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+            jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("did", AppPreferences.getDriverId());
+            jsonObject.put("driver_id", AppPreferences.getDriverId());
+            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
+            jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
             jsonObject.put("received_amount", amount);
             jsonObject.put("rate", rate);
             jsonObject.put("feedback", feedback);
-            jsonObject.put("is_dispatch", AppPreferences.getCallData(context).isDispatcher());
-            jsonObject.put("lat", AppPreferences.getLatitude(context) + "");
-            jsonObject.put("lng", AppPreferences.getLongitude(context) + "");
+            jsonObject.put("is_dispatch", AppPreferences.getCallData().isDispatcher());
+            jsonObject.put("lat", AppPreferences.getLatitude() + "");
+            jsonObject.put("lng", AppPreferences.getLongitude() + "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -550,8 +557,8 @@ public class UserRepository {
     public void requestWalletHistory(Context context, IUserDataHandler handler, String pageNo) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.getWalletHistory(mContext, mDataCallback, AppPreferences.getDriverId(context),
-                AppPreferences.getAccessToken(context), pageNo);
+        mRestRequestHandler.getWalletHistory(mContext, mDataCallback, AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(), pageNo);
     }
 
     public void requestSettings(Context context, IUserDataHandler handler) {
@@ -563,15 +570,15 @@ public class UserRepository {
     public void requestAccountNumbers(Context context, IUserDataHandler handler, String pageNo) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.getAccountNumbers(mContext, mDataCallback, AppPreferences.getDriverId(context),
-                AppPreferences.getAccessToken(context), pageNo);
+        mRestRequestHandler.getAccountNumbers(mContext, mDataCallback, AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(), pageNo);
     }
 
     public void requestContactNumbers(Context context, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.getContactNumbers(mContext, mDataCallback, AppPreferences.getDriverId(context),
-                AppPreferences.getAccessToken(context));
+        mRestRequestHandler.getContactNumbers(mContext, mDataCallback, AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken());
     }
 
 
@@ -580,11 +587,11 @@ public class UserRepository {
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(mContext));
-            jsonObject.put("_id", AppPreferences.getDriverId(mContext));
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("tid", tripId);
             jsonObject.put("user_type", "d");
-            jsonObject.put("driver_id", AppPreferences.getDriverId(mContext));
+            jsonObject.put("driver_id", AppPreferences.getDriverId());
             jsonObject.put("passenger_id", passId);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -597,9 +604,9 @@ public class UserRepository {
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken(mContext));
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
             jsonObject.put("user_type", "d");
-            jsonObject.put("_id", AppPreferences.getDriverId(mContext));
+            jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("conversation_id", conversationId);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -615,12 +622,12 @@ public class UserRepository {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("is_available", "" + status);
-            jsonObject.put("driver_id", AppPreferences.getDriverId(context));
-            jsonObject.put("_id", AppPreferences.getDriverId(context));
-            jsonObject.put("token_id", AppPreferences.getAccessToken(context));
-            jsonObject.put("lat", AppPreferences.getLatitude(context));
-            jsonObject.put("lng", AppPreferences.getLongitude(context));
-            jsonObject.put("cih", AppPreferences.getCashInHands(context));
+            jsonObject.put("driver_id", AppPreferences.getDriverId());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("lat", AppPreferences.getLatitude());
+            jsonObject.put("lng", AppPreferences.getLongitude());
+            jsonObject.put("cih", AppPreferences.getCashInHands());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -635,8 +642,8 @@ public class UserRepository {
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("_id", AppPreferences.getDriverId(mContext));
-            jsonObject.put("token_id", AppPreferences.getAccessToken(mContext));
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
             jsonObject.put("tid", tripId);
             jsonObject.put("user_type", "d");
             jsonObject.put("receiver_id", receiverId);
@@ -657,8 +664,8 @@ public class UserRepository {
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("_id", AppPreferences.getDriverId(mContext));
-            jsonObject.put("token_id", AppPreferences.getAccessToken(mContext));
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
             jsonObject.put("app_version", Utils.getVersion(mContext));
 
         } catch (JSONException e) {
@@ -672,7 +679,7 @@ public class UserRepository {
                               String tid, String end_address, String lat, String lng) {
         mUserCallback = handler;
         mContext = context;
-        PilotData user = AppPreferences.getPilotData(mContext);
+        PilotData user = AppPreferences.getPilotData();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(UpdateDropOff.END_ADDRESS, end_address);
@@ -717,6 +724,8 @@ public class UserRepository {
         public void onResponse(Object object) {
             if (object instanceof RegisterResponse) {
                 mUserCallback.onUserRegister((RegisterResponse) object);
+            }else if(object instanceof DriverDestResponse){
+                mUserCallback.onDropOffUpdated((DriverDestResponse) object);
             } else if (object instanceof LoginResponse) {
                 if (null != mUserCallback) {
                     mUserCallback.onUserLogin((LoginResponse) object);
@@ -729,10 +738,10 @@ public class UserRepository {
                 if (null != mUserCallback) {
                     SettingsResponse settingsResponse = (SettingsResponse) object;
                     if (settingsResponse.getData() != null && settingsResponse.getData().getSettings() != null) {
-                        AppPreferences.setSettingsVersion(mContext, settingsResponse.getSetting_version());
-                        AppPreferences.saveSettingsData(mContext, settingsResponse.getData());
+                        AppPreferences.setSettingsVersion(settingsResponse.getSetting_version());
+                        AppPreferences.saveSettingsData(settingsResponse.getData());
                         if (settingsResponse.getData().getSettings().getCih_range() != null) {
-                            AppPreferences.setCashInHandsRange(mContext, settingsResponse.getData().getSettings().getCih_range());
+                            AppPreferences.setCashInHandsRange(settingsResponse.getData().getSettings().getCih_range());
                         }
                         mUserCallback.onGetSettingsResponse(true);
                     } else {
@@ -741,7 +750,7 @@ public class UserRepository {
                 }
             } else if (object instanceof GetCitiesResponse) {
                 if (null != mUserCallback) {
-                    AppPreferences.setAvailableCities(mContext, (GetCitiesResponse) object);
+                    AppPreferences.setAvailableCities((GetCitiesResponse) object);
                     mUserCallback.onCitiesResponse(((GetCitiesResponse) object));
                 }
             } else if (object instanceof PilotStatusResponse) {

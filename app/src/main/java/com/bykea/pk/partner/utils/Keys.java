@@ -136,4 +136,10 @@ public class Keys {
     public static final String CASH_IN_HANDS_INDEX = "CASH_IN_HANDS_INDEX";
     public static final String TRIP_DELAY = "TRIP_DELAY";
 
+    /***********************************************************************************************
+     * Driver drop off tags
+     **********************************************************************************************/
+
+    public static final String API_KEY_CHECK_TIME = "API_KEY_CHECK_TIME";
+    public static final String IS_API_KEY_REQUIRED = "IS_API_KEY_REQUIRED";
 }

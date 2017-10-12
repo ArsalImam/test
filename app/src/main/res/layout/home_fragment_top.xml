@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/transparent"
     android:clickable="true">
 
@@ -86,37 +87,119 @@
 
     </LinearLayout>
 
-
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/tvConnectionStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <FrameLayout
+        android:id="@+id/infoLay"
         android:layout_below="@+id/llInlineTop"
-        android:background="@color/colorPrimary"
-        android:drawableLeft="@drawable/_good_sattelite"
-        android:drawablePadding="@dimen/_18sdp"
-        android:gravity="center_vertical"
-        android:paddingBottom="@dimen/_4sdp"
-        android:paddingLeft="@dimen/_8sdp"
-        android:paddingTop="@dimen/_4sdp"
-        android:text="Good Connection"
-        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvConnectionStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:drawableLeft="@drawable/_good_sattelite"
+            android:drawablePadding="@dimen/_18sdp"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/_4sdp"
+            android:paddingLeft="@dimen/_8sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:text="Good Connection"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            app:fontName="roboto_regular.ttf" />
+
+        <com.bykea.pk.partner.widgets.AutoFitFontTextView
+            android:id="@+id/tvFenceError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color.error"
+            android:drawablePadding="@dimen/_18sdp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:padding="@dimen/_8sdp"
+            android:text="Non Service Area"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rl_setDestination"
+        android:layout_below="@+id/infoLay"
         android:visibility="visible"
-        app:fontName="roboto_regular.ttf" />
-
-    <com.bykea.pk.partner.widgets.AutoFitFontTextView
-        android:id="@+id/tvFenceError"
+        tools:visibility="visible"
+        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/llInlineTop"
-        android:background="@color/color.error"
-        android:drawablePadding="@dimen/_18sdp"
-        android:gravity="center_vertical"
-        android:maxLines="1"
-        android:padding="@dimen/_8sdp"
-        android:text="Non Service Area"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_12sdp"
-        android:visibility="gone" />
+        android:layout_height="@dimen/_40sdp">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tv_selectDestination"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="منزل منتخب کریں"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_18sdp"
+            android:visibility="visible"
+            app:fontName="jameel_noori_nastaleeq.ttf"/>
+
+        <View
+            android:layout_alignParentBottom="true"
+            android:background="@color/grey"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_destinationSelected"
+        android:layout_below="@+id/infoLay"
+        android:visibility="gone"
+        tools:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:gravity="center_vertical">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tv_destinationName"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:maxWidth="@dimen/_200sdp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="Saddar"
+            android:gravity="center_vertical"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_15sdp"/>
+
+        <View
+            android:layout_toLeftOf="@+id/tv_destinationSelected"
+            android:background="@color/grey"
+            android:layout_width="@dimen/_1sdp"
+            android:layout_height="match_parent" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tv_destinationSelected"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_9sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:text="منتخب منزل"
+            android:gravity="center"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_18sdp"/>
+
+        <View
+            android:layout_alignParentBottom="true"
+            android:background="@color/grey"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

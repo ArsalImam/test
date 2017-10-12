@@ -187,8 +187,8 @@ public class PlaceAutocompleteAdapter
                                             && places.getCount() > 0) {
                                         for (Place place : places) {
                                             distances.add("" + Math.round(((Utils.calculateDistance(place.getLatLng().latitude,
-                                                    place.getLatLng().longitude, AppPreferences.getLatitude(getContext()),
-                                                    AppPreferences.getLongitude(getContext()))) / 1000) * 10.0) / 10.0);
+                                                    place.getLatLng().longitude, AppPreferences.getLatitude(),
+                                                    AppPreferences.getLongitude())) / 1000) * 10.0) / 10.0);
                                         }
                                         places.release();
                                     }

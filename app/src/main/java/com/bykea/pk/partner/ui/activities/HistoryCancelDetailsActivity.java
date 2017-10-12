@@ -113,7 +113,7 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
 
 
                 tvCancelBy.setText(data.getCancel_by());
-                if (Utils.getDaysInBetween(System.currentTimeMillis(), new SimpleDateFormat(CURRENT_DATE_FORMAT).parse(data.getCancelTime()).getTime()) >= AppPreferences.getSettings(mCurrentActivity).getSettings().getTrip_support_max_days()) {
+                if (Utils.getDaysInBetween(System.currentTimeMillis(), new SimpleDateFormat(CURRENT_DATE_FORMAT).parse(data.getCancelTime()).getTime()) >= AppPreferences.getSettings().getSettings().getTrip_support_max_days()) {
                     btnProblem.setVisibility(View.GONE);
                 }
                 nameTv.setText(data.getPassenger().getName());
@@ -130,8 +130,8 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.btnProblem:
                 if (data != null) {
-                    String params = "name=" + AppPreferences.getPilotData(mCurrentActivity).getFullName() + "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData(mCurrentActivity).getPhoneNo();
-                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getTrip_support_link() + params, data.getTripNo());
+                    String params = "name=" + AppPreferences.getPilotData().getFullName() + "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
+                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
                 }
                 break;
 

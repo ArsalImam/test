@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.os.Vibrator;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -49,7 +48,6 @@ import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.thefinestartist.Base;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -126,7 +124,7 @@ public class ChatActivity extends BaseActivity {
 
     private void init() {
         messageList = new ArrayList<>();
-        NormalCallData callData = AppPreferences.getCallData(mCurrentActivity);
+        NormalCallData callData = AppPreferences.getCallData();
         String details = callData.getDetails();
         if (StringUtils.isNotBlank(details)) {
             ChatMessage detailsMsg = new ChatMessage();
@@ -143,15 +141,15 @@ public class ChatActivity extends BaseActivity {
         messagesContainer.setAdapter(chatAdapter);
 
         repository = new UserRepository();
-        if (AppPreferences.isOnTrip(mCurrentActivity)) {
-            mReceiversId = AppPreferences.getCallData(mCurrentActivity).getPassId();
+        if (AppPreferences.isOnTrip()) {
+            mReceiversId = AppPreferences.getCallData().getPassId();
 //            setToolbarTitle(AppPreferences.getCallData(mCurrentActivity).getPassName());
-            titleTv.setText(AppPreferences.getCallData(mCurrentActivity).getPassName());
+            titleTv.setText(AppPreferences.getCallData().getPassName());
         }
         if (null != getIntent() && StringUtils.isNotBlank(getIntent().getStringExtra(Keys.CHAT_CONVERSATION_ID))) {
             mCoversationId = getIntent().getStringExtra(Keys.CHAT_CONVERSATION_ID);
             isFromNotification = getIntent().getBooleanExtra("fromNotification", false);
-            if (!AppPreferences.isOnTrip(mCurrentActivity)) {
+            if (!AppPreferences.isOnTrip()) {
 //                setToolbarTitle(getIntent().getStringExtra("title"));
                 titleTv.setText(getIntent().getStringExtra("title"));
             }
@@ -162,10 +160,10 @@ public class ChatActivity extends BaseActivity {
             isFromNotification = getIntent().getBooleanExtra("fromNotification", false);
 //            Dialogs.INSTANCE.showLoader(mCurrentActivity);
 //            setToolbarTitle(AppPreferences.getCallData(mCurrentActivity).getPassName());
-            titleTv.setText(AppPreferences.getCallData(mCurrentActivity).getPassName());
+            titleTv.setText(AppPreferences.getCallData().getPassName());
             loader.setVisibility(View.VISIBLE);
             repository.getConversationId(mCurrentActivity, chatHandler,
-                    AppPreferences.getCallData(mCurrentActivity).getPassId(), AppPreferences.getCallData(mCurrentActivity).getTripId());
+                    AppPreferences.getCallData().getPassId(), AppPreferences.getCallData().getTripId());
 
         }
     }
@@ -241,14 +239,14 @@ public class ChatActivity extends BaseActivity {
 //                    Dialogs.INSTANCE.dismissDialog();
                     if (uploadAudioFile.isSuccess()) {
                         messageList.add(makeMsg(uploadAudioFile.getImagePath(), Keys.CHAT_TYPE_VOICE
-                                , AppPreferences.getDriverId(mCurrentActivity),
-                                AppPreferences.getPilotData(mCurrentActivity).getFullName(),
-                                AppPreferences.getPilotData(mCurrentActivity).getPilotImage(), false));
+                                , AppPreferences.getDriverId(),
+                                AppPreferences.getPilotData().getFullName(),
+                                AppPreferences.getPilotData().getPilotImage(), false));
                         chatAdapter.notifyDataSetChanged();
                         scrollDown();
                         repository.sendMessage(mCurrentActivity, chatHandler,
                                 uploadAudioFile.getImagePath(), mCoversationId, mReceiversId, Keys.CHAT_TYPE_VOICE,
-                                AppPreferences.getCallData(mCurrentActivity).getTripId());
+                                AppPreferences.getCallData().getTripId());
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, voiceMsgLayout, uploadAudioFile.getMessage());
                     }
@@ -286,7 +284,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AppPreferences.setChatActivityOnForeground(mCurrentActivity, true);
+        AppPreferences.setChatActivityOnForeground(true);
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
         registerReceiver(messageReceiver, new IntentFilter(Keys.BROADCAST_MESSAGE_RECEIVE));
@@ -296,7 +294,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        AppPreferences.setChatActivityOnForeground(mCurrentActivity, false);
+        AppPreferences.setChatActivityOnForeground(false);
         if (chatAdapter != null) {
             chatAdapter.stopPlayingAudio();
         }
@@ -307,7 +305,7 @@ public class ChatActivity extends BaseActivity {
         if (messageReceiver != null) {
             unregisterReceiver(messageReceiver);
         }
-        AppPreferences.setChatActivityOnForeground(mCurrentActivity, false);
+        AppPreferences.setChatActivityOnForeground(false);
         if (chatAdapter != null) {
             chatAdapter.stopPlayingAudio();
         }
@@ -398,12 +396,12 @@ public class ChatActivity extends BaseActivity {
         }
         messageEdit.setText("");
         repository.sendMessage(mCurrentActivity, chatHandler, lastMsg, mCoversationId,
-                mReceiversId, Keys.CHAT_TYPE_TEXT, AppPreferences.getCallData(mCurrentActivity).getTripId());
+                mReceiversId, Keys.CHAT_TYPE_TEXT, AppPreferences.getCallData().getTripId());
 
         messageList.add(makeMsg(lastMsg, Keys.CHAT_TYPE_TEXT,
-                AppPreferences.getDriverId(mCurrentActivity),
-                AppPreferences.getPilotData(mCurrentActivity).getFullName(),
-                AppPreferences.getPilotData(mCurrentActivity).getPilotImage(), false));
+                AppPreferences.getDriverId(),
+                AppPreferences.getPilotData().getFullName(),
+                AppPreferences.getPilotData().getPilotImage(), false));
         chatAdapter.notifyDataSetChanged();
         scrollDown();
     }
@@ -518,10 +516,10 @@ public class ChatActivity extends BaseActivity {
         ChatMessage chatMessage = new ChatMessage();
         Sender sender = new Sender();
         if (isReceived) {
-            sender.setImage(AppPreferences.getCallData(mCurrentActivity).getPassImage());
-            sender.setSenderId(AppPreferences.getCallData(mCurrentActivity).getPassId());
-            sender.setUsername(AppPreferences.getCallData(mCurrentActivity).getPassName());
-            chatMessage.setSenderId(AppPreferences.getCallData(mCurrentActivity).getPassId());
+            sender.setImage(AppPreferences.getCallData().getPassImage());
+            sender.setSenderId(AppPreferences.getCallData().getPassId());
+            sender.setUsername(AppPreferences.getCallData().getPassName());
+            chatMessage.setSenderId(AppPreferences.getCallData().getPassId());
         } else {
             sender.setImage(senderImage);
             sender.setSenderId(senderid);

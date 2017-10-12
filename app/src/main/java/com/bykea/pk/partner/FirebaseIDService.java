@@ -29,6 +29,6 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        AppPreferences.setRegId(this, token);
+        AppPreferences.setRegId(token);
     }
 }

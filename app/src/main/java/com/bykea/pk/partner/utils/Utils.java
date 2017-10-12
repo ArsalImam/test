@@ -17,7 +17,6 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
@@ -34,7 +33,6 @@ import android.widget.Toast;
 
 
 import com.bykea.pk.partner.BuildConfig;
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -83,6 +81,11 @@ import javax.net.ssl.TrustManagerFactory;
 
 
 public class Utils {
+
+
+    public static String getApiKey() {
+        return AppPreferences.isApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
+    }
 
     public static void infoLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
@@ -227,16 +230,16 @@ public class Utils {
 
     public static void logout(Context context) {
 
-        AppPreferences.saveLoginStatus(context, false);
-        AppPreferences.setIncomingCall(context, false);
-        AppPreferences.setCallData(context, null);
-        AppPreferences.setTripStatus(context, "");
-        AppPreferences.saveLoginStatus(context, false);
-        AppPreferences.setPilotData(context, null);
+        AppPreferences.saveLoginStatus(false);
+        AppPreferences.setIncomingCall(false);
+        AppPreferences.setCallData(null);
+        AppPreferences.setTripStatus("");
+        AppPreferences.saveLoginStatus(false);
+        AppPreferences.setPilotData(null);
 //        AppPreferences.clear(context);
-        if (StringUtils.isBlank(AppPreferences.getRegId(context))
+        if (StringUtils.isBlank(AppPreferences.getRegId())
                 && StringUtils.isNotBlank(FirebaseInstanceId.getInstance().getToken())) {
-            AppPreferences.setRegId(context, FirebaseInstanceId.getInstance().getToken());
+            AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
         }
         HomeActivity.visibleFragmentNumber = 0;
 
@@ -346,8 +349,8 @@ public class Utils {
         }
     }*/
 
-    public static int getMapIcon(Context context, String type) {
-        switch (AppPreferences.getTripStatus(context)) {
+    public static int getMapIcon(String type) {
+        switch (AppPreferences.getTripStatus()) {
             case TripStatus.ON_ARRIVED_TRIP:
                 if (StringUtils.containsIgnoreCase(type, "van")) {
                     return R.drawable.ic_van_location;
@@ -410,10 +413,10 @@ public class Utils {
         window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
 
-    public static void setCallIncomingState(Context context) {
-        AppPreferences.setIsOnTrip(context, false);
-        AppPreferences.setTripStatus(context, TripStatus.ON_FREE);
-        AppPreferences.setIncomingCall(context, true);
+    public static void setCallIncomingState() {
+        AppPreferences.setIsOnTrip(false);
+        AppPreferences.setTripStatus(TripStatus.ON_FREE);
+        AppPreferences.setIncomingCall(true);
     }
 
     public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
@@ -651,11 +654,11 @@ public class Utils {
 
     public static void onUnauthorized(final BaseActivity mCurrentActivity) {
         if (mCurrentActivity != null) {
-            AppPreferences.setIncomingCall(mCurrentActivity, false);
-            AppPreferences.setCallData(mCurrentActivity, null);
-            AppPreferences.setTripStatus(mCurrentActivity, "");
-            AppPreferences.saveLoginStatus(mCurrentActivity, false);
-            AppPreferences.setPilotData(mCurrentActivity, null);
+            AppPreferences.setIncomingCall(false);
+            AppPreferences.setCallData(null);
+            AppPreferences.setTripStatus("");
+            AppPreferences.saveLoginStatus(false);
+            AppPreferences.setPilotData(null);
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -673,11 +676,11 @@ public class Utils {
 
     public static void onUnauthorizedMockLocation(final BaseActivity mCurrentActivity) {
         if (mCurrentActivity != null) {
-            AppPreferences.setIncomingCall(mCurrentActivity, false);
-            AppPreferences.setCallData(mCurrentActivity, null);
-            AppPreferences.setTripStatus(mCurrentActivity, "");
-            AppPreferences.saveLoginStatus(mCurrentActivity, false);
-            AppPreferences.setPilotData(mCurrentActivity, null);
+            AppPreferences.setIncomingCall(false);
+            AppPreferences.setCallData(null);
+            AppPreferences.setTripStatus("");
+            AppPreferences.saveLoginStatus(false);
+            AppPreferences.setPilotData(null);
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -697,29 +700,29 @@ public class Utils {
     * This will sync Device Time and Server Time. We know that Device time can be changed easily so
     * we will calculate time difference between server and device
     * */
-    public static void saveServerTimeDifference(Context context, long serverTime) {
+    public static void saveServerTimeDifference(long serverTime) {
         long currentTime = System.currentTimeMillis();
-        AppPreferences.setServerTimeDifference(context,
-                (((AppPreferences.getLocationEmitTime(context) - serverTime) + (currentTime - serverTime)
-                        - (currentTime - AppPreferences.getLocationEmitTime(context))) / 2));
+        AppPreferences.setServerTimeDifference(
+                (((AppPreferences.getLocationEmitTime() - serverTime) + (currentTime - serverTime)
+                        - (currentTime - AppPreferences.getLocationEmitTime())) / 2));
 
     }
 
-    public static boolean isNotDelayed(Context context, long sentTime) {
-        long diff = (System.currentTimeMillis() - AppPreferences.getServerTimeDifference(context))
+    public static boolean isNotDelayed(long sentTime) {
+        long diff = (System.currentTimeMillis() - AppPreferences.getServerTimeDifference())
                 - sentTime;
         Utils.redLog("Time Diff Call", "" + diff);
-        AppPreferences.setTripDelay(context, diff);
+        AppPreferences.setTripDelay(diff);
         return diff <= 6000;
     }
 
-    public static boolean isCancelAfter5Min(Context context) {
-        long diff = (System.currentTimeMillis() - (AppPreferences.getServerTimeDifference(context) + AppPreferences.getCallData(context).getSentTime()));
+    public static boolean isCancelAfter5Min() {
+        long diff = (System.currentTimeMillis() - (AppPreferences.getServerTimeDifference() + AppPreferences.getCallData().getSentTime()));
         Utils.redLog("Time Diff Call", "" + diff);
         long cancel_time = 5;
-        if (AppPreferences.getSettings(context) != null && AppPreferences.getSettings(context).getSettings() != null &&
-                StringUtils.isNotBlank(AppPreferences.getSettings(context).getSettings().getCancel_time())) {
-            cancel_time = Long.parseLong(AppPreferences.getSettings(context).getSettings().getCancel_time());
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getCancel_time())) {
+            cancel_time = Long.parseLong(AppPreferences.getSettings().getSettings().getCancel_time());
         }
         return diff >= cancel_time * 60000;
     }
@@ -735,8 +738,8 @@ public class Utils {
             cities.add(karachi);
             return cities;
         }*/
-    public static ArrayList<PlacesResult> getCities(Context context) {
-        ArrayList<PlacesResult> availableCities = AppPreferences.getAvailableCities(context);
+    public static ArrayList<PlacesResult> getCities() {
+        ArrayList<PlacesResult> availableCities = AppPreferences.getAvailableCities();
         if (availableCities.size() > 0) {
             return availableCities;
         } else {
@@ -750,9 +753,9 @@ public class Utils {
         }
     }
 
-    public static int getCurrentCityIndex(Context mCurrentActivity) {
-        LatLng currentLatLng = new LatLng(AppPreferences.getLatitude(mCurrentActivity), AppPreferences.getLongitude(mCurrentActivity));
-        ArrayList<PlacesResult> cities = getCities(mCurrentActivity);
+    public static int getCurrentCityIndex() {
+        LatLng currentLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        ArrayList<PlacesResult> cities = getCities();
         float shortestDistance = 0;
         int index = 0;
         for (int i = 0; i < cities.size(); i++) {
@@ -825,7 +828,7 @@ public class Utils {
     * Request while using API without any Key.
     * */
     public static String getApiKeyForGeoCoder(Context context) {
-        return AppPreferences.isGeoCoderApiKeyRequired(context) ? context.getResources().getString(R.string.google_api_serverkey) : StringUtils.EMPTY;
+        return AppPreferences.isGeoCoderApiKeyRequired() ? context.getResources().getString(R.string.google_api_serverkey) : StringUtils.EMPTY;
     }
 
     /*
@@ -834,9 +837,9 @@ public class Utils {
     * Request while using API without any Key.
     * */
     public static String getApiKeyForDirections(Context context) {
-        if (AppPreferences.isDirectionsApiKeyRequired(context)) {
-            if (isDirectionsApiKeyCheckRequired(context)) {
-                AppPreferences.setDirectionsApiKeyRequired(context, false);
+        if (AppPreferences.isDirectionsApiKeyRequired()) {
+            if (isDirectionsApiKeyCheckRequired()) {
+                AppPreferences.setDirectionsApiKeyRequired(false);
                 return StringUtils.EMPTY;
             } else {
                 return context.getResources().getString(R.string.google_api_serverkey);
@@ -849,26 +852,26 @@ public class Utils {
     /*
     * Returns true if Last API call was more than 1 min ago
     * */
-    public static boolean isDirectionApiCallRequired(Context context) {
-        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime(context)) >= 45000;
+    public static boolean isDirectionApiCallRequired() {
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 45000;
     }
 
-    public static boolean isStatsApiCallRequired(Context context) {
-        return AppPreferences.isStatsApiCallRequired(context) ||
-                ((System.currentTimeMillis() - AppPreferences.getLastStatsApiCallTime(context)) >= (60000 * 4 * 60)); //4 hours
+    public static boolean isStatsApiCallRequired() {
+        return AppPreferences.isStatsApiCallRequired() ||
+                ((System.currentTimeMillis() - AppPreferences.getLastStatsApiCallTime()) >= (60000 * 4 * 60)); //4 hours
     }
 
-    public static String getTripDistance(Context context) {
-        return "" + (Math.round((AppPreferences.getDistanceCoveredInMeters(context) / 1000) * 10.0) / 10.0);
+    public static String getTripDistance() {
+        return "" + (Math.round((AppPreferences.getDistanceCoveredInMeters() / 1000) * 10.0) / 10.0);
     }
 
-    public static String getTripTime(Context context) {
-        long diff = System.currentTimeMillis() - AppPreferences.getStartTripTime(context);
+    public static String getTripTime() {
+        long diff = System.currentTimeMillis() - AppPreferences.getStartTripTime();
         return diff > 0 ? "" + (1 + (int) TimeUnit.MILLISECONDS.toMinutes(diff)) : "N/A";
     }
 
-    public static boolean isAppVersionCheckRequired(Context context) {
-        long lastApiCallTime = AppPreferences.getVersionCheckTime(context);
+    public static boolean isAppVersionCheckRequired() {
+        long lastApiCallTime = AppPreferences.getVersionCheckTime();
         return lastApiCallTime == 0 || (System.currentTimeMillis() - lastApiCallTime) >= Constants.MILISEC_IN_HALF_DAY;
     }
 
@@ -969,20 +972,20 @@ public class Utils {
         if (shouldConsiderLatLng) {
             float distance = calculateDistance(newLat, newLon, prevLat, prevLon);
             if (distance > 6) {
-                long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime(DriverApp.getContext()));
+                long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime());
                 long minTime = (long) ((distance) / (80 * 1000) * 3600);
                 if (timeDifference > minTime) {
-                    AppPreferences.setDistanceCoveredInMeters(DriverApp.getContext(), distance);
+                    AppPreferences.setDistanceCoveredInMeters(distance);
                     return true;
                 } else {
                     return false;
                 }
             } else {
-                AppPreferences.setPrevDistanceTime(DriverApp.getContext());
+                AppPreferences.setPrevDistanceTime();
                 return false;
             }
         } else {
-            AppPreferences.setPrevDistanceTime(DriverApp.getContext());
+            AppPreferences.setPrevDistanceTime();
             return false;
         }
     }
@@ -991,10 +994,10 @@ public class Utils {
 //        boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
 //        if (shouldConsiderLatLng) {
 //            if (distance > 6) {
-        long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime(DriverApp.getContext()));
+        long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime());
         long minTime = (long) ((distance) / (80 * 1000) * 3600);
         if (timeDifference > minTime) {
-            AppPreferences.setDistanceCoveredInMeters(DriverApp.getContext(), distance);
+            AppPreferences.setDistanceCoveredInMeters(distance);
             return true;
         } else {
             return false;
@@ -1022,22 +1025,22 @@ public class Utils {
 
     }
 
-    public static boolean isGeoCoderApiKeyCheckRequired(Context context) {
-        long lastApiCallTime = AppPreferences.getGeoCoderApiKeyCheckTime(context);
+    public static boolean isGeoCoderApiKeyCheckRequired() {
+        long lastApiCallTime = AppPreferences.getGeoCoderApiKeyCheckTime();
         return lastApiCallTime == 0 || (System.currentTimeMillis() - lastApiCallTime) >= Constants.MILLI_SEC_IN_1_AND_HALF_DAYS;
     }
 
-    private static boolean isDirectionsApiKeyCheckRequired(Context context) {
-        long lastApiCallTime = AppPreferences.getDirectionsApiKeyCheckTime(context);
+    private static boolean isDirectionsApiKeyCheckRequired() {
+        long lastApiCallTime = AppPreferences.getDirectionsApiKeyCheckTime();
         return lastApiCallTime == 0 || (System.currentTimeMillis() - lastApiCallTime) >= Constants.MILLI_SEC_IN_1_AND_HALF_DAYS;
     }
 
-    public static boolean isGetCitiesApiCallRequired(Context context) {
-        if (AppPreferences.getAvailableCities(context).size() == 0) {
+    public static boolean isGetCitiesApiCallRequired() {
+        if (AppPreferences.getAvailableCities().size() == 0) {
             return true;
-        } else if (AppPreferences.getCitiesApiCallTime(context) == 0) {
+        } else if (AppPreferences.getCitiesApiCallTime() == 0) {
             return true;
-        } else if ((System.currentTimeMillis() - AppPreferences.getCitiesApiCallTime(context)) >= Constants.MILISEC_IN_DAY) {
+        } else if ((System.currentTimeMillis() - AppPreferences.getCitiesApiCallTime()) >= Constants.MILISEC_IN_DAY) {
             return true;
         } else {
             return false;
@@ -1086,14 +1089,14 @@ public class Utils {
     }
 
 
-    public static void setOneSignalPlayerId(final Context context) {
-        if (StringUtils.isBlank(AppPreferences.getOneSignalPlayerId(context))) {
+    public static void setOneSignalPlayerId() {
+        if (StringUtils.isBlank(AppPreferences.getOneSignalPlayerId())) {
             OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
                 @Override
                 public void idsAvailable(String userId, String registrationId) {
                     if (StringUtils.isNotBlank(userId)) {
                         Utils.redLog("OneSignal P_ID", userId);
-                        AppPreferences.setOneSignalPlayerId(context, userId);
+                        AppPreferences.setOneSignalPlayerId(userId);
                     }
                 }
             });

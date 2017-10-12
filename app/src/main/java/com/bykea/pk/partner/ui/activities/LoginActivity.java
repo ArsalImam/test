@@ -1,10 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -12,15 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.bykea.pk.partner.ui.fragments.LoginFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.NetworkChangeListener;
-import com.bykea.pk.partner.utils.Permissions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -93,7 +84,7 @@ public class LoginActivity extends BaseActivity {
             if (null != location) {
                 pilotData.setLat(location.getLatitude() + "");
                 pilotData.setLng(location.getLongitude() + "");
-                AppPreferences.saveLocationFromLogin(mCurrentActivity, new LatLng(location.getLatitude(),
+                AppPreferences.saveLocationFromLogin(new LatLng(location.getLatitude(),
                         location.getLongitude()), "", location.getAccuracy(), Utils.isMockLocation(location, mCurrentActivity));
                 Utils.infoLog("Current Device Location ", location.toString());
             } else {

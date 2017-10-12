@@ -2,7 +2,6 @@ package com.bykea.pk.partner.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +18,6 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -110,7 +108,7 @@ public class PerformanceFragment extends Fragment {
                         loader.setVisibility(View.GONE);
                         if (response.isSuccess()) {
                             data_layout.setVisibility(View.VISIBLE);
-                            PilotData userData = AppPreferences.getPilotData(mCurrentActivity);
+                            PilotData userData = AppPreferences.getPilotData();
                             DriverStatsData responseData = response.getData();
                             if (StringUtils.isNotBlank(responseData.getDate())) {
                                 tvDate.setText(Utils.getFormattedDate(responseData.getDate(),
@@ -140,9 +138,9 @@ public class PerformanceFragment extends Fragment {
                                 userData.setRating(responseData.getRating());
                             }
 
-                            AppPreferences.setPilotData(mCurrentActivity, userData);
-                            AppPreferences.setStatsApiCallRequired(mCurrentActivity, false);
-                            AppPreferences.setLastStatsApiCallTime(mCurrentActivity, System.currentTimeMillis());
+                            AppPreferences.setPilotData(userData);
+                            AppPreferences.setStatsApiCallRequired(false);
+                            AppPreferences.setLastStatsApiCallTime(System.currentTimeMillis());
                         } else {
                             Utils.appToast(mCurrentActivity, response.getMessage());
                         }

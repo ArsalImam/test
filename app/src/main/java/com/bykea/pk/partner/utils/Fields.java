@@ -12,6 +12,12 @@ public class Fields {
 
     }
 
+    public static final class GoogleDirectionApi {
+        public static final String ORIGIN = "origins";
+        public static final String DESTINATION = "destinations";
+        public static final String KEY = "key";
+    }
+
     public static class Login {
         public static final String PHONE_NUMBER = "phone";
         public static final String PIN_CODE = "pincode";

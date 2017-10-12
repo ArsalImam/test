@@ -18,9 +18,9 @@
         android:layout_below="@+id/llTop">
 
         <RelativeLayout
-            android:visibility="visible"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
 
             <com.google.android.gms.maps.MapView
@@ -43,7 +43,6 @@
                 android:src="@drawable/my_location_bg" />
 
         </RelativeLayout>
-
 
         <LinearLayout
             android:id="@+id/rlInactiveImage"
@@ -81,6 +80,5 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@color/windowBackground" />
-
 
 </RelativeLayout>

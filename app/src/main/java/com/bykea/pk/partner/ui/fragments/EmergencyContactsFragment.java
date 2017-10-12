@@ -55,16 +55,16 @@ public class EmergencyContactsFragment extends Fragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.hospitalCall:
-                Utils.callingIntent(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getHospital());
+                Utils.callingIntent(mCurrentActivity, AppPreferences.getSettings().getSettings().getHospital());
                 break;
             case R.id.policeStationCall:
-                Utils.callingIntent(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getPolice());
+                Utils.callingIntent(mCurrentActivity, AppPreferences.getSettings().getSettings().getPolice());
                 break;
             case R.id.fireBrigadeCall:
-                Utils.callingIntent(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getFire_brigade());
+                Utils.callingIntent(mCurrentActivity, AppPreferences.getSettings().getSettings().getFire_brigade());
                 break;
             case R.id.ambulanceCall:
-                Utils.callingIntent(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getAmbulance());
+                Utils.callingIntent(mCurrentActivity, AppPreferences.getSettings().getSettings().getAmbulance());
                 break;
         }
     }

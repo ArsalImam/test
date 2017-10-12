@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -23,15 +22,19 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PilotData;
+import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
+import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
@@ -69,6 +72,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.app.Activity.RESULT_OK;
+
 public class HomeFragment extends Fragment {
 
     @Bind(R.id.rlInactiveImage)
@@ -95,6 +100,12 @@ public class HomeFragment extends Fragment {
     FontTextView tvCihIndex4;
     @Bind(R.id.tvCihIndex5)
     FontTextView tvCihIndex5;
+    @Bind(R.id.rl_setDestination)
+    RelativeLayout rl_setDestination;
+    @Bind(R.id.rl_destinationSelected)
+    RelativeLayout rl_destinationSelected;
+    @Bind(R.id.tv_destinationName)
+    FontTextView tv_destinationName;
 
     private UserRepository repository;
     private HomeActivity mCurrentActivity;
@@ -107,6 +118,7 @@ public class HomeFragment extends Fragment {
     private String currentVersion, latestVersion;
     private boolean isScreenInFront;
     private int[] cashInHand;
+    private PlacesResult mDropOff;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -141,14 +153,14 @@ public class HomeFragment extends Fragment {
     public void initRangeBar() {
         myRangeBar.init(mRangeBarTouch);
         int currentIndex = 0;
-        cashInHand = AppPreferences.getCashInHandsRange(mCurrentActivity);
+        cashInHand = AppPreferences.getCashInHandsRange();
         tvCihIndex1.setText(Utils.getFormattedNumber(cashInHand[0]));
         tvCihIndex2.setText(Utils.getFormattedNumber(cashInHand[1]));
         tvCihIndex3.setText(Utils.getFormattedNumber(cashInHand[2]));
         tvCihIndex4.setText(Utils.getFormattedNumber(cashInHand[3]));
         tvCihIndex5.setText(Utils.getFormattedNumber(cashInHand[4]));
         int length = cashInHand.length;
-        int value = AppPreferences.getCashInHands(mCurrentActivity);
+        int value = AppPreferences.getCashInHands();
         for (int i = 0; i < length; i++) {
             if (cashInHand[i] == value) {
                 currentIndex = i;
@@ -162,7 +174,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSlide(int index) {
                 Utils.redLog("Cash In Hand", "" + cashInHand[index]);
-                AppPreferences.setCashInHands(mCurrentActivity, cashInHand[index]);
+                AppPreferences.setCashInHands(cashInHand[index]);
             }
         });
     }
@@ -180,7 +192,7 @@ public class HomeFragment extends Fragment {
     };
 
     private void initViews() {
-        mCurrentActivity.setPilotData(AppPreferences.getPilotData(mCurrentActivity));
+        mCurrentActivity.setPilotData(AppPreferences.getPilotData());
         if (Utils.isLicenceExpired(mCurrentActivity.getPilotData().getLicenseExpiry())) {
             onUnauthorizedLicenceExpire();
         }
@@ -220,10 +232,10 @@ public class HomeFragment extends Fragment {
 
     private long getHeatMapTimer() {
         long timer = 5;
-        if (AppPreferences.getSettings(DriverApp.getContext()) != null
-                && AppPreferences.getSettings(DriverApp.getContext()).getSettings() != null
-                && StringUtils.isNotBlank(AppPreferences.getSettings(DriverApp.getContext()).getSettings().getHeatmap_refresh_timer())) {
-            timer = (long) Math.ceil(Double.parseDouble(AppPreferences.getSettings(DriverApp.getContext()).getSettings().getHeatmap_refresh_timer()));
+        if (AppPreferences.getSettings() != null
+                && AppPreferences.getSettings().getSettings() != null
+                && StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getHeatmap_refresh_timer())) {
+            timer = (long) Math.ceil(Double.parseDouble(AppPreferences.getSettings().getSettings().getHeatmap_refresh_timer()));
         }
         return timer * 60000;
     }
@@ -235,7 +247,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onFinish() {
             setConnectionStatus();
-            if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus(mCurrentActivity))
+            if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
                 repository.requestHeatMapData(mCurrentActivity, handler);
             countDownTimer.start();
         }
@@ -267,11 +279,11 @@ public class HomeFragment extends Fragment {
                 }
                 mGoogleMap.setMyLocationEnabled(true);
             }
-            if (AppPreferences.getLatitude(mCurrentActivity) != 0.0 &&
-                    AppPreferences.getLongitude(mCurrentActivity) != 0.0)
+            if (AppPreferences.getLatitude() != 0.0 &&
+                    AppPreferences.getLongitude() != 0.0)
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(AppPreferences.getLatitude(mCurrentActivity)
-                                , AppPreferences.getLongitude(mCurrentActivity))
+                        new LatLng(AppPreferences.getLatitude()
+                                , AppPreferences.getLongitude())
                         , 12.0f));
 
             if (mCurrentActivity != null && null != mCurrentActivity.getIntent() && null != mCurrentActivity.getIntent().getExtras() &&
@@ -310,24 +322,23 @@ public class HomeFragment extends Fragment {
         isScreenInFront = true;
         Notifications.removeAllNotifications(mCurrentActivity);
         countDownTimer.start();
-        if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus(mCurrentActivity))
+        if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
             repository.requestHeatMapData(mCurrentActivity, handler);
 
-        Utils.setCallIncomingState(mCurrentActivity);
+        Utils.setCallIncomingState();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Keys.LOCATION_UPDATE_BROADCAST);
         mCurrentActivity.registerReceiver(myReceiver, intentFilter);
-        if (AppPreferences.isLoggedIn(mCurrentActivity)) {
+        if (AppPreferences.isLoggedIn()) {
 
             initViews();
-            if (Utils.isStatsApiCallRequired(mCurrentActivity)) {
+            if (Utils.isStatsApiCallRequired()) {
                 repository.requestDriverStats(mCurrentActivity, handler);
             }
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
         super.onResume();
     }
-
 
     @Override
     public void onPause() {
@@ -365,30 +376,34 @@ public class HomeFragment extends Fragment {
         super.onDestroy();
     }
 
-    @OnClick({R.id.mapPinIv, R.id.statusCheck, R.id.rlInactiveImage, R.id.tvNotice, R.id.tvDemand})
+    @OnClick({R.id.mapPinIv, R.id.statusCheck, R.id.rlInactiveImage, R.id.tvNotice, R.id.tvDemand, R.id.rl_setDestination, R.id.rl_destinationSelected})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.rl_destinationSelected:
+            case R.id.rl_setDestination:
+                setHomeLocation();
+                break;
             case R.id.rlInactiveImage:
                 break;
             case R.id.mapPinIv:
                 setDriverLocation();
                 break;
             case R.id.tvDemand:
-                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings(mCurrentActivity).getSettings().getDemand(), "Demand");
+                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getDemand(), "Demand");
                 break;
             case R.id.tvNotice:                             //AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice()
-                Utils.startCustomWebViewActivity(mCurrentActivity,AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice(), "Notice");
+                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getNotice(), "Notice");
                 break;
             case R.id.statusCheck:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                    if (AppPreferences.getAvailableStatus(mCurrentActivity)) {
+                    if (AppPreferences.getAvailableStatus()) {
                         Dialogs.INSTANCE.showInactiveConfirmationDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                    AppPreferences.setAvailableStatus(mCurrentActivity, false);
+                                    AppPreferences.setAvailableStatus(false);
                                     repository.requestUpdateStatus(mCurrentActivity, handler, false);
                                 }
                             }
@@ -396,7 +411,7 @@ public class HomeFragment extends Fragment {
                     } else {
                         if (Connectivity.isConnectedFast(mCurrentActivity)) {
                             Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                            AppPreferences.setAvailableStatus(mCurrentActivity, true);
+                            AppPreferences.setAvailableStatus(true);
                             repository.requestUpdateStatus(mCurrentActivity, handler, true);
                         }
                     }
@@ -405,7 +420,35 @@ public class HomeFragment extends Fragment {
                             , mapPinIv, getString(R.string.error_internet_connectivity));
                 }
                 break;
+        }
+    }
 
+    private void setHomeLocation() {
+        Intent returndropoffIntent = new Intent(mCurrentActivity, ConfirmDropOffAddressActivity.class);
+        returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+        returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE, "Confirm Destination");
+        returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE, "Search Destination");
+        startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+//        ActivityStackManager.getInstance(mCurrentActivity).startConfirmDestActivity(mCurrentActivity, "Confirm Destination", "Search Destination");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (mCurrentActivity != null) {
+            if (requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
+                if (resultCode == RESULT_OK) {
+                    mDropOff = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT);
+                    tv_destinationName.setText("Loading...");
+                    rl_destinationSelected.setVisibility(View.VISIBLE);
+                    repository.requestDriverDropOff(mCurrentActivity
+                            , handler
+                            , String.valueOf(mDropOff.latitude)
+                            , String.valueOf(mDropOff.longitude)
+                            , mDropOff.address);
+                    //TODO Post Address to Server
+                }
+            }
         }
     }
 
@@ -413,8 +456,8 @@ public class HomeFragment extends Fragment {
         if (null != mGoogleMap) {
             Utils.formatMap(mGoogleMap);
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(AppPreferences.getLatitude(mCurrentActivity)
-                            , AppPreferences.getLongitude(mCurrentActivity))
+                    new LatLng(AppPreferences.getLatitude()
+                            , AppPreferences.getLongitude())
                     , 12.0f));
         }
     }
@@ -433,7 +476,7 @@ public class HomeFragment extends Fragment {
                                     && intent.getStringExtra("offline_location").equalsIgnoreCase(Keys.LOCATION_NOT_UPDATE_BROADCAST)) {
 //                    showOfflineDialog();
                             } else {
-                                Location location = (Location) intent.getParcelableExtra("location");
+                                Location location = intent.getParcelableExtra("location");
                                 //Move Map's Camera if there's significant change in Location
                                 if (mPrevLocToShow == null || location.distanceTo(mPrevLocToShow) > 30) {
                                     mPrevLocToShow = location;
@@ -442,22 +485,20 @@ public class HomeFragment extends Fragment {
                                             , 12.0f));
                                 }
                             }
-
                         }
                     }
                 });
             }
-
         }
     };
 
     private void onUnauthorized() {
-        AppPreferences.saveLoginStatus(mCurrentActivity, false);
-        AppPreferences.setIncomingCall(mCurrentActivity, false);
-        AppPreferences.setCallData(mCurrentActivity, null);
-        AppPreferences.setTripStatus(mCurrentActivity, "");
-        AppPreferences.saveLoginStatus(mCurrentActivity, false);
-        AppPreferences.setPilotData(mCurrentActivity, null);
+        AppPreferences.saveLoginStatus(false);
+        AppPreferences.setIncomingCall(false);
+        AppPreferences.setCallData(null);
+        AppPreferences.setTripStatus("");
+        AppPreferences.saveLoginStatus(false);
+        AppPreferences.setPilotData(null);
         HomeActivity.visibleFragmentNumber = 0;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
             @Override
@@ -469,12 +510,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void onUnauthorizedLicenceExpire() {
-        AppPreferences.saveLoginStatus(mCurrentActivity, false);
-        AppPreferences.setIncomingCall(mCurrentActivity, false);
-        AppPreferences.setCallData(mCurrentActivity, null);
-        AppPreferences.setTripStatus(mCurrentActivity, "");
-        AppPreferences.saveLoginStatus(mCurrentActivity, false);
-        AppPreferences.setPilotData(mCurrentActivity, null);
+        AppPreferences.saveLoginStatus(false);
+        AppPreferences.setIncomingCall(false);
+        AppPreferences.setCallData(null);
+        AppPreferences.setTripStatus("");
+        AppPreferences.saveLoginStatus(false);
+        AppPreferences.setPilotData(null);
         HomeActivity.visibleFragmentNumber = 0;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
             @Override
@@ -489,7 +530,7 @@ public class HomeFragment extends Fragment {
         if (mCurrentActivity == null || getView() == null) {
             return;
         }
-        if (!AppPreferences.getAvailableStatus(mCurrentActivity)) {
+        if (!AppPreferences.getAvailableStatus()) {
             statusCheck.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.inactive_icon));
             statusTv.setText("Inactive");
             rlInactiveImage.setVisibility(View.VISIBLE);
@@ -501,11 +542,11 @@ public class HomeFragment extends Fragment {
             myRangeBar.setEnabled(false);
         }
 
-        if (AppPreferences.isWalletAmountIncreased(mCurrentActivity)) {
-            tvFenceError.setText(AppPreferences.getWalletIncreasedError(mCurrentActivity));
+        if (AppPreferences.isWalletAmountIncreased()) {
+            tvFenceError.setText(AppPreferences.getWalletIncreasedError());
             tvFenceError.setVisibility(View.VISIBLE);
             tvConnectionStatus.setVisibility(View.GONE);
-        } else if (AppPreferences.isOutOfFence(mCurrentActivity)) {
+        } else if (AppPreferences.isOutOfFence()) {
             tvFenceError.setText("Non Service Area");
             tvFenceError.setVisibility(View.VISIBLE);
             tvConnectionStatus.setVisibility(View.GONE);
@@ -527,13 +568,13 @@ public class HomeFragment extends Fragment {
                             if (StringUtils.isNotBlank(response.getData().getRating())
                                     && StringUtils.isNotBlank(response.getData().getAcceptanceRate())
                                     && StringUtils.isNotBlank(response.getData().getTrips())) {
-                                PilotData data = AppPreferences.getPilotData(mCurrentActivity);
+                                PilotData data = AppPreferences.getPilotData();
                                 data.setRating(response.getData().getRating());
                                 data.setAcceptance_rate(Math.round(Double.parseDouble(response.getData().getAcceptanceRate())) + "");
                                 data.setVerified_trips(response.getData().getTrips());
-                                AppPreferences.setPilotData(mCurrentActivity, data);
-                                AppPreferences.setStatsApiCallRequired(mCurrentActivity, false);
-                                AppPreferences.setLastStatsApiCallTime(mCurrentActivity, System.currentTimeMillis());
+                                AppPreferences.setPilotData(data);
+                                AppPreferences.setStatsApiCallRequired(false);
+                                AppPreferences.setLastStatsApiCallTime(System.currentTimeMillis());
                             }
                         }
                     }
@@ -550,12 +591,12 @@ public class HomeFragment extends Fragment {
                         if (response.isSuccess()) {
                             try {
                                 if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
-                                    AppPreferences.setStartTripTime(mCurrentActivity,
-                                            AppPreferences.getServerTimeDifference(mCurrentActivity) +
+                                    AppPreferences.setStartTripTime(
+                                            AppPreferences.getServerTimeDifference() +
                                                     Utils.getTimeInMiles(response.getData().getStarted_at()));
                                 }
-                                AppPreferences.setCallData(mCurrentActivity, response.getData());
-                                AppPreferences.setTripStatus(mCurrentActivity, response.getData().getStatus());
+                                AppPreferences.setCallData(response.getData());
+                                AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                     WebIORequestHandler.getInstance().registerChatListener();
                                     ActivityStackManager.getInstance(mCurrentActivity)
@@ -573,7 +614,7 @@ public class HomeFragment extends Fragment {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
                                 //If there is no pending trip free all states for new trip..
-                                Utils.setCallIncomingState(mCurrentActivity);
+                                Utils.setCallIncomingState();
                             }
                         }
                     }
@@ -581,6 +622,21 @@ public class HomeFragment extends Fragment {
             }
         }
 
+        @Override
+        public void onDropOffUpdated(final DriverDestResponse commonResponse) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (commonResponse != null) {
+                        if (mDropOff != null) {
+                            tv_destinationName.setText(mDropOff.address);
+                        }
+                        rl_destinationSelected.setVisibility(View.VISIBLE);
+                        rl_setDestination.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
 
         @Override
         public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
@@ -590,12 +646,12 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
                         if (pilotStatusResponse.isSuccess()) {
-                            if (AppPreferences.getAvailableStatus(mCurrentActivity)) {
-                                if (AppPreferences.isWalletAmountIncreased(mCurrentActivity)) {
-                                    AppPreferences.setWalletAmountIncreased(mCurrentActivity, false);
+                            if (AppPreferences.getAvailableStatus()) {
+                                if (AppPreferences.isWalletAmountIncreased()) {
+                                    AppPreferences.setWalletAmountIncreased(false);
                                 }
-                                if (AppPreferences.isOutOfFence(mCurrentActivity)) {
-                                    AppPreferences.setOutOfFence(mCurrentActivity, false);
+                                if (AppPreferences.isOutOfFence()) {
+                                    AppPreferences.setOutOfFence(false);
                                 }
                                 ActivityStackManager.getInstance(mCurrentActivity).restartLocationService();
                             } else {
@@ -607,7 +663,7 @@ public class HomeFragment extends Fragment {
                                 onUnauthorized();
                             } else {
                                 Utils.appToast(mCurrentActivity, pilotStatusResponse.getMessage());
-                                AppPreferences.setAvailableStatus(mCurrentActivity, false);
+                                AppPreferences.setAvailableStatus(false);
                                 setStatusBtn();
                             }
                         }
@@ -659,6 +715,9 @@ public class HomeFragment extends Fragment {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        rl_destinationSelected.setVisibility(View.GONE);
+                        rl_setDestination.setVisibility(View.VISIBLE);
+
                         Dialogs.INSTANCE.dismissDialog();
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
                             onUnauthorized();
@@ -706,9 +765,9 @@ public class HomeFragment extends Fragment {
             try {
                 pInfo = pm.getPackageInfo(mCurrentActivity.getPackageName(), 0);
                 currentVersion = pInfo.versionName;
-                if (AppPreferences.getSettings(mCurrentActivity) != null
-                        && AppPreferences.getSettings(mCurrentActivity).getSettings() != null) {
-                    latestVersion = AppPreferences.getSettings(mCurrentActivity).getSettings().getApp_version();
+                if (AppPreferences.getSettings() != null
+                        && AppPreferences.getSettings().getSettings() != null) {
+                    latestVersion = AppPreferences.getSettings().getSettings().getApp_version();
                 }
                 if (StringUtils.isNotBlank(latestVersion) && StringUtils.isNotBlank(currentVersion)) {
                     Utils.redLog("VERSION", "Current: " + currentVersion + " Play Store: " + latestVersion);

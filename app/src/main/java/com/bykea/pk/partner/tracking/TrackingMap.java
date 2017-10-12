@@ -64,14 +64,14 @@ public enum TrackingMap {
 
     }
 
-    public static void addCurrentMarker(Context context, GoogleMap map, int icon) {
+    public static void addCurrentMarker(GoogleMap map, int icon) {
         if (null == map) return;
-        map.addMarker(new MarkerOptions().position(new LatLng(AppPreferences.getLatitude(context),
-                AppPreferences.getLongitude(context))).flat(true)
+        map.addMarker(new MarkerOptions().position(new LatLng(AppPreferences.getLatitude(),
+                AppPreferences.getLongitude())).flat(true)
                 .icon(BitmapDescriptorFactory.fromResource(icon)));
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(AppPreferences.getLatitude(context)
-                        , AppPreferences.getLongitude(context))
+                new LatLng(AppPreferences.getLatitude()
+                        , AppPreferences.getLongitude())
                 , 16.0f));
     }
 

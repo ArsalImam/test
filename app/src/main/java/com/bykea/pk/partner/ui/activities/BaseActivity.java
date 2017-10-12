@@ -148,10 +148,10 @@ public class BaseActivity extends AppCompatActivity {
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (StringUtils.isNotBlank(AppPreferences.getAdminMsg(mCurrentActivity)) && isScreenInFront
+                    if (StringUtils.isNotBlank(AppPreferences.getAdminMsg()) && isScreenInFront
                             && !(mCurrentActivity instanceof CallingActivity) && !(mCurrentActivity instanceof SplashActivity)) {
                         try {
-                            NotificationData notificationData = new Gson().fromJson(AppPreferences.getAdminMsg(mCurrentActivity), NotificationData.class);
+                            NotificationData notificationData = new Gson().fromJson(AppPreferences.getAdminMsg(), NotificationData.class);
                             if (StringUtils.isNotBlank(notificationData.getImageLink())) {
                                 showImageNotification(notificationData);
                             } else if (!(mCurrentActivity instanceof SplashActivity)) {
@@ -397,7 +397,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private void onNotificationOkClick(NotificationData notificationData) {
         Utils.openLinkInBrowser(notificationData.getLaunchUrl(), mCurrentActivity);
-        AppPreferences.setAdminMsg(mCurrentActivity, null);
+        AppPreferences.setAdminMsg(null);
         dismissNotificationDialog();
     }
 
