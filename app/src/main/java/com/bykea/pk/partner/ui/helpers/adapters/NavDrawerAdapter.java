@@ -1,7 +1,8 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,18 +12,18 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
-import com.bykea.pk.partner.ui.activities.HomeActivity;
-import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
-import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
-import com.bykea.pk.partner.ui.fragments.PerformanceFragment;
-import com.bykea.pk.partner.ui.fragments.ProfileFragment;
-import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
+import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
+import com.bykea.pk.partner.ui.fragments.PerformanceFragment;
+import com.bykea.pk.partner.ui.fragments.ProfileFragment;
 import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
+import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -34,9 +35,9 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import org.apache.commons.lang3.StringUtils;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
-    String[] titles;
-    String[] icons;
-    Context context;
+    private String[] titles;
+    private String[] icons;
+    private Context context;
 
     // The default constructor to receive titles,icons and context from MainActivity.
     public NavDrawerAdapter(String[] titles, String[] icons, Context context) {
@@ -54,7 +55,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
      * For every item there is a ViewHolder associated with it .
      */
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         FontTextView navTitle, navIcon;
         ImageView logoutIv;
@@ -64,13 +65,17 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         FontTextView tvRating;
 
         Context context;
+        HomeActivity mainActivity;
+        FragmentManager fragmentManager;
 
-        public ViewHolder(View drawerItem, int itemType, Context context) {
+        ViewHolder(View drawerItem, int itemType, Context context) {
 
             super(drawerItem);
             this.context = context;
             drawerItem.setOnClickListener(this);
 
+            mainActivity = (HomeActivity) context;
+            fragmentManager = mainActivity.getSupportFragmentManager();
             if (itemType == 1) {
                 navTitle = (FontTextView) itemView.findViewById(R.id.tv_NavTitle);
                 navIcon = (FontTextView) itemView.findViewById(R.id.iv_NavIcon);
@@ -92,67 +97,42 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
         @Override
         public void onClick(View v) {
-            HomeActivity mainActivity = (HomeActivity) context;
             mainActivity.drawerLayout.closeDrawers();
-            FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.fade_in,
-                    R.anim.fade_out);
+
             switch (getLayoutPosition()) {
                 case 0:// This case is for driver header part click.
                     if (HomeActivity.visibleFragmentNumber != 0) {
-                        ProfileFragment profileFragment = new ProfileFragment();
-                        fragmentTransaction.replace(R.id.containerView, profileFragment);
-                        fragmentTransaction.commit();
-                        HomeActivity.visibleFragmentNumber = 0;
+                        updateCurrentFragment(new ProfileFragment(),0);
                     }
                     break;
                 case 1:
                     if (HomeActivity.visibleFragmentNumber != 1) {
-                        HomeFragment homeFragment = new HomeFragment();
-                        fragmentTransaction.replace(R.id.containerView, homeFragment);
-                        fragmentTransaction.commit();
-                        HomeActivity.visibleFragmentNumber = 1;
-//                        updateCurrentFragment(new HomeFragment(),1);
+                        updateCurrentFragment(new HomeFragment(),1);
                     }
                     break;
                 case 2:
                     if (HomeActivity.visibleFragmentNumber != 2) {
-                        TripHistoryFragment tripHistoryFragment = new TripHistoryFragment();
-                        fragmentTransaction.replace(R.id.containerView, tripHistoryFragment);
-                        fragmentTransaction.commit();
-                        HomeActivity.visibleFragmentNumber = 2;
+                        updateCurrentFragment(new TripHistoryFragment(),2);
                     }
                     break;
                 case 3:
                     if (HomeActivity.visibleFragmentNumber != 3) {
-                        WalletFragment tripHistoryFragment = new WalletFragment();
-                        fragmentTransaction.replace(R.id.containerView, tripHistoryFragment);
-                        fragmentTransaction.commit();
-                        HomeActivity.visibleFragmentNumber = 3;
+                        updateCurrentFragment(new WalletFragment(),3);
                     }
                     break;
                 case 4:
                     if (HomeActivity.visibleFragmentNumber != 4) {
-                        PerformanceFragment performanceFragment = new PerformanceFragment();
-                        fragmentTransaction.replace(R.id.containerView, performanceFragment);
-                        fragmentTransaction.commit();
-                        HomeActivity.visibleFragmentNumber = 4;
+                        updateCurrentFragment(new PerformanceFragment(),4);
                     }
                     break;
                 case 5:
                     if (HomeActivity.visibleFragmentNumber != 5) {
-                        HowItWorksFragment howItWorksFragment = new HowItWorksFragment();
-                        fragmentTransaction.replace(R.id.containerView, howItWorksFragment);
-                        fragmentTransaction.commit();
-                        HomeActivity.visibleFragmentNumber = 5;
+                        updateCurrentFragment(new HowItWorksFragment(), 5);
                     }
                     break;
                 case 6:
                     if (HomeActivity.visibleFragmentNumber != 6) {
-                        ContactUsFragment contactUsFragment = new ContactUsFragment();
-                        fragmentTransaction.replace(R.id.containerView, contactUsFragment);
-                        fragmentTransaction.commit();
-                        HomeActivity.visibleFragmentNumber = 6;
+                        updateCurrentFragment(new ContactUsFragment(), 6);
                     }
                     break;
                 case 7://this case is for logout footer part click.
@@ -171,6 +151,15 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
             }
 
+        }
+
+        private void updateCurrentFragment(Fragment fragment, int pos) {
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    .replace(R.id.containerView, fragment)
+                    .commit();
+            HomeActivity.visibleFragmentNumber = pos;
         }
     }
 
@@ -233,7 +222,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     && StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
                 Utils.loadImgPicasso(context, holder.driverImage, R.drawable.profile_pic,
                         Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
-                AppPreferences.setProfileUpdated(context, false);
+                AppPreferences.setProfileUpdated(false);
             }
         } else if (position == getItemCount() - 1) {
             // No values assignment requires.

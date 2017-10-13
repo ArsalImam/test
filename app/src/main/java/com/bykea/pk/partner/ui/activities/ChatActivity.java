@@ -223,12 +223,12 @@ public class ChatActivity extends BaseActivity {
 
         }
 
-        @Override
-        public void onUpdateConversationStatus(UpdateConversationStatusResponse response) {
-            if (null != response && response.isSuccess()) {
-
-            }
-        }
+//        @Override
+//        public void onUpdateConversationStatus(UpdateConversationStatusResponse response) {
+//            if (null != response && response.isSuccess()) {
+//
+//            }
+//        }
 
 
         @Override
@@ -458,9 +458,7 @@ public class ChatActivity extends BaseActivity {
             recorder.prepare();
             recorder.start();
             chronometer.start();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
         isRecording = true;

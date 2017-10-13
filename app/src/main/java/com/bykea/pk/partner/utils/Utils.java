@@ -48,6 +48,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
@@ -1056,6 +1057,7 @@ public class Utils {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         return simpleDateFormat.format(System.currentTimeMillis());
     }
+
     public static String getUTCDate(long time) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -1142,9 +1144,15 @@ public class Utils {
         if (EVENT.length() > 40) {
             EVENT = EVENT.substring(EVENT.length() - 40, EVENT.length());
         }
+        int count = 0;
         Bundle bundle = new Bundle();
         Iterator iterator = data.keys();
         while (iterator.hasNext()) {
+            //Firebase can have max 10 TEXT properties
+            if (count == 10) {
+                break;
+            }
+            count++;
             String key = (String) iterator.next();
             String value = null;
             try {
@@ -1193,5 +1201,18 @@ public class Utils {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
             context.startActivity(browserIntent);
         }
+    }
+
+
+    /*
+    *  Flush Mixpanel Event in onDestroy()
+    * */
+    public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
+        MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
+        mixpanelAPI.identify(userID);
+        mixpanelAPI.getPeople().identify(userID);
+        mixpanelAPI.track(EVENT, data);
+
+        logFireBaseEvent(context, userID, EVENT, data);
     }
 }

@@ -26,7 +26,7 @@ public class BankAccountActivity extends BaseActivity {
     @Bind(R.id.callbtn)
     FontTextView callbtn;
 
-    BankAccountActivity mCurrentActivity;
+    private BankAccountActivity mCurrentActivity;
     private String financeNumber;
 
     @Override

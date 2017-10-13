@@ -20,7 +20,6 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -104,7 +103,7 @@ public class HomeActivity extends BaseActivity {
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(HomeActivity.this);
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
-        AppPreferences.setProfileUpdated(mCurrentActivity, true);
+        AppPreferences.setProfileUpdated(true);
     }
 
     @Override

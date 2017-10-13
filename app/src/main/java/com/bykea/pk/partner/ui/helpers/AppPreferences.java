@@ -559,7 +559,7 @@ public class AppPreferences {
                 .apply();
     }
 
-    public static void setProfileUpdated(Context context, boolean value) {
+    public static void setProfileUpdated(boolean value) {
         mSharedPreferences
                 .edit()
                 .putBoolean(Keys.IS_PROFILE_UPDATED, value)
@@ -897,5 +897,20 @@ public class AppPreferences {
 
     public static long getTripDelay() {
         return mSharedPreferences.getLong(Keys.TRIP_DELAY, 0);
+    }
+
+    public static void setDriverDestination(PlacesResult mDropOff) {
+        mSharedPreferences.edit().putString(Keys.DRIVER_DEST, new Gson().toJson(mDropOff)).apply();
+    }
+
+    public static PlacesResult getDriverDestination(){
+        String data = mSharedPreferences.getString(Keys.DRIVER_DEST, StringUtils.EMPTY);
+        PlacesResult destData;
+        if (StringUtils.isBlank(data)) {
+            destData = null;
+        } else {
+            destData = new Gson().fromJson(data, PlacesResult.class);
+        }
+        return destData;
     }
 }

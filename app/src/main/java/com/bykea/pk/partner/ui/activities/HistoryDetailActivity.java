@@ -86,23 +86,7 @@ public class HistoryDetailActivity extends BaseActivity {
     @Bind(R.id.btnProblem)
     FontTextView btnProblem;
 
-    private String tripNo;
-    private String startAddress;
-    private String endAddress;
-    private String name;
-    private String time;
-    private String date;
-    private String basefare;
-    private String totalfare;
-    private String type;
-    private String promo;
-    private String wallet;
-    private String driverRating;
-    private String passRating;
-    private String start_balance;
-    private String receivedAmount;
-
-    float totalTime, pricePerkm, totalDistance, pricePerMin;
+//    private String tripNo;
 
     ArrayList<Predefine_rating> rattingToShow = new ArrayList<>();
     private TripHistoryData data;
@@ -182,78 +166,6 @@ public class HistoryDetailActivity extends BaseActivity {
                 }
 
             }
-//            String status = getIntent().getStringExtra("status");
-//            endAddress = getIntent().getStringExtra("eaddress");
-//            startAddress = getIntent().getStringExtra("saddress");
-//            tripNo = getIntent().getStringExtra("trip_no");
-//            name = getIntent().getStringExtra("name");
-//            time = getIntent().getStringExtra("time");
-//            basefare = getIntent().getStringExtra("basefare");
-//            totalfare = getIntent().getStringExtra("amount");
-//            start_balance = getIntent().getStringExtra("start_balance");
-//            receivedAmount = getIntent().getStringExtra("receivedAmount");
-//            totalTime = Float.parseFloat(getIntent().getStringExtra("total_time"));
-//            pricePerMin = Float.parseFloat(getIntent().getStringExtra("pricePerMin"));
-//            pricePerkm = Float.parseFloat(getIntent().getStringExtra("pricePerKm"));
-//            totalDistance = Float.parseFloat(getIntent().getStringExtra("total_distance"));
-//
-//            type = getIntent().getStringExtra("type");
-//            promo = getIntent().getStringExtra("promo");
-//            wallet = getIntent().getStringExtra("wallet");
-//            driverRating = getIntent().getStringExtra("driverRating");
-//            passRating = getIntent().getStringExtra("passRating");
-//            String feedbackComments = getIntent().getStringExtra("feedbackComments");
-//            if (StringUtils.isNotBlank(feedbackComments)) {
-//                rattingToShow = new Gson().fromJson(feedbackComments, new TypeToken<ArrayList<Predefine_rating>>() {
-//                }.getType());
-//            } else {
-//                rlFeedbackMsg1.setVisibility(View.GONE);
-//                rlFeedbackMsg2.setVisibility(View.GONE);
-//            }
-//        }
-
-//        startAddressTv.setText(startAddress);
-//        endAddressTv.setText(endAddress);
-
-//        try {
-////            nameTv.setText(name);
-////            timeTv.setText(Utils.getFormattedDate(time, CURRENT_DATE_FORMAT,
-////                    REQUIRED_DATE_FORMAT));
-////            serviceTypeTv.setText(StringUtils.capitalize(type));
-////            totalDistanceTv.setText(totalDistance + " km");
-////            totalTimeTv.setText(Math.round(totalTime) + " mins");
-////            timePriceTv.setText("" + (Math.round(Math.ceil(totalTime * pricePerMin))));
-////            distancePriceTv.setText("" + (Math.round(Math.ceil(pricePerkm))));
-////            fareTv.setText("" + totalfare);
-////            basefareTv.setText("" + basefare);
-////            totalAmountTv.setText("Rs. " + receivedAmount);
-////            promoTv.setText("" + promo);
-////            if (start_balance.contains("-")) {
-////                walletTv.setText("(" + start_balance.substring(1) + ")");
-////            } else {
-////                if (wallet.equalsIgnoreCase("0")) {
-////                    walletTv.setText("" + wallet);
-////                } else {
-////                    walletTv.setText("- " + wallet);
-////                }
-////            }
-////            if (StringUtils.isNotBlank(driverRating)) {
-////                driverRb.setRating(Float.parseFloat(driverRating));
-////            }
-////            if (StringUtils.isNotBlank(passRating)) {
-////                passengerRb.setRating(Float.parseFloat(passRating));
-////            }
-////            if (rattingToShow != null && rattingToShow.size() > 0) {
-////                populatePredefineMsgs();
-////            }
-////            if (Utils.getDaysInBetween(System.currentTimeMillis(), new SimpleDateFormat(CURRENT_DATE_FORMAT).parse(time).getTime()) >= AppPreferences.getSettings(mCurrentActivity).getSettings().getTrip_support_max_days()) {
-////                btnProblem.setVisibility(View.GONE);
-////            }
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
         }
         setBackNavigation();
         setToolbarTitle((data.getTripNo()).toUpperCase());
@@ -270,9 +182,9 @@ public class HistoryDetailActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.btnProblem:
                 String params = "name=" + AppPreferences.getPilotData().getFullName() +
-                        "&booking=" + tripNo + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
+                        "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
                 Utils.startCustomWebViewActivity(mCurrentActivity,
-                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, tripNo);
+                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
                 break;
         }
     }

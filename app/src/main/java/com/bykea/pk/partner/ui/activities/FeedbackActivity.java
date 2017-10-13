@@ -98,11 +98,9 @@ public class FeedbackActivity extends BaseActivity {
         if (StringUtils.isNotBlank(editable)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
                 if (Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
-                    receivedAmountEt.setError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
-                    receivedAmountEt.requestFocus();
+                    setEtError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
                 } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
-                    receivedAmountEt.setError("Amount can't be more than " + AMOUNT_LIMIT);
-                    receivedAmountEt.requestFocus();
+                    setEtError("Amount can't be more than " + AMOUNT_LIMIT);
                 }
             } else {
                 Utils.appToast(mCurrentActivity, "Please enter valid amount.");
@@ -261,26 +259,21 @@ public class FeedbackActivity extends BaseActivity {
 
     private boolean valid() {
         if (StringUtils.isBlank(receivedAmountEt.getText().toString())) {
-            receivedAmountEt.setError("Enter received amount");
-            receivedAmountEt.requestFocus();
+            setEtError("Enter received amount");
             return false;
         } else if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
-            receivedAmountEt.setError("Invalid amount");
-            receivedAmountEt.requestFocus();
+            setEtError("Invalid amount");
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)) {
-            receivedAmountEt.setError("Amount can't be less than Total Charges");
-            receivedAmountEt.requestFocus();
+            setEtError("Amount can't be less than Total Charges");
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
-            receivedAmountEt.setError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
-            receivedAmountEt.requestFocus();
+            setEtError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
             return false;
         } else if (Integer.parseInt(receivedAmountEt.getText().toString()) > AMOUNT_LIMIT) {
-            receivedAmountEt.setError("Amount can't be more than " + AMOUNT_LIMIT);
-            receivedAmountEt.requestFocus();
+            setEtError("Amount can't be more than " + AMOUNT_LIMIT);
             return false;
         } else if (callerRb.getRating() <= 0.0) {
             Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, "Please Rate Passenger.");
@@ -289,17 +282,20 @@ public class FeedbackActivity extends BaseActivity {
             try {
                 int receivedPrice = Integer.parseInt(receivedAmountEt.getText().toString());
                 if (receivedPrice < 0) {
-                    receivedAmountEt.setError("Amount is not acceptable");
-                    receivedAmountEt.requestFocus();
+                    setEtError("Amount is not acceptable");
                     return false;
                 }
             } catch (Exception e) {
-                receivedAmountEt.setError("Amount is not acceptable");
-                receivedAmountEt.requestFocus();
+                setEtError("Amount is not acceptable");
                 return false;
             }
         }
         return true;
+    }
+
+    private void setEtError(String error) {
+        receivedAmountEt.setError(error);
+        receivedAmountEt.requestFocus();
     }
 
     @Override

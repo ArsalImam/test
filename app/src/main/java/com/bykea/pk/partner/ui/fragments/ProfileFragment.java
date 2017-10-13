@@ -190,11 +190,7 @@ public class ProfileFragment extends Fragment {
                         loader.setVisibility(View.GONE);
                         llTop.setVisibility(View.VISIBLE);
                         if (response.isSuccess()) {
-                            personalInfoTv.setEnabled(true);
-                            pinCodeTv.setEnabled(true);
-                            licenseInfoTv.setEnabled(true);
-                            motorbikeInfoTv.setEnabled(true);
-                            bankAccDetailsTv.setEnabled(true);
+                            enableViews(true);
                             mPersonalInfo = response.getData();
                             PilotData data = AppPreferences.getPilotData();
                             data.setFullName(mPersonalInfo.getFull_name());
@@ -202,7 +198,7 @@ public class ProfileFragment extends Fragment {
                             data.setLicenseExpiry(mPersonalInfo.getLicense_expire());
                             mCurrentActivity.setPilotData(data);
                             AppPreferences.setPilotData(data);
-                            AppPreferences.setProfileUpdated(mCurrentActivity, true);
+                            AppPreferences.setProfileUpdated(true);
                             driverNameTv.setText(mPersonalInfo.getFull_name());
                             driverAddressTv.setText(mPersonalInfo.getAddress());
                             driverCityTv.setText(mPersonalInfo.getCity());
@@ -213,11 +209,7 @@ public class ProfileFragment extends Fragment {
                                 driverLatLngTv.setText(mPersonalInfo.getHomeLat() + "," + mPersonalInfo.getHomeLng());
                             }
                         } else {
-                            personalInfoTv.setEnabled(false);
-                            pinCodeTv.setEnabled(false);
-                            licenseInfoTv.setEnabled(false);
-                            motorbikeInfoTv.setEnabled(false);
-                            bankAccDetailsTv.setEnabled(false);
+                            enableViews(false);
                             if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
@@ -250,5 +242,13 @@ public class ProfileFragment extends Fragment {
 
         }
     };
+
+    private void enableViews(boolean enabled) {
+        personalInfoTv.setEnabled(enabled);
+        pinCodeTv.setEnabled(enabled);
+        licenseInfoTv.setEnabled(enabled);
+        motorbikeInfoTv.setEnabled(enabled);
+        bankAccDetailsTv.setEnabled(enabled);
+    }
 
 }

@@ -60,7 +60,6 @@ import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.RoadLocationListener;
 import com.bykea.pk.partner.tracking.Route;
@@ -426,6 +425,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                                logMixPanelEvent();
                                 dataRepository.requestEndRide(mCurrentActivity, driversDataHandler);
                             }
                         }, new View.OnClickListener() {
@@ -470,6 +470,28 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                 setDriverLocation();
                 break;
         }
+    }
+
+    private void logMixPanelEvent() {
+        JSONObject properties = new JSONObject();
+        try {
+            properties.put("TripNo", callData.getTripNo());
+            properties.put("PassengerID", callData.getPassId());
+            properties.put("DriverID", AppPreferences.getPilotData().getId());
+            properties.put("timestamp", Utils.getIsoDate());
+            properties.put("City", AppPreferences.getPilotData().getCity().getName());
+            properties.put("PassengerName", callData.getPassName());
+            properties.put("DriverName", AppPreferences.getPilotData().getFullName());
+            properties.put("TripID", callData.getTripId());
+            properties.put("type", callData.getCallType());
+
+            Utils.logEvent(mCurrentActivity,callData.getPassId(),Constants.RIDE_COMPLETE.replace("_R_", callData.getCallType()),properties);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private void requestArrived() {
@@ -558,6 +580,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
 
     @Override
     protected void onDestroy() {
+        mixpanelAPI.flush();
         progressDialogJobActivity.dismiss();
         AppPreferences.setJobActivityOnForeground(false);
         AppPreferences.setLastDirectionsApiCallTime(0);
@@ -1441,11 +1464,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             data.put("CancelReason", cancelReason);
                             data.put("City", AppPreferences.getPilotData().getCity().getName());
 
-                            mixpanelAPI.identify(callData.getPassId());
-                            mixpanelAPI.getPeople().identify(callData.getPassId());
-                            mixpanelAPI.track(Constants.CANCEL_TRIP, data);
-                            mixpanelAPI.flush();
-                            Utils.logFireBaseEvent(mCurrentActivity, callData.getPassId(), Constants.CANCEL_TRIP, data);
+                            Utils.logEvent(mCurrentActivity,callData.getPassId(),Constants.CANCEL_TRIP,data);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

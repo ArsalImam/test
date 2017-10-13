@@ -49,6 +49,7 @@ public class Constants {
     public static final String SEARCHBOX_TITLE = "searchBox_title";
 
     public static String RIDE_FARE = "Eyeball-_R_-Finish";
+    public static String RIDE_COMPLETE = "Eyeball-_R_-Complete";
     public final static String CANCEL_TRIP = "Ride-Cancel";
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
     public final static String ON_PERMISSIONS_GRANTED = "ON_PERMISSIONS_GRANTED";

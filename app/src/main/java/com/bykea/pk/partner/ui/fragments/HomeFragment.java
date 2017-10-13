@@ -103,9 +103,9 @@ public class HomeFragment extends Fragment {
     @Bind(R.id.rl_setDestination)
     RelativeLayout rl_setDestination;
     @Bind(R.id.rl_destinationSelected)
-    RelativeLayout rl_destinationSelected;
+    LinearLayout rl_destinationSelected;
     @Bind(R.id.tv_destinationName)
-    FontTextView tv_destinationName;
+    AutoFitFontTextView tv_destinationName;
 
     private UserRepository repository;
     private HomeActivity mCurrentActivity;
@@ -242,8 +242,7 @@ public class HomeFragment extends Fragment {
 
     private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
         @Override
-        public void onTick(long millisUntilFinished) {
-        }
+        public void onTick(long millisUntilFinished) {}
 
         @Override
         public void onFinish() {
@@ -320,6 +319,9 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         mapView.onResume();
         isScreenInFront = true;
+        if(AppPreferences.getDriverDestination() != null){
+            destinationSet();
+        }
         Notifications.removeAllNotifications(mCurrentActivity);
         countDownTimer.start();
         if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
@@ -439,8 +441,8 @@ public class HomeFragment extends Fragment {
             if (requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
                 if (resultCode == RESULT_OK) {
                     mDropOff = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT);
+                    AppPreferences.setDriverDestination(mDropOff);
                     tv_destinationName.setText("Loading...");
-                    rl_destinationSelected.setVisibility(View.VISIBLE);
                     repository.requestDriverDropOff(mCurrentActivity
                             , handler
                             , String.valueOf(mDropOff.latitude)
@@ -450,6 +452,12 @@ public class HomeFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private void destinationSet() {
+        tv_destinationName.setText(AppPreferences.getDriverDestination().address);
+        rl_destinationSelected.setVisibility(View.VISIBLE);
+        rl_setDestination.setVisibility(View.GONE);
     }
 
     private void setDriverLocation() {
@@ -624,10 +632,8 @@ public class HomeFragment extends Fragment {
                 public void run() {
                     if (commonResponse != null) {
                         if (mDropOff != null) {
-                            tv_destinationName.setText(mDropOff.address);
+                            Utils.appToastDebug(mCurrentActivity,commonResponse.getMessage());
                         }
-                        rl_destinationSelected.setVisibility(View.VISIBLE);
-                        rl_setDestination.setVisibility(View.GONE);
                     }
                 }
             });

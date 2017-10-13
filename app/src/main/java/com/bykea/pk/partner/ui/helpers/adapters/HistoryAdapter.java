@@ -38,9 +38,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
 
         View view = layoutInflater.inflate(R.layout.list_item_trip_history,
                 parent, false);
-        ItemHolder holder = new ItemHolder(view);
 
-        return holder;
+        return new ItemHolder(view);
     }
 
     @Override

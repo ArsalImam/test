@@ -117,7 +117,7 @@ public class WalletHistoryAdapter extends RecyclerView.Adapter<WalletHistoryAdap
         mHistoryList.addAll(list);
     }*/
 
-    public static class ItemHolder extends RecyclerView.ViewHolder {
+    static class ItemHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.tvStatus)
         FontTextView tvStatus;
@@ -139,7 +139,7 @@ public class WalletHistoryAdapter extends RecyclerView.Adapter<WalletHistoryAdap
         RelativeLayout rlWalletItem;
 
 
-        public ItemHolder(final View itemView) {
+        ItemHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

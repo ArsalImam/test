@@ -129,7 +129,7 @@
         android:id="@+id/rl_setDestination"
         android:layout_below="@+id/infoLay"
         android:visibility="visible"
-        tools:visibility="visible"
+        tools:visibility="gone"
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp">
@@ -153,30 +153,33 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rl_destinationSelected"
         android:layout_below="@+id/infoLay"
+        android:orientation="horizontal"
         android:visibility="gone"
-        tools:visibility="gone"
+        tools:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
         android:gravity="center_vertical">
 
-        <com.bykea.pk.partner.widgets.FontTextView
+        <com.bykea.pk.partner.widgets.AutoFitFontTextView
             android:id="@+id/tv_destinationName"
             android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_width="wrap_content"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:maxWidth="@dimen/_200sdp"
+            android:layout_weight="2"
             android:maxLines="1"
             android:ellipsize="end"
+            android:visibility="visible"
             android:text="Saddar"
+            app:fontName="roboto_light.ttf"
             android:gravity="center_vertical"
             android:textColor="@color/black"
             android:textSize="@dimen/_15sdp"/>
 
         <View
-            android:layout_toLeftOf="@+id/tv_destinationSelected"
             android:background="@color/grey"
             android:layout_width="@dimen/_1sdp"
             android:layout_height="match_parent" />
@@ -185,7 +188,8 @@
             android:id="@+id/tv_destinationSelected"
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginLeft="@dimen/_9sdp"
-            android:layout_width="wrap_content"
+            android:layout_weight="4"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:text="منتخب منزل"
@@ -194,12 +198,11 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_18sdp"/>
 
-        <View
-            android:layout_alignParentBottom="true"
-            android:background="@color/grey"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp" />
 
-    </RelativeLayout>
-
+    </LinearLayout>
+            <View
+                android:layout_below="@+id/rl_destinationSelected"
+                android:background="@color/grey"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp" />
 </RelativeLayout>

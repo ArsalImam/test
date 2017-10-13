@@ -292,25 +292,24 @@ public class BaseActivity extends AppCompatActivity {
 
     public void setToolbar() {
         if (null == mToolbar) {
-            mToolbar = (Toolbar) findViewById(R.id.toolbar);
-            frameLayout = (FrameLayout) mToolbar.findViewById(R.id.frameLayout);
-            mLogo = (ImageView) mToolbar.findViewById(R.id.logo);
-            mTitleTv = (FontTextView) mToolbar.findViewById(R.id.title);
-            status = (FontTextView) mToolbar.findViewById(R.id.status);
-            rightIv = (ImageView) mToolbar.findViewById(R.id.rightIv);
+            initToolbar();
         }
 
         setSupportActionBar(mToolbar);
     }
 
+    private void initToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        frameLayout = (FrameLayout) mToolbar.findViewById(R.id.frameLayout);
+        mLogo = (ImageView) mToolbar.findViewById(R.id.logo);
+        mTitleTv = (FontTextView) mToolbar.findViewById(R.id.title);
+        status = (FontTextView) mToolbar.findViewById(R.id.status);
+        rightIv = (ImageView) mToolbar.findViewById(R.id.rightIv);
+    }
+
     public Toolbar getToolbar() {
         if (null == mToolbar) {
-            mToolbar = (Toolbar) findViewById(R.id.toolbar);
-            frameLayout = (FrameLayout) mToolbar.findViewById(R.id.frameLayout);
-            mLogo = (ImageView) mToolbar.findViewById(R.id.logo);
-            mTitleTv = (FontTextView) mToolbar.findViewById(R.id.title);
-            status = (FontTextView) mToolbar.findViewById(R.id.status);
-            rightIv = (ImageView) mToolbar.findViewById(R.id.rightIv);
+            initToolbar();
         }
         return mToolbar;
     }

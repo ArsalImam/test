@@ -124,9 +124,9 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                 .addApi(Places.GEO_DATA_API)
                 .build();
         requestCode = getIntent().getIntExtra("from", 0);
-        toolbarTitle = getIntent().getStringExtra(Constants.TOOLBAR_TITLE);
-        searchBoxTitle = getIntent().getStringExtra(Constants.SEARCHBOX_TITLE);
-
+//        toolbarTitle = getIntent().getStringExtra(Constants.TOOLBAR_TITLE);
+//        searchBoxTitle = getIntent().getStringExtra(Constants.SEARCHBOX_TITLE);
+        confirmBtn.setClickable(false);
         setBackNavigation();
         hideToolbarLogo();
         hideToolbarTitle();
@@ -349,8 +349,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
             setLocation(mlatitude, mlogitude);
 
         }
-
-
     };
 
     private void setLocation(double lat, double lng) {
@@ -401,6 +399,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                         String city = result.substring(result.lastIndexOf(',') + 1).trim();
                         addressTv.setText(name);
                         tvFromAddress.setText(city);
+                        confirmBtn.setClickable(true);
                     }
                 }
             });
@@ -429,6 +428,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
         @Override
         public void onError(String error) {
             Utils.redLog("Address error", error + "");
+            confirmBtn.setClickable(true);
             Dialogs.INSTANCE.showToast(mCurrentActivity, "" + error);
 //            stopLoadingAnimation();
         }

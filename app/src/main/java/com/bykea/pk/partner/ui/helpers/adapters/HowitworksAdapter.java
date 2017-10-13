@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.bykea.pk.partner.R;
 
 public class HowitworksAdapter extends PagerAdapter {
-    Context context;
+    private Context context;
     private int[] ImageGal = new int[]{
             R.drawable.one,
             R.drawable.two,
