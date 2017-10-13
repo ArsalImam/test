@@ -20,7 +20,6 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -87,7 +86,7 @@ public class CallingActivity extends BaseActivity {
 
         if (null != getIntent() && getIntent().getBooleanExtra("isGcm", false)) {
             Utils.redLog("FCM", "Calling Activity");
-            ((DriverApp) mCurrentActivity.getApplicationContext()).connect("Notification");
+            DriverApp.getApplication().connect();
             WebIORequestHandler.getInstance().setContext(mCurrentActivity);
             DriverApp.startLocationService(mCurrentActivity);
         }

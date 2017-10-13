@@ -75,19 +75,25 @@ public class DriverApp extends MultiDexApplication {
         }
     }
 
-    public Emitter.Listener connectionListener = new Emitter.Listener() {
+    private Emitter.Listener connectionListener = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
             Utils.redLog(Constants.APP_NAME + "  ########################    ", "Socket Connection Established....");
-            WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
+            attachListenersOnSocketConnected();
+
         }
     };
 
-    public void connect(String from) {
-        Utils.redLog(Constants.APP_NAME + "  connect method called    ", from);
+    public void attachListenersOnSocketConnected() {
+        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
+    }
+
+    public void connect() {
         try {
-            WebIO.getInstance().onConnect(connectionListener);
+            if (!WebIO.getInstance().isSocketConnected()) {
+                WebIO.getInstance().onConnect(connectionListener);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

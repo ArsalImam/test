@@ -520,4 +520,12 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        try {
+            super.onBackPressed();
+        } catch (IllegalStateException ignored) {
+
+        }
+    }
 }

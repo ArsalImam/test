@@ -94,8 +94,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
             holder.status.setText("Completed");
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
             holder.totalAmountTv.setVisibility(View.VISIBLE);
-            holder.dateTv.setText(Utils.getFormattedDate(data.getFinishTime(), CURRENT_DATE_FORMAT,
-                    REQUIRED_DATE_FORMAT));
+            if (StringUtils.isNotBlank(data.getFinishTime())) {
+                holder.dateTv.setText(Utils.getFormattedDate(data.getFinishTime(), CURRENT_DATE_FORMAT,
+                        REQUIRED_DATE_FORMAT));
+            } else {
+                holder.dateTv.setText(Utils.getFormattedDate(data.getFinishTime(), CURRENT_DATE_FORMAT,
+                        REQUIRED_DATE_FORMAT));
+            }
         }
     }
 

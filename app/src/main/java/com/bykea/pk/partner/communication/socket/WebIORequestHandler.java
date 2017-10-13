@@ -183,6 +183,7 @@ public class WebIORequestHandler {
                 public void call(Object... args) {
                     try {
                         WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
+                        DriverApp.getApplication().attachListenersOnSocketConnected();
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
@@ -206,6 +207,7 @@ public class WebIORequestHandler {
                 public void call(Object... args) {
                     try {
                         WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
+                        DriverApp.getApplication().attachListenersOnSocketConnected();
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emit(eventName, json);
