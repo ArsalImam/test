@@ -1,61 +1,56 @@
 package com.bykea.pk.partner.communication.socket;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Utils;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import io.socket.engineio.client.transports.Polling;
 import io.socket.engineio.client.transports.WebSocket;
+import okhttp3.OkHttpClient;
 
 
 public class WebIO {
 
     private Socket mSocket;
     private static WebIO mWebIO;
-    private static Context mContext;
 
-    /*  private WebIO() {
-          try {
-
-              IO.Options options = new IO.Options();
-  //            String token = AppPreferences.getAccessToken(mContext);
-              options.query = "appName=Terminal&AppId=7002738&AppSecret=cI790Mf";
-              options.timeout = 5 * 1000;
-
-              mSocket = IO.socket(ApiTags.SOCKET_BASE_SERVER_URL, options);
-
-          } catch (URISyntaxException e) {
-              e.printStackTrace();
-              mWebIO = null;
-          }
-      }
-  */
     private WebIO() {
         try {
 
             IO.Options options = new IO.Options();
-            //            String token = AppPreferences.getAccessToken(mContext);
             options.query = "appName=Terminal&AppId=7002738&AppSecret=cI790Mf&user_type=p";
             options.timeout = 15 * 1000;
             options.secure = true;
             options.forceNew = true;
             options.transports = new String[]{WebSocket.NAME, Polling.NAME};
-            SSLContext sslContext = Utils.getSSLContext(DriverApp.getContext());
-            if (sslContext != null) {
-                options.sslContext = sslContext;
-            }
+            //for socket io 0.8.2
+                /*SSLContext sslContext = Utils.getSSLContext(PassengerApp.getContext());
+                if (sslContext != null) {
+                    options.sslContext = sslContext;
+                }*/
+
+            //for socket io 1.0.0
+            addSslCertificates(options);
             mSocket = IO.socket(ApiTags.BASE_SERVER_URL, options);
 
         } catch (URISyntaxException e) {
@@ -63,6 +58,60 @@ public class WebIO {
             mWebIO = null;
         }
     }
+
+
+    private void addSslCertificates(IO.Options options) {
+        SSLContext sslContext = null;
+        try {
+            // loading CAs from an InputStream
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            InputStream cert = DriverApp.getContext().getResources().openRawResource(R.raw.star_bykea_net);
+            Certificate ca;
+            try {
+                ca = cf.generateCertificate(cert);
+            } finally {
+                cert.close();
+            }
+
+            // creating a KeyStore containing our trusted CAs
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+            // creating a TrustManager that trusts the CAs in our KeyStore
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+
+            // creating an SSLSocketFactory that uses our TrustManager
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .hostnameVerifier(new HostnameVerifier() {
+                        @SuppressLint("BadHostnameVerifier")
+                        @Override
+                        public boolean verify(String hostname, SSLSession session) {
+                            return true;
+                        }
+                    })
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) tmf.getTrustManagers()[0])
+                    .build();
+
+// default settings for all sockets
+            IO.setDefaultOkHttpWebSocketFactory(okHttpClient);
+            IO.setDefaultOkHttpCallFactory(okHttpClient);
+
+            options.callFactory = okHttpClient;
+            options.webSocketFactory = okHttpClient;
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public synchronized static WebIO getInstance() {
         if (mWebIO == null) {
@@ -98,13 +147,35 @@ public class WebIO {
     public void onConnect(Emitter.Listener connectCallBack) {
 
         try {
-            WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT, connectCallBack);
+            if (!isConnectionListenerAttached()) {
+                WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT, connectCallBack);
+            }
             WebIO.getInstance().getSocket().connect();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
+    /*
+    * Separate function to check Socket.EVENT_CONNECT event because Library is also attaching its own listener
+    * from Manager Class and callback is important for our app as we are requesting our server to
+    * updating socket for particular user when app establish connection
+    * */
+    private boolean isConnectionListenerAttached() {
+        if (WebIO.getInstance() != null && WebIO.getInstance().getSocket() != null &&
+                (WebIO.getInstance().getSocket().listeners(Socket.EVENT_CONNECT).size() > 0)) {
+            boolean isAttached = false;
+            for (Emitter.Listener listener : WebIO.getInstance().getSocket().listeners(Socket.EVENT_CONNECT)) {
+                if (listener.getClass().getName().contains(WebIORequestHandler.class.getName())) {
+                    isAttached = true;
+                }
+            }
+            return isAttached;
+        } else {
+            return false;
+        }
+    }
 
     public boolean emit(String event, Object... params) {
         if (!WebIO.getInstance().isSocketConnected()) {
@@ -115,14 +186,11 @@ public class WebIO {
         return true;
     }
 
-    public synchronized boolean emitLocation(String event, Object... params) {
+    synchronized boolean emitLocation(String event, Object... params) {
         if (!WebIO.getInstance().isSocketConnected()) {
             return false;
 
         }
-          /*if(BuildConfig.DEBUG){
-              Log.d("emit","event:"+event+" params:"+params.toString());
-          }*/
         if (AppPreferences.isLoggedIn()
                 && (AppPreferences.getAvailableStatus() ||
                 AppPreferences.isOutOfFence())) {
@@ -177,7 +245,8 @@ public class WebIO {
 
     public void offError(Emitter.Listener callBack) {
         WebIO.getInstance().getSocket().off(Socket.EVENT_ERROR, callBack)
-//                .off(Socket.EVENT_CONNECT_ERROR, callBack)
+//
+//    .off(Socket.EVENT_CONNECT_ERROR, callBack)
                 .off(Socket.EVENT_DISCONNECT, callBack);
         Dialogs.INSTANCE.dismissDialog();
     }

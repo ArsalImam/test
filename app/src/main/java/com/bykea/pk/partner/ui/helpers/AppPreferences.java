@@ -106,7 +106,6 @@ public class AppPreferences {
         if (null != user) {
             try {
                 userJson = new JSONObject(gson.toJson(user));
-                Utils.infoLog("Saving User Profile object: ", userJson.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -131,7 +130,6 @@ public class AppPreferences {
     public static PilotData getPilotData() {
         Gson gson = new Gson();
         String data = mSharedPreferences.getString(Keys.DRIVER_DATA, StringUtils.EMPTY);
-        Utils.infoLog("Get Driver Profile: ", data);
         if (StringUtils.isNotBlank(data)) {
             return gson.fromJson(data, PilotData.class);
         } else {
@@ -168,7 +166,6 @@ public class AppPreferences {
 
     public static void setPhoneNumber(String phone) {
         SharedPreferences.Editor ed = mSharedPreferences.edit();
-        Utils.infoLog("Saving phone no", phone);
         ed.putString(Keys.PHONE_NUMBER, phone);
         ed.commit();
     }
@@ -293,7 +290,6 @@ public class AppPreferences {
     }
 
     public static void setCallData(NormalCallData callData) {
-        Utils.infoLog("Saving Calling object: ", new Gson().toJson(callData));
         mSharedPreferences
                 .edit()
                 .putString(Keys.CALLDATA_OBJECT, new Gson().toJson(callData))
@@ -301,7 +297,6 @@ public class AppPreferences {
     }
 
     public static void setRating(String rating) {
-        Utils.infoLog("Saving Rating : ", Float.parseFloat(rating) + "");
         mSharedPreferences
                 .edit()
                 .putFloat(getDriverId() + "driverRating", Float.parseFloat(rating))
@@ -309,7 +304,6 @@ public class AppPreferences {
     }
 
     public static float getRating() {
-        Utils.infoLog("Saving Rating : ", mSharedPreferences.getFloat("driverRating", 0) + "");
         return mSharedPreferences.getFloat(getDriverId() + "driverRating", 0);
     }
 
@@ -329,7 +323,6 @@ public class AppPreferences {
     }
 
     public static boolean isOnTrip() {
-        Utils.infoLog(Constants.APP_NAME + " isOnTrip", mSharedPreferences.getBoolean(Keys.ON_TRIP, false) + "");
         return mSharedPreferences.getBoolean(Keys.ON_TRIP, false);
     }
 

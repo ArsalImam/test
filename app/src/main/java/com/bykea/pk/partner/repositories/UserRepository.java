@@ -513,7 +513,6 @@ public class UserRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        Utils.infoLog("Ridetime", totalTime + " seconds");
         mWebIORequestHandler.endRide(jsonObject, mDataCallback);
 
     }

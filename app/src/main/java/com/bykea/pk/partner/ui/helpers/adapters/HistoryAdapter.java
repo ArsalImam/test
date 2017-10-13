@@ -55,7 +55,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         if (data.getStatus().equalsIgnoreCase("completed")) {
             if (data.getInvoice() != null && StringUtils.isNotBlank(data.getInvoice().getTotal())) {
                 holder.totalAmountTv.setText("Rs. " + data.getInvoice().getTotal());
-            }else{
+            } else {
                 holder.totalAmountTv.setText("Rs. N/A");
             }
             holder.status.setText("Completed");
@@ -68,7 +68,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
             holder.status.setText(data.getCancel_by() + " Cancelled");
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.color_error));
             holder.totalAmountTv.setVisibility(View.VISIBLE);
-            holder.totalAmountTv.setText("Rs. " + data.getCancel_fee());
+            if (StringUtils.isNotBlank(data.getCancel_feeNoCheck())) {
+                holder.totalAmountTv.setText("Rs. " + data.getCancel_fee());
+            } else {
+                holder.totalAmountTv.setText("N/A");
+            }
             if (StringUtils.isNotBlank(data.getCancelTime())) {
                 holder.dateTv.setText(Utils.getFormattedDate(data.getCancelTime(), CURRENT_DATE_FORMAT,
                         REQUIRED_DATE_FORMAT));
@@ -85,7 +89,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         } else if (data.getStatus().equalsIgnoreCase("feedback")) {
             if (data.getInvoice() != null && StringUtils.isNotBlank(data.getInvoice().getTotal())) {
                 holder.totalAmountTv.setText("Rs. " + data.getInvoice().getTotal());
-            }else {
+            } else {
                 holder.totalAmountTv.setText("Rs. N/A");
             }
             holder.status.setText("Completed");
