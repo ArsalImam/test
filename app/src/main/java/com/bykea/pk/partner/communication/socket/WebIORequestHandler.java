@@ -144,7 +144,7 @@ public class WebIORequestHandler {
 
     public void updatePilotStatus(final IResponseCallback mResponseCallBack,
                                   JSONObject jsonObject) {
-        Utils.redLog(Constants.APP_NAME + " updateStatus ", jsonObject.toString());
+//        Utils.redLog(Constants.APP_NAME + " updateStatus ", jsonObject.toString());
         emitWithJObject(ApiTags.SOCKET_UPDATE_STATUS, new MyGenericListener(ApiTags.SOCKET_UPDATE_STATUS, PilotStatusResponse.class, mResponseCallBack)
                 , jsonObject);
     }

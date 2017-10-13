@@ -89,10 +89,10 @@ public class UserRepository {
 
     }
 
-    public void requestDriverDropOff(Context context, IUserDataHandler handler,String lat, String lng, String address){
+    public void requestDriverDropOff(Context context, IUserDataHandler handler, String lat, String lng, String address) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.requestDriverDropOff(context,mDataCallback,lat,lng,address);
+        mRestRequestHandler.requestDriverDropOff(context, mDataCallback, lat, lng, address);
     }
 
 
@@ -627,6 +627,12 @@ public class UserRepository {
             jsonObject.put("lat", AppPreferences.getLatitude());
             jsonObject.put("lng", AppPreferences.getLongitude());
             jsonObject.put("cih", AppPreferences.getCashInHands());
+
+            if (status && AppPreferences.getDriverDestination() != null) {
+                jsonObject.put("eLat", AppPreferences.getDriverDestination().latitude);
+                jsonObject.put("eLng", AppPreferences.getDriverDestination().longitude);
+                jsonObject.put("eAdd", AppPreferences.getDriverDestination().address);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -723,7 +729,7 @@ public class UserRepository {
         public void onResponse(Object object) {
             if (object instanceof RegisterResponse) {
                 mUserCallback.onUserRegister((RegisterResponse) object);
-            }else if(object instanceof DriverDestResponse){
+            } else if (object instanceof DriverDestResponse) {
                 mUserCallback.onDropOffUpdated((DriverDestResponse) object);
             } else if (object instanceof LoginResponse) {
                 if (null != mUserCallback) {

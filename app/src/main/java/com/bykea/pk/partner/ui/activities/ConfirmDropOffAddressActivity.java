@@ -30,6 +30,7 @@ import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.CustomMapView;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.gms.common.ConnectionResult;
@@ -71,7 +72,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     //    private CallRepository mCallRepository;
     Bundle bundle;
     @Bind(R.id.tvFromName)
-    FontTextView addressTv;
+    AutoFitFontTextView addressTv;
     @Bind(R.id.tvFromAddress)
     FontTextView tvFromAddress;
 

@@ -242,7 +242,8 @@ public class HomeFragment extends Fragment {
 
     private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
         @Override
-        public void onTick(long millisUntilFinished) {}
+        public void onTick(long millisUntilFinished) {
+        }
 
         @Override
         public void onFinish() {
@@ -319,8 +320,10 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         mapView.onResume();
         isScreenInFront = true;
-        if(AppPreferences.getDriverDestination() != null){
+        if (AppPreferences.getDriverDestination() != null) {
             destinationSet();
+        } else {
+            destinationNotSet();
         }
         Notifications.removeAllNotifications(mCurrentActivity);
         countDownTimer.start();
@@ -406,6 +409,8 @@ public class HomeFragment extends Fragment {
                                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                                     AppPreferences.setAvailableStatus(false);
+                                    AppPreferences.setDriverDestination(null);
+                                    destinationNotSet();
                                     repository.requestUpdateStatus(mCurrentActivity, handler, false);
                                 }
                             }
@@ -426,11 +431,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void setHomeLocation() {
-        Intent returndropoffIntent = new Intent(mCurrentActivity, ConfirmDropOffAddressActivity.class);
-        returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
-        returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE, "Confirm Destination");
-        returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE, "Search Destination");
-        startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+        if (!AppPreferences.getAvailableStatus()) {
+            Intent returndropoffIntent = new Intent(mCurrentActivity, ConfirmDropOffAddressActivity.class);
+            returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+            returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE, "Confirm Destination");
+            returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE, "Search Destination");
+            startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+        }
 //        ActivityStackManager.getInstance(mCurrentActivity).startConfirmDestActivity(mCurrentActivity, "Confirm Destination", "Search Destination");
     }
 
@@ -442,12 +449,12 @@ public class HomeFragment extends Fragment {
                 if (resultCode == RESULT_OK) {
                     mDropOff = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT);
                     AppPreferences.setDriverDestination(mDropOff);
-                    tv_destinationName.setText("Loading...");
-                    repository.requestDriverDropOff(mCurrentActivity
-                            , handler
-                            , String.valueOf(mDropOff.latitude)
-                            , String.valueOf(mDropOff.longitude)
-                            , mDropOff.address);
+                    destinationSet();
+//                    repository.requestDriverDropOff(mCurrentActivity
+//                            , handler
+//                            , String.valueOf(mDropOff.latitude)
+//                            , String.valueOf(mDropOff.longitude)
+//                            , mDropOff.address);
                     //TODO Post Address to Server
                 }
             }
@@ -458,6 +465,12 @@ public class HomeFragment extends Fragment {
         tv_destinationName.setText(AppPreferences.getDriverDestination().address);
         rl_destinationSelected.setVisibility(View.VISIBLE);
         rl_setDestination.setVisibility(View.GONE);
+    }
+
+    private void destinationNotSet() {
+        AppPreferences.setDriverDestination(null);
+        rl_destinationSelected.setVisibility(View.GONE);
+        rl_setDestination.setVisibility(View.VISIBLE);
     }
 
     private void setDriverLocation() {
@@ -631,9 +644,9 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void run() {
                     if (commonResponse != null) {
-                        if (mDropOff != null) {
-                            Utils.appToastDebug(mCurrentActivity,commonResponse.getMessage());
-                        }
+//                        if (mDropOff != null) {
+//                            Utils.appToastDebug(mCurrentActivity,commonResponse.getMessage());
+//                        }
                     }
                 }
             });

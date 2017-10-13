@@ -139,7 +139,7 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp">
 
-                <com.bykea.pk.partner.widgets.FontTextView
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
                     android:id="@+id/tvFromName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
