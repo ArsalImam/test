@@ -72,8 +72,6 @@ public class ConfirmDestinationActivity extends BaseActivity {
     private GoogleMap.OnCameraIdleListener onCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
         @Override
         public void onCameraIdle() {
-            Utils.infoLog("GOOGLE MAPS", " onCameraIdle method called.......");
-            Utils.infoLog("GOOGLE MAPS onCameraIdle", mGoogleMap.getCameraPosition().target + "");
             if (!firstTime)
                 reverseGeoCoding(mGoogleMap.getCameraPosition().target.latitude,
                         mGoogleMap.getCameraPosition().target.longitude);

@@ -36,16 +36,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Gson gson = new Gson();
         //if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated.
-        Utils.redLog(TAG, "Notification Received : " + "--------------------------------------------------------------");
-        Utils.redLog(TAG, "From: " + remoteMessage.getFrom());
 
-        if (!AppPreferences.isLoggedIn() || remoteMessage == null)
+        if (!AppPreferences.isLoggedIn()) {
             return;
+        }
 
 
         // Check if message contains a notification payload.
         if (remoteMessage.getData() != null && remoteMessage.getData().get("event") != null) {
-            Utils.redLog(TAG, "NOTIFICATION DATA : " + remoteMessage.getData().toString());
+            Utils.redLog(TAG, "NOTIFICATION DATA (FCM) : " + remoteMessage.getData().toString());
             if (remoteMessage.getData().get("event").equalsIgnoreCase("1")) {
                 NormalCallData callData = gson.fromJson(remoteMessage.getData().get("data"), NormalCallData.class);
                 if (StringUtils.isNotBlank(callData.getStatus())) {
@@ -53,10 +52,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip()) {
                             Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
-//                    if (remoteMessage.getData().get("cancel_by").equalsIgnoreCase("admin"))
                             intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
-//                    else
-//                        intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("msg", callData.getMessage());
                             if (AppPreferences.isJobActivityOnForeground() ||
                                     AppPreferences.isCallingActivityOnForeground()) {

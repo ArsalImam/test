@@ -88,7 +88,6 @@ public class SplashActivity extends BaseActivity {
                                     && StringUtils.isNotBlank(FirebaseInstanceId.getInstance().getToken())) {
                                 AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
                             }
-                            Utils.infoLog("SPLASH FCM TOKEN : ", AppPreferences.getRegId());
                             ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).startLocationService();
                             if (AppPreferences.isLoggedIn()) {
                                 // Connect socket
@@ -173,7 +172,6 @@ public class SplashActivity extends BaseActivity {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Utils.infoLog("CHECK RUNNING RESONSE ", errorMessage);
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
                             AppPreferences.saveLoginStatus(false);
                             AppPreferences.setIncomingCall(false);

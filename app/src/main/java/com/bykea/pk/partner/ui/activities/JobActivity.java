@@ -1176,8 +1176,6 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                             mpolylineList.add(polyline);
                         }
 
-                        Utils.infoLog("Route Distance and Time ", route.get(i).getDistanceText() + " : " +
-                                route.get(i).getDurationText());
                     }
 
                     if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute) {
@@ -1273,7 +1271,6 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         @Override
         public void onReceive(Context context, Intent intent) {
             if (null != intent && intent.getAction().equalsIgnoreCase(Keys.LOCATION_UPDATE_BROADCAST) && AppPreferences.isLoggedIn()) {
-                Utils.infoLog("LOCATION BROADCAST", "RECEIVED ==========================================================");
                 /*UPDATING DRIVER CURRENT AND PREVIOUS LOCATION
                     FOR TRACKING AND UPDATING DRIVER MARKERS*/
 
@@ -1292,7 +1289,6 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
                 }
 
 
-                Utils.infoLog("LOCATION BEARING VALUE: ", intent.getStringExtra("bearing"));
                 mLocBearing = intent.getStringExtra("bearing");
 
 

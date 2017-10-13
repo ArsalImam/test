@@ -360,8 +360,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     private GoogleMap.OnCameraIdleListener onCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
         @Override
         public void onCameraIdle() {
-            Utils.infoLog("GOOGLE MAPS", " onCameraIdle method called.......");
-            Utils.infoLog("GOOGLE MAPS onCameraIdle", mGoogleMap.getCameraPosition().target + "");
             //ignore API call when user selects place from search bar
             if (!isSearchedLoc) {
                 reverseGeoCoding(mGoogleMap.getCameraPosition().target.latitude,

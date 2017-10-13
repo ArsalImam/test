@@ -89,13 +89,13 @@ public class TripHistoryFragment extends Fragment {
         mHistoryAdapter.setMyOnItemClickListener(new HistoryAdapter.MyOnItemClickListener() {
             @Override
             public void onItemClickListener(int position, View view, TripHistoryData historyData) {
-                if(historyData.getInvoice() != null){
-                    if (!historyData.getStatus().equalsIgnoreCase("cancelled")) {
+                if (!historyData.getStatus().equalsIgnoreCase("cancelled")) {
+                    if (historyData.getInvoice() != null) {
                         ActivityStackManager.getInstance(mCurrentActivity).startCompletedDetailsActivity(historyData);
                         HomeActivity.visibleFragmentNumber = 2;
-                    } else {
-                        ActivityStackManager.getInstance(mCurrentActivity).startCancelDetailsActivity(historyData);
                     }
+                } else {
+                    ActivityStackManager.getInstance(mCurrentActivity).startCancelDetailsActivity(historyData);
                 }
             }
         });

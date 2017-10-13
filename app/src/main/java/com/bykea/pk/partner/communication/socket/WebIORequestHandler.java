@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class WebIORequestHandler {
@@ -181,45 +182,42 @@ public class WebIORequestHandler {
                 @Override
                 public void call(Object... args) {
                     try {
+                        WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
                         }
+                        Utils.redLog("Request at " + socket + " (onConnect)", json.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Utils.redLog(" Socket Was disconnected and connect again" +
-                            " to Update Location : , location emition completed.....", json.toString());
                 }
             });
         } else {
-            Utils.redLog(" Socket connected , Location emition completed.....", json.toString());
-
+            Utils.redLog("Request at " + socket, json.toString());
         }
     }
 
     private void emitWithJObject(final String eventName, MyGenericListener myGenericListener, final JSONObject json) {
-        Utils.redLog("Request at" + eventName, json.toString());
         WebIO.getInstance().on(eventName, myGenericListener);
         if (!WebIO.getInstance().emit(eventName, json)) {
             WebIO.getInstance().onConnect(new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     try {
+                        WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emit(eventName, json);
                         }
+                        Utils.redLog("Request at " + eventName + " (onConnect)", json.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Utils.redLog(eventName + " Socket Was disconnected and connect again" +
-                            " to emit json object : , generice emition completed..... ", json.toString());
                 }
             });
         } else {
-            Utils.redLog(eventName + " Socket connected , generice emition completed..... ", json.toString());
-
+            Utils.redLog("Request at " + eventName, json.toString());
         }
     }
 
@@ -238,7 +236,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponseJsonString = args[0].toString();
-            Utils.redLog("RESPONSE at " + mSocketName, serverResponseJsonString);
+            Utils.redLog("Response at " + mSocketName, serverResponseJsonString);
             Gson gson = new Gson();
             try {
                 Object serverResponse = gson.fromJson(serverResponseJsonString, dataModelClass);
@@ -246,11 +244,6 @@ public class WebIORequestHandler {
                     CommonResponse commonResponse = (CommonResponse) serverResponse;
                     if (commonResponse.isSuccess() || serverResponse instanceof PilotStatusResponse) {
                         mOnResponseCallBack.onResponse(serverResponse);
-                       /* if (serverResponse instanceof AcceptCallResponse) {
-                            registerChatListener();
-                        } else if (serverResponse instanceof EndRideResponse) {
-                            unRegisterChatListener();
-                        }*/
                     } else {
                         mOnResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
                     }
@@ -275,7 +268,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("Update location Response", serverResponse);
+            Utils.redLog("Response at " + mSocketName, serverResponse);
 
             Gson gson = new Gson();
             try {
@@ -348,31 +341,12 @@ public class WebIORequestHandler {
         }
     }
 
-/*
-
-    public static class ConnectionListener implements Emitter.Listener {
-
-        @Override
-        public void call(Object... args) {
-//            Utils.redLog(ConstantKeys.APP_NAME + "  ########################    ", "Socket Connection Established....");
-
-         *//**//*   mAccessTokenListener = new AccessTokenListener();
-            mJobCallListener = new WebIORequestHandler.JobCallListener();
-            mAdvanceJobCallListener = new WebIORequestHandler.AdvanceCallListener();
-            WebIO.on(ApiTags.SOCKET_ACCESS_TOKEN, mAccessTokenListener);
-            WebIO.on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
-            WebIO.on(ApiTags.SOCKET_ADVANCE_CALL, mAdvanceJobCallListener);*//**//*
-            WebIORequestHandler.getInstance().registerCallListener();
-            WebIORequestHandler.getInstance().registerAdvanceCallListener();
-        }
-    }*/
-
     public static class JobCallListener implements Emitter.Listener {
 
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog(Constants.APP_NAME + " TRIP NOTIFICATION LISTENER +++++++++++++++++++ ", serverResponse);
+            Utils.redLog("TRIP NOTIFICATION (Socket) ", serverResponse);
 
             Gson gson = new Gson();
             try {
@@ -383,7 +357,6 @@ public class WebIORequestHandler {
                 if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) && normalCallData.isSuccess()) {
                     ActivityStackManager.getInstance(mContext).startCallingActivity(normalCallData, false);
                 } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                    Utils.redLog(Constants.APP_NAME, " CANCEL CALLING Socket");
                     if (normalCallData.isSuccess()) {
                         if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
@@ -421,10 +394,6 @@ public class WebIORequestHandler {
             }
         }
 
-    }
-
-    private interface SetDataModel {
-        void setDataModel(Class<?> a);
     }
 
 

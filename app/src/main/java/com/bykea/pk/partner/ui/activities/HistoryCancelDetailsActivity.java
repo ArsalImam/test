@@ -101,8 +101,15 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
                     lastLine.setVisibility(View.VISIBLE);
                     tvTotalLabel.setVisibility(View.VISIBLE);
                     tvCancelFeeLabel.setVisibility(View.VISIBLE);
-                    totalAmountTv.setText("Rs. " + ("0".equalsIgnoreCase(data.getCancel_fee()) ? "0" : "-" + data.getCancel_fee()));
-                    tvCancelFee.setText("Rs. " + data.getCancel_fee());
+
+                    if (StringUtils.isNotBlank(data.getCancel_feeNoCheck())) {
+                        totalAmountTv.setText("Rs. " + ("0".equalsIgnoreCase(data.getCancel_fee()) ? "0" : "-" + data.getCancel_fee()));
+                        tvCancelFee.setText("Rs. " + data.getCancel_fee());
+                    } else {
+                        totalAmountTv.setText("N/A");
+                        tvCancelFee.setText("N/A");
+                    }
+
                 } else {
                     totalAmountTv.setVisibility(View.GONE);
                     tvCancelFee.setVisibility(View.GONE);

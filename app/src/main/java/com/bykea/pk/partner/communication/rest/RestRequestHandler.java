@@ -78,7 +78,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("LoginResponse", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -114,7 +113,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("Logout Response", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -148,7 +146,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("UPDATE PROFILE RESPONSE", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -180,7 +177,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("Number Verification", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -213,7 +209,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("LoginResponse", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -239,7 +234,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("ForgotPassword", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
 
             }
@@ -266,7 +260,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("GET TRIP HISTORY Response", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
 
             }
@@ -294,7 +287,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("GET TRIP HISTORY Response", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -319,7 +311,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.infoLog("CHECK RUNNING TRIP Response", t.getMessage() + " ");
                 mResponseCallBack.onError(0, getErrorMessage(t));
 
             }
@@ -351,7 +342,6 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
-                Utils.infoLog("Upload Audio File", t.getMessage() + " ");
             }
         });
 
@@ -380,7 +370,6 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
-                Utils.infoLog("UploadDocumentFile", t.getMessage() + " ");
             }
         });
     }
@@ -408,7 +397,6 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-                Utils.infoLog("GET SERVICE TYPES", t.getMessage() + " ");
             }
         });
     }
@@ -437,7 +425,6 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
-                Utils.infoLog("GET SERVICE TYPES", t.getMessage() + " ");
             }
         });
     }
@@ -461,7 +448,6 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
-                Utils.infoLog("GET SERVICE TYPES", t.getMessage() + " ");
             }
         });
     }

@@ -23,16 +23,14 @@ import com.onesignal.OneSignal;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class DriverApp extends MultiDexApplication {
 
     private static DriverApp mContext;
-    private static DriverApp mApplication;
     private BasicComponent mBasicComponent;
-    public static boolean isCallListenerAttached = false;
     private Emitter.Listener mJobCallListener = new WebIORequestHandler.JobCallListener();
-
 
     @Override
     public void onCreate() {
@@ -40,10 +38,6 @@ public class DriverApp extends MultiDexApplication {
         if (mContext == null) {
             mContext = this;
         }
-        if(mApplication == null){
-            mApplication = this;
-        }
-        isCallListenerAttached = false;
         mBasicComponent = DaggerBasicComponent.builder()
                 .sharedPrefModule(new SharedPrefModule())
                 .build();
@@ -66,7 +60,7 @@ public class DriverApp extends MultiDexApplication {
     }
 
     public static DriverApp getApplication() {
-        return mApplication;
+        return mContext;
     }
 
     public BasicComponent getBasicComponent() {
@@ -84,9 +78,9 @@ public class DriverApp extends MultiDexApplication {
     public Emitter.Listener connectionListener = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
             Utils.redLog(Constants.APP_NAME + "  ########################    ", "Socket Connection Established....");
             WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
-            isCallListenerAttached = true;
         }
     };
 
@@ -103,7 +97,6 @@ public class DriverApp extends MultiDexApplication {
         WebIO.getInstance().off(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
         WebIO.getInstance().getSocket().disconnect();
         WebIO.getInstance().getSocket().close();
-        isCallListenerAttached = false;
     }
 
     public static Context getContext() {

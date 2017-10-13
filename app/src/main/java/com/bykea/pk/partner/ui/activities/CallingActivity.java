@@ -251,7 +251,6 @@ public class CallingActivity extends BaseActivity {
                 timer.onFinish();
             } else {
                 if (!_mpSound.isPlaying()) _mpSound.start();
-//                    Utils.infoLog("Progress Values: ", progress + "");
                 progress = progress + 0.1f;
                 donutProgress.setProgress(progress);
                 counter += 1;

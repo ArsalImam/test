@@ -88,15 +88,9 @@ public class Utils {
         return AppPreferences.isApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
-    public static void infoLog(String tag, String message) {
-        if (BuildConfig.DEBUG) {
-            Log.i(Constants.APP_NAME + " " + tag, "" + message);
-        }
-    }
-
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            Log.e(Constants.APP_NAME + " " + tag + " : ", message + ".");
+            Log.e(tag + " : ", message + ".");
         }
     }
 
