@@ -1,16 +1,10 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Constants;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.DriverApp;
@@ -91,7 +85,7 @@ public class SplashActivity extends BaseActivity {
                             ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).startLocationService();
                             if (AppPreferences.isLoggedIn()) {
                                 // Connect socket
-                                ((DriverApp) getApplicationContext()).connect("Splash Activity");
+                                DriverApp.getApplication().connect();
                                 WebIORequestHandler.getInstance().setContext(mCurrentActivity);
                                 if (AppPreferences.isOnTrip()) {
                                     repository.requestRunningTrip(mCurrentActivity, handler);

@@ -147,9 +147,7 @@ public class WebIO {
     public void onConnect(Emitter.Listener connectCallBack) {
 
         try {
-            if (!isConnectionListenerAttached()) {
-                WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT, connectCallBack);
-            }
+            WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT, connectCallBack);
             WebIO.getInstance().getSocket().connect();
         } catch (Exception e) {
             e.printStackTrace();

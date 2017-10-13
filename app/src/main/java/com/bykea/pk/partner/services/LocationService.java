@@ -26,7 +26,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.bykea.pk.partner.DriverApp;
-import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -211,8 +210,8 @@ public class LocationService extends Service {
     private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {
         @Override
         public void onTick(long millisUntilFinished) {
-            if (!WebIO.getInstance().isSocketConnected() && Connectivity.isConnectedFast(mContext)) {
-                ((DriverApp) getApplicationContext()).connect("From the Service");
+            if (Connectivity.isConnectedFast(mContext)) {
+                DriverApp.getApplication().connect();
             }
         }
 
