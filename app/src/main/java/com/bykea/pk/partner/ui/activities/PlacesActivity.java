@@ -137,9 +137,8 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this,
-                "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
-                Toast.LENGTH_SHORT).show();
+        Utils.appToast(this,
+                "Could not connect to Google API Client: Error " + connectionResult.getErrorCode());
 
     }
 

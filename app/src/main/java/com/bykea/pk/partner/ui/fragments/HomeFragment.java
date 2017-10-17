@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -104,6 +105,8 @@ public class HomeFragment extends Fragment {
     RelativeLayout rl_setDestination;
     @Bind(R.id.rl_destinationSelected)
     LinearLayout rl_destinationSelected;
+    @Bind(R.id.rl_main_destination)
+    RelativeLayout rl_main_destination;
     @Bind(R.id.tv_destinationName)
     AutoFitFontTextView tv_destinationName;
 
@@ -118,7 +121,6 @@ public class HomeFragment extends Fragment {
     private String currentVersion, latestVersion;
     private boolean isScreenInFront;
     private int[] cashInHand;
-    private PlacesResult mDropOff;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -196,6 +198,7 @@ public class HomeFragment extends Fragment {
         if (Utils.isLicenceExpired(mCurrentActivity.getPilotData().getLicenseExpiry())) {
             onUnauthorizedLicenceExpire();
         }
+
         setStatusBtn();
         setConnectionStatus();
         myRangeBar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -223,7 +226,6 @@ public class HomeFragment extends Fragment {
         } else if (connectionStatus.equalsIgnoreCase("Poor Connection") ||
                 connectionStatus.equalsIgnoreCase("Fair Connection") || connectionStatus.equalsIgnoreCase("No Connection")) {
             tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
-
         } else if (connectionStatus.equalsIgnoreCase("Good Connection")) {
             tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
         }
@@ -286,8 +288,11 @@ public class HomeFragment extends Fragment {
                                 , AppPreferences.getLongitude())
                         , 12.0f));
 
-            if (mCurrentActivity != null && null != mCurrentActivity.getIntent() && null != mCurrentActivity.getIntent().getExtras() &&
-                    mCurrentActivity.getIntent().getBooleanExtra("isCancelledTrip", false) && !Dialogs.INSTANCE.isShowing()) {
+            if (mCurrentActivity != null &&
+                    null != mCurrentActivity.getIntent() &&
+                    null != mCurrentActivity.getIntent().getExtras() &&
+                    mCurrentActivity.getIntent().getBooleanExtra("isCancelledTrip", false) &&
+                    !Dialogs.INSTANCE.isShowing()) {
                 if (!mCurrentActivity.isDialogShown() && getView() != null) {
                     mCurrentActivity.setDialogShown(true);
                     if (mCurrentActivity.getIntent().getBooleanExtra("isCanceledByAdmin", false)) {
@@ -311,8 +316,6 @@ public class HomeFragment extends Fragment {
             }
 
         }
-
-
     };
 
 
@@ -320,11 +323,11 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         mapView.onResume();
         isScreenInFront = true;
-        if (AppPreferences.getDriverDestination() != null) {
-            destinationSet();
-        } else {
-            destinationNotSet();
-        }
+//        if (AppPreferences.getDriverDestination() != null) {
+//            destinationSet(true);
+//        } else {
+//            destinationSet(false);
+//        }
         Notifications.removeAllNotifications(mCurrentActivity);
         countDownTimer.start();
         if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
@@ -381,11 +384,17 @@ public class HomeFragment extends Fragment {
         super.onDestroy();
     }
 
+    private long mLastClickTime;
+
     @OnClick({R.id.mapPinIv, R.id.statusCheck, R.id.rlInactiveImage, R.id.tvNotice, R.id.tvDemand, R.id.rl_setDestination, R.id.rl_destinationSelected})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_destinationSelected:
             case R.id.rl_setDestination:
+                if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 setHomeLocation();
                 break;
             case R.id.rlInactiveImage:
@@ -410,7 +419,7 @@ public class HomeFragment extends Fragment {
                                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                                     AppPreferences.setAvailableStatus(false);
                                     AppPreferences.setDriverDestination(null);
-                                    destinationNotSet();
+//                                    destinationSet(false);
                                     repository.requestUpdateStatus(mCurrentActivity, handler, false);
                                 }
                             }
@@ -447,9 +456,9 @@ public class HomeFragment extends Fragment {
         if (mCurrentActivity != null) {
             if (requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
                 if (resultCode == RESULT_OK) {
-                    mDropOff = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT);
+                    PlacesResult mDropOff = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT);
                     AppPreferences.setDriverDestination(mDropOff);
-                    destinationSet();
+//                    destinationSet(true);
 //                    repository.requestDriverDropOff(mCurrentActivity
 //                            , handler
 //                            , String.valueOf(mDropOff.latitude)
@@ -461,17 +470,19 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void destinationSet() {
-        tv_destinationName.setText(AppPreferences.getDriverDestination().address);
-        rl_destinationSelected.setVisibility(View.VISIBLE);
-        rl_setDestination.setVisibility(View.GONE);
-    }
-
-    private void destinationNotSet() {
-        AppPreferences.setDriverDestination(null);
-        rl_destinationSelected.setVisibility(View.GONE);
-        rl_setDestination.setVisibility(View.VISIBLE);
-    }
+//    private void destinationSet(boolean set) {
+//        if (!AppPreferences.getAvailableStatus())
+//            rl_main_destination.setVisibility(View.VISIBLE);
+//        if (set) {
+//            tv_destinationName.setText(AppPreferences.getDriverDestination().address);
+//            rl_destinationSelected.setVisibility(View.VISIBLE);
+//            rl_setDestination.setVisibility(View.GONE);
+//        } else {
+//            AppPreferences.setDriverDestination(null);
+//            rl_destinationSelected.setVisibility(View.GONE);
+//            rl_setDestination.setVisibility(View.VISIBLE);
+//        }
+//    }
 
     private void setDriverLocation() {
         if (null != mGoogleMap) {
@@ -551,25 +562,46 @@ public class HomeFragment extends Fragment {
             statusTv.setText("Inactive");
             rlInactiveImage.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);
+
+            rl_main_destination.setVisibility(View.VISIBLE);
+            if (null != AppPreferences.getDriverDestination()) {
+                rl_setDestination.setVisibility(View.GONE);
+                rl_destinationSelected.setVisibility(View.VISIBLE);
+                tv_destinationName.setText(AppPreferences.getDriverDestination().address);
+            } else {
+                rl_setDestination.setVisibility(View.VISIBLE);
+                rl_destinationSelected.setVisibility(View.GONE);
+            }
+
         } else {
             statusCheck.setImageResource(R.drawable.active_icon);
             statusTv.setText("Active");
             rlInactiveImage.setVisibility(View.GONE);
             myRangeBar.setEnabled(false);
+
+            if (null != AppPreferences.getDriverDestination()) {
+                rl_setDestination.setVisibility(View.GONE);
+                rl_destinationSelected.setVisibility(View.VISIBLE);
+                tv_destinationName.setText(AppPreferences.getDriverDestination().address);
+            } else {
+                rl_main_destination.setVisibility(View.GONE);
+            }
         }
 
         if (AppPreferences.isWalletAmountIncreased()) {
-            tvFenceError.setText(AppPreferences.getWalletIncreasedError());
-            tvFenceError.setVisibility(View.VISIBLE);
-            tvConnectionStatus.setVisibility(View.GONE);
+            setFenceError(AppPreferences.getWalletIncreasedError());
         } else if (AppPreferences.isOutOfFence()) {
-            tvFenceError.setText("Non Service Area");
-            tvFenceError.setVisibility(View.VISIBLE);
-            tvConnectionStatus.setVisibility(View.GONE);
+            setFenceError("Non Service Area");
         } else {
             tvFenceError.setVisibility(View.GONE);
             tvConnectionStatus.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setFenceError(String errorMessage) {
+        tvFenceError.setText(errorMessage);
+        tvFenceError.setVisibility(View.VISIBLE);
+        tvConnectionStatus.setVisibility(View.GONE);
     }
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -729,9 +761,7 @@ public class HomeFragment extends Fragment {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        rl_destinationSelected.setVisibility(View.GONE);
-                        rl_setDestination.setVisibility(View.VISIBLE);
-
+//                        destinationSet(false);
                         Dialogs.INSTANCE.dismissDialog();
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
                             onUnauthorized();

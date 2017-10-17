@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/transparent"
     android:clickable="true">
 
@@ -89,9 +89,9 @@
 
     <FrameLayout
         android:id="@+id/infoLay"
-        android:layout_below="@+id/llInlineTop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llInlineTop">
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/tvConnectionStatus"
@@ -125,84 +125,5 @@
     </FrameLayout>
 
 
-    <RelativeLayout
-        android:id="@+id/rl_setDestination"
-        android:layout_below="@+id/infoLay"
-        android:visibility="visible"
-        tools:visibility="gone"
-        android:background="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp">
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/tv_selectDestination"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="منزل منتخب کریں"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_18sdp"
-            android:visibility="visible"
-            app:fontName="jameel_noori_nastaleeq.ttf"/>
-
-        <View
-            android:layout_alignParentBottom="true"
-            android:background="@color/grey"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp" />
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/rl_destinationSelected"
-        android:layout_below="@+id/infoLay"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        android:gravity="center_vertical">
-
-        <com.bykea.pk.partner.widgets.AutoFitFontTextView
-            android:id="@+id/tv_destinationName"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:visibility="visible"
-            android:text="Saddar"
-            app:fontName="roboto_light.ttf"
-            android:gravity="center_vertical"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_15sdp"/>
-
-        <View
-            android:background="@color/grey"
-            android:layout_width="@dimen/_1sdp"
-            android:layout_height="match_parent" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/tv_destinationSelected"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_9sdp"
-            android:layout_weight="4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:text="منتخب منزل"
-            android:gravity="center"
-            app:fontName="jameel_noori_nastaleeq.ttf"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_18sdp"/>
-
-
-    </LinearLayout>
-            <View
-                android:layout_below="@+id/rl_destinationSelected"
-                android:background="@color/grey"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_1sdp" />
 </RelativeLayout>

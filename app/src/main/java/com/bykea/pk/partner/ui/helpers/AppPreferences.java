@@ -893,7 +893,10 @@ public class AppPreferences {
     }
 
     public static void setDriverDestination(PlacesResult mDropOff) {
-        mSharedPreferences.edit().putString(Keys.DRIVER_DEST, mDropOff != null ? new Gson().toJson(mDropOff) : StringUtils.EMPTY).apply();
+        mSharedPreferences
+                .edit()
+                .putString(Keys.DRIVER_DEST, mDropOff != null ? new Gson().toJson(mDropOff) : StringUtils.EMPTY)
+                .apply();
     }
 
     public static PlacesResult getDriverDestination() {

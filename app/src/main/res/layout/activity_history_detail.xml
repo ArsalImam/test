@@ -100,7 +100,7 @@
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
 
-                <com.bykea.pk.partner.widgets.FontTextView
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
                     android:id="@+id/nameTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -354,7 +354,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
-
                 android:gravity="center_vertical"
                 android:paddingBottom="@dimen/_7sdp"
                 android:paddingTop="@dimen/_7sdp">
@@ -389,7 +388,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
-
                 android:gravity="center_vertical"
                 android:paddingBottom="@dimen/_7sdp"
                 android:paddingTop="@dimen/_7sdp">
@@ -441,7 +439,6 @@
                     android:background="@color/windowBackground"
                     android:gravity="left|center_vertical"
                     android:paddingBottom="@dimen/_7sdp"
-
                     android:paddingTop="@dimen/_7sdp"
                     android:text="Total"
                     android:textColor="@color/textColorPrimary"
@@ -711,9 +708,7 @@
                         android:textSize="@dimen/_9sdp"
                         android:visibility="visible" />
 
-
                 </LinearLayout>
-
 
             </LinearLayout>
 

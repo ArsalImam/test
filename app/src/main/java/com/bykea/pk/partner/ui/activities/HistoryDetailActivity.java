@@ -9,6 +9,7 @@ import android.widget.RatingBar;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.bykea.pk.partner.R;
@@ -32,7 +33,7 @@ public class HistoryDetailActivity extends BaseActivity {
     @Bind(R.id.endAddressTv)
     FontTextView endAddressTv;
     @Bind(R.id.nameTv)
-    FontTextView nameTv;
+    AutoFitFontTextView nameTv;
     @Bind(R.id.timeTv)
     FontTextView timeTv;/*
     @Bind(R.id.dateTv)

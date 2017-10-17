@@ -9,6 +9,7 @@ public class ApiTags {
     //LOCAL
 //    public static final String BASE_SERVER_URL = "http://172.16.0.60:3000";
 //    public static final String BASE_SERVER_URL = "http://192.168.8.103:3000";
+//    public static final String BASE_SERVER_URL = "http://172.16.0.60:3000";
 
     //STAGING PRO
     public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";

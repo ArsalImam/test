@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -82,6 +84,8 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     Spinner tvCities;
     @Bind(R.id.tvCitiesSingle)
     FontTextView tvCitiesSingle;
+    @Bind(R.id.loader)
+    ProgressBar loader;
 
 //    @Bind(R.id.tvFenceError)
 //    FontTextView tvFenceError;
@@ -127,7 +131,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
         requestCode = getIntent().getIntExtra("from", 0);
 //        toolbarTitle = getIntent().getStringExtra(Constants.TOOLBAR_TITLE);
 //        searchBoxTitle = getIntent().getStringExtra(Constants.SEARCHBOX_TITLE);
-        confirmBtn.setClickable(false);
         setBackNavigation();
         hideToolbarLogo();
         hideToolbarTitle();
@@ -363,6 +366,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
         public void onCameraIdle() {
             //ignore API call when user selects place from search bar
             if (!isSearchedLoc) {
+                startLoading();
                 reverseGeoCoding(mGoogleMap.getCameraPosition().target.latitude,
                         mGoogleMap.getCameraPosition().target.longitude);
             } else {
@@ -390,6 +394,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                 @Override
                 public void run() {
                     String result = response;
+                    finishLoading();
                     if (StringUtils.isNotBlank(result)) {
                         if (result.contains(";")) {
                             result = result.replace(";", ", ");
@@ -398,7 +403,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                         String city = result.substring(result.lastIndexOf(',') + 1).trim();
                         addressTv.setText(name);
                         tvFromAddress.setText(city);
-                        confirmBtn.setClickable(true);
                     }
                 }
             });
@@ -411,6 +415,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        finishLoading();
                         if (response.getRows()[0].getElements()[0].getStatus().equals("OK")) {
                             double distance = Math.ceil(Double.parseDouble(response.getRows()[0].getElements()[0].getDistance().getValue()) / 1000);
                             int duration = (int) Math.ceil(Double.parseDouble(response.getRows()[0].getElements()[0].getDuration().getValue()) / 60);
@@ -427,11 +432,25 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
         @Override
         public void onError(String error) {
             Utils.redLog("Address error", error + "");
-            confirmBtn.setClickable(true);
+            finishLoading();
             Dialogs.INSTANCE.showToast(mCurrentActivity, "" + error);
 //            stopLoadingAnimation();
         }
     };
+
+    private void finishLoading() {
+//        loader.setVisibility(View.GONE);
+        loader.setIndeterminate(false);
+        confirmBtn.setClickable(true);
+    }
+
+    private void startLoading() {
+//        loader.setVisibility(View.VISIBLE);
+//        loader.getProgressDrawable().setColorFilter(
+//                Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
+        loader.setIndeterminate(true);
+        confirmBtn.setClickable(false);
+    }
 
 //    private void startLoadingAnimation() {
 //        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
