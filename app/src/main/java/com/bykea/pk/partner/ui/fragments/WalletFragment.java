@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -181,12 +182,12 @@ public class WalletFragment extends Fragment {
                                     mHistoryAdapter.notifyDataSetChanged();
                                 } else {
                                     if (mLayoutManager.getItemCount() == 0) {
-                                        noDataIv.setVisibility(View.VISIBLE);
+                                        showNoTripData();
                                     }
                                 }
                             } else {
                                 if (mLayoutManager.getItemCount() == 0) {
-                                    noDataIv.setVisibility(View.VISIBLE);
+                                    showNoTripData();
                                 }
                                 if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
                                     Utils.onUnauthorized(mCurrentActivity);
@@ -218,5 +219,9 @@ public class WalletFragment extends Fragment {
         }
     };
 
+    private void showNoTripData() {
+        noDataIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.no_data));
+        noDataIv.setVisibility(View.VISIBLE);
+    }
 
 }

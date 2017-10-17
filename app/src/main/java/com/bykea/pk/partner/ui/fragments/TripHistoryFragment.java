@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,7 @@ import butterknife.ButterKnife;
 
 public class TripHistoryFragment extends Fragment {
 
+    //no_data
     @Bind(R.id.noDataIv)
     ImageView noDataIv;
     @Bind(R.id.loader)
@@ -59,7 +61,6 @@ public class TripHistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trip_history, container, false);
         ButterKnife.bind(this, view);
-
         return view;
     }
 
@@ -176,10 +177,10 @@ public class TripHistoryFragment extends Fragment {
                                 mHistoryAdapter.notifyDataSetChanged();
 
                             } else {
-                                noDataIv.setVisibility(View.VISIBLE);
+                                showNoTripData();
                             }
                         } else {
-                            noDataIv.setVisibility(View.VISIBLE);
+                            showNoTripData();
                             if (historyResponse.getCode() == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             }
@@ -209,4 +210,9 @@ public class TripHistoryFragment extends Fragment {
             }
         }
     };
+
+    private void showNoTripData() {
+        noDataIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.no_data));
+        noDataIv.setVisibility(View.VISIBLE);
+    }
 }

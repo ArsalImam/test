@@ -129,7 +129,7 @@ public class TripHistoryData implements Serializable {
     }
 
     public String getCancel_fee() {
-        return showCancelFee() ? cancel_fee : "0";
+        return StringUtils.isNotBlank(cancel_fee) ? showCancelFee() ? cancel_fee : "0" : "0";
     }
 
     public boolean showCancelFee() {

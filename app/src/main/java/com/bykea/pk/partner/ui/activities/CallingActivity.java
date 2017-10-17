@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
@@ -65,7 +66,7 @@ public class CallingActivity extends BaseActivity {
     private int counter = 0;
     private int total = 1;
 
-    private boolean isCalled = false;
+    private boolean isFreeDriverApiCalled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +133,8 @@ public class CallingActivity extends BaseActivity {
 
     }
 
+    private long mLastClickTime;
+
     @OnClick({R.id.rejectCallBtn, R.id.acceptCallBtn})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -144,10 +147,17 @@ public class CallingActivity extends BaseActivity {
                 }
                 break;
             case R.id.acceptCallBtn:
-                stopSound();
-                Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                repository.requestAcceptCall(mCurrentActivity, counterTv.getText().toString(), handler);
-                timer.cancel();
+                if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                if (!isFreeDriverApiCalled) {
+                    stopSound();
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                    repository.requestAcceptCall(mCurrentActivity, counterTv.getText().toString(), handler);
+                    timer.cancel();
+                }
                 break;
         }
     }
@@ -246,7 +256,6 @@ public class CallingActivity extends BaseActivity {
         @Override
         public void onTick(long millisUntilFinished) {
             if (progress >= 20) {
-                donutProgress.setProgress(20);
                 timer.onFinish();
             } else {
                 if (!_mpSound.isPlaying()) _mpSound.start();
@@ -262,12 +271,14 @@ public class CallingActivity extends BaseActivity {
 
         @Override
         public void onFinish() {
+            donutProgress.setProgress(20);
+            counterTv.setText("0");
             rejectCallBtn.setEnabled(false);
             acceptCallBtn.setEnabled(false);
             stopSound();
-            if (!isCalled) {
+            if (!isFreeDriverApiCalled) {
                 repository.freeDriverStatus(mCurrentActivity, handler);
-                isCalled = true;
+                isFreeDriverApiCalled = true;
                 ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
                 mCurrentActivity.finish();
             }

@@ -46,10 +46,9 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class WebIORequestHandler {
-
-    private static Context mContext;
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
     private static ChatMessageListener chatMessageListener = new ChatMessageListener();
+    private static Context mContext;
 
     public static WebIORequestHandler getInstance() {
         if (null == mWebIORequestHandler) {
@@ -116,19 +115,19 @@ public class WebIORequestHandler {
     }
 
     public void cancelRide(JSONObject cancelRideObject, IResponseCallback responseCallBack) {
-        Utils.redLog(Constants.APP_NAME + " CancelRideEmit ", cancelRideObject.toString());
+//        Utils.redLog(Constants.APP_NAME + " CancelRideEmit ", cancelRideObject.toString());
         emitWithJObject(ApiTags.SOCKET_CANCEL_RIDE_DRIVER, new MyGenericListener(ApiTags.SOCKET_CANCEL_RIDE_DRIVER, CancelRideResponse.class, responseCallBack),
                 cancelRideObject);
     }
 
     public void endRide(JSONObject endRideData, IResponseCallback responseCallBack) {
-        Utils.redLog(Constants.APP_NAME + " FinishRideEmit ", endRideData.toString());
+//        Utils.redLog(Constants.APP_NAME + " FinishRideEmit ", endRideData.toString());
         emitWithJObject(ApiTags.SOCKET_END_TRIP, new MyGenericListener(ApiTags.SOCKET_END_TRIP, EndRideResponse.class, responseCallBack),
                 endRideData);
     }
 
     public void feedback(JSONObject feedbackData, IResponseCallback responseCallBack) {
-        Utils.redLog(Constants.APP_NAME + " FinishRideEmit ", feedbackData.toString());
+//        Utils.redLog(Constants.APP_NAME + " FinishRideEmit ", feedbackData.toString());
         emitWithJObject(ApiTags.SOCKET_DRIVER_FEEDBACK, new MyGenericListener(ApiTags.SOCKET_DRIVER_FEEDBACK, FeedbackResponse.class, responseCallBack),
                 feedbackData);
     }
@@ -151,13 +150,13 @@ public class WebIORequestHandler {
 
     public void getConversationId(final IResponseCallback mResponseCallBack,
                                   JSONObject jsonObject) {
-        Utils.redLog(Constants.APP_NAME + " getConversationId ", jsonObject.toString());
+//        Utils.redLog(Constants.APP_NAME + " getConversationId ", jsonObject.toString());
         emitWithJObject(ApiTags.SOCKET_GET_CONVERSATION_ID, new MyGenericListener(ApiTags.SOCKET_GET_CONVERSATION_ID, GetConversationIdResponse.class, mResponseCallBack)
                 , jsonObject);
     }
 
     public void sendMessage(final IResponseCallback mResponseCallBack, JSONObject jsonObject) {
-        Utils.redLog(Constants.APP_NAME + " sendMessage ", jsonObject.toString());
+//        Utils.redLog(Constants.APP_NAME + " sendMessage ", jsonObject.toString());
         emitWithJObject(ApiTags.SOCKET_SEND_CHAT_MESSAGE, new MyGenericListener(ApiTags.SOCKET_SEND_CHAT_MESSAGE, SendMessageResponse.class, mResponseCallBack)
                 , jsonObject);
     }
