@@ -90,7 +90,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
-    compile('com.instabug.library:instabug:4.2.7') {
+    compile('com.instabug.library:instabug:4.3.0') {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'com.google.android.gms:play-services-gcm:9.4.0'

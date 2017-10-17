@@ -68,11 +68,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
             holder.status.setText(data.getCancel_by() + " Cancelled");
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.color_error));
             holder.totalAmountTv.setVisibility(View.VISIBLE);
-            if (StringUtils.isNotBlank(data.getCancel_feeNoCheck())) {
+//            if (StringUtils.isNotBlank(data.getCancel_feeNoCheck())) {
                 holder.totalAmountTv.setText("Rs. " + data.getCancel_fee());
-            } else {
-                holder.totalAmountTv.setText("N/A");
-            }
+//            } else {
+//                holder.totalAmountTv.setText("N/A");
+//            }
             if (StringUtils.isNotBlank(data.getCancelTime())) {
                 holder.dateTv.setText(Utils.getFormattedDate(data.getCancelTime(), CURRENT_DATE_FORMAT,
                         REQUIRED_DATE_FORMAT));

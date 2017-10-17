@@ -120,7 +120,7 @@ public class PerformanceFragment extends Fragment {
                             }
                             if (StringUtils.isNotBlank(responseData.getTrips())) {
                                 userData.setTripCount(responseData.getTrips());
-                                tvRating.setText(responseData.getTrips());
+                                tvRideCounts.setText(responseData.getTrips());
                             }
                             if (StringUtils.isNotBlank(responseData.getTime())) {
                                 userData.setTimeCount(responseData.getTime());
