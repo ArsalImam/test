@@ -479,7 +479,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                 //PlacesResult data model implements Parcelable so we could pass object in extras
                 returnIntent.putExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT, placesResult);
                 setResult(Activity.RESULT_OK, returnIntent);
-                tv_elaqa.setVisibility(View.GONE);
                 mCurrentActivity.finish();
                 break;
             case R.id.autocomplete_places:
@@ -503,8 +502,10 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     @Override
     protected void onDestroy() {
         mapView.onDestroy();
+        tv_elaqa.setVisibility(View.GONE);
         super.onDestroy();
     }
+
 
     @Override
     public void onLowMemory() {
@@ -513,5 +514,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    }
 }

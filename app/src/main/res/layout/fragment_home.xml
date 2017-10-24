@@ -52,12 +52,12 @@
             android:background="@color/black.transparent.inactive"
             android:gravity="top|center"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <ImageView
                 android:layout_width="@dimen/_140sdp"
                 android:layout_height="@dimen/_140sdp"
-                android:layout_marginTop="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_90sdp"
                 android:src="@drawable/ic_inactive_icon" />
 
             <com.bykea.pk.partner.widgets.FontTextView
@@ -72,12 +72,13 @@
 
 
     </FrameLayout>
+
     <RelativeLayout
         android:id="@+id/rl_main_destination"
-        android:background="@color/white"
-        android:layout_below="@+id/llTop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llTop"
+        android:background="@color/white">
 
         <RelativeLayout
             android:id="@+id/rl_setDestination"

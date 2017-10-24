@@ -181,7 +181,7 @@ public class BaseActivity extends AppCompatActivity {
         intentFilter.addAction(Keys.UNAUTHORIZED_BROADCAST);
         intentFilter.addAction(Keys.MOCK_LOCATION);
         registerReceiver(myReceiver, intentFilter);
-        if (!(mCurrentActivity instanceof JobActivity)) {
+        if (!(mCurrentActivity instanceof BookingActivity)) {
             IntentFilter intentFilterNetwork = new IntentFilter();
             intentFilterNetwork.addAction("android.net.conn.CONNECTIVITY_CHANGE");
             intentFilterNetwork.addAction("android.location.GPS_ENABLED_CHANGE");
@@ -417,7 +417,7 @@ public class BaseActivity extends AppCompatActivity {
         if (myReceiver != null) {
             unregisterReceiver(myReceiver);
         }
-        if (networkChangeListener != null && !(mCurrentActivity instanceof JobActivity)) {
+        if (networkChangeListener != null && !(mCurrentActivity instanceof BookingActivity)) {
             unregisterReceiver(networkChangeListener);
         }
         dismissProgressDialog();

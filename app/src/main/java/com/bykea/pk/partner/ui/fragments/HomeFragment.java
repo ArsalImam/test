@@ -8,9 +8,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -31,8 +39,10 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.helpers.DrawPolygonAsync;
 import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Constants;
@@ -45,9 +55,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -64,6 +82,8 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.maps.android.ui.IconGenerator;
+import com.squareup.okhttp.internal.Util;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -241,20 +261,20 @@ public class HomeFragment extends Fragment {
         }
         return timer * 60000;
     }
-
-    private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-        }
-
-        @Override
-        public void onFinish() {
-            setConnectionStatus();
-            if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
-                repository.requestHeatMapData(mCurrentActivity, handler);
-            countDownTimer.start();
-        }
-    };
+//
+//    private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
+//        @Override
+//        public void onTick(long millisUntilFinished) {
+//        }
+//
+//        @Override
+//        public void onFinish() {
+//            setConnectionStatus();
+//            if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
+//                repository.requestHeatMapData(mCurrentActivity, handler);
+//            countDownTimer.start();
+//        }
+//    };
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
         @Override
@@ -315,23 +335,102 @@ public class HomeFragment extends Fragment {
                 }
             }
 
+            ArrayList<HeatMapUpdatedResponse> data = new Gson().fromJson(getString(R.string.heat_map_data), new TypeToken<ArrayList<HeatMapUpdatedResponse>>() {
+            }.getType());
+            updateHeatMapUI(data);
         }
     };
 
+    private void updateHeatMapUI(final ArrayList<HeatMapUpdatedResponse> data) {
+        if (mGoogleMap != null) {
+            mGoogleMap.clear();
+        }
+        new DrawPolygonAsync(data, new DrawPolygonAsync.HeatMapCallback() {
+            @Override
+            public void onHeatMapDataParsed(final PolygonOptions polygonOptions) {
+                if (mCurrentActivity != null && getView() != null) {
+                    mCurrentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mGoogleMap.addPolygon(polygonOptions);
+                        }
+                    });
+                }
+            }
+        }).startAsyncTask();
+
+
+        //TODO Remove test code
+        LatLng southWest = new LatLng(24.9334716796875, 66.95068359375);
+        LatLng northEast = new LatLng(24.8126220703125, 67.115478515625);
+        LatLng southEast = new LatLng(24.9334716796875, 67.115478515625);
+        LatLng northWest = new LatLng(24.8126220703125, 66.95068359375);
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(southWest);
+        builder.include(northEast);
+        builder.include(southEast);
+        builder.include(northWest);
+        IconGenerator icnGenerator = new IconGenerator(mCurrentActivity);
+        icnGenerator.setTextAppearance(R.style.iconGenText);
+//        icnGenerator.setBackground(TRANSPARENT_DRAWABLE);
+        icnGenerator.setContentPadding(4, 4, 4, 4);
+        Bitmap icon = icnGenerator.makeIcon("TIME 1PM TO 3PM");
+        MarkerOptions markerOptions = new MarkerOptions().position(builder.build().getCenter())
+                .icon(BitmapDescriptorFactory.fromBitmap(icon)).anchor(0.5f, 0.5f);
+        mGoogleMap.addMarker(markerOptions);
+
+
+    }
+
+    private Bitmap writeTextOnDrawable(int drawableId, String text) {
+
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), drawableId)
+                .copy(Bitmap.Config.ARGB_8888, true);
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.NORMAL);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(convertToPixels(mCurrentActivity, 18));
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(bm);
+
+        //If the text is bigger than the canvas , reduce the font size
+        if (textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+            paint.setTextSize(convertToPixels(mCurrentActivity, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positions
+//        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int center = (int) ((canvas.getHeight() / 3) - ((paint.descent() + paint.ascent()) / 2));
+
+        canvas.drawText(text, center, center, paint);
+
+        return bm;
+    }
+
+    public static int convertToPixels(Context context, int nDP) {
+        final float conversionScale = context.getResources().getDisplayMetrics().density;
+
+        return (int) ((nDP * conversionScale) + 0.5f);
+
+    }
 
     @Override
     public void onResume() {
         mapView.onResume();
         isScreenInFront = true;
-//        if (AppPreferences.getDriverDestination() != null) {
-//            destinationSet(true);
-//        } else {
-//            destinationSet(false);
-//        }
         Notifications.removeAllNotifications(mCurrentActivity);
-        countDownTimer.start();
-        if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
-            repository.requestHeatMapData(mCurrentActivity, handler);
+//        countDownTimer.start();
+//        if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
+//            repository.requestHeatMapData(mCurrentActivity, handler);
 
         Utils.setCallIncomingState();
         IntentFilter intentFilter = new IntentFilter();
@@ -353,9 +452,9 @@ public class HomeFragment extends Fragment {
         super.onPause();
         isScreenInFront = false;
         mCurrentActivity.unregisterReceiver(myReceiver);
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
+//        if (countDownTimer != null) {
+//            countDownTimer.cancel();
+//        }
         if (mapView != null) {
             mapView.onPause();
         }
@@ -375,6 +474,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+//        mCurrentActivity.showToolbar();
         ButterKnife.unbind(this);
     }
 
@@ -403,10 +503,16 @@ public class HomeFragment extends Fragment {
                 setDriverLocation();
                 break;
             case R.id.tvDemand:
-                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getDemand(), "Demand");
+                if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                        StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
+                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getDemand(), "Demand");
+                }
                 break;
-            case R.id.tvNotice:                             //AppPreferences.getSettings(mCurrentActivity).getSettings().getNotice()
-                Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getNotice(), "Notice");
+            case R.id.tvNotice:
+                if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                        StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getNotice())) {
+                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getNotice(), "Notice");
+                }
                 break;
             case R.id.statusCheck:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
@@ -564,6 +670,7 @@ public class HomeFragment extends Fragment {
             myRangeBar.setEnabled(true);
 
             rl_main_destination.setVisibility(View.VISIBLE);
+//            Utils.animateHeight(rl_main_destination, 500, Math.round(mCurrentActivity.getResources().getDimension(R.dimen._41sdp)));
             if (null != AppPreferences.getDriverDestination()) {
                 rl_setDestination.setVisibility(View.GONE);
                 rl_destinationSelected.setVisibility(View.VISIBLE);
@@ -584,6 +691,7 @@ public class HomeFragment extends Fragment {
                 rl_destinationSelected.setVisibility(View.VISIBLE);
                 tv_destinationName.setText(AppPreferences.getDriverDestination().address);
             } else {
+//                Utils.animateHeight(rl_main_destination, 500, 0);
                 rl_main_destination.setVisibility(View.GONE);
             }
         }
@@ -739,6 +847,7 @@ public class HomeFragment extends Fragment {
                                     mGoogleMap.clear();
                                 }
                                 mHeatmapOverlay = mGoogleMap.addTileOverlay(new TileOverlayOptions().tileProvider(heatmapTileProvider));
+
                             } else {
                                 if (null != mHeatmapOverlay) {
                                     mHeatmapOverlay.clearTileCache();

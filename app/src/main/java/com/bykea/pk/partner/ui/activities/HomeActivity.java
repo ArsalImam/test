@@ -52,7 +52,7 @@ public class HomeActivity extends BaseActivity {
     RecyclerView recyclerView;
     @Bind(R.id.drawerMainActivity)
     public DrawerLayout drawerLayout;
-    private boolean isDialogShown;
+    private boolean isDialogShown, isSettingsApiFirstTimeCalled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,10 +163,17 @@ public class HomeActivity extends BaseActivity {
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        UserRepository repository = new UserRepository();
-        repository.requestSettings(mCurrentActivity, new UserDataHandler() {
+        if (AppPreferences.getSettings() == null) {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            isSettingsApiFirstTimeCalled = true;
+        }
+        new UserRepository().requestSettings(mCurrentActivity, new UserDataHandler() {
             @Override
             public void onGetSettingsResponse(boolean isUpdated) {
+                if (isSettingsApiFirstTimeCalled) {
+                    isSettingsApiFirstTimeCalled = false;
+                    Dialogs.INSTANCE.dismissDialog();
+                }
                 Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
                 if (currentFragment instanceof HomeFragment) {
                     ((HomeFragment) currentFragment).getCurrentVersion();
