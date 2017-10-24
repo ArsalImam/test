@@ -302,18 +302,18 @@ public class LocationService extends Service {
             } else if (errorCode == HTTPStatus.FENCE_ERROR) {
                 AppPreferences.setOutOfFence(true);
                 AppPreferences.setAvailableStatus(false);
-                mBus.post("INACTIVE-FENCE");
+                mBus.post(Keys.INACTIVE_FENCE);
             } else if (errorCode == HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT) {
                 if (StringUtils.isNotBlank(errorMessage)) {
                     AppPreferences.setWalletIncreasedError(errorMessage);
                 }
                 AppPreferences.setWalletAmountIncreased(true);
                 AppPreferences.setAvailableStatus(false);
-                mBus.post("INACTIVE-FENCE");
+                mBus.post(Keys.INACTIVE_FENCE);
             } else if (errorCode == HTTPStatus.FENCE_SUCCESS) {
                 AppPreferences.setOutOfFence(false);
                 AppPreferences.setAvailableStatus(true);
-                mBus.post("INACTIVE-FENCE");
+                mBus.post(Keys.INACTIVE_FENCE);
             }
         }
     };

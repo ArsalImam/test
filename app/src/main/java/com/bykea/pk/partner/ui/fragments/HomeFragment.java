@@ -218,17 +218,35 @@ public class HomeFragment extends Fragment {
         String connectionStatus = Connectivity.getConnectionStatus(mCurrentActivity);
         tvConnectionStatus.setText(connectionStatus);
         tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable._good_sattelite, 0, 0, 0);
-        if (connectionStatus.equalsIgnoreCase("Unknown Status")) {
-            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
-        } else if (connectionStatus.equalsIgnoreCase("Battery Low")) {
-            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-            tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.low_battery_icon, 0, 0, 0);
-        } else if (connectionStatus.equalsIgnoreCase("Poor Connection") ||
-                connectionStatus.equalsIgnoreCase("Fair Connection") || connectionStatus.equalsIgnoreCase("No Connection")) {
-            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
-        } else if (connectionStatus.equalsIgnoreCase("Good Connection")) {
-            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
+        switch (connectionStatus){
+            case "Unknown Status":
+                tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
+                break;
+            case "Battery Low":
+                tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
+                tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.low_battery_icon, 0, 0, 0);
+                break;
+            case "Poor Connection":
+            case "Fair Connection":
+            case "No Connection":
+                tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
+                break;
+            case "Good Connection":
+                tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
+                break;
         }
+//        if (connectionStatus.equalsIgnoreCase("Unknown Status")) {
+//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
+//        } else if (connectionStatus.equalsIgnoreCase("Battery Low")) {
+//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
+//            tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.low_battery_icon, 0, 0, 0);
+//        } else if (connectionStatus.equalsIgnoreCase("Poor Connection") ||
+//                connectionStatus.equalsIgnoreCase("Fair Connection") ||
+//                connectionStatus.equalsIgnoreCase("No Connection")) {
+//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
+//        } else if (connectionStatus.equalsIgnoreCase("Good Connection")) {
+//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
+//        }
 
     }
 
@@ -323,11 +341,7 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         mapView.onResume();
         isScreenInFront = true;
-//        if (AppPreferences.getDriverDestination() != null) {
-//            destinationSet(true);
-//        } else {
-//            destinationSet(false);
-//        }
+
         Notifications.removeAllNotifications(mCurrentActivity);
         countDownTimer.start();
         if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
@@ -470,20 +484,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-//    private void destinationSet(boolean set) {
-//        if (!AppPreferences.getAvailableStatus())
-//            rl_main_destination.setVisibility(View.VISIBLE);
-//        if (set) {
-//            tv_destinationName.setText(AppPreferences.getDriverDestination().address);
-//            rl_destinationSelected.setVisibility(View.VISIBLE);
-//            rl_setDestination.setVisibility(View.GONE);
-//        } else {
-//            AppPreferences.setDriverDestination(null);
-//            rl_destinationSelected.setVisibility(View.GONE);
-//            rl_setDestination.setVisibility(View.VISIBLE);
-//        }
-//    }
-
     private void setDriverLocation() {
         if (null != mGoogleMap) {
             Utils.formatMap(mGoogleMap);
@@ -553,7 +553,7 @@ public class HomeFragment extends Fragment {
         }, null, "Licence Expired", "Your driving licence is expired. Please renew your driving licence and then contact support.");
     }
 
-    public void setStatusBtn() {
+    public synchronized void setStatusBtn() {
         if (mCurrentActivity == null || getView() == null) {
             return;
         }
@@ -564,15 +564,14 @@ public class HomeFragment extends Fragment {
             myRangeBar.setEnabled(true);
 
             rl_main_destination.setVisibility(View.VISIBLE);
-            if (null != AppPreferences.getDriverDestination()) {
+            if(AppPreferences.getDriverDestination() == null){
+                rl_setDestination.setVisibility(View.VISIBLE);
+                rl_destinationSelected.setVisibility(View.GONE);
+            }else{
                 rl_setDestination.setVisibility(View.GONE);
                 rl_destinationSelected.setVisibility(View.VISIBLE);
                 tv_destinationName.setText(AppPreferences.getDriverDestination().address);
-            } else {
-                rl_setDestination.setVisibility(View.VISIBLE);
-                rl_destinationSelected.setVisibility(View.GONE);
             }
-
         } else {
             statusCheck.setImageResource(R.drawable.active_icon);
             statusTv.setText("Active");
@@ -580,6 +579,7 @@ public class HomeFragment extends Fragment {
             myRangeBar.setEnabled(false);
 
             if (null != AppPreferences.getDriverDestination()) {
+                rl_main_destination.setVisibility(View.VISIBLE);
                 rl_setDestination.setVisibility(View.GONE);
                 rl_destinationSelected.setVisibility(View.VISIBLE);
                 tv_destinationName.setText(AppPreferences.getDriverDestination().address);
@@ -701,6 +701,7 @@ public class HomeFragment extends Fragment {
                                 }
                                 ActivityStackManager.getInstance(mCurrentActivity).restartLocationService();
                             } else {
+                                AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance(mCurrentActivity).stopLocationService();
                             }
                             setStatusBtn();
@@ -710,6 +711,7 @@ public class HomeFragment extends Fragment {
                             } else {
                                 Utils.appToast(mCurrentActivity, pilotStatusResponse.getMessage());
                                 AppPreferences.setAvailableStatus(false);
+                                AppPreferences.setDriverDestination(null);
                                 setStatusBtn();
                             }
                         }
@@ -782,7 +784,8 @@ public class HomeFragment extends Fragment {
                 public void run() {
                     if (action.equalsIgnoreCase(Keys.CONNECTION_BROADCAST)) {
                         setConnectionStatus();
-                    } else if (action.equalsIgnoreCase("INACTIVE-PUSH") || action.equalsIgnoreCase("INACTIVE-FENCE")) {
+                    } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) || action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
+                        AppPreferences.setDriverDestination(null);
                         setStatusBtn();
                         //TODO Alert Dialog
                     }

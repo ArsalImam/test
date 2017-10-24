@@ -85,6 +85,10 @@ public class Keys {
     public static final String UNAUTHORIZED_BROADCAST = "UNAUTHORIZED_USER";
     public static final String CONNECTION_BROADCAST = "CONNECTION_BROADCAST";
     public static final String LOCATION_NOT_UPDATE_BROADCAST = "location_not_update_broadcast";
+
+    public static final String INACTIVE_PUSH = "INACTIVE-PUSH";
+    public static final String INACTIVE_FENCE = "INACTIVE-FENCE";
+
     /*JOB ACTIVITY CANCEL JOB LISTENER*/
     public static final String BROADCAST_CANCEL_RIDE = "BROADCAST_CANCEL_RIDE";
     public static final String BROADCAST_DROP_OFF_UPDATED = "BROADCAST_DROP_OFF_UPDATED";

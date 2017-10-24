@@ -513,5 +513,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    }
 }

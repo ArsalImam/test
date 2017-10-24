@@ -98,7 +98,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude())) {
                         AppPreferences.setAdminMsg(null);
                         AppPreferences.setAvailableStatus(false);
-                        mBus.post("INACTIVE-PUSH");
+                        mBus.post(Keys.INACTIVE_PUSH);
                         Notifications.generateAdminNotification(this, data.getMessage());
                     }
                 }
