@@ -19,7 +19,7 @@ import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
-import com.bykea.pk.partner.ui.activities.JobActivity;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -64,7 +64,7 @@ public class ActivityStackManager {
     }
 
     public void startJobActivity() {
-        Intent intent = new Intent(mContext, JobActivity.class);
+        Intent intent = new Intent(mContext, BookingActivity.class);
         mContext.startActivity(intent);
     }
 

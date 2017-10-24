@@ -93,7 +93,7 @@
             android:enabled="true" />
 
         <activity
-            android:name=".ui.activities.JobActivity"
+            android:name=".ui.activities.BookingActivity"
             android:excludeFromRecents="false"
             android:screenOrientation="portrait" />
         <activity

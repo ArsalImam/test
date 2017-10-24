@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.utils;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -27,6 +28,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -1208,5 +1210,22 @@ public class Utils {
         mixpanelAPI.track(EVENT, data);
 
         logFireBaseEvent(context, userID, EVENT, data);
+    }
+
+
+    public static void animateHeight(final View v, int duration, int targetHeight) {
+        int prevHeight = v.getHeight();
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(prevHeight, targetHeight);
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                v.getLayoutParams().height = (int) animation.getAnimatedValue();
+                v.requestLayout();
+            }
+        });
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
+        valueAnimator.setDuration(duration);
+        valueAnimator.start();
     }
 }

@@ -92,7 +92,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class JobActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
+public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
 
     @Bind(R.id.startAddressTv)
@@ -142,7 +142,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
     //    private List<com.google.maps.model.LatLng> mCapturedLocations;
 
 
-    private JobActivity mCurrentActivity;
+    private BookingActivity mCurrentActivity;
     private NormalCallData callData;
     private UserRepository dataRepository;
     private String cancelReason = StringUtils.EMPTY;
@@ -187,7 +187,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_job);
+        setContentView(R.layout.activity_booking);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         mCurrentActivity = this;
@@ -540,7 +540,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
     protected void onResume() {
         mapView.onResume();
         setInitialData();
-//        LocationService.setContext(JobActivity.this);
+//        LocationService.setContext(BookingActivity.this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
@@ -549,7 +549,7 @@ public class JobActivity extends BaseActivity implements GoogleApiClient.OnConne
         checkGps();
         checkConnectivity(mCurrentActivity);
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
-//        LocationService.setContext(JobActivity.this);
+//        LocationService.setContext(BookingActivity.this);
         WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
         isJobActivityLive = true;

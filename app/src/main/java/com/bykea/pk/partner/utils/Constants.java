@@ -60,11 +60,11 @@ public class Constants {
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
 
-
     public static class Extras {
         public static final String SELECTED_VEHICLE_DATA = "SELECTED_VEHICLE_DATA";
         public static final String RIDE_VEHICLE_DATA = "RIDE_VEHICLE_DATA";
         public static final String TRIP_DETAILS = "TRIP_DETAILS";
     }
 
+    public static final float ANDROID_OPACITY = 255;
 }
