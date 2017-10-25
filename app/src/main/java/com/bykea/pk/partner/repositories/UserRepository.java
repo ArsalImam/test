@@ -727,7 +727,164 @@ public class UserRepository {
     private IResponseCallback mDataCallback = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {
-            if (object instanceof RegisterResponse) {
+            String className = object.getClass().getSimpleName();
+            switch (className) {
+                case "RegisterResponse":
+                    mUserCallback.onUserRegister((RegisterResponse) object);
+                    break;
+                case "DriverDestResponse":
+                    mUserCallback.onDropOffUpdated((DriverDestResponse) object);
+                    break;
+                case "LoginResponse":
+                    if (null != mUserCallback) {
+                        mUserCallback.onUserLogin((LoginResponse) object);
+                    }
+                    break;
+                case "LogoutResponse":
+                    if (null != mUserCallback) {
+                        mUserCallback.onPilotLogout((LogoutResponse) object);
+                    }
+                    break;
+                case "SettingsResponse":
+                    if (null != mUserCallback) {
+                        SettingsResponse settingsResponse = (SettingsResponse) object;
+                        if (settingsResponse.getData() != null && settingsResponse.getData().getSettings() != null) {
+                            AppPreferences.setSettingsVersion(settingsResponse.getSetting_version());
+                            AppPreferences.saveSettingsData(settingsResponse.getData());
+                            if (settingsResponse.getData().getSettings().getCih_range() != null) {
+                                AppPreferences.setCashInHandsRange(settingsResponse.getData().getSettings().getCih_range());
+                            }
+                            mUserCallback.onGetSettingsResponse(true);
+                        } else {
+                            mUserCallback.onGetSettingsResponse(false);
+                        }
+                    }
+                    break;
+                case "GetCitiesResponse":
+                    if (null != mUserCallback) {
+                        AppPreferences.setAvailableCities((GetCitiesResponse) object);
+                        mUserCallback.onCitiesResponse(((GetCitiesResponse) object));
+                    }
+                    break;
+                case "PilotStatusResponse":
+                    mUserCallback.onUpdateStatus((PilotStatusResponse) object);
+                    break;
+                case "AckCallResponse":
+                    mUserCallback.onAck(((AckCallResponse) object).getMessage());
+                    break;
+                case "HeatMapResponse":
+                    mUserCallback.getHeatMap((HeatMapResponse) object);
+                    break;
+                case "UpdateProfileResponse":
+                    mUserCallback.onUpdateProfile((UpdateProfileResponse) object);
+                    break;
+                case "WalletHistoryResponse":
+                    mUserCallback.getWalletData((WalletHistoryResponse) object);
+                    break;
+                case "AccountNumbersResponse":
+                    mUserCallback.getAccountNumbers((AccountNumbersResponse) object);
+                    break;
+                case "ContactNumbersResponse":
+                    mUserCallback.getContactNumbers((ContactNumbersResponse) object);
+                    break;
+                case "CheckDriverStatusResponse":
+                    mUserCallback.onRunningTrips((CheckDriverStatusResponse) object);
+                    break;
+                case "TripHistoryResponse":
+                    mUserCallback.onGetTripHistory((TripHistoryResponse) object);
+                    break;
+                case "TripMissedHistoryResponse":
+                    mUserCallback.onGetMissedTripHistory((TripMissedHistoryResponse) object);
+                    break;
+                case "GeocoderApi":
+                    mUserCallback.onReverseGeocode((GeocoderApi) object);
+                    break;
+                case "CancelRideResponse":
+                    mUserCallback.onCancelRide((CancelRideResponse) object);
+                    break;
+                case "FreeDriverResponse":
+                    mUserCallback.onFreeDriver((FreeDriverResponse) object);
+                    break;
+                case "UploadAudioFile":
+                    mUserCallback.onUploadAudioFile((UploadAudioFile) object);
+                    break;
+                case "UploadDocumentFile":
+                    mUserCallback.onUploadFile((UploadDocumentFile) object);
+                    break;
+                case "ForgotPasswordResponse":
+                    mUserCallback.onForgotPassword((ForgotPasswordResponse) object);
+                    break;
+                case "VerifyCodeResponse":
+                    mUserCallback.onCodeVerification((VerifyCodeResponse) object);
+                    break;
+                case "VerifyNumberResponse":
+                    mUserCallback.onNumberVerification((VerifyNumberResponse) object);
+                    break;
+                case "AcceptCallResponse":
+                    WebIORequestHandler.getInstance().registerChatListener();
+                    mUserCallback.onAcceptCall((AcceptCallResponse) object);
+                    break;
+                case "RejectCallResponse":
+                    mUserCallback.onRejectCall((RejectCallResponse) object);
+                    break;
+                case "ArrivedResponse":
+                    mUserCallback.onArrived((ArrivedResponse) object);
+                    break;
+                case "BeginRideResponse":
+                    mUserCallback.onBeginRide((BeginRideResponse) object);
+                    break;
+                case "EndRideResponse":
+                    WebIORequestHandler.getInstance().unRegisterChatListener();
+                    mUserCallback.onEndRide((EndRideResponse) object);
+                    break;
+                case "FeedbackResponse":
+                    mUserCallback.onFeedback((FeedbackResponse) object);
+                    break;
+                case "ConversationResponse":
+                    mUserCallback.onGetConversations((ConversationResponse) object);
+                    break;
+                case "SendMessageResponse":
+                    mUserCallback.onSendMessage((SendMessageResponse) object);
+                    break;
+                case "ConversationChatResponse":
+                    mUserCallback.onGetConversationChat((ConversationChatResponse) object);
+                    break;
+                case "UpdateConversationStatusResponse":
+                    mUserCallback.onUpdateConversationStatus((UpdateConversationStatusResponse) object);
+                    break;
+                case "GetConversationIdResponse":
+                    mUserCallback.onGetConversationId((GetConversationIdResponse) object);
+                    break;
+                case "ServiceTypeResponse":
+                    mUserCallback.onGetServiceTypes((ServiceTypeResponse) object);
+                    break;
+                case "ChangePinResponse":
+                    if (null != mUserCallback) {
+                        mUserCallback.onChangePinResponse(((ChangePinResponse) object));
+                    }
+                    break;
+                case "GetProfileResponse":
+                    if (null != mUserCallback) {
+                        mUserCallback.onGetProfileResponse(((GetProfileResponse) object));
+                    }
+                    break;
+                case "DriverStatsResponse":
+                    if (null != mUserCallback) {
+                        mUserCallback.onDriverStatsResponse(((DriverStatsResponse) object));
+                    }
+                    break;
+                case "UpdateDropOffResponse":
+                    if (null != mUserCallback) {
+                        mUserCallback.onUpdateDropOff(((UpdateDropOffResponse) object));
+                    }
+                    break;
+                case "CommonResponse":
+                    mUserCallback.onCommonResponse((CommonResponse) object);
+                    break;
+            }
+
+
+            /*if (object instanceof RegisterResponse) {
                 mUserCallback.onUserRegister((RegisterResponse) object);
             } else if (object instanceof DriverDestResponse) {
                 mUserCallback.onDropOffUpdated((DriverDestResponse) object);
@@ -838,7 +995,7 @@ public class UserRepository {
                 }
             } else if (object instanceof CommonResponse) {
                 mUserCallback.onCommonResponse((CommonResponse) object);
-            }
+            }*/
         }
 
         @Override

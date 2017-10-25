@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -440,6 +441,7 @@ public class BaseActivity extends AppCompatActivity {
         notificationDialog.setContentView(R.layout.admin_notification_dialog);
         FontTextView msg = (FontTextView) notificationDialog.findViewById(R.id.tvMessage);
         FontTextView title = (FontTextView) notificationDialog.findViewById(R.id.title);
+        msg.setMovementMethod(new ScrollingMovementMethod());
         msg.setText(notificationData.getMessage());
         title.setText(notificationData.getTitle());
         FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);

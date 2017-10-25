@@ -10,7 +10,7 @@
 # Add any project specific keep options here:
 
 # If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
+# and specify the fully qualified class name details the JavaScript interface
 # class:
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
@@ -25,8 +25,11 @@
 -keep class com.bykea.pk.partner.models.** { *; }
 -keep class com.instabug.** { *; }
 -keep class java.io.** { *; }
+-keep class com.wang.** { *; }
 -dontwarn butterknife.internal.**
 -dontwarn com.instabug.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
 -keep class **$$ViewBinder { *; }
 
 -keepclasseswithmembernames class * {

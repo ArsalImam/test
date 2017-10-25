@@ -226,6 +226,13 @@ public class Utils {
     }
 
     public static void logout(Context context) {
+        clearData();
+        HomeActivity.visibleFragmentNumber = 0;
+        ActivityStackManager.getInstance(context).startLoginActivity();
+        ((Activity) context).finish();
+    }
+
+    private static void clearData() {
         AppPreferences.saveLoginStatus(false);
         AppPreferences.setIncomingCall(false);
         AppPreferences.setCallData(null);
@@ -238,9 +245,6 @@ public class Utils {
         AppPreferences.clear();
         AppPreferences.setRegId(regId);
         AppPreferences.saveLocation(currentLat, currentLng);
-        HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.getInstance(context).startLoginActivity();
-        ((Activity) context).finish();
     }
 
     public static String formatDecimalPlaces(String value) {
@@ -650,11 +654,7 @@ public class Utils {
 
     public static void onUnauthorized(final BaseActivity mCurrentActivity) {
         if (mCurrentActivity != null) {
-            AppPreferences.setIncomingCall(false);
-            AppPreferences.setCallData(null);
-            AppPreferences.setTripStatus("");
-            AppPreferences.saveLoginStatus(false);
-            AppPreferences.setPilotData(null);
+            clearData();
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -672,11 +672,7 @@ public class Utils {
 
     public static void onUnauthorizedMockLocation(final BaseActivity mCurrentActivity) {
         if (mCurrentActivity != null) {
-            AppPreferences.setIncomingCall(false);
-            AppPreferences.setCallData(null);
-            AppPreferences.setTripStatus("");
-            AppPreferences.saveLoginStatus(false);
-            AppPreferences.setPilotData(null);
+            clearData();
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

@@ -31,7 +31,9 @@
         android:layout_gravity="center"
         android:gravity="top|start"
         android:minHeight="@dimen/_100sdp"
+        android:maxHeight="@dimen/_260sdp"
         android:padding="@dimen/_16sdp"
+        android:scrollbars="vertical"
         android:textColor="@color/textColorPrimary"
         android:textSize="@dimen/_18sdp"
         app:fontName="roboto_regular.ttf" />
