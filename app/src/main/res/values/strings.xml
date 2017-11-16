@@ -167,7 +167,7 @@
     <string name="inactive_msg">آن لائن ہو کر درخواست لیں</string>
     <string name="complain_msg">Booking History main Booking Details pay \nclick ker ke apni complaints register karain</string>
 
-   <!--Drop off driver-->
+    <!--Drop off driver-->
     <string name="pick_up_point">Pick Up</string>
     <string name="drop_off_point">Drop Off</string>
     <string name="heat_map_data">[
@@ -926,6 +926,7 @@
         }
     }
 ]</string>
+    <string name="back_to_booking_history">BACK TO BOOKING HISTORY</string>
 
 
 </resources>

@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 
 import com.bykea.pk.partner.models.data.TripHistoryData;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
@@ -182,10 +183,12 @@ public class HistoryDetailActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnProblem:
-                String params = "name=" + AppPreferences.getPilotData().getFullName() +
-                        "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
-                Utils.startCustomWebViewActivity(mCurrentActivity,
-                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
+//                String params = "name=" + AppPreferences.getPilotData().getFullName() +
+//                        "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
+//                Utils.startCustomWebViewActivity(mCurrentActivity,
+//                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
+
+                ActivityStackManager.getInstance(mCurrentActivity).startProblemActivity(mCurrentActivity,data.getTripNo());
                 break;
         }
     }

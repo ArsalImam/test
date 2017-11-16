@@ -7,6 +7,7 @@ import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
@@ -649,6 +650,17 @@ public class RestRequestHandler {
         }
         return errorMsg;
     }
+
+    public void postProblem(Context context, String selectedReason, String tripId,
+                            String email, String details, IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<ProblemPostResponse> restCall = mRestClient.postProblem(AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),selectedReason, tripId,email,details,"d");
+        restCall.enqueue(new GenericRetrofitCallBack<ProblemPostResponse>(onResponseCallBack));
+
+    }
+
 
 
     public void callGeoCoderApi(final String latitude, final String longitude,

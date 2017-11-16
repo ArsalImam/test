@@ -334,20 +334,17 @@ public class HomeFragment extends Fragment {
                 if (!mCurrentActivity.isDialogShown() && getView() != null) {
                     mCurrentActivity.setDialogShown(true);
                     if (mCurrentActivity.getIntent().getBooleanExtra("isCanceledByAdmin", false)) {
+                        String message = mCurrentActivity.getIntent().getStringExtra("cancelMsg");
                         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
                                 new StringCallBack() {
                                     @Override
-                                    public void onCallBack(String msg) {
-
-                                    }
-                                }, null, "Booking Cancelled", "Admin has cancelled the Booking");
+                                    public void onCallBack(String msg) {}
+                                }, null, "Booking Cancelled", StringUtils.isNotBlank(message) ? message : "");
                     } else {
                         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
                                 new StringCallBack() {
                                     @Override
-                                    public void onCallBack(String msg) {
-
-                                    }
+                                    public void onCallBack(String msg) {}
                                 }, null, "Booking Cancelled", "Passenger has cancelled the Trip");
                     }
                 }
@@ -544,6 +541,7 @@ public class HomeFragment extends Fragment {
                                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                                     AppPreferences.setAvailableStatus(false);
                                     AppPreferences.setDriverDestination(null);
+
 //                                    destinationSet(false);
                                     repository.requestUpdateStatus(mCurrentActivity, handler, false);
                                 }

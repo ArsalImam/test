@@ -278,8 +278,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                 }
             });
-
-
         }
     };
 
@@ -485,7 +483,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             properties.put("TripID", callData.getTripId());
             properties.put("type", callData.getCallType());
 
-            Utils.logEvent(mCurrentActivity,callData.getPassId(),Constants.RIDE_COMPLETE.replace("_R_", callData.getCallType()),properties);
+            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_COMPLETE.replace("_R_", callData.getCallType()), properties);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -826,8 +824,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     updateCamera(mLocBearing);
                     // ANIMATE DRIVER MARKER TO THE TARGET LOCATION.
                     if (isLastAnimationComplete) {
-                        LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                        animateMarker(latLng, mPreviousLocation.bearingTo(mCurrentLocation));
+                        if(Utils.calculateDistance(driverMarker.getPosition().latitude,
+                                driverMarker.getPosition().longitude,mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()) >=10){
+                            LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                            animateMarker(latLng, mPreviousLocation.bearingTo(mCurrentLocation));
+                        }
                     }
                 }
             }
@@ -843,6 +844,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         driverMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
                 Utils.getMapIcon(callData.getCallType())))
                 .position(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude())));
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                return true;
+            }
+        });
     }
 
     private void updateDropOffMarker(String latitude, String longitude) {
@@ -1292,7 +1299,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 mLocBearing = intent.getStringExtra("bearing");
 
 
-                //THIS CHECK IS TO SHOW DROP OF ICON WHEN DRIVER PRESS ARIVED BUTTON
+                //THIS CHECK IS TO SHOW DROP OFF ICON WHEN DRIVER PRESS ARRIVED BUTTON
                 if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                     if (StringUtils.isNotBlank(callData.getEndLat()) &&
                             StringUtils.isNotBlank(callData.getEndLng())) {
@@ -1348,10 +1355,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     @Override
                     public void run() {
                         if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)) {
-                            cancelByPassenger(false);
+                            cancelByPassenger(false, "");
                         }
                         if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
-                            cancelByPassenger(true);
+                            String message = intent.getStringExtra("msg");
+                            cancelByPassenger(true, message);
                         }
                         if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_COMPLETE_BY_ADMIN)) {
                             onCompleteByAdmin(intent.getStringExtra("msg"));
@@ -1382,10 +1390,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
 
-    private void cancelByPassenger(boolean isCanceledByAdmin) {
+    private void cancelByPassenger(boolean isCanceledByAdmin, String cancelMsg) {
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(isCanceledByAdmin);
+        ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(isCanceledByAdmin, cancelMsg);
         mCurrentActivity.finish();
     }
 
@@ -1460,7 +1468,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             data.put("CancelReason", cancelReason);
                             data.put("City", AppPreferences.getPilotData().getCity().getName());
 
-                            Utils.logEvent(mCurrentActivity,callData.getPassId(),Constants.CANCEL_TRIP,data);
+                            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.CANCEL_TRIP, data);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -1595,7 +1603,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     public void run() {
                         try {
                             if (response.getMessage().equalsIgnoreCase("Trip Not Found")) {
-                                cancelByPassenger(false);
+                                cancelByPassenger(false, "");
                             } else {
                                 if (shouldUpdateTripData(response.getData().getStatus())) {
                                     AppPreferences.setCallData(response.getData());

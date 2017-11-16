@@ -1,0 +1,96 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:paddingTop="@dimen/_40sdp"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/_15sdp"
+        android:paddingRight="@dimen/_15sdp">
+
+        <LinearLayout
+            android:id="@+id/text_lay"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:orientation="vertical">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:textSize="@dimen/_30sdp"
+                android:textStyle="bold"
+                app:fontName="roboto_bold.ttf"
+                android:textColor="@color/colorAccent"
+                android:padding="@dimen/_9sdp"
+                android:text="THANK YOU" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/_9sdp"
+                android:textSize="@dimen/_18sdp"
+                android:lineSpacingExtra="@dimen/_20sdp"
+                android:text="Hamara Numainda Apse jald\nHee Rabta Karaiga" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/editText_lay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/square_outline_bg"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:padding="@dimen/_9sdp"
+                android:textSize="@dimen/textsize.body1" />
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/etDetails"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_130sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:background="@drawable/square_outline_bg"
+                android:gravity="left"
+                android:hint="Enter Details"
+                android:inputType="textMultiLine"
+                android:minLines="10"
+                android:overScrollMode="always"
+                android:padding="@dimen/_9sdp"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/textsize.body1"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <com.bykea.pk.partner.widgets.FontButton
+            android:id="@+id/submitBtn"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:background="@drawable/button_background_green_round"
+            android:gravity="center"
+            android:text="EMAIL"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize.medium"
+            app:fontName="roboto_bold.ttf" />
+
+    </LinearLayout>
+
+</FrameLayout>

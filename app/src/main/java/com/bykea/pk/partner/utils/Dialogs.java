@@ -131,8 +131,8 @@ public enum Dialogs {
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_logout);
 
-        ((FontTextView) mDialog.findViewById(R.id.positive)).setOnClickListener(positive);
-        ((FontTextView) mDialog.findViewById(R.id.negative)).setOnClickListener(negative);
+        mDialog.findViewById(R.id.positive).setOnClickListener(positive);
+        mDialog.findViewById(R.id.negative).setOnClickListener(negative);
         ((FontTextView) mDialog.findViewById(R.id.message)).setText(message);
 
         showDialog();
@@ -150,11 +150,11 @@ public enum Dialogs {
             mDialog.setCancelable(false);
 
         if (negative == null) {
-            ((FontTextView) mDialog.findViewById(R.id.negativeBtn)).setVisibility(View.GONE);
+            mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
         } else {
-            ((FontTextView) mDialog.findViewById(R.id.negativeBtn)).setOnClickListener(negative);
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(negative);
         }
-        ((FontTextView) mDialog.findViewById(R.id.positiveBtn)).setOnClickListener(positive);
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
         ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(message);
         ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
 
@@ -182,11 +182,11 @@ public enum Dialogs {
         dialog.setContentView(R.layout.dialog_alert);
         dialog.setCancelable(false);
         if (negative == null) {
-            ((FontTextView) dialog.findViewById(R.id.negativeBtn)).setVisibility(View.GONE);
+            dialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
         } else {
-            ((FontTextView) dialog.findViewById(R.id.negativeBtn)).setOnClickListener(negative);
+            dialog.findViewById(R.id.negativeBtn).setOnClickListener(negative);
         }
-        ((FontTextView) dialog.findViewById(R.id.positiveBtn)).setOnClickListener(new View.OnClickListener() {
+        dialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -229,7 +229,7 @@ public enum Dialogs {
                 radioGroup.addView(radioButton, rprms);
             }
         }
-        ((FontTextView) mDialog.findViewById(R.id.positiveBtn)).setOnClickListener(new View.OnClickListener() {
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (radioGroup.getCheckedRadioButtonId() != -1) {
@@ -252,7 +252,7 @@ public enum Dialogs {
         mDialog.setContentView(R.layout.dialog_confirm_arrival);
         RadioGroup optionGroup = (RadioGroup) mDialog.findViewById(R.id.optionBtn);
 
-        ((FontTextView) mDialog.findViewById(R.id.positiveBtn)).setOnClickListener(positive);
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
 
 
         showDialog();
@@ -283,8 +283,8 @@ public enum Dialogs {
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_status);
 
-        ((FontTextView) mDialog.findViewById(R.id.positive)).setOnClickListener(positive);
-        ((FontTextView) mDialog.findViewById(R.id.negative)).setOnClickListener(negative);
+        mDialog.findViewById(R.id.positive).setOnClickListener(positive);
+        mDialog.findViewById(R.id.negative).setOnClickListener(negative);
 
         showDialog();
     }
@@ -298,7 +298,6 @@ public enum Dialogs {
         mDialog.setOnCancelListener(cancelListener);
         showDialog();
     }
-
 
     public void showLocationSettings(final Context context, final int requestCode) {
         dismissDialog();
@@ -362,7 +361,6 @@ public enum Dialogs {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void showItems(Context context, String[] items, final IntegerCallBack listener) {
@@ -385,7 +383,6 @@ public enum Dialogs {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.top_up_dialog);
-
 
         FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
         FontTextView msg = (FontTextView) mDialog.findViewById(R.id.tvMessage);
@@ -436,7 +433,6 @@ public enum Dialogs {
 
         okIv.setOnClickListener(onClickListener);
 
-
         showDialog();
 
     }
@@ -447,9 +443,9 @@ public enum Dialogs {
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_alert);
         mDialog.setCancelable(false);
-        ((FontTextView) mDialog.findViewById(R.id.negativeBtn)).setVisibility(View.GONE);
+        mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
 
-        ((FontTextView) mDialog.findViewById(R.id.positiveBtn)).setOnClickListener(new View.OnClickListener() {
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
@@ -470,9 +466,9 @@ public enum Dialogs {
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_alert);
         mDialog.setCancelable(false);
-        ((FontTextView) mDialog.findViewById(R.id.negativeBtn)).setVisibility(View.GONE);
+        mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
 
-        ((FontTextView) mDialog.findViewById(R.id.positiveBtn)).setOnClickListener(new View.OnClickListener() {
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismissDialog();
@@ -483,6 +479,4 @@ public enum Dialogs {
 
         showDialog();
     }
-
-
 }

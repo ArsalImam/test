@@ -296,25 +296,51 @@ public class LocationService extends Service {
     private UserDataHandler handler = new UserDataHandler() {
         @Override
         public void onError(int errorCode, String errorMessage) {
-            if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
-                sendBroadcast(locationIntent);
-            } else if (errorCode == HTTPStatus.FENCE_ERROR) {
-                AppPreferences.setOutOfFence(true);
-                AppPreferences.setAvailableStatus(false);
-                mBus.post(Keys.INACTIVE_FENCE);
-            } else if (errorCode == HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT) {
-                if (StringUtils.isNotBlank(errorMessage)) {
-                    AppPreferences.setWalletIncreasedError(errorMessage);
-                }
-                AppPreferences.setWalletAmountIncreased(true);
-                AppPreferences.setAvailableStatus(false);
-                mBus.post(Keys.INACTIVE_FENCE);
-            } else if (errorCode == HTTPStatus.FENCE_SUCCESS) {
-                AppPreferences.setOutOfFence(false);
-                AppPreferences.setAvailableStatus(true);
-                mBus.post(Keys.INACTIVE_FENCE);
+            switch (errorCode) {
+                case HTTPStatus.UNAUTHORIZED:
+                    Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
+                    sendBroadcast(locationIntent);
+                    break;
+                case HTTPStatus.FENCE_ERROR:
+                    AppPreferences.setOutOfFence(true);
+                    AppPreferences.setAvailableStatus(false);
+                    mBus.post(Keys.INACTIVE_FENCE);
+                    break;
+                case HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT:
+                    if (StringUtils.isNotBlank(errorMessage)) {
+                        AppPreferences.setWalletIncreasedError(errorMessage);
+                    }
+                    AppPreferences.setWalletAmountIncreased(true);
+                    AppPreferences.setAvailableStatus(false);
+                    mBus.post(Keys.INACTIVE_FENCE);
+                    break;
+                case HTTPStatus.FENCE_SUCCESS:
+                    AppPreferences.setOutOfFence(false);
+                    AppPreferences.setAvailableStatus(true);
+                    mBus.post(Keys.INACTIVE_FENCE);
+                    break;
             }
+
+
+//            if (errorCode == HTTPStatus.UNAUTHORIZED) {
+//                Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
+//                sendBroadcast(locationIntent);
+//            } else if (errorCode == HTTPStatus.FENCE_ERROR) {
+//                AppPreferences.setOutOfFence(true);
+//                AppPreferences.setAvailableStatus(false);
+//                mBus.post(Keys.INACTIVE_FENCE);
+//            } else if (errorCode == HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT) {
+//                if (StringUtils.isNotBlank(errorMessage)) {
+//                    AppPreferences.setWalletIncreasedError(errorMessage);
+//                }
+//                AppPreferences.setWalletAmountIncreased(true);
+//                AppPreferences.setAvailableStatus(false);
+//                mBus.post(Keys.INACTIVE_FENCE);
+//            } else if (errorCode == HTTPStatus.FENCE_SUCCESS) {
+//                AppPreferences.setOutOfFence(false);
+//                AppPreferences.setAvailableStatus(true);
+//                mBus.post(Keys.INACTIVE_FENCE);
+//            }
         }
     };
 

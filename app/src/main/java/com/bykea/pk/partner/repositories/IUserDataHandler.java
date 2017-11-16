@@ -25,6 +25,7 @@ import com.bykea.pk.partner.models.response.HeatMapResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
@@ -132,6 +133,7 @@ public interface IUserDataHandler {
 
     void onCitiesResponse(GetCitiesResponse response);
 
+    void onProblemPosted(ProblemPostResponse response);
 
     void onError(int errorCode, String errorMessage);
 }

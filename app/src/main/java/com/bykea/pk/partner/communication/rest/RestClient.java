@@ -17,12 +17,12 @@ import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
 
-public class RestClient {
+class RestClient {
     private static IRestClient retrofitCalls;
     private static IRestClient retrofitGoogleApiCalls;
 
 
-    public static IRestClient getClient(Context context) {
+    static IRestClient getClient(Context context) {
         if (retrofitCalls == null) {
 
             OkHttpClient okHttpClient = new OkHttpClient();
@@ -73,7 +73,7 @@ public class RestClient {
         return retrofitCalls;
     }
 */
-    public static IRestClient getGooglePlaceApiClient() {
+    static IRestClient getGooglePlaceApiClient() {
         if (retrofitGoogleApiCalls == null) {
             Retrofit client = new Retrofit.Builder()
                     .baseUrl(ApiTags.GOOGLE_API_BASE_URL)

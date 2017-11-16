@@ -22,6 +22,8 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
+import com.bykea.pk.partner.ui.activities.PostProblemActivity;
+import com.bykea.pk.partner.ui.activities.ProblemActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -54,10 +56,11 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin) {
+    public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin, String cancelMsg) {
         Intent intent = new Intent(mContext, HomeActivity.class);
         intent.putExtra("isCancelledTrip", true);
         intent.putExtra("isCanceledByAdmin", isCanceledByAdmin);
+        intent.putExtra("cancelMsg",cancelMsg);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mContext.startActivity(intent);
@@ -99,9 +102,11 @@ public class ActivityStackManager {
     }
 
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm) {
-        if (AppPreferences.getAvailableStatus() && Utils.isGpsEnable(mContext)
+        if (AppPreferences.getAvailableStatus()
+                && Utils.isGpsEnable(mContext)
                 && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
                 && Utils.isNotDelayed(callData.getData().getSentTime())) {
+
             AppPreferences.setCallData(callData.getData());
             Intent callIntent = new Intent(DriverApp.getContext(), CallingActivity.class);
             callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -159,6 +164,18 @@ public class ActivityStackManager {
         returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE,toolBarTitle);
         returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE,toolBarTitle);
         mCurrentActivity.startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+    }
 
+    public void startProblemPostActivity(Context context,String tripId, String reason) {
+        Intent intent = new Intent(context,PostProblemActivity.class);
+        intent.putExtra("TRIP_ID",tripId);
+        intent.putExtra("REASON",reason);
+        context.startActivity(intent);
+    }
+
+    public void startProblemActivity(Context context,String tripNo) {
+        Intent intent = new Intent(context,ProblemActivity.class);
+        intent.putExtra("TRIP_ID",tripNo);
+        context.startActivity(intent);
     }
 }

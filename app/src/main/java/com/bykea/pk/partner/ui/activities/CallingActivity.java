@@ -373,7 +373,7 @@ public class CallingActivity extends BaseActivity {
                                 Utils.setCallIncomingState();
                                 AppPreferences.setTripStatus(TripStatus.ON_FREE);
                                 stopSound();
-                                ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(false);
+                                ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(false, "");
                                 mCurrentActivity.finish();
                             }
                         }
