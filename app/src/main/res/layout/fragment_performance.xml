@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
     <ProgressBar
@@ -16,8 +17,8 @@
         android:id="@+id/data_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="vertical">
+
 
 
         <com.bykea.pk.partner.widgets.FontTextView
@@ -34,163 +35,13 @@
         <View
             android:id="@+id/toolbarLine"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
+            android:layout_height="1dp"
             android:background="@color/secondaryColorLight" />
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/performanceList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/_26sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:paddingRight="@dimen/_10sdp"
-                android:paddingTop="@dimen/_26sdp">
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvAcceptanceRate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="N/A"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_28sdp"
-                    app:fontName="roboto_bold.ttf" />
-
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Acceptance"
-                    android:textColor="@color/textColorPerformance"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="roboto_bold.ttf" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="@dimen/_1sdp"
-                android:layout_height="match_parent"
-                android:background="@color/secondaryColorLight" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/_26sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:paddingRight="@dimen/_10sdp"
-                android:paddingTop="@dimen/_26sdp">
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvRating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="N/A"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_28sdp"
-                    app:fontName="roboto_bold.ttf" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Rating"
-                    android:textColor="@color/textColorPerformance"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="roboto_bold.ttf" />
-            </LinearLayout>
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/secondaryColorLight" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/_26sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:paddingRight="@dimen/_10sdp"
-                android:paddingTop="@dimen/_26sdp">
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="N/A"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_28sdp"
-                    app:fontName="roboto_bold.ttf" />
-
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Time"
-                    android:textColor="@color/textColorPerformance"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="roboto_bold.ttf" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="@dimen/_1sdp"
-                android:layout_height="match_parent"
-                android:background="@color/secondaryColorLight" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/_26sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:paddingRight="@dimen/_10sdp"
-                android:paddingTop="@dimen/_26sdp">
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvRideCounts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="N/A"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_28sdp"
-                    app:fontName="roboto_bold.ttf" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Rides"
-                    android:textColor="@color/textColorPerformance"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="roboto_bold.ttf" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/secondaryColorLight" />
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

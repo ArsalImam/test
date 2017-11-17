@@ -606,7 +606,7 @@ public class HomeFragment extends Fragment {
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
-            if (mCurrentActivity != null && getView() != null) {
+            if (mCurrentActivity != null && getView() != null && mGoogleMap != null) {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -723,13 +723,11 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void run() {
                         if (response.isSuccess() && response.getData() != null && getView() != null) {
-                            if (StringUtils.isNotBlank(response.getData().getRating())
-                                    && StringUtils.isNotBlank(response.getData().getAcceptanceRate())
-                                    && StringUtils.isNotBlank(response.getData().getTrips())) {
+                            if (StringUtils.isNotBlank(response.getData().getRating())) {
                                 PilotData data = AppPreferences.getPilotData();
                                 data.setRating(response.getData().getRating());
-                                data.setAcceptance_rate(Math.round(Double.parseDouble(response.getData().getAcceptanceRate())) + "");
-                                data.setVerified_trips(response.getData().getTrips());
+//                                data.setAcceptance_rate(Math.round(Double.parseDouble(response.getData().getAcceptanceRate())) + "");
+//                                data.setVerified_trips(response.getData().getTrips());
                                 AppPreferences.setPilotData(data);
                                 AppPreferences.setStatsApiCallRequired(false);
                                 AppPreferences.setLastStatsApiCallTime(System.currentTimeMillis());

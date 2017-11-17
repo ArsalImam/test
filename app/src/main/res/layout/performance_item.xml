@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/_26sdp"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
+        android:paddingTop="@dimen/_26sdp">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="N/A"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_28sdp"
+            app:fontName="roboto_bold.ttf" />
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Acceptance"
+            android:textColor="@color/textColorPerformance"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="roboto_bold.ttf" />
+    </LinearLayout>
+
+</LinearLayout>

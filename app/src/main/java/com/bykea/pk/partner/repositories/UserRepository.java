@@ -665,7 +665,7 @@ public class UserRepository {
 
     }
 
-    public void requestDriverStats(Context context, IUserDataHandler handler) {
+    public void requestDriverStats(Context context, IUserDataHandler handler, boolean isHome) {
         mContext = context;
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
@@ -673,6 +673,9 @@ public class UserRepository {
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("token_id", AppPreferences.getAccessToken());
             jsonObject.put("app_version", Utils.getVersion(mContext));
+            if (isHome) {
+                jsonObject.put("home", true);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -729,14 +732,14 @@ public class UserRepository {
                             String tripId, String email, String details) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.postProblem(context, selectedReason, tripId,email,details, mDataCallback);
+        mRestRequestHandler.postProblem(context, selectedReason, tripId, email, details, mDataCallback);
     }
 
     private IResponseCallback mDataCallback = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {
             String className = object.getClass().getSimpleName();
-            if(null != mUserCallback) {
+            if (null != mUserCallback) {
                 switch (className) {
                     case "RegisterResponse":
                         mUserCallback.onUserRegister((RegisterResponse) object);
@@ -878,8 +881,8 @@ public class UserRepository {
                         mUserCallback.onCommonResponse((CommonResponse) object);
                         break;
                 }
-            }else{
-                Utils.redLog("UserRepo","mUserCallback is Null");
+            } else {
+                Utils.redLog("UserRepo", "mUserCallback is Null");
             }
 
 
