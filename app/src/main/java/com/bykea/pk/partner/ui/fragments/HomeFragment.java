@@ -456,7 +456,7 @@ public class HomeFragment extends Fragment {
 
             initViews();
             if (Utils.isStatsApiCallRequired()) {
-                repository.requestDriverStats(mCurrentActivity, handler);
+                repository.requestDriverStats(mCurrentActivity, handler,true);
             }
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
@@ -539,8 +539,8 @@ public class HomeFragment extends Fragment {
                                 Dialogs.INSTANCE.dismissDialog();
                                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                    AppPreferences.setAvailableStatus(false);
-                                    AppPreferences.setDriverDestination(null);
+//                                    AppPreferences.setAvailableStatus(false);
+//                                    AppPreferences.setDriverDestination(null);
 
 //                                    destinationSet(false);
                                     repository.requestUpdateStatus(mCurrentActivity, handler, false);
@@ -550,7 +550,7 @@ public class HomeFragment extends Fragment {
                     } else {
                         if (Connectivity.isConnectedFast(mCurrentActivity)) {
                             Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                            AppPreferences.setAvailableStatus(true);
+//                            AppPreferences.setAvailableStatus(true);
                             repository.requestUpdateStatus(mCurrentActivity, handler, true);
                         }
                     }
@@ -778,6 +778,8 @@ public class HomeFragment extends Fragment {
             }
         }
 
+        /*
+        * Unused*/
         @Override
         public void onDropOffUpdated(final DriverDestResponse commonResponse) {
             mCurrentActivity.runOnUiThread(new Runnable() {
@@ -800,6 +802,7 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
                         if (pilotStatusResponse.isSuccess()) {
+                            AppPreferences.setAvailableStatus(!AppPreferences.getAvailableStatus());
                             if (AppPreferences.getAvailableStatus()) {
                                 if (AppPreferences.isWalletAmountIncreased()) {
                                     AppPreferences.setWalletAmountIncreased(false);

@@ -212,7 +212,7 @@ interface IRestClient {
                                           @Field("trip_id") String tripID,
                                           @Field("email") String email,
                                           @Field("details") String details,
-                                          @Field("type") String type);
+                                          @Field("user_type") String type);
 
 
 

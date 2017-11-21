@@ -72,6 +72,12 @@ public class ProblemActivity extends BaseActivity {
         ivBackBtn.setImageDrawable(setTint(drawable,ContextCompat.getColor(mCurrentActivity,R.color.white)));
         tvTitle.setTextColor(ContextCompat.getColor(mCurrentActivity,R.color.white));
         tvTitle.setText(tripId);
+        ivBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     public void loadFragment(Fragment fragment, boolean isMainFrag) {

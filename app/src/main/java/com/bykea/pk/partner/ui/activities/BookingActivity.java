@@ -250,6 +250,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     if (callData != null && StringUtils.isNotBlank(callData.getStartLat())
                             && StringUtils.isNotBlank(callData.getStartLng())) {
                         updatePickupMarker(callData.getStartLat(), callData.getStartLng());
+
 //                        TrackingMap.addMarker(mCurrentActivity, mLocBearing, mGoogleMap, Double.parseDouble(callData.getStartLat())
 //                                , Double.parseDouble(callData.getStartLng()), R.drawable.ic_destination_temp);
                         LatLngBounds bounds;
@@ -261,6 +262,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         bounds = builder.build();
                         zoomFirstTime(new LatLng(AppPreferences.getLatitude(),
                                 AppPreferences.getLongitude()));
+                        setPickupBounds();
+
 
 
                         if (isResume) {
@@ -824,8 +827,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     updateCamera(mLocBearing);
                     // ANIMATE DRIVER MARKER TO THE TARGET LOCATION.
                     if (isLastAnimationComplete) {
-                        if(Utils.calculateDistance(driverMarker.getPosition().latitude,
-                                driverMarker.getPosition().longitude,mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()) >=10){
+                        if (Utils.calculateDistance(driverMarker.getPosition().latitude,
+                                driverMarker.getPosition().longitude, mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()) >= 10) {
                             LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                             animateMarker(latLng, mPreviousLocation.bearingTo(mCurrentLocation));
                         }
@@ -872,6 +875,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_temp))
                     .position(new LatLng(Double.parseDouble(latitude),
                             Double.parseDouble(longitude))));
+            /*
+            * setting bounds for pickup marker*/
+//            setPickupBounds();
         }
         /*if (!AppPreferences.getTripStatus(mCurrentActivity).equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
             if (StringUtils.isNotBlank(callData.getPassLat()) && StringUtils.isNotBlank(callData.getPassLng())) {
@@ -1093,8 +1099,69 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     new LatLng(Double.parseDouble(callData.getStartLat()),
                             Double.parseDouble(callData.getStartLng())), Routing.pickupRoute);
 
+
         }
     }
+
+    private void setPickupBounds() {
+        /*int padding = 80;
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(driverMarker.getPosition());
+        builder.include(pickUpMarker.getPosition());
+        LatLngBounds bounds = builder.build();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        mGoogleMap.moveCamera(cu);*/
+
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
+        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._60sdp);
+        mGoogleMap.setPadding(padding, padding, padding, padding);
+        mGoogleMap.moveCamera(cu);
+//        mGoogleMap.setPadding(0, 0, 0, 0);
+    }
+
+    private LatLngBounds getCurrentLatLngBounds() {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        if (pickUpMarker != null) {
+            builder.include(pickUpMarker.getPosition());
+        }
+        builder.include(driverMarker.getPosition());
+
+
+        LatLngBounds tmpBounds = builder.build();
+        /* Add 2 points 1000m northEast and southWest of the center.
+         * They increase the bounds only, if they are not already larger
+         * than this.
+         * 1000m on the diagonal translates into about 709m to each direction. */
+        LatLng center = tmpBounds.getCenter();
+        LatLng northEast = move(center, 709, 709);
+        LatLng southWest = move(center, -709, -709);
+
+        builder.include(southWest);
+        builder.include(northEast);
+        return builder.build();
+    }
+
+    private static LatLng move(LatLng startLL, double toNorth, double toEast) {
+        double lonDiff = meterToLongitude(toEast, startLL.latitude);
+        double latDiff = meterToLatitude(toNorth);
+        return new LatLng(startLL.latitude + latDiff, startLL.longitude
+                + lonDiff);
+    }
+
+    private static final double EARTHRADIUS = 6366198;
+
+    private static double meterToLongitude(double meterToEast, double latitude) {
+        double latArc = Math.toRadians(latitude);
+        double radius = Math.cos(latArc) * EARTHRADIUS;
+        double rad = meterToEast / radius;
+        return Math.toDegrees(rad);
+    }
+
+    private static double meterToLatitude(double meterToNorth) {
+        double rad = meterToNorth / EARTHRADIUS;
+        return Math.toDegrees(rad);
+    }
+
 
     private void drawRouteToDropOff() {
         if (StringUtils.isNotBlank(callData.getStartLat())
@@ -1184,6 +1251,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         }
 
                     }
+
+//                    if (null != mCurrentLocation && callData != null && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+//                        if (mCurrentActivity != null && mGoogleMap != null) {
+//                            setPickupBounds();
+//                        }
+//                    }
 
                     if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute) {
                         if (mCurrentActivity != null && mGoogleMap != null) {
