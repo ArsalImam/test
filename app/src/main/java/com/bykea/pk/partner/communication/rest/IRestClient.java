@@ -11,6 +11,7 @@ import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -30,6 +31,8 @@ import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Fields;
 import com.squareup.okhttp.RequestBody;
 
+import java.util.ArrayList;
+
 import retrofit.Call;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
@@ -38,6 +41,7 @@ import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
 import retrofit.http.Query;
+import retrofit.http.Url;
 
 
 interface IRestClient {
@@ -182,11 +186,11 @@ interface IRestClient {
 
     @FormUrlEncoded
     @POST(ApiTags.SET_DRIVER_DROP_OFF)
-    Call<DriverDestResponse>setDriverDroppOff(@Field("_id") String _id,
-                                              @Field("token_id") String token_id,
-                                              @Field("eLat") String lat,
-                                              @Field("eLng") String lng,
-                                              @Field("eAdd") String address);
+    Call<DriverDestResponse> setDriverDroppOff(@Field("_id") String _id,
+                                               @Field("token_id") String token_id,
+                                               @Field("eLat") String lat,
+                                               @Field("eLng") String lng,
+                                               @Field("eAdd") String address);
 
 
     @GET(ApiTags.GET_PROFILE_API)
@@ -196,6 +200,9 @@ interface IRestClient {
 
     @GET(ApiTags.GET_CITIES)
     Call<GetCitiesResponse> getCities();
+
+    @GET
+    Call<ArrayList<HeatMapUpdatedResponse>> getHeatMap(@Url String url);
 
 
     @GET(ApiTags.PLACES_DISTANCEMATRIX_EXT_URL)

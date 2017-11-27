@@ -7,8 +7,10 @@ import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.AccountNumbersResponse;
@@ -35,11 +37,13 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.squareup.okhttp.internal.Util;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -598,6 +602,28 @@ public class RestRequestHandler {
         requestCall.enqueue(new GenericRetrofitCallBack<GetCitiesResponse>(onResponseCallBack));
     }
 
+    public synchronized void requestHeatMap(Context context, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getBykea2ApiClient(mContext);
+        String url = ApiTags.HEAT_MAP_2.replace("CITY_NAME", StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
+        Call<ArrayList<HeatMapUpdatedResponse>> requestCall = mRestClient.getHeatMap(url);
+        requestCall.enqueue(new Callback<ArrayList<HeatMapUpdatedResponse>>() {
+            @Override
+            public void onResponse(Response<ArrayList<HeatMapUpdatedResponse>> response, Retrofit retrofit) {
+                if (response != null && response.isSuccess() && response.body() != null) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onResponse(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Utils.redLog("onError", "HeatMapUpdatedResponse");
+            }
+        });
+    }
 
 
     private class GenericRetrofitCallBack<T extends CommonResponse> implements Callback<T> {
@@ -627,11 +653,11 @@ public class RestRequestHandler {
     }
 
     public void requestDriverDropOff(Context context, IResponseCallback onResponseCallBack,
-                                     String lat, String lng, String address){
+                                     String lat, String lng, String address) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
         Call<DriverDestResponse> requestCall = mRestClient.setDriverDroppOff(AppPreferences.getDriverId()
-                ,AppPreferences.getAccessToken(),lat,lng,address);
+                , AppPreferences.getAccessToken(), lat, lng, address);
         requestCall.enqueue(new GenericRetrofitCallBack<DriverDestResponse>(onResponseCallBack));
     }
 
@@ -667,7 +693,6 @@ public class RestRequestHandler {
         restCall.enqueue(new GenericRetrofitCallBack<ProblemPostResponse>(onResponseCallBack));
 
     }
-
 
 
     public void callGeoCoderApi(final String latitude, final String longitude,

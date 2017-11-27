@@ -239,7 +239,7 @@ public class HomeFragment extends Fragment {
         String connectionStatus = Connectivity.getConnectionStatus(mCurrentActivity);
         tvConnectionStatus.setText(connectionStatus);
         tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable._good_sattelite, 0, 0, 0);
-        switch (connectionStatus){
+        switch (connectionStatus) {
             case "Unknown Status":
                 tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
                 break;
@@ -289,8 +289,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onFinish() {
             setConnectionStatus();
-            if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
-                repository.requestHeatMapData(mCurrentActivity, handler);
+            getHeatMapData();
             countDownTimer.start();
         }
     };
@@ -339,13 +338,15 @@ public class HomeFragment extends Fragment {
                         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
                                 new StringCallBack() {
                                     @Override
-                                    public void onCallBack(String msg) {}
+                                    public void onCallBack(String msg) {
+                                    }
                                 }, null, "Booking Cancelled", StringUtils.isNotBlank(message) ? message : "");
                     } else {
                         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
                                 new StringCallBack() {
                                     @Override
-                                    public void onCallBack(String msg) {}
+                                    public void onCallBack(String msg) {
+                                    }
                                 }, null, "Booking Cancelled", "Passenger has cancelled the Trip");
                     }
                 }
@@ -376,7 +377,7 @@ public class HomeFragment extends Fragment {
         }).startAsyncTask();
 
 
-        //TODO Remove test code
+        /*//TODO Remove test code
         LatLng southWest = new LatLng(24.9334716796875, 66.95068359375);
         LatLng northEast = new LatLng(24.8126220703125, 67.115478515625);
         LatLng southEast = new LatLng(24.9334716796875, 67.115478515625);
@@ -393,7 +394,7 @@ public class HomeFragment extends Fragment {
         Bitmap icon = icnGenerator.makeIcon("TIME 1PM TO 3PM");
         MarkerOptions markerOptions = new MarkerOptions().position(builder.build().getCenter())
                 .icon(BitmapDescriptorFactory.fromBitmap(icon)).anchor(0.5f, 0.5f);
-        mGoogleMap.addMarker(markerOptions);
+        mGoogleMap.addMarker(markerOptions);*/
 
 
     }
@@ -446,8 +447,7 @@ public class HomeFragment extends Fragment {
 
         Notifications.removeAllNotifications(mCurrentActivity);
         countDownTimer.start();
-        if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
-            repository.requestHeatMapData(mCurrentActivity, handler);
+        getHeatMapData();
 
         Utils.setCallIncomingState();
         IntentFilter intentFilter = new IntentFilter();
@@ -457,11 +457,17 @@ public class HomeFragment extends Fragment {
 
             initViews();
             if (Utils.isStatsApiCallRequired()) {
-                repository.requestDriverStats(mCurrentActivity, handler,true);
+                repository.requestDriverStats(mCurrentActivity, handler, true);
             }
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
         super.onResume();
+    }
+
+    private void getHeatMapData() {
+        if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus()) {
+            repository.requestHeatMapData(mCurrentActivity, handler);
+        }
     }
 
     @Override
@@ -657,10 +663,10 @@ public class HomeFragment extends Fragment {
             myRangeBar.setEnabled(true);
 
             rl_main_destination.setVisibility(View.VISIBLE);
-            if(AppPreferences.getDriverDestination() == null){
+            if (AppPreferences.getDriverDestination() == null) {
                 rl_setDestination.setVisibility(View.VISIBLE);
                 rl_destinationSelected.setVisibility(View.GONE);
-            }else{
+            } else {
                 rl_setDestination.setVisibility(View.GONE);
                 rl_destinationSelected.setVisibility(View.VISIBLE);
                 tv_destinationName.setText(AppPreferences.getDriverDestination().address);
@@ -821,7 +827,7 @@ public class HomeFragment extends Fragment {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //TODO updateHeatMapUI(data);
+                        updateHeatMapUI(heatMapResponse);
                     }
                 });
             }
@@ -858,7 +864,7 @@ public class HomeFragment extends Fragment {
                     } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) || action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
                         AppPreferences.setDriverDestination(null);
                         setStatusBtn();
-                    }else if (action.equalsIgnoreCase(Keys.ACTIVE_FENCE)) {
+                    } else if (action.equalsIgnoreCase(Keys.ACTIVE_FENCE)) {
                         setStatusBtn();
                     }
                 }

@@ -20,6 +20,7 @@ import retrofit.Retrofit;
 class RestClient {
     private static IRestClient retrofitCalls;
     private static IRestClient retrofitGoogleApiCalls;
+    private static IRestClient bykea2retrofitCalls;
 
 
     static IRestClient getClient(Context context) {
@@ -52,27 +53,26 @@ class RestClient {
     }
 
 
-
- /*   public static IRestClient getClient(Context context) {
-        if (retrofitCalls == null) {
-            OkHttpClient okHttpClient;
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                    HttpLoggingInterceptor.Level.NONE);
-            okHttpClient = new OkHttpClient();
-            okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.interceptors().add(loggingInterceptor);
-            Retrofit.Builder builder = new Retrofit.Builder();
-            Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL)
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            retrofitCalls = client.create(IRestClient.class);
-        }
-        return retrofitCalls;
-    }
-*/
+    /*   public static IRestClient getClient(Context context) {
+           if (retrofitCalls == null) {
+               OkHttpClient okHttpClient;
+               HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+               loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
+                       HttpLoggingInterceptor.Level.NONE);
+               okHttpClient = new OkHttpClient();
+               okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
+               okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+               okHttpClient.interceptors().add(loggingInterceptor);
+               Retrofit.Builder builder = new Retrofit.Builder();
+               Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL)
+                       .client(okHttpClient)
+                       .addConverterFactory(GsonConverterFactory.create())
+                       .build();
+               retrofitCalls = client.create(IRestClient.class);
+           }
+           return retrofitCalls;
+       }
+   */
     static IRestClient getGooglePlaceApiClient() {
         if (retrofitGoogleApiCalls == null) {
             Retrofit client = new Retrofit.Builder()
@@ -82,6 +82,34 @@ class RestClient {
             retrofitGoogleApiCalls = client.create(IRestClient.class);
         }
         return retrofitGoogleApiCalls;
+    }
+
+    static IRestClient getBykea2ApiClient(Context context) {
+        if (bykea2retrofitCalls == null) {
+            OkHttpClient okHttpClient = new OkHttpClient();
+
+            // creating an SSLSocketFactory that uses our TrustManager
+//            SSLContext sslContext = Utils.getSSLContext(context);
+//            if (sslContext != null) {
+//                okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
+//            }
+
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
+                    HttpLoggingInterceptor.Level.NONE);
+
+
+            okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.interceptors().add(loggingInterceptor);
+            Retrofit.Builder builder = new Retrofit.Builder();
+            Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL_2)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            bykea2retrofitCalls = client.create(IRestClient.class);
+        }
+        return bykea2retrofitCalls;
     }
 
 }
