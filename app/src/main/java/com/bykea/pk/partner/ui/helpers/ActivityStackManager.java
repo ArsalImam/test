@@ -24,6 +24,8 @@ import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
+import com.bykea.pk.partner.ui.activities.ReportActivity;
+import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -177,5 +179,15 @@ public class ActivityStackManager {
         Intent intent = new Intent(context,ProblemActivity.class);
         intent.putExtra("TRIP_ID",tripNo);
         context.startActivity(intent);
+    }
+
+    public void startReportActivity() {
+        Intent intent = new Intent(mContext,ReportActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    public void startReportPostActivity() {
+        Intent intent = new Intent(mContext,ReportPostActivity.class);
+        mContext.startActivity(intent);
     }
 }

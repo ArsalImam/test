@@ -1,13 +1,13 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/secondaryColorLightest"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:layout_width="match_parent"
@@ -21,7 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp">
+            android:weightSum="2">
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/supportCall"
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawablePadding="-8dp"
-                android:drawableTop="@drawable/contact_email_icon"
+                android:drawableTop="@drawable/ic_error"
                 android:gravity="center"
                 android:text="رپورٹ"
                 android:textAllCaps="true"
@@ -52,6 +52,7 @@
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
+                android:visibility="gone"
                 android:id="@+id/supportWatsapp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -65,21 +66,30 @@
                 android:textSize="@dimen/textsize.large"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
-
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/Color_DarkGray"/>
+
+        <View
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/Color_DarkGray"/>
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingTop="@dimen/_10sdp"
             android:text="فنانس"
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/textsize.xlarge"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <LinearLayout
+            android:weightSum="2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -103,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawablePadding="-8dp"
-                android:drawableTop="@drawable/contact_email_icon"
+                android:drawableTop="@drawable/ic_error"
                 android:gravity="center"
                 android:text="رپورٹ"
                 android:textAllCaps="true"
@@ -112,6 +122,7 @@
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
+                android:visibility="gone"
                 android:id="@+id/financeWatsapp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -125,9 +136,18 @@
                 android:textSize="@dimen/textsize.large"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
-
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/Color_DarkGray"/>
+
+        <View
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/Color_DarkGray"/>
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/fontTextView2"

@@ -233,12 +233,6 @@ public class Utils {
     }
 
     private static void clearData() {
-        AppPreferences.saveLoginStatus(false);
-        AppPreferences.setIncomingCall(false);
-        AppPreferences.setCallData(null);
-        AppPreferences.setTripStatus("");
-        AppPreferences.saveLoginStatus(false);
-        AppPreferences.setPilotData(null);
         String regId = AppPreferences.getRegId();
         double currentLat = AppPreferences.getLatitude();
         double currentLng = AppPreferences.getLongitude();

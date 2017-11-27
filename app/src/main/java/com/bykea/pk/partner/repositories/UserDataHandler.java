@@ -22,6 +22,7 @@ import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.HeatMapResponse;
+import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -41,6 +42,8 @@ import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
+
+import java.util.ArrayList;
 
 
 public class UserDataHandler implements IUserDataHandler {
@@ -126,7 +129,7 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     @Override
-    public void getHeatMap(HeatMapResponse heatMapResponse) {
+    public void getHeatMap(ArrayList<HeatMapUpdatedResponse> heatMapResponse) {
 
     }
 

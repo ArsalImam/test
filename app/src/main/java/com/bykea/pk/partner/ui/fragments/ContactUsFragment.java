@@ -16,6 +16,7 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.AccountsListActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
@@ -103,7 +104,8 @@ public class ContactUsFragment extends Fragment {
                 Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
                 break;
             case R.id.supportEmail:
-                Utils.contactViaEmail(mCurrentActivity, contactNumbers.getData().getSupports().getEmail());
+//                Utils.contactViaEmail(mCurrentActivity, contactNumbers.getData().getSupports().getEmail());
+                ActivityStackManager.getInstance(mCurrentActivity).startReportActivity();
                 break;
             case R.id.supportWatsapp:
                 Utils.contactViaWhatsApp(mCurrentActivity, contactNumbers.getData().getSupports().getWhatsapp());
@@ -112,7 +114,8 @@ public class ContactUsFragment extends Fragment {
                 Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getFinance().getCall());
                 break;
             case R.id.financeEmail:
-                Utils.contactViaEmail(mCurrentActivity, contactNumbers.getData().getFinance().getEmail());
+//                Utils.contactViaEmail(mCurrentActivity, contactNumbers.getData().getFinance().getEmail());
+                ActivityStackManager.getInstance(mCurrentActivity).startReportActivity();
                 break;
             case R.id.financeWatsapp:
                 Utils.contactViaWhatsApp(mCurrentActivity, contactNumbers.getData().getFinance().getWhatsapp());

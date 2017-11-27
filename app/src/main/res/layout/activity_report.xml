@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.bykea.pk.partner.ui.activities.ReportActivity">
+
+    <include layout="@layout/custom_toolbar_green"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:visibility="visible"
+        android:id="@+id/reportList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/helpLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.bykea.pk.partner.widgets.AutoFitFontTextView
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/_20sdp"
+            android:gravity="center"
+            android:text="@string/bookingProblem"/>
+
+        <ImageView
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/report_help"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -59,25 +59,11 @@ public class ProblemActivity extends BaseActivity {
         tripId = getIntent().getStringExtra("TRIP_ID");
         fragmentManager = getSupportFragmentManager();
         loadFragment(new ProblemFragment(),true);
-        setActionBarUI();
+        setGreenActionbarTitle(tripId,"");
         mProblemList = new ArrayList<>();
         probReasons = AppPreferences.getSettings().getPredefine_messages().getReasons();
         copyList();
         initProblemList();
-    }
-
-    private void setActionBarUI() {
-        toolbar.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorAccent));
-        Drawable drawable = ContextCompat.getDrawable(mCurrentActivity,R.drawable.ic_arrow_back_48px);
-        ivBackBtn.setImageDrawable(setTint(drawable,ContextCompat.getColor(mCurrentActivity,R.color.white)));
-        tvTitle.setTextColor(ContextCompat.getColor(mCurrentActivity,R.color.white));
-        tvTitle.setText(tripId);
-        ivBackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
     }
 
     public void loadFragment(Fragment fragment, boolean isMainFrag) {

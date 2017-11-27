@@ -19,6 +19,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -279,20 +280,20 @@ public class HomeFragment extends Fragment {
         }
         return timer * 60000;
     }
-//
-//    private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
-//        @Override
-//        public void onTick(long millisUntilFinished) {
-//        }
-//
-//        @Override
-//        public void onFinish() {
-//            setConnectionStatus();
-//            if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
-//                repository.requestHeatMapData(mCurrentActivity, handler);
-//            countDownTimer.start();
-//        }
-//    };
+
+    private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+        }
+
+        @Override
+        public void onFinish() {
+            setConnectionStatus();
+            if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
+                repository.requestHeatMapData(mCurrentActivity, handler);
+            countDownTimer.start();
+        }
+    };
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
         @Override
@@ -350,9 +351,9 @@ public class HomeFragment extends Fragment {
                 }
             }
 
-            ArrayList<HeatMapUpdatedResponse> data = new Gson().fromJson(getString(R.string.heat_map_data), new TypeToken<ArrayList<HeatMapUpdatedResponse>>() {
-            }.getType());
-            updateHeatMapUI(data);
+//            ArrayList<HeatMapUpdatedResponse> data = new Gson().fromJson(getString(R.string.heat_map_data), new TypeToken<ArrayList<HeatMapUpdatedResponse>>() {
+//            }.getType());
+//            updateHeatMapUI(data);
         }
     };
 
@@ -444,9 +445,9 @@ public class HomeFragment extends Fragment {
         isScreenInFront = true;
 
         Notifications.removeAllNotifications(mCurrentActivity);
-//        countDownTimer.start();
-//        if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
-//            repository.requestHeatMapData(mCurrentActivity, handler);
+        countDownTimer.start();
+        if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus())
+            repository.requestHeatMapData(mCurrentActivity, handler);
 
         Utils.setCallIncomingState();
         IntentFilter intentFilter = new IntentFilter();
@@ -468,9 +469,9 @@ public class HomeFragment extends Fragment {
         super.onPause();
         isScreenInFront = false;
         mCurrentActivity.unregisterReceiver(myReceiver);
-//        if (countDownTimer != null) {
-//            countDownTimer.cancel();
-//        }
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         if (mapView != null) {
             mapView.onPause();
         }
@@ -627,23 +628,6 @@ public class HomeFragment extends Fragment {
             }
         }
     };
-
-    private void onUnauthorized() {
-        AppPreferences.saveLoginStatus(false);
-        AppPreferences.setIncomingCall(false);
-        AppPreferences.setCallData(null);
-        AppPreferences.setTripStatus("");
-        AppPreferences.saveLoginStatus(false);
-        AppPreferences.setPilotData(null);
-        HomeActivity.visibleFragmentNumber = 0;
-        Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-            @Override
-            public void onCallBack(String msg) {
-                ActivityStackManager.getInstance(mCurrentActivity).startLoginActivity();
-                mCurrentActivity.finish();
-            }
-        }, null, "UnAuthorized", "Session Expired. Please Log in again.");
-    }
 
     private void onUnauthorizedLicenceExpire() {
         AppPreferences.saveLoginStatus(false);
@@ -818,7 +802,7 @@ public class HomeFragment extends Fragment {
                             setStatusBtn();
                         } else {
                             if (pilotStatusResponse.getCode() == HTTPStatus.UNAUTHORIZED) {
-                                onUnauthorized();
+                                Utils.onUnauthorized(mCurrentActivity);
                             } else {
                                 Utils.appToast(mCurrentActivity, pilotStatusResponse.getMessage());
                                 AppPreferences.setAvailableStatus(false);
@@ -832,37 +816,12 @@ public class HomeFragment extends Fragment {
         }
 
         @Override
-        public void getHeatMap(final HeatMapResponse heatMapResponse) {
+        public void getHeatMap(final ArrayList<HeatMapUpdatedResponse> heatMapResponse) {
             if (mCurrentActivity != null && getView() != null && mGoogleMap != null) {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (heatMapResponse.isSuccess()) {
-                            if (heatMapResponse.getData().size() > 0) {
-                                ArrayList<LatLng> latLngs = new ArrayList<>();
-                                for (HeatmapLatlng heatmapLatlng : heatMapResponse.getData()) {
-                                    latLngs.add(new LatLng(heatmapLatlng.getLat(), heatmapLatlng.getLng()));
-                                }
-                                HeatmapTileProvider heatmapTileProvider = new HeatmapTileProvider.Builder().data(latLngs).build();
-                                heatmapTileProvider.setRadius(30);
-                                if (null != mHeatmapOverlay) {
-                                    mHeatmapOverlay.clearTileCache();
-                                }
-                                if (mGoogleMap != null) {
-                                    mGoogleMap.clear();
-                                }
-                                mHeatmapOverlay = mGoogleMap.addTileOverlay(new TileOverlayOptions().tileProvider(heatmapTileProvider));
-
-                            } else {
-                                if (null != mHeatmapOverlay) {
-                                    mHeatmapOverlay.clearTileCache();
-                                }
-                                if (mGoogleMap != null) {
-                                    mGoogleMap.clear();
-                                }
-                            }
-
-                        }
+                        //TODO updateHeatMapUI(data);
                     }
                 });
             }
@@ -878,7 +837,7 @@ public class HomeFragment extends Fragment {
 //                        destinationSet(false);
                         Dialogs.INSTANCE.dismissDialog();
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                            onUnauthorized();
+                            Utils.onUnauthorized(mCurrentActivity);
                         } else {
                             Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
                         }
@@ -899,7 +858,8 @@ public class HomeFragment extends Fragment {
                     } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) || action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
                         AppPreferences.setDriverDestination(null);
                         setStatusBtn();
-                        //TODO Alert Dialog
+                    }else if (action.equalsIgnoreCase(Keys.ACTIVE_FENCE)) {
+                        setStatusBtn();
                     }
                 }
             });

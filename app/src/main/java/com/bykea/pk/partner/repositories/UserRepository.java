@@ -30,6 +30,7 @@ import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.HeatMapResponse;
+import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -174,7 +175,7 @@ public class UserRepository {
         mRestRequestHandler.getCities(mContext, mDataCallback);
     }
 
-    public void requestHeatMapData(Context context, IUserDataHandler handler) {
+    /*public void requestHeatMapData(Context context, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
@@ -193,6 +194,11 @@ public class UserRepository {
             ex.printStackTrace();
         }
         mWebIORequestHandler.requestHeatmap(jsonObject, mDataCallback);
+    }*/
+    public void requestHeatMapData(Context context, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        // TODO Call API
     }
 
 
@@ -777,7 +783,7 @@ public class UserRepository {
                         mUserCallback.onAck(((AckCallResponse) object).getMessage());
                         break;
                     case "HeatMapResponse":
-                        mUserCallback.getHeatMap((HeatMapResponse) object);
+                        mUserCallback.getHeatMap((ArrayList<HeatMapUpdatedResponse>) object);
                         break;
                     case "UpdateProfileResponse":
                         mUserCallback.onUpdateProfile((UpdateProfileResponse) object);

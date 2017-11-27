@@ -656,7 +656,14 @@ public class RestRequestHandler {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
         Call<ProblemPostResponse> restCall = mRestClient.postProblem(AppPreferences.getDriverId(),
-                AppPreferences.getAccessToken(),selectedReason, tripId,email,details,"d");
+                AppPreferences.getAccessToken(),
+                selectedReason,
+                tripId,
+                email,
+                AppPreferences.getPilotData().getFullName(),
+                AppPreferences.getPilotData().getPhoneNo(),
+                details,
+                "d");
         restCall.enqueue(new GenericRetrofitCallBack<ProblemPostResponse>(onResponseCallBack));
 
     }

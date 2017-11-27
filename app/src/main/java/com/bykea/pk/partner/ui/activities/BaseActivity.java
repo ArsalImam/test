@@ -45,6 +45,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import butterknife.Bind;
+
 
 public class BaseActivity extends AppCompatActivity {
     private Toolbar mToolbar;
@@ -57,7 +59,9 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isScreenInFront;
     private ProgressDialog progressDialog;
     private Dialog notificationDialog;
-
+    private FontTextView tvTitle;
+    private FontTextView tvTitleUrdu;
+    private ImageView ivBackBtn;
     private final String ACCESS_FINE_LOCATION = "android.permission.ACCESS_FINE_LOCATION";
     private final String PHONE_STATE = "android.permission.READ_PHONE_STATE";
 
@@ -84,6 +88,25 @@ public class BaseActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         isScreenInFront = false;
+    }
+
+    public void setGreenActionbarTitle(String english, String urdu){
+        tvTitle = (FontTextView) findViewById(R.id.tvTitle);
+        tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
+        ivBackBtn = (ImageView) findViewById(R.id.ivBackBtn);
+
+        if(StringUtils.isEmpty(urdu)){
+            tvTitleUrdu.setVisibility(View.GONE);
+        }else{
+            tvTitleUrdu.setText(urdu);
+        }
+        tvTitle.setText(english);
+        ivBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     private boolean checkPermissions(boolean restartLocationService) {
@@ -297,7 +320,6 @@ public class BaseActivity extends AppCompatActivity {
         if (null == mToolbar) {
             initToolbar();
         }
-
         setSupportActionBar(mToolbar);
     }
 

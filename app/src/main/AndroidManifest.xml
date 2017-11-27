@@ -194,7 +194,9 @@
             android:name=".ui.activities.ConfirmDropOffAddressActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.activities.ProblemActivity" />
-        <activity android:name=".ui.activities.PostProblemActivity"></activity>
+        <activity android:name=".ui.activities.PostProblemActivity" />
+        <activity android:name=".ui.activities.ReportActivity" />
+        <activity android:name=".ui.activities.ReportPostActivity"></activity>
     </application>
 
 </manifest>

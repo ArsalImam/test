@@ -211,6 +211,8 @@ interface IRestClient {
                                           @Field("reason") String reason,
                                           @Field("trip_id") String tripID,
                                           @Field("email") String email,
+                                          @Field("name") String name,
+                                          @Field("ph") String phone,
                                           @Field("details") String details,
                                           @Field("user_type") String type);
 

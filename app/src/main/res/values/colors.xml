@@ -16,6 +16,7 @@
 
     <color name="secondaryColor">#c0c0c0</color>
     <color name="secondaryColorLight">#e5e5e5</color>
+    <color name="secondaryColorLightest">#eaeaea</color>
     <color name="secondaryColorDark">#303030</color>
 
     <color name="colorAccent">#04aa32</color>

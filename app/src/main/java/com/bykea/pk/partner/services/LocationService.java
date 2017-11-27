@@ -317,30 +317,9 @@ public class LocationService extends Service {
                 case HTTPStatus.FENCE_SUCCESS:
                     AppPreferences.setOutOfFence(false);
                     AppPreferences.setAvailableStatus(true);
-                    mBus.post(Keys.INACTIVE_FENCE);
+                    mBus.post(Keys.ACTIVE_FENCE);
                     break;
             }
-
-
-//            if (errorCode == HTTPStatus.UNAUTHORIZED) {
-//                Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
-//                sendBroadcast(locationIntent);
-//            } else if (errorCode == HTTPStatus.FENCE_ERROR) {
-//                AppPreferences.setOutOfFence(true);
-//                AppPreferences.setAvailableStatus(false);
-//                mBus.post(Keys.INACTIVE_FENCE);
-//            } else if (errorCode == HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT) {
-//                if (StringUtils.isNotBlank(errorMessage)) {
-//                    AppPreferences.setWalletIncreasedError(errorMessage);
-//                }
-//                AppPreferences.setWalletAmountIncreased(true);
-//                AppPreferences.setAvailableStatus(false);
-//                mBus.post(Keys.INACTIVE_FENCE);
-//            } else if (errorCode == HTTPStatus.FENCE_SUCCESS) {
-//                AppPreferences.setOutOfFence(false);
-//                AppPreferences.setAvailableStatus(true);
-//                mBus.post(Keys.INACTIVE_FENCE);
-//            }
         }
     };
 

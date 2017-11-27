@@ -278,7 +278,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                 public void run() {
                     Utils.hideSoftKeyboard(mCurrentActivity, mAutocompleteView);
                     isSearchedLoc = true;
-                    mAutocompleteView.setText("");
+//                    mAutocompleteView.setText("");
                     mAutocompleteView.clearFocus();
                     mAutocompleteView.setFocusable(false);
                     String result = placesResult.name;
@@ -367,6 +367,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
             //ignore API call when user selects place from search bar
             if (!isSearchedLoc) {
                 startLoading();
+                mAutocompleteView.setText("");
                 reverseGeoCoding(mGoogleMap.getCameraPosition().target.latitude,
                         mGoogleMap.getCameraPosition().target.longitude);
             } else {

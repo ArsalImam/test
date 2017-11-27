@@ -101,20 +101,13 @@ public class AppPreferences {
     }
 
     public static void setPilotData(PilotData user) {
-        Gson gson = new Gson();
-        JSONObject userJson = null;
         if (null != user) {
-            try {
-                userJson = new JSONObject(gson.toJson(user));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
             SharedPreferences.Editor ed = mSharedPreferences.edit();
             ed.putString(Keys.EMAIL, user.getEmail());
             ed.putString(Keys.ACCESS_TOKEN, user.getAccessToken());
             ed.putString(Keys.DRIVER_ID, user.getId());
             ed.putString(Keys.PHONE_NUMBER, user.getPhoneNo());
-            ed.putString(Keys.DRIVER_DATA, userJson.toString());
+            ed.putString(Keys.DRIVER_DATA, new Gson().toJson(user));
             ed.apply();
         } else {
             SharedPreferences.Editor ed = mSharedPreferences.edit();
@@ -122,16 +115,14 @@ public class AppPreferences {
             ed.putString(Keys.ACCESS_TOKEN, "");
             ed.putString(Keys.DRIVER_ID, "");
             ed.putString(Keys.DRIVER_DATA, "");
-            ed.clear();
             ed.apply();
         }
     }
 
     public static PilotData getPilotData() {
-        Gson gson = new Gson();
         String data = mSharedPreferences.getString(Keys.DRIVER_DATA, StringUtils.EMPTY);
         if (StringUtils.isNotBlank(data)) {
-            return gson.fromJson(data, PilotData.class);
+            return new Gson().fromJson(data, PilotData.class);
         } else {
             return new PilotData();
         }

@@ -88,6 +88,7 @@ public class Keys {
 
     public static final String INACTIVE_PUSH = "INACTIVE-PUSH";
     public static final String INACTIVE_FENCE = "INACTIVE-FENCE";
+    public static final String ACTIVE_FENCE = "ACTIVE_FENCE";
 
     /*JOB ACTIVITY CANCEL JOB LISTENER*/
     public static final String BROADCAST_CANCEL_RIDE = "BROADCAST_CANCEL_RIDE";
