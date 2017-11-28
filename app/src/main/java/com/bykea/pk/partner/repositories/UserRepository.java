@@ -198,7 +198,7 @@ public class UserRepository {
     public void requestHeatMapData(Context context, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        // TODO Call API
+        mRestRequestHandler.requestHeatMap(context, mDataCallback);
     }
 
 
@@ -782,7 +782,7 @@ public class UserRepository {
                     case "AckCallResponse":
                         mUserCallback.onAck(((AckCallResponse) object).getMessage());
                         break;
-                    case "HeatMapResponse":
+                    case "ArrayList":
                         mUserCallback.getHeatMap((ArrayList<HeatMapUpdatedResponse>) object);
                         break;
                     case "UpdateProfileResponse":
