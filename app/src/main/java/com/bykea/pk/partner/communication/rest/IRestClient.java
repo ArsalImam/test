@@ -37,6 +37,7 @@ import retrofit.Call;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.Header;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
@@ -202,7 +203,8 @@ interface IRestClient {
     Call<GetCitiesResponse> getCities();
 
     @GET
-    Call<ArrayList<HeatMapUpdatedResponse>> getHeatMap(@Url String url);
+    Call<ArrayList<HeatMapUpdatedResponse>> getHeatMap(@Header("x-key") String key,
+                                                       @Url String url);
 
 
     @GET(ApiTags.PLACES_DISTANCEMATRIX_EXT_URL)

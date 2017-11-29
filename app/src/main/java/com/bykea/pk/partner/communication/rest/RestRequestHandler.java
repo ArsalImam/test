@@ -605,9 +605,9 @@ public class RestRequestHandler {
     public synchronized void requestHeatMap(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykea2ApiClient(mContext);
+//        mRestClient = RestClient.getBykea2ApiClient(mContext);
         String url = ApiTags.HEAT_MAP_2.replace("CITY_NAME", StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
-        Call<ArrayList<HeatMapUpdatedResponse>> requestCall = mRestClient.getHeatMap(url);
+        Call<ArrayList<HeatMapUpdatedResponse>> requestCall = RestClient.getBykea2ApiClient(mContext).getHeatMap(ApiTags.HEAT_MAP_2_X_API, url);
         requestCall.enqueue(new Callback<ArrayList<HeatMapUpdatedResponse>>() {
             @Override
             public void onResponse(Response<ArrayList<HeatMapUpdatedResponse>> response, Retrofit retrofit) {
