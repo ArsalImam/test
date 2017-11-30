@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -606,7 +607,9 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
 //        mRestClient = RestClient.getBykea2ApiClient(mContext);
-        String url = ApiTags.HEAT_MAP_2.replace("CITY_NAME", StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        String url = ApiTags.HEAT_MAP_2.replace("HOUR", "" + hour)
+                .replace("CITY_NAME", StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
         Call<ArrayList<HeatMapUpdatedResponse>> requestCall = RestClient.getBykea2ApiClient(mContext).getHeatMap(ApiTags.HEAT_MAP_2_X_API, url);
         requestCall.enqueue(new Callback<ArrayList<HeatMapUpdatedResponse>>() {
             @Override
