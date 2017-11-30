@@ -110,8 +110,10 @@ public class PostProblemFragment extends Fragment {
 
     private void submitProblem() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        new UserRepository().postProblem(mCurrentActivity, mCallBack,mCurrentActivity.selectedReason,
-                mCurrentActivity.tripId,etEmail.getText().toString(),etDetails.getText().toString());
+        new UserRepository().postProblem(mCurrentActivity,
+                mCallBack,mCurrentActivity.selectedReason,
+                mCurrentActivity.tripId,etEmail.getText().toString(),
+                etDetails.getText().toString(),false);
         }
 
     private IUserDataHandler mCallBack = new UserDataHandler(){

@@ -11,6 +11,7 @@
     <!--android:layout_height="match_parent">-->
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/llTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,18 +30,17 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/rlServiceType"
+        android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/llTimer"
-        android:layout_below="@+id/llTop"
-        android:gravity="center">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/llNewRequest"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin.xlarge"
-            android:layout_marginRight="@dimen/margin.xlarge"
+            android:layout_height="@dimen/_160sdp"
+            android:layout_marginLeft="@dimen/_30sdp"
+            android:layout_marginRight="@dimen/_30sdp"
             android:background="@drawable/white_bg_square"
             android:gravity="center"
             android:orientation="vertical"
@@ -48,11 +48,12 @@
 
             <ImageView
                 android:id="@+id/ivCallType"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:src="@drawable/ride" />
 
             <ImageView
+                android:visibility="gone"
                 android:id="@+id/imageView3"
                 android:layout_width="@dimen/width.xxxlarge"
                 android:layout_height="@dimen/height.large"
@@ -60,6 +61,7 @@
                 app:srcCompat="@drawable/ic_new_request_urdu" />
 
             <com.bykea.pk.partner.widgets.FontTextView
+                android:visibility="gone"
                 android:id="@+id/callerNameTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,6 +77,7 @@
         </LinearLayout>
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:visibility="gone"
             android:id="@+id/startAddressTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,6 +100,7 @@
 
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/llDistance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -137,34 +141,35 @@
 
     <LinearLayout
         android:id="@+id/llTimer"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/llBottom"
-        android:gravity="center"
-        android:padding="@dimen/_16sdp">
+        android:layout_below="@+id/rlServiceType"
+        android:gravity="center">
 
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="@color/transparent">
 
             <ImageView
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_100sdp"
+                android:layout_width="@dimen/_200sdp"
+                android:layout_height="@dimen/_200sdp"
                 android:layout_gravity="center"
                 android:background="@drawable/green_circle_bg" />
 
             <ImageView
-                android:layout_width="@dimen/_118sdp"
-                android:layout_height="@dimen/_118sdp"
+                android:layout_width="@dimen/_200sdp"
+                android:layout_height="@dimen/_200sdp"
                 android:layout_gravity="center"
                 android:background="@drawable/green_circle_outline_bg" />
 
             <com.bykea.pk.partner.widgets.DonutProgress
                 android:id="@+id/donut_progress"
-                android:layout_width="@dimen/_118sdp"
-                android:layout_height="@dimen/_118sdp"
+                android:layout_width="@dimen/_190sdp"
+                android:layout_height="@dimen/_190sdp"
                 android:layout_gravity="center"
                 app:donut_finished_color="@color/windowBackground"
                 app:donut_finished_stroke_width="@dimen/_6sdp"
@@ -180,14 +185,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:maxLength="2"
-                android:text="20"
+                android:text="8"
                 android:textColor="@color/buttonTextColor"
-                android:textSize="@dimen/textsize.display3"
+                android:textSize="@dimen/_90sdp"
                 app:fontName="roboto_regular.ttf" />
 
         </FrameLayout>
-    </LinearLayout>
 
+
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/llBottom"
         android:layout_width="match_parent"
@@ -221,7 +227,7 @@
             app:fontName="MuseoSans_1.otf" />
 
     </LinearLayout>
-    <!--</RelativeLayout>-->
 
+    <!--</RelativeLayout>-->
 
 </RelativeLayout>

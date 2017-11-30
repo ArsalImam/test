@@ -69,7 +69,7 @@ public class ReportActivity extends BaseActivity {
                     rvReportList.setVisibility(View.GONE);
                     helpLayout.setVisibility(View.VISIBLE);
                 }else{
-                    ActivityStackManager.getInstance(mCurrentActivity).startReportPostActivity();
+                    ActivityStackManager.getInstance(mCurrentActivity).startReportPostActivity(reason);
                 }
             }
         });

@@ -735,10 +735,10 @@ public class UserRepository {
     }
 
     public void postProblem(Context context, IUserDataHandler handler, String selectedReason,
-                            String tripId, String email, String details) {
+                            String tripId, String email, String details, boolean isFromReport) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.postProblem(context, selectedReason, tripId, email, details, mDataCallback);
+        mRestRequestHandler.postProblem(context, selectedReason, tripId, email, details,isFromReport, mDataCallback);
     }
 
     private IResponseCallback mDataCallback = new IResponseCallback() {

@@ -446,8 +446,6 @@ public class HomeFragment extends Fragment {
         isScreenInFront = true;
 
         Notifications.removeAllNotifications(mCurrentActivity);
-        countDownTimer.start();
-        getHeatMapData();
 
         Utils.setCallIncomingState();
         IntentFilter intentFilter = new IntentFilter();
@@ -528,7 +526,10 @@ public class HomeFragment extends Fragment {
             case R.id.tvDemand:
                 if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
                         StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
-                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getDemand(), "Demand");
+                    String demandLink = AppPreferences.getSettings().getSettings().getDemand();
+//                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
+                    String replaceString = demandLink.replace(Constants.REPLACE_CITY,StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
+                    Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
                 }
                 break;
             case R.id.tvNotice:
@@ -656,7 +657,7 @@ public class HomeFragment extends Fragment {
         if (mCurrentActivity == null || getView() == null) {
             return;
         }
-        if (!AppPreferences.getAvailableStatus()) {
+        if (!AppPreferences.getAvailableStatus()) {     //inactive state
             statusCheck.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.inactive_icon));
             statusTv.setText("Inactive");
             rlInactiveImage.setVisibility(View.VISIBLE);
@@ -671,7 +672,7 @@ public class HomeFragment extends Fragment {
                 rl_destinationSelected.setVisibility(View.VISIBLE);
                 tv_destinationName.setText(AppPreferences.getDriverDestination().address);
             }
-        } else {
+        } else {        //active state
             statusCheck.setImageResource(R.drawable.active_icon);
             statusTv.setText("Active");
             rlInactiveImage.setVisibility(View.GONE);
@@ -683,9 +684,11 @@ public class HomeFragment extends Fragment {
                 rl_destinationSelected.setVisibility(View.VISIBLE);
                 tv_destinationName.setText(AppPreferences.getDriverDestination().address);
             } else {
-//                Utils.animateHeight(rl_main_destination, 500, 0);
                 rl_main_destination.setVisibility(View.GONE);
             }
+
+            countDownTimer.start();
+            getHeatMapData();
         }
 
         if (AppPreferences.isWalletAmountIncreased()) {
