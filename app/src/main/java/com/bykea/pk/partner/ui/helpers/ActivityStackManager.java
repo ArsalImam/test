@@ -186,8 +186,9 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startReportPostActivity() {
+    public void startReportPostActivity(String reason) {
         Intent intent = new Intent(mContext,ReportPostActivity.class);
+        intent.putExtra("reason",reason);
         mContext.startActivity(intent);
     }
 }

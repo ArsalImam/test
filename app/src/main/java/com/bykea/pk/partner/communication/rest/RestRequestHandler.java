@@ -678,7 +678,7 @@ public class RestRequestHandler {
     }
 
     public void postProblem(Context context, String selectedReason, String tripId,
-                            String email, String details, IResponseCallback onResponseCallBack) {
+                            String email, String details, boolean isFromReport, IResponseCallback onResponseCallBack) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
         Call<ProblemPostResponse> restCall = mRestClient.postProblem(AppPreferences.getDriverId(),
@@ -689,6 +689,7 @@ public class RestRequestHandler {
                 AppPreferences.getPilotData().getFullName(),
                 AppPreferences.getPilotData().getPhoneNo(),
                 details,
+                isFromReport,
                 "d");
         restCall.enqueue(new GenericRetrofitCallBack<ProblemPostResponse>(onResponseCallBack));
 

@@ -8,6 +8,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.Utils;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -139,15 +140,47 @@ public class WebIO {
     }
 
     public void clearConnectionData() {
-        WebIO.getInstance().getSocket().close();
-        mWebIO = null;
-
+        try {
+            WebIO.getInstance().getSocket().off();
+            WebIO.getInstance().getSocket().io().off();
+            WebIO.getInstance().getSocket().disconnect();
+            WebIO.getInstance().getSocket().close();
+            mWebIO = null;
+            mSocket = null;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        Utils.redLog("Socket", "Connection Cleared !");
     }
+
+
+    private Emitter.Listener onTimeOutError = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (args != null && args.length > 0) {
+                Utils.redLog("onError", args[0].toString());
+                WebIO.getInstance().clearConnectionData();
+            }
+        }
+    };
+
+    private Emitter.Listener onError = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (args != null && args.length > 0) {
+                Utils.redLog("onError", args[0].toString());
+                WebIO.getInstance().clearConnectionData();
+            }
+        }
+    };
 
     public void onConnect(Emitter.Listener connectCallBack) {
 
         try {
             WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT, connectCallBack);
+            on(Socket.EVENT_CONNECT_TIMEOUT, onTimeOutError); //timeout
+            on(Socket.EVENT_ERROR, onError);
+            on(Socket.EVENT_CONNECT_ERROR, onError);
             WebIO.getInstance().getSocket().connect();
         } catch (Exception e) {
             e.printStackTrace();

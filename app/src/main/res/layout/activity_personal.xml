@@ -331,7 +331,6 @@
                     android:background="@color/transparent"
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.small"
-                    android:text=" ajna ja ja ja aj aja ja aj aa aja jaaj a"
                     android:maxLines="2"
                     android:textColor="@color/textColorSecondary"
                     android:textSize="@dimen/textsize.normal"

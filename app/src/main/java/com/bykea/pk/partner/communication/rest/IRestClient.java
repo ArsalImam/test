@@ -221,6 +221,7 @@ interface IRestClient {
                                           @Field("name") String name,
                                           @Field("ph") String phone,
                                           @Field("details") String details,
+                                          @Field("con") boolean isFromReport,
                                           @Field("user_type") String type);
 
 
