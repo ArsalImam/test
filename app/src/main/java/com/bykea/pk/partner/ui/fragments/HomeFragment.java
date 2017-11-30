@@ -526,7 +526,10 @@ public class HomeFragment extends Fragment {
             case R.id.tvDemand:
                 if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
                         StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
-                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getDemand(), "Demand");
+                    String demandLink = AppPreferences.getSettings().getSettings().getDemand();
+//                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
+                    String replaceString = demandLink.replace(Constants.REPLACE_CITY,StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
+                    Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
                 }
                 break;
             case R.id.tvNotice:
