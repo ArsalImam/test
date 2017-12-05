@@ -38,7 +38,7 @@
                 android:padding="@dimen/_9sdp"
                 android:textSize="@dimen/_18sdp"
                 android:lineSpacingExtra="@dimen/_20sdp"
-                android:text="Hamara Numainda Apse jald\nHee Rabta Karaiga" />
+                android:text="Hamara Numainda Apse Jald\nHee Rabta Karaiga" />
 
         </LinearLayout>
 
@@ -86,7 +86,8 @@
             android:layout_marginTop="@dimen/_30sdp"
             android:background="@drawable/button_background_green_round"
             android:gravity="center"
-            android:text="EMAIL"
+            android:text="Submit"
+            android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="@dimen/textsize.medium"
             app:fontName="roboto_bold.ttf" />
