@@ -1096,7 +1096,8 @@ public class Utils {
     }
 
     public static String getCloudinaryLink(String icon, Context context) {
-        return "http://res.cloudinary.com/bykea/image/upload/w_" + getDimension(context) + ",h_" + getDimension(context) + ",c_scale/" + icon;
+//        return "http://res.cloudinary.com/bykea/image/upload/w_" + getDimension(context) + ",h_" + getDimension(context) + ",c_scale/" + icon;
+        return "http://res.cloudinary.com/bykea/image/upload/" + icon;
     }
 
     private static String getDimension(Context context) {
