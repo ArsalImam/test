@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
             android:layout_below="@+id/infoLay"
-            android:background="@color/white"
+            android:background="@color/yellow_dd"
             android:visibility="visible">
 
             <com.bykea.pk.partner.widgets.FontTextView
@@ -99,6 +99,7 @@
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <View
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
                 android:layout_alignParentBottom="true"
@@ -152,6 +153,7 @@
         </LinearLayout>
 
         <View
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:layout_below="@+id/rl_destinationSelected"
