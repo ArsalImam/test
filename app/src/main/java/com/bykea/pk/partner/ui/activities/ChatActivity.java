@@ -450,6 +450,8 @@ public class ChatActivity extends BaseActivity {
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(output_formats[currentFormat]);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        recorder.setAudioEncodingBitRate(20000);
+        recorder.setAudioSamplingRate(44100);
         recorder.setOutputFile(getFilename());
         recorder.setOnErrorListener(errorListener);
         recorder.setOnInfoListener(infoListener);
