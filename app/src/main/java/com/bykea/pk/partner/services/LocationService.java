@@ -13,6 +13,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
@@ -35,6 +39,7 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.squareup.okhttp.internal.Util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -50,6 +55,7 @@ public class LocationService extends Service {
     private LocationRequest mLocationRequest;
 
     private boolean shouldCallLocApi = true;
+    private int counter = 0;
 
     private PowerManager.WakeLock wakeLock;
     private EventBus mBus = EventBus.getDefault();
@@ -199,6 +205,75 @@ public class LocationService extends Service {
                 }
             }
         }
+
+
+    }
+
+    /*
+    * when Booking Screen is in background & driver is in any trip then, we need to call distance
+    * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
+    * is already being handled via Direction API when we are showing Route to driver.
+    * counter == 4 indicates that API will be called after 40 sec
+    * */
+    private void updateETAIfRequired() {
+        if (counter == 4) {
+            counter = 0;
+        }
+        counter++;
+        if (!AppPreferences.isJobActivityOnForeground() && AppPreferences.isOnTrip() && counter == 4) {
+            Utils.redLog("Direction -> Trip Status ", AppPreferences.getTripStatus());
+            if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+                NormalCallData callData = AppPreferences.getCallData();
+                if (callData != null && StringUtils.isNotBlank(callData.getEndLat()) &&
+                        StringUtils.isNotBlank(callData.getEndLng())) {
+                    String destination = callData.getEndLat() + "," + callData.getEndLng();
+                    callDistanceMatrixApi(destination);
+                }
+            } else if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus())
+                    || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+                NormalCallData callData = AppPreferences.getCallData();
+                if (callData != null && StringUtils.isNotBlank(callData.getStartLat()) &&
+                        StringUtils.isNotBlank(callData.getStartLng())) {
+                    String destination = callData.getStartLat() + "," + callData.getStartLng();
+                    callDistanceMatrixApi(destination);
+                }
+            }
+
+        }
+    }
+
+    /*
+    * check if last start latlng and current start latlng has at least 15 m difference
+    * */
+    private LatLng lastApiCallLatLng;
+
+    private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
+        if (lastApiCallLatLng != null &&
+                Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude, lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < 15) {
+            return false;
+        }
+        return true;
+    }
+
+    private void callDistanceMatrixApi(String destination) {
+        LatLng newLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        if (isDirectionApiCallRequired(newLatLng)) {
+            lastApiCallLatLng = newLatLng;
+            String origin = newLatLng.latitude + "," + newLatLng.longitude;
+            new PlacesRepository().getDistanceMatrix(origin, destination, mContext, new PlacesDataHandler() {
+                @Override
+                public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
+                    if (response.getRows().length > 0
+                            && response.getRows()[0].getElements().length > 0) {
+                        String time = (response.getRows()[0].getElements()[0].getDuration().getValueInt() / 60) + "";
+                        String distance = Utils.formatDecimalPlaces((response.getRows()[0].getElements()[0].getDistance().getValueInt() / 1000.0) + "", 1);
+                        AppPreferences.setEta(time);
+                        AppPreferences.setEstimatedDistance(distance);
+                        Utils.redLog("onDistanceMatrixResponse", "Time -> " + time + " Distance ->" + distance);
+                    }
+                }
+            });
+        }
     }
 
     private void addLatLng(double lat, double lon, boolean updatePrevTime) {
@@ -226,6 +301,7 @@ public class LocationService extends Service {
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         updateTripRouteList(lat, lon);
+//                    TODO apply after testing    updateETAIfRequired();
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;

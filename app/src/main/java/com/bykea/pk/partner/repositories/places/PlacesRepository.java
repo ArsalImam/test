@@ -24,15 +24,15 @@ public class PlacesRepository {
         mUserCallback = handler;
         mRestRequestHandler.callGeoCoderApi(lat, lng, mGeoCoderPlaces, context);
     }
+
     public void getGoogleGeoCoder2(IPlacesDataHandler handler,
-                                  String lat, String lng, Context context) {
+                                   String lat, String lng, Context context) {
         mUserCallback = handler;
         mRestRequestHandler.callGeoCoderApi2(lat, lng, mGeoCoderPlaces, context);
     }
 
 
-    public void getDistanceMatrix(IPlacesDataHandler handler,
-                                  String origin, String destination, Context context) {
+    public void getDistanceMatrix(String origin, String destination, Context context, IPlacesDataHandler handler) {
         mUserCallback = handler;
         mRestRequestHandler.getDistanceMatriax(origin, destination, mGeoCoderPlaces, context);
     }

@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.models.response;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class GoogleDistanceMatrixApi {
     private String status;
 
@@ -107,6 +109,10 @@ public class GoogleDistanceMatrixApi {
                 return value;
             }
 
+            public int getValueInt() {
+                return StringUtils.isNotBlank(value) ? Integer.parseInt(value) : 0;
+            }
+
             public void setValue(String value) {
                 this.value = value;
             }
@@ -132,6 +138,10 @@ public class GoogleDistanceMatrixApi {
 
             public String getValue() {
                 return value;
+            }
+
+            public int getValueInt() {
+                return StringUtils.isNotBlank(value) ? Integer.parseInt(value) : 0;
             }
 
             public void setValue(String value) {
