@@ -64,6 +64,9 @@ public class LocationService extends Service {
 
     private LocationCallback mLocationCallback;
 
+    private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
+    private LatLng lastApiCallLatLng;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -213,14 +216,14 @@ public class LocationService extends Service {
     * when Booking Screen is in background & driver is in any trip then, we need to call distance
     * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
     * is already being handled via Direction API when we are showing Route to driver.
-    * counter == 4 indicates that API will be called after 40 sec
+    * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
     * */
     private void updateETAIfRequired() {
-        if (counter == 4) {
+        if (counter == DISTANCE_MATRIX_API_CALL_TIME) {
             counter = 0;
         }
         counter++;
-        if (!AppPreferences.isJobActivityOnForeground() && AppPreferences.isOnTrip() && counter == 4) {
+        if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground() && counter == DISTANCE_MATRIX_API_CALL_TIME) {
             Utils.redLog("Direction -> Trip Status ", AppPreferences.getTripStatus());
             if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
                 NormalCallData callData = AppPreferences.getCallData();
@@ -245,7 +248,6 @@ public class LocationService extends Service {
     /*
     * check if last start latlng and current start latlng has at least 15 m difference
     * */
-    private LatLng lastApiCallLatLng;
 
     private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
         if (lastApiCallLatLng != null &&
@@ -301,7 +303,7 @@ public class LocationService extends Service {
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         updateTripRouteList(lat, lon);
-//                    TODO apply after testing    updateETAIfRequired();
+                        updateETAIfRequired();
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;

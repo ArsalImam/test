@@ -833,7 +833,7 @@ public class RestRequestHandler {
         call.enqueue(new Callback<GoogleDistanceMatrixApi>() {
             @Override
             public void onResponse(Response<GoogleDistanceMatrixApi> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
+                if (response.isSuccess() && response.body() != null) {
                     mDataCallback.onResponse(response.body());
                     if (Constants.INVALID_REQUEST.equalsIgnoreCase(response.body().getStatus()) ||
                             Constants.OVER_QUERY_LIMIT.equalsIgnoreCase(response.body().getStatus())) {
