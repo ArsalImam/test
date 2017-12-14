@@ -271,6 +271,8 @@ public class LocationService extends Service {
                         String distance = Utils.formatDecimalPlaces((response.getRows()[0].getElements()[0].getDistance().getValueInt() / 1000.0) + "", 1);
                         AppPreferences.setEta(time);
                         AppPreferences.setEstimatedDistance(distance);
+                        mBus.post(Keys.ETA_IN_BG_UPDATED);
+
                         Utils.redLog("onDistanceMatrixResponse", "Time -> " + time + " Distance ->" + distance);
                     }
                 }

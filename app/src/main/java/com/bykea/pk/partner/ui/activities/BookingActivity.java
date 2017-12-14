@@ -265,7 +265,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         setPickupBounds();
 
 
-
                         if (isResume) {
                             if (StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())
                                     && StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
@@ -1706,4 +1705,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
+    @Override
+    public void onEvent(String action) {
+        super.onEvent(action);
+        if (Keys.ETA_IN_BG_UPDATED.equalsIgnoreCase(action)) {
+            callData.setArivalTime(AppPreferences.getEta());
+            callData.setDistance(AppPreferences.getEstimatedDistance());
+            setTimeDistance(callData.getArivalTime(), callData.getDistance());
+            AppPreferences.setCallData(callData);
+        }
+    }
 }

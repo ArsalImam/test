@@ -88,6 +88,7 @@ public class Keys {
 
     public static final String INACTIVE_PUSH = "INACTIVE-PUSH";
     public static final String INACTIVE_FENCE = "INACTIVE-FENCE";
+    public static final String ETA_IN_BG_UPDATED = "ETA_IN_BG_UPDATED";
     public static final String ACTIVE_FENCE = "ACTIVE_FENCE";
 
     /*JOB ACTIVITY CANCEL JOB LISTENER*/
