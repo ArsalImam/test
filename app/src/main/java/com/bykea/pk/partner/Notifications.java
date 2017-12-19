@@ -21,7 +21,7 @@ import android.text.Html;
 import android.util.Patterns;
 
 import com.bykea.pk.partner.models.ReceivedMessage;
-import com.bykea.pk.partner.ui.activities.ChatActivity;
+import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -376,7 +376,7 @@ public class Notifications {
                 .setContentText("" + receivedMessage.getData().getMessage())
                 .setSound(soundUri).setAutoCancel(true);
 
-        Intent targetIntent = new Intent(context, ChatActivity.class);
+        Intent targetIntent = new Intent(context, ChatActivityNew.class);
         targetIntent.putExtra(Keys.CHAT_CONVERSATION_ID, receivedMessage.getData().getConversationId());
         targetIntent.putExtra("chat", true);
 

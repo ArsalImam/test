@@ -147,6 +147,18 @@
                 android:visibility="invisible" />
 
 
+            <ProgressBar
+                android:id="@+id/loader_audio"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textLayout"
+                android:layout_below="@+id/messagesContainer"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="-5dp"
+                android:layout_marginTop="-8dp"
+                android:indeterminate="true"
+                android:visibility="invisible" />
         </RelativeLayout>
 
     </LinearLayout>

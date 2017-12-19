@@ -19,6 +19,7 @@ import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
+import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
@@ -743,6 +744,11 @@ public class UserRepository {
         mRestRequestHandler.postProblem(context, selectedReason, tripId, email, details,isFromReport, mDataCallback);
     }
 
+    public void downloadAudioFile(Context context, String path, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.downloadAudioFile(context, mDataCallback, path);
+    }
     private IResponseCallback mDataCallback = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {
@@ -884,6 +890,9 @@ public class UserRepository {
                         break;
                     case "ProblemPostResponse":
                         mUserCallback.onProblemPosted((ProblemPostResponse) object);
+                        break;
+                    case "DownloadAudioFileResponse":
+                        mUserCallback.onDownloadAudio((DownloadAudioFileResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

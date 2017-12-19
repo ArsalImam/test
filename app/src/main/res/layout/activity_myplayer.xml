@@ -27,23 +27,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <ImageView
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="70dp"
-                android:layout_marginBottom="20dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/play_icon_videos" />
-
-            <TextView
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="@string/app_name"
-                android:textColor="@color/color.error"
-                android:textSize="20dp"
-                android:textStyle="bold" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -52,11 +35,6 @@
                 android:scaleType="fitCenter" />
         </LinearLayout>
 
-        <Button
-            android:visibility="gone"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp" />
     </LinearLayout>
 
 </RelativeLayout>

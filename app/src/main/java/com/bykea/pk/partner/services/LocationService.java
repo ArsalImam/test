@@ -257,8 +257,9 @@ public class LocationService extends Service {
         if (lastApiCallLatLng != null &&
                 Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude, lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < 15) {
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     private void callDistanceMatrixApi(String destination) {
