@@ -30,6 +30,7 @@ import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Fields;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.ResponseBody;
 
 import java.util.ArrayList;
 
@@ -227,6 +228,8 @@ interface IRestClient {
                                           @Field("user_type") String type);
 
 
+    @GET
+    Call<ResponseBody> downloadAudioFile(@Url String fileUrl);
 
   /*  @FormUrlEncoded
 

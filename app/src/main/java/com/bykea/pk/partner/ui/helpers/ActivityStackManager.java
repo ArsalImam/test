@@ -12,7 +12,7 @@ import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
-import com.bykea.pk.partner.ui.activities.ChatActivity;
+import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
 import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
@@ -30,6 +30,8 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+
+import top.oply.opuslib.OpusService;
 
 
 public class ActivityStackManager {
@@ -123,7 +125,7 @@ public class ActivityStackManager {
 
     public void startChatActivity(String title, String refId, boolean isChatEnable) {
         Utils.redLog(Constants.APP_NAME + " CONVERSATION ID = ", refId);
-        Intent intent = new Intent(mContext, ChatActivity.class);
+        Intent intent = new Intent(mContext, ChatActivityNew.class);
         intent.putExtra(Keys.CHAT_CONVERSATION_ID, refId);
         intent.putExtra("chat", isChatEnable);
         intent.putExtra("title", title);
@@ -191,4 +193,21 @@ public class ActivityStackManager {
         intent.putExtra("reason",reason);
         mContext.startActivity(intent);
     }
+
+
+    public void startOpusService() {
+        if (!Utils.isServiceRunning(mContext, OpusService.class)) {
+            Intent intent = new Intent(mContext, OpusService.class);
+            mContext.startService(intent);
+            Utils.redLog("StackManager", "OpusService Starts from " + mContext.getClass().getSimpleName());
+        }
+    }
+
+    public void stopOpusService() {
+        if (Utils.isServiceRunning(mContext, OpusService.class)) {
+            mContext.stopService(new Intent(mContext, OpusService.class));
+            Utils.redLog("StackManager", "OpusService Stop");
+        }
+    }
+
 }

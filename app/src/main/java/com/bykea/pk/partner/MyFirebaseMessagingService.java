@@ -4,12 +4,12 @@ import android.content.Intent;
 
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.ui.activities.ChatActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
@@ -78,7 +78,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
             } else if (remoteMessage.getData().get("event").equalsIgnoreCase("2")) {
                 if (AppPreferences.isOnTrip()) {
-                    Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivity.class);
+                    Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivityNew.class);
                     chatIntent.putExtra("chat", true);
                     chatIntent.putExtra("fromNotification", true);
                     chatIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -11,6 +11,7 @@ import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
+import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
@@ -137,6 +138,8 @@ public interface IUserDataHandler {
     void onCitiesResponse(GetCitiesResponse response);
 
     void onProblemPosted(ProblemPostResponse response);
+
+    void onDownloadAudio(DownloadAudioFileResponse response);
 
     void onError(int errorCode, String errorMessage);
 }

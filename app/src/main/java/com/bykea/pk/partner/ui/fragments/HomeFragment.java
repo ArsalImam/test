@@ -358,21 +358,31 @@ public class HomeFragment extends Fragment {
         }
     };
 
+    private ArrayList<Polygon> mPolygonList = new ArrayList<>();
+
     private void updateHeatMapUI(final ArrayList<HeatMapUpdatedResponse> data) {
+        if (mPolygonList.size() > 0) {
+            for (Polygon polygon : mPolygonList) {
+                polygon.remove();
+            }
+            mPolygonList.clear();
+        }
         if (mGoogleMap != null) {
             mGoogleMap.clear();
         }
         new DrawPolygonAsync(data, new DrawPolygonAsync.HeatMapCallback() {
             @Override
             public void onHeatMapDataParsed(final PolygonOptions polygonOptions) {
+                synchronized (this) {
                 if (mCurrentActivity != null && getView() != null) {
                     mCurrentActivity.runOnUiThread(new Runnable() {
                         @Override
-                        public void run() {
-                            mGoogleMap.addPolygon(polygonOptions);
+                            public synchronized void run() {
+                                mPolygonList.add(mGoogleMap.addPolygon(polygonOptions));
                         }
                     });
                 }
+            }
             }
         }).startAsyncTask();
 

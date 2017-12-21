@@ -146,7 +146,7 @@
         </service>
 
         <activity
-            android:name=".ui.activities.ChatActivity"
+            android:name=".ui.activities.ChatActivityNew"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity

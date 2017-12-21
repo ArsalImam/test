@@ -11,6 +11,7 @@ import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
+import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
@@ -258,6 +259,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onProblemPosted(ProblemPostResponse response) {
+
+    }
+
+    @Override
+    public void onDownloadAudio(DownloadAudioFileResponse response) {
 
     }
 

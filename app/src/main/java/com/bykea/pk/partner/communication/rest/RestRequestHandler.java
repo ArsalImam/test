@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
+import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
@@ -37,12 +38,16 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.squareup.okhttp.ResponseBody;
 import com.squareup.okhttp.internal.Util;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -698,6 +703,85 @@ public class RestRequestHandler {
 
     }
 
+    public void downloadAudioFile(Context context, final IResponseCallback onResponseCallBack,
+                                  final String url) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<ResponseBody> restCall = mRestClient.downloadAudioFile(url);
+        restCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    Utils.redLog("DownloadAudio", "server contacted and has file");
+
+                    boolean writtenToDisk = writeResponseBodyToDisk(response.body());
+                    if (writtenToDisk) {
+                        DownloadAudioFileResponse response1 = new DownloadAudioFileResponse();
+                        response1.setLink(url);
+                        response1.setPath(mContext.getExternalFilesDir(null) + File.separator + "bykea_msg.wav");
+                        onResponseCallBack.onResponse(response1);
+                    }
+                    Utils.redLog("DownloadAudio", "file download was a success? " + writtenToDisk);
+                } else {
+                    Utils.redLog("DownloadAudio", "server contact failed");
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                onResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + getErrorMessage(t));
+            }
+        });
+    }
+
+    private boolean writeResponseBodyToDisk(ResponseBody body) {
+        try {
+            File futureStudioIconFile = new File(mContext.getExternalFilesDir(null) + File.separator + "bykea_msg.wav");
+
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
+
+            try {
+                byte[] fileReader = new byte[4096];
+
+                long fileSize = body.contentLength();
+                long fileSizeDownloaded = 0;
+
+                inputStream = body.byteStream();
+                outputStream = new FileOutputStream(futureStudioIconFile);
+
+                while (true) {
+                    int read = inputStream.read(fileReader);
+
+                    if (read == -1) {
+                        break;
+                    }
+
+                    outputStream.write(fileReader, 0, read);
+
+                    fileSizeDownloaded += read;
+
+                    Utils.redLog("DownloadAudio", "file download: " + fileSizeDownloaded + " of " + fileSize);
+                }
+
+                outputStream.flush();
+
+                return true;
+            } catch (IOException e) {
+                return false;
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+    }
 
     public void callGeoCoderApi(final String latitude, final String longitude,
                                 final IResponseCallback mDataCallback, Context context) {

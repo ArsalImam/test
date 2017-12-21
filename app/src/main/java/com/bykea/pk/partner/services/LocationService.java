@@ -231,6 +231,10 @@ public class LocationService extends Service {
                         StringUtils.isNotBlank(callData.getEndLng())) {
                     String destination = callData.getEndLat() + "," + callData.getEndLng();
                     callDistanceMatrixApi(destination);
+                } else {
+                    //in case when there is no drop off add distance covered and time taken
+                    updateETA(Utils.getTripTime(), Utils.getTripDistance());
+
                 }
             } else if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus())
                     || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
@@ -253,8 +257,9 @@ public class LocationService extends Service {
         if (lastApiCallLatLng != null &&
                 Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude, lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < 15) {
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     private void callDistanceMatrixApi(String destination) {
@@ -269,15 +274,19 @@ public class LocationService extends Service {
                             && response.getRows()[0].getElements().length > 0) {
                         String time = (response.getRows()[0].getElements()[0].getDuration().getValueInt() / 60) + "";
                         String distance = Utils.formatDecimalPlaces((response.getRows()[0].getElements()[0].getDistance().getValueInt() / 1000.0) + "", 1);
-                        AppPreferences.setEta(time);
-                        AppPreferences.setEstimatedDistance(distance);
-                        mBus.post(Keys.ETA_IN_BG_UPDATED);
+                        updateETA(time, distance);
 
                         Utils.redLog("onDistanceMatrixResponse", "Time -> " + time + " Distance ->" + distance);
                     }
                 }
             });
         }
+    }
+
+    private void updateETA(String time, String distance) {
+        AppPreferences.setEta(time);
+        AppPreferences.setEstimatedDistance(distance);
+        mBus.post(Keys.ETA_IN_BG_UPDATED);
     }
 
     private void addLatLng(double lat, double lon, boolean updatePrevTime) {
