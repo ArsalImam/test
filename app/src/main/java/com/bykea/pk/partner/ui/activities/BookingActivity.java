@@ -746,7 +746,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             startAddressTv.setText(callData.getStartAddress());
             mGoogleSrcLatLng = callData.getStartLat() + "," + callData.getStartLng();
         } else {
-            setTimeDistance("0", "0");
+            updateEtaAndCallData("0", "0");
             startAddressTv.setText(callData.getStartAddress());
             mGoogleSrcLatLng = callData.getStartLat() + "," + callData.getStartLng();
         }
@@ -755,6 +755,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         currentLocationIv.setVisibility(View.INVISIBLE);
         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
 
+    }
+
+    private void updateEtaAndCallData(String time, String distance) {
+        callData.setArivalTime(time);
+        callData.setDistance(distance);
+        setTimeDistance(callData.getArivalTime(), callData.getDistance());
+        AppPreferences.setCallData(callData);
     }
 
     private void setOnStartData() {
@@ -1039,7 +1046,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         }
                         Utils.redLog("Route", "updatedDistance -> " + updatedDistance + " KM");
                         Utils.redLog("Route", "updatedTime -> " + time + " min");
-                        setTimeDistance(time + "", updatedDistance + "");
+                        updateEtaAndCallData(time + "", updatedDistance + "");
                         break;
                     } else {
                         Utils.redLog("Route", "isLatLngCovered -> true");
@@ -1083,7 +1090,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void showEstimatedDistTime() {
         if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)
                 && endAddressTv.getText().toString().equalsIgnoreCase(getString(R.string.destination_not_selected_msg))) {
-            setTimeDistance(Utils.getTripTime(), Utils.getTripDistance());
+            updateEtaAndCallData(Utils.getTripTime(), Utils.getTripDistance());
         }
     }
 
@@ -1238,8 +1245,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         mPolylineOptions = route.get(i).getPolyOptions();
                         if (i == 0) {
                             mRouteLatLng = route.get(i).getPoints();
-                            setTimeDistance((route.get(i).getDurationValue() / 60) + "",
+                            updateEtaAndCallData((route.get(i).getDurationValue() / 60) + "",
                                     Utils.formatDecimalPlaces((route.get(i).getDistanceValue() / 1000.0) + "", 1));
+
                             distanceToPickup = (route.get(i).getDistanceValue());
 
                             mapPolylines = mGoogleMap.addPolyline(mPolylineOptions);
@@ -1510,7 +1518,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         setOnArrivedData();
                         // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
                         changeDriverMarker();
-                        setTimeDistance("0", "0");
+                        updateEtaAndCallData("0", "0");
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, arrivedResponse.getMessage());
                     }
@@ -1709,10 +1717,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     public void onEvent(String action) {
         super.onEvent(action);
         if (Keys.ETA_IN_BG_UPDATED.equalsIgnoreCase(action)) {
-            callData.setArivalTime(AppPreferences.getEta());
-            callData.setDistance(AppPreferences.getEstimatedDistance());
-            setTimeDistance(callData.getArivalTime(), callData.getDistance());
-            AppPreferences.setCallData(callData);
+            updateEtaAndCallData(AppPreferences.getEta(), AppPreferences.getEstimatedDistance());
         }
     }
 }
