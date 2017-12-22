@@ -484,6 +484,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             properties.put("DriverName", AppPreferences.getPilotData().getFullName());
             properties.put("TripID", callData.getTripId());
             properties.put("type", callData.getCallType());
+            if(StringUtils.isNotBlank(Utils.getCurrentLocation())){
+                properties.put("endDropOff", Utils.getCurrentLocation());
+            }
 
             Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_COMPLETE.replace("_R_", callData.getCallType()), properties);
 
