@@ -1219,4 +1219,14 @@ public class Utils {
         valueAnimator.setDuration(duration);
         valueAnimator.start();
     }
+
+    public static String getCurrentLocation() {
+        String currentLocaiton;
+        if(AppPreferences.getLatitude() != 0 && AppPreferences.getLongitude() != 0 && AppPreferences.getLatitude() != 0.0 && AppPreferences.getLongitude() != 0.0){
+            currentLocaiton = AppPreferences.getLatitude() + "," + AppPreferences.getLongitude();
+        }else{
+            currentLocaiton = StringUtils.EMPTY;
+        }
+        return currentLocaiton;
+    }
 }

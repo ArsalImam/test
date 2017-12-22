@@ -476,7 +476,7 @@ public class HomeFragment extends Fragment {
 
     private void getHeatMapData() {
         if (Connectivity.isConnectedFast(mCurrentActivity) && AppPreferences.getAvailableStatus()) {
-            repository.requestHeatMapData(mCurrentActivity, handler);
+//            repository.requestHeatMapData(mCurrentActivity, handler);
         }
     }
 
