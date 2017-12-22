@@ -281,18 +281,18 @@ public class HomeFragment extends Fragment {
         return timer * 60000;
     }
 
-    private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-        }
-
-        @Override
-        public void onFinish() {
-            setConnectionStatus();
-            getHeatMapData();
-            countDownTimer.start();
-        }
-    };
+//    private CountDownTimer countDownTimer = new CountDownTimer(getHeatMapTimer(), getHeatMapTimer()) {
+//        @Override
+//        public void onTick(long millisUntilFinished) {
+//        }
+//
+//        @Override
+//        public void onFinish() {
+//            setConnectionStatus();
+//            getHeatMapData();
+//            countDownTimer.start();
+//        }
+//    };
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
         @Override
@@ -360,6 +360,7 @@ public class HomeFragment extends Fragment {
 
     private ArrayList<Polygon> mPolygonList = new ArrayList<>();
 
+    //    private PolygonDrawingUtil polygonDrawingUtil = new PolygonDrawingUtil();
     private void updateHeatMapUI(final ArrayList<HeatMapUpdatedResponse> data) {
         if (mPolygonList.size() > 0) {
             for (Polygon polygon : mPolygonList) {
@@ -374,15 +375,15 @@ public class HomeFragment extends Fragment {
             @Override
             public void onHeatMapDataParsed(final PolygonOptions polygonOptions) {
                 synchronized (this) {
-                if (mCurrentActivity != null && getView() != null) {
-                    mCurrentActivity.runOnUiThread(new Runnable() {
-                        @Override
+                    if (mCurrentActivity != null && getView() != null) {
+                        mCurrentActivity.runOnUiThread(new Runnable() {
+                            @Override
                             public synchronized void run() {
                                 mPolygonList.add(mGoogleMap.addPolygon(polygonOptions));
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
-            }
             }
         }).startAsyncTask();
 
@@ -408,6 +409,7 @@ public class HomeFragment extends Fragment {
 
 
     }
+
 
     private Bitmap writeTextOnDrawable(int drawableId, String text) {
 
@@ -483,9 +485,9 @@ public class HomeFragment extends Fragment {
         super.onPause();
         isScreenInFront = false;
         mCurrentActivity.unregisterReceiver(myReceiver);
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
+//        if (countDownTimer != null) {
+//            countDownTimer.cancel();
+//        }
         if (mapView != null) {
             mapView.onPause();
         }
@@ -538,7 +540,7 @@ public class HomeFragment extends Fragment {
                         StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
                     String demandLink = AppPreferences.getSettings().getSettings().getDemand();
 //                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
-                    String replaceString = demandLink.replace(Constants.REPLACE_CITY,StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
+                    String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
                     Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
                 }
                 break;
@@ -697,8 +699,8 @@ public class HomeFragment extends Fragment {
                 rl_main_destination.setVisibility(View.GONE);
             }
 
-            countDownTimer.start();
-            getHeatMapData();
+//            countDownTimer.start();
+//            getHeatMapData();
         }
 
         if (AppPreferences.isWalletAmountIncreased()) {
