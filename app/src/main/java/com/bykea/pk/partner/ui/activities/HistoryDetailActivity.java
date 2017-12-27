@@ -78,6 +78,10 @@ public class HistoryDetailActivity extends BaseActivity {
     FontTextView fareTv;
     @Bind(R.id.promoTv)
     FontTextView promoTv;
+
+    @Bind(R.id.dropOffDiscTv)
+    FontTextView dropOffDiscTv;
+
     @Bind(R.id.walletTv)
     FontTextView walletTv;
     @Bind(R.id.driverRb)
@@ -128,6 +132,7 @@ public class HistoryDetailActivity extends BaseActivity {
                     basefareTv.setText("" + data.getInvoice().getBaseFare());
                     totalAmountTv.setText("Rs. " + data.getInvoice().getTotal());
                     promoTv.setText("" + data.getInvoice().getPromo_deduction());
+                    dropOffDiscTv.setText("" + data.getInvoice().getDropoff_discount());
 
                     String start_balance = verifyData(data.getInvoice().getStart_balance());
                     String wallet = verifyData(data.getInvoice().getWallet_deduction());
@@ -188,7 +193,7 @@ public class HistoryDetailActivity extends BaseActivity {
 //                Utils.startCustomWebViewActivity(mCurrentActivity,
 //                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
 
-                ActivityStackManager.getInstance(mCurrentActivity).startProblemActivity(mCurrentActivity,data.getTripNo());
+                ActivityStackManager.getInstance(mCurrentActivity).startProblemActivity(mCurrentActivity, data.getTripNo());
                 break;
         }
     }

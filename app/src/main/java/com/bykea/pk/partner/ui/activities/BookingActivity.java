@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -484,7 +485,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             properties.put("DriverName", AppPreferences.getPilotData().getFullName());
             properties.put("TripID", callData.getTripId());
             properties.put("type", callData.getCallType());
-            if(StringUtils.isNotBlank(Utils.getCurrentLocation())){
+            if (StringUtils.isNotBlank(Utils.getCurrentLocation())) {
                 properties.put("endDropOff", Utils.getCurrentLocation());
             }
 
@@ -1445,9 +1446,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             cancelByPassenger(true, message);
                         }
                         if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_COMPLETE_BY_ADMIN)) {
+                            playNotificationSound();
                             onCompleteByAdmin(intent.getStringExtra("msg"));
                         }
                         if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
+                            playNotificationSound();
                             Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
                             callData = AppPreferences.getCallData();
                             updateDropOff();
@@ -1474,6 +1477,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
 
     private void cancelByPassenger(boolean isCanceledByAdmin, String cancelMsg) {
+        playNotificationSound();
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
         ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(isCanceledByAdmin, cancelMsg);
@@ -1721,6 +1725,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         super.onEvent(action);
         if (Keys.ETA_IN_BG_UPDATED.equalsIgnoreCase(action)) {
             updateEtaAndCallData(AppPreferences.getEta(), AppPreferences.getEstimatedDistance());
+        }
+    }
+
+
+    private void playNotificationSound() {
+        if (AppPreferences.isCallingActivityOnForeground()) {
+            MediaPlayer
+                    .create(mCurrentActivity, R.raw.notification_sound)
+                    .start();
         }
     }
 }

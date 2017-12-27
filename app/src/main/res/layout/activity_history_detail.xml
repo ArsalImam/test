@@ -365,6 +365,40 @@
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
                     android:gravity="left|center_vertical"
+                    android:text="Drop Off Discount"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/dropOffDiscTv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_light.ttf" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin.small"
+                android:layout_marginRight="@dimen/margin.small"
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/_7sdp"
+                android:paddingTop="@dimen/_7sdp">
+
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="left|center_vertical"
                     android:text="Promo"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"

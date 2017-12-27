@@ -189,6 +189,7 @@ public class TripHistoryData implements Serializable {
         @SerializedName("trip_charges")
         private String tripCharges;
         private String promo_deduction;
+        private String dropoff_discount;
         private String wallet_deduction;
 
         public String getKm() {
@@ -237,6 +238,14 @@ public class TripHistoryData implements Serializable {
 
         public String getStart_balance() {
             return start_balance;
+        }
+
+        public String getDropoff_discount() {
+            return StringUtils.isNotBlank(dropoff_discount) ? dropoff_discount : "0";
+        }
+
+        public void setDropoff_discount(String dropoff_discount) {
+            this.dropoff_discount = dropoff_discount;
         }
 
     }
