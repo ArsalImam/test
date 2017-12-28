@@ -92,11 +92,11 @@ public class TripHistoryFragment extends Fragment {
             public void onItemClickListener(int position, View view, TripHistoryData historyData) {
                 if (!historyData.getStatus().equalsIgnoreCase("cancelled")) {
                     if (historyData.getInvoice() != null) {
-                        ActivityStackManager.getInstance(mCurrentActivity).startCompletedDetailsActivity(historyData);
+                        ActivityStackManager.getInstance().startCompletedDetailsActivity(historyData, mCurrentActivity);
                         HomeActivity.visibleFragmentNumber = 2;
                     }
                 } else {
-                    ActivityStackManager.getInstance(mCurrentActivity).startCancelDetailsActivity(historyData);
+                    ActivityStackManager.getInstance().startCancelDetailsActivity(historyData, mCurrentActivity);
                 }
             }
         });
@@ -146,7 +146,7 @@ public class TripHistoryFragment extends Fragment {
         mCurrentActivity.showMissedCallIcon(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityStackManager.getInstance(mCurrentActivity).startMissedCallsActivity();
+                ActivityStackManager.getInstance().startMissedCallsActivity(mCurrentActivity);
             }
         });
     }

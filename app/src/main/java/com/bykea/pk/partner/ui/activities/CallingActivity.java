@@ -10,7 +10,10 @@ import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -29,6 +32,7 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +61,8 @@ public class CallingActivity extends BaseActivity {
     FontTextView timeTv;
     @Bind(R.id.ivCallType)
     ImageView ivCallType;
+    @Bind(R.id.activity_calling)
+    RelativeLayout activity_calling;
 
     private UserRepository repository;
     private MediaPlayer _mpSound;
@@ -88,7 +94,7 @@ public class CallingActivity extends BaseActivity {
         if (null != getIntent() && getIntent().getBooleanExtra("isGcm", false)) {
             Utils.redLog("FCM", "Calling Activity");
             DriverApp.getApplication().connect();
-            WebIORequestHandler.getInstance().setContext(mCurrentActivity);
+//            WebIORequestHandler.getInstance().setContext(mCurrentActivity);
             DriverApp.startLocationService(mCurrentActivity);
         }
         ackCall();
@@ -100,7 +106,7 @@ public class CallingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
+//        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(CallingActivity.this);
         AppPreferences.setCallingActivityOnForeground(true);
@@ -108,7 +114,6 @@ public class CallingActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         stopSound();
         unregisterReceiver(cancelRideReceiver);
         if (AppPreferences.isOnTrip()) {
@@ -118,6 +123,25 @@ public class CallingActivity extends BaseActivity {
             AppPreferences.setIncomingCall(true);
         }
         AppPreferences.setCallingActivityOnForeground(false);
+        if (ivCallType != null) {
+            ivCallType.setImageDrawable(null);
+        }
+        unbindDrawables(activity_calling);
+        Runtime.getRuntime().gc();
+        super.onDestroy();
+    }
+
+
+    private void unbindDrawables(View view) {
+        if (view.getBackground() != null) {
+            view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup && !(view instanceof AdapterView)) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                unbindDrawables(((ViewGroup) view).getChildAt(i));
+            }
+            ((ViewGroup) view).removeAllViews();
+        }
     }
 
     @Override
@@ -180,7 +204,7 @@ public class CallingActivity extends BaseActivity {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
+                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                         stopSound();
                         mCurrentActivity.finish();
                     }
@@ -200,7 +224,7 @@ public class CallingActivity extends BaseActivity {
                         if (acceptCallResponse.isSuccess()) {
                             AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
                             AppPreferences.setIsOnTrip(true);
-                            ActivityStackManager.getInstance(mCurrentActivity).startJobActivity();
+                            ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                             stopSound();
                             mCurrentActivity.finish();
                         } else {
@@ -229,7 +253,7 @@ public class CallingActivity extends BaseActivity {
                     } else {
                         AppPreferences.setIncomingCall(true);
                     }
-                    ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
+                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     stopSound();
                     mCurrentActivity.finish();
                 }
@@ -243,7 +267,7 @@ public class CallingActivity extends BaseActivity {
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
                     Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
-                    ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
+                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     stopSound();
                     mCurrentActivity.finish();
                 }
@@ -279,7 +303,7 @@ public class CallingActivity extends BaseActivity {
             if (!isFreeDriverApiCalled) {
                 repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
-                ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
+                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                 mCurrentActivity.finish();
             }
         }
@@ -375,7 +399,7 @@ public class CallingActivity extends BaseActivity {
                                 Utils.setCallIncomingState();
                                 AppPreferences.setTripStatus(TripStatus.ON_FREE);
                                 stopSound();
-                                ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(false, "");
+                                ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, "", mCurrentActivity);
                                 mCurrentActivity.finish();
                             }
                         }

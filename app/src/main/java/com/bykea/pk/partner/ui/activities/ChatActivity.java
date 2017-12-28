@@ -35,7 +35,6 @@ import com.bykea.pk.partner.models.Sender;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
-import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -285,7 +284,7 @@ public class ChatActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         AppPreferences.setChatActivityOnForeground(true);
-        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
+//        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
         registerReceiver(messageReceiver, new IntentFilter(Keys.BROADCAST_MESSAGE_RECEIVE));
         Notifications.removeAllNotifications(mCurrentActivity);
@@ -315,7 +314,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (isFromNotification) {
-            ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(false);
+            ActivityStackManager.getInstance().startHomeActivity(false,mCurrentActivity);
             finish();
         } else {
             super.onBackPressed();

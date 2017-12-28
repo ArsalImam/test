@@ -134,7 +134,7 @@ public class WalletFragment extends Fragment {
         mCurrentActivity.showWalletIcon(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityStackManager.getInstance(mCurrentActivity).startRequestPaymentActivity();
+                ActivityStackManager.getInstance().startRequestPaymentActivity(mCurrentActivity);
             }
         });
     }

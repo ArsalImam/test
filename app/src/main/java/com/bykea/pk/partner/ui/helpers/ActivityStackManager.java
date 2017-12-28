@@ -35,23 +35,24 @@ import top.oply.opuslib.OpusService;
 
 
 public class ActivityStackManager {
-    private static Context mContext;
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
 
     private ActivityStackManager() {
     }
 
-    public static ActivityStackManager getInstance(Context context) {
-        mContext = context;
+    private static void setContext() {
+    }
+
+    public static ActivityStackManager getInstance() {
         return mActivityStack;
     }
 
-    public void startLoginActivity() {
+    public void startLoginActivity(Context mContext) {
         Intent intent = new Intent(mContext, LoginActivity.class);
         mContext.startActivity(intent);
     }
 
-    public void startHomeActivity(boolean firstTime) {
+    public void startHomeActivity(boolean firstTime, Context mContext) {
         Intent intent = new Intent(mContext, HomeActivity.class);
         if (firstTime) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
@@ -60,52 +61,52 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin, String cancelMsg) {
+    public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin, String cancelMsg, Context mContext) {
         Intent intent = new Intent(mContext, HomeActivity.class);
         intent.putExtra("isCancelledTrip", true);
         intent.putExtra("isCanceledByAdmin", isCanceledByAdmin);
-        intent.putExtra("cancelMsg",cancelMsg);
+        intent.putExtra("cancelMsg", cancelMsg);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mContext.startActivity(intent);
     }
 
-    public void startJobActivity() {
+    public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
         mContext.startActivity(intent);
     }
 
-    public void startFeedbackActivity() {
+    public void startFeedbackActivity(Context mContext) {
         Intent intent = new Intent(mContext, FeedbackActivity.class);
         mContext.startActivity(intent);
     }
 
-    public void startFeedbackFromResume() {
+    public void startFeedbackFromResume(Context mContext) {
         Intent intent = new Intent(mContext, FeedbackActivity.class);
         mContext.startActivity(intent);
     }
 
-    public void startLocationService() {
+    public void startLocationService(Context mContext) {
         if (!Utils.isServiceRunning(mContext, LocationService.class)) {
             mContext.startService(new Intent(mContext, LocationService.class));
         }
     }
 
-    public void stopLocationService() {
+    public void stopLocationService(Context mContext) {
         AppPreferences.setStopService(true);
         if (Utils.isServiceRunning(mContext, LocationService.class)) {
             mContext.stopService(new Intent(mContext, LocationService.class));
         }
     }
 
-    public void restartLocationService() {
+    public void restartLocationService(Context mContext) {
         if (Utils.isServiceRunning(mContext, LocationService.class)) {
             mContext.stopService(new Intent(mContext, LocationService.class));
         }
-        startLocationService();
+        startLocationService(mContext);
     }
 
-    public void startCallingActivity(NormalCallData callData, boolean isFromGcm) {
+    public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
         if (AppPreferences.getAvailableStatus()
                 && Utils.isGpsEnable(mContext)
                 && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
@@ -123,7 +124,7 @@ public class ActivityStackManager {
         }
     }
 
-    public void startChatActivity(String title, String refId, boolean isChatEnable) {
+    public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {
         Utils.redLog(Constants.APP_NAME + " CONVERSATION ID = ", refId);
         Intent intent = new Intent(mContext, ChatActivityNew.class);
         intent.putExtra(Keys.CHAT_CONVERSATION_ID, refId);
@@ -132,23 +133,23 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startRequestPaymentActivity() {
+    public void startRequestPaymentActivity(Context mContext) {
         Intent intent = new Intent(mContext, PaymentRequestActivity.class);
         mContext.startActivity(intent);
     }
 
-    public void startMissedCallsActivity() {
+    public void startMissedCallsActivity(Context mContext) {
         Intent intent = new Intent(mContext, HistoryMissedCallsActivity.class);
         mContext.startActivity(intent);
     }
 
-    public void startCancelDetailsActivity(TripHistoryData data) {
+    public void startCancelDetailsActivity(TripHistoryData data, Context mContext) {
         Intent intent = new Intent(mContext, HistoryCancelDetailsActivity.class);
         intent.putExtra(Constants.Extras.TRIP_DETAILS, data);
         mContext.startActivity(intent);
     }
 
-    public void startLauncherActivity() {
+    public void startLauncherActivity(Context mContext) {
         PackageManager packageManager = mContext.getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(mContext.getPackageName());
         ComponentName componentName = intent.getComponent();
@@ -156,46 +157,46 @@ public class ActivityStackManager {
         mContext.startActivity(mainIntent);
     }
 
-    public void startCompletedDetailsActivity(TripHistoryData historyData) {
+    public void startCompletedDetailsActivity(TripHistoryData historyData, Context mContext) {
         Intent intent = new Intent(mContext, HistoryDetailActivity.class);
         intent.putExtra(Constants.Extras.TRIP_DETAILS, historyData);
         mContext.startActivity(intent);
     }
 
-    public void startConfirmDestActivity(Activity mCurrentActivity,String toolBarTitle, String searchBoxTitle) {
+    public void startConfirmDestActivity(Activity mContext, String toolBarTitle, String searchBoxTitle) {
         Intent returndropoffIntent = new Intent(mContext, ConfirmDropOffAddressActivity.class);
         returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
-        returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE,toolBarTitle);
-        returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE,toolBarTitle);
-        mCurrentActivity.startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+        returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE, toolBarTitle);
+        returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE, toolBarTitle);
+        mContext.startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
     }
 
-    public void startProblemPostActivity(Context context,String tripId, String reason) {
-        Intent intent = new Intent(context,PostProblemActivity.class);
-        intent.putExtra("TRIP_ID",tripId);
-        intent.putExtra("REASON",reason);
+    public void startProblemPostActivity(Context context, String tripId, String reason) {
+        Intent intent = new Intent(context, PostProblemActivity.class);
+        intent.putExtra("TRIP_ID", tripId);
+        intent.putExtra("REASON", reason);
         context.startActivity(intent);
     }
 
-    public void startProblemActivity(Context context,String tripNo) {
-        Intent intent = new Intent(context,ProblemActivity.class);
-        intent.putExtra("TRIP_ID",tripNo);
+    public void startProblemActivity(Context context, String tripNo) {
+        Intent intent = new Intent(context, ProblemActivity.class);
+        intent.putExtra("TRIP_ID", tripNo);
         context.startActivity(intent);
     }
 
-    public void startReportActivity() {
-        Intent intent = new Intent(mContext,ReportActivity.class);
+    public void startReportActivity(Context mContext) {
+        Intent intent = new Intent(mContext, ReportActivity.class);
         mContext.startActivity(intent);
     }
 
-    public void startReportPostActivity(String reason) {
-        Intent intent = new Intent(mContext,ReportPostActivity.class);
-        intent.putExtra("reason",reason);
+    public void startReportPostActivity(String reason, Context mContext) {
+        Intent intent = new Intent(mContext, ReportPostActivity.class);
+        intent.putExtra("reason", reason);
         mContext.startActivity(intent);
     }
 
 
-    public void startOpusService() {
+    public void startOpusService(Context mContext) {
         if (!Utils.isServiceRunning(mContext, OpusService.class)) {
             Intent intent = new Intent(mContext, OpusService.class);
             mContext.startService(intent);
@@ -203,7 +204,7 @@ public class ActivityStackManager {
         }
     }
 
-    public void stopOpusService() {
+    public void stopOpusService(Context mContext) {
         if (Utils.isServiceRunning(mContext, OpusService.class)) {
             mContext.stopService(new Intent(mContext, OpusService.class));
             Utils.redLog("StackManager", "OpusService Stop");

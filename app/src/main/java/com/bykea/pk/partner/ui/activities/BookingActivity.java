@@ -304,7 +304,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
                 Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
             else {
-                ActivityStackManager.getInstance(mCurrentActivity).startLocationService();
+                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
         }
     }
@@ -346,8 +346,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         switch (view.getId()) {
             case R.id.chatBtn:
                 if (!callData.isDispatcher()) {
-                    ActivityStackManager.getInstance(mCurrentActivity)
-                            .startChatActivity(callData.getPassName(), "", true);
+                    ActivityStackManager.getInstance()
+                            .startChatActivity(callData.getPassName(), "", true,mCurrentActivity);
                 } else {
                     Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                 }
@@ -554,7 +554,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         checkConnectivity(mCurrentActivity);
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(BookingActivity.this);
-        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
+//        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
         isJobActivityLive = true;
         AppPreferences.setJobActivityOnForeground(true);
@@ -1480,7 +1480,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         playNotificationSound();
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        ActivityStackManager.getInstance(mCurrentActivity).startHomeActivityFromCancelTrip(isCanceledByAdmin, cancelMsg);
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, cancelMsg,mCurrentActivity);
         mCurrentActivity.finish();
     }
 
@@ -1489,7 +1489,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
             @Override
             public void onCallBack(String msg) {
-                ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
+                ActivityStackManager.getInstance().startHomeActivity(true,mCurrentActivity);
                 mCurrentActivity.finish();
             }
         }, null, "Trip Completed", msg);
@@ -1565,7 +1565,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         AppPreferences.setAvailableStatus(cancelRideResponse.isAvailable());
 
                         /*dataRepository.requestLocationUpdate(mCurrentActivity);*/ // Required to reduce availability status delay
-                        ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
+                        ActivityStackManager.getInstance().startHomeActivity(true,mCurrentActivity);
                         finish();
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, cancelRideResponse.getMessage());
@@ -1604,8 +1604,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         tvEstimation.setVisibility(View.GONE);
                         AppPreferences.clearTripDistanceData();
                         AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP);
-                        ActivityStackManager.getInstance(mCurrentActivity)
-                                .startFeedbackActivity();
+                        ActivityStackManager.getInstance()
+                                .startFeedbackActivity(mCurrentActivity);
                         mCurrentActivity.finish();
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, endRideResponse.getMessage());

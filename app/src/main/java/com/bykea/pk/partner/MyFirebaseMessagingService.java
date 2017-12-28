@@ -73,7 +73,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             Notifications.createNotification(mContext, callData.getMessage(), 23);
                         }
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING)) {
-                        ActivityStackManager.getInstance(mContext).startCallingActivity(callData, true);
+                        ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
                     }
                 }
             } else if (remoteMessage.getData().get("event").equalsIgnoreCase("2")) {

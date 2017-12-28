@@ -45,10 +45,10 @@ android {
         }
         debug {
             signingConfig signingConfigs.debug
-            shrinkResources true // to remove unused resources. This will reduce APK size.
-            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
+            shrinkResources false // to remove unused resources. This will reduce APK size.
+//            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+//                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
 
         }
     }
@@ -135,6 +135,8 @@ dependencies {
     compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     compile 'top.oply.opuslib:opuslib:1.0.2'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
 }

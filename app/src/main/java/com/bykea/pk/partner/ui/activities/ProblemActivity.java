@@ -3,7 +3,6 @@ package com.bykea.pk.partner.ui.activities;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -103,7 +102,7 @@ public class ProblemActivity extends BaseActivity {
         mAdapter.setMyOnItemClickListener(new ProblemItemsAdapter.MyOnItemClickListener() {
             @Override
             public void onItemClickListener(int position, View view, String reason) {
-                ActivityStackManager.getInstance(mCurrentActivity).startProblemPostActivity(mCurrentActivity, tripId, reason);
+                ActivityStackManager.getInstance().startProblemPostActivity(mCurrentActivity, tripId, reason);
 //                selectedReason = reason;
 //                loadFragment(new PostProblemFragment());
             }

@@ -26,16 +26,17 @@ import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 
 import com.bykea.pk.partner.BuildConfig;
-import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -48,7 +49,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -93,7 +93,7 @@ public class Utils {
 
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            Log.e(tag + " : ", message + ".");
+            Log.e(tag + " : ", message);
         }
     }
 
@@ -229,7 +229,7 @@ public class Utils {
     public static void logout(Context context) {
         clearData();
         HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.getInstance(context).startLoginActivity();
+        ActivityStackManager.getInstance().startLoginActivity(context);
         ((Activity) context).finish();
     }
 
@@ -657,7 +657,7 @@ public class Utils {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                         @Override
                         public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance(mCurrentActivity).startLoginActivity();
+                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
                             mCurrentActivity.finish();
                         }
                     }, null, "UnAuthorized", "Session Expired. Please Log in again.");
@@ -675,7 +675,7 @@ public class Utils {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                         @Override
                         public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance(mCurrentActivity).startLoginActivity();
+                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
                             mCurrentActivity.finish();
                         }
                     }, null, "UnAuthorized", "We strictly discourage usage of Fake GPS, please disable this and login again. Thank you! ");
@@ -1250,6 +1250,20 @@ public class Utils {
                 }
             }
         } catch (Exception ignored) {
+        }
+    }
+
+    public static void unbindDrawables(View view) {
+        if (view != null) {
+            if (view.getBackground() != null) {
+                view.getBackground().setCallback(null);
+            }
+            if (view instanceof ViewGroup && !(view instanceof AdapterView)) {
+                for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                    unbindDrawables(((ViewGroup) view).getChildAt(i));
+                }
+                ((ViewGroup) view).removeAllViews();
+            }
         }
     }
 

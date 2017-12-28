@@ -15,11 +15,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -56,22 +53,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.TileOverlay;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.HeatmapLatlng;
-import com.bykea.pk.partner.models.response.HeatMapResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -83,8 +70,6 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.maps.android.ui.IconGenerator;
-import com.squareup.okhttp.internal.Util;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -98,6 +83,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment {
 
+    @Bind(R.id.rlMain)
+    RelativeLayout rlMain;
     @Bind(R.id.rlInactiveImage)
     LinearLayout rlInactiveImage;
     @Bind(R.id.mapPinIv)
@@ -307,17 +294,7 @@ public class HomeFragment extends Fragment {
             if (mCurrentActivity != null && !Permissions.hasLocationPermissions(mCurrentActivity)) {
                 Permissions.getLocationPermissions(HomeFragment.this);
             } else {
-                if (ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                mGoogleMap.setMyLocationEnabled(true);
+                if (enableLocation()) return;
             }
             if (AppPreferences.getLatitude() != 0.0 &&
                     AppPreferences.getLongitude() != 0.0)
@@ -357,6 +334,23 @@ public class HomeFragment extends Fragment {
 //            updateHeatMapUI(data);
         }
     };
+
+    private boolean enableLocation() {
+        if (ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return true;
+        }
+        if (mGoogleMap != null) {
+            mGoogleMap.setMyLocationEnabled(true);
+        }
+        return false;
+    }
 
     private ArrayList<Polygon> mPolygonList = new ArrayList<>();
 
@@ -471,6 +465,7 @@ public class HomeFragment extends Fragment {
             }
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
+        if (enableLocation()) return;
         super.onResume();
     }
 
@@ -491,12 +486,17 @@ public class HomeFragment extends Fragment {
         if (mapView != null) {
             mapView.onPause();
         }
+        clearMap();
     }
 
     @Override
     public void onStop() {
+        if (mapView != null) {
+            mapView.onStop();
+        }
         isScreenInFront = false;
         super.onStop();
+        clearMap();
     }
 
     @Override
@@ -507,14 +507,34 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        clearMap();
+        Utils.unbindDrawables(rlMain);
 //        mCurrentActivity.showToolbar();
         ButterKnife.unbind(this);
     }
 
     @Override
     public void onDestroy() {
-        mapView.onDestroy();
         super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    private boolean clearMap() {
+        if (mGoogleMap != null) {
+            if (ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return true;
+            }
+            mGoogleMap.setMyLocationEnabled(false);
+            mGoogleMap.clear();
+        }
+        return false;
     }
 
     private long mLastClickTime;
@@ -659,7 +679,7 @@ public class HomeFragment extends Fragment {
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
             @Override
             public void onCallBack(String msg) {
-                ActivityStackManager.getInstance(mCurrentActivity).startLoginActivity();
+                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
                 mCurrentActivity.finish();
             }
         }, null, "Licence Expired", "Your driving licence is expired. Please renew your driving licence and then contact support.");
@@ -760,11 +780,11 @@ public class HomeFragment extends Fragment {
                                 AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                     WebIORequestHandler.getInstance().registerChatListener();
-                                    ActivityStackManager.getInstance(mCurrentActivity)
-                                            .startJobActivity();
+                                    ActivityStackManager.getInstance()
+                                            .startJobActivity(mCurrentActivity);
                                 } else {
-                                    ActivityStackManager.getInstance(mCurrentActivity)
-                                            .startFeedbackFromResume();
+                                    ActivityStackManager.getInstance()
+                                            .startFeedbackFromResume(mCurrentActivity);
                                 }
                                 mCurrentActivity.finish();
                             } catch (NullPointerException ignored) {
@@ -815,10 +835,10 @@ public class HomeFragment extends Fragment {
                                 if (AppPreferences.isOutOfFence()) {
                                     AppPreferences.setOutOfFence(false);
                                 }
-                                ActivityStackManager.getInstance(mCurrentActivity).restartLocationService();
+                                ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
                             } else {
                                 AppPreferences.setDriverDestination(null);
-                                ActivityStackManager.getInstance(mCurrentActivity).stopLocationService();
+                                ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
                             }
                             setStatusBtn();
                         } else {

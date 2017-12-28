@@ -92,7 +92,7 @@ public class HomeActivity extends BaseActivity {
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
                 Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
             else {
-                ActivityStackManager.getInstance(mCurrentActivity).startLocationService();
+                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
         }
     }
@@ -102,7 +102,7 @@ public class HomeActivity extends BaseActivity {
         super.onResume();
          /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(HomeActivity.this);
-        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
+//        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         AppPreferences.setProfileUpdated(true);
     }
 

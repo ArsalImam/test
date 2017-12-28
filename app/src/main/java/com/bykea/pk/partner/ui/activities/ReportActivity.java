@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -69,7 +68,7 @@ public class ReportActivity extends BaseActivity {
                     rvReportList.setVisibility(View.GONE);
                     helpLayout.setVisibility(View.VISIBLE);
                 }else{
-                    ActivityStackManager.getInstance(mCurrentActivity).startReportPostActivity(reason);
+                    ActivityStackManager.getInstance().startReportPostActivity(reason,mCurrentActivity);
                 }
             }
         });

@@ -82,18 +82,18 @@ public class SplashActivity extends BaseActivity {
                                     && StringUtils.isNotBlank(FirebaseInstanceId.getInstance().getToken())) {
                                 AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
                             }
-                            ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).startLocationService();
+                            ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                             if (AppPreferences.isLoggedIn()) {
                                 // Connect socket
                                 DriverApp.getApplication().connect();
-                                WebIORequestHandler.getInstance().setContext(mCurrentActivity);
+//                                WebIORequestHandler.getInstance().setContext(mCurrentActivity);
                                 if (AppPreferences.isOnTrip()) {
                                     repository.requestRunningTrip(mCurrentActivity, handler);
                                 } else {
                                     startHomeActivity();
                                 }
                             } else {
-                                ActivityStackManager.getInstance(mCurrentActivity).startLoginActivity();
+                                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
                                 finish();
                             }
                         } else {
@@ -131,11 +131,11 @@ public class SplashActivity extends BaseActivity {
                                 AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                     WebIORequestHandler.getInstance().registerChatListener();
-                                    ActivityStackManager.getInstance(mCurrentActivity)
-                                            .startJobActivity();
+                                    ActivityStackManager.getInstance()
+                                            .startJobActivity(mCurrentActivity);
                                 } else {
-                                    ActivityStackManager.getInstance(mCurrentActivity)
-                                            .startFeedbackFromResume();
+                                    ActivityStackManager.getInstance()
+                                            .startFeedbackFromResume(mCurrentActivity);
                                 }
                                 finish();
                             } catch (NullPointerException e) {
@@ -176,7 +176,7 @@ public class SplashActivity extends BaseActivity {
                                 @Override
                                 public void onClick(View v) {
                                     Dialogs.INSTANCE.dismissDialog();
-                                    ActivityStackManager.getInstance(mCurrentActivity).startLoginActivity();
+                                    ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
                                     finish();
                                 }
                             }, null, "UnAuthorized", "Your account is logged in to another device. You are not login here " +
@@ -192,7 +192,15 @@ public class SplashActivity extends BaseActivity {
     };
 
     private void startHomeActivity() {
-        ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(false);
+        ActivityStackManager.getInstance().startHomeActivity(false, mCurrentActivity);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (findViewById(R.id.activity_splash) != null) {
+            Utils.unbindDrawables(findViewById(R.id.activity_splash));
+        }
     }
 }

@@ -48,7 +48,7 @@ import io.socket.emitter.Emitter;
 public class WebIORequestHandler {
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
     private static ChatMessageListener chatMessageListener = new ChatMessageListener();
-    private static Context mContext;
+//    private static Context mContext;
 
     public static WebIORequestHandler getInstance() {
         if (null == mWebIORequestHandler) {
@@ -57,9 +57,9 @@ public class WebIORequestHandler {
         return mWebIORequestHandler;
     }
 
-    public void setContext(Context context) {
-        mContext = context;
-    }
+//    public void setContext(Context context) {
+//        mContext = context;
+//    }
 
     private WebIORequestHandler() {
     }
@@ -274,9 +274,9 @@ public class WebIORequestHandler {
             Gson gson = new Gson();
             try {
                 LocationResponse locationResponse = gson.fromJson(serverResponse, LocationResponse.class);
-                if (null == mContext) {
-                    mContext = DriverApp.getContext();
-                }
+//                if (null == mContext) {
+//                    mContext = DriverApp.getContext();
+//                }
                 if (AppPreferences.isLoggedIn() && locationResponse.getData() != null) {
                     if (StringUtils.isNotBlank(locationResponse.getData().getLat())
                             && StringUtils.isNotBlank(locationResponse.getData().getLng())) {
@@ -316,9 +316,9 @@ public class WebIORequestHandler {
             Utils.redLog("CHAT MESSAGE RECEIVED....", serverResponse);
 
             Gson gson = new Gson();
-            if (null == mContext) {
-                mContext = DriverApp.getContext();
-            }
+//            if (null == mContext) {
+//                mContext = DriverApp.getContext();
+//            }
             ReceivedMessage receivedMessage = gson.fromJson(serverResponse, ReceivedMessage.class);
             try {
                 if (AppPreferences.isOnTrip()) {
@@ -326,12 +326,12 @@ public class WebIORequestHandler {
                     if (!AppPreferences.getLastMessageID()
                             .equalsIgnoreCase(receivedMessage.getData().getMessageId())) {
                         if (!AppPreferences.isChatActivityOnForeground()) {
-                            Notifications.createChatNotification(mContext, receivedMessage);
+                            Notifications.createChatNotification(DriverApp.getContext(), receivedMessage);
                         }
                         Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
                         intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
                         intent.putExtra("msg", receivedMessage);
-                        ((Activity) mContext).sendBroadcast(intent);
+                        DriverApp.getContext().sendBroadcast(intent);
                         AppPreferences.setLastMessageID(receivedMessage.getData().getMessageId());
                     }
                 }
@@ -351,30 +351,30 @@ public class WebIORequestHandler {
 
             Gson gson = new Gson();
             try {
-                if (null == mContext) {
-                    mContext = DriverApp.getContext();
-                }
+//                if (null == mContext) {
+//                    mContext = DriverApp.getContext();
+//                }
                 NormalCallData normalCallData = gson.fromJson(serverResponse, NormalCallData.class);
                 if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) && normalCallData.isSuccess()) {
-                    ActivityStackManager.getInstance(mContext).startCallingActivity(normalCallData, false);
+                    ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
                 } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                     if (normalCallData.isSuccess()) {
-                        if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip()) {
+                        if (AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("msg", normalCallData.getMessage());
                             Utils.setCallIncomingState();
                             if (AppPreferences.isJobActivityOnForeground() ||
                                     AppPreferences.isCallingActivityOnForeground()) {
-                                mContext.sendBroadcast(intent);
+                                DriverApp.getContext().sendBroadcast(intent);
                             } else {
-                                mContext.sendBroadcast(intent);
-                                Notifications.createCancelNotification(mContext, "Passenger has cancelled the Trip", 23);
+                                DriverApp.getContext().sendBroadcast(intent);
+                                Notifications.createCancelNotification(DriverApp.getContext(), "Passenger has cancelled the Trip", 23);
                             }
                             getInstance().unRegisterChatListener();
                         }
                     } else {
-                        Utils.appToastDebug(mContext, normalCallData.getMessage());
+                        Utils.appToastDebug(DriverApp.getContext(), normalCallData.getMessage());
                     }
                 } else if (StringUtils.isNotBlank(normalCallData.getData().getEndAddress()) &&
                         !normalCallData.getData().getEndAddress().equalsIgnoreCase(AppPreferences.getCallData().getEndAddress())) {
@@ -386,7 +386,7 @@ public class WebIORequestHandler {
                     AppPreferences.setCallData(callData);
                     Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
                     intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
-                    mContext.sendBroadcast(intent);
+                    DriverApp.getContext().sendBroadcast(intent);
                 } else {
                     Utils.redLog(Constants.TAG_CALL, normalCallData.getMessage() + "");
                 }

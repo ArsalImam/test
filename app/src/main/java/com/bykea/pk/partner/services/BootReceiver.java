@@ -12,6 +12,6 @@ public class BootReceiver  extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Utils.redLog("Boot Receiver", "TRUE");
-        ActivityStackManager.getInstance(context).startLocationService();
+        ActivityStackManager.getInstance().startLocationService(context);
     }
 }

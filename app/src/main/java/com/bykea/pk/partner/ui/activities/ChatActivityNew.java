@@ -28,7 +28,6 @@ import android.widget.RelativeLayout;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.helpers.OpusPlayerCallBack;
-import com.bykea.pk.partner.ui.helpers.adapters.ChatAdapter;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.ChatMessage;
@@ -37,7 +36,6 @@ import com.bykea.pk.partner.models.Sender;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
-import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -55,7 +53,6 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -309,10 +306,10 @@ public class ChatActivityNew extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(OpusEvent.ACTION_OPUS_UI_RECEIVER);
         registerReceiver(mOpusReceiver, filter);
-        ActivityStackManager.getInstance(mCurrentActivity).startOpusService();
+        ActivityStackManager.getInstance().startOpusService(mCurrentActivity);
 
         AppPreferences.setChatActivityOnForeground(true);
-        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
+//        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
         registerReceiver(messageReceiver, new IntentFilter(Keys.BROADCAST_MESSAGE_RECEIVE));
         Notifications.removeAllNotifications(mCurrentActivity);
@@ -332,7 +329,7 @@ public class ChatActivityNew extends BaseActivity {
                 Utils.redLog("ChatActivity", "UnregisterRecieverException" + " " + ex.toString());
             }
         }
-        ActivityStackManager.getInstance(mCurrentActivity).stopOpusService();
+        ActivityStackManager.getInstance().stopOpusService(mCurrentActivity);
         if (mOpusReceiver != null) {
             try {
                 unregisterReceiver(mOpusReceiver);
@@ -363,7 +360,7 @@ public class ChatActivityNew extends BaseActivity {
     public void onBackPressed() {
         onActivityFinish();
         if (isFromNotification) {
-            ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(false);
+            ActivityStackManager.getInstance().startHomeActivity(false,mCurrentActivity);
             finish();
         } else {
             super.onBackPressed();

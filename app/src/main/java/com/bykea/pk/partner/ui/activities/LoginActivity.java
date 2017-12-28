@@ -1,25 +1,13 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.bykea.pk.partner.ui.fragments.LoginFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Utils;
 
 
 public class LoginActivity extends BaseActivity {
@@ -42,7 +30,7 @@ public class LoginActivity extends BaseActivity {
                 R.anim.fade_out);
         fragmentTransaction.replace(R.id.containerView, mainFragment, null);
         fragmentTransaction.commit();
-        ActivityStackManager.getInstance(mCurrentActivity.getApplicationContext()).restartLocationService();
+        ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
     }
 
     @Override

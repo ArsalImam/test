@@ -140,7 +140,7 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
                 if (data != null) {
 //                    String params = "name=" + AppPreferences.getPilotData().getFullName() + "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
 //                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
-                    ActivityStackManager.getInstance(mCurrentActivity).startProblemActivity(mCurrentActivity,data.getTripNo());
+                    ActivityStackManager.getInstance().startProblemActivity(mCurrentActivity,data.getTripNo());
                 }
                 break;
 

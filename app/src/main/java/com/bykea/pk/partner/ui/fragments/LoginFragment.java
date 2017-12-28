@@ -166,7 +166,7 @@ public class LoginFragment extends Fragment {
                         Dialogs.INSTANCE.dismissDialog();
                         if (loginResponse.isSuccess()) {
                             Utils.redLog("token_id at Login", loginResponse.getUser().getAccessToken());
-                            ActivityStackManager.getInstance(getActivity()).startLocationService();
+                            ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                             AppPreferences.setPilotData(loginResponse.getUser());
                             AppPreferences.setAvailableStatus(loginResponse.getUser().isAvailable());
                             AppPreferences.setCashInHands(loginResponse.getUser().getCashInHand());
@@ -180,7 +180,7 @@ public class LoginFragment extends Fragment {
                             Utils.setOneSignalTag("type", loginResponse.getUser().is_vendor() ? "vendor" : "normal");
                             Utils.setOneSignalTag("tag", "driver");
                             Utils.setOneSignalTag("driver_id", loginResponse.getUser().getId());
-                            ActivityStackManager.getInstance(getActivity()).startHomeActivity(true);
+                            ActivityStackManager.getInstance().startHomeActivity(true,mCurrentActivity);
                             // Connect socket
                             DriverApp.getApplication().connect();
 

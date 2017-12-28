@@ -45,8 +45,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import butterknife.Bind;
-
 
 public class BaseActivity extends AppCompatActivity {
     private Toolbar mToolbar;
@@ -129,7 +127,7 @@ public class BaseActivity extends AppCompatActivity {
         if (hasPermission) {
             if (restartLocationService) {
                 Utils.redLog("BaseActivity", "restartLocationService");
-                ActivityStackManager.getInstance(mCurrentActivity).restartLocationService();
+                ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
             }
             if (mCurrentActivity instanceof SplashActivity) {
                 mEventBus.post(Constants.ON_PERMISSIONS_GRANTED);

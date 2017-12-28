@@ -236,7 +236,7 @@ public class FeedbackActivity extends BaseActivity {
                     Utils.setCallIncomingState();
                     AppPreferences.setWalletAmountIncreased(!feedbackResponse.isAvailable());
                     AppPreferences.setAvailableStatus(feedbackResponse.isAvailable());
-                    ActivityStackManager.getInstance(mCurrentActivity).startHomeActivity(true);
+                    ActivityStackManager.getInstance().startHomeActivity(true,mCurrentActivity);
                     mCurrentActivity.finish();
                 }
             });
@@ -333,7 +333,7 @@ public class FeedbackActivity extends BaseActivity {
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
                 Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
             else {
-                ActivityStackManager.getInstance(mCurrentActivity).startLocationService();
+                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
         }
     }

@@ -193,7 +193,7 @@ public class HistoryDetailActivity extends BaseActivity {
 //                Utils.startCustomWebViewActivity(mCurrentActivity,
 //                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
 
-                ActivityStackManager.getInstance(mCurrentActivity).startProblemActivity(mCurrentActivity, data.getTripNo());
+                ActivityStackManager.getInstance().startProblemActivity(mCurrentActivity, data.getTripNo());
                 break;
         }
     }
