@@ -342,8 +342,10 @@ public class CallingActivity extends BaseActivity {
         switch (callType) {
             case "parcel":
             case "send":
+            case "delivery":
                 return R.drawable.bhejdo;
             case "bring":
+            case "purchase":
                 return R.drawable.lay_ao;
             case "ride":
                 return R.drawable.ride;

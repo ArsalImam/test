@@ -111,8 +111,8 @@ public class FeedbackActivity extends BaseActivity {
         mCurrentActivity = this;
 
         NormalCallData callData = AppPreferences.getCallData();
-        boolean isSendType = StringUtils.containsIgnoreCase(callData.getCallType(), "Send");
-        boolean isBringType = StringUtils.containsIgnoreCase(callData.getCallType(), "Bring");
+        boolean isSendType = StringUtils.containsIgnoreCase(callData.getCallType(), "Send") || StringUtils.containsIgnoreCase(callData.getCallType(), "Delivery");
+        boolean isBringType = StringUtils.containsIgnoreCase(callData.getCallType(), "Bring") || StringUtils.containsIgnoreCase(callData.getCallType(), "Purchase");
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
         totalCharges = callData.getTotalFare();
