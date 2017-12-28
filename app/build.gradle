@@ -45,10 +45,10 @@ android {
         }
         debug {
             signingConfig signingConfigs.debug
-            shrinkResources false // to remove unused resources. This will reduce APK size.
-//            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-//                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
+            shrinkResources true // to remove unused resources. This will reduce APK size.
+            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
 
         }
     }

@@ -69,4 +69,5 @@ public class Constants {
     }
 
     public static final float ANDROID_OPACITY = 255;
+    public static final String ON_SOCKET_CONNECTED = "ON_SOCKET_CONNECTED";
 }
