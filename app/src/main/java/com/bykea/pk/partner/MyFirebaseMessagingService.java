@@ -51,14 +51,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                         if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip()) {
                             Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
-                            Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
+                            Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
                             intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
                             intent.putExtra("msg", callData.getMessage());
+                            Utils.setCallIncomingState();
                             if (AppPreferences.isJobActivityOnForeground() ||
                                     AppPreferences.isCallingActivityOnForeground()) {
-                                mContext.sendBroadcast(intent);
+//                                mContext.sendBroadcast(intent);
+                                EventBus.getDefault().post(intent);
                             } else {
-                                Utils.setCallIncomingState();
+                                EventBus.getDefault().post(intent);
                                 Notifications.createCancelNotification(mContext, callData.getMessage(), 23);
                             }
                         }
@@ -67,7 +69,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
                         intent.putExtra("msg", callData.getMessage());
                         if (AppPreferences.isJobActivityOnForeground()) {
-                            mContext.sendBroadcast(intent);
+                            EventBus.getDefault().post(intent);
+//                            mContext.sendBroadcast(intent);
                         } else {
                             Utils.setCallIncomingState();
                             Notifications.createNotification(mContext, callData.getMessage(), 23);

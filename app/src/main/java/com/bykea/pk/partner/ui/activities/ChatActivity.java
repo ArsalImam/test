@@ -49,6 +49,7 @@ import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
@@ -286,7 +287,7 @@ public class ChatActivity extends BaseActivity {
         AppPreferences.setChatActivityOnForeground(true);
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
-        registerReceiver(messageReceiver, new IntentFilter(Keys.BROADCAST_MESSAGE_RECEIVE));
+//        registerReceiver(messageReceiver, new IntentFilter(Keys.BROADCAST_MESSAGE_RECEIVE));
         Notifications.removeAllNotifications(mCurrentActivity);
     }
 
@@ -301,9 +302,9 @@ public class ChatActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if (messageReceiver != null) {
-            unregisterReceiver(messageReceiver);
-        }
+//        if (messageReceiver != null) {
+//            unregisterReceiver(messageReceiver);
+//        }
         AppPreferences.setChatActivityOnForeground(false);
         if (chatAdapter != null) {
             chatAdapter.stopPlayingAudio();
@@ -314,7 +315,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (isFromNotification) {
-            ActivityStackManager.getInstance().startHomeActivity(false,mCurrentActivity);
+            ActivityStackManager.getInstance().startHomeActivity(false, mCurrentActivity);
             finish();
         } else {
             super.onBackPressed();
@@ -497,6 +498,28 @@ public class ChatActivity extends BaseActivity {
             messagesContainer.scrollToPosition(messageList.size() - 1);
     }
 
+
+    @Subscribe
+    public void onEvent(final Intent intent) {
+        if (mCurrentActivity != null && null != intent && null != intent.getExtras()) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_MESSAGE_RECEIVE)
+                            && null != intent.getSerializableExtra("msg")) {
+                        ReceivedMessage chatMessage = (ReceivedMessage) (intent.getSerializableExtra("msg"));
+                        messageList.add(makeMsg(chatMessage.getData().getMessage(), chatMessage.getData().getMessageType(),
+                                chatMessage.getData().getSender(), "", "", true));
+                        chatAdapter.notifyDataSetChanged();
+                        scrollDown();
+                    }
+                }
+            });
+
+        }
+    }
+
+/*
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -508,7 +531,7 @@ public class ChatActivity extends BaseActivity {
                 scrollDown();
             }
         }
-    };
+    };*/
 
     private ChatMessage makeMsg(String msg, String type, String senderid, String senderName,
                                 String senderImage, boolean isReceived) {

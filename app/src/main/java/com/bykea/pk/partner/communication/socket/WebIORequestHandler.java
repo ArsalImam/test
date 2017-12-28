@@ -39,6 +39,7 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -331,7 +332,8 @@ public class WebIORequestHandler {
                         Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
                         intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
                         intent.putExtra("msg", receivedMessage);
-                        DriverApp.getContext().sendBroadcast(intent);
+//                        DriverApp.getContext().sendBroadcast(intent);
+                        EventBus.getDefault().post(intent);
                         AppPreferences.setLastMessageID(receivedMessage.getData().getMessageId());
                     }
                 }
@@ -359,16 +361,25 @@ public class WebIORequestHandler {
                     ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
                 } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                     if (normalCallData.isSuccess()) {
-                        if (AppPreferences.isOnTrip()) {
+
+                        /*
+                        * when Gps is off, we don't show Calling Screen so we don't need to show
+                        * Cancel notification either if passenger cancels it before booking.
+                        * If passenger has cancelled it after booking we will entertain this Cancel notification
+                        * */
+
+                        if (Utils.isGpsEnable(DriverApp.getContext()) || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("msg", normalCallData.getMessage());
                             Utils.setCallIncomingState();
                             if (AppPreferences.isJobActivityOnForeground() ||
                                     AppPreferences.isCallingActivityOnForeground()) {
-                                DriverApp.getContext().sendBroadcast(intent);
+//                                DriverApp.getContext().sendBroadcast(intent);
+                                EventBus.getDefault().post(intent);
                             } else {
-                                DriverApp.getContext().sendBroadcast(intent);
+                                EventBus.getDefault().post(intent);
+//                                DriverApp.getContext().sendBroadcast(intent);
                                 Notifications.createCancelNotification(DriverApp.getContext(), "Passenger has cancelled the Trip", 23);
                             }
                             getInstance().unRegisterChatListener();
@@ -386,7 +397,8 @@ public class WebIORequestHandler {
                     AppPreferences.setCallData(callData);
                     Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
                     intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
-                    DriverApp.getContext().sendBroadcast(intent);
+//                    DriverApp.getContext().sendBroadcast(intent);
+                    EventBus.getDefault().post(intent);
                 } else {
                     Utils.redLog(Constants.TAG_CALL, normalCallData.getMessage() + "");
                 }

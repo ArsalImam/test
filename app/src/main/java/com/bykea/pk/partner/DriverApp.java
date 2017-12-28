@@ -19,7 +19,7 @@ import com.instabug.library.invocation.InstabugInvocationEvent;
 import com.onesignal.OSNotification;
 import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
-import com.squareup.leakcanary.LeakCanary;
+//import com.squareup.leakcanary.LeakCanary;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -36,12 +36,12 @@ public class DriverApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
+//            return;
+//        }
+//        LeakCanary.install(this);
         if (mContext == null) {
             mContext = this;
         }

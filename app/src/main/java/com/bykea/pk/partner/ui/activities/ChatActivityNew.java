@@ -51,6 +51,7 @@ import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -98,7 +99,7 @@ public class ChatActivityNew extends BaseActivity {
     @SuppressLint("InlinedApi")
     private int output_formats[] = {MediaRecorder.OutputFormat.MPEG_4, MediaRecorder.OutputFormat.THREE_GPP};
     private int currentFormat = 0;
-//    private MediaRecorder recorder = null;
+    //    private MediaRecorder recorder = null;
     private String filePath;
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";//2016-05-20T12:37:58.508Z
     private static final String REQUIRED_FORMAT = "EEEE, MMM dd, hh:mm aa";//"EEEE, MMM dd, hh:mm a"
@@ -311,7 +312,7 @@ public class ChatActivityNew extends BaseActivity {
         AppPreferences.setChatActivityOnForeground(true);
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
-        registerReceiver(messageReceiver, new IntentFilter(Keys.BROADCAST_MESSAGE_RECEIVE));
+//        registerReceiver(messageReceiver, new IntentFilter(Keys.BROADCAST_MESSAGE_RECEIVE));
         Notifications.removeAllNotifications(mCurrentActivity);
     }
 
@@ -322,13 +323,13 @@ public class ChatActivityNew extends BaseActivity {
         if (chatAdapter != null) {
             chatAdapter.stopPlayingAudio();
         }
-        if (messageReceiver != null) {
-            try {
-                unregisterReceiver(messageReceiver);
-            } catch (Exception ex) {
-                Utils.redLog("ChatActivity", "UnregisterRecieverException" + " " + ex.toString());
-            }
-        }
+//        if (messageReceiver != null) {
+//            try {
+//                unregisterReceiver(messageReceiver);
+//            } catch (Exception ex) {
+//                Utils.redLog("ChatActivity", "UnregisterRecieverException" + " " + ex.toString());
+//            }
+//        }
         ActivityStackManager.getInstance().stopOpusService(mCurrentActivity);
         if (mOpusReceiver != null) {
             try {
@@ -360,12 +361,13 @@ public class ChatActivityNew extends BaseActivity {
     public void onBackPressed() {
         onActivityFinish();
         if (isFromNotification) {
-            ActivityStackManager.getInstance().startHomeActivity(false,mCurrentActivity);
+            ActivityStackManager.getInstance().startHomeActivity(false, mCurrentActivity);
             finish();
         } else {
             super.onBackPressed();
         }
     }
+
     private boolean shouldUploadFile;
 
     private void setListener() {
@@ -464,7 +466,7 @@ public class ChatActivityNew extends BaseActivity {
         File file = new File(filepath, AUDIO_RECORDER_FOLDER);
         if (!file.exists()) {
             file.mkdirs();
-        }else {
+        } else {
             Utils.clearDirectory(file);
         }
 
@@ -525,18 +527,36 @@ public class ChatActivityNew extends BaseActivity {
             messagesContainer.scrollToPosition(messageList.size() - 1);
     }
 
-    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (null != intent && null != intent.getSerializableExtra("msg")) {
-                ReceivedMessage chatMessage = (ReceivedMessage) (intent.getSerializableExtra("msg"));
-                messageList.add(makeMsg(chatMessage.getData().getMessage(), chatMessage.getData().getMessageType(),
-                        chatMessage.getData().getSender(), "", "", true));
-                chatAdapter.notifyDataSetChanged();
-                scrollDown();
-            }
+    @Subscribe
+    public void onEvent(final Intent intent) {
+        if (mCurrentActivity != null && null != intent && null != intent.getExtras()) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_MESSAGE_RECEIVE)
+                            && null != intent.getSerializableExtra("msg")) {
+                        ReceivedMessage chatMessage = (ReceivedMessage) (intent.getSerializableExtra("msg"));
+                        messageList.add(makeMsg(chatMessage.getData().getMessage(), chatMessage.getData().getMessageType(),
+                                chatMessage.getData().getSender(), "", "", true));
+                        chatAdapter.notifyDataSetChanged();
+                        scrollDown();
+                    }
+                }
+            });
         }
-    };
+    }
+//    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (null != intent && null != intent.getSerializableExtra("msg")) {
+//                ReceivedMessage chatMessage = (ReceivedMessage) (intent.getSerializableExtra("msg"));
+//                messageList.add(makeMsg(chatMessage.getData().getMessage(), chatMessage.getData().getMessageType(),
+//                        chatMessage.getData().getSender(), "", "", true));
+//                chatAdapter.notifyDataSetChanged();
+//                scrollDown();
+//            }
+//        }
+//    };
 
     private ChatMessage makeMsg(String msg, String type, String senderid, String senderName,
                                 String senderImage, boolean isReceived) {

@@ -82,6 +82,7 @@ import com.google.maps.android.PolyUtil;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -347,7 +348,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             case R.id.chatBtn:
                 if (!callData.isDispatcher()) {
                     ActivityStackManager.getInstance()
-                            .startChatActivity(callData.getPassName(), "", true,mCurrentActivity);
+                            .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
                 } else {
                     Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                 }
@@ -532,11 +533,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Keys.BROADCAST_CANCEL_RIDE);
-        intentFilter.addAction(Keys.BROADCAST_COMPLETE_BY_ADMIN);
-        intentFilter.addAction(Keys.BROADCAST_DROP_OFF_UPDATED);
-        registerReceiver(cancelRideReceiver, intentFilter);
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(Keys.BROADCAST_CANCEL_RIDE);
+//        intentFilter.addAction(Keys.BROADCAST_COMPLETE_BY_ADMIN);
+//        intentFilter.addAction(Keys.BROADCAST_DROP_OFF_UPDATED);
+//        registerReceiver(cancelRideReceiver, intentFilter);
         registerReceiver(locationReceiver, new IntentFilter(Keys.LOCATION_UPDATE_BROADCAST));
     }
 
@@ -590,7 +591,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         AppPreferences.setLastDirectionsApiCallTime(0);
         // Unregister here due to some reasons.
         unregisterReceiver(locationReceiver);
-        unregisterReceiver(cancelRideReceiver);
+//        unregisterReceiver(cancelRideReceiver);
         unregisterReceiver(networkChangeListener);
         mapView.onDestroy();
         super.onDestroy();
@@ -1431,7 +1432,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     }
 
-    private BroadcastReceiver cancelRideReceiver = new BroadcastReceiver() {
+
+
+    /*private BroadcastReceiver cancelRideReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
             if (mCurrentActivity != null && null != intent && null != intent.getExtras()) {
@@ -1460,7 +1463,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             }
         }
-    };
+    };*/
 
     private void updateDropOffUI() {
         callData = AppPreferences.getCallData();
@@ -1480,7 +1483,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         playNotificationSound();
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, cancelMsg,mCurrentActivity);
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, cancelMsg, mCurrentActivity);
         mCurrentActivity.finish();
     }
 
@@ -1489,7 +1492,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
             @Override
             public void onCallBack(String msg) {
-                ActivityStackManager.getInstance().startHomeActivity(true,mCurrentActivity);
+                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                 mCurrentActivity.finish();
             }
         }, null, "Trip Completed", msg);
@@ -1565,7 +1568,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         AppPreferences.setAvailableStatus(cancelRideResponse.isAvailable());
 
                         /*dataRepository.requestLocationUpdate(mCurrentActivity);*/ // Required to reduce availability status delay
-                        ActivityStackManager.getInstance().startHomeActivity(true,mCurrentActivity);
+                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                         finish();
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, cancelRideResponse.getMessage());
@@ -1725,6 +1728,35 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         super.onEvent(action);
         if (Keys.ETA_IN_BG_UPDATED.equalsIgnoreCase(action)) {
             updateEtaAndCallData(AppPreferences.getEta(), AppPreferences.getEstimatedDistance());
+        }
+    }
+
+    @Subscribe
+    public void onEvent(final Intent intent) {
+        if (mCurrentActivity != null && null != intent && null != intent.getExtras()) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)) {
+                        cancelByPassenger(false, "");
+                    }
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
+                        String message = intent.getStringExtra("msg");
+                        cancelByPassenger(true, message);
+                    }
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_COMPLETE_BY_ADMIN)) {
+                        playNotificationSound();
+                        onCompleteByAdmin(intent.getStringExtra("msg"));
+                    }
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
+                        playNotificationSound();
+                        Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
+                        callData = AppPreferences.getCallData();
+                        updateDropOff();
+                    }
+                }
+            });
+
         }
     }
 
