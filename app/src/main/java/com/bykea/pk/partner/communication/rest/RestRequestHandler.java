@@ -331,7 +331,7 @@ public class RestRequestHandler {
     }
 
     //THIS METHOD IS TO UPLOAD AUDIO MESSAGE FILE
-    public void uploadAudioFile(Context context, IResponseCallback responseCallBack, File file) {
+    public void uploadAudioFile(Context context, IResponseCallback responseCallBack, final File file) {
         mContext = context;
         mResponseCallBack = responseCallBack;
         mRestClient = RestClient.getClient(mContext);
@@ -339,6 +339,7 @@ public class RestRequestHandler {
         requestCall.enqueue(new Callback<UploadAudioFile>() {
             @Override
             public void onResponse(Response<UploadAudioFile> response, Retrofit retrofit) {
+                Utils.deleteFile(file);
                 if (null == response.body()) {
                     mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
                 } else if (response.body().getCode() == HTTPStatus.OK ||
@@ -352,6 +353,7 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Throwable t) {
+                Utils.deleteFile(file);
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });

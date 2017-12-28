@@ -86,6 +86,7 @@ public class DriverApp extends MultiDexApplication {
     };
 
     public void attachListenersOnSocketConnected() {
+        EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
         WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
     }
 

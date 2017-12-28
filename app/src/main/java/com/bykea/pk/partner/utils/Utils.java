@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -239,6 +240,7 @@ public class Utils {
         AppPreferences.clear();
         AppPreferences.setRegId(regId);
         AppPreferences.saveLocation(currentLat, currentLng);
+//        WebIO.getInstance().clearConnectionData();
     }
 
     public static String formatDecimalPlaces(String value) {
@@ -982,6 +984,7 @@ public class Utils {
 //            if (distance > 6) {
         long timeDifference = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - AppPreferences.getPrevDistanceTime());
         long minTime = (long) ((distance) / (80 * 1000) * 3600);
+        Utils.redLog("isValidLocation", "minTime ->" + minTime + " : timeDiff ->" + timeDifference);
         if (timeDifference > minTime) {
             AppPreferences.setDistanceCoveredInMeters(distance);
             return true;
@@ -1222,11 +1225,32 @@ public class Utils {
 
     public static String getCurrentLocation() {
         String currentLocaiton;
-        if(AppPreferences.getLatitude() != 0 && AppPreferences.getLongitude() != 0 && AppPreferences.getLatitude() != 0.0 && AppPreferences.getLongitude() != 0.0){
+        if (AppPreferences.getLatitude() != 0 && AppPreferences.getLongitude() != 0 && AppPreferences.getLatitude() != 0.0 && AppPreferences.getLongitude() != 0.0) {
             currentLocaiton = AppPreferences.getLatitude() + "," + AppPreferences.getLongitude();
-        }else{
+        } else {
             currentLocaiton = StringUtils.EMPTY;
         }
         return currentLocaiton;
     }
+
+
+    public static void deleteFile(File file) {
+        try {
+            file.delete();
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static void clearDirectory(File file) {
+        try {
+            if (file.isDirectory()) {
+                String[] children = file.list();
+                for (String aChildren : children) {
+                    new File(file, aChildren).delete();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
 }

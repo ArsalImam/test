@@ -22,6 +22,7 @@ import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -43,6 +44,7 @@ import com.squareup.okhttp.internal.Util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +106,7 @@ public class LocationService extends Service {
 
 
     private void init() {
+        mBus.register(this);
         mUserRepository = new UserRepository();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationCallback = new LocationCallback() {
@@ -422,4 +425,27 @@ public class LocationService extends Service {
         sendBroadcast(locationIntent);
     }
 
+
+    /*
+    * update location when socket is reconnected, this will sync/update socket id on server
+    * */
+    @Subscribe
+    public void onEvent(String event) {
+        if (Constants.ON_SOCKET_CONNECTED.equalsIgnoreCase(event)) {
+            if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() ||
+                    AppPreferences.isOutOfFence() || AppPreferences.isOnTrip())) {
+                synchronized (this) {
+                    double lat = AppPreferences.getLatitude();
+                    double lon = AppPreferences.getLongitude();
+                    boolean isMock = AppPreferences.isFromMockLocation();
+                    if (lat != 0.0 && lon != 0.0 && !isMock) {
+                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                            Utils.redLog("requestLocationUpdate", "onSocketConnected");
+                            mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

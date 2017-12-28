@@ -24,6 +24,7 @@
 -keep class com.github.jd.** { *; }
 -keep class com.bykea.pk.partner.models.** { *; }
 -keep class com.instabug.** { *; }
+-keep class top.oply.opuslib.** { *; }
 -keep class java.io.** { *; }
 -keep class com.wang.** { *; }
 -dontwarn butterknife.internal.**

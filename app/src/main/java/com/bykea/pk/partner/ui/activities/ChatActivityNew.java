@@ -467,6 +467,8 @@ public class ChatActivityNew extends BaseActivity {
         File file = new File(filepath, AUDIO_RECORDER_FOLDER);
         if (!file.exists()) {
             file.mkdirs();
+        }else {
+            Utils.clearDirectory(file);
         }
 
         filePath = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + file_exts[currentFormat]);
