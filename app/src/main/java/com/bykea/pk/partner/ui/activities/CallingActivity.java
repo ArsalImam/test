@@ -349,10 +349,20 @@ public class CallingActivity extends BaseActivity {
         distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
         if (StringUtils.isNotBlank(callData.getIcon())) {
+            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity));
             Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity))
                     .placeholder(getServiceIcon(callData))
-                    .fit().centerInside()
-                    .into(ivCallType);
+                    .into(ivCallType, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnSuccess");
+                        }
+
+                        @Override
+                        public void onError() {
+                            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnError");
+                        }
+                    });
         } else if (StringUtils.isNotBlank(callData.getCallType())) {
             ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, getServiceIcon(callData)));
         } else {
