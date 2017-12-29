@@ -1,7 +1,11 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.view.View;
 
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
@@ -26,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class SplashActivity extends BaseActivity {
 
+    private static final int REQUEST_CODE = 123;
     private SplashActivity mCurrentActivity;
     private UserRepository repository;
 
@@ -49,7 +54,9 @@ public class SplashActivity extends BaseActivity {
             new AdvertisingIdTask().execute();
         }
         Utils.setOneSignalPlayerId();
+//        checkDrawOverlayPermission();
     }
+
 
 
     @Override

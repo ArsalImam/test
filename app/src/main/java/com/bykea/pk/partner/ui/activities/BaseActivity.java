@@ -9,9 +9,12 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -47,19 +50,15 @@ import org.greenrobot.eventbus.Subscribe;
 
 
 public class BaseActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE = 203;
     private Toolbar mToolbar;
     private FontTextView mTitleTv, status;
-    private FrameLayout frameLayout;
-    private TextView mEditBtn;
     private ImageView mLogo, rightIv;
     private BaseActivity mCurrentActivity;
     private final EventBus mEventBus = EventBus.getDefault();
     private boolean isScreenInFront;
     private ProgressDialog progressDialog;
     private Dialog notificationDialog;
-    private FontTextView tvTitle;
-    private FontTextView tvTitleUrdu;
-    private ImageView ivBackBtn;
     private final String ACCESS_FINE_LOCATION = "android.permission.ACCESS_FINE_LOCATION";
     private final String PHONE_STATE = "android.permission.READ_PHONE_STATE";
 
@@ -88,14 +87,14 @@ public class BaseActivity extends AppCompatActivity {
         isScreenInFront = false;
     }
 
-    public void setGreenActionbarTitle(String english, String urdu){
-        tvTitle = (FontTextView) findViewById(R.id.tvTitle);
-        tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
-        ivBackBtn = (ImageView) findViewById(R.id.ivBackBtn);
+    public void setGreenActionBarTitle(String english, String urdu) {
+        FontTextView tvTitle = (FontTextView) findViewById(R.id.tvTitle);
+        FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
+        ImageView ivBackBtn = (ImageView) findViewById(R.id.ivBackBtn);
 
-        if(StringUtils.isEmpty(urdu)){
+        if (StringUtils.isEmpty(urdu)) {
             tvTitleUrdu.setVisibility(View.GONE);
-        }else{
+        } else {
             tvTitleUrdu.setText(urdu);
         }
         tvTitle.setText(english);
@@ -106,6 +105,9 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 
     private boolean checkPermissions(boolean restartLocationService) {
         boolean hasPermission = false;
@@ -186,6 +188,24 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
+
+    public boolean checkDrawOverlayPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (!Settings.canDrawOverlays(this)) {
+            Utils.redLog("BaseActivity", "canDrawOverlays false");
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, REQUEST_CODE);
+            return false;
+        } else {
+            Utils.redLog("BaseActivity", "canDrawOverlays true");
+            checkPermissions(true);
+            return true;
+        }
+    }
+
 
 
     @Override
@@ -323,7 +343,6 @@ public class BaseActivity extends AppCompatActivity {
 
     private void initToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        frameLayout = (FrameLayout) mToolbar.findViewById(R.id.frameLayout);
         mLogo = (ImageView) mToolbar.findViewById(R.id.logo);
         mTitleTv = (FontTextView) mToolbar.findViewById(R.id.title);
         status = (FontTextView) mToolbar.findViewById(R.id.status);
