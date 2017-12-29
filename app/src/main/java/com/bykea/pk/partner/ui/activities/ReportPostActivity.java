@@ -51,7 +51,7 @@ public class ReportPostActivity extends BaseActivity {
         mCurrentActivity = this;
         ButterKnife.bind(mCurrentActivity);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        setGreenActionbarTitle("Report","رپورٹ");
+        setGreenActionBarTitle("Report","رپورٹ");
         if(getIntent() != null){
             reason = getIntent().getStringExtra("reason");
         }

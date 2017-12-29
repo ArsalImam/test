@@ -49,7 +49,7 @@ public class ReportActivity extends BaseActivity {
         mCurrentActivity = this;
         ButterKnife.bind(mCurrentActivity);
         helpLayout.setVisibility(View.GONE);
-        setGreenActionbarTitle("Report","رپورٹ");
+        setGreenActionBarTitle("Report","رپورٹ");
         createData();
         initRecyclerView();
     }

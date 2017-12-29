@@ -58,7 +58,7 @@ public class ProblemActivity extends BaseActivity {
         tripId = getIntent().getStringExtra("TRIP_ID");
         fragmentManager = getSupportFragmentManager();
         loadFragment(new ProblemFragment(),true);
-        setGreenActionbarTitle(tripId,"");
+        setGreenActionBarTitle(tripId,"");
         mProblemList = new ArrayList<>();
         probReasons = AppPreferences.getSettings().getPredefine_messages().getReasons();
         copyList();
