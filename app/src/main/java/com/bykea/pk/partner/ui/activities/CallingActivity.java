@@ -371,9 +371,9 @@ public class CallingActivity extends BaseActivity {
             case "top-up":
                 return R.drawable.top_up;
             case "utilitybill":
-                return R.drawable.bill;
+                return R.drawable.utility_bill;
             case "deposit":
-                return R.drawable.lay_ao_copy_1;
+                return R.drawable.jama_karo;
             case "carryvan":
                 return R.drawable.carry_van;
             default:
