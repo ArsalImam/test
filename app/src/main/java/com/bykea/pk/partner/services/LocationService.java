@@ -197,11 +197,9 @@ public class LocationService extends Service {
                 if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
                     float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
                     if (Utils.isValidLocation(/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), */distance)) {
-                        addLatLng(lat, lon, true);
-                        if (distance > 1000) {
-                            if (!isDirectionApiRunning) {
-                                getRouteLatLng(lat, lon, lastLat, lastLng);
-                            }
+                        addLatLng(lat, lon, distance > 0f);
+                        if ((distance > 1000) && !isDirectionApiRunning) {
+                            getRouteLatLng(lat, lon, lastLat, lastLng);
                         }
                     } else {
                         addLatLng(Double.parseDouble(lastLat), Double.parseDouble(lastLng), false);

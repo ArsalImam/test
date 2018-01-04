@@ -245,16 +245,23 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showConfirmArrivalDialog(Context context, View.OnClickListener positive) {
+    public void showConfirmArrivalDialog(Context context, boolean showTickBtn, View.OnClickListener positive) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_confirm_arrival);
-        RadioGroup optionGroup = (RadioGroup) mDialog.findViewById(R.id.optionBtn);
-
-        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
-
-
+        if (showTickBtn) {
+            mDialog.findViewById(R.id.positiveBtn).setVisibility(View.VISIBLE);
+            mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
+        } else {
+            mDialog.findViewById(R.id.positiveBtn).setVisibility(View.GONE);
+        }
+        mDialog.findViewById(R.id.negativeBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismissDialog();
+            }
+        });
         showDialog();
     }
 
