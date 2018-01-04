@@ -423,6 +423,12 @@ public class UserRepository {
             jsonObject.put("tid", AppPreferences.getCallData().getTripId());
             jsonObject.put("lat", AppPreferences.getLatitude() + "");
             jsonObject.put("lng", AppPreferences.getLongitude() + "");
+
+            ArrayList<LocCoordinatesInTrip> latLngList = AppPreferences.getLocCoordinatesInTrip();
+            jsonObject.put("routes", new Gson().toJson(latLngList));
+
+            AppPreferences.clearTripDistanceData();
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -741,7 +747,7 @@ public class UserRepository {
                             String tripId, String email, String details, boolean isFromReport) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.postProblem(context, selectedReason, tripId, email, details,isFromReport, mDataCallback);
+        mRestRequestHandler.postProblem(context, selectedReason, tripId, email, details, isFromReport, mDataCallback);
     }
 
     public void downloadAudioFile(Context context, String path, IUserDataHandler handler) {
@@ -749,6 +755,7 @@ public class UserRepository {
         mUserCallback = handler;
         mRestRequestHandler.downloadAudioFile(context, mDataCallback, path);
     }
+
     private IResponseCallback mDataCallback = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {

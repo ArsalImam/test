@@ -207,7 +207,13 @@ public class CallingActivity extends BaseActivity {
                         Dialogs.INSTANCE.showTempToast(mCurrentActivity,
                                 acceptCallResponse.getMessage());
                         if (acceptCallResponse.isSuccess()) {
+                            AppPreferences.clearTripDistanceData();
                             AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
+
+                            NormalCallData callData = AppPreferences.getCallData();
+                            callData.setStatus(TripStatus.ON_ACCEPT_CALL);
+                            AppPreferences.setCallData(callData);
+
                             AppPreferences.setIsOnTrip(true);
                             ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                             stopSound();

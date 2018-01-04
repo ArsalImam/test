@@ -190,7 +190,8 @@ public class LocationService extends Service {
 
     public void updateTripRouteList(double lat, double lon) {
         Utils.redLog("TripStatus", AppPreferences.getTripStatus());
-        if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+        if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()) ||
+                TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus())) {
             synchronized (this) {
                 String lastLat = AppPreferences.getPrevDistanceLatitude();
                 String lastLng = AppPreferences.getPrevDistanceLongitude();
@@ -294,7 +295,6 @@ public class LocationService extends Service {
         AppPreferences.addLocCoordinateInTrip(lat, lon);
         AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
     }
-
 
     private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {
         @Override
