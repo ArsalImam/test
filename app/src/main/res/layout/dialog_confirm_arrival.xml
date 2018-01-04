@@ -30,15 +30,21 @@
     <!--</LinearLayout>-->
 
 
-    <ImageView
-        android:id="@+id/messageTv"
+    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+        android:id="@+id/tvMessage"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height.xxxlarge"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/_28sdp"
         android:layout_marginBottom="@dimen/_28sdp"
-        android:gravity="center"
-        app:srcCompat="@drawable/ic_confirm_arrival_urdu" />
+        android:paddingLeft="@dimen/_6sdp"
+        android:paddingRight="@dimen/_6sdp"
+        app:fontName="jameel_noori_nastaleeq.ttf"
+        android:textSize="@dimen/_32sdp"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:text="آپ ابھی بھی کچھ دورہیں، کیا واقعی پہنچ گئے؟"
+        android:gravity="center" />
 
 
     <LinearLayout

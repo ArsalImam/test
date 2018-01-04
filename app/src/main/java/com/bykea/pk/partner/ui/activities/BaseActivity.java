@@ -75,7 +75,6 @@ public class BaseActivity extends AppCompatActivity {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -105,9 +104,6 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
     private boolean checkPermissions(boolean restartLocationService) {
         boolean hasPermission = false;

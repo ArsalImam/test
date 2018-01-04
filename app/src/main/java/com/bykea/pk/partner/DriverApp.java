@@ -99,7 +99,7 @@ public class DriverApp extends MultiDexApplication {
 
     public void connect() {
         try {
-            if (!WebIO.getInstance().isSocketConnected()) {
+            if (!WebIO.getInstance().isSocketConnected() && AppPreferences.isLoggedIn()) {
                 WebIO.getInstance().onConnect(connectionListener);
             }
         } catch (Exception e) {

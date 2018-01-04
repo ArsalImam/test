@@ -21,6 +21,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.exoplayer.BuildConfig;
@@ -250,10 +251,13 @@ public enum Dialogs {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_confirm_arrival);
+        AutoFitFontTextView tvMessage = (AutoFitFontTextView) mDialog.findViewById(R.id.tvMessage);
         if (showTickBtn) {
+            tvMessage.setText("آپ ابھی بھی کچھ دورہیں، کیا واقعی پہنچ گئے؟");
             mDialog.findViewById(R.id.positiveBtn).setVisibility(View.VISIBLE);
             mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
         } else {
+            tvMessage.setText("آپ ابھی بھی کچھ دورہیں");
             mDialog.findViewById(R.id.positiveBtn).setVisibility(View.GONE);
         }
         mDialog.findViewById(R.id.negativeBtn).setOnClickListener(new View.OnClickListener() {

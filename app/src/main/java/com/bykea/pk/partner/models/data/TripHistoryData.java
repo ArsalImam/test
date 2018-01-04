@@ -43,6 +43,8 @@ public class TripHistoryData implements Serializable {
     private String cancel_by;
     private String cancel_fee;
 
+    private boolean dd;
+
     public String getStatus() {
         return status;
     }
@@ -152,6 +154,14 @@ public class TripHistoryData implements Serializable {
         return created_at;
     }
 
+    public boolean isDd() {
+        return dd;
+    }
+
+    public void setDd(boolean dd) {
+        this.dd = dd;
+    }
+
 
     public static class Driver implements Serializable {
         private String plate_no;
@@ -178,6 +188,13 @@ public class TripHistoryData implements Serializable {
         String total;
         String km;
         String minutes;
+
+        @SerializedName("wait_mins")
+        private String waitMins;
+
+        @SerializedName("wc_value")
+        private String wait_charges;
+
         @SerializedName("base_fare")
         String baseFare;
         @SerializedName("price_km")
@@ -191,6 +208,8 @@ public class TripHistoryData implements Serializable {
         private String promo_deduction;
         private String dropoff_discount;
         private String wallet_deduction;
+
+        private boolean dd;
 
         public String getKm() {
             return km;
@@ -248,6 +267,29 @@ public class TripHistoryData implements Serializable {
             this.dropoff_discount = dropoff_discount;
         }
 
+        public String getWaitMins() {
+            return waitMins;
+        }
+
+        public void setWaitMins(String waitMins) {
+            this.waitMins = waitMins;
+        }
+
+        public String getWait_charges() {
+            return wait_charges;
+        }
+
+        public void setWait_charges(String wait_charges) {
+            this.wait_charges = wait_charges;
+        }
+
+        public boolean isDd() {
+            return dd;
+        }
+
+        public void setDd(boolean dd) {
+            this.dd = dd;
+        }
     }
 
 

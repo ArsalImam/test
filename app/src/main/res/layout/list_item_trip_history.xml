@@ -94,6 +94,16 @@
     </LinearLayout>
 
     <ImageView
+        android:visibility="gone"
+        android:id="@+id/ivDriverDestination"
+        android:src="@drawable/ic_driver_destination"
+        android:layout_toLeftOf="@id/ivRight"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginRight="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_20sdp"/>
+
+    <ImageView
         android:id="@+id/ivRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

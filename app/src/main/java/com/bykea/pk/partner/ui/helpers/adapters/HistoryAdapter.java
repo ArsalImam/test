@@ -58,6 +58,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
             } else {
                 holder.totalAmountTv.setText("Rs. N/A");
             }
+            if(data.isDd()){
+                holder.ivDriverDestination.setVisibility(View.VISIBLE);
+            }else{
+                holder.ivDriverDestination.setVisibility(View.GONE);
+            }
             holder.status.setText("Completed");
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
             holder.totalAmountTv.setVisibility(View.VISIBLE);
@@ -126,7 +131,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         FontTextView totalAmountTv;
         FontTextView status;
         FontTextView dateTv;
-
+        ImageView ivDriverDestination;
 
         ItemHolder(final View itemView) {
             super(itemView);
@@ -135,6 +140,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
             totalAmountTv = (FontTextView) itemView.findViewById(R.id.totalAmountTv);
             tripNoTv = (FontTextView) itemView.findViewById(R.id.tripNoTv);
             status = (FontTextView) itemView.findViewById(R.id.status);
+            ivDriverDestination = (ImageView) itemView.findViewById(R.id.ivDriverDestination);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
