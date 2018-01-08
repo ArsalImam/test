@@ -113,5 +113,9 @@
 
     <dimen name="admin_noti_lr_margin">@dimen/_15sdp</dimen>
     <dimen name="admin_noti_tb_margin">@dimen/_15sdp</dimen>
+    <dimen name="text_size_feedback">@dimen/_14sdp</dimen>
+    <dimen name="feedback_padding">@dimen/_4sdp</dimen>
+    <dimen name="feedback_padding_bottom">@dimen/_7sdp</dimen>
+    <dimen name="feedback_height">@dimen/_35sdp</dimen>
 
 </resources>

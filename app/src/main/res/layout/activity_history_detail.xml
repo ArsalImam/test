@@ -82,6 +82,9 @@
 
             </LinearLayout>
 
+
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height.large"
@@ -650,12 +653,11 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/margin.small"
                 android:layout_marginTop="@dimen/margin.small"
-                android:layout_weight="2"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="visible">
@@ -663,9 +665,8 @@
                 <LinearLayout
                     android:id="@+id/rlFeedbackMsg1"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/feedback_height"
                     android:layout_marginBottom="@dimen/_1sdp"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingLeft="@dimen/_10sdp"
@@ -680,10 +681,14 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:padding="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
+                        android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingLeft="@dimen/feedback_padding"
                         android:text="Comfort"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_9sdp" />
+                        android:textSize="@dimen/text_size_feedback"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/tvMsg2"
@@ -694,11 +699,15 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:padding="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
+                        android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingLeft="@dimen/feedback_padding"
                         android:text="Driving"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_9sdp"
-                        android:visibility="visible" />
+                        android:textSize="@dimen/text_size_feedback"
+                        android:visibility="visible"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/tvMsg3"
@@ -709,11 +718,15 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:padding="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
+                        android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingLeft="@dimen/feedback_padding"
                         android:text="Navigation"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_9sdp"
-                        android:visibility="visible" />
+                        android:textSize="@dimen/text_size_feedback"
+                        android:visibility="visible"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 </LinearLayout>
 
@@ -721,9 +734,8 @@
                 <LinearLayout
                     android:id="@+id/rlFeedbackMsg2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/feedback_height"
                     android:layout_marginTop="@dimen/_1sdp"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingLeft="@dimen/_10sdp"
@@ -738,10 +750,14 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:padding="@dimen/_8sdp"
-                        android:text="Service"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
+                        android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingLeft="@dimen/feedback_padding"
+                        android:text="احتیاط"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_9sdp" />
+                        android:textSize="@dimen/text_size_feedback"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
                     <com.bykea.pk.partner.widgets.FontTextView
@@ -753,11 +769,15 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:padding="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
+                        android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingLeft="@dimen/feedback_padding"
                         android:text="Navigation"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_9sdp"
-                        android:visibility="visible" />
+                        android:textSize="@dimen/text_size_feedback"
+                        android:visibility="visible"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/tvMsg6"
@@ -768,16 +788,19 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:padding="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
+                        android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingLeft="@dimen/feedback_padding"
                         android:text="Navigation"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_9sdp"
-                        android:visibility="visible" />
+                        android:textSize="@dimen/text_size_feedback"
+                        android:visibility="visible"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 </LinearLayout>
 
             </LinearLayout>
-
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/btnProblem"
                 android:layout_width="@dimen/_230sdp"

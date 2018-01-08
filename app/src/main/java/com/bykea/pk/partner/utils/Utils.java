@@ -841,7 +841,7 @@ public class Utils {
     * Returns true if Last API call was more than 1 min ago
     * */
     public static boolean isDirectionApiCallRequired() {
-        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 45000;
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
     }
 
     public static boolean isStatsApiCallRequired() {

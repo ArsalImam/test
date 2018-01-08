@@ -183,6 +183,9 @@ public class HistoryDetailActivity extends BaseActivity {
                     }
                     if (rattingToShow != null && rattingToShow.size() > 0) {
                         populatePredefineMsgs();
+                    } else {
+                        rlFeedbackMsg1.setVisibility(View.GONE);
+                        rlFeedbackMsg2.setVisibility(View.GONE);
                     }
                     if (Utils.getDaysInBetween(System.currentTimeMillis(),
                             new SimpleDateFormat(CURRENT_DATE_FORMAT).parse(data.getAcceptTime()).getTime()) >=

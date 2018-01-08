@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
@@ -158,7 +159,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private Marker driverMarker, dropOffMarker, pickUpMarker/*, passCurrentLocMarker*/;
     private MarkerOptions driverMarkerOptions;
     private Polyline mapPolylines;
-    private List<Polyline> mpolylineList;
     private List<LatLng> mRouteLatLng;
     private PolylineOptions mPolylineOptions;
 
@@ -630,7 +630,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mCurrentLocation.setLongitude(AppPreferences.getLongitude());
         mCurrentLocation.setLatitude(AppPreferences.getLatitude());
         mPreviousLocation = new Location("");
-        mpolylineList = new ArrayList<>();
         mArriveTraceCircleList = new ArrayList<>();
         mStartTraceCircleList = new ArrayList<>();
 
@@ -1235,43 +1234,26 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (null != mpolylineList && mpolylineList.size() > 0) {
-                        mpolylineList.clear();
-                    }
-                    if (null != mPolylineOptions) {
-                        mPolylineOptions = null;
-                    }
+                    mRouteLatLng = route.get(0).getPoints();
+                    updateEtaAndCallData((route.get(0).getDurationValue() / 60) + "",
+                            Utils.formatDecimalPlaces((route.get(0).getDistanceValue() / 1000.0) + "", 1));
+
+                    distanceToPickup = (route.get(0).getDistanceValue());
+
+
                     if (mapPolylines != null) {
                         mapPolylines.remove();
                     }
+                    PolylineOptions polyOptions = new PolylineOptions();
+                    polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
+                    polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
+                    polyOptions.addAll(route.get(0).getPoints());
+                    mapPolylines = mGoogleMap.addPolyline(polyOptions);
 
-        /*ADDING ROUTES TO MAP, ROUTE MAY CONTAIN ONE OR MORE ALTERNATIVE ROUTES*/
-                    for (int i = 0; i < route.size(); i++) {
 
-                        mPolylineOptions = route.get(i).getPolyOptions();
-                        if (i == 0) {
-                            mRouteLatLng = route.get(i).getPoints();
-                            updateEtaAndCallData((route.get(i).getDurationValue() / 60) + "",
-                                    Utils.formatDecimalPlaces((route.get(i).getDistanceValue() / 1000.0) + "", 1));
+                    if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute)
 
-                            distanceToPickup = (route.get(i).getDistanceValue());
-
-                            mapPolylines = mGoogleMap.addPolyline(mPolylineOptions);
-                            mpolylineList.add(mapPolylines);
-                        } else {
-                            Polyline polyline = mGoogleMap.addPolyline(mPolylineOptions);
-                            mpolylineList.add(polyline);
-                        }
-
-                    }
-
-//                    if (null != mCurrentLocation && callData != null && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-//                        if (mCurrentActivity != null && mGoogleMap != null) {
-//                            setPickupBounds();
-//                        }
-//                    }
-
-                    if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute) {
+                    {
                         if (mCurrentActivity != null && mGoogleMap != null) {
                             int padding = 40; // offset from edges of the map in pixels
                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(route.get(0).getLatLgnBounds(), padding);
@@ -1284,6 +1266,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             lastApiCallLatLng = null;
         }
+
     }
 
     @Override

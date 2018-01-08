@@ -13,7 +13,7 @@ public class Settings {
     private String ambulance;
     private String videos;
     private String heatmap_refresh_timer;
-    private int arrived_min_dist;
+    private String arrived_min_dist;
 
     @SerializedName("driver_app_version")
     private String app_version;
@@ -103,10 +103,7 @@ public class Settings {
     }
 
     public int getArrived_min_dist() {
-        return arrived_min_dist;
+        return Integer.parseInt(arrived_min_dist);
     }
 
-    public void setArrived_min_dist(int arrived_min_dist) {
-        this.arrived_min_dist = arrived_min_dist;
-    }
 }

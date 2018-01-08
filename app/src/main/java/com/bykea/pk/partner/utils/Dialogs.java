@@ -211,7 +211,7 @@ public enum Dialogs {
     public void showCancelDialog(final Context context, final StringCallBack callBack) {
         if (null == context) return;
         dismissDialog();
-        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
         mDialog.setContentView(R.layout.cancel_job_dialog);
         final RadioGroup radioGroup = (RadioGroup) mDialog.findViewById(R.id.optionBtn);
         RadioGroup.LayoutParams rprms;
@@ -226,6 +226,7 @@ public enum Dialogs {
 //                }
                 radioButton.setId(id++);
                 radioButton.setTextColor(ContextCompat.getColor(context, R.color.textColorPrimary));
+                radioButton.setTextSize(context.getResources().getDimension(R.dimen._8sdp));
                 rprms = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
                 radioGroup.addView(radioButton, rprms);
             }

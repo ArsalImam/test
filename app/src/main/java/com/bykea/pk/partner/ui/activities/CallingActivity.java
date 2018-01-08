@@ -214,6 +214,8 @@ public class CallingActivity extends BaseActivity {
                             callData.setStatus(TripStatus.ON_ACCEPT_CALL);
                             AppPreferences.setCallData(callData);
 
+                            AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
                             AppPreferences.setIsOnTrip(true);
                             ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                             stopSound();

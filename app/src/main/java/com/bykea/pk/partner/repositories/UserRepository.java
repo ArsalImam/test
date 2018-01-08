@@ -421,12 +421,18 @@ public class UserRepository {
             jsonObject.put("pid", AppPreferences.getCallData().getPassId());
             jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
             jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-            jsonObject.put("lat", AppPreferences.getLatitude() + "");
-            jsonObject.put("lng", AppPreferences.getLongitude() + "");
+            String lat = AppPreferences.getLatitude() + "";
+            String lng = AppPreferences.getLongitude() + "";
+            jsonObject.put("lat", lat);
+            jsonObject.put("lng",lng );
 
-            ArrayList<LocCoordinatesInTrip> latLngList = AppPreferences.getLocCoordinatesInTrip();
-            jsonObject.put("routes", new Gson().toJson(latLngList));
-
+            LocCoordinatesInTrip arrivedLatLng = new LocCoordinatesInTrip();
+            arrivedLatLng.setLat(lat);
+            arrivedLatLng.setLng(lng);
+            arrivedLatLng.setDate(Utils.getIsoDate());
+            ArrayList<LocCoordinatesInTrip> prevLatLngList = AppPreferences.getLocCoordinatesInTrip();
+            prevLatLngList.add(arrivedLatLng);
+            jsonObject.put("routes", new Gson().toJson(prevLatLngList));
             AppPreferences.clearTripDistanceData();
 
         } catch (Exception ex) {
