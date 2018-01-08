@@ -296,7 +296,7 @@
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
                     android:gravity="left|center_vertical"
-                    android:text="4 Wait min"
+                    android:text="Waiting"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />

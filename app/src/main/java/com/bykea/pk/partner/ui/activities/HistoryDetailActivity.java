@@ -93,7 +93,6 @@ public class HistoryDetailActivity extends BaseActivity {
     FontTextView btnProblem;
 
 
-
     @Bind(R.id.tvWaitMins)
     FontTextView tvWaitMins;
 
@@ -141,18 +140,20 @@ public class HistoryDetailActivity extends BaseActivity {
                     promoTv.setText("" + data.getInvoice().getPromo_deduction());
                     dropOffDiscTv.setText("" + data.getInvoice().getDropoff_discount());
 
-                    if(StringUtils.isNotBlank(data.getInvoice().getWaitMins())){
-                        float wait_min = Math.round(Float.parseFloat(data.getInvoice().getWaitMins()));
-                        if (wait_min > 1) {
-                            tvWaitMins.setText(wait_min + " Wait mins");
-                        } else {
-                            tvWaitMins.setText(wait_min + " Wait min");
-                        }
-                    }
+//                    if(StringUtils.isNotBlank(data.getInvoice().getWaitMins())){
+//                        float wait_min = Math.round(Float.parseFloat(data.getInvoice().getWaitMins()));
+//                        if (wait_min > 1) {
+//                            tvWaitMins.setText(wait_min + " Wait mins");
+//                        } else {
+//                            tvWaitMins.setText(wait_min + " Wait min");
+//                        }
+//                    }
 
-                    if(StringUtils.isNotBlank(data.getInvoice().getWait_charges())){
+                    if (StringUtils.isNotBlank(data.getInvoice().getWait_charges())) {
                         float wait_charges = Float.parseFloat(data.getInvoice().getWait_charges());
                         tvWaitPrice.setText("" + (Math.round(Math.ceil(wait_charges))));
+                    } else {
+                        tvWaitPrice.setText("0");
                     }
 
                     String start_balance = verifyData(data.getInvoice().getStart_balance());
