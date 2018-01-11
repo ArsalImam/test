@@ -52,17 +52,18 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         } else {
             holder.tripNoTv.setText(data.getTripNo());
         }
+        if(data.isDd()){
+            holder.ivDriverDestination.setVisibility(View.VISIBLE);
+        }else{
+            holder.ivDriverDestination.setVisibility(View.GONE);
+        }
         if (data.getStatus().equalsIgnoreCase("completed")) {
             if (data.getInvoice() != null && StringUtils.isNotBlank(data.getInvoice().getTotal())) {
                 holder.totalAmountTv.setText("Rs. " + data.getInvoice().getTotal());
             } else {
                 holder.totalAmountTv.setText("Rs. N/A");
             }
-            if(data.isDd()){
-                holder.ivDriverDestination.setVisibility(View.VISIBLE);
-            }else{
-                holder.ivDriverDestination.setVisibility(View.GONE);
-            }
+
             holder.status.setText("Completed");
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
             holder.totalAmountTv.setVisibility(View.VISIBLE);

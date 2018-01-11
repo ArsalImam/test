@@ -163,7 +163,6 @@ public class WebIORequestHandler {
     }
 
     public void getDriverStats(final IResponseCallback mResponseCallBack, JSONObject jsonObject) {
-        Utils.redLog(ApiTags.SOCKET_GET_DRIVER_STATS, jsonObject.toString());
         emitWithJObject(ApiTags.SOCKET_GET_DRIVER_STATS, new MyGenericListener(ApiTags.SOCKET_GET_DRIVER_STATS, DriverStatsResponse.class, mResponseCallBack)
                 , jsonObject);
     }

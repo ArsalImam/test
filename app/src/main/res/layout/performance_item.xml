@@ -32,7 +32,7 @@
             android:id="@+id/tvKey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Acceptance"
+            android:text="Destination Trips"
             android:textColor="@color/textColorPerformance"
             android:textSize="@dimen/_12sdp"
             app:fontName="roboto_bold.ttf" />

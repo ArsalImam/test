@@ -933,8 +933,8 @@ public class HomeFragment extends Fragment {
                     Utils.redLog("VERSION", "Current: " + currentVersion + " Play Store: " + latestVersion);
                     if (!currentVersion.equalsIgnoreCase(latestVersion)) {
                         if (!Dialogs.INSTANCE.isShowing()) {
-                            Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "Update App", "Latest Version Of Bykea is " +
-                                    "available on Play Store. Please Update the App for better Service. Thank You !", "https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
+                            Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "Important Notice", "Bykea partner app has been updated, " +
+                                    "kindly update your app. Thank you", "https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
 
                         }
                     }

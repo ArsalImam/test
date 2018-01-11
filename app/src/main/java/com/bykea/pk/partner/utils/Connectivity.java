@@ -49,8 +49,9 @@ public class Connectivity {
      * @return
      */
     public static boolean isConnectedFast(Context context) {
-        NetworkInfo info = Connectivity.getNetworkInfo(context);
-        return (info != null && info.isConnected() && Connectivity.isConnectionFast(info.getType(), info.getSubtype()));
+        return isConnected(context);
+//        NetworkInfo info = Connectivity.getNetworkInfo(context);
+//        return (info != null && info.isConnected() && Connectivity.isConnectionFast(info.getType(), info.getSubtype()));
     }
 
     /**
@@ -86,7 +87,7 @@ public class Connectivity {
                 case TelephonyManager.NETWORK_TYPE_UMTS:
                     return true; // ~ 400-7000 kbps
             /*
-			 * Above API level 7, make sure to set android:targetSdkVersion
+             * Above API level 7, make sure to set android:targetSdkVersion
 			 * to appropriate level to use these
 			 */
                 case TelephonyManager.NETWORK_TYPE_EHRPD: // API level 11
@@ -129,11 +130,11 @@ public class Connectivity {
         } else if (type == ConnectivityManager.TYPE_MOBILE) {
             switch (subType) {
                 case TelephonyManager.NETWORK_TYPE_CDMA:
-                    return ""+1; //Poor
+                    return "" + 1; //Poor
                 case TelephonyManager.NETWORK_TYPE_1xRTT:
                 case TelephonyManager.NETWORK_TYPE_EDGE:
                 case TelephonyManager.NETWORK_TYPE_GPRS:
-                    return ""+3; //Fair
+                    return "" + 3; //Fair
                 case TelephonyManager.NETWORK_TYPE_EVDO_A:
                 case TelephonyManager.NETWORK_TYPE_EVDO_0:
                 case TelephonyManager.NETWORK_TYPE_HSDPA:
@@ -145,11 +146,11 @@ public class Connectivity {
                 case TelephonyManager.NETWORK_TYPE_HSPAP:
                 case TelephonyManager.NETWORK_TYPE_IDEN:
                 case TelephonyManager.NETWORK_TYPE_LTE:
-                    return ""+5; //Good
+                    return "" + 5; //Good
                 case TelephonyManager.NETWORK_TYPE_UNKNOWN:
-                    return ""+0; //No Connection
+                    return "" + 0; //No Connection
                 default:
-                    return ""+0;
+                    return "" + 0;
             }
         } else {
             return "Not Connected";
@@ -163,13 +164,13 @@ public class Connectivity {
         } else if (Connectivity.getInternetStatus(info.getType(), info.getSubtype(), context) == 3
                 && Utils.getBatteryPercentageDouble(context) > 20) {
             return "Good Connection";
-        }else if(Connectivity.getInternetStatus(info.getType(), info.getSubtype(), context) >= 2
+        } else if (Connectivity.getInternetStatus(info.getType(), info.getSubtype(), context) >= 2
                 && Utils.getBatteryPercentageDouble(context) > 20) {
             return "Fair Connection";
-        }else if(Connectivity.getInternetStatus(info.getType(), info.getSubtype(), context) >= 2
+        } else if (Connectivity.getInternetStatus(info.getType(), info.getSubtype(), context) >= 2
                 && Utils.getBatteryPercentageDouble(context) <= 20) {
             return "Battery Low";
-        }else {
+        } else {
             return "Poor Connection";
         }
     }

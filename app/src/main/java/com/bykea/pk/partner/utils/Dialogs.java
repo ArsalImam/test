@@ -226,7 +226,6 @@ public enum Dialogs {
 //                }
                 radioButton.setId(id++);
                 radioButton.setTextColor(ContextCompat.getColor(context, R.color.textColorPrimary));
-                radioButton.setTextSize(context.getResources().getDimension(R.dimen._8sdp));
                 rprms = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
                 radioGroup.addView(radioButton, rprms);
             }

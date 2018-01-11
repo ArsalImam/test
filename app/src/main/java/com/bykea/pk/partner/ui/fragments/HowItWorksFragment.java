@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.ModelVideoDemo;
@@ -27,7 +27,7 @@ public class HowItWorksFragment extends Fragment {
 
 
     ArrayList<ModelVideoDemo> arrayDemo = new ArrayList<>();
-    ListView lvDemo;
+    RecyclerView mRecyclerVeiw;
     String[] videoURLs = new String[]{"https://www.youtube.com/watch?v=D8-PCyUx3ic", "https://www.youtube.com/watch?v=cEC6sPC-fwg", "https://www.youtube.com/watch?v=N7g9JL4oJyg", "https://www.youtube.com/watch?v=D8-PCyUx3ic", "https://www.youtube.com/watch?v=cEC6sPC-fwg", "https://www.youtube.com/watch?v=N7g9JL4oJyg", "https://www.youtube.com/watch?v=D8-PCyUx3ic"};
     String[] videoName = new String[]{"App Overview", "Best Practices", "Ride Process", "Ratings", "Wallet and Payments", "Parcel", "Registration"};
     int[] videoNameImgs = new int[]{R.drawable.app_ka_jaiza, R.drawable.tareeqa_kaar, R.drawable.amal, R.drawable.rating, R.drawable.raqam_aur_adaigi, R.drawable.parcel, R.drawable.registration};
@@ -47,7 +47,7 @@ public class HowItWorksFragment extends Fragment {
         mCurrentActivity.setToolbarTitle("How it works");
         mCurrentActivity.hideToolbarLogo();
 
-        lvDemo = (ListView) view.findViewById(R.id.lvVideoDemo);
+        mRecyclerVeiw = (RecyclerView) view.findViewById(R.id.lvVideoDemo);
         String[] videoLinks = AppPreferences.getSettings().getSettings().getVideos().split(",");
 
         for (int x = 0; x < videoLinks.length; x++) {
@@ -61,23 +61,25 @@ public class HowItWorksFragment extends Fragment {
             mDemo.setVideoURL(videoLinks[x]);
             arrayDemo.add(mDemo);
         }
-
-        final HowItWorksVideoAdapter adapter = new HowItWorksVideoAdapter(mCurrentActivity, arrayDemo);
-
-        lvDemo.setAdapter(adapter);
-        lvDemo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mRecyclerVeiw.setHasFixedSize(true);
+        GridLayoutManager layoutManager = new GridLayoutManager(mCurrentActivity, 2);
+        mRecyclerVeiw.setLayoutManager(layoutManager);
+        final HowItWorksVideoAdapter adapter = new HowItWorksVideoAdapter(mCurrentActivity, arrayDemo, new HowItWorksVideoAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClickListener(ModelVideoDemo data) {
                 try {
                     Intent intent = new Intent(mCurrentActivity, MyPlayerActivity.class);
-                    intent.putExtra("VIDEO_ID", arrayDemo.get(position).getVideoURL().split("v=")[1]);
+                    intent.putExtra("VIDEO_ID", data.getVideoURL().split("v=")[1]);
                     startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
-        });
+        }
+        );
+
+        mRecyclerVeiw.setAdapter(adapter);
+
     }
 
     @Override

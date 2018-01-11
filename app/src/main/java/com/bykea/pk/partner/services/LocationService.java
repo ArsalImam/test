@@ -80,10 +80,12 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Utils.redLog("LocServ", "onCreate");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Utils.redLog("LocServ", "onStartCommand");
         mContext = getApplicationContext();
         //acquire wake lock services to make service run
         PowerManager mgr = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
@@ -98,10 +100,15 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Utils.redLog("LocServ", "onDestroy");
         stopLocationUpdates();
         if (wakeLock != null) {
             wakeLock.release();
         }
+        cancelTimer();
+    }
+
+    private void cancelTimer() {
         if (mCountDownTimer != null) {
             mCountDownTimer.cancel();
         }
@@ -122,6 +129,7 @@ public class LocationService extends Service {
         createLocationRequest();
         getLastLocation();
         startLocationUpdates();
+        cancelTimer();
         mCountDownTimer.start();
     }
 
@@ -269,7 +277,7 @@ public class LocationService extends Service {
 
     private void callDistanceMatrixApi(String destination) {
         LatLng newLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
-        if (isDirectionApiCallRequired(newLatLng)) {
+        if (isDirectionApiCallRequired(newLatLng) && Connectivity.isConnected(mContext)) {
             lastApiCallLatLng = newLatLng;
             String origin = newLatLng.latitude + "," + newLatLng.longitude;
             new PlacesRepository().getDistanceMatrix(origin, destination, mContext, new PlacesDataHandler() {
@@ -450,8 +458,9 @@ public class LocationService extends Service {
         }
     }
 
-    @Override
+    /*@Override
     public void onTaskRemoved(Intent rootIntent) {
+        Utils.redLog("LocServ", "onTaskRemoved");
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
 
@@ -463,5 +472,5 @@ public class LocationService extends Service {
                 restartServicePendingIntent);
 
         super.onTaskRemoved(rootIntent);
-    }
+    }*/
 }

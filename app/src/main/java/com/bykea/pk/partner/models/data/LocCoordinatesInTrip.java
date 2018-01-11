@@ -4,6 +4,7 @@ public class LocCoordinatesInTrip {
     private String lat;
     private String lng;
     private String timeStamp;
+    private String gps;
     private String date;
 
     public String getLat() {
@@ -36,5 +37,13 @@ public class LocCoordinatesInTrip {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getGps() {
+        return gps;
+    }
+
+    public void setGps(String gps) {
+        this.gps = gps;
     }
 }

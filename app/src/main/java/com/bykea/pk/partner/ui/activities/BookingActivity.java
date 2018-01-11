@@ -381,8 +381,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived))) {
-                        if (distanceToPickup > 200) {
-                            boolean showTickBtn = distanceToPickup < AppPreferences.getSettings().getSettings().getArrived_min_dist();
+                        int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
+                                Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
+                        if (distance > 200) {
+                            boolean showTickBtn = distance < AppPreferences.getSettings().getSettings().getArrived_min_dist();
                             Dialogs.INSTANCE.showConfirmArrivalDialog(mCurrentActivity, showTickBtn, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

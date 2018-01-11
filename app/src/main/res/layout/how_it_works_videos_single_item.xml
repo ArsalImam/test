@@ -1,55 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="10dp"
-    android:paddingTop="10dp">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
 
     <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tvVideoNo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Video No 1"
         android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/_10sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:text="Video No 1"
+        android:textColor="#000"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:id="@+id/tvVideoNo"
-        android:textColor="#000"/>
+        android:textStyle="bold" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginTop="10dp"
-        >
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/app_ka_jaiza"
-        android:layout_toLeftOf="@+id/imgPlay"
-        android:id="@+id/imgVideoName"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="15dp"
-        android:visibility="gone"
-        />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/play_icon_videos"
-           android:layout_centerInParent="true"
-            android:id="@+id/imgPlay"/>
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Video Name"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/imgPlay"
-            android:textColor="#000"
-            android:visibility="gone"
-            android:layout_marginLeft="15dp"
-            android:id="@+id/tvVideoName"/>
-</RelativeLayout>
+        android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/imgVideoName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/imgPlay"
+            android:src="@drawable/app_ka_jaiza"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/imgPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:paddingBottom="@dimen/_10sdp"
+            android:src="@drawable/play_icon_videos" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvVideoName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/imgPlay"
+            android:text="Video Name"
+            android:textColor="#000"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.7dp"
+        android:background="@color/wallet_hint_foreground_holo_light" />
 </LinearLayout>

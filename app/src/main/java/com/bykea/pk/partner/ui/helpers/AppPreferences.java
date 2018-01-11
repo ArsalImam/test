@@ -657,6 +657,9 @@ public class AppPreferences {
         currentLatLng.setDate("" + Utils.getIsoDate());
         currentLatLng.setLat("" + lat);
         currentLatLng.setLng("" + lng);
+        if (!Utils.isGpsEnable(DriverApp.getContext())) {
+            currentLatLng.setGps("0");
+        }
         ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip();
         prevLatLngList.add(currentLatLng);
         String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
