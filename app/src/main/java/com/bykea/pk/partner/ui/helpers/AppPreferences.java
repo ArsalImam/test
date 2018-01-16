@@ -59,7 +59,7 @@ public class AppPreferences {
 
     public static boolean isApiKeyRequired() {
         return mSharedPreferences
-                .getBoolean(Keys.IS_API_KEY_REQUIRED, false);
+                .getBoolean(Keys.IS_API_KEY_REQUIRED, true);
     }
 
     public static void saveSettingsData(SettingsData data) {

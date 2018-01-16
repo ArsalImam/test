@@ -2,10 +2,17 @@
     <!--<string name="app_name">Bykea Partner</string>-->
     <string name="app_name">بائیکیا پارٹنر</string>
     <!--            GOOGLE API KEY                          -->
-    <string name="google.api.client.key">AIzaSyDRo33cwg4KXS6KK2ibsZ4_40_3fsWGCeE</string>
     <!--  Live   <string name="google.api.serverkey">AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA</string>-->
     <!--<string name="google.api.serverkey">AIzaSyD-PS71WvtMUAusr3NKn7iw62tPdCQGacQ</string>-->
-    <string name="google.api.serverkey">AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY</string>
+    <!--<string name="google.api.serverkey">AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY</string>-->
+
+    <!--<string name="google.api.client.key">AIzaSyDRo33cwg4KXS6KK2ibsZ4_40_3fsWGCeE</string>-->
+
+    <!--Live new 12/01/17-->
+    <string name="google.api.client.key">AIzaSyB1ci22exVt0IhYxrihjVVYGboKQuAsEMU</string>
+
+    <!--Live new 12/01/17-->
+    <string name="google.api.serverkey">AIzaSyDDSVksBi_d5aBo0WgXun0ZWG-Z2IUTYQQ</string>
 
     <!--                BUTTON STRINGS HERE                 -->
     <string name="button.text.login">login</string>
