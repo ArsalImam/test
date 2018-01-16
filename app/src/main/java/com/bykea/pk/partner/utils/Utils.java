@@ -1206,6 +1206,20 @@ public class Utils {
         logFireBaseEvent(context, userID, EVENT, data);
     }
 
+    /*-------------------- Mixpanel For Parter Events ---------------*/
+
+    public static void logMixpanelEvent(Context context, String EVENT, JSONObject data) {
+        MixpanelAPI.getInstance(context, Constants.MIX_PANEL_DRIVER_API_KEY).track(EVENT, data);
+//        logFireBaseEvent(context, EVENT, data);
+    }
+
+    public static void flushMixPanelEvent(Context context) {
+        MixpanelAPI.getInstance(context, Constants.MIX_PANEL_DRIVER_API_KEY).flush();
+    }
+
+
+ /*-------------------- Mixpanel For Parter Events ---------------*/
+
 
     public static void animateHeight(final View v, int duration, int targetHeight) {
         int prevHeight = v.getHeight();

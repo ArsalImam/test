@@ -5,6 +5,9 @@ import com.bykea.pk.partner.BuildConfig;
 
 public class Constants {
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
+
+    public static final String MIX_PANEL_DRIVER_API_KEY = "95cdb68bf780e59e76ea95a2a62f59d8";
+
     public static final String GCM_KEY = "764640458585";// GOOGLE ACCOUNT Bykea PROJECT ID...
     public static final String APP_NAME = "BYKEA PARTNER";
 
@@ -66,6 +69,17 @@ public class Constants {
         public static final String SELECTED_VEHICLE_DATA = "SELECTED_VEHICLE_DATA";
         public static final String RIDE_VEHICLE_DATA = "RIDE_VEHICLE_DATA";
         public static final String TRIP_DETAILS = "TRIP_DETAILS";
+    }
+
+    public static class AnalyticsEvents {
+        public final static String REPLACE = "_R_";
+        public final static String EYE_BALL = "Eyeball";
+        public final static String ON_ACCEPT = EYE_BALL + "_Accept";
+        public final static String ON_ARRIVED = EYE_BALL + "_Arrived";
+        public final static String ON_START = EYE_BALL + "_Started";
+        public final static String ON_FINISH = EYE_BALL + "_Finished";
+        public final static String ON_FEEDBACK = EYE_BALL + "_Feedback";
+
     }
 
     public static final float ANDROID_OPACITY = 255;
