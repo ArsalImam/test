@@ -7,11 +7,11 @@ import android.content.Intent;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.utils.Utils;
 
-public class BootReceiver  extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Utils.redLog("Boot Receiver", "TRUE");
-        ActivityStackManager.getInstance().startLocationService(context);
+        ActivityStackManager.getInstance().restartLocationService(context, "Phone Restarted");
     }
 }

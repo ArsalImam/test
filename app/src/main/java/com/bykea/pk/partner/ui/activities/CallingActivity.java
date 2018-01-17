@@ -216,7 +216,7 @@ public class CallingActivity extends BaseActivity {
                             NormalCallData callData = AppPreferences.getCallData();
                             callData.setStatus(TripStatus.ON_ACCEPT_CALL);
                             AppPreferences.setCallData(callData);
-                            logMixpanelEvent(callData);
+//                            logMixpanelEvent(callData);
 
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
@@ -271,28 +271,31 @@ public class CallingActivity extends BaseActivity {
             });
         }
     };
-
+/*
     private void logMixpanelEvent(NormalCallData callData) {
         try {
+
             JSONObject data = new JSONObject();
             data.put("Success", true);
-            data.put("Trip_ID", callData.getTripId());
-            data.put("Trip_No", callData.getTripNo());
-            data.put("Pick_Up_Location", callData.getData().getStartLat() + "," + callData.getStartLng());
+            data.put("PassengerID", callData.getPassId());
+            data.put("DriverID", AppPreferences.getPilotData().getId());
+            data.put("TripID", callData.getTripId());
+            data.put("TripNo", callData.getTripNo());
+            data.put("PickUpLocation", callData.getData().getStartLat() + "," + callData.getStartLng());
             data.put("timestamp", Utils.getIsoDate());
             if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
-                data.put("Drop_off_Location", callData.getEndLat() + "," + callData.getEndLng());
-                data.put("ETA", Utils.formatETA(callData.getArivalTime()));
+                data.put("DropOffLocation", callData.getEndLat() + "," + callData.getEndLng());
             }
-            data.put("Current_Location", Utils.getCurrentLocation());
-            data.put("Passenger_Name", callData.getPassName());
-            data.put("Driver_Name", AppPreferences.getPilotData().getFullName());
-            data.put("Call_Type", callData.getCallType());
-            Utils.logMixpanelEvent(mCurrentActivity, Constants.AnalyticsEvents.ON_ACCEPT, data);
+            data.put("ETA", Utils.formatETA(callData.getArivalTime()));
+            data.put("CurrentLocation", Utils.getCurrentLocation());
+            data.put("PassengerName", callData.getPassName());
+            data.put("DriverName", AppPreferences.getPilotData().getFullName());
+            data.put("type", callData.getCallType());
+            Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(), Constants.AnalyticsEvents.ON_ACCEPT, data);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     private CountDownTimer timer = new CountDownTimer(20800, 100) {
 

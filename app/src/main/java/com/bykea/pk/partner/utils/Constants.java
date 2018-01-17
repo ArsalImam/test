@@ -60,6 +60,9 @@ public class Constants {
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
     public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+
+    //    Live new 12/01/17
+//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyDDSVksBi_d5aBo0WgXun0ZWG-Z2IUTYQQ";
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
     public static final String REPLACE_CITY = "-replace-";
@@ -69,6 +72,7 @@ public class Constants {
         public static final String SELECTED_VEHICLE_DATA = "SELECTED_VEHICLE_DATA";
         public static final String RIDE_VEHICLE_DATA = "RIDE_VEHICLE_DATA";
         public static final String TRIP_DETAILS = "TRIP_DETAILS";
+        public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
     }
 
     public static class AnalyticsEvents {

@@ -203,10 +203,6 @@ public class FeedbackActivity extends BaseActivity {
             properties.put("timestamp", Utils.getIsoDate());
             properties.put("City", AppPreferences.getPilotData().getCity().getName());
 
-
-            //Firebase can have max 10 TEXT properties
-            Utils.logFireBaseEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_FARE.replace("_R_", callData.getCallType()), properties);
-
             properties.put("PassengerName", callData.getPassName());
             properties.put("DriverName", AppPreferences.getPilotData().getFullName());
             if (StringUtils.isNotBlank(callData.getPromo_deduction())) {
@@ -219,7 +215,8 @@ public class FeedbackActivity extends BaseActivity {
             } else {
                 properties.put("WalletDeduction", "0");
             }
-            mixpanelAPI.track(Constants.RIDE_FARE.replace("_R_", callData.getCallType()), properties);
+            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_FARE.replace("_R_", callData.getCallType()), properties);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -236,7 +233,7 @@ public class FeedbackActivity extends BaseActivity {
                     Utils.setCallIncomingState();
                     AppPreferences.setWalletAmountIncreased(!feedbackResponse.isAvailable());
                     AppPreferences.setAvailableStatus(feedbackResponse.isAvailable());
-                    ActivityStackManager.getInstance().startHomeActivity(true,mCurrentActivity);
+                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     mCurrentActivity.finish();
                 }
             });
@@ -319,7 +316,7 @@ public class FeedbackActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        mixpanelAPI.flush();
+        Utils.flushMixPanelEvent(mCurrentActivity);
         super.onDestroy();
 
     }

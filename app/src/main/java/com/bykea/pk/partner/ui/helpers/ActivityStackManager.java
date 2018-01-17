@@ -93,17 +93,23 @@ public class ActivityStackManager {
     }
 
     public void stopLocationService(Context mContext) {
-        AppPreferences.setStopService(true);
         if (Utils.isServiceRunning(mContext, LocationService.class)) {
             mContext.stopService(new Intent(mContext, LocationService.class));
         }
     }
 
     public void restartLocationService(Context mContext) {
-        if (Utils.isServiceRunning(mContext, LocationService.class)) {
-            mContext.stopService(new Intent(mContext, LocationService.class));
-        }
+        stopLocationService(mContext);
         startLocationService(mContext);
+    }
+
+    public void restartLocationService(Context mContext, String STATUS) {
+        stopLocationService(mContext);
+        if (!Utils.isServiceRunning(mContext, LocationService.class)) {
+            Intent intent = new Intent(mContext, LocationService.class);
+            intent.putExtra(Constants.Extras.LOCATION_SERVICE_STATUS, STATUS);
+            mContext.startService(intent);
+        }
     }
 
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {

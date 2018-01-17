@@ -175,7 +175,7 @@ public class ConfirmDestinationActivity extends BaseActivity {
     private void reverseGeoCoding(double targetLat, double targetLng) {
         UserRepository repository = new UserRepository();
         repository.requestReverseGeocoding(mCurrentActivity, handler, targetLat + "," + targetLng,
-                Utils.getApiKeyForGeoCoder(mCurrentActivity));
+                Utils.getApiKeyForGeoCoder());
 
     }
 

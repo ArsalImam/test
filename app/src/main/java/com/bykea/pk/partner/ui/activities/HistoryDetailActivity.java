@@ -173,7 +173,11 @@ public class HistoryDetailActivity extends BaseActivity {
                     if (data.getPassRating() != null && StringUtils.isNotBlank(data.getPassRating().getRate())) {
                         passengerRb.setRating(Float.parseFloat(data.getPassRating().getRate()));
                     }
-                    String feedbackComments = data.getPassRating().getFeedback_message()[0];
+                    String feedbackComments = StringUtils.EMPTY;
+                    if (data.getPassRating() != null && data.getPassRating().getFeedback_message() != null
+                            && StringUtils.isNotBlank(data.getPassRating().getFeedback_message()[0])) {
+                        feedbackComments = data.getPassRating().getFeedback_message()[0];
+                    }
                     if (StringUtils.isNotBlank(feedbackComments)) {
                         rattingToShow = new Gson().fromJson(feedbackComments, new TypeToken<ArrayList<Predefine_rating>>() {
                         }.getType());

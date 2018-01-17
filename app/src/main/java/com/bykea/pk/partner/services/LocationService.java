@@ -55,6 +55,7 @@ import java.util.List;
 
 public class LocationService extends Service {
 
+    private String STATUS = StringUtils.EMPTY;
     private Context mContext;
     private UserRepository mUserRepository;
     private LocationRequest mLocationRequest;
@@ -86,6 +87,9 @@ public class LocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Utils.redLog("LocServ", "onStartCommand");
+        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
+            STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
+        }
         mContext = getApplicationContext();
         //acquire wake lock services to make service run
         PowerManager mgr = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
@@ -303,8 +307,9 @@ public class LocationService extends Service {
     }
 
     private void addLatLng(double lat, double lon, boolean updatePrevTime) {
-        AppPreferences.addLocCoordinateInTrip(lat, lon);
+        AppPreferences.addLocCoordinateInTrip(lat, lon, STATUS);
         AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
+        STATUS = StringUtils.EMPTY;
     }
 
     private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {

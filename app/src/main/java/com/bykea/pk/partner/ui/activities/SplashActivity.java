@@ -58,7 +58,6 @@ public class SplashActivity extends BaseActivity {
     }
 
 
-
     @Override
     public void onEvent(String action) {
         super.onEvent(action);

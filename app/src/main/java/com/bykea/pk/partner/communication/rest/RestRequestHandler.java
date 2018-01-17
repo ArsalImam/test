@@ -789,7 +789,7 @@ public class RestRequestHandler {
                                 final IResponseCallback mDataCallback, Context context) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<GeocoderApi> call = restClient.callGeoCoderApi(latitude + "," + longitude, Constants.GOOGLE_PLACE_SERVER_API_KEY);
+        Call<GeocoderApi> call = restClient.callGeoCoderApi(latitude + "," + longitude, Utils.getApiKeyForGeoCoder());
         call.enqueue(new Callback<GeocoderApi>() {
             @Override
             public void onResponse(Response<GeocoderApi> geocoderApiResponse, Retrofit retrofit) {
@@ -848,65 +848,20 @@ public class RestRequestHandler {
                         if (StringUtils.isNotBlank(add)) {
                             mDataCallback.onResponse(add);
                         } else {
-                            AppPreferences.setApiKeyRequired(true);
+                            AppPreferences.setGeoCoderApiKeyRequired(true);
                             mDataCallback.onError(0, "No Address Found");
                         }
                     } else {
-                        AppPreferences.setApiKeyRequired(true);
+                        AppPreferences.setGeoCoderApiKeyRequired(true);
                     }
                 } else {
-                    AppPreferences.setApiKeyRequired(true);
+                    AppPreferences.setGeoCoderApiKeyRequired(true);
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                AppPreferences.setApiKeyRequired(true);
-                Utils.redLog("GeoCode", t.getMessage() + "");
-            }
-        });
-    }
-
-    public void callGeoCoderApi2(final String latitude, final String longitude, final IResponseCallback mDataCallback, Context context) {
-        mContext = context;
-        IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<GeocoderApi> call = restClient.callGeoCoderApi(latitude + "," + longitude, Utils.getApiKey());
-        call.enqueue(new Callback<GeocoderApi>() {
-            @Override
-            public void onResponse(Response<GeocoderApi> geocoderApiResponse, Retrofit retrofit) {
-                if (geocoderApiResponse != null && geocoderApiResponse.isSuccess()) {
-                    if (geocoderApiResponse.body() != null
-                            && geocoderApiResponse.body().getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
-                            && geocoderApiResponse.body().getResults().length > 0) {
-                        String cityName = StringUtils.EMPTY;
-                        GeocoderApi.Address_components[] address_componentses = geocoderApiResponse.body().getResults()[0].getAddress_components();
-                        for (GeocoderApi.Address_components addressComponent : address_componentses) {
-                            String[] types = addressComponent.getTypes();
-                            for (String type : types) {
-
-                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_CITY)) {
-                                    cityName = addressComponent.getLong_name();
-                                }
-                                if (StringUtils.isNotBlank(cityName)) {
-                                    break;
-                                }
-                            }
-                            if (StringUtils.isNotBlank(cityName)) {
-                                break;
-                            }
-                        }
-                        mDataCallback.onResponse("Current city: " + cityName);
-                    } else {
-                        AppPreferences.setApiKeyRequired(true);
-                    }
-                } else {
-                    AppPreferences.setApiKeyRequired(true);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                AppPreferences.setApiKeyRequired(true);
+                AppPreferences.setGeoCoderApiKeyRequired(true);
                 Utils.redLog("GeoCode", t.getMessage() + "");
             }
         });

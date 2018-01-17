@@ -87,10 +87,6 @@ import javax.net.ssl.TrustManagerFactory;
 public class Utils {
 
 
-    public static String getApiKey() {
-        return AppPreferences.isApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
-    }
-
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.e(tag + " : ", message);
@@ -815,8 +811,8 @@ public class Utils {
     * Will return Empty String if there's no error in Last
     * Request while using API without any Key.
     * */
-    public static String getApiKeyForGeoCoder(Context context) {
-        return AppPreferences.isGeoCoderApiKeyRequired() ? context.getResources().getString(R.string.google_api_serverkey) : StringUtils.EMPTY;
+    public static String getApiKeyForGeoCoder() {
+        return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
     /*
@@ -830,7 +826,7 @@ public class Utils {
                 AppPreferences.setDirectionsApiKeyRequired(false);
                 return StringUtils.EMPTY;
             } else {
-                return context.getResources().getString(R.string.google_api_serverkey);
+                return Constants.GOOGLE_PLACE_SERVER_API_KEY;
             }
         } else {
             return StringUtils.EMPTY;
@@ -1206,20 +1202,9 @@ public class Utils {
         logFireBaseEvent(context, userID, EVENT, data);
     }
 
-    /*-------------------- Mixpanel For Parter Events ---------------*/
-
-    public static void logMixpanelEvent(Context context, String EVENT, JSONObject data) {
-        MixpanelAPI.getInstance(context, Constants.MIX_PANEL_DRIVER_API_KEY).track(EVENT, data);
-//        logFireBaseEvent(context, EVENT, data);
-    }
-
     public static void flushMixPanelEvent(Context context) {
-        MixpanelAPI.getInstance(context, Constants.MIX_PANEL_DRIVER_API_KEY).flush();
+        MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY).flush();
     }
-
-
- /*-------------------- Mixpanel For Parter Events ---------------*/
-
 
     public static void animateHeight(final View v, int duration, int targetHeight) {
         int prevHeight = v.getHeight();

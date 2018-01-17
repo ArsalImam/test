@@ -38,30 +38,6 @@ public class AppPreferences {
                 .apply();
     }
 
-
-    public static void setApiKeyRequired(boolean status) {
-        SharedPreferences.Editor ed = mSharedPreferences.edit();
-        ed.putBoolean(Keys.IS_API_KEY_REQUIRED, status);
-        if (status) {
-            if (getApiKeyCheckTime() == 0) {
-                ed.putLong(Keys.API_KEY_CHECK_TIME, System.currentTimeMillis());
-            }
-        } else {
-            ed.putLong(Keys.API_KEY_CHECK_TIME, 0);
-        }
-        ed.apply();
-    }
-
-    public static long getApiKeyCheckTime() {
-        return mSharedPreferences
-                .getLong(Keys.API_KEY_CHECK_TIME, 0);
-    }
-
-    public static boolean isApiKeyRequired() {
-        return mSharedPreferences
-                .getBoolean(Keys.IS_API_KEY_REQUIRED, true);
-    }
-
     public static void saveSettingsData(SettingsData data) {
         mSharedPreferences
                 .edit()
@@ -641,15 +617,23 @@ public class AppPreferences {
         return mSharedPreferences.getLong(Keys.TIME_PREV_DISTANCE, 0);
     }
 
-    public static boolean isStopServiceCalled() {
-        return mSharedPreferences.getBoolean(Keys.IS_STOP_SERVICE_CALLED, false);
-    }
-
-    public static void setStopService(boolean value) {
-        mSharedPreferences
-                .edit()
-                .putBoolean(Keys.IS_STOP_SERVICE_CALLED, value)
-                .apply();
+    public static void addLocCoordinateInTrip(double lat, double lng, String STATUS) {
+        LocCoordinatesInTrip currentLatLng = new LocCoordinatesInTrip();
+        currentLatLng.setDate("" + Utils.getIsoDate());
+        currentLatLng.setLat("" + lat);
+        currentLatLng.setLng("" + lng);
+        if (!Utils.isGpsEnable(DriverApp.getContext())) {
+            currentLatLng.setGps("0");
+        }
+        if (StringUtils.isNotBlank(STATUS)) {
+            currentLatLng.setStatus(STATUS);
+        }
+        ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip();
+        prevLatLngList.add(currentLatLng);
+        String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
+        }.getType());
+        Utils.redLog("InTripLoc", value);
+        mSharedPreferences.edit().putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value).apply();
     }
 
     public static void addLocCoordinateInTrip(double lat, double lng) {

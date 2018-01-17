@@ -52,8 +52,6 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
         setContentView(R.layout.activity_places);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
-
-        GeoApiContext mGeoContext = new GeoApiContext().setApiKey(getString(R.string.google_api_serverkey));
         mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
                 .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
                 .addApi(Places.GEO_DATA_API)

@@ -110,32 +110,20 @@ public class PlaceAutocompleteAdapter
         return mResultList.get(position);
     }
 
+    @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-      /*  View row = super.getView(position, convertView, parent);
-
-        // Sets the primary and secondary text for a row.
-        // Note that getPrimaryText() and getSecondaryText() return a CharSequence that may contain
-        // styling based on the given CharacterStyle.
-
-        AutocompletePrediction item = getItem(position);
-
-        TextView textView1 = (TextView) row.findViewById(android.R.id.text1);
-        TextView textView2 = (TextView) row.findViewById(android.R.id.text2);
-        textView1.setText(item.getPrimaryText(STYLE_BOLD));
-        textView2.setText(item.getSecondaryText(STYLE_BOLD));
-        Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/roboto_light.ttf");
-        textView1.setTypeface(typeface);
-        textView2.setTypeface(typeface);
-        textView1.setTextSize(14);
-        textView2.setTextSize(14);
-
-        return row;*/
 
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_places, null);
-        ((TextView) convertView.findViewById(R.id.placeNameTv)).setText(getItem(position).getPrimaryText(null));
-        ((TextView) convertView.findViewById(R.id.placeAddressTv)).setText(Utils.formatAddress(getItem(position).getFullText(null).toString()));
-        ((TextView) convertView.findViewById(R.id.placeDistTv)).setText(distances.size() > position ? distances.get(position) + " km" : "N/A");
+        if (mResultList != null && position < mResultList.size()) {
+            ((TextView) convertView.findViewById(R.id.placeNameTv)).setText(getItem(position).getPrimaryText(null));
+            ((TextView) convertView.findViewById(R.id.placeAddressTv)).setText(Utils.formatAddress(getItem(position).getFullText(null).toString()));
+            ((TextView) convertView.findViewById(R.id.placeDistTv)).setText(distances.size() > position ? distances.get(position) + " km" : "N/A");
+        } else {
+            ((TextView) convertView.findViewById(R.id.placeNameTv)).setText(StringUtils.EMPTY);
+            ((TextView) convertView.findViewById(R.id.placeAddressTv)).setText(StringUtils.EMPTY);
+            ((TextView) convertView.findViewById(R.id.placeDistTv)).setText(StringUtils.EMPTY);
+        }
         return convertView;
     }
 
@@ -151,61 +139,74 @@ public class PlaceAutocompleteAdapter
                 FilterResults results = new FilterResults();
                 // Skip the autocomplete query if no constraints are given.
                 if (constraint != null) {
-                    // Query the autocomplete API for the (constraint) search string.
-                    ArrayList<AutocompletePrediction> resultList = getAutocomplete(constraint);
-                    if (resultList != null) {
-                        // The API successfully returned results.
-                        if (StringUtils.isNotBlank(city)) {
-                            Iterator<AutocompletePrediction> it = resultList.iterator();
-                            while (it.hasNext()) {
-                                AutocompletePrediction item = it.next();
-                                if (city.equalsIgnoreCase("Rawalpindi")) {
-                                    if (!item.getSecondaryText(null).toString().contains(city) &&
-                                            !item.getSecondaryText(null).toString().contains("Islamabad")) {
-                                        it.remove();
-                                    }
-                                } else {
-                                    if (!item.getSecondaryText(null).toString().contains(city)) {
-                                        it.remove();
-                                    }
-                                }
-                            }
-                        }
-                        if (resultList.size() > 0) {
-                            final CountDownLatch resultLatch = new CountDownLatch(1);
-                            String[] placeIds = new String[resultList.size()];
-                            for (int i = 0; i < resultList.size(); i++) {
-                                placeIds[i] = resultList.get(i).getPlaceId();
-                            }
-                            distances = new ArrayList<>();
-                            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                                    .getPlaceById(mGoogleApiClient, placeIds);
-                            placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
-                                @Override
-                                public void onResult(@NonNull PlaceBuffer places) {
-                                    if (places.getStatus() != null && places.getStatus().isSuccess()
-                                            && places.getCount() > 0) {
-                                        for (Place place : places) {
-                                            distances.add("" + Math.round(((Utils.calculateDistance(place.getLatLng().latitude,
-                                                    place.getLatLng().longitude, AppPreferences.getLatitude(),
-                                                    AppPreferences.getLongitude())) / 1000) * 10.0) / 10.0);
-                                        }
-                                        places.release();
-                                    }
-                                    resultLatch.countDown();
-                                }
-                            });
-                            try {
-                                resultLatch.await();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
 
-                            mResultList = resultList;
-                            results.values = mResultList;
-                            results.count = mResultList.size();
+                    if (constraint.length() == 4 || constraint.length() == 6 || constraint.length() == 8) {
+                        // Query the autocomplete API for the (constraint) search string.
+                        ArrayList<AutocompletePrediction> resultList = getAutocomplete(constraint);
+                        if (resultList != null) {
+                            // The API successfully returned results.
+                            if (StringUtils.isNotBlank(city)) {
+                                Iterator<AutocompletePrediction> it = resultList.iterator();
+                                while (it.hasNext()) {
+                                    AutocompletePrediction item = it.next();
+                                    if (city.equalsIgnoreCase("Rawalpindi")) {
+                                        if (!item.getSecondaryText(null).toString().contains(city) &&
+                                                !item.getSecondaryText(null).toString().contains("Islamabad")) {
+                                            it.remove();
+                                        }
+                                    } else {
+                                        if (!item.getSecondaryText(null).toString().contains(city)) {
+                                            it.remove();
+                                        }
+                                    }
+                                }
+                            }
+                            if (resultList.size() > 0) {
+                                final CountDownLatch resultLatch = new CountDownLatch(1);
+                                String[] placeIds = new String[resultList.size()];
+                                for (int i = 0; i < resultList.size(); i++) {
+                                    placeIds[i] = resultList.get(i).getPlaceId();
+                                }
+                                distances = new ArrayList<>();
+                                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                                        .getPlaceById(mGoogleApiClient, placeIds);
+                                placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
+                                    @Override
+                                    public void onResult(@NonNull PlaceBuffer places) {
+                                        if (places.getStatus() != null && places.getStatus().isSuccess()
+                                                && places.getCount() > 0) {
+                                            for (Place place : places) {
+                                                distances.add("" + Math.round(((Utils.calculateDistance(place.getLatLng().latitude,
+                                                        place.getLatLng().longitude, AppPreferences.getLatitude(),
+                                                        AppPreferences.getLongitude())) / 1000) * 10.0) / 10.0);
+                                            }
+                                            places.release();
+                                        }
+                                        resultLatch.countDown();
+                                    }
+                                });
+                                try {
+                                    resultLatch.await();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                mResultList = resultList;
+                                results.values = mResultList;
+                                results.count = mResultList.size();
+                            } else {
+                                if (mResultList != null && mResultList.size() > 0) {
+                                    results.values = mResultList;
+                                    results.count = mResultList.size();
+                                }
+                            }
                         }
+                    } else if (mResultList != null && mResultList.size() > 0) {
+                        results.values = mResultList;
+                        results.count = mResultList.size();
                     }
+                } else if (mResultList != null) {
+                    mResultList.clear();
                 }
                 return results;
             }

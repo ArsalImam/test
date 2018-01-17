@@ -183,7 +183,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private MapView mapView;
     private ProgressDialog progressDialogJobActivity;
     private LatLng lastPolyLineLatLng, lastApiCallLatLng;
-    private MixpanelAPI mixpanelAPI;
 
 
     @Override
@@ -216,7 +215,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
-        mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
     }
 
 
@@ -588,7 +586,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     protected void onDestroy() {
-        mixpanelAPI.flush();
+        Utils.flushMixPanelEvent(mCurrentActivity);
         progressDialogJobActivity.dismiss();
         AppPreferences.setJobActivityOnForeground(false);
         AppPreferences.setLastDirectionsApiCallTime(0);
