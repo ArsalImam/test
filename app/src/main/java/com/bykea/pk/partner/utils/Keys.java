@@ -149,4 +149,5 @@ public class Keys {
     public static final String API_KEY_CHECK_TIME = "API_KEY_CHECK_TIME";
     public static final String IS_API_KEY_REQUIRED = "IS_API_KEY_REQUIRED";
     public static final String DRIVER_DEST = "DRIVER_DEST";
+    public static final String MIX_PANEL_DIST_ID = "MIX_PANEL_DIST_ID";
 }

@@ -149,6 +149,7 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
                     final String url = Utils.getFileLink(chatMessages.get(position)
                             .getMessage());
                     mPlayer = OpusPlayer.getInstance();
+                    mPlayer.setEventSender(new OpusEvent(context));
                     ((ChatActivityNew) context).setCallBack(playbackHandler);
                     selectedUrl = url;
                     new UserRepository().downloadAudioFile(context, url, new UserDataHandler() {
@@ -199,6 +200,17 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
                                 break;
                             case OpusEvent.PLAY_PROGRESS_UPDATE:
                                 if (isMsgPlaying) {
+                                    /*long currentPosition = bundle.getLong(OpusEvent.EVENT_PLAY_PROGRESS_POSITION);
+                                    long duration = bundle.getLong(OpusEvent.EVENT_PLAY_DURATION);
+                                    Utils.AudioTime t = new Utils.AudioTime();
+                                    t.setTimeInSecond(currentPosition);
+                                    t.setTimeInSecond(duration);
+                                    if (duration != 0) {
+                                        int progress = (int) (10 * currentPosition / duration);
+                                        prevViewHolder.seekBar.setProgress(progress);
+                                        Utils.redLog("OpusCallBack", "PROGRESS " + progress);
+                                        Utils.redLog("OpusCallBack", "(int) mPlayer.getPosition()" + (int) mPlayer.getPosition());
+                                    }*/
                                     prevViewHolder.seekBar.setProgress((int) mPlayer.getPosition());
                                 }
                                 Utils.redLog("OpusCallBack", "OpusEvent.PLAY_PROGRESS_UPDATE");

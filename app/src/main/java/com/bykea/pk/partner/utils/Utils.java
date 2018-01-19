@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -64,6 +65,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -223,13 +225,14 @@ public class Utils {
     }
 
     public static void logout(Context context) {
-        clearData();
+        clearData(context);
         HomeActivity.visibleFragmentNumber = 0;
         ActivityStackManager.getInstance().startLoginActivity(context);
         ((Activity) context).finish();
     }
 
-    private static void clearData() {
+    private static void clearData(Context context) {
+//        Utils.resetMixPanel(context, false);
         String regId = AppPreferences.getRegId();
         double currentLat = AppPreferences.getLatitude();
         double currentLng = AppPreferences.getLongitude();
@@ -646,7 +649,7 @@ public class Utils {
 
     public static void onUnauthorized(final BaseActivity mCurrentActivity) {
         if (mCurrentActivity != null) {
-            clearData();
+            clearData(mCurrentActivity);
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -664,7 +667,7 @@ public class Utils {
 
     public static void onUnauthorizedMockLocation(final BaseActivity mCurrentActivity) {
         if (mCurrentActivity != null) {
-            clearData();
+            clearData(mCurrentActivity);
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1190,6 +1193,61 @@ public class Utils {
     }
 
 
+    private static void setMixPanelPeople(MixpanelAPI mMixpanel) {
+        final MixpanelAPI.People people = mMixpanel.getPeople();
+
+// Update the basic data in the user's People Analytics record.
+// Unlike events, People Analytics always stores the most recent value
+// provided.
+        PilotData user = AppPreferences.getPilotData();
+        if (user.getFullName().contains(" ") && user.getFullName().split(" ").length > 1) {
+            people.setOnce("$first_name", user.getFullName().split(" ")[0]);
+            people.setOnce("$last_name", user.getFullName().split(" ")[1]);
+        } else {
+            people.setOnce("$first_name", user.getFullName());
+        }
+        if (StringUtils.isNotBlank(user.getEmail())) {
+            people.setOnce("$email", user.getEmail());
+        }
+        people.setOnce("$phone", user.getPhonePlusSign());
+    }
+
+    public static void resetMixPanel(Context context, boolean isFromSplash) {
+        MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
+        if (isFromSplash) {
+            if (!mixpanel.getDistinctId().equalsIgnoreCase(AppPreferences.getLastMixPanelDistId())) {
+                mixpanel.reset();
+                AppPreferences.setLastMixPanelDistId(mixpanel.getDistinctId());
+            }
+        } else {
+            mixpanel.reset();
+        }
+    }
+
+    public static void setMixPanelUserId(Context context) {
+        if (AppPreferences.isLoggedIn()) {
+            MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
+            if (StringUtils.isBlank(mixpanel.getDistinctId())
+                    || !mixpanel.getDistinctId().equalsIgnoreCase(AppPreferences.getPilotData().getId())) {
+//                mixpanel.alias(AppPreferences.getUser().get_id(), null);
+                mixpanel.identify(AppPreferences.getPilotData().getId());
+                mixpanel.getPeople().identify(AppPreferences.getPilotData().getId());
+                mixpanel.getPeople().initPushHandling(Constants.GCM_PROJECT_NO);
+                setMixPanelPeople(mixpanel);
+                AppPreferences.setLastMixPanelDistId(mixpanel.getDistinctId());
+            }
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
+            mFirebaseAnalytics.setUserId(AppPreferences.getPilotData().getId());
+            mFirebaseAnalytics.setUserProperty("name", AppPreferences.getPilotData().getFullName());
+            mFirebaseAnalytics.setUserProperty("phone", AppPreferences.getPilotData().getPhonePlusSign());
+        }
+    }
+
+    public static MixpanelAPI getMixPanelInstance(Context context) {
+        return MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
+    }
+
+
     /*
     *  Flush Mixpanel Event in onDestroy()
     * */
@@ -1265,5 +1323,54 @@ public class Utils {
             }
         }
     }
+
+
+    public static class AudioTime implements Serializable {
+        private String mFormat = "%02d:%02d:%02d";
+        private int mHour = 0;
+        private int mMinute = 0;
+        private int mSecond = 0;
+
+        public AudioTime() {
+
+        }
+
+        public AudioTime(long seconds) {
+            setTimeInSecond(seconds);
+        }
+
+        /**
+         * get time in the format of "HH:MM:SS"
+         *
+         * @return
+         */
+        public String getTime() {
+
+            return String.format(mFormat, mHour, mMinute, mSecond);
+        }
+
+        public void setTimeInSecond(long seconds) {
+            mSecond = (int) (seconds % 60);
+            long m = seconds / 60;
+            mMinute = (int) (m % 60);
+            mHour = (int) (m / 60);
+
+        }
+
+        public void add(int seconds) {
+            mSecond += seconds;
+            if (mSecond >= 60) {
+                mSecond %= 60;
+                mMinute++;
+
+                if (mMinute >= 60) {
+                    mMinute %= 60;
+                    mHour++;
+                }
+            }
+        }
+
+    }
+
 
 }

@@ -122,6 +122,10 @@ public class PilotData {
         return phoneNo;
     }
 
+    public String getPhonePlusSign() {
+        return "+" + phoneNo;
+    }
+
     public void setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
     }

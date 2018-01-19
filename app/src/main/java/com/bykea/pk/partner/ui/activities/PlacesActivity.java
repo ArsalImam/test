@@ -201,7 +201,7 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
                         }
                         place = places.get(0);
                         Utils.redLog(Constants.APP_NAME, "Place details received: " + place.toString());
-                        Intent intent = new Intent(PlacesActivity.this, ConfirmDestinationActivity.class);
+                        Intent intent = new Intent(mCurrentActivity, ConfirmDestinationActivity.class);
                         intent.putExtra("address", primaryText /*+ " " + place.getAddress()*/);
                         intent.putExtra("lat", place.getLatLng().latitude);
                         intent.putExtra("lng", place.getLatLng().longitude);

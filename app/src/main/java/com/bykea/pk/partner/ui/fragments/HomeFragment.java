@@ -172,9 +172,8 @@ public class HomeFragment extends Fragment {
         int length = cashInHand.length;
         int value = AppPreferences.getCashInHands();
         for (int i = 0; i < length; i++) {
-            if (cashInHand[i] == value) {
+            if (cashInHand[i] <= value) {
                 currentIndex = i;
-                break;
             }
         }
         myRangeBar.refreshDrawableState();

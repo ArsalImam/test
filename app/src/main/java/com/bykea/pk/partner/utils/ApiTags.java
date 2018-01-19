@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.utils;
 
+import com.bykea.pk.partner.BuildConfig;
+
 public class ApiTags {
 
     //STAGING
@@ -10,6 +12,8 @@ public class ApiTags {
 //    public static final String BASE_SERVER_URL = "http://172.16.0.60:3000";
 //    public static final String BASE_SERVER_URL = "http://192.168.8.103:3000";
 //    public static final String BASE_SERVER_URL = "http://172.16.0.60:3000";
+//    public static final String BASE_SERVER_URL = "http://172.16.0.75:3001";
+
 
     //Bykea 2 (For Heat Map)
     public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
@@ -20,10 +24,16 @@ public class ApiTags {
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3002";
 
 //    phase 2 live
-    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
+//    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
 
 //    phase 2 live Test
 //    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3001";
+
+
+    //Staging/Live w.r.t. build type
+    public static final String BASE_SERVER_URL = BuildConfig.DEBUG
+            ? "https://staging.bykea.net:3000" : "https://secure.bykea.net:3000";
+
 
     public static final String GOOGLE_API_BASE_URL = "https://maps.googleapis.com/";
     public static final String PLACES_GEOCODER_EXT_URL = "maps/api/geocode/json";

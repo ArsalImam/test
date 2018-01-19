@@ -11,8 +11,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 14
-        versionName "3.5"
+        versionCode 16
+        versionName "3.7"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -34,6 +34,10 @@ android {
     }
     buildTypes {
         release {
+            //key for live apps
+//            resValue "string", "google_api_client_key", '"AIzaSyB1ci22exVt0IhYxrihjVVYGboKQuAsEMU"'//EXT
+            resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'//ASSET
+
             signingConfig signingConfigs.release
             // to remove unused resources. This will reduce APK size.
             shrinkResources true
@@ -44,6 +48,9 @@ android {
                     'proguard-rules.pro'
         }
         debug {
+            //key for staging apps
+            resValue "string", "google_api_client_key", '"AIzaSyDLrIkjk0m_aznCJHf__6KSbKYNV5vM0CQ"'
+
             signingConfig signingConfigs.debug
             shrinkResources false // to remove unused resources. This will reduce APK size.
 //            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
@@ -90,7 +97,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
-    compile('com.instabug.library:instabug:4.8.1') {
+    compile('com.instabug.library:instabug:4.9.0') {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'com.google.android.gms:play-services-gcm:9.4.0'

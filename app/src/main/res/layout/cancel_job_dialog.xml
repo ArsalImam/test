@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:maxHeight="@dimen/_280sdp">
+            app:maxHeight="@dimen/_260sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"

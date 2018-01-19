@@ -8,12 +8,6 @@
 
     <!--<string name="google.api.client.key">AIzaSyDRo33cwg4KXS6KK2ibsZ4_40_3fsWGCeE</string>-->
 
-    <!--Live new 12/01/17-->
-    <string name="google.api.client.key">AIzaSyB1ci22exVt0IhYxrihjVVYGboKQuAsEMU</string>
-
-    <!--Live new 12/01/17-->
-    <!--<string name="google.api.serverkey">AIzaSyDDSVksBi_d5aBo0WgXun0ZWG-Z2IUTYQQ</string>-->
-
     <!--                BUTTON STRINGS HERE                 -->
     <string name="button.text.login">login</string>
     <string name="button.text.register">Create New Account</string>
@@ -935,6 +929,7 @@
 ]</string>
     <string name="back_to_booking_history">BACK TO BOOKING HISTORY</string>
     <string name="bookingProblem">بکنگ سے متعلق مسئلہ کے لئے بکنگ کی تفصیل\n میں جاکر پرابلم کے بٹن پے کلک کریں</string>
+    <string name="loading">Loading...</string>
 
 
 </resources>

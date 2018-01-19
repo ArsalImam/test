@@ -163,6 +163,10 @@ public class ConfirmDestinationActivity extends BaseActivity {
             AppPreferences.setDropOffData(getIntent().getStringExtra("address"),
                     getIntent().getDoubleExtra("lat", 0.0), getIntent().getDoubleExtra("lng", 0.0));
             setLocation(getIntent().getDoubleExtra("lat", 0.0), getIntent().getDoubleExtra("lng", 0.0));
+        } else {
+            addressTv.setText(getResources().getString(R.string.loading));
+            firstTime = false;
+            setLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude());
         }
     }
 
@@ -193,16 +197,18 @@ public class ConfirmDestinationActivity extends BaseActivity {
 
     @OnClick(R.id.confirmBtn)
     public void onClick() {
-
-        AppPreferences.setDropOffData(addressTv.getText().toString(),
-                mGoogleMap.getCameraPosition().target.latitude,
-                mGoogleMap.getCameraPosition().target.longitude);
-        Intent intent = new Intent();
+        if (StringUtils.isNotBlank(addressTv.getText().toString())
+                && !addressTv.getText().toString().equalsIgnoreCase(getResources().getString(R.string.loading))) {
+            AppPreferences.setDropOffData(addressTv.getText().toString(),
+                    mGoogleMap.getCameraPosition().target.latitude,
+                    mGoogleMap.getCameraPosition().target.longitude);
+            Intent intent = new Intent();
         /*intent.putExtra("address", addressTv.getText().toString());
         intent.putExtra("lat", mGoogleMap.getCameraPosition().target.latitude);
         intent.putExtra("lng", mGoogleMap.getCameraPosition().target.longitude);*/
-        setResult(RESULT_OK, intent);
-        finish();
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 
     @Override

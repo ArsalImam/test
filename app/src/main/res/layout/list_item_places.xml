@@ -39,14 +39,14 @@
             android:layout_toRightOf="@+id/imageView"
             android:orientation="horizontal">
 
-            <TextView
+          <!--  <TextView
                 android:id="@+id/placeDistTv"
                 android:layout_width="@dimen/_42sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_1sdp"
                 android:text="0 km"
-                android:textSize="@dimen/textsize.small" />
+                android:textSize="@dimen/textsize.small" />-->
 
             <TextView
                 android:id="@+id/placeAddressTv"

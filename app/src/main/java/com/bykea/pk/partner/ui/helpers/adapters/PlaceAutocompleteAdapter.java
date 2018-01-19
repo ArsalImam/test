@@ -47,7 +47,7 @@ public class PlaceAutocompleteAdapter
      */
     private ArrayList<AutocompletePrediction> mResultList;
     private String city;
-    private ArrayList<String> distances = new ArrayList<>();
+//    private ArrayList<String> distances = new ArrayList<>();
 
     /**
      * Handles autocomplete requests.
@@ -118,11 +118,11 @@ public class PlaceAutocompleteAdapter
         if (mResultList != null && position < mResultList.size()) {
             ((TextView) convertView.findViewById(R.id.placeNameTv)).setText(getItem(position).getPrimaryText(null));
             ((TextView) convertView.findViewById(R.id.placeAddressTv)).setText(Utils.formatAddress(getItem(position).getFullText(null).toString()));
-            ((TextView) convertView.findViewById(R.id.placeDistTv)).setText(distances.size() > position ? distances.get(position) + " km" : "N/A");
+//            ((TextView) convertView.findViewById(R.id.placeDistTv)).setText(distances.size() > position ? distances.get(position) + " km" : "N/A");
         } else {
             ((TextView) convertView.findViewById(R.id.placeNameTv)).setText(StringUtils.EMPTY);
             ((TextView) convertView.findViewById(R.id.placeAddressTv)).setText(StringUtils.EMPTY);
-            ((TextView) convertView.findViewById(R.id.placeDistTv)).setText(StringUtils.EMPTY);
+//            ((TextView) convertView.findViewById(R.id.placeDistTv)).setText(StringUtils.EMPTY);
         }
         return convertView;
     }
@@ -140,7 +140,7 @@ public class PlaceAutocompleteAdapter
                 // Skip the autocomplete query if no constraints are given.
                 if (constraint != null) {
 
-                    if (constraint.length() == 4 || constraint.length() == 6 || constraint.length() == 8) {
+                    if (constraint.length() == 4 || constraint.length() == 6 || constraint.length() >= 8) {
                         // Query the autocomplete API for the (constraint) search string.
                         ArrayList<AutocompletePrediction> resultList = getAutocomplete(constraint);
                         if (resultList != null) {
@@ -162,7 +162,8 @@ public class PlaceAutocompleteAdapter
                                 }
                             }
                             if (resultList.size() > 0) {
-                                final CountDownLatch resultLatch = new CountDownLatch(1);
+                                //details api starts from here
+                               /* final CountDownLatch resultLatch = new CountDownLatch(1);
                                 String[] placeIds = new String[resultList.size()];
                                 for (int i = 0; i < resultList.size(); i++) {
                                     placeIds[i] = resultList.get(i).getPlaceId();
@@ -189,7 +190,7 @@ public class PlaceAutocompleteAdapter
                                     resultLatch.await();
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
-                                }
+                                }*/
 
                                 mResultList = resultList;
                                 results.values = mResultList;
@@ -247,7 +248,6 @@ public class PlaceAutocompleteAdapter
      *
      * @param constraint Autocomplete query string
      * @return Results from the autocomplete API or null if the query was not successful.
-     * @see Places#GEO_DATA_API#getAutocomplete(CharSequence)
      * @see AutocompletePrediction#freeze()
      */
     private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {

@@ -215,7 +215,8 @@ public class FeedbackActivity extends BaseActivity {
             } else {
                 properties.put("WalletDeduction", "0");
             }
-            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_FARE.replace("_R_", callData.getCallType()), properties);
+            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_FARE.replace(
+                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), properties);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -316,7 +317,7 @@ public class FeedbackActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        Utils.flushMixPanelEvent(mCurrentActivity);
+//        Utils.flushMixPanelEvent(mCurrentActivity);
         super.onDestroy();
 
     }

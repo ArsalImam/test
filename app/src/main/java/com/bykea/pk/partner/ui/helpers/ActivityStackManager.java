@@ -13,7 +13,6 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
-import com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
 import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
@@ -169,13 +168,6 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startConfirmDestActivity(Activity mContext, String toolBarTitle, String searchBoxTitle) {
-        Intent returndropoffIntent = new Intent(mContext, ConfirmDropOffAddressActivity.class);
-        returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
-        returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE, toolBarTitle);
-        returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE, toolBarTitle);
-        mContext.startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
-    }
 
     public void startProblemPostActivity(Context context, String tripId, String reason) {
         Intent intent = new Intent(context, PostProblemActivity.class);

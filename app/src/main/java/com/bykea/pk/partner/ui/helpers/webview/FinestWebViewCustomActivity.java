@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import com.bykea.pk.partner.R;
 import com.thefinestartist.finestwebview.FinestWebViewActivity;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class FinestWebViewCustomActivity extends FinestWebViewActivity {
 
     private FinestWebViewCustomActivity mCurrentActivity;
@@ -23,7 +25,7 @@ public class FinestWebViewCustomActivity extends FinestWebViewActivity {
 
     @Override
     public void onBackPressed() {
-        if (webView.getUrl().contains("thank-you.php")) {
+        if (StringUtils.isNotBlank(webView.getUrl()) && webView.getUrl().contains("thank-you.php")) {
             close();
         } else {
             super.onBackPressed();

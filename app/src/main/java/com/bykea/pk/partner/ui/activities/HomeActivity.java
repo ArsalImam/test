@@ -80,6 +80,7 @@ public class HomeActivity extends BaseActivity {
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
 
         Notifications.clearNotifications(mCurrentActivity);
+//        Utils.setMixPanelUserId(mCurrentActivity);
 
     }
 

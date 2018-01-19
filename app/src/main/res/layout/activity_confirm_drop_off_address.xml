@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:animateLayoutChanges="false"
+    android:orientation="vertical"
     tools:context="com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity">
 
     <include layout="@layout/toolbar" />
@@ -14,12 +14,14 @@
         android:id="@+id/toolbarLine"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
-        android:background="@color/secondaryColorLight" />
+        android:background="@color/secondaryColorLight"
+        android:visibility="gone" />
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="@dimen/height.large.medium"
-        android:background="@color/windowBackground">
+        android:background="@color/windowBackground"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -111,17 +113,17 @@
         <!--android:visibility="visible"-->
 
 
-        <ProgressBar
-            android:id="@+id/loader"
-            android:indeterminate="true"
-            android:layout_marginBottom="-8dp"
-            android:layout_marginTop="-4dp"
-            android:layout_gravity="bottom"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
     </android.support.v7.widget.CardView>
+
+    <ProgressBar
+        android:id="@+id/loader"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-8dp"
+        android:layout_marginTop="-4dp"
+        android:indeterminate="true" />
 
     <FrameLayout
         android:id="@+id/activity_confirm_destination"

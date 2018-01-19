@@ -55,6 +55,9 @@ public class SplashActivity extends BaseActivity {
         }
         Utils.setOneSignalPlayerId();
 //        checkDrawOverlayPermission();
+//        if (!AppPreferences.isLoggedIn()) {
+//            Utils.resetMixPanel(mCurrentActivity, true);
+//        }
     }
 
 

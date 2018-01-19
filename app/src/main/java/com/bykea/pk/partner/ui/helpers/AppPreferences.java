@@ -64,7 +64,7 @@ public class AppPreferences {
         ed.apply();
     }
 
-    public static String getDropOffAddress(Context context) {
+    public static String getDropOffAddress() {
         return mSharedPreferences.getString("dropOffAddress", "");
     }
 
@@ -72,7 +72,7 @@ public class AppPreferences {
         return mSharedPreferences.getString("dropOffLat", "0");
     }
 
-    public static String getDropOffLng(Context context) {
+    public static String getDropOffLng() {
         return mSharedPreferences.getString("dropOffLng", "0");
     }
 
@@ -886,5 +886,17 @@ public class AppPreferences {
             destData = new Gson().fromJson(data, PlacesResult.class);
         }
         return destData;
+    }
+
+
+    public static void setLastMixPanelDistId(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.MIX_PANEL_DIST_ID, value)
+                .apply();
+    }
+
+    public static String getLastMixPanelDistId() {
+        return mSharedPreferences.getString(Keys.MIX_PANEL_DIST_ID, StringUtils.EMPTY);
     }
 }

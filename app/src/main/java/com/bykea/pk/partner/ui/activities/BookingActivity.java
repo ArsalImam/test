@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
@@ -80,7 +79,6 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.maps.android.PolyUtil;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
@@ -288,13 +286,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 49)//CHECK FOR DROP OFF PLACE RESULT
         {
-            if (StringUtils.isNotBlank(AppPreferences.getDropOffAddress(mCurrentActivity))) {
+            if (StringUtils.isNotBlank(AppPreferences.getDropOffAddress())) {
                 callData.setEndLat(AppPreferences.getDropOffLat());
-                callData.setEndLng(AppPreferences.getDropOffLng(mCurrentActivity));
-                callData.setEndAddress(AppPreferences.getDropOffAddress(mCurrentActivity));
+                callData.setEndLng(AppPreferences.getDropOffLng());
+                callData.setEndAddress(AppPreferences.getDropOffAddress());
                 AppPreferences.setCallData(callData);
                 updateDropOffToServer();
-
             }
 
         }
@@ -352,7 +349,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.endAddressTv:
-                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
+                Intent intent1 = new Intent(mCurrentActivity, ConfirmDestinationActivity.class);
+                if (StringUtils.isNotBlank(callData.getEndLat()) &&
+                        StringUtils.isNotBlank(callData.getEndLng()) &&
+                        StringUtils.isNotBlank(callData.getEndAddress())) {
+                    intent1.putExtra("address", callData.getEndAddress());
+                    intent1.putExtra("lat", Double.parseDouble(callData.getEndLat()));
+                    intent1.putExtra("lng", Double.parseDouble(callData.getEndLng()));
+                }
+                startActivityForResult(intent1, 49);
+//                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.callbtn:
                 Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
@@ -415,6 +421,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 AppPreferences.clearTripDistanceData();
                                 dataRepository.requestBeginRide(mCurrentActivity, driversDataHandler,
                                         callData.getEndLat(), callData.getEndLng(), callData.getEndAddress());
+                                logMixPanelEvent(TripStatus.ON_START_TRIP);
                             }
                         }, new View.OnClickListener() {
                             @Override
@@ -428,7 +435,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                logMixPanelEvent();
+                                logMixPanelEvent(TripStatus.ON_FINISH_TRIP);
                                 dataRepository.requestEndRide(mCurrentActivity, driversDataHandler);
                             }
                         }, new View.OnClickListener() {
@@ -474,8 +481,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
         }
     }
-
-    private void logMixPanelEvent() {
+/*
+    private void logMixPanelEvent(String status) {
         JSONObject properties = new JSONObject();
         try {
             properties.put("TripNo", callData.getTripNo());
@@ -491,20 +498,58 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 properties.put("endDropOff", Utils.getCurrentLocation());
             }
 
-            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.RIDE_COMPLETE.replace("_R_", callData.getCallType()), properties);
+            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_COMPLETE.replace("_R_", callData.getCallType()), properties);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-    }
+    }*/
 
     private void requestArrived() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         dataRepository.requestArrived(mCurrentActivity, driversDataHandler);
+        logMixPanelEvent(TripStatus.ON_ARRIVED_TRIP);
     }
 
+
+    private void logMixPanelEvent(String status) {
+        try {
+
+            JSONObject data = new JSONObject();
+            data.put("PassengerID", callData.getPassId());
+            data.put("DriverID", AppPreferences.getPilotData().getId());
+            data.put("TripID", callData.getTripId());
+            data.put("TripNo", callData.getTripNo());
+            data.put("PickUpLocation", callData.getStartLat() + "," + callData.getStartLng());
+            data.put("timestamp", Utils.getIsoDate());
+            if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
+                data.put("DropOffLocation", callData.getEndLat() + "," + callData.getEndLng());
+            }
+            data.put("ETA", AppPreferences.getEta());
+            data.put("EstimatedDistance", AppPreferences.getEstimatedDistance());
+            data.put("CurrentLocation", Utils.getCurrentLocation());
+            data.put("PassengerName", callData.getPassName());
+            data.put("DriverName", AppPreferences.getPilotData().getFullName());
+            data.put("type", callData.getCallType());
+            data.put("City", AppPreferences.getPilotData().getCity().getName());
+
+
+            if (TripStatus.ON_FINISH_TRIP.equalsIgnoreCase(status)) {
+                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_COMPLETE.replace(
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+            } else if (TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(status)) {
+                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ARRIVED.replace(
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+            } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(status)) {
+                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_START.replace(
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void setDriverLocation() {
         if (null != mGoogleMap) {
@@ -586,7 +631,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     protected void onDestroy() {
-        Utils.flushMixPanelEvent(mCurrentActivity);
+//        Utils.flushMixPanelEvent(mCurrentActivity);
         progressDialogJobActivity.dismiss();
         AppPreferences.setJobActivityOnForeground(false);
         AppPreferences.setLastDirectionsApiCallTime(0);
@@ -1542,7 +1587,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             data.put("CancelReason", cancelReason);
                             data.put("City", AppPreferences.getPilotData().getCity().getName());
 
-                            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.CANCEL_TRIP, data);
+                            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

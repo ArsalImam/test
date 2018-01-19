@@ -63,7 +63,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import top.oply.opuslib.OpusEvent;
-import top.oply.opuslib.OpusService;
+import top.oply.opuslib.OpusRecorder;
+//import top.oply.opuslib.OpusService;
 
 public class ChatActivityNew extends BaseActivity {
 
@@ -117,6 +118,7 @@ public class ChatActivityNew extends BaseActivity {
     private String mCoversationId;
     private String mReceiversId;
     private OpusReceiver mOpusReceiver;
+    private OpusRecorder opusRecorder;
 
     private SSLSocketFactory defaultSslSocketFactory;
 
@@ -129,6 +131,8 @@ public class ChatActivityNew extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(this);
+        opusRecorder = OpusRecorder.getInstance();
+        opusRecorder.setEventSender(new OpusEvent(mCurrentActivity));
         init();
         setListener();
         if (!Permissions.hasMicPermission(mCurrentActivity)) {
@@ -307,7 +311,7 @@ public class ChatActivityNew extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(OpusEvent.ACTION_OPUS_UI_RECEIVER);
         registerReceiver(mOpusReceiver, filter);
-        ActivityStackManager.getInstance().startOpusService(mCurrentActivity);
+//        ActivityStackManager.getInstance().startOpusService(mCurrentActivity);
 
         AppPreferences.setChatActivityOnForeground(true);
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
@@ -330,7 +334,7 @@ public class ChatActivityNew extends BaseActivity {
 //                Utils.redLog("ChatActivity", "UnregisterRecieverException" + " " + ex.toString());
 //            }
 //        }
-        ActivityStackManager.getInstance().stopOpusService(mCurrentActivity);
+//        ActivityStackManager.getInstance().stopOpusService(mCurrentActivity);
         if (mOpusReceiver != null) {
             try {
                 unregisterReceiver(mOpusReceiver);
@@ -497,7 +501,8 @@ public class ChatActivityNew extends BaseActivity {
         chronometer.setBase(SystemClock.elapsedRealtime());
 
         try {
-            OpusService.record(mCurrentActivity, getFilename());
+            opusRecorder.startRecording(getFilename());
+//            OpusService.record(mCurrentActivity, getFilename());
             chronometer.start();
         } catch (Exception e) {
             e.printStackTrace();
@@ -512,13 +517,15 @@ public class ChatActivityNew extends BaseActivity {
             if (isRecording) {
                 chronometer.stop();
             }
-            OpusService.stopRecording(mCurrentActivity);
+            opusRecorder.stopRecording();
+//            OpusService.stopRecording(mCurrentActivity);
             isRecording = false;
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } finally {
             isRecording = false;
-            OpusService.stopRecording(mCurrentActivity);
+            opusRecorder.stopRecording();
+//            OpusService.stopRecording(mCurrentActivity);
         }
     }
 

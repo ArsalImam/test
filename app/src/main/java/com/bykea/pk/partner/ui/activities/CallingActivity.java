@@ -118,6 +118,7 @@ public class CallingActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+//        Utils.flushMixPanelEvent(mCurrentActivity);
         stopSound();
 //        unregisterReceiver(cancelRideReceiver);
         if (AppPreferences.isOnTrip()) {
@@ -146,6 +147,7 @@ public class CallingActivity extends BaseActivity {
     }
 
     private long mLastClickTime;
+    private String acceptSeconds = "0";
 
     @OnClick({R.id.acceptCallBtn})
     public void onClick(View view) {
@@ -167,7 +169,8 @@ public class CallingActivity extends BaseActivity {
                 if (!isFreeDriverApiCalled) {
                     stopSound();
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                    repository.requestAcceptCall(mCurrentActivity, counterTv.getText().toString(), handler);
+                    acceptSeconds = counterTv.getText().toString();
+                    repository.requestAcceptCall(mCurrentActivity, acceptSeconds, handler);
                     timer.cancel();
                 }
                 break;
@@ -216,7 +219,7 @@ public class CallingActivity extends BaseActivity {
                             NormalCallData callData = AppPreferences.getCallData();
                             callData.setStatus(TripStatus.ON_ACCEPT_CALL);
                             AppPreferences.setCallData(callData);
-//                            logMixpanelEvent(callData);
+                            logMixpanelEvent(callData, true);
 
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
@@ -271,31 +274,40 @@ public class CallingActivity extends BaseActivity {
             });
         }
     };
-/*
-    private void logMixpanelEvent(NormalCallData callData) {
+
+    private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
         try {
 
             JSONObject data = new JSONObject();
-            data.put("Success", true);
             data.put("PassengerID", callData.getPassId());
             data.put("DriverID", AppPreferences.getPilotData().getId());
             data.put("TripID", callData.getTripId());
             data.put("TripNo", callData.getTripNo());
-            data.put("PickUpLocation", callData.getData().getStartLat() + "," + callData.getStartLng());
+            data.put("PickUpLocation", callData.getStartLat() + "," + callData.getStartLng());
             data.put("timestamp", Utils.getIsoDate());
             if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
                 data.put("DropOffLocation", callData.getEndLat() + "," + callData.getEndLng());
             }
             data.put("ETA", Utils.formatETA(callData.getArivalTime()));
+            data.put("EstimatedDistance", AppPreferences.getEstimatedDistance());
             data.put("CurrentLocation", Utils.getCurrentLocation());
             data.put("PassengerName", callData.getPassName());
             data.put("DriverName", AppPreferences.getPilotData().getFullName());
             data.put("type", callData.getCallType());
-            Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(), Constants.AnalyticsEvents.ON_ACCEPT, data);
+            data.put("City", AppPreferences.getPilotData().getCity().getName());
+
+            if (isOnAccept) {
+                data.put("AcceptSeconds", acceptSeconds);
+                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+            } else {
+                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
     private CountDownTimer timer = new CountDownTimer(20800, 100) {
 
@@ -365,6 +377,7 @@ public class CallingActivity extends BaseActivity {
 
     private void setInitialData() {
         NormalCallData callData = AppPreferences.getCallData();
+        logMixpanelEvent(callData, false);
 //        callerNameTv.setText(callData.getPassName());
 //        startAddressTv.setText(callData.getStartAddress());
 //        timeTv.setText(callData.getArivalTime() + " min");

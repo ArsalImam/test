@@ -424,7 +424,7 @@ public class UserRepository {
             String lat = AppPreferences.getLatitude() + "";
             String lng = AppPreferences.getLongitude() + "";
             jsonObject.put("lat", lat);
-            jsonObject.put("lng",lng );
+            jsonObject.put("lng", lng);
 
             LocCoordinatesInTrip arrivedLatLng = new LocCoordinatesInTrip();
             arrivedLatLng.setLat(lat);
@@ -433,6 +433,7 @@ public class UserRepository {
             ArrayList<LocCoordinatesInTrip> prevLatLngList = AppPreferences.getLocCoordinatesInTrip();
             prevLatLngList.add(arrivedLatLng);
             jsonObject.put("routes", new Gson().toJson(prevLatLngList));
+
             AppPreferences.clearTripDistanceData();
 
         } catch (Exception ex) {
@@ -642,6 +643,17 @@ public class UserRepository {
         mUserCallback = handler;
         JSONObject jsonObject = new JSONObject();
         try {
+            PilotData pilotData = AppPreferences.getPilotData();
+            JSONObject properties = new JSONObject();
+            properties.put("DriverID", pilotData.getId());
+            properties.put("timestamp", Utils.getIsoDate());
+            properties.put("City", pilotData.getCity().getName());
+            properties.put("DriverName", pilotData.getFullName());
+            properties.put("CurrentLocation", Utils.getCurrentLocation());
+            properties.put("cih", AppPreferences.getCashInHands());
+            properties.put("status", status ? "Active" : "Inactive");
+
+
             jsonObject.put("is_available", "" + status);
             jsonObject.put("driver_id", AppPreferences.getDriverId());
             jsonObject.put("_id", AppPreferences.getDriverId());
@@ -654,7 +666,17 @@ public class UserRepository {
                 jsonObject.put("eLat", AppPreferences.getDriverDestination().latitude);
                 jsonObject.put("eLng", AppPreferences.getDriverDestination().longitude);
                 jsonObject.put("eAdd", AppPreferences.getDriverDestination().address);
+
+                properties.put("DD", true);
+                properties.put("DDLocation", AppPreferences.getDriverDestination().latitude
+                        + "," + AppPreferences.getDriverDestination().longitude);
+                properties.put("DDAddress", AppPreferences.getDriverDestination().address);
+            } else {
+                properties.put("DD", false);
             }
+
+            Utils.logEvent(context, pilotData.getId(), Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

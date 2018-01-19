@@ -4,11 +4,8 @@ package com.bykea.pk.partner.utils;
 import com.bykea.pk.partner.BuildConfig;
 
 public class Constants {
+    public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
-
-    public static final String MIX_PANEL_DRIVER_API_KEY = "95cdb68bf780e59e76ea95a2a62f59d8";
-
-    public static final String GCM_KEY = "764640458585";// GOOGLE ACCOUNT Bykea PROJECT ID...
     public static final String APP_NAME = "BYKEA PARTNER";
 
     public static final String DEVICE_TYPE = "android";
@@ -48,18 +45,20 @@ public class Constants {
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
     public static final int CONFIRM_DROPOFF_REQUEST_CODE = 101;
+    public static final int UPDATE_DROPOFF_REQUEST_CODE = 102;
     public static final String TOOLBAR_TITLE = "toolbar_title";
     public static final String SEARCHBOX_TITLE = "searchBox_title";
 
-    public final static String RIDE_FARE = "Eyeball-_R_-Finish";
-    public final static String RIDE_COMPLETE = "Eyeball-_R_-Complete";
-    public final static String CANCEL_TRIP = "Ride-Cancel";
+
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
     public final static String ON_PERMISSIONS_GRANTED = "ON_PERMISSIONS_GRANTED";
 
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
-    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+
+
+    public static final String GOOGLE_PLACE_SERVER_API_KEY = BuildConfig.DEBUG ?
+            "AIzaSyBWdn986iBdCt-K8PzVe_8ne3gEeGmu_8Y" : "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
     //    Live new 12/01/17
 //    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyDDSVksBi_d5aBo0WgXun0ZWG-Z2IUTYQQ";
@@ -77,12 +76,18 @@ public class Constants {
 
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
-        public final static String EYE_BALL = "Eyeball";
-        public final static String ON_ACCEPT = EYE_BALL + "_Accept";
-        public final static String ON_ARRIVED = EYE_BALL + "_Arrived";
-        public final static String ON_START = EYE_BALL + "_Started";
-        public final static String ON_FINISH = EYE_BALL + "_Finished";
-        public final static String ON_FEEDBACK = EYE_BALL + "_Feedback";
+        public final static String CANCEL_TRIP = "Ride-Cancel";
+        public final static String EYE_BALL = "Eyeball-";
+        public final static String RIDE_FARE = EYE_BALL + REPLACE +"-Finish";
+        public final static String RIDE_COMPLETE = EYE_BALL + REPLACE +"-Complete";
+        public final static String ON_RECEIVE_NEW_JOB = EYE_BALL + REPLACE + "-Request";
+        public final static String ON_ACCEPT = EYE_BALL + REPLACE + "-Accept";
+        public final static String ON_ARRIVED = EYE_BALL + REPLACE + "-Arrived";
+        public final static String ON_START = EYE_BALL + REPLACE + "-Started";
+        public final static String ON_STATUS_UPDATE = EYE_BALL + "-StatusUpdate";
+
+//        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
+//        public final static String ON_FEEDBACK = EYE_BALL+ REPLACE   + "-Feedback";//already logged against passenger
 
     }
 
