@@ -58,7 +58,7 @@ public class Constants {
 
 
     public static final String GOOGLE_PLACE_SERVER_API_KEY = BuildConfig.DEBUG ?
-            "AIzaSyBWdn986iBdCt-K8PzVe_8ne3gEeGmu_8Y" : "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+            "AIzaSyCJw1nRmfRZnfpd8MoBUZodz6dCdWOaINU" : "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
     //    Live new 12/01/17
 //    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyDDSVksBi_d5aBo0WgXun0ZWG-Z2IUTYQQ";

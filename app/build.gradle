@@ -49,7 +49,8 @@ android {
         }
         debug {
             //key for staging apps
-            resValue "string", "google_api_client_key", '"AIzaSyDLrIkjk0m_aznCJHf__6KSbKYNV5vM0CQ"'
+//            resValue "string", "google_api_client_key", '"AIzaSyDLrIkjk0m_aznCJHf__6KSbKYNV5vM0CQ"'
+            resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'
 
             signingConfig signingConfigs.debug
             shrinkResources false // to remove unused resources. This will reduce APK size.
