@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -1371,6 +1372,32 @@ public class Utils {
         }
 
     }
+
+    public static Integer getServiceIcon(NormalCallData callData) {
+        String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
+        switch (callType) {
+            case "parcel":
+            case "send":
+            case "delivery":
+                return R.drawable.bhejdo;
+            case "bring":
+            case "purchase":
+                return R.drawable.lay_ao;
+            case "ride":
+                return R.drawable.ride;
+            case "top-up":
+                return R.drawable.top_up;
+            case "utilitybill":
+                return R.drawable.utility_bill;
+            case "deposit":
+                return R.drawable.jama_karo;
+            case "carryvan":
+                return R.drawable.carry_van;
+            default:
+                return R.drawable.ride;
+        }
+    }
+
 
 
 }
