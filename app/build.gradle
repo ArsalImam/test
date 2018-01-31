@@ -147,5 +147,6 @@ dependencies {
 //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     compile 'top.oply.opuslib:opuslib:1.0.2'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+    compile 'de.hdodenhof:circleimageview:2.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

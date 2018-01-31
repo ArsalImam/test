@@ -33,7 +33,7 @@
                 android:layout_weight="1"
                 android:gravity="center">
 
-                <com.bykea.pk.partner.widgets.CircularImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/driverImage"
                     android:layout_width="@dimen/width.xxxlarge"
                     android:layout_height="@dimen/height.xxxlarge"

@@ -29,10 +29,11 @@ import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.CircularImageView;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
     private String[] titles;
@@ -59,7 +60,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
         FontTextView navTitle, navIcon;
         ImageView logoutIv;
-        CircularImageView driverImage;
+        CircleImageView driverImage;
         FontTextView driverName;
         RatingBar driverRb;
         FontTextView tvRating;
@@ -84,7 +85,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                 logoutIv = (ImageView) itemView.findViewById(R.id.logoutIv);
             } else if (itemType == 0)//Header driver info
             {
-                driverImage = (CircularImageView) itemView.findViewById(R.id.driverImage);
+                driverImage = (CircleImageView) itemView.findViewById(R.id.driverImage);
                 driverName = (FontTextView) itemView.findViewById(R.id.driverNameTv);
                 driverRb = (RatingBar) itemView.findViewById(R.id.driverRb);
                 tvRating = (FontTextView) itemView.findViewById(R.id.tvRating);

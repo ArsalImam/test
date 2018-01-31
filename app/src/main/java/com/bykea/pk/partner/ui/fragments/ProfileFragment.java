@@ -13,8 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.bykea.pk.partner.BuildConfig;
-import com.bykea.pk.partner.ui.activities.BankAccountActivity;
-import com.bykea.pk.partner.ui.activities.MotorbikeActivity;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.PersonalInfoData;
 import com.bykea.pk.partner.models.data.PilotData;
@@ -22,18 +20,19 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.activities.BankAccountActivity;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.ChangePinActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LicenseActivity;
+import com.bykea.pk.partner.ui.activities.MotorbikeActivity;
 import com.bykea.pk.partner.ui.activities.PersonalActivity;
-import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.CircularImageView;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class ProfileFragment extends Fragment {
@@ -50,7 +50,7 @@ public class ProfileFragment extends Fragment {
     ProgressBar loader;
 
     @Bind(R.id.driverImage)
-    CircularImageView driverImage;
+    CircleImageView driverImage;
     @Bind(R.id.driverNameTv)
     FontTextView driverNameTv;
     @Bind(R.id.driverAddressTv)
