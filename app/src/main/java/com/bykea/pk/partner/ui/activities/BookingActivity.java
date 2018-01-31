@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -24,6 +25,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bykea.pk.partner.Notifications;
@@ -31,6 +33,7 @@ import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
@@ -99,15 +102,19 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         RoutingListener {
 
     @Bind(R.id.startAddressTv)
-    FontTextView startAddressTv;
+    AutoFitFontTextView startAddressTv;
+
     @Bind(R.id.tvTripId)
     FontTextView tvTripId;
+
     @Bind(R.id.tvCodAmount)
-    FontTextView tvCodAmount;
+    AutoFitFontTextView tvCodAmount;
+
     @Bind(R.id.tvPWalletAmount)
-    FontTextView tvPWalletAmount;
+    AutoFitFontTextView tvPWalletAmount;
+
     @Bind(R.id.llTopRight)
-    LinearLayout llTopRight;
+    RelativeLayout llTopRight;
     @Bind(R.id.callbtn)
     ImageView callbtn;
     @Bind(R.id.cancelBtn)
@@ -123,15 +130,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @Bind(R.id.distanceTv)
     FontTextView distanceTv;
     @Bind(R.id.endAddressTv)
-    FontTextView endAddressTv;
+    AutoFitFontTextView endAddressTv;
     @Bind(R.id.tvEstimation)
     FontTextView tvEstimation;
     @Bind(R.id.jobBtn)
     FontTextView jobBtn;
-    @Bind(R.id.currentLocationIv)
-    ImageView currentLocationIv;
-    @Bind(R.id.currentLocIv)
-    ImageView currentLocIv;
+    @Bind(R.id.cvDirections)
+    CardView cvDirections;
+
+    @Bind(R.id.cvLocation)
+    CardView cvLocation;
     @Bind(R.id.ivServiceIcon)
     ImageView ivServiceIcon;
 
@@ -215,7 +223,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         mapView.getMapAsync(mapReadyCallback);
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
     }
 
@@ -230,6 +238,27 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         super.onSaveInstanceState(outState);
     }
 
+
+    private GoogleMap.OnCameraIdleListener mCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
+        @Override
+        public void onCameraIdle() {
+            try {
+                if (mGoogleMap == null) {
+                    return;
+                }
+                if (Utils.calculateDistance(mGoogleMap.getCameraPosition().target.latitude, mGoogleMap.getCameraPosition().target.longitude,
+                        AppPreferences.getLatitude(), AppPreferences.getLongitude()) < 500) {
+                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.white));
+                } else {
+                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.secondaryColor));
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(final GoogleMap googleMap) {
@@ -246,6 +275,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     mGoogleMap.clear();
                     Utils.formatMap(mGoogleMap);
                     mGoogleMap.setPadding(0, 0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen.map_padding_bottom));
+                    mGoogleMap.setOnCameraIdleListener(mCameraIdleListener);
                     getDriverRoadPosition(mCurrentActivity,
                             new com.google.maps.model.LatLng(AppPreferences.getLatitude(),
                                     AppPreferences.getLongitude()));
@@ -298,8 +328,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 updateDropOffToServer();
             }
 
-        }
-        if (requestCode == Permissions.LOCATION_PERMISSION) {
+        } else if (requestCode == Permissions.LOCATION_PERMISSION) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
                 Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
@@ -341,7 +370,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
 
-    @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.currentLocIv, R.id.currentLocationIv, R.id.endAddressTv})
+    @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections, R.id.endAddressTv})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.chatBtn:
@@ -454,7 +483,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
 
                 break;
-            case R.id.currentLocationIv:
+            case R.id.cvDirections:
 
                 //CHECK FOR THE SRC AND DEST SHOULD NOT BE EMPTY FOR GOOGLE TRACKING..
                 if (StringUtils.isNotBlank(mGoogleSrcLatLng) && StringUtils.isNotBlank(mGoogleDesLatLng)) {
@@ -480,7 +509,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     }
                 }
                 break;
-            case R.id.currentLocIv:
+            case R.id.cvLocation:
                 setDriverLocation();
                 break;
         }
@@ -683,23 +712,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mStartTraceCircleList = new ArrayList<>();
 
         callData = AppPreferences.getCallData();
+        showWalletAmount();
         isResume = true;
         if (callData != null) {
             AppPreferences.setTripStatus(callData.getStatus());
 //        setCallData();
             tvTripId.setText(callData.getTripNo());
-            if (StringUtils.isNotBlank(callData.getCodAmount())) {
-                String codAmount = "Rs. " + callData.getCodAmount();
-                llTopRight.setVisibility(View.VISIBLE);
-                tvCodAmount.setVisibility(View.VISIBLE);
-//                tvTripId.setGravity(Gravity.CENTER | Gravity.START);
-//                tvCodAmount.setGravity(Gravity.CENTER | Gravity.END);
-                tvCodAmount.setText(callData.isCod() ? codAmount : codAmount);
-            } else {
-                llTopRight.setVisibility(View.GONE);
-                tvCodAmount.setVisibility(View.GONE);
-//                tvTripId.setGravity(Gravity.CENTER);
-            }
+
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
             } else {
@@ -766,22 +785,21 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mGoogleSrcLatLng = AppPreferences.getLatitude() + "," + AppPreferences.getLongitude();
         mGoogleDesLatLng = callData.getStartLat() + "," + callData.getStartLng();
 
-        String mLocLat = AppPreferences.getLatitude() + "";
-        String mLocLng = AppPreferences.getLongitude() + "";
-
         drawRouteToPickup();
     }
 
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
         endAddressTv.setVisibility(View.VISIBLE);
-        currentLocationIv.setVisibility(View.INVISIBLE);
+        startAddressTv.setVisibility(View.GONE);
+        cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
     }
 
     private void setStartedState() {
+        startAddressTv.setVisibility(View.GONE);
         endAddressTv.setVisibility(View.VISIBLE);
-        currentLocationIv.setVisibility(View.VISIBLE);
+        cvDirections.setVisibility(View.VISIBLE);
         jobBtn.setText(getString(R.string.button_text_finish));
         setOnStartData();
         mGoogleSrcLatLng = callData.getStartLat() + "," + callData.getStartLng();
@@ -790,18 +808,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showWalletAmount() {
-//        tvPWalletAmount.setVisibility(View.VISIBLE);
-        llTopRight.setVisibility(View.VISIBLE);
+//        if (!callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+//            llTopLeft.setVisibility(View.VISIBLE);
+        tvPWalletAmount.setText("Rs. " + callData.getPassWallet());
+//        } else {
+//            llTopLeft.setVisibility(View.GONE);
+//        }
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
-//            tvCodAmount.setVisibility(View.VISIBLE);
-//            tvCodAmount.setGravity(Gravity.BOTTOM | Gravity.END);
-//            tvPWalletAmount.setGravity(Gravity.TOP | Gravity.END);
+            llTopRight.setVisibility(View.VISIBLE);
+            tvCodAmount.setText("Rs. " + callData.getCodAmount());
         } else {
-//            tvCodAmount.setVisibility(View.GONE);
-//            tvPWalletAmount.setGravity(Gravity.CENTER | Gravity.END);
+            llTopRight.setVisibility(View.GONE);
         }
-//        tvTripId.setGravity(Gravity.CENTER | Gravity.START);
-        tvPWalletAmount.setText("Rs." + callData.getPassWallet());
     }
 
     private void setOnArrivedData() {
@@ -827,7 +845,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
 
         jobBtn.setText(getString(R.string.button_text_start));
-        currentLocationIv.setVisibility(View.INVISIBLE);
+        cvDirections.setVisibility(View.INVISIBLE);
         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
 
     }
@@ -854,13 +872,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
             startAddressTv.setText(callData.getStartAddress());
-            endAddressTv.setText(callData.getEndAddress());
         }
 
         if (StringUtils.isBlank(callData.getEndAddress()))
             endAddressTv.setText(getString(R.string.destination_not_selected_msg));
-        else endAddressTv.setText(callData.getEndAddress());
-
+        else {
+            endAddressTv.setText(callData.getEndAddress());
+        }
         if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
             updatePickupMarker(callData.getEndLat(), callData.getEndLng());
         } else if (pickUpMarker != null) {
@@ -1194,8 +1212,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mGoogleMap.moveCamera(cu);*/
 
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
-        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._60sdp);
-        mGoogleMap.setPadding(padding, padding, padding, padding);
+        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
+        mGoogleMap.setPadding(0, padding, 0, padding);
         mGoogleMap.moveCamera(cu);
 //        mGoogleMap.setPadding(0, 0, 0, 0);
     }
@@ -1578,6 +1596,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
                         AppPreferences.setCallData(callData);
                         endAddressTv.setVisibility(View.VISIBLE);
+                        startAddressTv.setVisibility(View.GONE);
                         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
                         setOnArrivedData();
                         // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
