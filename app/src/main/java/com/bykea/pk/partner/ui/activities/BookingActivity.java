@@ -79,6 +79,8 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.maps.android.PolyUtil;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
@@ -130,6 +132,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     ImageView currentLocationIv;
     @Bind(R.id.currentLocIv)
     ImageView currentLocIv;
+    @Bind(R.id.ivServiceIcon)
+    ImageView ivServiceIcon;
 
     private String canceOption = "Didn't show up";
 
@@ -688,13 +692,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 String codAmount = "Rs. " + callData.getCodAmount();
                 llTopRight.setVisibility(View.VISIBLE);
                 tvCodAmount.setVisibility(View.VISIBLE);
-                tvTripId.setGravity(Gravity.CENTER | Gravity.START);
-                tvCodAmount.setGravity(Gravity.CENTER | Gravity.END);
-                tvCodAmount.setText(callData.isCod() ? "COD   " + codAmount : codAmount);
+//                tvTripId.setGravity(Gravity.CENTER | Gravity.START);
+//                tvCodAmount.setGravity(Gravity.CENTER | Gravity.END);
+                tvCodAmount.setText(callData.isCod() ? codAmount : codAmount);
             } else {
                 llTopRight.setVisibility(View.GONE);
                 tvCodAmount.setVisibility(View.GONE);
-                tvTripId.setGravity(Gravity.CENTER);
+//                tvTripId.setGravity(Gravity.CENTER);
             }
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
@@ -709,6 +713,27 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     Utils.redLog("RESUME TRIP", "STARTED STATE RESUME");
                     setStartedState();
                 }
+            }
+
+            if (StringUtils.isNotBlank(callData.getIcon())) {
+                Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity));
+                Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity))
+                        .placeholder(Utils.getServiceIcon(callData))
+                        .into(ivServiceIcon, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnSuccess");
+                            }
+
+                            @Override
+                            public void onError() {
+                                Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnError");
+                            }
+                        });
+            } else if (StringUtils.isNotBlank(callData.getCallType())) {
+                ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, Utils.getServiceIcon(callData)));
+            } else {
+                ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
             }
 
             if (StringUtils.isNotBlank(callData.getDistance()))
@@ -765,18 +790,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showWalletAmount() {
-        tvPWalletAmount.setVisibility(View.VISIBLE);
+//        tvPWalletAmount.setVisibility(View.VISIBLE);
         llTopRight.setVisibility(View.VISIBLE);
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
-            tvCodAmount.setVisibility(View.VISIBLE);
-            tvCodAmount.setGravity(Gravity.BOTTOM | Gravity.END);
-            tvPWalletAmount.setGravity(Gravity.TOP | Gravity.END);
+//            tvCodAmount.setVisibility(View.VISIBLE);
+//            tvCodAmount.setGravity(Gravity.BOTTOM | Gravity.END);
+//            tvPWalletAmount.setGravity(Gravity.TOP | Gravity.END);
         } else {
-            tvCodAmount.setVisibility(View.GONE);
-            tvPWalletAmount.setGravity(Gravity.CENTER | Gravity.END);
+//            tvCodAmount.setVisibility(View.GONE);
+//            tvPWalletAmount.setGravity(Gravity.CENTER | Gravity.END);
         }
-        tvTripId.setGravity(Gravity.CENTER | Gravity.START);
-        tvPWalletAmount.setText("Wallet   " + callData.getPassWallet());
+//        tvTripId.setGravity(Gravity.CENTER | Gravity.START);
+        tvPWalletAmount.setText("Rs." + callData.getPassWallet());
     }
 
     private void setOnArrivedData() {

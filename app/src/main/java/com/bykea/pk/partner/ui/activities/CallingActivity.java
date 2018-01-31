@@ -386,7 +386,7 @@ public class CallingActivity extends BaseActivity {
         if (StringUtils.isNotBlank(callData.getIcon())) {
             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity));
             Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity))
-                    .placeholder(getServiceIcon(callData))
+                    .placeholder(Utils.getServiceIcon(callData))
                     .into(ivCallType, new Callback() {
                         @Override
                         public void onSuccess() {
@@ -399,35 +399,9 @@ public class CallingActivity extends BaseActivity {
                         }
                     });
         } else if (StringUtils.isNotBlank(callData.getCallType())) {
-            ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, getServiceIcon(callData)));
+            ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, Utils.getServiceIcon(callData)));
         } else {
             ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
-        }
-    }
-
-
-    private Integer getServiceIcon(NormalCallData callData) {
-        String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
-        switch (callType) {
-            case "parcel":
-            case "send":
-            case "delivery":
-                return R.drawable.bhejdo;
-            case "bring":
-            case "purchase":
-                return R.drawable.lay_ao;
-            case "ride":
-                return R.drawable.ride;
-            case "top-up":
-                return R.drawable.top_up;
-            case "utilitybill":
-                return R.drawable.utility_bill;
-            case "deposit":
-                return R.drawable.jama_karo;
-            case "carryvan":
-                return R.drawable.carry_van;
-            default:
-                return R.drawable.ride;
         }
     }
 

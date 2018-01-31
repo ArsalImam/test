@@ -43,8 +43,10 @@
     <color name="black.transparent.inactive">#D8000000</color>
     <color name="grey">#a4a1a1</color>
     <color name="blue">#3f8bef</color>
+    <color name="blue_light">#ADEAFF</color>
     <color name="white">#FFFFFF</color>
     <color name="yellow_dd">#fdfd96</color>
+    <color name="yellow">#FAFFAD</color>
 
 
 
