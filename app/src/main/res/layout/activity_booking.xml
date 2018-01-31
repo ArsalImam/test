@@ -410,19 +410,20 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:elevation="@dimen/_8sdp"
             android:scaleType="fitXY"
-            android:src="@drawable/my_location_bg" />
+            android:padding="@dimen/_3sdp"
+            android:src="@drawable/ic_current_location_new" />
 
         <ImageView
             android:id="@+id/currentLocationIv"
-            android:layout_width="@dimen/_42sdp"
-            android:layout_height="@dimen/_42sdp"
+            android:layout_width="@dimen/_52sdp"
+            android:layout_height="@dimen/_52sdp"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/currentLocIv"
-            android:layout_marginRight="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:elevation="@dimen/_8sdp"
             android:scaleType="fitXY"
-            android:src="@drawable/navigation_icon" />
+            android:src="@drawable/ic_navigation" />
 
     </RelativeLayout>
 
