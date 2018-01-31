@@ -14,13 +14,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PersonalActivity extends BaseActivity {
     @Bind(R.id.pilotName)
     FontTextView pilotName;
 
     @Bind(R.id.pilotImage)
-    ImageView pilotImage;
+    CircleImageView pilotImage;
 
     @Bind(R.id.pilotAddress)
     FontTextView pilotAddress;

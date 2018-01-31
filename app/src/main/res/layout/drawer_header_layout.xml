@@ -9,7 +9,7 @@
     android:paddingBottom="3dp">
 
 
-    <com.bykea.pk.partner.widgets.CircularImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/driverImage"
         android:layout_width="@dimen/top.logo.width"
         android:layout_height="@dimen/top.logo.height"
