@@ -248,9 +248,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 if (Utils.calculateDistance(mGoogleMap.getCameraPosition().target.latitude, mGoogleMap.getCameraPosition().target.longitude,
                         AppPreferences.getLatitude(), AppPreferences.getLongitude()) < 500) {
-                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.white));
+                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondaryDark));
                 } else {
-                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.secondaryColor));
+                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.white));
                 }
 
 
@@ -818,7 +818,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             llTopRight.setVisibility(View.VISIBLE);
             tvCodAmount.setText("Rs. " + callData.getCodAmount());
         } else {
-            llTopRight.setVisibility(View.GONE);
+            llTopRight.setVisibility(View.INVISIBLE);
         }
     }
 
