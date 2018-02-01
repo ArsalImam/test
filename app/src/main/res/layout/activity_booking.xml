@@ -258,7 +258,7 @@
                         android:layout_marginLeft="@dimen/_8sdp"
                         android:layout_marginStart="@dimen/_8sdp"
                         android:maxLines="1"
-                        android:text="رقم کی وصولی"
+                        android:text="کیش کی وصولی"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
