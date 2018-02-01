@@ -162,6 +162,25 @@ public enum Dialogs {
         showDialog();
     }
 
+    public void showCallPassengerDialog(Context context, View.OnClickListener btnSender,
+                                View.OnClickListener btnRecipient) {
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.call_passenger_dialog);
+
+        mDialog.findViewById(R.id.ivSender).setOnClickListener(btnSender);
+        mDialog.findViewById(R.id.ivRecipient).setOnClickListener(btnRecipient);
+        mDialog.findViewById(R.id.ivBackBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+            }
+        });
+
+        showDialog();
+    }
+
     public void showRideStatusDialog(Context context, View.OnClickListener positive,
                                      View.OnClickListener negative, String title) {
         if (null == context) return;

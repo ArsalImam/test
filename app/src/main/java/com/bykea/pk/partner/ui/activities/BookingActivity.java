@@ -394,7 +394,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.callbtn:
-                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+//                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                //TODO Check if recpient no is not null show callPassengerDialog else calling intent
+                showCallPassengerDialog();
                 break;
             case R.id.cancelBtn:
                 if (Utils.isCancelAfter5Min()) {
@@ -513,6 +515,20 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 setDriverLocation();
                 break;
         }
+    }
+
+    private void showCallPassengerDialog() {
+        Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.redLog("BookingActivity", "Call Sender");
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.redLog("BookingActivity", "Call Recipient");
+            }
+        });
     }
 /*
     private void logMixPanelEvent(String status) {
