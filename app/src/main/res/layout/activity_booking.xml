@@ -365,7 +365,7 @@
                 android:text="@string/button.text.cancel.urdu"
                 android:textAllCaps="true"
                 android:textColor="@color/buttonTextColor"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_18sdp"
                 android:textStyle="bold"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
@@ -381,7 +381,7 @@
                 android:text="@string/button.text.arrived"
                 android:textAllCaps="true"
                 android:textColor="@color/buttonTextColor"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_18sdp"
                 android:textStyle="bold"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 

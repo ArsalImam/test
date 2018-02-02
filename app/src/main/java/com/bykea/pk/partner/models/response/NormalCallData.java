@@ -57,6 +57,7 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("total")
     private String totalFare;
     private String pass_socket_id;
+    private String rec_no;
 
     @SerializedName("km")
     private String distanceCovered;
@@ -386,4 +387,11 @@ public class NormalCallData extends CommonResponse {
         this.icon = icon;
     }
 
+    public String getRec_no() {
+        return rec_no;
+    }
+
+    public void setRec_no(String rec_no) {
+        this.rec_no = rec_no;
+    }
 }

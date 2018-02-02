@@ -248,9 +248,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 if (Utils.calculateDistance(mGoogleMap.getCameraPosition().target.latitude, mGoogleMap.getCameraPosition().target.longitude,
                         AppPreferences.getLatitude(), AppPreferences.getLongitude()) < 500) {
-                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondaryDark));
+                    cvLocation.setVisibility(View.INVISIBLE);
+//                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
                 } else {
-                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.white));
+                    cvLocation.setVisibility(View.VISIBLE);
+//                    cvLocation.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.white));
                 }
 
 
@@ -394,9 +396,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.callbtn:
-//                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
-                //TODO Check if recpient no is not null show callPassengerDialog else calling intent
-                showCallPassengerDialog();
+                if (StringUtils.isNotBlank(callData.getRec_no())) {
+                    showCallPassengerDialog();
+                } else {
+                    Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                }
                 break;
             case R.id.cancelBtn:
                 if (Utils.isCancelAfter5Min()) {
@@ -521,11 +525,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
                 Utils.redLog("BookingActivity", "Call Sender");
             }
         }, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.callingIntent(mCurrentActivity, callData.getRec_no());
                 Utils.redLog("BookingActivity", "Call Recipient");
             }
         });
@@ -852,6 +858,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 StringUtils.isNotBlank(callData.getEndLng()) &&
                 StringUtils.isNotBlank(callData.getEndAddress())) {
             endAddressTv.setText(callData.getEndAddress());
+            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
             startAddressTv.setText(callData.getStartAddress());
             mGoogleSrcLatLng = callData.getStartLat() + "," + callData.getStartLng();
         } else {
@@ -890,10 +897,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             startAddressTv.setText(callData.getStartAddress());
         }
 
-        if (StringUtils.isBlank(callData.getEndAddress()))
+        if (StringUtils.isBlank(callData.getEndAddress())) {
             endAddressTv.setText(getString(R.string.destination_not_selected_msg));
-        else {
+            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.Color_Red));
+        } else {
             endAddressTv.setText(callData.getEndAddress());
+            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
         }
         if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
             updatePickupMarker(callData.getEndLat(), callData.getEndLng());
