@@ -57,11 +57,18 @@ public class Constants {
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
 
 
-    public static final String GOOGLE_PLACE_SERVER_API_KEY = BuildConfig.DEBUG ?
-            "AIzaSyCJw1nRmfRZnfpd8MoBUZodz6dCdWOaINU" : "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+    //Staging
+//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";
+    //Live
+    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
-    //    Live new 12/01/17
-//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyDDSVksBi_d5aBo0WgXun0ZWG-Z2IUTYQQ";
+
+    //Staging
+//    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
+    //Live
+    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
+
+
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
     public static final String REPLACE_CITY = "-replace-";
@@ -72,14 +79,15 @@ public class Constants {
         public static final String RIDE_VEHICLE_DATA = "RIDE_VEHICLE_DATA";
         public static final String TRIP_DETAILS = "TRIP_DETAILS";
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
+        public static final String DROP_OFF = "DROP_OFF";
     }
 
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
         public final static String CANCEL_TRIP = "Ride-Cancel";
         public final static String EYE_BALL = "Eyeball-";
-        public final static String RIDE_FARE = EYE_BALL + REPLACE +"-Finish";
-        public final static String RIDE_COMPLETE = EYE_BALL + REPLACE +"-Complete";
+        public final static String RIDE_FARE = EYE_BALL + REPLACE + "-Finish";
+        public final static String RIDE_COMPLETE = EYE_BALL + REPLACE + "-Complete";
         public final static String ON_RECEIVE_NEW_JOB = EYE_BALL + REPLACE + "-Request";
         public final static String ON_ACCEPT = EYE_BALL + REPLACE + "-Accept";
         public final static String ON_ARRIVED = EYE_BALL + REPLACE + "-Arrived";
@@ -93,4 +101,5 @@ public class Constants {
 
     public static final float ANDROID_OPACITY = 255;
     public static final String ON_SOCKET_CONNECTED = "ON_SOCKET_CONNECTED";
+    public static final String COUNTRY_CODE_AUTOCOMPLETE = "country:pk";
 }

@@ -9,8 +9,11 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
+import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
@@ -894,4 +897,41 @@ public class RestRequestHandler {
         });
     }
 
+
+    public PlaceAutoCompleteResponse autocomplete(String input) {
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        PlaceAutoCompleteResponse placeAutoCompleteResponse = null;
+        try {
+            Response<PlaceAutoCompleteResponse> response = call.execute();
+            if (response.body().getStatus().equalsIgnoreCase("OK")) {
+                placeAutoCompleteResponse = response.body();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return placeAutoCompleteResponse;
+    }
+
+    public void getPlaceDetails(String s, Context context, final IResponseCallback mDataCallback) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        call.enqueue(new Callback<PlaceDetailsResponse>() {
+            @Override
+            public void onResponse(Response<PlaceDetailsResponse> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body() != null) {
+                    mDataCallback.onResponse(response.body());
+                } else {
+                    mDataCallback.onError(0, response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mDataCallback.onError(0, t.toString());
+            }
+        });
+
+    }
 }

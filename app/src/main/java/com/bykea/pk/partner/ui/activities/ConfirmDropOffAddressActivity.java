@@ -3,27 +3,23 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.NearByResults;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.Predictions;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
@@ -35,15 +31,7 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.CustomMapView;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,13 +48,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ConfirmDropOffAddressActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class ConfirmDropOffAddressActivity extends BaseActivity {
 
     private ConfirmDropOffAddressActivity mCurrentActivity;
     private GoogleMap mGoogleMap;
     private CustomMapView mapView;
-    private boolean firstTime = true, isSearchedLoc;
-    protected GoogleApiClient mGoogleApiClient;
+    private boolean isSearchedLoc;
     private PlaceAutocompleteAdapter mAdapter;
     private int requestCode = 0;
     private LatLng latlngPoint, prevNearByLatLng;
@@ -87,33 +74,15 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     @Bind(R.id.loader)
     ProgressBar loader;
 
-//    @Bind(R.id.tvFenceError)
-//    FontTextView tvFenceError;
-
-    @Bind(R.id.tv_elaqa)
-    FontTextView tv_elaqa;
 
     @Bind(R.id.autocomplete_places)
     AutoCompleteTextView mAutocompleteView;
 
-//    @Bind(R.id.clearBtn)
-//    ImageView clearSearchBtn;
-
-//    @Bind(R.id.rlNoDriverFound)
-//    RelativeLayout rlNoDriverFound;
-
-//    @Bind(R.id.loaderIv)
-//    ImageView loaderIv;
-//    @Bind(R.id.timeTv)
-//    TextView timeTv;
-//    @Bind(R.id.arrowLocationIv)
-//    ImageView arrowLocationIv;
 
     @Bind(R.id.rlFrom)
     RelativeLayout rlFrom;
     private ArrayList<PlacesResult> cities;
     private String primaryText;
-    private String toolbarTitle, searchBoxTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,32 +93,9 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
         mCurrentActivity = this;
 
         setInitMap(savedInstanceState);
-        mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
-                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
-                .addApi(Places.GEO_DATA_API)
-                .build();
-        requestCode = getIntent().getIntExtra("from", 0);
-//        toolbarTitle = getIntent().getStringExtra(Constants.TOOLBAR_TITLE);
-//        searchBoxTitle = getIntent().getStringExtra(Constants.SEARCHBOX_TITLE);
-        setBackNavigation();
-        hideToolbarLogo();
-        hideToolbarTitle();
-        setStatusButton("Cancel");
-        tv_elaqa.setVisibility(View.VISIBLE);
-
-        bundle = getIntent().getParcelableExtra("point");
-        if (requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE) {
-            if (getIntent().hasExtra("point")) {
-                latlngPoint = bundle.getParcelable("point_latlng");
-                mAddressName = getIntent().getStringExtra("name");
-                mAutocompleteView.setHint(searchBoxTitle);
-            }
-//            loaderIv.setVisibility(View.GONE);
-//            arrowLocationIv.setVisibility(View.GONE);
-//            timeTv.setVisibility(View.GONE);
-        }
         setSearchAdapter();
     }
+
 
     private void setSearchAdapter() {
         mAutocompleteView.setText("");
@@ -191,25 +137,16 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     private void setCity(PlacesResult city) {
         mAutocompleteView.setText("");
         mAutocompleteView.setOnItemClickListener(mAutocompleteClickListener);
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setCountry("PK")
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
-                .build();
-        LatLngBounds.Builder bounds =
-                new LatLngBounds.Builder();
-        bounds.include(new LatLng(city.latitude, city.longitude));
-//        mAdapter = new PlaceAutocompleteAdapter(mCurrentActivity, mGoogleApiClient, bounds.build(),
-//                typeFilter, city.name, isPickUpPoint);
-        mAdapter = new PlaceAutocompleteAdapter(mCurrentActivity, mGoogleApiClient, bounds.build(), typeFilter, city.name);
+        mAdapter = new PlaceAutocompleteAdapter(mCurrentActivity, city.name);
         mAutocompleteView.setAdapter(mAdapter);
         mAutocompleteView.setDropDownWidth(getResources().getDisplayMetrics().widthPixels);
 
-//        clearSearchBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mAutocompleteView.setText("");
-//            }
-//        });
+    }
+
+    private void clearAutoComplete() {
+        mAutocompleteView.clearFocus();
+        mAutocompleteView.setFocusable(false);
+        mAutocompleteView.setText(StringUtils.EMPTY);
     }
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener
@@ -221,53 +158,32 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
              The adapter stores each Place suggestion in a AutocompletePrediction from which we
              read the place ID and title.
               */
+            clearAutoComplete();
             if (position < mAdapter.getCount()) {
-                final AutocompletePrediction item = mAdapter.getItem(position);
-                final String placeId = item.getPlaceId();
-                primaryText = Utils.formatAddress(item.getFullText(null).toString());
-
-
+                final Predictions item = mAdapter.getItem(position);
+                String placeId = StringUtils.EMPTY;
+                if (item != null) {
+                    placeId = item.getPlace_id();
+                    primaryText = Utils.formatAddress(item.getDescription());
+                }
                 Utils.redLog("Auto", "Autocomplete item selected: " + primaryText);
-
-            /*
-             Issue a request to the Places Geo Data API to retrieve a Place object with additional
-             details about the place.
-              */
-                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                        .getPlaceById(mGoogleApiClient, placeId);
-                placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-
-           /* Toast.makeText(getApplicationContext(), "Clicked: " + primaryText,
-                    Toast.LENGTH_SHORT).show();*/
                 Utils.redLog("bykea", "Called getPlaceById to get Place details for " + placeId);
-            }
-        }
-    };
+                new PlacesRepository().getPlaceDetails(placeId, mCurrentActivity, new PlacesDataHandler() {
+                    @Override
+                    public void onPlaceDetailsResponse(PlaceDetailsResponse response) {
 
-    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
-            = new ResultCallback<PlaceBuffer>() {
-        @Override
-        public void onResult(PlaceBuffer places) {
+                        NearByResults results = response.getResult();
+                        if (results != null) {
+                            String result = StringUtils.isNotBlank(primaryText) ? primaryText : Utils.formatAddress(results.getFormatted_address());
+//                            mAutocompleteView.setText(result);
+                            PlacesResult placesResult = new PlacesResult(result, "",
+                                    results.getGeometry().getLocation().getLat(), results.getGeometry().getLocation().getLng());
+                            updateDropOff(placesResult);
 
-            if (!places.getStatus().isSuccess()) {
-                // Request did not complete successfully
-                Utils.redLog("bykea", "Place query did not complete. Error: " + places.getStatus().toString());
-                places.release();
-                return;
+                        }
+                    }
+                });
             }
-            // Get the Place object from the buffer.
-            if (places.get(0) == null) {
-                return;
-            }
-            Place place = places.get(0);
-
-            // Format details of the place for display and show it in a TextView.
-//            tvLocation.setText("" + place.getAddress());
-            String result = StringUtils.isNotBlank(primaryText) ? primaryText : Utils.formatAddress(!place.getAddress().toString().contains(place.getName().toString()) ? place.getName() + ", " + place.getAddress().toString() : place.getAddress().toString());
-            PlacesResult placesResult = new PlacesResult(result, "",
-                    place.getLatLng().latitude, place.getLatLng().longitude);
-            updateDropOff(placesResult);
-            places.release();
         }
     };
 
@@ -278,14 +194,8 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                 public void run() {
                     Utils.hideSoftKeyboard(mCurrentActivity, mAutocompleteView);
                     isSearchedLoc = true;
-//                    mAutocompleteView.setText("");
-                    mAutocompleteView.clearFocus();
-                    mAutocompleteView.setFocusable(false);
-                    String result = placesResult.name;
-                    String name = result.replace(result.substring(result.lastIndexOf(',') + 1), "").replace(",", "");
-                    String city = result.substring(result.lastIndexOf(',') + 1).trim();
-                    addressTv.setText(name);
-                    tvFromAddress.setText(city);
+                    clearAutoComplete();
+                    setAddress(placesResult.name);
                     mGoogleMap.getUiSettings().setScrollGesturesEnabled(false);
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(placesResult.latitude, placesResult.longitude), 16.0f), 1000, new GoogleMap.CancelableCallback() {
                         @Override
@@ -335,23 +245,23 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
             mGoogleMap.setPadding(0, 0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen.map_padding_bottom));
             Double mlogitude;
             Double mlatitude;
-            if (mAddressName.equalsIgnoreCase(getString(R.string.pick_up_point)) ||
-                    mAddressName.equalsIgnoreCase(getString(R.string.drop_off_point))) {
+
+            PlacesResult placesResult = null;
+            if (getIntent() != null) {
+                placesResult = getIntent().getParcelableExtra(Constants.Extras.DROP_OFF);
+            }
+
+            if (placesResult != null) {
+                isSearchedLoc = true;
+                mlatitude = placesResult.latitude;
+                mlogitude = placesResult.longitude;
+                setAddress(placesResult.address);
+
+            } else {
                 mlatitude = AppPreferences.getLatitude();
                 mlogitude = AppPreferences.getLongitude();
-            } else {
-                if (latlngPoint != null) {
-                    mlatitude = latlngPoint.latitude;
-                    mlogitude = latlngPoint.longitude;
-                } else {
-                    mlatitude = AppPreferences.getLatitude();
-                    mlogitude = AppPreferences.getLongitude();
-                }
             }
-            Log.e("mlattitude", String.valueOf(mlatitude));
-            Log.e("logitude", String.valueOf(mlogitude));
             setLocation(mlatitude, mlogitude);
-
         }
     };
 
@@ -367,10 +277,11 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
             //ignore API call when user selects place from search bar
             if (!isSearchedLoc) {
                 startLoading();
-                mAutocompleteView.setText("");
+                mAutocompleteView.setText(StringUtils.EMPTY);
                 reverseGeoCoding(mGoogleMap.getCameraPosition().target.latitude,
                         mGoogleMap.getCameraPosition().target.longitude);
             } else {
+                finishLoading();
                 isSearchedLoc = false;
             }
 
@@ -400,10 +311,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
                         if (result.contains(";")) {
                             result = result.replace(";", ", ");
                         }
-                        String name = result.replace(result.substring(result.lastIndexOf(',') + 1), "").replace(",", "");
-                        String city = result.substring(result.lastIndexOf(',') + 1).trim();
-                        addressTv.setText(name);
-                        tvFromAddress.setText(city);
+                        setAddress(result);
                     }
                 }
             });
@@ -439,6 +347,18 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
         }
     };
 
+
+    private void setAddress(String result) {
+        if (result.contains(",") && result.split(",").length > 1) {
+            addressTv.setText(result.split(",")[0]);
+            tvFromAddress.setText(result.split(",")[1]);
+        } else {
+            addressTv.setText(result);
+            tvFromAddress.setText(result);
+        }
+
+    }
+
     private void finishLoading() {
 //        loader.setVisibility(View.GONE);
         loader.setIndeterminate(false);
@@ -446,35 +366,24 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     }
 
     private void startLoading() {
-//        loader.setVisibility(View.VISIBLE);
-//        loader.getProgressDrawable().setColorFilter(
-//                Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
         loader.setIndeterminate(true);
         confirmBtn.setClickable(false);
     }
 
-//    private void startLoadingAnimation() {
-//        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//        anim.setInterpolator(new LinearInterpolator());
-//        anim.setRepeatCount(Animation.INFINITE);
-//        anim.setDuration(700);
-//        loaderIv.startAnimation(anim);
-//    }
 
-//    private void stopLoadingAnimation() {
-//        try {
-//            loaderIv.setAnimation(null);
-//        } catch (Exception ex) {
-//
-//        }
-//    }
-
-    @OnClick({R.id.confirmBtn, R.id.autocomplete_places/*, R.id.tvCities*/})
+    @OnClick({R.id.confirmBtn, R.id.autocomplete_places, R.id.ivBackBtn, R.id.status})
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.ivBackBtn:
+            case R.id.status:
+                onBackPressed();
+                break;
             case R.id.confirmBtn:
-                PlacesResult placesResult = new PlacesResult("DropOffAddress",
-                        addressTv.getText().toString() + ", " + tvFromAddress.getText().toString(),
+                String address = addressTv.getText().toString();
+                if (!address.equalsIgnoreCase(tvFromAddress.getText().toString())) {
+                    address = addressTv.getText().toString() + ", " + tvFromAddress.getText().toString();
+                }
+                PlacesResult placesResult = new PlacesResult("DropOffAddress", address,
                         mGoogleMap.getCameraPosition().target.latitude, mGoogleMap.getCameraPosition().target.longitude);
                 Intent returnIntent = new Intent();
                 //PlacesResult data model implements Parcelable so we could pass object in extras
@@ -503,7 +412,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
     @Override
     protected void onDestroy() {
         mapView.onDestroy();
-        tv_elaqa.setVisibility(View.GONE);
         super.onDestroy();
     }
 
@@ -514,7 +422,4 @@ public class ConfirmDropOffAddressActivity extends BaseActivity implements Googl
         super.onLowMemory();
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-    }
 }

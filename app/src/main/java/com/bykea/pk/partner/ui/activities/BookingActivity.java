@@ -29,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bykea.pk.partner.Notifications;
+import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
@@ -162,8 +163,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     public static boolean isWazeCheck = true;
     public static boolean isGoogleCheck;
     public static int cancelRequest = 0;
-    private String mGoogleSrcLatLng = "";
-    private String mGoogleDesLatLng = "";
     private int distanceToPickup = 0;
 
     private Marker driverMarker, dropOffMarker, pickUpMarker/*, passCurrentLocMarker*/;
@@ -281,37 +280,20 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     getDriverRoadPosition(mCurrentActivity,
                             new com.google.maps.model.LatLng(AppPreferences.getLatitude(),
                                     AppPreferences.getLongitude()));
-                    if (callData != null && StringUtils.isNotBlank(callData.getStartLat())
-                            && StringUtils.isNotBlank(callData.getStartLng())) {
-                        updatePickupMarker(callData.getStartLat(), callData.getStartLng());
-
-//                        TrackingMap.addMarker(mCurrentActivity, mLocBearing, mGoogleMap, Double.parseDouble(callData.getStartLat())
-//                                , Double.parseDouble(callData.getStartLng()), R.drawable.ic_destination_temp);
-                        LatLngBounds bounds;
-                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                        builder.include(new LatLng(AppPreferences.getLatitude(),
-                                AppPreferences.getLongitude()));
-                        builder.include(new LatLng(Double.parseDouble(callData.getStartLat())
-                                , Double.parseDouble(callData.getStartLng())));
-                        bounds = builder.build();
-                        zoomFirstTime(new LatLng(AppPreferences.getLatitude(),
-                                AppPreferences.getLongitude()));
-                        setPickupBounds();
-
-
-                        if (isResume) {
-                            if (StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())
-                                    && StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
-                                boundRoute(new LatLng(AppPreferences.getLatitude(),
-                                                AppPreferences.getLongitude())
-                                        , new LatLng(Double.parseDouble(callData.getStartLat()),
-                                                Double.parseDouble(callData.getStartLng())),
-                                        new LatLng(Double.parseDouble(callData.getEndLat()),
-                                                Double.parseDouble(callData.getEndLng())));
+                    if (callData != null) {
+                        if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
+                                || AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                            if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
+                                updatePickupMarker(callData.getEndLat(), callData.getEndLng());
+                                setPickupBounds();
+                            }
+                        } else {
+                            if (StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
+                                updatePickupMarker(callData.getStartLat(), callData.getStartLng());
+                                setPickupBounds();
                             }
                         }
                     }
-
                 }
             });
         }
@@ -320,16 +302,26 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 49)//CHECK FOR DROP OFF PLACE RESULT
-        {
-            if (StringUtils.isNotBlank(AppPreferences.getDropOffAddress())) {
-                callData.setEndLat(AppPreferences.getDropOffLat());
-                callData.setEndLng(AppPreferences.getDropOffLng());
-                callData.setEndAddress(AppPreferences.getDropOffAddress());
+//        if (requestCode == 49)//CHECK FOR DROP OFF PLACE RESULT
+//        {
+//            if (StringUtils.isNotBlank(AppPreferences.getDropOffAddress())) {
+//                callData.setEndLat(AppPreferences.getDropOffLat());
+//                callData.setEndLng(AppPreferences.getDropOffLng());
+//                callData.setEndAddress(AppPreferences.getDropOffAddress());
+//                AppPreferences.setCallData(callData);
+//                updateDropOffToServer();
+//            }
+//
+//        }
+        if (requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
+            if (resultCode == RESULT_OK) {
+                PlacesResult mDropOff = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT);
+                callData.setEndLat("" + mDropOff.latitude);
+                callData.setEndLng("" + mDropOff.longitude);
+                callData.setEndAddress(mDropOff.address);
                 AppPreferences.setCallData(callData);
                 updateDropOffToServer();
             }
-
         } else if (requestCode == Permissions.LOCATION_PERMISSION) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
@@ -359,7 +351,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     mRouteLatLng.clear();
                 }
                 drawRouteToDropOff();
-                mGoogleDesLatLng = callData.getEndLat() + "," + callData.getEndLng();
                 updatePickupMarker(callData.getEndLat(), callData.getEndLng());
             }
         }
@@ -384,15 +375,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.endAddressTv:
-                Intent intent1 = new Intent(mCurrentActivity, ConfirmDestinationActivity.class);
+                Intent intent1 = new Intent(mCurrentActivity, ConfirmDropOffAddressActivity.class);
                 if (StringUtils.isNotBlank(callData.getEndLat()) &&
                         StringUtils.isNotBlank(callData.getEndLng()) &&
                         StringUtils.isNotBlank(callData.getEndAddress())) {
-                    intent1.putExtra("address", callData.getEndAddress());
-                    intent1.putExtra("lat", Double.parseDouble(callData.getEndLat()));
-                    intent1.putExtra("lng", Double.parseDouble(callData.getEndLng()));
+                    PlacesResult placesResult = new PlacesResult(StringUtils.EMPTY, callData.getEndAddress(),
+                            Double.parseDouble(callData.getEndLat()),
+                            Double.parseDouble(callData.getEndLng()));
+                    intent1.putExtra(Constants.Extras.DROP_OFF, placesResult);
                 }
-                startActivityForResult(intent1, 49);
+                startActivityForResult(intent1, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.callbtn:
@@ -490,34 +482,39 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                 break;
             case R.id.cvDirections:
-
-                //CHECK FOR THE SRC AND DEST SHOULD NOT BE EMPTY FOR GOOGLE TRACKING..
-                if (StringUtils.isNotBlank(mGoogleSrcLatLng) && StringUtils.isNotBlank(mGoogleDesLatLng)) {
-                    try {
-                        String uri = "";
-                        Intent intent;
-                        if (!endAddressTv.getText().toString().equalsIgnoreCase(getString(R.string.destination_not_selected_msg))) {
-                            uri = "http://maps.google.com/maps?saddr=" + mGoogleSrcLatLng +
-                                    "&daddr=" + mGoogleDesLatLng;
-                            intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse("http://maps.google.com/maps?saddr=" + mGoogleSrcLatLng +
-                                            "&daddr=" + mGoogleDesLatLng));
-                        } else {
-                            uri = "http://maps.google.com/maps?saddr=&daddr=";
-                            intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse("http://maps.google.com/maps?saddr=&daddr="));
-                        }
-                        Utils.redLog("Google Route Link ", uri);
-
-                        startActivity(intent);
-                    } catch (ActivityNotFoundException ex) {
-                        Toast.makeText(mCurrentActivity, "Please install google play services", Toast.LENGTH_LONG).show();
-                    }
-                }
+                startGoogleDirectionsApp();
                 break;
             case R.id.cvLocation:
                 setDriverLocation();
                 break;
+        }
+    }
+
+    private void startGoogleDirectionsApp() {
+        if (callData != null) {
+            String start, end = StringUtils.EMPTY;
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                start = Utils.getCurrentLocation();
+                end = callData.getStartLat() + "," + callData.getStartLng();
+            } else {
+                start = Utils.getCurrentLocation();
+                if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
+                    end = callData.getEndLat() + "," + callData.getEndLng();
+                }
+            }
+
+            String uri = "http://maps.google.com/maps?saddr=" + start +
+                    "&daddr=" + end;
+            try {
+                Intent intent;
+                intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(uri));
+                Utils.redLog("Google Route Link ", uri);
+                startActivity(intent);
+            } catch (ActivityNotFoundException ex) {
+                Toast.makeText(mCurrentActivity, "Please install google play services", Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 
@@ -796,16 +793,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         setTimeDistance(Utils.formatETA(callData.getArivalTime()),
                 callData.getDistance());
         startAddressTv.setText(callData.getStartAddress());
-      /*  if (StringUtils.isNotBlank(callData.getEndAddress())) {
-            destTv.setText(callData.getEndAddress());
-        }*/
-       /* if (StringUtils.isNotBlank(callData.getPassImage())) {
-            Picasso.with(mCurrentActivity).load(Utils.getImageLink(callData.getPassImage()))
-                    .into(callerIv);
-        }*/
-
-        mGoogleSrcLatLng = AppPreferences.getLatitude() + "," + AppPreferences.getLongitude();
-        mGoogleDesLatLng = callData.getStartLat() + "," + callData.getStartLng();
 
         drawRouteToPickup();
     }
@@ -824,8 +811,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         cvDirections.setVisibility(View.VISIBLE);
         jobBtn.setText(getString(R.string.button_text_finish));
         setOnStartData();
-        mGoogleSrcLatLng = callData.getStartLat() + "," + callData.getStartLng();
-        mGoogleDesLatLng = callData.getEndLat() + "," + callData.getEndLng();
 
     }
 
@@ -860,11 +845,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             endAddressTv.setText(callData.getEndAddress());
             endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
             startAddressTv.setText(callData.getStartAddress());
-            mGoogleSrcLatLng = callData.getStartLat() + "," + callData.getStartLng();
         } else {
             updateEtaAndCallData("0", "0");
             startAddressTv.setText(callData.getStartAddress());
-            mGoogleSrcLatLng = callData.getStartLat() + "," + callData.getStartLng();
         }
 
         jobBtn.setText(getString(R.string.button_text_start));
@@ -993,31 +976,20 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void updatePickupMarker(String latitude, String longitude) {
         if (null == mGoogleMap) return;
-        if (null != pickUpMarker) pickUpMarker.setPosition(new LatLng(Double.parseDouble(latitude),
-                Double.parseDouble(longitude)));
-        else {
-            pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_temp))
+        if (pickUpMarker != null) {
+            pickUpMarker.remove();
+        }
+        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
+                    R.drawable.ic_drop_off_pin_red))
                     .position(new LatLng(Double.parseDouble(latitude),
                             Double.parseDouble(longitude))));
-            /*
-            * setting bounds for pickup marker*/
-//            setPickupBounds();
+        } else {
+            pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
+                    R.drawable.ic_destination_temp))
+                    .position(new LatLng(Double.parseDouble(latitude),
+                            Double.parseDouble(longitude))));
         }
-        /*if (!AppPreferences.getTripStatus(mCurrentActivity).equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            if (StringUtils.isNotBlank(callData.getPassLat()) && StringUtils.isNotBlank(callData.getPassLng())) {
-                if (passCurrentLocMarker == null) {
-                    passCurrentLocMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pass_current_marker))
-                            .position(new LatLng(Double.parseDouble(callData.getPassLat()),
-                                    Double.parseDouble(callData.getPassLng()))));
-                } else {
-                    passCurrentLocMarker.setPosition(new LatLng(Double.parseDouble(callData.getPassLat()),
-                            Double.parseDouble(callData.getPassLng())));
-                }
-            }
-        } else if (passCurrentLocMarker != null) {
-            passCurrentLocMarker.remove();
-            passCurrentLocMarker = null;
-        }*/
     }
 
 
@@ -1417,24 +1389,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
 
     }
-
-    private RoadLocationListener roadLocationListener = new RoadLocationListener() {
-        @Override
-        public void onGetRoadLocation(double snappedLat, double snappedLng) {
-            onGetLocation(snappedLat, snappedLng);
-        }
-
-        @Override
-        public void onErrorRoadLocation(String msg) {
-//            Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, msg);
-        }
-    };
-
-
-    /******************************************************************************************
-     * CALLBACK METHODS ARE IMPLEMENT HERE
-     ******************************************************************************************/
-
 
     private GoogleMap.CancelableCallback changeMapRotation = new GoogleMap.CancelableCallback() {
         @Override

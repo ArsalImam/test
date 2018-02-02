@@ -1,3 +1,4 @@
+/*
 package com.bykea.pk.partner.ui.activities;
 
 import android.content.Intent;
@@ -53,7 +54,9 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
-                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
+                .enableAutoManage(mCurrentActivity, 0 */
+/* clientId *//*
+, mCurrentActivity)
                 .addApi(Places.GEO_DATA_API)
                 .build();
 
@@ -71,7 +74,8 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
             switch (v.getId()) {
                 case R.id.tvCities:
                     //Remove comments to Allow different cities options if required
-                    /*String[] citiesArray = new String[cities.size()];
+                    */
+/*String[] citiesArray = new String[cities.size()];
                     int i = 0;
                     for (PlacesResult city : cities) {
                         citiesArray[i] = city.name;
@@ -82,7 +86,8 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
                         public void onCallBack(int position) {
                             setCity(cities.get(position));
                         }
-                    });*/
+                    });*//*
+
                     break;
             }
         }
@@ -119,8 +124,7 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
         LatLngBounds.Builder bounds =
                 new LatLngBounds.Builder();
         bounds.include(new LatLng(city.latitude, city.longitude));
-        mAdapter = new PlaceAutocompleteAdapter(mCurrentActivity, mGoogleApiClient, bounds.build(),
-                typeFilter, city.name);
+        mAdapter = new PlaceAutocompleteAdapter(mCurrentActivity, city.name);
         mAutocompleteView.setAdapter(mAdapter);
         mAutocompleteView.setDropDownWidth(getResources().getDisplayMetrics().widthPixels);
 
@@ -140,7 +144,8 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
 
     }
 
-    /**
+    */
+/**
      * Listener that handles selections from suggestions from the AutoCompleteTextView that
      * displays Place suggestions.
      * Gets the place id of the selected item and issues a request to the Places Geo Data API
@@ -148,7 +153,8 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
      *
      * @see GeoDataApi#getPlaceById(GoogleApiClient,
      * String...)
-     */
+     *//*
+
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
         @Override
@@ -177,10 +183,12 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
         }
     };
 
-    /**
+    */
+/**
      * Callback for results from a Places Geo Data API query that shows the first place result in
      * the details view on screen.
-     */
+     *//*
+
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
             = new ResultCallback<PlaceBuffer>() {
         @Override
@@ -202,7 +210,9 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
                         place = places.get(0);
                         Utils.redLog(Constants.APP_NAME, "Place details received: " + place.toString());
                         Intent intent = new Intent(mCurrentActivity, ConfirmDestinationActivity.class);
-                        intent.putExtra("address", primaryText /*+ " " + place.getAddress()*/);
+                        intent.putExtra("address", primaryText */
+/*+ " " + place.getAddress()*//*
+);
                         intent.putExtra("lat", place.getLatLng().latitude);
                         intent.putExtra("lng", place.getLatLng().longitude);
                         startActivity(intent);
@@ -216,3 +226,4 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
         }
     };
 }
+*/

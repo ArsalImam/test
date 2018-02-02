@@ -20,11 +20,11 @@ public class ApiTags {
 
     //STAGING PRO
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
-    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3001";
+//    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3001";
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3002";
 
     //live
-//    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
+    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
 
     //live Test
 //    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3001";
@@ -32,6 +32,8 @@ public class ApiTags {
 
     public static final String GOOGLE_API_BASE_URL = "https://maps.googleapis.com/";
     public static final String PLACES_GEOCODER_EXT_URL = "maps/api/geocode/json";
+    public static final String EXTENDED_URL_GOOGLE_PLACE_AUTOCOMPLETE_API = "maps/api/place/autocomplete/json";
+    public static final String EXTENDED_URL_GOOGLE_PLACE_DETAILS_API = "maps/api/place/details/json";
     public static final String HEAT_MAP_2 = "/getdata/HOUR/CITY_NAME";
     public static final String HEAT_MAP_2_X_API = "6E46E61CB1458A9F32C02CE5F056A557CC801DC31A43ABF39F7BCA9ED6FFAFD2";
 

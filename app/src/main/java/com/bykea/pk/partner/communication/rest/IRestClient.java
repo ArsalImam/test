@@ -15,6 +15,8 @@ import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
+import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
@@ -230,6 +232,16 @@ interface IRestClient {
 
     @GET
     Call<ResponseBody> downloadAudioFile(@Url String fileUrl);
+
+    @GET(ApiTags.EXTENDED_URL_GOOGLE_PLACE_DETAILS_API)
+    Call<PlaceDetailsResponse> getPlaceDetails(@Query("placeid") String placeid,
+                                               @Query("key") String googleMapApiKey);
+
+    @GET(ApiTags.EXTENDED_URL_GOOGLE_PLACE_AUTOCOMPLETE_API)
+    Call<PlaceAutoCompleteResponse> getAutoCompletePlaces(@Query("input") String input,
+                                                          @Query("location") String location,
+                                                          @Query("components") String component,
+                                                          @Query("key") String googleMapApiKey);
 
   /*  @FormUrlEncoded
 

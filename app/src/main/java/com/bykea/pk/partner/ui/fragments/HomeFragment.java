@@ -604,9 +604,7 @@ public class HomeFragment extends Fragment {
     private void setHomeLocation() {
         if (!AppPreferences.getAvailableStatus()) {
             Intent returndropoffIntent = new Intent(mCurrentActivity, ConfirmDropOffAddressActivity.class);
-            returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
-            returndropoffIntent.putExtra(Constants.TOOLBAR_TITLE, "Confirm Destination");
-            returndropoffIntent.putExtra(Constants.SEARCHBOX_TITLE, "Search Destination");
+            returndropoffIntent.putExtra(Constants.Extras.DROP_OFF, AppPreferences.getDriverDestination());
             startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
         }
 //        ActivityStackManager.getInstance(mCurrentActivity).startConfirmDestActivity(mCurrentActivity, "Confirm Destination", "Search Destination");

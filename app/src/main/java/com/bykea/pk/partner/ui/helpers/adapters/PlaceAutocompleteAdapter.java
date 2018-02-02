@@ -13,6 +13,9 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.bykea.pk.partner.communication.rest.RestRequestHandler;
+import com.bykea.pk.partner.models.data.Predictions;
+import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -38,61 +41,19 @@ import java.util.concurrent.TimeUnit;
 
 
 public class PlaceAutocompleteAdapter
-        extends ArrayAdapter<AutocompletePrediction> implements Filterable {
+        extends ArrayAdapter<Predictions> implements Filterable {
 
-    private static final String TAG = "PlaceAutocompleteAdapter";
-    private static final CharacterStyle STYLE_BOLD = new StyleSpan(Typeface.BOLD);
-    /**
-     * Current results returned by this adapter.
-     */
-    private ArrayList<AutocompletePrediction> mResultList;
+    private ArrayList<Predictions> mResultList;
     private String city;
-//    private ArrayList<String> distances = new ArrayList<>();
+    private RestRequestHandler mRestRequestHandler = new RestRequestHandler();
 
-    /**
-     * Handles autocomplete requests.
-     */
-    private GoogleApiClient mGoogleApiClient;
 
-    /**
-     * The bounds used for Places Geo Data autocomplete API requests.
-     */
-    private LatLngBounds mBounds;
 
-    /**
-     * The autocomplete filter used to restrict queries to a specific set of place types.
-     */
-    private AutocompleteFilter mPlaceFilter;
-
-    /**
-     * Initializes with a resource for text rows and autocomplete query bounds.
-     *
-     * @see ArrayAdapter#ArrayAdapter(Context, int)
-     */
-    public PlaceAutocompleteAdapter(Context context, GoogleApiClient googleApiClient,
-                                    LatLngBounds bounds, AutocompleteFilter filter) {
+    public PlaceAutocompleteAdapter(Context context, String city) {
         super(context, -1, android.R.id.text1);
-        mGoogleApiClient = googleApiClient;
-        mBounds = bounds;
-        mPlaceFilter = filter;
-    }
-
-    public PlaceAutocompleteAdapter(Context context, GoogleApiClient googleApiClient,
-                                    LatLngBounds bounds, AutocompleteFilter filter, String city) {
-        super(context, -1, android.R.id.text1);
-        mGoogleApiClient = googleApiClient;
-        mBounds = bounds;
-        mPlaceFilter = filter;
         this.city = city;
-
     }
 
-    /**
-     * Sets the bounds for all subsequent queries.
-     */
-    public void setBounds(LatLngBounds bounds) {
-        mBounds = bounds;
-    }
 
     /**
      * Returns the number of results received in the last autocomplete query.
@@ -106,7 +67,7 @@ public class PlaceAutocompleteAdapter
      * Returns an item from the last autocomplete query.
      */
     @Override
-    public AutocompletePrediction getItem(int position) {
+    public Predictions getItem(int position) {
         return mResultList.get(position);
     }
 
@@ -116,8 +77,8 @@ public class PlaceAutocompleteAdapter
 
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_places, null);
         if (mResultList != null && position < mResultList.size()) {
-            ((TextView) convertView.findViewById(R.id.placeNameTv)).setText(getItem(position).getPrimaryText(null));
-            ((TextView) convertView.findViewById(R.id.placeAddressTv)).setText(Utils.formatAddress(getItem(position).getFullText(null).toString()));
+            ((TextView) convertView.findViewById(R.id.placeNameTv)).setText(mResultList.get(position).getStructured_formatting().getMain_text());
+            ((TextView) convertView.findViewById(R.id.placeAddressTv)).setText(Utils.formatAddress(mResultList.get(position).getDescription()));
 //            ((TextView) convertView.findViewById(R.id.placeDistTv)).setText(distances.size() > position ? distances.get(position) + " km" : "N/A");
         } else {
             ((TextView) convertView.findViewById(R.id.placeNameTv)).setText(StringUtils.EMPTY);
@@ -142,20 +103,22 @@ public class PlaceAutocompleteAdapter
 
                     if (constraint.length() == 4 || constraint.length() == 6 || constraint.length() >= 8) {
                         // Query the autocomplete API for the (constraint) search string.
-                        ArrayList<AutocompletePrediction> resultList = getAutocomplete(constraint);
+//                        ArrayList<AutocompletePrediction> resultList = getAutocomplete(constraint);
+                        PlaceAutoCompleteResponse result = mRestRequestHandler.autocomplete(constraint.toString());
+                        ArrayList<Predictions> resultList = result.getPredictions();
                         if (resultList != null) {
                             // The API successfully returned results.
                             if (StringUtils.isNotBlank(city)) {
-                                Iterator<AutocompletePrediction> it = resultList.iterator();
+                                Iterator<Predictions> it = resultList.iterator();
                                 while (it.hasNext()) {
-                                    AutocompletePrediction item = it.next();
+                                    Predictions item = it.next();
                                     if (city.equalsIgnoreCase("Rawalpindi")) {
-                                        if (!item.getSecondaryText(null).toString().contains(city) &&
-                                                !item.getSecondaryText(null).toString().contains("Islamabad")) {
+                                        if (!item.getStructured_formatting().getSecondary_text().contains(city) &&
+                                                !item.getStructured_formatting().getSecondary_text().contains("Islamabad")) {
                                             it.remove();
                                         }
                                     } else {
-                                        if (!item.getSecondaryText(null).toString().contains(city)) {
+                                        if (!item.getStructured_formatting().getSecondary_text().contains(city)) {
                                             it.remove();
                                         }
                                     }
@@ -235,54 +198,5 @@ public class PlaceAutocompleteAdapter
             }
         };
     }
-
-    /**
-     * Submits an autocomplete query to the Places Geo Data Autocomplete API.
-     * Results are returned as frozen AutocompletePrediction objects, ready to be cached.
-     * objects to store the Place ID and description that the API returns.
-     * Returns an empty list if no results were found.
-     * Returns null if the API client is not available or the query did not complete
-     * successfully.
-     * This method MUST be called off the main UI thread, as it will block until data is returned
-     * from the API, which may include a network request.
-     *
-     * @param constraint Autocomplete query string
-     * @return Results from the autocomplete API or null if the query was not successful.
-     * @see AutocompletePrediction#freeze()
-     */
-    private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {
-        if (mGoogleApiClient.isConnected()) {
-            Utils.redLog(TAG, "Starting autocomplete query for: " + constraint);
-
-            // Submit the query to the autocomplete API and retrieve a PendingResult that will
-            // contain the results when the query completes.
-            PendingResult<AutocompletePredictionBuffer> results =
-                    Places.GeoDataApi
-                            .getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
-                                    mBounds, mPlaceFilter);
-
-            // This method should have been called off the main UI thread. Block and wait for at most 60s
-            // for a result from the API.
-            AutocompletePredictionBuffer autocompletePredictions = results
-                    .await(60, TimeUnit.SECONDS);
-
-            // Confirm that the query completed successfully, otherwise return null
-            final Status status = autocompletePredictions.getStatus();
-            if (!status.isSuccess()) {
-                Utils.redLog(TAG, "Error getting autocomplete prediction API call: " + status.toString());
-                autocompletePredictions.release();
-                return null;
-            }
-
-            Utils.redLog(TAG, "Query completed. Received " + autocompletePredictions.getCount()
-                    + " predictions.");
-
-            // Freeze the results immutable representation that can be stored safely.
-            return DataBufferUtils.freezeAndClose(autocompletePredictions);
-        }
-        Utils.redLog(TAG, "Google API client is not connected for autocomplete query.");
-        return null;
-    }
-
 
 }
