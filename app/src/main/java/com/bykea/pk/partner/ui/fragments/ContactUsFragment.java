@@ -105,7 +105,7 @@ public class ContactUsFragment extends Fragment {
                 break;
             case R.id.supportEmail:
 //                Utils.contactViaEmail(mCurrentActivity, contactNumbers.getData().getSupports().getEmail());
-                ActivityStackManager.getInstance().startReportActivity(mCurrentActivity);
+                ActivityStackManager.getInstance().startReportActivity(mCurrentActivity, "s");
                 break;
             case R.id.supportWatsapp:
                 Utils.contactViaWhatsApp(mCurrentActivity, contactNumbers.getData().getSupports().getWhatsapp());
@@ -115,7 +115,7 @@ public class ContactUsFragment extends Fragment {
                 break;
             case R.id.financeEmail:
 //                Utils.contactViaEmail(mCurrentActivity, contactNumbers.getData().getFinance().getEmail());
-                ActivityStackManager.getInstance().startReportActivity(mCurrentActivity);
+                ActivityStackManager.getInstance().startReportActivity(mCurrentActivity, "f");
                 break;
             case R.id.financeWatsapp:
                 Utils.contactViaWhatsApp(mCurrentActivity, contactNumbers.getData().getFinance().getWhatsapp());

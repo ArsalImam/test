@@ -223,6 +223,7 @@ interface IRestClient {
                                           @Field("reason") String reason,
                                           @Field("trip_id") String tripID,
                                           @Field("email") String email,
+                                          @Field("cType") String contactType,
                                           @Field("name") String name,
                                           @Field("ph") String phone,
                                           @Field("details") String details,

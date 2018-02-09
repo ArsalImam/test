@@ -58,15 +58,15 @@ public class Constants {
 
 
     //Staging
-//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";
+    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";
     //Live
-    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
 
     //Staging
-//    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
+    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
     //Live
-    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
+//    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
 
 
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
@@ -80,6 +80,7 @@ public class Constants {
         public static final String TRIP_DETAILS = "TRIP_DETAILS";
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
         public static final String DROP_OFF = "DROP_OFF";
+        public static final String CONTACT_TYPE = "cType";
     }
 
     public static class AnalyticsEvents {

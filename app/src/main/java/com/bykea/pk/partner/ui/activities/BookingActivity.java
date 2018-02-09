@@ -281,8 +281,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             new com.google.maps.model.LatLng(AppPreferences.getLatitude(),
                                     AppPreferences.getLongitude()));
                     if (callData != null) {
-                        if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
-                                || AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                        if (/*AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
+                                ||*/ AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                             if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
                                 updatePickupMarker(callData.getEndLat(), callData.getEndLng());
                                 setPickupBounds();
@@ -395,7 +395,24 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.cancelBtn:
-                if (Utils.isCancelAfter5Min()) {
+                //Code Reverted for XTime
+                /*if (Utils.isCancelAfterXMin()) {
+                    //TODO Don't show reason dialog
+                    Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            //TODO Cancel Trip
+                            dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler,
+                                    "");
+                        }
+                    }, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Dialogs.INSTANCE.dismissDialog();
+                        }
+                    }, "Cancel Trip", "Cancel If No Show");
+                } else*/ if (Utils.isCancelAfter5Min()) {
                     Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1045,6 +1062,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     /************************************************************************************
      * WHEN DRIVER LOCATION UPDATE ROTATE MAP IN THE DIRECTION TO WHICH DRIVER IS MOVING SLOWLY..
      *************************************************************************************/
+    private final int ANIMATE_SPEED_TURN = 1000;
+
     public void updateCamera(final String bearing) {
         new Thread(new Runnable() {
             @Override
@@ -1052,12 +1071,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (mGoogleMap != null && mGoogleMap.getCameraPosition().zoom == 16f) {
+//                        && mGoogleMap.getCameraPosition().zoom == 16f
+                        if (mGoogleMap != null) {
                             CameraPosition currentPlace = new CameraPosition.Builder()
                                     .target(new LatLng(mCurrentLocation.getLatitude(),
                                             mCurrentLocation.getLongitude()))
                                     /*.bearing(Float.parseFloat(bearing)).tilt(0f)*/
                                     .zoom(16f).build();
+//                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
+//                            int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._40sdp);
+//                            mGoogleMap.setPadding(padding, padding, padding, padding);
+//                            mGoogleMap.animateCamera(cameraUpdate, ANIMATE_SPEED_TURN, changeMapRotation);
                             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace), 2000, changeMapRotation);
                             mpreLocBearing = bearing;
                         }
@@ -1370,8 +1394,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             updateDriverMarker(mCurrentLocation.getLatitude() + "",
                     mCurrentLocation.getLongitude() + "");
 
-            if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
-                    || AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            if (/*AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
+                    ||*/ AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng()))
                     drawRouteOnChange(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()),
                             new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng())));

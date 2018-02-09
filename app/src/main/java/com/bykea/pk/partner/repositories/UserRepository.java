@@ -771,11 +771,23 @@ public class UserRepository {
         mRestRequestHandler.getProfileData(context, mDataCallback);
     }
 
-    public void postProblem(Context context, IUserDataHandler handler, String selectedReason,
-                            String tripId, String email, String details, boolean isFromReport) {
+    public void postProblem(Context context,
+                            IUserDataHandler handler,
+                            String selectedReason,
+                            String tripId,
+                            String email,
+                            String contactType,
+                            String details,
+                            boolean isFromReport) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.postProblem(context, selectedReason, tripId, email, details, isFromReport, mDataCallback);
+        mRestRequestHandler.postProblem(context,
+                selectedReason,
+                tripId,
+                email,
+                contactType,
+                details,
+                isFromReport, mDataCallback);
     }
 
     public void downloadAudioFile(Context context, String path, IUserDataHandler handler) {

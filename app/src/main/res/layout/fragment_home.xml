@@ -168,6 +168,6 @@
         android:layout_height="@dimen/height.xlarge"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:background="@color/windowBackground" />
+        android:background="@color/white" />
 
 </RelativeLayout>

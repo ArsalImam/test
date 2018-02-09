@@ -12,6 +12,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ReportActivity extends BaseActivity {
     private ProblemItemsAdapter mAdapter;
     private ArrayList<String> mReportList;
     private final String BOOKING_PROBLEM = "Booking se mutalik koi masla";
-    private boolean isHelpShowing =  false;
+    private boolean isHelpShowing = false;
     private String[] contactReasongs;
 
     @Bind(R.id.reportList)
@@ -41,6 +42,8 @@ public class ReportActivity extends BaseActivity {
     @Bind(R.id.helpLayout)
     LinearLayout helpLayout;
 
+    private String contactType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,9 +52,10 @@ public class ReportActivity extends BaseActivity {
         mCurrentActivity = this;
         ButterKnife.bind(mCurrentActivity);
         helpLayout.setVisibility(View.GONE);
-        setGreenActionBarTitle("Report","رپورٹ");
+        setGreenActionBarTitle("Report", "رپورٹ");
         createData();
         initRecyclerView();
+        contactType = getIntent().getStringExtra(Constants.Extras.CONTACT_TYPE);
     }
 
     private void initRecyclerView() {
@@ -63,12 +67,12 @@ public class ReportActivity extends BaseActivity {
         mAdapter.setMyOnItemClickListener(new ProblemItemsAdapter.MyOnItemClickListener() {
             @Override
             public void onItemClickListener(int position, View view, String reason) {
-                if(reason.equalsIgnoreCase(BOOKING_PROBLEM)){
+                if (reason.equalsIgnoreCase(BOOKING_PROBLEM)) {
                     isHelpShowing = true;
                     rvReportList.setVisibility(View.GONE);
                     helpLayout.setVisibility(View.VISIBLE);
-                }else{
-                    ActivityStackManager.getInstance().startReportPostActivity(reason,mCurrentActivity);
+                } else {
+                    ActivityStackManager.getInstance().startReportPostActivity(mCurrentActivity, reason, contactType);
                 }
             }
         });
@@ -77,7 +81,7 @@ public class ReportActivity extends BaseActivity {
     private void createData() {
         mReportList = new ArrayList<>();
         contactReasongs = AppPreferences.getSettings().getPredefine_messages().getContact_reason();
-        Collections.addAll(mReportList,contactReasongs);
+        Collections.addAll(mReportList, contactReasongs);
 //        mReportList.add("App me masla hai");
 //        mReportList.add("Mujhay request nahi arahi");
 //        mReportList.add("Guarantee me masla he");
@@ -91,11 +95,11 @@ public class ReportActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(isHelpShowing){
+        if (isHelpShowing) {
             isHelpShowing = false;
             rvReportList.setVisibility(View.VISIBLE);
             helpLayout.setVisibility(View.GONE);
-        }else {
+        } else {
             super.onBackPressed();
         }
     }

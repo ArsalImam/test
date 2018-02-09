@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontButton;
@@ -64,6 +66,16 @@ public class PostProblemFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        if(StringUtils.isNotBlank(AppPreferences.getPilotData().getEmail())) {
+            etEmail.setText(AppPreferences.getPilotData().getEmail());
+            etDetails.requestFocus();
+        }else{
+            etEmail.requestFocus();
+        }
+    }
+
     @OnClick({R.id.submitBtn})
     void onClick(View view) {
         switch (view.getId()) {
@@ -111,9 +123,13 @@ public class PostProblemFragment extends Fragment {
     private void submitProblem() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         new UserRepository().postProblem(mCurrentActivity,
-                mCallBack,mCurrentActivity.selectedReason,
-                mCurrentActivity.tripId,etEmail.getText().toString(),
-                etDetails.getText().toString(),false);
+                mCallBack,
+                mCurrentActivity.selectedReason,
+                mCurrentActivity.tripId,
+                etEmail.getText().toString(),
+                "",
+                etDetails.getText().toString(),
+                false);
         }
 
     private IUserDataHandler mCallBack = new UserDataHandler(){

@@ -715,6 +715,17 @@ public class Utils {
         return diff >= cancel_time * 60000;
     }
 
+    public static boolean isCancelAfterXMin() {
+        long diff = (System.currentTimeMillis() - (AppPreferences.getServerTimeDifference() + AppPreferences.getCallData().getSentTime()));
+        Utils.redLog("Time Diff Call", "" + diff);
+        long cancel_time = 5;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getCancel_time())) {
+            cancel_time = Long.parseLong(AppPreferences.getSettings().getSettings().getCancel_time());
+        }
+        return diff >= cancel_time * 60000;
+    }
+
     /*
         public static ArrayList<PlacesResult> getCities() {
             PlacesResult rawalpindi = new PlacesResult("Rawalpindi", StringUtils.EMPTY, Constants.rwpLat, Constants.rwpLng);

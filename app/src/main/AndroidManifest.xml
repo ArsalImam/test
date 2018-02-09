@@ -54,6 +54,9 @@
         <activity
             android:name=".ui.activities.HomeActivity"
             android:launchMode="singleTask"
+            android:largeHeap="true"
+            android:theme="@style/AppTheme.Map"
+            android:hardwareAccelerated="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.SplashActivity"
@@ -95,6 +98,8 @@
         <activity
             android:name=".ui.activities.BookingActivity"
             android:excludeFromRecents="false"
+            android:hardwareAccelerated="false"
+            android:theme="@style/AppTheme.Map"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.FeedbackActivity"
@@ -168,6 +173,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.ConfirmDestinationActivity"
+            android:theme="@style/AppTheme.Map"
+            android:hardwareAccelerated="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.AccountsListActivity"

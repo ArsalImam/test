@@ -62,6 +62,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/square_outline_bg"
                 android:hint="Enter Email"
+                android:textColor="@color/textColorPrimary"
+                android:textColorHint="@color/Color_Gray"
                 android:inputType="textEmailAddress"
                 android:padding="@dimen/_9sdp"
                 android:textSize="@dimen/textsize.body1" />
@@ -81,6 +83,7 @@
                 android:scrollbarStyle="insideInset"
                 android:scrollbars="vertical"
                 android:textColor="@color/textColorPrimary"
+                android:textColorHint="@color/Color_Gray"
                 android:textSize="@dimen/textsize.body1"
                 android:visibility="visible" />
 

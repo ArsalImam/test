@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.helpers;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -182,14 +181,16 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-    public void startReportActivity(Context mContext) {
+    public void startReportActivity(Context mContext, String cTtype) {
         Intent intent = new Intent(mContext, ReportActivity.class);
+        intent.putExtra(Constants.Extras.CONTACT_TYPE, cTtype);
         mContext.startActivity(intent);
     }
 
-    public void startReportPostActivity(String reason, Context mContext) {
+    public void startReportPostActivity(Context mContext, String reason, String contactType) {
         Intent intent = new Intent(mContext, ReportPostActivity.class);
         intent.putExtra("reason", reason);
+        intent.putExtra(Constants.Extras.CONTACT_TYPE, contactType);
         mContext.startActivity(intent);
     }
 
