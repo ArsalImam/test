@@ -43,8 +43,8 @@ public class ReportPostActivity extends BaseActivity {
     @Bind(R.id.editText_lay)
     LinearLayout editText_lay;
 
-    private String reason;
-    private String contactType;
+    private String reason, contactType;
+    private final String backScreen = "BACK TO REPORTS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class ReportPostActivity extends BaseActivity {
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.submitBtn:
-                if (submitBtn.getText().toString().equalsIgnoreCase(getString(R.string.back_to_booking_history))) {
+                if (submitBtn.getText().toString().equalsIgnoreCase(backScreen)) {
                     mCurrentActivity.finish();
                 } else {
                     if (isValid()) {
@@ -86,7 +86,7 @@ public class ReportPostActivity extends BaseActivity {
         mCurrentActivity.findViewById(R.id.ivBackBtn).setVisibility(View.GONE);
         editText_lay.setVisibility(View.GONE);
         text_lay.setVisibility(View.VISIBLE);
-        submitBtn.setText("BACK TO REPORTS");
+        submitBtn.setText(backScreen);
         submitBtn.setTypeface(FontUtils.getFonts(mCurrentActivity, "roboto_bold.ttf"));
 
 //        mCurrentActivity.isSubmitted = true;

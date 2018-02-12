@@ -50,7 +50,8 @@ android {
         debug {
             //key for staging apps
 //            resValue "string", "google_api_client_key", '"AIzaSyCEWBeRa_DqLFg3-qU5Qtu9HWSjUsjezjc"'
-            resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'
+            resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'   //Latest staging 9 Feb
+//            resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'//Live Map Key Driver
 
             signingConfig signingConfigs.debug
             shrinkResources false // to remove unused resources. This will reduce APK size.

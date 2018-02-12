@@ -412,7 +412,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             Dialogs.INSTANCE.dismissDialog();
                         }
                     }, "Cancel Trip", "Cancel If No Show");
-                } else*/ if (Utils.isCancelAfter5Min()) {
+                } else*/
+                if (Utils.isCancelAfter5Min()) {
                     Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -510,25 +511,33 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void startGoogleDirectionsApp() {
         if (callData != null) {
             String start, end = StringUtils.EMPTY;
-            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            if(callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)){
                 start = Utils.getCurrentLocation();
-                end = callData.getStartLat() + "," + callData.getStartLng();
-            } else {
+                if (StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
+                    end = callData.getStartLat() + "," + callData.getStartLng();
+                }
+            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 start = Utils.getCurrentLocation();
+//                end = callData.getStartLat() + "," + callData.getStartLng();
                 if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
                     end = callData.getEndLat() + "," + callData.getEndLng();
                 }
+            } else {
+                start = Utils.getCurrentLocation();
+                if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
+//                    end = callData.getEndLat() + "," + callData.getEndLng();
+                    end = callData.getStartLat() + "," + callData.getStartLng();
+                }
             }
 
-            String uri = "http://maps.google.com/maps?saddr=" + start +
-                    "&daddr=" + end;
+            String uri = "http://maps.google.com/maps?saddr=" + start + "&daddr=" + end;
+//            String uri1 = "https://maps.google.com/maps/dir/?api=1&origin=" + start + "&destination=" + end + "&travelmode=driving";
+//            "&dir_action=navigate"
             try {
-                Intent intent;
-                intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(uri));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 Utils.redLog("Google Route Link ", uri);
                 startActivity(intent);
-            } catch (ActivityNotFoundException ex) {
+            } catch (Exception ex) {
                 Toast.makeText(mCurrentActivity, "Please install google play services", Toast.LENGTH_LONG).show();
             }
 

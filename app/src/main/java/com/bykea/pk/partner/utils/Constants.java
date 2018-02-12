@@ -58,7 +58,8 @@ public class Constants {
 
 
     //Staging
-    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";
+//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";   //Staging Server Key of Passenger
+    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyCJw1nRmfRZnfpd8MoBUZodz6dCdWOaINU"; //Latest Staging 9 Feb for Driver
     //Live
 //    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
