@@ -524,7 +524,7 @@ public class ChatActivityNew extends BaseActivity {
             e.printStackTrace();
         } finally {
             isRecording = false;
-            opusRecorder.stopRecording();
+//            opusRecorder.stopRecording();
 //            OpusService.stopRecording(mCurrentActivity);
         }
     }

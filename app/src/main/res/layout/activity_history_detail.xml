@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -83,8 +84,6 @@
             </LinearLayout>
 
 
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height.large"
@@ -107,12 +106,15 @@
                     android:id="@+id/nameTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
+                    android:maxLength="22"
+                    android:maxLines="1"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_light.ttf" />
+                    app:fontName="roboto_light.ttf"
+                    tools:text="Muhammad Salman Qureshi" />
 
             </LinearLayout>
             <!--
@@ -682,9 +684,9 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="@dimen/feedback_padding_bottom"
-                        android:paddingTop="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingLeft="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingTop="@dimen/feedback_padding"
                         android:text="Comfort"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -700,9 +702,9 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="@dimen/feedback_padding_bottom"
-                        android:paddingTop="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingLeft="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingTop="@dimen/feedback_padding"
                         android:text="Driving"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -719,9 +721,9 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="@dimen/feedback_padding_bottom"
-                        android:paddingTop="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingLeft="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingTop="@dimen/feedback_padding"
                         android:text="Navigation"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -751,9 +753,9 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="@dimen/feedback_padding_bottom"
-                        android:paddingTop="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingLeft="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingTop="@dimen/feedback_padding"
                         android:text="احتیاط"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -770,9 +772,9 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="@dimen/feedback_padding_bottom"
-                        android:paddingTop="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingLeft="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingTop="@dimen/feedback_padding"
                         android:text="Navigation"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -789,9 +791,9 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="@dimen/feedback_padding_bottom"
-                        android:paddingTop="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingLeft="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingTop="@dimen/feedback_padding"
                         android:text="Navigation"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -801,6 +803,7 @@
                 </LinearLayout>
 
             </LinearLayout>
+
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/btnProblem"
                 android:layout_width="@dimen/_230sdp"

@@ -160,32 +160,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private NormalCallData callData;
     private UserRepository dataRepository;
     private String cancelReason = StringUtils.EMPTY;
-    public static boolean isWazeCheck = true;
-    public static boolean isGoogleCheck;
-    public static int cancelRequest = 0;
-    private int distanceToPickup = 0;
 
     private Marker driverMarker, dropOffMarker, pickUpMarker/*, passCurrentLocMarker*/;
-    private MarkerOptions driverMarkerOptions;
     private Polyline mapPolylines;
     private List<LatLng> mRouteLatLng;
-    private PolylineOptions mPolylineOptions;
 
-    private List<Circle> mArriveTraceCircleList;
-    private List<Circle> mStartTraceCircleList;
-    //    private LatLng dropOff = new LatLng(33.438706, 72.970290);
 
     //LOCATION CHANGE UPDATE DATA MEMBERS
     private Location mCurrentLocation;
     private Location mPreviousLocation;
     private String mLocBearing = "0.0";
-    private String mpreLocBearing = "0";
-    private boolean isDriverUpdated;
-    private boolean animationStart = false, isFirstTime = true;
-
-    //HANDLING RESUME CASE.
-//    private NormalCallData resumeTripData;
-    private boolean isResume = false;
+    private boolean animationStart = false, isFirstTime = true, isResume = false;
 
 
     private GoogleMap mGoogleMap;
@@ -281,8 +266,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             new com.google.maps.model.LatLng(AppPreferences.getLatitude(),
                                     AppPreferences.getLongitude()));
                     if (callData != null) {
-                        if (/*AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
-                                ||*/ AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                        if (/*callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
+                                ||*/ callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                             if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
                                 updatePickupMarker(callData.getEndLat(), callData.getEndLng());
                                 setPickupBounds();
@@ -511,7 +496,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void startGoogleDirectionsApp() {
         if (callData != null) {
             String start, end = StringUtils.EMPTY;
-            if(callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)){
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                 start = Utils.getCurrentLocation();
                 if (StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
                     end = callData.getStartLat() + "," + callData.getStartLng();
@@ -657,11 +642,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(Keys.BROADCAST_CANCEL_RIDE);
-//        intentFilter.addAction(Keys.BROADCAST_COMPLETE_BY_ADMIN);
-//        intentFilter.addAction(Keys.BROADCAST_DROP_OFF_UPDATED);
-//        registerReceiver(cancelRideReceiver, intentFilter);
         registerReceiver(locationReceiver, new IntentFilter(Keys.LOCATION_UPDATE_BROADCAST));
     }
 
@@ -669,7 +649,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     protected void onResume() {
         mapView.onResume();
         setInitialData();
-//        LocationService.setContext(BookingActivity.this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
@@ -677,9 +656,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         registerReceiver(networkChangeListener, intentFilter);
         checkGps();
         checkConnectivity(mCurrentActivity);
-         /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
-//        LocationService.setContext(BookingActivity.this);
-//        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
         isJobActivityLive = true;
         AppPreferences.setJobActivityOnForeground(true);
@@ -753,8 +729,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mCurrentLocation.setLongitude(AppPreferences.getLongitude());
         mCurrentLocation.setLatitude(AppPreferences.getLatitude());
         mPreviousLocation = new Location("");
-        mArriveTraceCircleList = new ArrayList<>();
-        mStartTraceCircleList = new ArrayList<>();
 
         callData = AppPreferences.getCallData();
         showWalletAmount();
@@ -801,7 +775,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
 
             if (StringUtils.isNotBlank(callData.getDistance()))
-                distanceToPickup = (int) Double.parseDouble(callData.getDistance()) * 1000;
+                ;
 
         }
     }
@@ -1092,7 +1066,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //                            mGoogleMap.setPadding(padding, padding, padding, padding);
 //                            mGoogleMap.animateCamera(cameraUpdate, ANIMATE_SPEED_TURN, changeMapRotation);
                             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace), 2000, changeMapRotation);
-                            mpreLocBearing = bearing;
                         }
 
                     }
@@ -1306,7 +1279,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         } else {
             if (mapPolylines != null) {
-                mPolylineOptions = null;
                 mapPolylines.remove();
             }
 //            Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, "No destination available to draw route");
@@ -1318,7 +1290,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             drawRoute(startLatLng, endLatlng, Routing.onChangeRoute);
         } else {
             if (mapPolylines != null) {
-                mPolylineOptions = null;
                 mapPolylines.remove();
             }
         }
@@ -1355,8 +1326,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     mRouteLatLng = route.get(0).getPoints();
                     updateEtaAndCallData((route.get(0).getDurationValue() / 60) + "",
                             Utils.formatDecimalPlaces((route.get(0).getDistanceValue() / 1000.0) + "", 1));
-
-                    distanceToPickup = (route.get(0).getDistanceValue());
 
 
                     if (mapPolylines != null) {
@@ -1484,83 +1453,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
     };
-
-    //METHOD CALLED WHEN THE WE PLOT ROUTE FROM CURRENT LOCATION TO DESTINATION. IN ROUTING SUCCESS CALLBACK METHOD.
-    private void addTraceCircles(Location circleLocation) {
-
-        if (null == mPreviousLocation || null == mGoogleMap) return;
-        CircleOptions mStartTraceCirleOptions;
-        CircleOptions mArriveTraceCirleOptions;
-        if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-            if (null != mStartTraceCircleList) mStartTraceCircleList.clear();
-            mStartTraceCirleOptions = null;
-            mArriveTraceCirleOptions = new CircleOptions();
-            mArriveTraceCirleOptions.center(new LatLng(circleLocation.getLatitude(),
-                    circleLocation.getLongitude()));
-            mArriveTraceCirleOptions.fillColor(ContextCompat.getColor(mCurrentActivity, R.color.color_success));
-            mArriveTraceCirleOptions.radius(6);
-            mArriveTraceCirleOptions.strokeWidth(0);
-            mArriveTraceCircleList.add(mGoogleMap.addCircle(mArriveTraceCirleOptions));
-
-        } else if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            if (null != mArriveTraceCircleList) mArriveTraceCircleList.clear();
-            mArriveTraceCirleOptions = null;
-            mStartTraceCirleOptions = new CircleOptions();
-            mStartTraceCirleOptions.center(new LatLng(circleLocation.getLatitude(),
-                    circleLocation.getLongitude()));
-            mStartTraceCirleOptions.fillColor(ContextCompat.getColor(mCurrentActivity, R.color.color_success));
-            mStartTraceCirleOptions.radius(6);
-            mStartTraceCirleOptions.strokeWidth(0);
-            mStartTraceCircleList.add(mGoogleMap.addCircle(mStartTraceCirleOptions));
-        }
-
-    }
-
-
-
-    /*private BroadcastReceiver cancelRideReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, final Intent intent) {
-            if (mCurrentActivity != null && null != intent && null != intent.getExtras()) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)) {
-                            cancelByPassenger(false, "");
-                        }
-                        if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
-                            String message = intent.getStringExtra("msg");
-                            cancelByPassenger(true, message);
-                        }
-                        if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_COMPLETE_BY_ADMIN)) {
-                            playNotificationSound();
-                            onCompleteByAdmin(intent.getStringExtra("msg"));
-                        }
-                        if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
-                            playNotificationSound();
-                            Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
-                            callData = AppPreferences.getCallData();
-                            updateDropOff();
-                        }
-                    }
-                });
-
-            }
-        }
-    };*/
-
-    private void updateDropOffUI() {
-        callData = AppPreferences.getCallData();
-        if (StringUtils.isNotBlank(callData.getEndAddress())
-                && StringUtils.isNotBlank(callData.getEndLat())
-                && StringUtils.isNotBlank(callData.getEndLng())) {
-            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                setStartedState();
-                updateDropOff();
-            }
-        }
-
-    }
 
 
     private void cancelByPassenger(boolean isCanceledByAdmin, String cancelMsg) {

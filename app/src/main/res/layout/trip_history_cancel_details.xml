@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -146,12 +147,15 @@
                     android:id="@+id/nameTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
+                    android:maxLength="22"
+                    android:maxLines="1"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_light.ttf" />
+                    app:fontName="roboto_light.ttf"
+                    tools:text="Muhammad Salman Qureshi" />
 
             </LinearLayout>
 

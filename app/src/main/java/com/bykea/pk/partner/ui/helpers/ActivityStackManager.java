@@ -29,7 +29,6 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
-import top.oply.opuslib.OpusService;
 
 
 public class ActivityStackManager {
@@ -192,22 +191,6 @@ public class ActivityStackManager {
         intent.putExtra("reason", reason);
         intent.putExtra(Constants.Extras.CONTACT_TYPE, contactType);
         mContext.startActivity(intent);
-    }
-
-
-    public void startOpusService(Context mContext) {
-        if (!Utils.isServiceRunning(mContext, OpusService.class)) {
-            Intent intent = new Intent(mContext, OpusService.class);
-            mContext.startService(intent);
-            Utils.redLog("StackManager", "OpusService Starts from " + mContext.getClass().getSimpleName());
-        }
-    }
-
-    public void stopOpusService(Context mContext) {
-        if (Utils.isServiceRunning(mContext, OpusService.class)) {
-            mContext.stopService(new Intent(mContext, OpusService.class));
-            Utils.redLog("StackManager", "OpusService Stop");
-        }
     }
 
 }
