@@ -13,7 +13,7 @@ import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
-import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
+import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
@@ -42,7 +42,6 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.squareup.okhttp.ResponseBody;
-import com.squareup.okhttp.internal.Util;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -507,7 +506,7 @@ public class RestRequestHandler {
         mRestClient = RestClient.getClient(context);
         Call<WalletHistoryResponse> restCall = mRestClient.getWalletHistory(driverId,
                 accessToken, "d", pageNo);
-//        restCall.enqueue(new GenericRetrofitCallBack<WalletHistoryResponse>(onResponseCallBack));
+//        restCall.enqueue(new GenericRetrofitCallBackSuccess<WalletHistoryResponse>(onResponseCallBack));
         restCall.enqueue(new Callback<WalletHistoryResponse>() {
             @Override
             public void onResponse(Response<WalletHistoryResponse> response, Retrofit retrofit) {
@@ -537,7 +536,7 @@ public class RestRequestHandler {
         mRestClient = RestClient.getClient(context);
         Call<AccountNumbersResponse> restCall = mRestClient.getAccountNumbers(driverId,
                 accessToken, "d", pageNo);
-//        restCall.enqueue(new GenericRetrofitCallBack<WalletHistoryResponse>(onResponseCallBack));
+//        restCall.enqueue(new GenericRetrofitCallBackSuccess<WalletHistoryResponse>(onResponseCallBack));
         restCall.enqueue(new Callback<AccountNumbersResponse>() {
             @Override
             public void onResponse(Response<AccountNumbersResponse> response, Retrofit retrofit) {
@@ -567,7 +566,7 @@ public class RestRequestHandler {
         mRestClient = RestClient.getClient(context);
         Call<ContactNumbersResponse> restCall = mRestClient.getContactNumbers(driverId,
                 accessToken, "d");
-//        restCall.enqueue(new GenericRetrofitCallBack<WalletHistoryResponse>(onResponseCallBack));
+//        restCall.enqueue(new GenericRetrofitCallBackSuccess<WalletHistoryResponse>(onResponseCallBack));
         restCall.enqueue(new Callback<ContactNumbersResponse>() {
             @Override
             public void onResponse(Response<ContactNumbersResponse> response, Retrofit retrofit) {
@@ -596,21 +595,21 @@ public class RestRequestHandler {
         Call<ChangePinResponse> requestCall = mRestClient.requestChangePin(AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken(),
                 newPin, oldPin, "d");
-        requestCall.enqueue(new GenericRetrofitCallBack<ChangePinResponse>(onResponseCallBack));
+        requestCall.enqueue(new GenericRetrofitCallBackSuccess<ChangePinResponse>(onResponseCallBack));
     }
 
     public void getProfileData(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
         Call<GetProfileResponse> requestCall = mRestClient.requestProfileData(AppPreferences.getDriverId(), AppPreferences.getAccessToken(), "d");
-        requestCall.enqueue(new GenericRetrofitCallBack<GetProfileResponse>(onResponseCallBack));
+        requestCall.enqueue(new GenericRetrofitCallBackSuccess<GetProfileResponse>(onResponseCallBack));
     }
 
     public void getCities(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
         Call<GetCitiesResponse> requestCall = mRestClient.getCities();
-        requestCall.enqueue(new GenericRetrofitCallBack<GetCitiesResponse>(onResponseCallBack));
+        requestCall.enqueue(new GenericRetrofitCallBackSuccess<GetCitiesResponse>(onResponseCallBack));
     }
 
     public synchronized void requestHeatMap(Context context, final IResponseCallback onResponseCallBack) {
@@ -639,10 +638,10 @@ public class RestRequestHandler {
     }
 
 
-    private class GenericRetrofitCallBack<T extends CommonResponse> implements Callback<T> {
+    private class GenericRetrofitCallBackSuccess<T extends CommonResponse> implements Callback<T> {
         private IResponseCallback mCallBack;
 
-        public GenericRetrofitCallBack(IResponseCallback callBack) {
+        public GenericRetrofitCallBackSuccess(IResponseCallback callBack) {
             mCallBack = callBack;
         }
 
@@ -665,13 +664,50 @@ public class RestRequestHandler {
         }
     }
 
+    private class GenericRetrofitCallBack<T extends CommonResponse> implements Callback<T> {
+        private IResponseCallback mCallBack;
+
+        public GenericRetrofitCallBack(IResponseCallback callBack) {
+            mCallBack = callBack;
+        }
+
+        @Override
+        public void onResponse(Response<T> response, Retrofit retrofit) {
+            if (response == null || response.body() == null) {
+                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + mContext.getString(R.string.error_try_again) + " ");
+                return;
+            }
+            if (response.body().isSuccess()) {
+                mCallBack.onResponse(response.body());
+            } else {
+                mCallBack.onError(response.body().getCode(), response.body().getMessage());
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+        }
+    }
+
     public void requestDriverDropOff(Context context, IResponseCallback onResponseCallBack,
                                      String lat, String lng, String address) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
         Call<DriverDestResponse> requestCall = mRestClient.setDriverDroppOff(AppPreferences.getDriverId()
                 , AppPreferences.getAccessToken(), lat, lng, address);
-        requestCall.enqueue(new GenericRetrofitCallBack<DriverDestResponse>(onResponseCallBack));
+        requestCall.enqueue(new GenericRetrofitCallBackSuccess<DriverDestResponse>(onResponseCallBack));
+    }
+
+    public void updateRegid(IResponseCallback onResponseCallBack,
+                            String id,
+                            String reg_id,
+                            String tokenId, Context context) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<UpdateRegIDResponse> requestCall = mRestClient.updateRegid(id, id, tokenId, reg_id,
+                "android", "d");
+        requestCall.enqueue(new GenericRetrofitCallBack<UpdateRegIDResponse>(onResponseCallBack));
     }
 
     @NonNull
@@ -711,7 +747,7 @@ public class RestRequestHandler {
                 details,
                 isFromReport,
                 "d");
-        restCall.enqueue(new GenericRetrofitCallBack<ProblemPostResponse>(onResponseCallBack));
+        restCall.enqueue(new GenericRetrofitCallBackSuccess<ProblemPostResponse>(onResponseCallBack));
 
     }
 
@@ -905,20 +941,39 @@ public class RestRequestHandler {
     }
 
 
-    public PlaceAutoCompleteResponse autocomplete(String input) {
+    public void autocomplete(Context context, String input, final IResponseCallback mDataCallback) {
+        mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
         Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
-        PlaceAutoCompleteResponse placeAutoCompleteResponse = null;
-        try {
-            Response<PlaceAutoCompleteResponse> response = call.execute();
-            if (response.body().getStatus().equalsIgnoreCase("OK")) {
-                placeAutoCompleteResponse = response.body();
+        call.enqueue(new Callback<PlaceAutoCompleteResponse>() {
+            @Override
+            public void onResponse(Response<PlaceAutoCompleteResponse> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body() != null &&
+                        response.body().getStatus().equalsIgnoreCase("OK")) {
+                    mDataCallback.onResponse(response.body());
+                } else {
+                    mDataCallback.onError(0, response.message());
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return placeAutoCompleteResponse;
+
+            @Override
+            public void onFailure(Throwable t) {
+                mDataCallback.onError(0, t.toString());
+            }
+        });
+//        PlaceAutoCompleteResponse placeAutoCompleteResponse = null;
+//        try {
+//            Response<PlaceAutoCompleteResponse> response = call.execute();
+//            if (response.body().getStatus().equalsIgnoreCase("OK")) {
+//                placeAutoCompleteResponse = response.body();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Utils.redLog("AutoComplete", "Api called with input = " + input);
+//        return placeAutoCompleteResponse;
     }
+
 
     public void getPlaceDetails(String s, Context context, final IResponseCallback mDataCallback) {
         mContext = context;

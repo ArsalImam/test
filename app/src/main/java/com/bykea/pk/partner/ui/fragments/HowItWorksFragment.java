@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.fragments;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.MyPlayerActivity;
 import com.bykea.pk.partner.ui.helpers.adapters.HowItWorksVideoAdapter;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -68,6 +70,12 @@ public class HowItWorksFragment extends Fragment {
             @Override
             public void onItemClickListener(ModelVideoDemo data) {
                 try {
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                        // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
+                        //TODO: Remove it when crash is resolved in latest YouTube App
+                        Utils.watchYoutubeVideo(mCurrentActivity, data.getVideoURL().split("v=")[1]);
+                        return;
+                    }
                     Intent intent = new Intent(mCurrentActivity, MyPlayerActivity.class);
                     intent.putExtra("VIDEO_ID", data.getVideoURL().split("v=")[1]);
                     startActivity(intent);

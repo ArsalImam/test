@@ -2,6 +2,9 @@ package com.bykea.pk.partner;
 
 import android.util.Log;
 
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.utils.Utils;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -30,5 +33,8 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
      */
     private void sendRegistrationToServer(String token) {
         AppPreferences.setRegId(token);
+        if (Utils.isFcmIdUpdateRequired()) {
+            new UserRepository().updateRegid(this, new UserDataHandler());
+        }
     }
 }

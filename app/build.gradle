@@ -107,7 +107,7 @@ dependencies {
     /*compile('com.afollestad:easyvideoplayer:0.3.0') {
         exclude group: 'com.android.support'
     }*/
-    compile('com.onesignal:OneSignal:[3.5.3,4.0.0)') {
+    compile('com.onesignal:OneSignal:[3.7.1,4.0.0)') {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'org.jsoup:jsoup:1.10.1'
@@ -128,7 +128,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:11.0.4'
     compile 'com.google.firebase:firebase-core:11.0.4'
     compile 'com.google.firebase:firebase-messaging:11.0.4'
-    compile 'com.google.maps:google-maps-services:0.1.6'
+    compile 'com.google.maps:google-maps-services:0.2.6'
     compile 'com.google.maps.android:android-maps-utils:0.5'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.jakewharton:butterknife:7.0.1'
@@ -149,5 +149,6 @@ dependencies {
     compile 'top.oply.opuslib:opuslib:1.0.2'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
     compile 'de.hdodenhof:circleimageview:2.2.0'
+
 }
 apply plugin: 'com.google.gms.google-services'

@@ -71,7 +71,7 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView feedbackBtn;
 
     private FeedbackActivity mCurrentActivity;
-    private String totalCharges;
+    private String totalCharges = StringUtils.EMPTY;
     private int TOP_UP_LIMIT, AMOUNT_LIMIT;
 
 
@@ -266,11 +266,11 @@ public class FeedbackActivity extends BaseActivity {
         } else if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
             setEtError("Invalid amount");
             return false;
-        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
+        } else if (Constants.REG_EX_DIGIT.matches(totalCharges)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)) {
             setEtError("Amount can't be less than Total Charges");
             return false;
-        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
+        } else if (Constants.REG_EX_DIGIT.matches(totalCharges)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
             setEtError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
             return false;

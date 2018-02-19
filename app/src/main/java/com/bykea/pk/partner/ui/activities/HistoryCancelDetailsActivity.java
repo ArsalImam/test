@@ -68,7 +68,7 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.trip_history_cancel_details);
+        setContentView(R.layout.activity_trip_history_cancel_details);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         mCurrentActivity = this;

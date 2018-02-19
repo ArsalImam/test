@@ -27,6 +27,7 @@
 -keep class top.oply.opuslib.** { *; }
 -keep class java.io.** { *; }
 -keep class com.wang.** { *; }
+-keep class com.onesignal.** { *; }
 -dontwarn butterknife.internal.**
 -dontwarn com.instabug.**
 -dontwarn javax.annotation.Nullable

@@ -80,6 +80,15 @@ public class Fields {
         public static final String tokenId = "token_id";
         public static final String isAvailable = "is_available";
     }
+    public static final class PushNotificationFCM {
+        public static final String ID = "id";
+        public static final String _ID = "_id";
+        public static final String TOKEN_ID = "token_id";
+        public static final String REG_ID = "regId";
+        public static final String DEVICE_TYPE = "device_type";
+        public static final String TYPE = "type";
+        public static final String notification_status = "notification_status";
 
+    }
 
 }

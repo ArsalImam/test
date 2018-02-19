@@ -24,6 +24,7 @@ import com.bykea.pk.partner.models.response.SettingsResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
+import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
@@ -196,6 +197,14 @@ interface IRestClient {
                                                @Field("eLng") String lng,
                                                @Field("eAdd") String address);
 
+    @FormUrlEncoded
+    @POST(ApiTags.UPDATE_REG_ID)
+    Call<UpdateRegIDResponse> updateRegid(@Field(Fields.PushNotificationFCM.ID) String id,
+                                          @Field(Fields.PushNotificationFCM._ID) String _id,
+                                          @Field(Fields.PushNotificationFCM.TOKEN_ID) String tokenId,
+                                          @Field(Fields.PushNotificationFCM.REG_ID) String reg_id,
+                                          @Field(Fields.PushNotificationFCM.DEVICE_TYPE) String device_type,
+                                          @Field(Fields.PushNotificationFCM.TYPE) String type);
 
     @GET(ApiTags.GET_PROFILE_API)
     Call<GetProfileResponse> requestProfileData(@Query("_id") String _id,

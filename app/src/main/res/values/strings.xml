@@ -932,6 +932,7 @@
     <string name="back_to_reports">BACK TO REPORTS</string>
     <string name="bookingProblem">بکنگ سے متعلق مسئلہ کے لئے بکنگ کی تفصیل\n میں جاکر پرابلم کے بٹن پے کلک کریں</string>
     <string name="loading">Loading…</string>
+    <string name="verification_code_sent">We have sent an SMS with your new pin code</string>
 
 
 </resources>

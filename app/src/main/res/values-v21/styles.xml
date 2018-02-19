@@ -2,7 +2,6 @@
 
     <style name="AppTheme" parent="AppTheme.Base">
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:windowContentTransitions">true</item>
 
     </style>

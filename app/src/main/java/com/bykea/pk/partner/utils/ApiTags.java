@@ -62,6 +62,8 @@ public class ApiTags {
     public static final String UPLOAD_DRIVER_DOCUMENTS_API = "/api/v1/users/fileupload";
     public static final String UPLOAD_AUDIO_FILE_API = "/api/v1/chat/fileupload";
     public static final String POST_PROBLEM = "api/v1/driver/sendProblemEmail";
+    public static final String UPDATE_REG_ID = "/api/v1/common/UpdateRegId";
+
 
     /******************************************************************************
      * SOCKET METHODS STRINGS                                                     *

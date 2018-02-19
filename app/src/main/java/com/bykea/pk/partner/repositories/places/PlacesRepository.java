@@ -6,6 +6,7 @@ import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.utils.Constants;
 
@@ -42,6 +43,10 @@ public class PlacesRepository {
         mRestRequestHandler.getPlaceDetails(placeId, context, mGeoCoderPlaces);
     }
 
+    public void getPlaceAutoComplete(Context context, String search, IPlacesDataHandler handler) {
+        mUserCallback = handler;
+        mRestRequestHandler.autocomplete(context, search, mGeoCoderPlaces);
+    }
 
     private IResponseCallback mGeoCoderPlaces = new IResponseCallback() {
         @Override
@@ -52,6 +57,8 @@ public class PlacesRepository {
                 mUserCallback.onDistanceMatrixResponse((GoogleDistanceMatrixApi) object);
             } else if (object instanceof PlaceDetailsResponse) {
                 mUserCallback.onPlaceDetailsResponse((PlaceDetailsResponse) object);
+            }else if (object instanceof PlaceAutoCompleteResponse) {
+                mUserCallback.onPlaceAutoCompleteResponse((PlaceAutoCompleteResponse) object);
             }
         }
 

@@ -47,6 +47,7 @@ import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
+import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
@@ -796,6 +797,14 @@ public class UserRepository {
         mRestRequestHandler.downloadAudioFile(context, mDataCallback, path);
     }
 
+    public void updateRegid(Context context,
+                            IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        PilotData user = AppPreferences.getPilotData();
+        mRestRequestHandler.updateRegid(mDataCallback, user.getId(), AppPreferences.getRegId(), user.getAccessToken(), context);
+    }
+
     private IResponseCallback mDataCallback = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {
@@ -940,6 +949,14 @@ public class UserRepository {
                         break;
                     case "DownloadAudioFileResponse":
                         mUserCallback.onDownloadAudio((DownloadAudioFileResponse) object);
+                        break;
+                    case "UpdateRegIDResponse":
+                        PilotData user = AppPreferences.getPilotData();
+                        if (user != null) {
+                            user.setReg_id(AppPreferences.getRegId());
+                            AppPreferences.setPilotData(user);
+                        }
+                        mUserCallback.onUpdateRegid((UpdateRegIDResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

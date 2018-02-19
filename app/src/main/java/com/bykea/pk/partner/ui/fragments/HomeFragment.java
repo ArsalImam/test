@@ -149,10 +149,11 @@ public class HomeFragment extends Fragment {
         repository = new UserRepository();
         mapView = (MapView) view.findViewById(R.id.homeMapFragment);
         mapView.onCreate(savedInstanceState);
-        mapView.onResume();
+//        mapView.onResume();
         try {
             MapsInitializer.initialize(mCurrentActivity.getApplicationContext());
         } catch (Exception e) {
+            Utils.redLog("HomeScreenException", e.getMessage());
             e.printStackTrace();
         }
         mapView.getMapAsync(mapReadyCallback);

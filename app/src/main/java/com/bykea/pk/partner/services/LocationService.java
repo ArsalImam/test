@@ -93,7 +93,9 @@ public class LocationService extends Service {
         mContext = getApplicationContext();
         //acquire wake lock services to make service run
         PowerManager mgr = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-        wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+        if (mgr != null) {
+            wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+        }
         if (wakeLock != null) {
             wakeLock.acquire();
         }

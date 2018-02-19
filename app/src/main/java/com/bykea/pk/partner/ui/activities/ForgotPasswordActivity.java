@@ -1,12 +1,8 @@
-package com.bykea.pk.partner.ui.fragments;
+package com.bykea.pk.partner.ui.activities;
 
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -27,10 +23,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class ForgotPasswordFragment extends Fragment {
+public class ForgotPasswordActivity extends BaseActivity {
 
 
     @Bind(R.id.backBtn)
@@ -41,18 +34,15 @@ public class ForgotPasswordFragment extends Fragment {
     Button sendBtn;
 
     private UserRepository repository;
+    private ForgotPasswordActivity mCurrentActivity;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_forgot_password, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_forgot_password);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        mCurrentActivity = this;
+        ButterKnife.bind(this);
         repository = new UserRepository();
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         if (StringUtils.isNotBlank(AppPreferences.getPhoneNumber())) {
@@ -60,27 +50,22 @@ public class ForgotPasswordFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
 
     @OnClick({R.id.backBtn, R.id.sendBtn, R.id.phoneNumberEt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backBtn:
-                getActivity().onBackPressed();
+                mCurrentActivity.onBackPressed();
                 break;
             case R.id.sendBtn:
-                if (Connectivity.isConnectedFast(getActivity())) {
-                    if (Utils.isValidNumber(getActivity(), phoneNumberEt)) {
-                        Dialogs.INSTANCE.showLoader(getActivity());
-                        repository.requestForgotPassword(getActivity(), handler,
+                if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                    if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt)) {
+                        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                        repository.requestForgotPassword(mCurrentActivity, handler,
                                 Utils.phoneNumberForServer(phoneNumberEt.getText().toString()));
                     }
                 } else {
-                    Dialogs.INSTANCE.showToast(getActivity(), "Please check your internet connection.");
+                    Dialogs.INSTANCE.showToast(mCurrentActivity, "Please check your internet connection.");
                 }
                 break;
             case R.id.phoneNumberEt:
@@ -94,13 +79,18 @@ public class ForgotPasswordFragment extends Fragment {
     private UserDataHandler handler = new UserDataHandler() {
         @Override
         public void onForgotPassword(ForgotPasswordResponse commonResponse) {
-            if (getView() != null) {
+            if (mCurrentActivity != null) {
                 Dialogs.INSTANCE.dismissDialog();
                 if (commonResponse.isSuccess()) {
-                    Dialogs.INSTANCE.showSuccessMessage(getActivity(), sendBtn, commonResponse.getMessage());
-                    getActivity().onBackPressed();
+                    Dialogs.INSTANCE.showSuccessDialogForgotPassword(mCurrentActivity, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            mCurrentActivity.finish();
+                        }
+                    });
                 } else {
-                    Dialogs.INSTANCE.showError(getActivity(), sendBtn, commonResponse.getMessage());
+                    Dialogs.INSTANCE.showError(mCurrentActivity, sendBtn, commonResponse.getMessage());
                 }
             }
         }

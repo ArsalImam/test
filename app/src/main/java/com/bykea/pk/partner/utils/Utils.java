@@ -3,6 +3,7 @@ package com.bykea.pk.partner.utils;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -1410,5 +1411,23 @@ public class Utils {
     }
 
 
+    public static boolean isFcmIdUpdateRequired() {
+        boolean required = false;
+        if (AppPreferences.isLoggedIn() && StringUtils.isNotBlank(AppPreferences.getRegId())
+                && AppPreferences.getPilotData() != null && !AppPreferences.getRegId().equalsIgnoreCase(AppPreferences.getPilotData().getReg_id())) {
+            required = true;
+        }
+        return required;
+    }
 
+    public static void watchYoutubeVideo(Context context, String id) {
+        try {
+            Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://www.youtube.com/watch?v=" + id));
+            context.startActivity(webIntent);
+        }
+    }
 }

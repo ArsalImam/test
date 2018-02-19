@@ -58,6 +58,9 @@ public class SplashActivity extends BaseActivity {
 //        if (!AppPreferences.isLoggedIn()) {
 //            Utils.resetMixPanel(mCurrentActivity, true);
 //        }
+        if (Utils.isFcmIdUpdateRequired()) {
+            repository.updateRegid(this, handler);
+        }
     }
 
 

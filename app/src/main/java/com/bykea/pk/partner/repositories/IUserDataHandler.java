@@ -38,6 +38,7 @@ import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
+import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
@@ -140,6 +141,7 @@ public interface IUserDataHandler {
     void onProblemPosted(ProblemPostResponse response);
 
     void onDownloadAudio(DownloadAudioFileResponse response);
+    void onUpdateRegid(UpdateRegIDResponse response);
 
     void onError(int errorCode, String errorMessage);
 }

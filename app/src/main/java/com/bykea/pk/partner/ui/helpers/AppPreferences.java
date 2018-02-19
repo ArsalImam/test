@@ -157,7 +157,7 @@ public class AppPreferences {
     }
 
     public static String getRegId() {
-        return mSharedPreferences.getString(Keys.FCM_REGISTRATION_ID, "");
+        return mSharedPreferences.getString(Keys.FCM_REGISTRATION_ID, StringUtils.EMPTY);
     }
 
     public static String getAccessToken() {

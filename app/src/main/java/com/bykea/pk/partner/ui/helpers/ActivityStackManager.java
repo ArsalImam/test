@@ -13,6 +13,7 @@ import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
+import com.bykea.pk.partner.ui.activities.ForgotPasswordActivity;
 import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
@@ -190,6 +191,10 @@ public class ActivityStackManager {
         Intent intent = new Intent(mContext, ReportPostActivity.class);
         intent.putExtra("reason", reason);
         intent.putExtra(Constants.Extras.CONTACT_TYPE, contactType);
+        mContext.startActivity(intent);
+    }
+    public void startForgotPasswordActivity(Context mContext) {
+        Intent intent = new Intent(mContext, ForgotPasswordActivity.class);
         mContext.startActivity(intent);
     }
 

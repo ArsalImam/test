@@ -36,6 +36,7 @@ public class PilotData {
 
     private String lat;
     private String lng;
+    private String reg_id;
 
     private String verified_trips;
 
@@ -235,6 +236,14 @@ public class PilotData {
 
     public void setCashInHand(String cashInHand) {
         this.cashInHand = cashInHand;
+    }
+
+    public String getReg_id() {
+        return reg_id;
+    }
+
+    public void setReg_id(String reg_id) {
+        this.reg_id = reg_id;
     }
 
     public class City {

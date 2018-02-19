@@ -143,6 +143,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     CardView cvLocation;
     @Bind(R.id.ivServiceIcon)
     ImageView ivServiceIcon;
+    @Bind(R.id.tvCashWasooliLabel)
+    FontTextView tvCashWasooliLabel;
 
     private String canceOption = "Didn't show up";
 
@@ -399,6 +401,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     }, "Cancel Trip", "Cancel If No Show");
                 } else*/
                 if (Utils.isCancelAfter5Min()) {
+
+                    String msg ="پہنچنے کے " + AppPreferences.getSettings().getSettings().getCancel_time() + "  منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی" ;
                     Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -410,7 +414,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         public void onClick(View v) {
                             Dialogs.INSTANCE.dismissDialog();
                         }
-                    }, "Cancel Trip", "If you are cancelling after " + AppPreferences.getSettings().getSettings().getCancel_time() + " minutes of booking, you may be charged a small cancellation fee.");
+                    }, "Cancel Trip", msg);
                 } else {
                     cancelReasonDialog();
                 }
@@ -515,15 +519,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
             }
 
-            String uri = "http://maps.google.com/maps?saddr=" + start + "&daddr=" + end;
-//            String uri1 = "https://maps.google.com/maps/dir/?api=1&origin=" + start + "&destination=" + end + "&travelmode=driving";
-//            "&dir_action=navigate"
+//            String uri = "http://maps.google.com/maps?saddr=" + start + "&daddr=" + end;
+            String uri = "https://www.google.com/maps/dir/?api=1&origin=" + start + "&destination=" + end + "&travelmode=driving";
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setPackage("com.google.android.apps.maps");
                 Utils.redLog("Google Route Link ", uri);
                 startActivity(intent);
             } catch (Exception ex) {
-                Toast.makeText(mCurrentActivity, "Please install google play services", Toast.LENGTH_LONG).show();
+                Toast.makeText(mCurrentActivity, "Please install Google Maps", Toast.LENGTH_LONG).show();
             }
 
         }
@@ -824,6 +828,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
             llTopRight.setVisibility(View.VISIBLE);
             tvCodAmount.setText("Rs. " + callData.getCodAmount());
+            boolean isBringType = StringUtils.containsIgnoreCase(callData.getCallType(), "Bring")
+                    || StringUtils.containsIgnoreCase(callData.getCallType(), "Purchase");
+            if (isBringType) {
+                tvCashWasooliLabel.setText("خریداری کی رقم");
+            }
         } else {
             llTopRight.setVisibility(View.INVISIBLE);
         }
