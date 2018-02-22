@@ -15,9 +15,6 @@ public class ApiTags {
 //    public static final String BASE_SERVER_URL = "http://172.16.0.75:3001";
 
 
-    //Bykea 2 (For Heat Map)
-    public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
-
     //STAGING PRO
     public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3001";
@@ -29,6 +26,8 @@ public class ApiTags {
     //live Test
 //    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3001";
 
+    //Bykea 2 (For Heat Map)
+    public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
 
     public static final String GOOGLE_API_BASE_URL = "https://maps.googleapis.com/";
     public static final String PLACES_GEOCODER_EXT_URL = "maps/api/geocode/json";

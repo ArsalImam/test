@@ -289,8 +289,11 @@ public class LocationService extends Service {
             new PlacesRepository().getDistanceMatrix(origin, destination, mContext, new PlacesDataHandler() {
                 @Override
                 public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
-                    if (response.getRows().length > 0
-                            && response.getRows()[0].getElements().length > 0) {
+                    if (response != null && response.getRows() != null
+                            && response.getRows().length > 0 && response.getRows()[0].getElements() != null
+                            && response.getRows()[0].getElements().length > 0
+                            && response.getRows()[0].getElements()[0].getDuration() != null
+                            && response.getRows()[0].getElements()[0].getDistance() != null) {
                         String time = (response.getRows()[0].getElements()[0].getDuration().getValueInt() / 60) + "";
                         String distance = Utils.formatDecimalPlaces((response.getRows()[0].getElements()[0].getDistance().getValueInt() / 1000.0) + "", 1);
                         updateETA(time, distance);

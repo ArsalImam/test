@@ -414,6 +414,7 @@ public class Utils {
         AppPreferences.setIsOnTrip(false);
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
         AppPreferences.setIncomingCall(true);
+        AppPreferences.clearTrackingData();
     }
 
     public static boolean isServiceRunning(Context context, Class<?> serviceClass) {

@@ -272,13 +272,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 ||*/ callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                             if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
                                 updatePickupMarker(callData.getEndLat(), callData.getEndLng());
-                                setPickupBounds();
                             }
+                            setPickupBounds();
                         } else {
                             if (StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
                                 updatePickupMarker(callData.getStartLat(), callData.getStartLng());
-                                setPickupBounds();
                             }
+                            setPickupBounds();
                         }
                     }
                 }
@@ -402,7 +402,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 } else*/
                 if (Utils.isCancelAfter5Min()) {
 
-                    String msg ="پہنچنے کے " + AppPreferences.getSettings().getSettings().getCancel_time() + "  منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی" ;
+                    String msg = "پہنچنے کے " + AppPreferences.getSettings().getSettings().getCancel_time() + "  منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
                     Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -946,7 +946,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         if (Utils.calculateDistance(driverMarker.getPosition().latitude,
                                 driverMarker.getPosition().longitude, mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()) >= 10) {
                             LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                            animateMarker(latLng, mPreviousLocation.bearingTo(mCurrentLocation));
+                            animateMarker(latLng);
                         }
                     }
                 }
@@ -1004,10 +1004,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private boolean isLastAnimationComplete = true;
 
-    private synchronized void animateMarker(final LatLng target, final float toRotation) {
+    private synchronized void animateMarker(final LatLng target) {
         try {
             isLastAnimationComplete = false;
-            final float currentRotationAngle = driverMarker.getRotation();
             final float duration = 4850;
             final Handler handler = new Handler();
             final long start = SystemClock.uptimeMillis();
@@ -1019,7 +1018,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             handler.post(new Runnable() {
                 long elapsed;
                 float t;
-                float rot;
 
                 @Override
                 public void run() {
@@ -1031,7 +1029,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     double lng = t * target.longitude + (1 - t) * startLatLng.longitude;
                     double lat = t * target.latitude + (1 - t) * startLatLng.latitude;
 
-                    rot = t * toRotation + (1 - t) * currentRotationAngle;
                     if (driverMarker == null)
                         return;
 
