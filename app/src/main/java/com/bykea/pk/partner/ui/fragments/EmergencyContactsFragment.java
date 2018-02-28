@@ -1,3 +1,4 @@
+/*
 package com.bykea.pk.partner.ui.fragments;
 
 
@@ -69,3 +70,4 @@ public class EmergencyContactsFragment extends Fragment {
         }
     }
 }
+*/

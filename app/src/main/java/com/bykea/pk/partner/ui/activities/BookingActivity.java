@@ -756,10 +756,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     setStartedState();
                 }
             }
-
-            if (StringUtils.isNotBlank(callData.getIcon())) {
-                Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity));
-                Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity))
+            String icon = Utils.getServiceIcon(callData.getCallType());
+            if (StringUtils.isNotBlank(icon)) {
+                Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon, mCurrentActivity));
+                Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(icon, mCurrentActivity))
                         .placeholder(Utils.getServiceIcon(callData))
                         .into(ivServiceIcon, new Callback() {
                             @Override

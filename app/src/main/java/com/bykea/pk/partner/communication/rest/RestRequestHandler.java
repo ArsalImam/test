@@ -476,7 +476,7 @@ public class RestRequestHandler {
         mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(context);
         Call<SettingsResponse> requestCall = mRestClient.getSettings("d",
-                AppPreferences.getPilotData().getCity().getName(), AppPreferences.getSettingsVersion());
+                AppPreferences.getPilotData().getCity().get_id(), AppPreferences.getSettingsVersion());
         requestCall.enqueue(new Callback<SettingsResponse>() {
             @Override
             public void onResponse(Response<SettingsResponse> response, Retrofit retrofit) {

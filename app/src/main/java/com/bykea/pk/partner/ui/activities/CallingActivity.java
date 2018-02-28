@@ -383,9 +383,10 @@ public class CallingActivity extends BaseActivity {
 //        timeTv.setText(callData.getArivalTime() + " min");
 //        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
-        if (StringUtils.isNotBlank(callData.getIcon())) {
-            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity));
-            Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(callData.getIcon(), mCurrentActivity))
+        String icon = Utils.getServiceIcon(callData.getCallType());
+        if (StringUtils.isNotBlank(icon)) {
+            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon, mCurrentActivity));
+            Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(icon, mCurrentActivity))
                     .placeholder(Utils.getServiceIcon(callData))
                     .into(ivCallType, new Callback() {
                         @Override

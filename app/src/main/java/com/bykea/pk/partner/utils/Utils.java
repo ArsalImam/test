@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -1430,5 +1431,20 @@ public class Utils {
                     Uri.parse("http://www.youtube.com/watch?v=" + id));
             context.startActivity(webIntent);
         }
+    }
+
+    public static String getServiceIcon(String serviceName) {
+        String icon = StringUtils.EMPTY;
+        ArrayList<VehicleListData> mList =
+                AppPreferences.getSettings().getRegion_services();
+        if (mList != null && mList.size() > 0) {
+            for (VehicleListData data : mList) {
+                if (data.getName().equalsIgnoreCase(serviceName)) {
+                    icon = data.getIcon();
+                    break;
+                }
+            }
+        }
+        return icon;
     }
 }
