@@ -13,6 +13,7 @@ public class Keys {
     public static final String PHONE_NUMBER_VERIFIED = "PHONE_NUMBER_VERIFIED";
     public static final String FCM_REGISTRATION_ID = "FCM_REGISTRATION_ID";
     public static final String AVAILABLE_STATUS = "AVAILABLE_STATUS";
+    public static final String AVAILABLE_STATUS_API_CALL = "AVAILABLE_STATUS_API_CALL";
     public static final String VERIFIED_STATUS = "VERIFIED_STATUS";
     public static final String LOGIN_STATUS = "LOGIN_STATUS";
 

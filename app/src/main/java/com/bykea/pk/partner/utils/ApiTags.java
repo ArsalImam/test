@@ -41,7 +41,6 @@ public class ApiTags {
     public static final String CODE_VERIFICATION_API = "/api/v1/users/verfiyPincode";
     public static final String FORGOT_PASSWORD_API = "/api/v1/driver/forgotPassword";
     public static final String REGISTER_USER_API = "/api/v1/driver/register";
-    public static final String UPDATE_STATUS = "/api/v1/driver/updateAvailability";
     public static final String CHECK_RUNNING_TRIP = "/api/v1/getdriverrunningtrip";
     public static final String UPDATE_PROFILE_API = "/api/v1/driver/updateDriverProfile";
     public static final String GET_PROFILE_API = "/api/v1/driver/getProfile";

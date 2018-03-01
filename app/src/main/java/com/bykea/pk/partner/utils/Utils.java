@@ -1413,9 +1413,9 @@ public class Utils {
     }
 
 
-    public static boolean isFcmIdUpdateRequired() {
+    public static boolean isFcmIdUpdateRequired(boolean isLoggedIn) {
         boolean required = false;
-        if (AppPreferences.isLoggedIn() && StringUtils.isNotBlank(AppPreferences.getRegId())
+        if (isLoggedIn && StringUtils.isNotBlank(AppPreferences.getRegId())
                 && AppPreferences.getPilotData() != null && !AppPreferences.getRegId().equalsIgnoreCase(AppPreferences.getPilotData().getReg_id())) {
             required = true;
         }

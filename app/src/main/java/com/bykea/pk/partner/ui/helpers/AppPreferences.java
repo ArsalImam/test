@@ -184,6 +184,17 @@ public class AppPreferences {
                 .apply();
     }
 
+    public static void setAvailableAPICalling(boolean status) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.AVAILABLE_STATUS_API_CALL, status)
+                .apply();
+    }
+
+    public static boolean isAvailableStatusAPICalling() {
+        return mSharedPreferences.getBoolean(Keys.AVAILABLE_STATUS_API_CALL, false);
+    }
+
     public static boolean getAvailableStatus() {
         return mSharedPreferences.getBoolean(Keys.AVAILABLE_STATUS, false);
     }

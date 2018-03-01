@@ -155,11 +155,6 @@ interface IRestClient {
     @GET(ApiTags.GET_SERVICE_TYPE_API)
     Call<ServiceTypeResponse> getServiceTypes();
 
-    @FormUrlEncoded
-    @POST(ApiTags.UPDATE_STATUS)
-    Call<PilotStatusResponse> updateStatus(@Field("driver_id") String driverId,
-                                           @Field("is_available") String status);
-
     @GET(ApiTags.GET_WALLET_LIST)
     Call<WalletHistoryResponse> getWalletHistory(@Query("_id") String Id,
                                                  @Query("token_id") String tokenId,

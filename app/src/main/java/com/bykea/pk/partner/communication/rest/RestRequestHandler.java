@@ -27,7 +27,6 @@ import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
-import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
@@ -412,34 +411,6 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
-    }
-
-    //THIS METHOD IS UPLOAD DRIVER DOCUMENT FILE
-    public void updatePilotStatus(Context context, final IResponseCallback onResponseCallback,
-                                  String driverId, boolean status) {
-        mContext = context;
-        mResponseCallBack = onResponseCallback;
-        mRestClient = RestClient.getClient(mContext);
-        Call<PilotStatusResponse> requestCall = mRestClient.updateStatus(driverId, status + "");
-        requestCall.enqueue(new Callback<PilotStatusResponse>() {
-            @Override
-            public void onResponse(Response<PilotStatusResponse> response, Retrofit retrofit) {
-                if (null == response.body()) {
-                    mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
-                } else if (response.body().getCode() == HTTPStatus.OK ||
-                        response.body().getCode() == HTTPStatus.CREATED) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body().getCode(),
-                            response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
     }

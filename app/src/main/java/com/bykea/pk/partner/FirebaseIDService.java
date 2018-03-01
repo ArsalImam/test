@@ -33,7 +33,7 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
      */
     private void sendRegistrationToServer(String token) {
         AppPreferences.setRegId(token);
-        if (Utils.isFcmIdUpdateRequired()) {
+        if (Utils.isFcmIdUpdateRequired(AppPreferences.isLoggedIn())) {
             new UserRepository().updateRegid(this, new UserDataHandler());
         }
     }

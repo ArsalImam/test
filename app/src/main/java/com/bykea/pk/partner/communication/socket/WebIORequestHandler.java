@@ -359,7 +359,7 @@ public class WebIORequestHandler {
                 if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) && normalCallData.isSuccess()) {
                     ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
                 } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                    if (normalCallData.isSuccess()) {
+                    if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
 
                         /*
                         * when Gps is off, we don't show Calling Screen so we don't need to show
