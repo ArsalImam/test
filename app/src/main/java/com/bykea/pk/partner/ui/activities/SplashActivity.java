@@ -50,16 +50,19 @@ public class SplashActivity extends BaseActivity {
             repository.getCities(mCurrentActivity, handler);
         }
 
-        if (StringUtils.isBlank(AppPreferences.getADID()) && !AppPreferences.isLoggedIn()) {
-            new AdvertisingIdTask().execute();
-        }
+
         Utils.setOneSignalPlayerId();
-//        checkDrawOverlayPermission();
-//        if (!AppPreferences.isLoggedIn()) {
-//            Utils.resetMixPanel(mCurrentActivity, true);
-//        }
-        if (Utils.isFcmIdUpdateRequired()) {
-            repository.updateRegid(this, handler);
+        if (AppPreferences.isLoggedIn()) {
+            if (AppPreferences.getSettings() == null
+                    || AppPreferences.getSettings().getSettings() == null
+                    || AppPreferences.getSettings().getRegion_services() == null) {
+                repository.requestSettings(mCurrentActivity, handler);
+            }
+            if (Utils.isFcmIdUpdateRequired(true)) {
+                repository.updateRegid(this, handler);
+            }
+        } else if (StringUtils.isBlank(AppPreferences.getADID())) {
+            new AdvertisingIdTask().execute();
         }
     }
 
@@ -98,7 +101,6 @@ public class SplashActivity extends BaseActivity {
                             if (AppPreferences.isLoggedIn()) {
                                 // Connect socket
                                 DriverApp.getApplication().connect();
-//                                WebIORequestHandler.getInstance().setContext(mCurrentActivity);
                                 if (AppPreferences.isOnTrip()) {
                                     repository.requestRunningTrip(mCurrentActivity, handler);
                                 } else {
@@ -213,6 +215,9 @@ public class SplashActivity extends BaseActivity {
         super.onDestroy();
         if (findViewById(R.id.activity_splash) != null) {
             Utils.unbindDrawables(findViewById(R.id.activity_splash));
+        }
+        if (timer != null) {
+            timer.cancel();
         }
     }
 }

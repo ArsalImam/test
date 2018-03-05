@@ -15,9 +15,6 @@ public class ApiTags {
 //    public static final String BASE_SERVER_URL = "http://172.16.0.75:3001";
 
 
-    //Bykea 2 (For Heat Map)
-    public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
-
     //STAGING PRO
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
     public static final String BASE_SERVER_URL = "https://staging.bykea.net:3001";
@@ -29,6 +26,8 @@ public class ApiTags {
     //live Test
 //    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3001";
 
+    //Bykea 2 (For Heat Map)
+    public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
 
     public static final String GOOGLE_API_BASE_URL = "https://maps.googleapis.com/";
     public static final String PLACES_GEOCODER_EXT_URL = "maps/api/geocode/json";
@@ -42,7 +41,6 @@ public class ApiTags {
     public static final String CODE_VERIFICATION_API = "/api/v1/users/verfiyPincode";
     public static final String FORGOT_PASSWORD_API = "/api/v1/driver/forgotPassword";
     public static final String REGISTER_USER_API = "/api/v1/driver/register";
-    public static final String UPDATE_STATUS = "/api/v1/driver/updateAvailability";
     public static final String CHECK_RUNNING_TRIP = "/api/v1/getdriverrunningtrip";
     public static final String UPDATE_PROFILE_API = "/api/v1/driver/updateDriverProfile";
     public static final String GET_PROFILE_API = "/api/v1/driver/getProfile";

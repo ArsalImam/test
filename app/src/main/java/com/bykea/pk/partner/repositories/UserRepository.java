@@ -7,6 +7,7 @@ import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.PilotData;
+import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AccountNumbersResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
@@ -58,6 +59,8 @@ import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -67,6 +70,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class UserRepository {
 
@@ -223,12 +227,10 @@ public class UserRepository {
             // THIS CHECK IS FOR TRACKING DURING TRIP...
             if (AppPreferences.isOnTrip()) {
                 jsonObject.put("eta", AppPreferences.getEta());
+                jsonObject.put("distance", AppPreferences.getEstimatedDistance());
                 jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
                 jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
                 jsonObject.put("inCall", true);
-                jsonObject.put("end_lat", AppPreferences.getCallData().getEndLat());
-                jsonObject.put("end_lng", AppPreferences.getCallData().getEndLng());
-                jsonObject.put("end_address", AppPreferences.getCallData().getEndAddress());
             } else {
                 //to free driver after trip Finished
                 if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus())) {
@@ -276,6 +278,15 @@ public class UserRepository {
                 jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
                 jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
                 jsonObject.put("inCall", true);
+                ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
+                if (trackingData.size() == 0) {
+                    TrackingData data = new TrackingData();
+                    data.setLat(lat + "");
+                    data.setLng(lon + "");
+                    trackingData.add(data);
+                }
+                jsonObject.put("track", new JSONArray(new Gson().toJson(trackingData)));
+                AppPreferences.clearTrackingData();
             } else {
                 //to free driver after trip Finished
                 if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus())) {

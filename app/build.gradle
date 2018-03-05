@@ -11,8 +11,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 17
-        versionName "3.8"
+        versionCode 18
+        versionName "3.9"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -99,7 +99,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
-    compile('com.instabug.library:instabug:4.9.1') {
+    compile('com.instabug.library:instabug:4.10.2') {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'com.google.android.gms:play-services-gcm:9.4.0'
@@ -128,7 +128,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:11.0.4'
     compile 'com.google.firebase:firebase-core:11.0.4'
     compile 'com.google.firebase:firebase-messaging:11.0.4'
-    compile 'com.google.maps:google-maps-services:0.2.6'
+    compile 'com.google.maps:google-maps-services:0.1.6'
     compile 'com.google.maps.android:android-maps-utils:0.5'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.jakewharton:butterknife:7.0.1'

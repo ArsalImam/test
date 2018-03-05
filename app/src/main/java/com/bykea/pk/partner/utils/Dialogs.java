@@ -24,6 +24,7 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.FontUtils;
 import com.google.android.exoplayer.BuildConfig;
 
 import org.apache.commons.lang3.StringUtils;
@@ -156,14 +157,17 @@ public enum Dialogs {
             mDialog.findViewById(R.id.negativeBtn).setOnClickListener(negative);
         }
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
-        ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(message);
+        FontTextView messageTv = ((FontTextView) mDialog.findViewById(R.id.messageTv));
+        messageTv.setTypeface(FontUtils.getFonts(context, "jameel_noori_nastaleeq.ttf"));
+        messageTv.setText(message);
+        messageTv.setTextSize(context.getResources().getDimension(R.dimen._7sdp));
         ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
 
         showDialog();
     }
 
     public void showCallPassengerDialog(Context context, View.OnClickListener btnSender,
-                                View.OnClickListener btnRecipient) {
+                                        View.OnClickListener btnRecipient) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);

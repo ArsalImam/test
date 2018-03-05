@@ -161,14 +161,15 @@ public class PerformanceFragment extends Fragment {
                         if (response.isSuccess()) {
 
                             if (StringUtils.isNotBlank(response.getData().getDate())) {
-                                tvDate.setText(Utils.getFormattedDate(response.getData().getDate(),
-                                        CURRENT_DATE_FORMAT, REQUIRED_DATE_FORMAT));
+                                tvDate.setText(response.getData().getDate());
                             }
                             driverStatsResponse = new DriverStatsResponse();
                             mList = new ArrayList<>();
                             driverStatsResponse = response;
-                            mList.addAll(response.getPerformance());
-                            initAdapter();
+                            if (response.getPerformance() != null && response.getPerformance().size() > 0) {
+                                mList.addAll(response.getPerformance());
+                                initAdapter();
+                            }
                         }
                     }
                 });

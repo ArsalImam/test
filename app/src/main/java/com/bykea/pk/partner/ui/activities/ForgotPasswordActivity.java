@@ -98,6 +98,7 @@ public class ForgotPasswordActivity extends BaseActivity {
         @Override
         public void onError(int errorCode, String errorMessage) {
             Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showError(mCurrentActivity, sendBtn, errorMessage);
         }
     };
 }

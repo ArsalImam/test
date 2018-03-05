@@ -28,11 +28,17 @@
 -keep class java.io.** { *; }
 -keep class com.wang.** { *; }
 -keep class com.onesignal.** { *; }
+-keep class android.support.** { *; }
+-keep interface android.support.** { *; }
 -dontwarn butterknife.internal.**
 -dontwarn com.instabug.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
 -keep class **$$ViewBinder { *; }
+
+-renamesourcefileattribute SourceFile
+
+-keepattributes SourceFile,LineNumberTable
 
 -keepclasseswithmembernames class * {
     @butterknife.* <fields>;

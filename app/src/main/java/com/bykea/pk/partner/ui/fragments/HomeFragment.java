@@ -159,6 +159,7 @@ public class HomeFragment extends Fragment {
         mapView.getMapAsync(mapReadyCallback);
         Utils.checkGooglePlayServicesVersion(mCurrentActivity);
         initRangeBar();
+        AppPreferences.setAvailableAPICalling(false);
     }
 
     public void initRangeBar() {
@@ -577,28 +578,25 @@ public class HomeFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
-                                if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
-//                                    AppPreferences.setAvailableStatus(false);
-//                                    AppPreferences.setDriverDestination(null);
-
-//                                    destinationSet(false);
-                                    repository.requestUpdateStatus(mCurrentActivity, handler, false);
-                                }
+                                callAvailableStatusAPI(false);
                             }
                         });
                     } else {
-                        if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-//                            AppPreferences.setAvailableStatus(true);
-                            repository.requestUpdateStatus(mCurrentActivity, handler, true);
-                        }
+                        callAvailableStatusAPI(true);
                     }
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity
                             , mapPinIv, getString(R.string.error_internet_connectivity));
                 }
                 break;
+        }
+    }
+
+    private void callAvailableStatusAPI(boolean status) {
+        if (Connectivity.isConnectedFast(mCurrentActivity)) {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            AppPreferences.setAvailableAPICalling(true);
+            repository.requestUpdateStatus(mCurrentActivity, handler, status);
         }
     }
 
@@ -826,6 +824,7 @@ public class HomeFragment extends Fragment {
                         Dialogs.INSTANCE.dismissDialog();
                         if (pilotStatusResponse.isSuccess()) {
                             AppPreferences.setAvailableStatus(!AppPreferences.getAvailableStatus());
+                            AppPreferences.setAvailableAPICalling(false);
                             if (AppPreferences.getAvailableStatus()) {
                                 if (AppPreferences.isWalletAmountIncreased()) {
                                     AppPreferences.setWalletAmountIncreased(false);

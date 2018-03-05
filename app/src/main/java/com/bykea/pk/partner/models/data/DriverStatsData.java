@@ -1,9 +1,12 @@
 package com.bykea.pk.partner.models.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class DriverStatsData {
 
     private String rating;
 
+    @SerializedName("date_range")
     private String date;
 
     public String getRating() {

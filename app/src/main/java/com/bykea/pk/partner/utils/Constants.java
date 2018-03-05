@@ -66,6 +66,7 @@ public class Constants {
 
     //Staging
     public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
+
     //Live
 //    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
 

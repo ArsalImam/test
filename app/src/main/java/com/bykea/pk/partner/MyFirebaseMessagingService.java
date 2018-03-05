@@ -64,16 +64,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                 Notifications.createCancelNotification(mContext, callData.getMessage(), 23);
                             }
                         }
-                    } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP)) {
-                        Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
-                        intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
-                        intent.putExtra("msg", callData.getMessage());
-                        if (AppPreferences.isJobActivityOnForeground()) {
-                            EventBus.getDefault().post(intent);
+                    } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) && AppPreferences.getAvailableStatus()) {
+
+                        /*
+                        * when Gps is off, we don't show Calling Screen so we don't need to show
+                        * Cancel notification either if passenger cancels it before booking.
+                        * If passenger has cancelled it after booking we will entertain this Cancel notification
+                        * */
+
+                        if (Utils.isGpsEnable(DriverApp.getContext()) || AppPreferences.isOnTrip()) {
+                            Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
+                            intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
+                            intent.putExtra("msg", callData.getMessage());
+                            if (AppPreferences.isJobActivityOnForeground()) {
+                                EventBus.getDefault().post(intent);
 //                            mContext.sendBroadcast(intent);
-                        } else {
-                            Utils.setCallIncomingState();
-                            Notifications.createNotification(mContext, callData.getMessage(), 23);
+                            } else {
+                                Utils.setCallIncomingState();
+                                Notifications.createNotification(mContext, callData.getMessage(), 23);
+                            }
                         }
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING)) {
                         ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);

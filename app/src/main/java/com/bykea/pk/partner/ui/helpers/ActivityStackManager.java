@@ -31,7 +31,6 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
 
-
 public class ActivityStackManager {
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
 
@@ -112,6 +111,7 @@ public class ActivityStackManager {
 
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
         if (AppPreferences.getAvailableStatus()
+                && !AppPreferences.isAvailableStatusAPICalling()
                 && Utils.isGpsEnable(mContext)
                 && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
                 && Utils.isNotDelayed(callData.getData().getSentTime())) {
@@ -193,6 +193,7 @@ public class ActivityStackManager {
         intent.putExtra(Constants.Extras.CONTACT_TYPE, contactType);
         mContext.startActivity(intent);
     }
+
     public void startForgotPasswordActivity(Context mContext) {
         Intent intent = new Intent(mContext, ForgotPasswordActivity.class);
         mContext.startActivity(intent);

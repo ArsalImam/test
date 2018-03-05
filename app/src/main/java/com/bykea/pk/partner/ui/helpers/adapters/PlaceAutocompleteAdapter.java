@@ -111,14 +111,17 @@ public class PlaceAutocompleteAdapter
                                                 Iterator<Predictions> it = resultList.iterator();
                                                 while (it.hasNext()) {
                                                     Predictions item = it.next();
-                                                    if (city.equalsIgnoreCase("Rawalpindi")) {
-                                                        if (!item.getStructured_formatting().getSecondary_text().contains(city) &&
-                                                                !item.getStructured_formatting().getSecondary_text().contains("Islamabad")) {
-                                                            it.remove();
-                                                        }
-                                                    } else {
-                                                        if (!item.getStructured_formatting().getSecondary_text().contains(city)) {
-                                                            it.remove();
+                                                    if (item.getStructured_formatting() != null
+                                                            && StringUtils.isNotBlank(item.getStructured_formatting().getSecondary_text()) && StringUtils.isNotBlank(city)) {
+                                                        if (city.equalsIgnoreCase("Rawalpindi")) {
+                                                            if (!item.getStructured_formatting().getSecondary_text().contains(city) &&
+                                                                    !item.getStructured_formatting().getSecondary_text().contains("Islamabad")) {
+                                                                it.remove();
+                                                            }
+                                                        } else {
+                                                            if (!item.getStructured_formatting().getSecondary_text().contains(city)) {
+                                                                it.remove();
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -138,7 +141,7 @@ public class PlaceAutocompleteAdapter
                                     }
                                 });
                             }
-                        }, 1250);
+                        }, 1000);
                     } else if (mResultList != null) {
                         autocompleteHandler.removeMessages(0);
                         mResultList.clear();

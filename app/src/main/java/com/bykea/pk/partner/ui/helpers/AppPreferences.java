@@ -9,6 +9,7 @@ import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -183,6 +184,17 @@ public class AppPreferences {
                 .apply();
     }
 
+    public static void setAvailableAPICalling(boolean status) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.AVAILABLE_STATUS_API_CALL, status)
+                .apply();
+    }
+
+    public static boolean isAvailableStatusAPICalling() {
+        return mSharedPreferences.getBoolean(Keys.AVAILABLE_STATUS_API_CALL, false);
+    }
+
     public static boolean getAvailableStatus() {
         return mSharedPreferences.getBoolean(Keys.AVAILABLE_STATUS, false);
     }
@@ -208,8 +220,37 @@ public class AppPreferences {
             ed.putBoolean(Keys.IS_MOCK_LOCATION, isMock);
             ed.putFloat(Keys.LOCATION_ACCURACY, accuracy);
             ed.apply();
+            updateTrackingData(location);
         }
 
+    }
+
+
+    private static void updateTrackingData(LatLng location) {
+        if (isOnTrip()) {
+            TrackingData latLng = new TrackingData();
+            latLng.setLat(location.latitude + "");
+            latLng.setLng(location.longitude + "");
+            ArrayList<TrackingData> prevLatLngList = getTrackingData();
+            prevLatLngList.add(latLng);
+            String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<TrackingData>>() {
+            }.getType());
+            mSharedPreferences.edit().putString(Keys.TRACKING_DATA, value).apply();
+        }
+    }
+
+    public static void clearTrackingData() {
+        mSharedPreferences.edit().putString(Keys.TRACKING_DATA, StringUtils.EMPTY).apply();
+    }
+
+    public static ArrayList<TrackingData> getTrackingData() {
+        String jsonString = mSharedPreferences.getString(Keys.TRACKING_DATA, StringUtils.EMPTY);
+        ArrayList<TrackingData> latLngList = new ArrayList<>();
+        if (StringUtils.isNotBlank(jsonString)) {
+            latLngList = new Gson().fromJson(jsonString, new TypeToken<ArrayList<TrackingData>>() {
+            }.getType());
+        }
+        return latLngList;
     }
 
     public static void saveLocation(double latitude, double longitude) {

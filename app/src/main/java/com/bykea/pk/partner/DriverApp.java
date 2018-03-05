@@ -36,8 +36,8 @@ public class DriverApp extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 //        if (com.squareup.leakcanary.LeakCanaryLeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
+        // This process is dedicated to LeakCanary for heap analysis.
+        // You should not init your app in this process.
 //            return;
 //        }
 //        com.squareup.leakcanary.LeakCanaryLeakCanary.install(this);
@@ -94,6 +94,9 @@ public class DriverApp extends MultiDexApplication {
     public void attachListenersOnSocketConnected() {
         EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
         WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
+        if (AppPreferences.isOnTrip()) {
+            WebIORequestHandler.getInstance().registerChatListener();
+        }
     }
 
     public void connect() {

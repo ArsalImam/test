@@ -13,6 +13,7 @@ public class Keys {
     public static final String PHONE_NUMBER_VERIFIED = "PHONE_NUMBER_VERIFIED";
     public static final String FCM_REGISTRATION_ID = "FCM_REGISTRATION_ID";
     public static final String AVAILABLE_STATUS = "AVAILABLE_STATUS";
+    public static final String AVAILABLE_STATUS_API_CALL = "AVAILABLE_STATUS_API_CALL";
     public static final String VERIFIED_STATUS = "VERIFIED_STATUS";
     public static final String LOGIN_STATUS = "LOGIN_STATUS";
 
@@ -122,7 +123,7 @@ public class Keys {
     public static final String LATITUDE_PREV_DISTANCE = "LATITUDE_PREV_DISTANCE";
     public static final String LONGITUDE_PREV_DISTANCE = "LONGITUDE_PREV_DISTANCE";
     public static final String TIME_PREV_DISTANCE = "TIME_PREV_DISTANCE";
-    public static final String MOCK_LOCATION = "MOCK_LOCATION";
+    public static final String MOCK_LOCATION = "MOCK_LOCATION_BYKEA_PARTNER";
     public static final String IS_STOP_SERVICE_CALLED = "IS_STOP_SERVICE_CALLED";
     public static final String IN_TRIP_LAT_LNG_ARRAY = "IN_TRIP_LAT_LNG_ARRAY";
     public static final String IS_STATS_API_CALL_REQUIRED = "IS_STATS_API_CALL_REQUIRED";
@@ -150,4 +151,5 @@ public class Keys {
     public static final String IS_API_KEY_REQUIRED = "IS_API_KEY_REQUIRED";
     public static final String DRIVER_DEST = "DRIVER_DEST";
     public static final String MIX_PANEL_DIST_ID = "MIX_PANEL_DIST_ID";
+    public static final String TRACKING_DATA = "TRACKING_DATA";
 }
