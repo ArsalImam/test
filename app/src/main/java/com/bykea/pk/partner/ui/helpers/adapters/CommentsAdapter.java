@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.PredefineRatingToShow;
+import com.bykea.pk.partner.models.data.Predefine_rating;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
@@ -18,13 +19,12 @@ import butterknife.ButterKnife;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
 
-    private ArrayList<PredefineRatingToShow> commentsList;
+    private ArrayList<Predefine_rating> commentsList;
     private ItemClickListener itemClickListener;
     private Context mContext;
 
-    public CommentsAdapter(Context context, ArrayList<PredefineRatingToShow> ratingList, ItemClickListener itemClickListener) {
+    public CommentsAdapter(Context context, ArrayList<Predefine_rating> ratingList) {
         this.commentsList = ratingList;
-        this.itemClickListener = itemClickListener;
         mContext = context;
     }
 
@@ -38,24 +38,19 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if ("true".equalsIgnoreCase(commentsList.get(position).getSelected())) {
-            holder.tvComment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.bg_selected_feedback_comment));
-        } else {
-            holder.tvComment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.bg_unselected_feedback_comment));
-        }
+//        if ("true".equalsIgnoreCase(commentsList.get(position).getSelected())) {
+//            holder.tvComment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.bg_selected_feedback_comment));
+//        } else {
+//            holder.tvComment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.bg_unselected_feedback_comment));
+//        }
         holder.tvComment.setText(commentsList.get(position).getMessage());
     }
 
-    public void setSelection(int position, String selected) {
-        commentsList.get(position).setSelected(selected);
-        notifyItemChanged(position);
-    }
-
-    public void updateData(ArrayList<PredefineRatingToShow> newComments) {
+   /* public void updateData(ArrayList<PredefineRatingToShow> newComments) {
         commentsList.clear();
         commentsList.addAll(newComments);
         notifyDataSetChanged();
-    }
+    }*/
 
     @Override
     public int getItemCount() {
@@ -73,7 +68,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    itemClickListener.onClick(commentsList.get(getAdapterPosition()), getAdapterPosition());
+//                    itemClickListener.onClick(commentsList.get(getAdapterPosition()), getAdapterPosition());
                 }
             });
         }

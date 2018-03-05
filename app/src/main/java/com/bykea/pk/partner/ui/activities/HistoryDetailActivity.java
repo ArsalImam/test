@@ -2,6 +2,8 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -9,6 +11,7 @@ import android.widget.RatingBar;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.adapters.CommentsAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.google.gson.Gson;
@@ -98,9 +101,14 @@ public class HistoryDetailActivity extends BaseActivity {
 
     @Bind(R.id.tvWaitPrice)
     FontTextView tvWaitPrice;
+
+    @Bind(R.id.rvComments)
+    RecyclerView rvComments;
+    private CommentsAdapter mAdapter;
+
 //    private String tripNo;
 
-    ArrayList<Predefine_rating> rattingToShow = new ArrayList<>();
+    ArrayList<Predefine_rating> ratingToShow = new ArrayList<>();
     private TripHistoryData data;
 
 
@@ -179,14 +187,15 @@ public class HistoryDetailActivity extends BaseActivity {
                         feedbackComments = data.getPassRating().getFeedback_message()[0];
                     }
                     if (StringUtils.isNotBlank(feedbackComments)) {
-                        rattingToShow = new Gson().fromJson(feedbackComments, new TypeToken<ArrayList<Predefine_rating>>() {
+                        ratingToShow = new Gson().fromJson(feedbackComments, new TypeToken<ArrayList<Predefine_rating>>() {
                         }.getType());
                     } else {
                         rlFeedbackMsg1.setVisibility(View.GONE);
                         rlFeedbackMsg2.setVisibility(View.GONE);
                     }
-                    if (rattingToShow != null && rattingToShow.size() > 0) {
-                        populatePredefineMsgs();
+                    if (ratingToShow != null && ratingToShow.size() > 0) {
+//                        populatePredefineMsgs();
+                        populateComments();
                     } else {
                         rlFeedbackMsg1.setVisibility(View.GONE);
                         rlFeedbackMsg2.setVisibility(View.GONE);
@@ -212,7 +221,6 @@ public class HistoryDetailActivity extends BaseActivity {
         return StringUtils.isNotBlank(value) ? value : StringUtils.EMPTY;
     }
 
-
     @OnClick({R.id.btnProblem})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -225,6 +233,27 @@ public class HistoryDetailActivity extends BaseActivity {
                 ActivityStackManager.getInstance().startProblemActivity(mCurrentActivity, data.getTripNo());
                 break;
         }
+    }
+
+
+    private void populateComments() {
+        int column = 3;
+//        switch (ratingToShow.size()) {
+//            case 1:
+//                column = 1;
+//                break;
+//            case 2:
+//                column = 2;
+//                break;
+//            default:
+//                column = 3;
+//                break;
+//        }
+
+        mAdapter = new CommentsAdapter(mCurrentActivity, ratingToShow);
+        rvComments.setLayoutManager(new GridLayoutManager(mCurrentActivity, column));
+        rvComments.setHasFixedSize(true);
+        rvComments.setAdapter(mAdapter);
     }
 
     private void populatePredefineMsgs() {
@@ -242,32 +271,32 @@ public class HistoryDetailActivity extends BaseActivity {
         tvMsg4.setVisibility(View.GONE);
         tvMsg5.setVisibility(View.GONE);
         tvMsg6.setVisibility(View.GONE);
-        if (rattingToShow.size() > 0) {
+        if (ratingToShow.size() > 0) {
             rlFeedbackMsg1.setVisibility(View.VISIBLE);
             tvMsg1.setVisibility(View.VISIBLE);
-            tvMsg1.setText(rattingToShow.get(0).getMessage());
-            tvMsg1.setTag(rattingToShow.get(0).get_id());
-            if (rattingToShow.size() > 1) {
+            tvMsg1.setText(ratingToShow.get(0).getMessage());
+            tvMsg1.setTag(ratingToShow.get(0).get_id());
+            if (ratingToShow.size() > 1) {
                 tvMsg2.setVisibility(View.VISIBLE);
-                tvMsg2.setText(rattingToShow.get(1).getMessage());
-                tvMsg2.setTag(rattingToShow.get(1).get_id());
-                if (rattingToShow.size() > 2) {
+                tvMsg2.setText(ratingToShow.get(1).getMessage());
+                tvMsg2.setTag(ratingToShow.get(1).get_id());
+                if (ratingToShow.size() > 2) {
                     tvMsg3.setVisibility(View.VISIBLE);
-                    tvMsg3.setText(rattingToShow.get(2).getMessage());
-                    tvMsg3.setTag(rattingToShow.get(2).get_id());
-                    if (rattingToShow.size() > 3) {
+                    tvMsg3.setText(ratingToShow.get(2).getMessage());
+                    tvMsg3.setTag(ratingToShow.get(2).get_id());
+                    if (ratingToShow.size() > 3) {
                         rlFeedbackMsg2.setVisibility(View.VISIBLE);
                         tvMsg4.setVisibility(View.VISIBLE);
-                        tvMsg4.setText(rattingToShow.get(3).getMessage());
-                        tvMsg4.setTag(rattingToShow.get(3).get_id());
-                        if (rattingToShow.size() > 4) {
+                        tvMsg4.setText(ratingToShow.get(3).getMessage());
+                        tvMsg4.setTag(ratingToShow.get(3).get_id());
+                        if (ratingToShow.size() > 4) {
                             tvMsg5.setVisibility(View.VISIBLE);
-                            tvMsg5.setText(rattingToShow.get(4).getMessage());
-                            tvMsg5.setTag(rattingToShow.get(4).get_id());
-                            if (rattingToShow.size() > 5) {
+                            tvMsg5.setText(ratingToShow.get(4).getMessage());
+                            tvMsg5.setTag(ratingToShow.get(4).get_id());
+                            if (ratingToShow.size() > 5) {
                                 tvMsg6.setVisibility(View.VISIBLE);
-                                tvMsg6.setText(rattingToShow.get(5).getMessage());
-                                tvMsg6.setTag(rattingToShow.get(5).get_id());
+                                tvMsg6.setText(ratingToShow.get(5).getMessage());
+                                tvMsg6.setTag(ratingToShow.get(5).get_id());
                             }
                         }
                     }

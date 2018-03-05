@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginBottom="@dimen/_2sdp"
+    android:layout_marginRight="@dimen/_2sdp"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -21,7 +22,7 @@
         android:paddingLeft="@dimen/feedback_padding"
         android:paddingRight="@dimen/feedback_padding"
         android:paddingTop="@dimen/feedback_padding"
-        android:text="Comfort"
+        android:text="احتیاط"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_feedback"
         app:fontName="jameel_noori_nastaleeq.ttf" />
