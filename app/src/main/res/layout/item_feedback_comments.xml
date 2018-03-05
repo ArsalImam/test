@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llMain"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/_2sdp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tvComment"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_unselected_feedback_comment"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingBottom="@dimen/feedback_padding_bottom"
+        android:paddingLeft="@dimen/feedback_padding"
+        android:paddingRight="@dimen/feedback_padding"
+        android:paddingTop="@dimen/feedback_padding"
+        android:text="Comfort"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_feedback"
+        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+</LinearLayout>
