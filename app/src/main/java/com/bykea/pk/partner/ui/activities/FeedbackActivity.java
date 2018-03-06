@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import android.text.Editable;
 import android.view.View;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -70,6 +71,17 @@ public class FeedbackActivity extends BaseActivity {
     @Bind(R.id.feedbackBtn)
     FontTextView feedbackBtn;
 
+    @Bind(R.id.tvWalletDeduction)
+    FontTextView tvWalletDeduction;
+    @Bind(R.id.tvAmountToGet)
+    FontTextView tvAmountToGet;
+    @Bind(R.id.rlWalletDeduction)
+    RelativeLayout rlWalletDeduction;
+    @Bind(R.id.rlPromoDeduction)
+    RelativeLayout rlPromoDeduction;
+    @Bind(R.id.tvPromoDeduction)
+    FontTextView tvPromoDeduction;
+
     private FeedbackActivity mCurrentActivity;
     private String totalCharges = StringUtils.EMPTY;
     private int TOP_UP_LIMIT, AMOUNT_LIMIT;
@@ -130,28 +142,25 @@ public class FeedbackActivity extends BaseActivity {
             }
         }
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
-        totalAmountTv.setText("Rs. " + (StringUtils.isNotBlank(totalCharges) ? totalCharges : "N/A"));
+//        totalAmountTv.setText((StringUtils.isNotBlank(totalCharges) ? totalCharges : "N/A"));
+        totalAmountTv.setText((StringUtils.isNotBlank(callData.getTrip_charges()) ? callData.getTrip_charges() : "N/A"));
         startAddressTv.setText(callData.getStartAddress());
-        tvTotalDistance.setText(callData.getDistanceCovered() + " km");
-        tvTotalTime.setText(callData.getTotalMins() + " mins");
+        tvTotalDistance.setText("(" + callData.getDistanceCovered() + " km,");
+        tvTotalTime.setText(callData.getTotalMins() + " mins)");
         endAddressTv.setText((StringUtils.isBlank(callData.getEndAddress())
                 ? "N/A" : callData.getEndAddress()));
         callerNameTv.setText(callData.getPassName());
-        String invoiceMsg = StringUtils.EMPTY;
-        if (StringUtils.isNotBlank(callData.getPromo_deduction()) && Double.parseDouble(callData.getPromo_deduction()) > 0
-                && StringUtils.isNotBlank(callData.getWallet_deduction()) && Double.parseDouble(callData.getWallet_deduction()) > 0) {
-            invoiceMsg = "Promo + Wallet Deduction";
-        } else if (StringUtils.isNotBlank(callData.getPromo_deduction()) && Double.parseDouble(callData.getPromo_deduction()) > 0) {
-            invoiceMsg = "Promo Deduction";
-        } else if (StringUtils.isNotBlank(callData.getWallet_deduction()) && Double.parseDouble(callData.getWallet_deduction()) > 0) {
-            invoiceMsg = "Wallet Deduction";
+        if (StringUtils.isNotBlank(callData.getPromo_deduction()) && Double.parseDouble(callData.getPromo_deduction()) > 0) {
+            rlPromoDeduction.setVisibility(View.VISIBLE);
+            tvPromoDeduction.setText(callData.getPromo_deduction());
+        } else{
+            rlPromoDeduction.setVisibility(View.GONE);
         }
-        if (StringUtils.isNotBlank(invoiceMsg)) {
-            invoiceMsgTv.setVisibility(View.VISIBLE);
-            invoiceMsgTv.setText(invoiceMsg);
-        } else {
-            invoiceMsgTv.setVisibility(View.INVISIBLE);
+        if (StringUtils.isNotBlank(callData.getWallet_deduction()) && Double.parseDouble(callData.getWallet_deduction()) > 0) {
+            tvWalletDeduction.setText(callData.getWallet_deduction());
         }
+        tvAmountToGet.setText(totalCharges);
+
         callerRb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {

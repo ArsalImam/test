@@ -32,6 +32,7 @@
         android:id="@+id/toolbarLine"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_2sdp"
+        android:visibility="gone"
         android:background="@drawable/toolbar_bottom_shadow_gray" />
 
     <ScrollView
@@ -47,7 +48,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@color/secondaryColorLight"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingBottom="@dimen/padding.tiny"
@@ -105,7 +106,7 @@
                         android:padding="@dimen/padding.tiny"
                         android:text="2202 Kimberly Way Cambrigde."
                         android:textColor="@color/textColorSecondaryDark"
-                        android:textSize="@dimen/_16sdp"
+                        android:textSize="@dimen/_14sdp"
                         app:fontName="roboto_regular.ttf" />
 
 
@@ -126,7 +127,7 @@
                         android:padding="@dimen/padding.tiny"
                         android:text="2202 Kimberly Way Cambrigde.. "
                         android:textColor="@color/textColorSecondaryDark"
-                        android:textSize="@dimen/_16sdp"
+                        android:textSize="@dimen/_14sdp"
                         app:fontName="roboto_regular.ttf" />
 
                 </LinearLayout>
@@ -137,15 +138,178 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
+                android:visibility="gone"
                 android:background="@color/colorPrimary" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/totalAmountTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="N/A"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.small.medium"
+                        app:fontName="roboto_regular.ttf" />
+
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tvKeraya"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text=" کرایہ"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.normal"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tvTotalTime"
+                        android:layout_toLeftOf="@id/tvKeraya"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:layout_marginRight="@dimen/_2sdp"
+                        android:paddingTop="@dimen/_2sdp"
+                        android:text="6min)"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.small.medium"
+                        app:fontName="roboto_regular.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tvTotalDistance"
+                        android:layout_toLeftOf="@id/tvTotalTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingTop="@dimen/_2sdp"
+                        android:text="6km"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.small.medium"
+                        app:fontName="roboto_regular.ttf" />
+
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlWalletDeduction"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tvWalletDeduction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="N/A"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.small.medium"
+                        app:fontName="roboto_regular.ttf" />
+
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/invoiceMsgTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="والیٹ سے کٹوتی"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.normal"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlPromoDeduction"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tvPromoDeduction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="N/A"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.small.medium"
+                        app:fontName="roboto_regular.ttf" />
+
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="پرومو سے کٹوتی"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.normal"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/divider" />
+
+                <RelativeLayout
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tvAmountToGet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="N/A"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.small.medium"
+                        app:fontName="roboto_regular.ttf" />
+
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="نقد کرائے کی وصولی"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.normal"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/margin.normal"
-
+                android:visibility="gone"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
@@ -169,7 +333,7 @@
                         app:fontName="roboto_regular.ttf" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/tvTotalDistance"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -203,7 +367,7 @@
                         app:fontName="roboto_regular.ttf" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/totalAmountTv"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -238,7 +402,7 @@
                         app:fontName="roboto_regular.ttf" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/tvTotalTime"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -290,7 +454,7 @@
             </LinearLayout>
 
             <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/invoiceMsgTv"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -308,14 +472,14 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@color/white"
                 android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="@dimen/padding.small">
+                android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/fontTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/_4sdp"
+                    android:visibility="gone"
                     android:text="Amount Received"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/_24sdp"
@@ -327,7 +491,7 @@
                     android:layout_height="@dimen/height.xlarge"
                     android:background="@color/transparent"
                     android:gravity="center"
-                    android:hint="Enter Amount"
+                    android:hint="Received Rs."
                     android:imeOptions="actionDone"
                     android:inputType="numberPassword"
                     android:maxLength="5"
