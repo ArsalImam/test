@@ -536,19 +536,71 @@ public class UserRepository {
             jsonObject.put("routes", new Gson().toJson(latLngList));
 
 
-            /*//TODO remove below redundant data after api changes
-            jsonObject.put("total_time", totalTime + "");
-            jsonObject.put("driver_id", AppPreferences.getDriverId(context));
-            jsonObject.put("did", AppPreferences.getDriverId(context));
-            jsonObject.put("pid", AppPreferences.getCallData(context).getPassId());
-            jsonObject.put("trips_id", AppPreferences.getCallData(context).getTripId());
-            jsonObject.put("endlatitude", endLatString);
-            jsonObject.put("endlongitude", endLngString);*/
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         mWebIORequestHandler.endRide(jsonObject, mDataCallback);
+
+    }
+
+
+    private void setFeedBackCommonData(String feedback, String rate, String amount, JSONObject jsonObject) throws JSONException {
+        jsonObject.put("token_id", AppPreferences.getAccessToken());
+        jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+        jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+        jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
+        jsonObject.put("_id", AppPreferences.getDriverId());
+        jsonObject.put("did", AppPreferences.getDriverId());
+        jsonObject.put("driver_id", AppPreferences.getDriverId());
+        jsonObject.put("pid", AppPreferences.getCallData().getPassId());
+        jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+        jsonObject.put("received_amount", amount);
+        jsonObject.put("rate", rate);
+        jsonObject.put("feedback", feedback);
+        jsonObject.put("is_dispatch", AppPreferences.getCallData().isDispatcher());
+        jsonObject.put("lat", AppPreferences.getLatitude() + "");
+        jsonObject.put("lng", AppPreferences.getLongitude() + "");
+    }
+
+    public void requestFeedback(Context context, IUserDataHandler handler, String feedback,
+                                String rate, String amount, String purcAmount) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        mContext = context;
+        try {
+            setFeedBackCommonData(feedback, rate, amount, jsonObject);
+            if (StringUtils.isNotBlank(purcAmount)) {
+                jsonObject.put("purcAmount", purcAmount);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.feedback(jsonObject, mDataCallback);
+
+    }
+
+    public void requestFeedback(Context context, IUserDataHandler handler, String feedback,
+                                String rate, String amount,
+                                boolean dStatus, String dMsg, String recName, String recPh) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        mContext = context;
+        try {
+            setFeedBackCommonData(feedback, rate, amount, jsonObject);
+            jsonObject.put("dStatus", dStatus);
+            if (StringUtils.isNotBlank(dMsg)) {
+                jsonObject.put("dMsg", dMsg);
+            }
+            if (StringUtils.isNotBlank(recName)) {
+                jsonObject.put("recName", recName);
+            }
+            if (StringUtils.isNotBlank(recPh)) {
+                jsonObject.put("recPh", recPh);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.feedback(jsonObject, mDataCallback);
 
     }
 
@@ -558,21 +610,7 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-            jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
-            jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
-            jsonObject.put("_id", AppPreferences.getDriverId());
-            jsonObject.put("did", AppPreferences.getDriverId());
-            jsonObject.put("driver_id", AppPreferences.getDriverId());
-            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
-            jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
-            jsonObject.put("received_amount", amount);
-            jsonObject.put("rate", rate);
-            jsonObject.put("feedback", feedback);
-            jsonObject.put("is_dispatch", AppPreferences.getCallData().isDispatcher());
-            jsonObject.put("lat", AppPreferences.getLatitude() + "");
-            jsonObject.put("lng", AppPreferences.getLongitude() + "");
+            setFeedBackCommonData(feedback, rate, amount, jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
         }

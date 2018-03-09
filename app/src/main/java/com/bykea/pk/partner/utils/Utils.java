@@ -12,6 +12,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -292,7 +294,6 @@ public class Utils {
     }
 
     public static String getFileLink(String name) {
-        Utils.redLog("File Url", "http://52.36.93.28:3000/files/" + name);
         return ApiTags.BASE_SERVER_URL + "/files/" + name;
     }
 
@@ -1055,6 +1056,11 @@ public class Utils {
 
     }
 
+    public static String getCommaFormattedAmount(String amount) {
+        return NumberFormat.getNumberInstance(Locale.US).format(Long.parseLong(amount)) + " ";
+
+    }
+
     public static String getUTCCurrentDate() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -1339,6 +1345,16 @@ public class Utils {
         }
     }
 
+    public static boolean isDeliveryService(String callType) {
+        return StringUtils.containsIgnoreCase(callType, "Send")
+                || StringUtils.containsIgnoreCase(callType, "Delivery");
+    }
+
+    public static boolean isPurchaseService(String callType) {
+        return StringUtils.containsIgnoreCase(callType, "Bring")
+                || StringUtils.containsIgnoreCase(callType, "Purchase");
+    }
+
 
     public static class AudioTime implements Serializable {
         private String mFormat = "%02d:%02d:%02d";
@@ -1447,4 +1463,11 @@ public class Utils {
         }
         return icon;
     }
+
+    public static Drawable changeDrawableColor(Context context, int d, int color) {
+        Drawable wrappedDrawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, d).mutate());
+        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, color));
+        return wrappedDrawable;
+    }
+
 }

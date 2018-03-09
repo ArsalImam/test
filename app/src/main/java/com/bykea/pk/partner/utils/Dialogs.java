@@ -23,6 +23,7 @@ import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontButton;
+import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
 import com.google.android.exoplayer.BuildConfig;
@@ -305,6 +306,23 @@ public enum Dialogs {
             public void onClick(View v) {
                 dismissDialog();
                 Utils.callingIntent(context, number);
+            }
+        });
+        showDialog();
+    }
+
+    public void showTopUpDialog(final Context context, final StringCallBack callBack) {
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.top_up_add_dialog);
+        final FontEditText receivedAmountEt = (FontEditText) mDialog.findViewById(R.id.receivedAmountEt);
+        receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+        mDialog.findViewById(R.id.ivPositive).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+                callBack.onCallBack(receivedAmountEt.getText().toString());
             }
         });
         showDialog();

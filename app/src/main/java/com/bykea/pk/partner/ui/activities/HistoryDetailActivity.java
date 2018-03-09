@@ -5,6 +5,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 
@@ -106,6 +107,8 @@ public class HistoryDetailActivity extends BaseActivity {
     RecyclerView rvComments;
     private CommentsAdapter mAdapter;
 
+    @Bind(R.id.flCommentsRv)
+    FrameLayout flCommentsRv;
 //    private String tripNo;
 
     ArrayList<Predefine_rating> ratingToShow = new ArrayList<>();
@@ -237,21 +240,24 @@ public class HistoryDetailActivity extends BaseActivity {
 
 
     private void populateComments() {
-        int column = 3;
-//        switch (ratingToShow.size()) {
-//            case 1:
-//                column = 1;
-//                break;
-//            case 2:
-//                column = 2;
-//                break;
-//            default:
-//                column = 3;
-//                break;
-//        }
+        flCommentsRv.setVisibility(View.VISIBLE);
 
+        GridLayoutManager layoutManager = new GridLayoutManager(mCurrentActivity, 6);
+        final int span;
+        span = ratingToShow.size() % 3;
+        final int rows = ((ratingToShow.size() - 1) - span);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (position <= rows) {
+                    return 2;
+                } else {
+                    return span == 1 ? 6 : 3;
+                }
+            }
+        });
         mAdapter = new CommentsAdapter(mCurrentActivity, ratingToShow);
-        rvComments.setLayoutManager(new GridLayoutManager(mCurrentActivity, column));
+        rvComments.setLayoutManager(layoutManager);
         rvComments.setHasFixedSize(true);
         rvComments.setAdapter(mAdapter);
     }

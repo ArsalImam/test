@@ -654,13 +654,15 @@
 
 
             <FrameLayout
+                android:id="@+id/flCommentsRv"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_100sdp"
+                android:visibility="gone"
                 android:layout_gravity="center">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rvComments"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:paddingLeft="@dimen/_8sdp"

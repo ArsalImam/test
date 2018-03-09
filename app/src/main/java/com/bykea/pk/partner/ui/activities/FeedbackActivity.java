@@ -2,13 +2,20 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -17,6 +24,7 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.adapters.DeliveryMsgsSpinnerAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
@@ -24,7 +32,6 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.CircularImageView;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -32,6 +39,8 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -50,10 +59,8 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView invoiceMsgTv;
     @Bind(R.id.endAddressTv)
     FontTextView endAddressTv;
-    @Bind(R.id.callerIv)
-    CircularImageView callerIv;
-    @Bind(R.id.callerNameTv)
-    FontTextView callerNameTv;
+    //    @Bind(R.id.callerNameTv)
+//    FontTextView callerNameTv;
     @Bind(R.id.totalAmountTv)
     FontTextView totalAmountTv;
 
@@ -64,12 +71,16 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView tvTotalDistance;
     @Bind(R.id.receivedAmountEt)
     FontEditText receivedAmountEt;
+    @Bind(R.id.llKharedari)
+    LinearLayout llKharedari;
+    @Bind(R.id.llTotal)
+    LinearLayout llTotal;
     @Bind(R.id.callerRb)
     RatingBar callerRb;
-    @Bind(R.id.ratingValueTv)
-    FontTextView ratingValueTv;
+    //    @Bind(R.id.ratingValueTv)
+//    FontTextView ratingValueTv;
     @Bind(R.id.feedbackBtn)
-    FontTextView feedbackBtn;
+    ImageView feedbackBtn;
 
     @Bind(R.id.tvWalletDeduction)
     FontTextView tvWalletDeduction;
@@ -81,9 +92,31 @@ public class FeedbackActivity extends BaseActivity {
     RelativeLayout rlPromoDeduction;
     @Bind(R.id.tvPromoDeduction)
     FontTextView tvPromoDeduction;
+    @Bind(R.id.tvCOD)
+    FontTextView tvCOD;
+    @Bind(R.id.tvAmountToGetLable)
+    FontTextView tvAmountToGetLable;
+    @Bind(R.id.totalAmountTvLable)
+    FontTextView totalAmountTvLable;
+    @Bind(R.id.rlCOD)
+    RelativeLayout rlCOD;
+    @Bind(R.id.rlDeliveryStatus)
+    RelativeLayout rlDeliveryStatus;
+    @Bind(R.id.spDeliveryStatus)
+    Spinner spDeliveryStatus;
+    @Bind(R.id.llReceiverInfo)
+    LinearLayout llReceiverInfo;
+    @Bind(R.id.ivRight0)
+    ImageView ivRight0;
+    @Bind(R.id.etReceiverName)
+    FontEditText etReceiverName;
+    @Bind(R.id.etReceiverMobileNo)
+    FontEditText etReceiverMobileNo;
+    @Bind(R.id.kharedariAmountEt)
+    FontEditText kharedariAmountEt;
 
     private FeedbackActivity mCurrentActivity;
-    private String totalCharges = StringUtils.EMPTY;
+    private String totalCharges = StringUtils.EMPTY, lastKhareedariAmount = StringUtils.EMPTY;
     private int TOP_UP_LIMIT, AMOUNT_LIMIT;
 
 
@@ -92,7 +125,7 @@ public class FeedbackActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feedback);
+        setContentView(R.layout.activity_feedback_new);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         initViews();
@@ -119,12 +152,15 @@ public class FeedbackActivity extends BaseActivity {
         }
     }
 
+    private boolean isDeliveryType, isPurchaseType;
+    private NormalCallData callData;
+
     private void initViews() {
         mCurrentActivity = this;
 
-        NormalCallData callData = AppPreferences.getCallData();
-        boolean isSendType = StringUtils.containsIgnoreCase(callData.getCallType(), "Send") || StringUtils.containsIgnoreCase(callData.getCallType(), "Delivery");
-        boolean isBringType = StringUtils.containsIgnoreCase(callData.getCallType(), "Bring") || StringUtils.containsIgnoreCase(callData.getCallType(), "Purchase");
+        callData = AppPreferences.getCallData();
+        isDeliveryType = Utils.isDeliveryService(callData.getCallType());
+        isPurchaseType = Utils.isPurchaseService(callData.getCallType());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
         if (StringUtils.isNotBlank(callData.getTotalFare())) {
@@ -133,11 +169,11 @@ public class FeedbackActivity extends BaseActivity {
         TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
         if (StringUtils.isNotBlank(callData.getCodAmountNotFormatted())) {
             String amount = callData.getCodAmountNotFormatted();
-            if (isSendType) {
+            if (isDeliveryType) {
                 if (callData.isCod()) {
                     TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
                 }
-            } else if (!isBringType) {
+            } else if (!isPurchaseType) {
                 TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
             }
         }
@@ -145,29 +181,144 @@ public class FeedbackActivity extends BaseActivity {
 //        totalAmountTv.setText((StringUtils.isNotBlank(totalCharges) ? totalCharges : "N/A"));
         totalAmountTv.setText((StringUtils.isNotBlank(callData.getTrip_charges()) ? callData.getTrip_charges() : "N/A"));
         startAddressTv.setText(callData.getStartAddress());
-        tvTotalDistance.setText("(" + callData.getDistanceCovered() + " km,");
+        tvTotalDistance.setText("(" + callData.getDistanceCovered() + " km, ");
         tvTotalTime.setText(callData.getTotalMins() + " mins)");
         endAddressTv.setText((StringUtils.isBlank(callData.getEndAddress())
                 ? "N/A" : callData.getEndAddress()));
-        callerNameTv.setText(callData.getPassName());
+//        callerNameTv.setText(callData.getPassName());
         if (StringUtils.isNotBlank(callData.getPromo_deduction()) && Double.parseDouble(callData.getPromo_deduction()) > 0) {
-            rlPromoDeduction.setVisibility(View.VISIBLE);
             tvPromoDeduction.setText(callData.getPromo_deduction());
-        } else{
+        } else {
             rlPromoDeduction.setVisibility(View.GONE);
         }
         if (StringUtils.isNotBlank(callData.getWallet_deduction()) && Double.parseDouble(callData.getWallet_deduction()) > 0) {
             tvWalletDeduction.setText(callData.getWallet_deduction());
+        } else {
+            rlWalletDeduction.setVisibility(View.GONE);
         }
-        tvAmountToGet.setText(totalCharges);
+        tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
 
-        callerRb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        if (isDeliveryType) {
+            receivedAmountEt.requestFocus();
+            updateUIICODelivery();
+        } else if (isPurchaseType) {
+            updateUIforPurcahseService();
+        } else {
+            receivedAmountEt.requestFocus();
+        }
+    }
+
+    private void updateUIforPurcahseService() {
+        totalAmountTvLable.setText(" کرائے کی کمائی");
+        receivedAmountEt.clearFocus();
+        llKharedari.setVisibility(View.VISIBLE);
+        kharedariAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+        kharedariAmountEt.requestFocus();
+        initKhareedadiSuggestion();
+        kharedariAmountEt.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                ratingValueTv.setText(Utils.formatDecimalPlaces(rating + ""));
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (StringUtils.isNotBlank(kharedariAmountEt.getText().toString())
+                        && !kharedariAmountEt.getText().toString().equalsIgnoreCase(lastKhareedariAmount)) {
+                    lastKhareedariAmount = kharedariAmountEt.getText().toString();
+                    totalCharges = "" + (Integer.parseInt(lastKhareedariAmount) + Integer.parseInt(callData.getTotalFare()));
+                    receivedAmountEt.setHint("Suggested Rs. " + Utils.getCommaFormattedAmount(totalCharges));
+                } else if (StringUtils.isBlank(kharedariAmountEt.getText().toString())) {
+                    initKhareedadiSuggestion();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
-        receivedAmountEt.requestFocus();
+    }
+
+    private void initKhareedadiSuggestion() {
+        lastKhareedariAmount = StringUtils.EMPTY;
+        totalCharges = callData.getTotalFare();
+        receivedAmountEt.setHint("Suggested Rs. " + Utils.getCommaFormattedAmount(totalCharges));
+    }
+
+    private ArrayList<String> getDeliveryMsgsList() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("کامیاب ڈیلیوری");
+        list.add("ناكام - وصول کرنے والا رابطے میں نہیں");
+        list.add("ناكام - وصول کرنے والا موجود نہیں ہے");
+        list.add("ناكام - پارسل وصول کرنے سے انکار");
+        list.add("ناكام - پتہ نہیں ملا");
+        return list;
+    }
+
+    private void updateUIICODelivery() {
+        llReceiverInfo.setVisibility(View.VISIBLE);
+        llReceiverInfo.setPadding(0, 0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen._8sdp));
+        if (StringUtils.isNotBlank(callData.getCodAmount()) && callData.isCod()) {
+            rlDeliveryStatus.setVisibility(View.VISIBLE);
+            rlCOD.setVisibility(View.VISIBLE);
+            tvAmountToGetLable.setText(" ٹوٹل");
+            ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
+//            String amount = callData.getCodAmountNotFormatted();
+//            TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
+            tvCOD.setText(callData.getCodAmount());
+            initAdapter(callData);
+
+        } else {
+            rlCOD.setVisibility(View.GONE);
+        }
+
+    }
+
+    private int selectedMsgPosition = 0;
+
+    private void initAdapter(final NormalCallData callData) {
+
+        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, getDeliveryMsgsList());
+
+
+        spDeliveryStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, final View view, final int position, long id) {
+
+                if (view != null) {
+                    view.findViewById(R.id.tvItem).setPadding(0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen._34sdp), 0);
+                } else {
+                    final ViewTreeObserver layoutObserver = spDeliveryStatus.getViewTreeObserver();
+                    layoutObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            View selectedView = spDeliveryStatus.getSelectedView();
+                            if (selectedView != null) {
+                                selectedView.findViewById(R.id.tvItem).setPadding(0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen._34sdp), 0);
+                            }
+                            spDeliveryStatus.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    });
+                }
+                selectedMsgPosition = position;
+                if (position == 0) {
+                    tvCOD.setPaintFlags(tvCOD.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    totalCharges = "" + (Integer.parseInt(callData.getTotalFare()) + Integer.parseInt(callData.getCodAmountNotFormatted()));
+                } else {
+                    tvCOD.setPaintFlags(tvCOD.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    totalCharges = callData.getTotalFare();
+                }
+                tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        spDeliveryStatus.setAdapter(adapter);
+        spDeliveryStatus.setSelection(0);
     }
 
     private long mLastClickTime;
@@ -178,11 +329,25 @@ public class FeedbackActivity extends BaseActivity {
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
+        /*if (isPurchaseType && llTotal.getVisibility() != View.VISIBLE && StringUtils.isNotBlank(kharedariAmountEt.getText().toString())) {
+            llTotal.setVisibility(View.VISIBLE);
+        } else */
         if (valid()) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             logMPEvent();
-            new UserRepository().requestFeedback(mCurrentActivity, handler,
-                    "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
+            if (isDeliveryType) {
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
+                        , selectedMsgPosition == 0, getDeliveryMsgsList().get(selectedMsgPosition), etReceiverName.getText().toString(),
+                        etReceiverMobileNo.getText().toString());
+            } else if (isPurchaseType) {
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString(),
+                        kharedariAmountEt.getText().toString());
+            } else {
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
+            }
         }
     }
 
@@ -271,8 +436,16 @@ public class FeedbackActivity extends BaseActivity {
     };
 
     private boolean valid() {
-        if (StringUtils.isBlank(receivedAmountEt.getText().toString())) {
+        if (isPurchaseType && StringUtils.isBlank(kharedariAmountEt.getText().toString())) {
+            kharedariAmountEt.setError("Enter amount");
+            kharedariAmountEt.requestFocus();
+            return false;
+        } else if (StringUtils.isBlank(receivedAmountEt.getText().toString())) {
             setEtError("Enter received amount");
+            return false;
+        } else if (isDeliveryType && StringUtils.isBlank(etReceiverName.getText().toString())) {
+            etReceiverName.setError("Required");
+            etReceiverName.requestFocus();
             return false;
         } else if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
             setEtError("Invalid amount");

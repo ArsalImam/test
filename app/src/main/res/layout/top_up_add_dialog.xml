@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/_250sdp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:gravity="center">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:gravity="center"
+            android:text="Top-Up"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="roboto_regular.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:minHeight="@dimen/_60sdp"
+            android:text="ٹاپ آپ"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100sdp">
+
+        <com.bykea.pk.partner.widgets.FontEditText
+            android:id="@+id/receivedAmountEt"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height.xlarge"
+            android:layout_gravity="center"
+            android:background="@color/transparent"
+            android:gravity="center"
+            android:hint="Received Rs."
+            android:imeOptions="actionDone"
+            android:inputType="numberPassword"
+            android:maxLength="5"
+            android:textColor="@color/textColorPrimary"
+            android:textColorHint="@color/secondaryColorLight"
+            android:textSize="@dimen/height.medium" />
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/ivPositive"
+        android:layout_width="@dimen/_140sdp"
+        android:layout_height="@dimen/_38sdp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:background="@drawable/button_green_square"
+        android:text="OK"
+        android:textColor="@color/white">
+
+        <ImageView
+            android:layout_width="@dimen/height.xlarge"
+            android:layout_height="@dimen/height.xlarge"
+            android:layout_gravity="center"
+            android:padding="@dimen/_8sdp"
+            android:src="@drawable/check_mark" />
+    </FrameLayout>
+
+</LinearLayout>

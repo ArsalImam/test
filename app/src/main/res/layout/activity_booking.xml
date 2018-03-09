@@ -166,57 +166,77 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/rlChat"
-                android:layout_marginTop="@dimen/_4sdp"
                 android:visibility="visible">
 
-                <RelativeLayout
+
+                <FrameLayout
                     android:id="@+id/llTopLeft"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_8sdp"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:layout_weight="1"
-                    android:background="@color/blue_light"
-                    android:paddingBottom="@dimen/_3sdp"
-                    android:paddingLeft="@dimen/_5sdp"
-                    android:paddingRight="@dimen/_5sdp"
-                    android:paddingTop="@dimen/_3sdp">
+                    android:layout_weight="1">
 
-                    <com.bykea.pk.partner.widgets.AutoFitFontTextView
-                        android:id="@+id/tvPWalletAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:gravity="center|left"
-                        android:maxLines="1"
-                        android:maxWidth="@dimen/_60sdp"
-                        android:textAllCaps="false"
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="@dimen/_12sdp"
-                        android:visibility="visible"
-                        tools:text="Rs. 10,000" />
 
-                    <com.bykea.pk.partner.widgets.FontTextView
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/_8sdp"
+                        android:layout_marginRight="@dimen/_8sdp"
                         android:layout_marginStart="@dimen/_8sdp"
-                        android:gravity="end|center"
-                        android:maxLines="1"
-                        android:text="والیٹ میں رقم"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_12sdp"
-                        app:fontName="jameel_noori_nastaleeq.ttf" />
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_weight="1"
+                        android:background="@color/blue_light"
+                        android:paddingBottom="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_5sdp"
+                        android:paddingRight="@dimen/_5sdp"
+                        android:paddingTop="@dimen/_3sdp">
 
-                </RelativeLayout>
+                        <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                            android:id="@+id/tvPWalletAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center|left"
+                            android:maxLines="1"
+                            android:maxWidth="@dimen/_60sdp"
+                            android:textAllCaps="false"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/_12sdp"
+                            android:visibility="visible"
+                            tools:text="Rs. 10,000" />
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/_8sdp"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:gravity="end|center"
+                            android:maxLines="1"
+                            android:text="والیٹ میں رقم"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_12sdp"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    </RelativeLayout>
+
+
+                    <ImageView
+                        android:id="@+id/ivTopUp"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:layout_gravity="right"
+                        android:paddingBottom="@dimen/_4sdp"
+                        android:paddingLeft="@dimen/_4sdp"
+                        android:src="@drawable/circle_plus" />
+                </FrameLayout>
+
 
                 <View
-                    android:layout_width="@dimen/_24sdp"
+                    android:layout_width="@dimen/_4sdp"
                     android:layout_height="match_parent" />
 
                 <RelativeLayout
@@ -224,7 +244,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+
                     android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:layout_weight="1"
                     android:background="@color/yellow"
                     android:gravity="center_vertical|end"

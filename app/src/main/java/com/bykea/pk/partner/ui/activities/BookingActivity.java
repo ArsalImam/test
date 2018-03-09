@@ -145,6 +145,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     ImageView ivServiceIcon;
     @Bind(R.id.tvCashWasooliLabel)
     FontTextView tvCashWasooliLabel;
+    @Bind(R.id.ivTopUp)
+    ImageView ivTopUp;
 
     private String canceOption = "Didn't show up";
 
@@ -350,7 +352,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
 
-    @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections, R.id.endAddressTv})
+    @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
+            R.id.endAddressTv, R.id.ivTopUp})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.chatBtn:
@@ -493,6 +496,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.cvLocation:
                 setDriverLocation();
+                break;
+            case R.id.ivTopUp:
+                Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, new StringCallBack() {
+                    @Override
+                    public void onCallBack(String msg) {
+                        //TODO Call API
+                    }
+                });
                 break;
         }
     }
@@ -825,12 +836,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //        } else {
 //            llTopLeft.setVisibility(View.GONE);
 //        }
+        if (Utils.isDeliveryService(callData.getCallType())) {
+            ivTopUp.setVisibility(View.VISIBLE);
+        } else {
+            ivTopUp.setVisibility(View.INVISIBLE);
+        }
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
             llTopRight.setVisibility(View.VISIBLE);
             tvCodAmount.setText("Rs. " + callData.getCodAmount());
-            boolean isBringType = StringUtils.containsIgnoreCase(callData.getCallType(), "Bring")
-                    || StringUtils.containsIgnoreCase(callData.getCallType(), "Purchase");
-            if (isBringType) {
+            if (Utils.isPurchaseService(callData.getCallType())) {
                 tvCashWasooliLabel.setText("خریداری کی رقم");
             }
         } else {
