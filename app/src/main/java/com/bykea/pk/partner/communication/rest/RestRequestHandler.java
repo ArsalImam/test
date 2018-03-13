@@ -4,9 +4,17 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
+import com.bykea.pk.partner.models.data.CitiesData;
+import com.bykea.pk.partner.models.data.SavedPlaces;
+import com.bykea.pk.partner.models.data.ZoneData;
+import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
+import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
+import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
@@ -14,6 +22,7 @@ import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
+import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
@@ -680,6 +689,74 @@ public class RestRequestHandler {
                 "android", "d");
         requestCall.enqueue(new GenericRetrofitCallBack<UpdateRegIDResponse>(onResponseCallBack));
     }
+
+    public void requestZones(Context context, CitiesData city, IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<GetZonesResponse> restCall = mRestClient.requestZones(city.get_id());
+        restCall.enqueue(new GenericRetrofitCallBack<GetZonesResponse>(onResponseCallBack));
+    }
+
+    public void requestZoneAreas(Context context, ZoneData zone, IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<ZoneAreaResponse> restCall = mRestClient.requestZoneAreas(zone.get_id());
+        restCall.enqueue(new GenericRetrofitCallBack<ZoneAreaResponse>(onResponseCallBack));
+    }
+
+
+
+    public void addSavedPlace(Context context, final IResponseCallback onResponseCallback,
+                              SavedPlaces savedPlaces) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+        savedPlaces.setUserId(AppPreferences.getPilotData().getId());
+        savedPlaces.setToken_id(AppPreferences.getPilotData().getAccessToken());
+
+        Call<AddSavedPlaceResponse> requestCall = mRestClient.addSavedPlace(savedPlaces);
+        requestCall.enqueue(new GenericRetrofitCallBack<AddSavedPlaceResponse>(onResponseCallback));
+
+    }
+
+    public void updateSavedPlace(Context context, final IResponseCallback onResponseCallback,
+                                 SavedPlaces savedPlaces) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+        savedPlaces.setUserId(AppPreferences.getPilotData().getId());
+        savedPlaces.setToken_id(AppPreferences.getPilotData().getAccessToken());
+
+        Call<AddSavedPlaceResponse> requestCall = mRestClient.updateSavedPlace(savedPlaces);
+        requestCall.enqueue(new GenericRetrofitCallBack<AddSavedPlaceResponse>(onResponseCallback));
+
+    }
+
+    public void deleteSavedPlace(Context context, final IResponseCallback onResponseCallback,
+                                 SavedPlaces savedPlaces) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+        DeletePlaceRequest request = new DeletePlaceRequest();
+        request.setUserId(AppPreferences.getPilotData().getId());
+        request.setToken_id(AppPreferences.getPilotData().getAccessToken());
+        request.setPlaceId(savedPlaces.getPlaceId());
+
+        Call<DeleteSavedPlaceResponse> requestCall = mRestClient.deleteSavedPlace(request);
+        requestCall.enqueue(new GenericRetrofitCallBack<DeleteSavedPlaceResponse>(onResponseCallback));
+
+    }
+
+    public void getSavedPlaces(Context context, final IResponseCallback onResponseCallback) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+
+        Call<GetSavedPlacesResponse> requestCall = mRestClient.getSavedPlaces(AppPreferences.getPilotData().getId(), AppPreferences.getPilotData().getAccessToken());
+        requestCall.enqueue(new GenericRetrofitCallBack<GetSavedPlacesResponse>(onResponseCallback));
+
+    }
+
 
     @NonNull
     private String getErrorMessage(Throwable error) {

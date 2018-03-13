@@ -2,6 +2,7 @@ package com.bykea.pk.partner.repositories;
 
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AccountNumbersResponse;
+import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
@@ -22,6 +23,8 @@ import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
+import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
+import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
@@ -44,6 +47,7 @@ import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
+import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 
 import java.util.ArrayList;
 
@@ -270,6 +274,31 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onUpdateRegid(UpdateRegIDResponse response) {
+
+    }
+
+    @Override
+    public void onAddSavedPlaceResponse(AddSavedPlaceResponse response) {
+
+    }
+
+    @Override
+    public void onDeleteSavedPlaceResponse() {
+
+    }
+
+    @Override
+    public void onGetSavedPlacesResponse(GetSavedPlacesResponse response) {
+
+    }
+
+    @Override
+    public void onZonesResponse(GetZonesResponse response) {
+
+    }
+
+    @Override
+    public void onZoneAreasResponse(ZoneAreaResponse response) {
 
     }
 

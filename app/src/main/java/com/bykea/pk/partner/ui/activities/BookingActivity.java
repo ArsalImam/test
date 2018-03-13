@@ -365,15 +365,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.endAddressTv:
-                Intent intent1 = new Intent(mCurrentActivity, ConfirmDropOffAddressActivity.class);
+                Intent intent1 = new Intent(mCurrentActivity, SelectPlaceActivity.class);
                 if (StringUtils.isNotBlank(callData.getEndLat()) &&
                         StringUtils.isNotBlank(callData.getEndLng()) &&
                         StringUtils.isNotBlank(callData.getEndAddress())) {
-                    PlacesResult placesResult = new PlacesResult(StringUtils.EMPTY, callData.getEndAddress(),
+                    PlacesResult placesResult = new PlacesResult(callData.getEndAddress(), callData.getEndAddress(),
                             Double.parseDouble(callData.getEndLat()),
                             Double.parseDouble(callData.getEndLng()));
-                    intent1.putExtra(Constants.Extras.DROP_OFF, placesResult);
+                    intent1.putExtra(Constants.Extras.SELECTED_ITEM, placesResult);
                 }
+                intent1.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
                 startActivityForResult(intent1, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
@@ -531,12 +532,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
 
 //            String uri = "http://maps.google.com/maps?saddr=" + start + "&daddr=" + end;
-            String uri = "https://www.google.com/maps/dir/?api=1&origin=" + start + "&destination=" + end + "&travelmode=driving";
+//            String uri = "https://www.google.com/maps/dir/?api=1&origin=" + start + "&destination=" + end + "&travelmode=driving";
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                intent.setPackage("com.google.android.apps.maps");
-                Utils.redLog("Google Route Link ", uri);
-                startActivity(intent);
+//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+//                intent.setPackage("com.google.android.apps.maps");
+//                Utils.redLog("Google Route Link ", uri);
+//                startActivity(intent);
+
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + end + "&mode=d");
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
             } catch (Exception ex) {
                 Toast.makeText(mCurrentActivity, "Please install Google Maps", Toast.LENGTH_LONG).show();
             }

@@ -203,7 +203,6 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -217,10 +216,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
         isScreenInFront = true;
         checkNotification();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Keys.UNAUTHORIZED_BROADCAST);
-        intentFilter.addAction(Keys.MOCK_LOCATION);
-        registerReceiver(myReceiver, intentFilter);
         if (!(mCurrentActivity instanceof BookingActivity)) {
             IntentFilter intentFilterNetwork = new IntentFilter();
             intentFilterNetwork.addAction("android.net.conn.CONNECTIVITY_CHANGE");
@@ -235,8 +230,8 @@ public class BaseActivity extends AppCompatActivity {
     private BroadcastReceiver networkChangeListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase("android.location.GPS_ENABLED_CHANGE") ||
-                    intent.getAction().equalsIgnoreCase("android.location.PROVIDERS_CHANGED")) {
+            if ("android.location.GPS_ENABLED_CHANGE".equalsIgnoreCase(intent.getAction()) ||
+                    "android.location.PROVIDERS_CHANGED".equalsIgnoreCase(intent.getAction())) {
                 checkGps();
             } else {
                 checkConnectivity(context);
@@ -306,24 +301,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, final Intent intent) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mCurrentActivity != null && intent != null) {
-                        if (intent.getAction().equalsIgnoreCase(Keys.UNAUTHORIZED_BROADCAST)) {
-                            Utils.onUnauthorized(BaseActivity.this);
-                        } else if (intent.getAction().equalsIgnoreCase(Keys.MOCK_LOCATION)) {
-                            Utils.onUnauthorizedMockLocation(BaseActivity.this);
-//                            Dialogs.INSTANCE.showToast(mCurrentActivity, "Please disable Mock/Fake Location Providers.");
-                        }
-                    }
-                }
-            });
-        }
-    };
 
     //setting contentLayout view to activity
     public void setContentView(int activity_main) {
@@ -453,9 +430,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Utils.flushMixPanelEvent(mCurrentActivity);
-        if (myReceiver != null) {
-            unregisterReceiver(myReceiver);
-        }
         if (networkChangeListener != null && !(mCurrentActivity instanceof BookingActivity)) {
             unregisterReceiver(networkChangeListener);
         }
@@ -467,8 +441,12 @@ public class BaseActivity extends AppCompatActivity {
 
     @Subscribe
     public void onEvent(final String action) {
-        if (action.equalsIgnoreCase(Constants.ON_NEW_NOTIFICATION)) {
+        if (Constants.ON_NEW_NOTIFICATION.equalsIgnoreCase(action)) {
             checkNotification();
+        } else if (Keys.UNAUTHORIZED_BROADCAST.equalsIgnoreCase(action)) {
+            Utils.onUnauthorized(mCurrentActivity);
+        } else if (Keys.MOCK_LOCATION.equalsIgnoreCase(action)) {
+            Utils.onUnauthorizedMockLocation(mCurrentActivity);
         }
     }
 
@@ -568,4 +546,25 @@ public class BaseActivity extends AppCompatActivity {
 
         }
     }
+
+
+    void setTitleCustomToolbarUrdu(String urdu) {
+        FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
+        FontTextView tvTitle = (FontTextView) findViewById(R.id.tvTitle);
+
+        tvTitle.setVisibility(View.GONE);
+        tvTitleUrdu.setVisibility(View.VISIBLE);
+        tvTitleUrdu.setText(urdu);
+        setBackPress(findViewById(R.id.ivBackBtn));
+    }
+
+    private void setBackPress(View view) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
 }

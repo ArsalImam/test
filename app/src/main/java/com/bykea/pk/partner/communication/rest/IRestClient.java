@@ -1,15 +1,21 @@
 package com.bykea.pk.partner.communication.rest;
 
 
+import com.bykea.pk.partner.models.data.SavedPlaces;
+import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.response.AccountNumbersResponse;
+import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
+import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
+import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
+import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
@@ -30,6 +36,7 @@ import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
+import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Fields;
 import com.squareup.okhttp.RequestBody;
@@ -38,6 +45,7 @@ import com.squareup.okhttp.ResponseBody;
 import java.util.ArrayList;
 
 import retrofit.Call;
+import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
@@ -247,6 +255,30 @@ interface IRestClient {
                                                           @Query("location") String location,
                                                           @Query("components") String component,
                                                           @Query("key") String googleMapApiKey);
+
+
+    @POST(ApiTags.ADD_SAVED_PLACE)
+    Call<AddSavedPlaceResponse> addSavedPlace(@Body SavedPlaces body);
+
+    @POST(ApiTags.UPDATE_SAVED_PLACE)
+    Call<AddSavedPlaceResponse> updateSavedPlace(@Body SavedPlaces body);
+
+    @POST(ApiTags.DELETE_SAVED_PLACE)
+    Call<DeleteSavedPlaceResponse> deleteSavedPlace(@Body DeletePlaceRequest body);
+
+
+    @GET(ApiTags.GET_SAVED_PLACES)
+    Call<GetSavedPlacesResponse> getSavedPlaces(@Query("_id") String userId,
+                                                @Query("token_id") String tripId);
+
+
+    @GET(ApiTags.GET_AREAS)
+    Call<GetZonesResponse> requestZones(@Query("city") String cityId);
+
+    @GET(ApiTags.GET_ADDRESSES)
+    Call<ZoneAreaResponse> requestZoneAreas(@Query("zid") String cityId);
+
+
 
   /*  @FormUrlEncoded
 

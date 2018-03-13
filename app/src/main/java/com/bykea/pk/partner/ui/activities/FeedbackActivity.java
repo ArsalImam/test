@@ -37,6 +37,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -424,8 +425,7 @@ public class FeedbackActivity extends BaseActivity {
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
                     if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                        Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
-                        sendBroadcast(locationIntent);
+                        EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, errorMessage);
                     }
@@ -443,9 +443,12 @@ public class FeedbackActivity extends BaseActivity {
         } else if (StringUtils.isBlank(receivedAmountEt.getText().toString())) {
             setEtError("Enter received amount");
             return false;
-        } else if (isDeliveryType && StringUtils.isBlank(etReceiverName.getText().toString())) {
+        } else if (isDeliveryType && selectedMsgPosition == 0 && StringUtils.isBlank(etReceiverName.getText().toString())) {
             etReceiverName.setError("Required");
             etReceiverName.requestFocus();
+            return false;
+        } else if ((isDeliveryType || isPurchaseType) && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
+                && !Utils.isValidNumber(mCurrentActivity, etReceiverMobileNo)) {
             return false;
         } else if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
             setEtError("Invalid amount");

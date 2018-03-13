@@ -15,6 +15,8 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -464,6 +466,17 @@ public class Utils {
     public static void hideSoftKeyboard(Context context, View v) {
         InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    public static void hideSoftKeyboard(android.support.v4.app.Fragment fragment) {
+        try {
+            final InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null && fragment.getView() != null) {
+                imm.hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
+            }
+        } catch (Exception ignored) {
+        }
+
     }
 
     public static void hideKeyboard(Activity context) {
@@ -1469,5 +1482,27 @@ public class Utils {
         DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, color));
         return wrappedDrawable;
     }
+    public static boolean isConnected(Context context, boolean showToast) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (null != networkInfo && networkInfo.isConnectedOrConnecting()) {
+            return true;
+        } else {
+            if (showToast) {
+                appToast(context, context.getString(R.string.error_internet_connectivity));
+            }
+            return false;
+        }
+    }
+
+    public static void addRecentPlace(PlacesResult placesResult) {
+        String recentResult = placesResult.address;
+        int lastIndex = recentResult.lastIndexOf(',');
+        String name = recentResult.substring(0, lastIndex);
+        PlacesResult placesResult1 = new PlacesResult(name, recentResult, placesResult.latitude, placesResult.longitude);
+        AppPreferences.setRecentPlaces(placesResult1);
+    }
+
 
 }

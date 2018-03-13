@@ -66,6 +66,15 @@ public class ApiTags {
     public static final String UPDATE_REG_ID = "/api/v1/common/UpdateRegId";
 
 
+    public static final String ADD_SAVED_PLACE = "/api/v1/users/savePlace";
+    public static final String GET_SAVED_PLACES = "/api/v1/users/userPlaces";
+    public static final String DELETE_SAVED_PLACE = "/api/v1/users/deletePlace";
+    public static final String UPDATE_SAVED_PLACE = "/api/v1/users/updatePlace";
+
+    public static final String GET_AREAS = "/api/v1/users/getZones";
+    public static final String GET_ADDRESSES = "/api/v1/users/getZoneAreas";
+
+
     /******************************************************************************
      * SOCKET METHODS STRINGS                                                     *
      ******************************************************************************/

@@ -5,12 +5,16 @@ import android.content.Context;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.PilotData;
+import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.TrackingData;
+import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AccountNumbersResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
+import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
@@ -31,6 +35,8 @@ import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
+import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
+import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
@@ -54,20 +60,25 @@ import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
+import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.HTTPStatus;
+import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -854,6 +865,46 @@ public class UserRepository {
         mRestRequestHandler.updateRegid(mDataCallback, user.getId(), AppPreferences.getRegId(), user.getAccessToken(), context);
     }
 
+
+    public void requestZones(Context context, CitiesData city, UserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestZones(context, city, mDataCallback);
+    }
+
+
+    public void requestZoneAreas(Context context, ZoneData zone, UserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestZoneAreas(context, zone, mDataCallback);
+    }
+
+    public void addSavedPlace(Context context, SavedPlaces savedPlaces, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.addSavedPlace(mContext, mDataCallback, savedPlaces);
+    }
+
+    public void updateSavedPlace(Context context, SavedPlaces savedPlaces, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.updateSavedPlace(mContext, mDataCallback, savedPlaces);
+    }
+
+
+    public void deleteSavedPlace(Context context, SavedPlaces savedPlaces, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.deleteSavedPlace(mContext, mDataCallback, savedPlaces);
+    }
+
+    public void getSavedPlaces(Context context, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.getSavedPlaces(mContext, mDataCallback);
+    }
+
+
     private IResponseCallback mDataCallback = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {
@@ -1007,6 +1058,34 @@ public class UserRepository {
                         }
                         mUserCallback.onUpdateRegid((UpdateRegIDResponse) object);
                         break;
+                    case "AddSavedPlaceResponse":
+                        mUserCallback.onAddSavedPlaceResponse((AddSavedPlaceResponse) object);
+                        break;
+                    case "DeleteSavedPlaceResponse":
+                        mUserCallback.onDeleteSavedPlaceResponse();
+                        break;
+                    case "GetSavedPlacesResponse":
+                        GetSavedPlacesResponse getSavedPlacesResponse = (GetSavedPlacesResponse) object;
+                        if (getSavedPlacesResponse.getData() != null && getSavedPlacesResponse.getData().size() > 0) {
+                            for (SavedPlaces place : getSavedPlacesResponse.getData()) {
+                                place.setPlaceId(place.getUserId());  // in response _id is place id
+                                if (place.getLoc() != null && place.getLoc().size() > 1) {
+                                    place.setLat(place.getLoc().get(0));
+                                    place.setLng(place.getLoc().get(1));
+                                    place.getLoc().clear();
+                                }
+                            }
+                            AppPreferences.updateSavedPlace(getSavedPlacesResponse.getData());
+                        }
+                        AppPreferences.setSavedPlacesAPICalled(true);
+                        mUserCallback.onGetSavedPlacesResponse((GetSavedPlacesResponse) object);
+                        break;
+                    case "GetZonesResponse":
+                        mUserCallback.onZonesResponse((GetZonesResponse) object);
+                        break;
+                    case "ZoneAreaResponse":
+                        mUserCallback.onZoneAreasResponse((ZoneAreaResponse) object);
+                        break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);
                         break;
@@ -1014,120 +1093,6 @@ public class UserRepository {
             } else {
                 Utils.redLog("UserRepo", "mUserCallback is Null");
             }
-
-
-            /*if (object instanceof RegisterResponse) {
-                mUserCallback.onUserRegister((RegisterResponse) object);
-            } else if (object instanceof DriverDestResponse) {
-                mUserCallback.onDropOffUpdated((DriverDestResponse) object);
-            } else if (object instanceof LoginResponse) {
-                if (null != mUserCallback) {
-                    mUserCallback.onUserLogin((LoginResponse) object);
-                }
-            } else if (object instanceof LogoutResponse) {
-                if (null != mUserCallback) {
-                    mUserCallback.onPilotLogout((LogoutResponse) object);
-                }
-            } else if (object instanceof SettingsResponse) {
-                if (null != mUserCallback) {
-                    SettingsResponse settingsResponse = (SettingsResponse) object;
-                    if (settingsResponse.getData() != null && settingsResponse.getData().getSettings() != null) {
-                        AppPreferences.setSettingsVersion(settingsResponse.getSetting_version());
-                        AppPreferences.saveSettingsData(settingsResponse.getData());
-                        if (settingsResponse.getData().getSettings().getCih_range() != null) {
-                            AppPreferences.setCashInHandsRange(settingsResponse.getData().getSettings().getCih_range());
-                        }
-                        mUserCallback.onGetSettingsResponse(true);
-                    } else {
-                        mUserCallback.onGetSettingsResponse(false);
-                    }
-                }
-            } else if (object instanceof GetCitiesResponse) {
-                if (null != mUserCallback) {
-                    AppPreferences.setAvailableCities((GetCitiesResponse) object);
-                    mUserCallback.onCitiesResponse(((GetCitiesResponse) object));
-                }
-            } else if (object instanceof PilotStatusResponse) {
-                mUserCallback.onUpdateStatus((PilotStatusResponse) object);
-            } else if (object instanceof AckCallResponse) {
-                mUserCallback.onAck(((AckCallResponse) object).getMessage());
-            } else if (object instanceof HeatMapResponse) {
-                mUserCallback.getHeatMap((HeatMapResponse) object);
-            } else if (object instanceof UpdateProfileResponse) {
-                mUserCallback.onUpdateProfile((UpdateProfileResponse) object);
-            } else if (object instanceof WalletHistoryResponse) {
-                mUserCallback.getWalletData((WalletHistoryResponse) object);
-            } else if (object instanceof AccountNumbersResponse) {
-                mUserCallback.getAccountNumbers((AccountNumbersResponse) object);
-            } else if (object instanceof ContactNumbersResponse) {
-                mUserCallback.getContactNumbers((ContactNumbersResponse) object);
-            } else if (object instanceof CheckDriverStatusResponse) {
-                mUserCallback.onRunningTrips((CheckDriverStatusResponse) object);
-            } else if (object instanceof TripHistoryResponse) {
-                mUserCallback.onGetTripHistory((TripHistoryResponse) object);
-            } else if (object instanceof TripMissedHistoryResponse) {
-                mUserCallback.onGetMissedTripHistory((TripMissedHistoryResponse) object);
-            } else if (object instanceof GeocoderApi) {
-                mUserCallback.onReverseGeocode((GeocoderApi) object);
-            } else if (object instanceof CancelRideResponse) {
-                mUserCallback.onCancelRide((CancelRideResponse) object);
-            } else if (object instanceof FreeDriverResponse) {
-                mUserCallback.onFreeDriver((FreeDriverResponse) object);
-            } else if (object instanceof UploadAudioFile) {
-                mUserCallback.onUploadAudioFile((UploadAudioFile) object);
-            } else if (object instanceof UploadDocumentFile) {
-                mUserCallback.onUploadFile((UploadDocumentFile) object);
-            } else if (object instanceof ForgotPasswordResponse) {
-                mUserCallback.onForgotPassword((ForgotPasswordResponse) object);
-            } else if (object instanceof VerifyCodeResponse) {
-                mUserCallback.onCodeVerification((VerifyCodeResponse) object);
-            } else if (object instanceof VerifyNumberResponse) {
-                mUserCallback.onNumberVerification((VerifyNumberResponse) object);
-            } else if (object instanceof AcceptCallResponse) {
-                WebIORequestHandler.getInstance().registerChatListener();
-                mUserCallback.onAcceptCall((AcceptCallResponse) object);
-            } else if (object instanceof RejectCallResponse) {
-                mUserCallback.onRejectCall((RejectCallResponse) object);
-            } else if (object instanceof ArrivedResponse) {
-                mUserCallback.onArrived((ArrivedResponse) object);
-            } else if (object instanceof BeginRideResponse) {
-                mUserCallback.onBeginRide((BeginRideResponse) object);
-            } else if (object instanceof EndRideResponse) {
-                WebIORequestHandler.getInstance().unRegisterChatListener();
-                mUserCallback.onEndRide((EndRideResponse) object);
-            } else if (object instanceof FeedbackResponse) {
-                mUserCallback.onFeedback((FeedbackResponse) object);
-            } else if (object instanceof ConversationResponse) {
-                mUserCallback.onGetConversations((ConversationResponse) object);
-            } else if (object instanceof SendMessageResponse) {
-                mUserCallback.onSendMessage((SendMessageResponse) object);
-            } else if (object instanceof ConversationChatResponse) {
-                mUserCallback.onGetConversationChat((ConversationChatResponse) object);
-            } else if (object instanceof UpdateConversationStatusResponse) {
-                mUserCallback.onUpdateConversationStatus((UpdateConversationStatusResponse) object);
-            } else if (object instanceof GetConversationIdResponse) {
-                mUserCallback.onGetConversationId((GetConversationIdResponse) object);
-            } else if (object instanceof ServiceTypeResponse) {
-                mUserCallback.onGetServiceTypes((ServiceTypeResponse) object);
-            } else if (object instanceof ChangePinResponse) {
-                if (null != mUserCallback) {
-                    mUserCallback.onChangePinResponse(((ChangePinResponse) object));
-                }
-            } else if (object instanceof GetProfileResponse) {
-                if (null != mUserCallback) {
-                    mUserCallback.onGetProfileResponse(((GetProfileResponse) object));
-                }
-            } else if (object instanceof DriverStatsResponse) {
-                if (null != mUserCallback) {
-                    mUserCallback.onDriverStatsResponse(((DriverStatsResponse) object));
-                }
-            } else if (object instanceof UpdateDropOffResponse) {
-                if (null != mUserCallback) {
-                    mUserCallback.onUpdateDropOff(((UpdateDropOffResponse) object));
-                }
-            } else if (object instanceof CommonResponse) {
-                mUserCallback.onCommonResponse((CommonResponse) object);
-            }*/
         }
 
         @Override
@@ -1137,6 +1102,11 @@ public class UserRepository {
 
         @Override
         public void onError(int errorCode, String error) {
+            /*if (errorCode == HTTPStatus.UNAUTHORIZED) {
+                EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+            } else {
+                mUserCallback.onError(errorCode, error);
+            }*/
             mUserCallback.onError(errorCode, error);
         }
 

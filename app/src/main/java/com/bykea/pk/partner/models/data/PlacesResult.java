@@ -3,29 +3,16 @@ package com.bykea.pk.partner.models.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 
 public class PlacesResult implements Parcelable {
     public double latitude;
     public double longitude;
     public String name;
     public String address;
-
-    @Override
-    public int describeContents() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /**
-     * Storing the PlacesResult data to Parcel object
-     **/
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
-        dest.writeString(name);
-        dest.writeString(address);
-    }
+    public boolean isSaved;
+    public String placeId;
 
     /**
      * A constructor that initializes the PlacesResult object
@@ -47,6 +34,8 @@ public class PlacesResult implements Parcelable {
         this.longitude = in.readDouble();
         this.name = in.readString();
         this.address = in.readString();
+        isSaved = in.readByte() != 0;
+        placeId = in.readString();
     }
 
     public static final Creator<PlacesResult> CREATOR = new Creator<PlacesResult>() {
@@ -61,4 +50,20 @@ public class PlacesResult implements Parcelable {
             return new PlacesResult[size];
         }
     };
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int i) {
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeString(name);
+        dest.writeString(address);
+        dest.writeByte((byte) (isSaved ? 1 : 0));
+        dest.writeString(placeId);
+    }
 }

@@ -208,6 +208,12 @@
         <activity
             android:name=".ui.activities.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.SelectPlaceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.SavePlaceActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

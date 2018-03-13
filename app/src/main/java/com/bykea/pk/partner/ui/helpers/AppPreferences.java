@@ -9,6 +9,7 @@ import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.utils.Constants;
@@ -27,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class AppPreferences {
 
@@ -797,6 +799,7 @@ public class AppPreferences {
         }.getType());
         ed.putLong(Keys.AVAILABLE_CITIES_API_CALL_TIME, System.currentTimeMillis());
         ed.putString(Keys.AVAILABLE_CITIES, value);
+        ed.putString(Keys.SERVICE_CITIES, new Gson().toJson(response));
         ed.apply();
     }
 
@@ -940,4 +943,114 @@ public class AppPreferences {
     public static String getLastMixPanelDistId() {
         return mSharedPreferences.getString(Keys.MIX_PANEL_DIST_ID, StringUtils.EMPTY);
     }
+
+
+    public static void setRecentPlaces(PlacesResult place) {
+        ArrayList<PlacesResult> recentPlaces = new ArrayList<>();
+        recentPlaces.add(place);
+        ArrayList<PlacesResult> prevPlaces = getRecentPlaces();
+        if (prevPlaces != null && prevPlaces.size() > 0) {
+            //Remove place if already exists to avoid duplicate place
+            Iterator<PlacesResult> iterator = prevPlaces.iterator();
+            while (iterator.hasNext()) {
+                PlacesResult temp = iterator.next();
+                if (temp.name.equalsIgnoreCase(place.name)) {
+                    iterator.remove();
+                }
+            }
+            //keep only 40 recent places, new places already added at top
+            if (prevPlaces.size() > 39) {
+                prevPlaces.remove(39);
+            }
+            recentPlaces.addAll(prevPlaces);
+        }
+        String value = new Gson().toJson(recentPlaces, new TypeToken<ArrayList<PlacesResult>>() {
+        }.getType());
+        mSharedPreferences
+                .edit()
+                .putString(Keys.RECENT_PLACES, value)
+                .apply();
+    }
+
+    public static ArrayList<PlacesResult> getRecentPlaces() {
+        String placesJson = mSharedPreferences.getString(Keys.RECENT_PLACES, "");
+        ArrayList<PlacesResult> places;
+        places = new Gson().fromJson(placesJson, new TypeToken<ArrayList<PlacesResult>>() {
+        }.getType());
+        return places;
+    }
+
+
+    public static void setSavedPlace(SavedPlaces place) {
+        ArrayList<SavedPlaces> recentPlaces = new ArrayList<>();
+        recentPlaces.add(place);
+        ArrayList<SavedPlaces> prevPlaces = getSavedPlaces();
+        if (prevPlaces != null && prevPlaces.size() > 0) {
+            //Remove place if already exists to avoid duplicate place
+            Iterator<SavedPlaces> iterator = prevPlaces.iterator();
+            while (iterator.hasNext()) {
+                SavedPlaces temp = iterator.next();
+                if (temp.getAddress().equalsIgnoreCase(place.getAddress())) {
+                    float distance = Utils.calculateDistance(temp.getLat(), temp.getLng(), place.getLat(), place.getLng());
+                    if (distance < Constants.SAVED_PLACES_RADIUS) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+            //keep only 19 saved places, new places already added at top
+            if (prevPlaces.size() > 19) {
+                prevPlaces.remove(19);
+            }
+            recentPlaces.addAll(prevPlaces);
+        }
+        String value = new Gson().toJson(recentPlaces, new TypeToken<ArrayList<SavedPlaces>>() {
+        }.getType());
+        mSharedPreferences
+                .edit()
+                .putString(Keys.SAVED_PLACES, value)
+                .apply();
+    }
+
+    public static void updateSavedPlace(ArrayList<SavedPlaces> places) {
+        String value = new Gson().toJson(places, new TypeToken<ArrayList<SavedPlaces>>() {
+        }.getType());
+        mSharedPreferences
+                .edit()
+                .putString(Keys.SAVED_PLACES, value)
+                .apply();
+    }
+
+    public static ArrayList<SavedPlaces> getSavedPlaces() {
+        String placesJson = mSharedPreferences.getString(Keys.SAVED_PLACES, StringUtils.EMPTY);
+        ArrayList<SavedPlaces> places = new ArrayList<>();
+        if (StringUtils.isNotBlank(placesJson)) {
+            places = new Gson().fromJson(placesJson, new TypeToken<ArrayList<SavedPlaces>>() {
+            }.getType());
+        }
+        return places;
+    }
+
+    public static void setSavedPlacesAPICalled(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.IS_SAVED_PLACES_API_CALLED, value)
+                .apply();
+    }
+
+    public static boolean isSavedPlacesAPICalled() {
+        return mSharedPreferences
+                .getBoolean(Keys.IS_SAVED_PLACES_API_CALLED, false);
+    }
+
+
+    public static GetCitiesResponse getServiceCities() {
+        String jsonString = mSharedPreferences.getString(Keys.SERVICE_CITIES, StringUtils.EMPTY);
+        GetCitiesResponse citiesData = null;
+        if (StringUtils.isNotBlank(jsonString)) {
+            citiesData = new Gson().fromJson(jsonString, GetCitiesResponse.class);
+        }
+        return citiesData;
+    }
+
 }

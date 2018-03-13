@@ -48,7 +48,9 @@
     <color name="white">#FFFFFF</color>
     <color name="yellow_dd">#fdfd96</color>
     <color name="yellow">#FAFFAD</color>
-
+    <color name="secondaryColorUltraLight">#e5e5e5</color>
+    <color name="secondaryColor4">#c2c2c2</color>
+    <color name="yellowStar">#F7D722</color>
 
 
 </resources>

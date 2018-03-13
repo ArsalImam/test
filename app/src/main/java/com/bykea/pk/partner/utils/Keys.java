@@ -131,6 +131,7 @@ public class Keys {
     public static final String IS_DIRECTIONS_API_KEY_REQUIRED = "IS_DIRECTIONS_API_KEY_REQUIRED";
     public static final String API_KEY_CHECK_TIME_DIRECTIONS = "API_KEY_CHECK_TIME_DIRECTIONS";
 
+    public static final String SERVICE_CITIES = "SERVICE_CITIES";
     public static final String AVAILABLE_CITIES = "AVAILABLE_CITIES";
     public static final String AVAILABLE_CITIES_API_CALL_TIME = "AVAILABLE_CITIES_API_CALL_TIME";
     public static final String ADID = "GOOGLE_ADID";
@@ -152,4 +153,8 @@ public class Keys {
     public static final String DRIVER_DEST = "DRIVER_DEST";
     public static final String MIX_PANEL_DIST_ID = "MIX_PANEL_DIST_ID";
     public static final String TRACKING_DATA = "TRACKING_DATA";
+    public static final String RECENT_PLACES = "RECENT_PLACES_NEW";
+    public static final String SAVED_PLACES = "SAVED_PLACES_NEW";
+    public static final String IS_SAVED_PLACES_API_CALLED = "IS_SAVED_PLACES_API_CALLED";
+
 }

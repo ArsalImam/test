@@ -40,6 +40,7 @@ import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.activities.SelectPlaceActivity;
 import com.bykea.pk.partner.ui.helpers.DrawPolygonAsync;
 import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -602,8 +603,9 @@ public class HomeFragment extends Fragment {
 
     private void setHomeLocation() {
         if (!AppPreferences.getAvailableStatus()) {
-            Intent returndropoffIntent = new Intent(mCurrentActivity, ConfirmDropOffAddressActivity.class);
-            returndropoffIntent.putExtra(Constants.Extras.DROP_OFF, AppPreferences.getDriverDestination());
+            Intent returndropoffIntent = new Intent(mCurrentActivity, SelectPlaceActivity.class);
+            returndropoffIntent.putExtra(Constants.Extras.SELECTED_ITEM, AppPreferences.getDriverDestination());
+            returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
             startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
         }
 //        ActivityStackManager.getInstance(mCurrentActivity).startConfirmDestActivity(mCurrentActivity, "Confirm Destination", "Search Destination");

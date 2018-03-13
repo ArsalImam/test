@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.IntentCompat;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
@@ -25,6 +26,7 @@ import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
 import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
+import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -46,6 +48,8 @@ public class ActivityStackManager {
 
     public void startLoginActivity(Context mContext) {
         Intent intent = new Intent(mContext, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mContext.startActivity(intent);
     }
 
@@ -197,6 +201,13 @@ public class ActivityStackManager {
     public void startForgotPasswordActivity(Context mContext) {
         Intent intent = new Intent(mContext, ForgotPasswordActivity.class);
         mContext.startActivity(intent);
+    }
+
+
+    public void startSavePlaceActivity(Context context, PlacesResult placesResult) {
+        Intent intent = new Intent(context, SavePlaceActivity.class);
+        intent.putExtra(Constants.Extras.SELECTED_ITEM, placesResult);
+        context.startActivity(intent);
     }
 
 }

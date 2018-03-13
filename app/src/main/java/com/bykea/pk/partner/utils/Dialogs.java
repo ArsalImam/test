@@ -167,6 +167,36 @@ public enum Dialogs {
         showDialog();
     }
 
+
+    public void showAlertDialog(Context context, String title, String message, View.OnClickListener onClick) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_alert);
+
+        FontButton okIv = (FontButton) mDialog.findViewById(R.id.positiveBtn);
+        FontButton cancelIv = (FontButton) mDialog.findViewById(R.id.negativeBtn);
+        cancelIv.setText("CANCEL");
+        okIv.setText("OK");
+
+        cancelIv.setAllCaps(true);
+        okIv.setAllCaps(true);
+
+        FontTextView titleTv = (FontTextView) mDialog.findViewById(R.id.titleTv);
+        FontTextView msg = (FontTextView) mDialog.findViewById(R.id.messageTv);
+
+        titleTv.setText(title);
+        msg.setText(message);
+        okIv.setOnClickListener(onClick);
+        cancelIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+            }
+        });
+        mDialog.setCancelable(false);
+        showDialog();
+    }
+
     public void showCallPassengerDialog(Context context, View.OnClickListener btnSender,
                                         View.OnClickListener btnRecipient) {
         if (null == context) return;

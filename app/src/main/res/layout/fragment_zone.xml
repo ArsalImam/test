@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/rlFromCity"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_44sdp"
+        android:background="@drawable/border_form">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/spCities"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/_6sdp"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_14sdp"
+            tools:text="Karachi" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvZones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
+    </FrameLayout>
+
+</LinearLayout>

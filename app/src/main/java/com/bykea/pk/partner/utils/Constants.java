@@ -77,12 +77,24 @@ public class Constants {
 
 
     public static class Extras {
+        public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
+        public static final String CONTACT_TYPE = "cType";
+
+
         public static final String SELECTED_VEHICLE_DATA = "SELECTED_VEHICLE_DATA";
         public static final String RIDE_VEHICLE_DATA = "RIDE_VEHICLE_DATA";
         public static final String TRIP_DETAILS = "TRIP_DETAILS";
-        public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
+        public static final String TRIP_DATA = "TRIP_DATA";
+        public static final String SELECTED_ITEM = "SELECTED_ITEM";
+        public static final String SELECTED_CITY = "SELECTED_CITY";
+        public static final String LIST_ITEMS = "LIST_ITEMS";
+        public static final String CALL_PENDING_API = "CALL_PENDING_API";
+        public static final String NAVIGATE_TO_BOOKING_SCREEN = "NAVIGATE_TO_BOOKING_SCREEN";
+        public static final String CHAT_MSG = "CHAT_MSG";
+        public static final String HIDE_SEARCH = "HIDE_SEARCH";
+        public static final String TOP_BAR = "top_bar";
         public static final String DROP_OFF = "DROP_OFF";
-        public static final String CONTACT_TYPE = "cType";
+        public static final String PICK_UP = "PICK_UP";
     }
 
     public static class AnalyticsEvents {
@@ -105,4 +117,7 @@ public class Constants {
     public static final float ANDROID_OPACITY = 255;
     public static final String ON_SOCKET_CONNECTED = "ON_SOCKET_CONNECTED";
     public static final String COUNTRY_CODE_AUTOCOMPLETE = "country:pk";
+    public static final String PLACES_TITLE = "places_title";
+    public static final float SAVED_PLACES_RADIUS = 200f;
+
 }

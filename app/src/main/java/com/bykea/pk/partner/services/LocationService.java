@@ -172,8 +172,9 @@ public class LocationService extends Service {
                 Utils.redLog("Location", location.getLatitude() + "," + location.getLongitude() + "  (" + Utils.getUTCDate(location.getTime()) + ")");
             } else {
                 Utils.redLog("Location", "Mock location Received...");
-                Intent intent = new Intent(Keys.MOCK_LOCATION);
-                sendBroadcast(intent);
+//                Intent intent = new Intent(Keys.MOCK_LOCATION);
+//                sendBroadcast(intent);
+                EventBus.getDefault().post(Keys.MOCK_LOCATION);
             }
         }
     }
@@ -409,8 +410,7 @@ public class LocationService extends Service {
         public void onError(int errorCode, String errorMessage) {
             switch (errorCode) {
                 case HTTPStatus.UNAUTHORIZED:
-                    Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
-                    sendBroadcast(locationIntent);
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
                     break;
                 case HTTPStatus.FENCE_ERROR:
                     AppPreferences.setOutOfFence(true);
