@@ -27,6 +27,7 @@ import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
@@ -278,6 +279,14 @@ interface IRestClient {
     @GET(ApiTags.GET_ADDRESSES)
     Call<ZoneAreaResponse> requestZoneAreas(@Query("zid") String cityId);
 
+
+    @FormUrlEncoded
+    @POST(ApiTags.TOP_UP_PASSENGER_WALLET)
+    Call<TopUpPassWalletResponse> topUpPassengerWallet(@Field("_id") String _id,
+                                                       @Field("token_id") String token_id,
+                                                       @Field("tId") String tripNo,
+                                                       @Field("amount") String amount,
+                                                       @Field("pId") String passId);
 
 
   /*  @FormUrlEncoded

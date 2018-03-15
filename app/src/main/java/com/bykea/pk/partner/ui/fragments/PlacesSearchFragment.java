@@ -139,7 +139,6 @@ public class PlacesSearchFragment extends Fragment {
         mCurrentActivity = (SelectPlaceActivity) getActivity();
         mRepository = new UserRepository();
         requestCode = mCurrentActivity.getIntent().getIntExtra("from", 0);
-        setInitMap(savedInstanceState, view);
         if (getArguments() != null && getArguments().getBoolean(Constants.Extras.HIDE_SEARCH)) {
             rlDropDown.setVisibility(View.GONE);
             rlSavePlace.setVisibility(View.VISIBLE);
@@ -148,22 +147,37 @@ public class PlacesSearchFragment extends Fragment {
             setSearchAdapter();
         }
         Utils.hideSoftKeyboard(this);
+        mapView = (CustomMapView) view.findViewById(R.id.confirmMapFragment);
+        final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
+        mapView.onCreate(mapViewSavedInstanceState);
+        if (getArguments() == null || !getArguments().getBoolean(Constants.Extras.IS_FROM_VIEW_PAGER)) {
+            setInitMap();
+        }
     }
 
     private void updateStarColor() {
         ivStar.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.ic_star_grey, isSavedPlace ? R.color.yellowStar : R.color.secondaryColorLight));
     }
 
-    private void setInitMap(Bundle savedInstanceState, View view) {
-        mapView = (CustomMapView) view.findViewById(R.id.confirmMapFragment);
-        final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
-        mapView.onCreate(mapViewSavedInstanceState);
-        try {
-            MapsInitializer.initialize(mCurrentActivity.getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
+    private boolean isMapLoaded;
+
+//    @Override
+//    public void setUserVisibleHint(boolean isVisibleToUser) {
+//        super.setUserVisibleHint(isVisibleToUser);
+//        if (isVisibleToUser && !isMapLoaded) {
+//        }
+//    }
+
+    public void setInitMap() {
+        if (!isMapLoaded && getView() != null) {
+            isMapLoaded = true;
+            try {
+                MapsInitializer.initialize(mCurrentActivity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mapView.getMapAsync(mapReadyCallback);
         }
-        mapView.getMapAsync(mapReadyCallback);
     }
 
 
@@ -174,6 +188,7 @@ public class PlacesSearchFragment extends Fragment {
                 return;
             }
             mGoogleMap = googleMap;
+
             Utils.formatMap(mGoogleMap);
             mapView.init(mGoogleMap);
             mGoogleMap.setPadding(0, 0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen.map_padding_bottom));
@@ -237,11 +252,14 @@ public class PlacesSearchFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         final Bundle mapViewSaveState = new Bundle(outState);
-        mapView.onSaveInstanceState(mapViewSaveState);
-        outState.putBundle("mapViewSaveState", mapViewSaveState);
+        if (mapView != null) {
+            mapView.onSaveInstanceState(mapViewSaveState);
+            outState.putBundle("mapViewSaveState", mapViewSaveState);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -438,8 +456,6 @@ public class PlacesSearchFragment extends Fragment {
     };
 
 
-
-
     @OnClick({R.id.confirmBtn, R.id.autocomplete_places, R.id.pickUpLl, R.id.ivStar})
     public void onClick(View v) {
         switch (v.getId()) {
@@ -532,7 +548,9 @@ public class PlacesSearchFragment extends Fragment {
 
     @Override
     public void onResume() {
-        mapView.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
         super.onResume();
         try {
             if (mGoogleMap != null && !addressTv.getText().toString().equalsIgnoreCase(getString(R.string.set_pickup_location))) {
@@ -546,19 +564,25 @@ public class PlacesSearchFragment extends Fragment {
 
     @Override
     public void onPause() {
-        mapView.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        mapView.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
         super.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
-        mapView.onLowMemory();
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
         super.onLowMemory();
     }
 
@@ -569,8 +593,6 @@ public class PlacesSearchFragment extends Fragment {
         confirmBtn.setEnabled(true);
         confirmBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_green_square));
     }
-
-
 
 
     private void finishLoading() {

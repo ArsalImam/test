@@ -73,6 +73,9 @@ public class ApiTags {
 
     public static final String GET_AREAS = "/api/v1/users/getZones";
     public static final String GET_ADDRESSES = "/api/v1/users/getZoneAreas";
+    public static final String TOP_UP_PASSENGER_WALLET = "/api/v1/driver/topupToPassenger";
+
+
 
 
     /******************************************************************************

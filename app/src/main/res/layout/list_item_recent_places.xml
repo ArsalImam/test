@@ -65,6 +65,7 @@
 
 
         <ImageView
+            android:visibility="gone"
             android:id="@+id/ivStar"
             android:layout_width="@dimen/_34sdp"
             android:layout_height="@dimen/_34sdp"

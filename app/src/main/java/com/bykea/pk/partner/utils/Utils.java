@@ -1368,6 +1368,16 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "Purchase");
     }
 
+    public static boolean isValidTopUpAmount(String amount) {
+        boolean valid = true;
+        if (StringUtils.isNotBlank(amount) && AppPreferences.getSettings() != null
+                && StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getPartner_topup_limit())
+                && Integer.parseInt(amount) > Integer.parseInt(AppPreferences.getSettings().getSettings().getPartner_topup_limit())) {
+            valid = false;
+        }
+        return valid;
+    }
+
 
     public static class AudioTime implements Serializable {
         private String mFormat = "%02d:%02d:%02d";
@@ -1482,6 +1492,7 @@ public class Utils {
         DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, color));
         return wrappedDrawable;
     }
+
     public static boolean isConnected(Context context, boolean showToast) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

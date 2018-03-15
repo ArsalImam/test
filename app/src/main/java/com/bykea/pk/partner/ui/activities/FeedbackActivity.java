@@ -116,6 +116,13 @@ public class FeedbackActivity extends BaseActivity {
     @Bind(R.id.kharedariAmountEt)
     FontEditText kharedariAmountEt;
 
+    @Bind(R.id.rlDropOffDiscount)
+    RelativeLayout rlDropOffDiscount;
+
+    @Bind(R.id.tvDropOffDiscount)
+    FontTextView tvDropOffDiscount;
+
+
     private FeedbackActivity mCurrentActivity;
     private String totalCharges = StringUtils.EMPTY, lastKhareedariAmount = StringUtils.EMPTY;
     private int TOP_UP_LIMIT, AMOUNT_LIMIT;
@@ -199,6 +206,10 @@ public class FeedbackActivity extends BaseActivity {
         }
         tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
 
+        if (StringUtils.isNotBlank(callData.getDropoff_discount())) {
+            rlDropOffDiscount.setVisibility(View.VISIBLE);
+            tvDropOffDiscount.setText(callData.getDropoff_discount());
+        }
         if (isDeliveryType) {
             receivedAmountEt.requestFocus();
             updateUIICODelivery();

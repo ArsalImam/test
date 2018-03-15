@@ -83,6 +83,8 @@ public class NormalCallData extends CommonResponse {
     private boolean isCod;
 
     private String details;
+    private String dropoff_discount;
+
 
     public String getDistanceCovered() {
         return distanceCovered;
@@ -393,5 +395,13 @@ public class NormalCallData extends CommonResponse {
 
     public void setRec_no(String rec_no) {
         this.rec_no = rec_no;
+    }
+
+    public String getDropoff_discount() {
+        return dropoff_discount;
+    }
+
+    public void setDropoff_discount(String dropoff_discount) {
+        this.dropoff_discount = dropoff_discount;
     }
 }

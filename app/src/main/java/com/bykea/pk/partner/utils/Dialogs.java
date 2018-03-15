@@ -348,11 +348,21 @@ public enum Dialogs {
         mDialog.setContentView(R.layout.top_up_add_dialog);
         final FontEditText receivedAmountEt = (FontEditText) mDialog.findViewById(R.id.receivedAmountEt);
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+        mDialog.findViewById(R.id.ivBackBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismissDialog();
+            }
+        });
         mDialog.findViewById(R.id.ivPositive).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismissDialog();
-                callBack.onCallBack(receivedAmountEt.getText().toString());
+                if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString())) {
+                    dismissDialog();
+                    callBack.onCallBack(receivedAmountEt.getText().toString());
+                } else {
+                    receivedAmountEt.setError("Amount can't be more than " + AppPreferences.getSettings().getSettings().getPartner_topup_limit());
+                }
             }
         });
         showDialog();

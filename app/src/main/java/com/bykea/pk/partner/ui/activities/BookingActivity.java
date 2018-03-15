@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
 import com.bykea.pk.partner.utils.Constants;
@@ -502,7 +503,34 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, new StringCallBack() {
                     @Override
                     public void onCallBack(String msg) {
-                        //TODO Call API
+                        if (StringUtils.isNotBlank(msg)) {
+                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                            dataRepository.topUpPassengerWallet(mCurrentActivity, callData, msg, new UserDataHandler() {
+                                @Override
+                                public void onTopUpPassWallet(final TopUpPassWalletResponse response) {
+                                    if (mCurrentActivity != null) {
+                                        mCurrentActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Dialogs.INSTANCE.dismissDialog();
+                                                Utils.appToast(mCurrentActivity, response.getMessage());
+                                                if (response.getData() != null) {
+                                                    callData.setPassWallet(response.getData().getAmount());
+                                                    tvPWalletAmount.setText("Rs. " + callData.getPassWallet());
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                }
+
+                                @Override
+                                public void onError(int errorCode, String errorMessage) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                    Utils.appToast(mCurrentActivity, errorMessage);
+                                }
+                            });
+                        }
                     }
                 });
                 break;
@@ -1603,6 +1631,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         }
                         if (StringUtils.isNotBlank(endRideResponse.getData().getPromo_deduction())) {
                             callData.setPromo_deduction(endRideResponse.getData().getPromo_deduction());
+                        }
+                        if (StringUtils.isNotBlank(endRideResponse.getData().getDropoff_discount())) {
+                            callData.setDropoff_discount(endRideResponse.getData().getDropoff_discount());
                         }
                         callData.setStatus(TripStatus.ON_FINISH_TRIP);
                         callData.setTrip_charges(endRideResponse.getData().getTrip_charges());

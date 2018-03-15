@@ -36,6 +36,7 @@ import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
@@ -145,12 +146,20 @@ public interface IUserDataHandler {
     void onProblemPosted(ProblemPostResponse response);
 
     void onDownloadAudio(DownloadAudioFileResponse response);
+
     void onUpdateRegid(UpdateRegIDResponse response);
 
     void onAddSavedPlaceResponse(AddSavedPlaceResponse response);
+
     void onDeleteSavedPlaceResponse();
+
     void onGetSavedPlacesResponse(GetSavedPlacesResponse response);
+
     void onZonesResponse(GetZonesResponse response);
+
     void onZoneAreasResponse(ZoneAreaResponse response);
+
+    void onTopUpPassWallet(TopUpPassWalletResponse response);
+
     void onError(int errorCode, String errorMessage);
 }

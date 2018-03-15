@@ -8,34 +8,56 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_48sdp"
         android:background="@color/colorAccent"
-        android:gravity="center">
+        android:fitsSystemWindows="true"
+        android:orientation="horizontal"
+        android:theme="@style/toolbarIconColor"
+        android:visibility="visible">
 
-        <com.bykea.pk.partner.widgets.FontTextView
+
+        <ImageView
+            android:id="@+id/ivBackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/_8sdp"
+            android:paddingRight="@dimen/_8sdp"
+            app:srcCompat="@drawable/ic_arrow_white" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="@dimen/_4sdp"
-            android:gravity="center"
-            android:text="Top-Up"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            app:fontName="roboto_regular.ttf" />
+            android:background="@color/colorAccent"
+            android:gravity="center">
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:minHeight="@dimen/_60sdp"
-            android:text="ٹاپ آپ"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-    </LinearLayout>
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/_4sdp"
+                android:gravity="center"
+                android:text="Top-Up"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="roboto_regular.ttf" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minHeight="@dimen/_48sdp"
+                android:text="ٹاپ آپ"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+        </LinearLayout>
+    </FrameLayout>
+
 
     <FrameLayout
         android:layout_width="match_parent"

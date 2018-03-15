@@ -17,9 +17,11 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
@@ -705,7 +707,6 @@ public class RestRequestHandler {
     }
 
 
-
     public void addSavedPlace(Context context, final IResponseCallback onResponseCallback,
                               SavedPlaces savedPlaces) {
         mContext = context;
@@ -754,6 +755,17 @@ public class RestRequestHandler {
 
         Call<GetSavedPlacesResponse> requestCall = mRestClient.getSavedPlaces(AppPreferences.getPilotData().getId(), AppPreferences.getPilotData().getAccessToken());
         requestCall.enqueue(new GenericRetrofitCallBack<GetSavedPlacesResponse>(onResponseCallback));
+
+    }
+
+    public void topUpPassengerWallet(Context context, NormalCallData callData, String amount,final IResponseCallback onResponseCallback) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+
+        Call<TopUpPassWalletResponse> requestCall = mRestClient.topUpPassengerWallet(AppPreferences.getPilotData().getId(),
+                AppPreferences.getPilotData().getAccessToken(), callData.getTripNo(), amount, callData.getPassId());
+        requestCall.enqueue(new GenericRetrofitCallBack<TopUpPassWalletResponse>(onResponseCallback));
 
     }
 

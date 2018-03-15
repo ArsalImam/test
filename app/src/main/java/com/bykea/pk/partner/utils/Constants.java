@@ -92,6 +92,7 @@ public class Constants {
         public static final String NAVIGATE_TO_BOOKING_SCREEN = "NAVIGATE_TO_BOOKING_SCREEN";
         public static final String CHAT_MSG = "CHAT_MSG";
         public static final String HIDE_SEARCH = "HIDE_SEARCH";
+        public static final String IS_FROM_VIEW_PAGER = "IS_FROM_VIEW_PAGER";
         public static final String TOP_BAR = "top_bar";
         public static final String DROP_OFF = "DROP_OFF";
         public static final String PICK_UP = "PICK_UP";

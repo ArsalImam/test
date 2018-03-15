@@ -25,6 +25,7 @@ public class EndRideResponse extends CommonResponse {
     private String wallet_deduction;
     private String promo_deduction;
     private String trip_charges;
+    private String dropoff_discount;
 
     public String getDistanceCovered() {
         return distanceCovered;
@@ -72,5 +73,13 @@ public class EndRideResponse extends CommonResponse {
 
     public String getTrip_charges() {
         return trip_charges;
+    }
+
+    public String getDropoff_discount() {
+        return dropoff_discount;
+    }
+
+    public void setDropoff_discount(String dropoff_discount) {
+        this.dropoff_discount = dropoff_discount;
     }
 }

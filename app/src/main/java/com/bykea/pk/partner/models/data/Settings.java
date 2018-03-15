@@ -26,7 +26,7 @@ public class Settings {
     @SerializedName("terms_driver")
     private String terms;
     private String cih_range;
-
+    private String partner_topup_limit;
 
     public String getCancel_time() {
         return cancel_time;
@@ -86,4 +86,11 @@ public class Settings {
         return Integer.parseInt(arrived_min_dist);
     }
 
+    public String getPartner_topup_limit() {
+        return partner_topup_limit;
+    }
+
+    public void setPartner_topup_limit(String partner_topup_limit) {
+        this.partner_topup_limit = partner_topup_limit;
+    }
 }

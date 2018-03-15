@@ -49,6 +49,7 @@ import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
@@ -905,6 +906,13 @@ public class UserRepository {
     }
 
 
+    public void topUpPassengerWallet(Context context, NormalCallData data,String amount, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.topUpPassengerWallet(mContext, data, amount, mDataCallback);
+    }
+
+
     private IResponseCallback mDataCallback = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {
@@ -1085,6 +1093,9 @@ public class UserRepository {
                         break;
                     case "ZoneAreaResponse":
                         mUserCallback.onZoneAreasResponse((ZoneAreaResponse) object);
+                        break;
+                    case "TopUpPassWalletResponse":
+                        mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

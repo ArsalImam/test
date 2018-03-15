@@ -144,7 +144,7 @@ public class SelectPlaceActivity extends BaseActivity {
         list = new ArrayList<>();
         list.add(new PlacesAreaFragment());
         list.add(getSearchFragment());
-        list.add(new PlacesSavedFragment());
+//        list.add(new PlacesSavedFragment());
         list.add(new PlacesRecentFragment());
         mAdapter = new CustomPagerAdapter(getSupportFragmentManager(), list);
         mViewPager.setAdapter(mAdapter);
@@ -171,12 +171,13 @@ public class SelectPlaceActivity extends BaseActivity {
     @NonNull
     private Fragment getSearchFragment() {
         Fragment placesSearchFragment = new PlacesSearchFragment();
+        Bundle bundle = new Bundle();
         if (getIntent() != null && getIntent().getParcelableExtra(Constants.Extras.SELECTED_ITEM) != null) {
-            Bundle bundle = new Bundle();
             PlacesResult placesResult = getIntent().getParcelableExtra(Constants.Extras.SELECTED_ITEM);
             bundle.putParcelable(Constants.Extras.SELECTED_ITEM, placesResult);
-            placesSearchFragment.setArguments(bundle);
         }
+        bundle.putBoolean(Constants.Extras.IS_FROM_VIEW_PAGER, true);
+        placesSearchFragment.setArguments(bundle);
         return placesSearchFragment;
     }
 
@@ -186,23 +187,24 @@ public class SelectPlaceActivity extends BaseActivity {
             mCurrentActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             setSelected(ivArea, R.drawable.ic_location_grey, tvArea, tvAreaUrdu);
             setUnSelected(ivSearch, R.drawable.ic_search_grey, tvSearch, tvSearchUrdu);
-            setUnSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
+//            setUnSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
             setUnSelected(ivRecent, R.drawable.ic_reload_grey, tvRecent, tvRecentUrdu);
         } else if (position == 1) {
             setUnSelected(ivArea, R.drawable.ic_location_grey, tvArea, tvAreaUrdu);
             setSelected(ivSearch, R.drawable.ic_search_grey, tvSearch, tvSearchUrdu);
-            setUnSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
+//            setUnSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
             setUnSelected(ivRecent, R.drawable.ic_reload_grey, tvRecent, tvRecentUrdu);
-        } else if (position == 2) {
+//            ((PlacesSearchFragment) mAdapter.getItem(position)).setInitMap();
+        } /*else if (position == 2) {
             setUnSelected(ivArea, R.drawable.ic_location_grey, tvArea, tvAreaUrdu);
             setUnSelected(ivSearch, R.drawable.ic_search_grey, tvSearch, tvSearchUrdu);
-            setSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
+//            setSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
             setUnSelected(ivRecent, R.drawable.ic_reload_grey, tvRecent, tvRecentUrdu);
             ((PlacesSavedFragment) mAdapter.getItem(position)).updateAdapter();
-        } else if (position == 3) {
+        }*/ else if (position == 2) {
             setUnSelected(ivArea, R.drawable.ic_location_grey, tvArea, tvAreaUrdu);
             setUnSelected(ivSearch, R.drawable.ic_search_grey, tvSearch, tvSearchUrdu);
-            setUnSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
+//            setUnSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
             setSelected(ivRecent, R.drawable.ic_reload_grey, tvRecent, tvRecentUrdu);
         }
 

@@ -36,6 +36,7 @@ import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
@@ -299,6 +300,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onZoneAreasResponse(ZoneAreaResponse response) {
+
+    }
+
+    @Override
+    public void onTopUpPassWallet(TopUpPassWalletResponse response) {
 
     }
 
