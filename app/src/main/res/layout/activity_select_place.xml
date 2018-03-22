@@ -117,13 +117,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/_4sdp"
-            android:paddingTop="@dimen/_4sdp">
+            android:paddingBottom="@dimen/_2sdp"
+            android:paddingTop="@dimen/_2sdp">
 
             <ImageView
                 android:id="@+id/ivArea"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_location_grey" />
 
@@ -155,13 +155,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/_4sdp"
-            android:paddingTop="@dimen/_4sdp">
+            android:paddingBottom="@dimen/_2sdp"
+            android:paddingTop="@dimen/_2sdp">
 
             <ImageView
                 android:id="@+id/ivSearch"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_search_grey" />
 
@@ -194,13 +194,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/_4sdp"
-            android:paddingTop="@dimen/_4sdp">
+            android:paddingBottom="@dimen/_2sdp"
+            android:paddingTop="@dimen/_2sdp">
 
             <ImageView
                 android:id="@+id/ivSaved"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_star_grey" />
 
@@ -232,13 +232,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/_4sdp"
-            android:paddingTop="@dimen/_4sdp">
+            android:paddingBottom="@dimen/_2sdp"
+            android:paddingTop="@dimen/_2sdp">
 
             <ImageView
                 android:id="@+id/ivRecent"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_reload_grey" />
 
@@ -266,7 +266,7 @@
 
     </LinearLayout>
 
-    <android.support.v4.view.ViewPager
+    <com.bykea.pk.partner.widgets.NonSwipeableViewPager
         android:id="@+id/vpFragments"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

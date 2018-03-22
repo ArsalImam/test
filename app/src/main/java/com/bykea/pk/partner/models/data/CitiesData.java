@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class CitiesData implements Parcelable{
+public class CitiesData implements Parcelable {
     private String _id;
 
     private String name;
@@ -23,6 +23,9 @@ public class CitiesData implements Parcelable{
     private boolean is_from;
     private boolean is_to;
     private String[] loc;
+
+    public CitiesData() {
+    }
 
     protected CitiesData(Parcel in) {
         _id = in.readString();

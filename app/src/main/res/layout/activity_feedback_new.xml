@@ -294,7 +294,8 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/_10sdp"
                     android:paddingRight="@dimen/_10sdp"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/tvDropOffDiscount"
@@ -314,7 +315,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
-                        android:text="  ڈراپ اوف ڈسکاؤنٹ"
+                        android:text=" ڈراپ اپ ڈسکاونٹ‎"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="@dimen/textsize.normal"
                         app:fontName="jameel_noori_nastaleeq.ttf" />

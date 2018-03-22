@@ -15,7 +15,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/tvUrduItem"
         android:text="Bahdarabad"
-        android:textSize="@dimen/_13sdp"
+        android:textSize="@dimen/_15sdp"
         android:textColor="@color/textColorPrimary" />
 
 
@@ -27,7 +27,7 @@
         android:layout_centerVertical="true"
         android:maxWidth="@dimen/_100sdp"
         android:text="بہادرآباد"
-        android:textSize="@dimen/_13sdp"
+        android:textSize="@dimen/_15sdp"
         android:textColor="@color/black"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 

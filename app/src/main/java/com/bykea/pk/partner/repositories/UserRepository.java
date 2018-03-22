@@ -37,7 +37,6 @@ import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.HeatMapResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -65,24 +64,16 @@ import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.HTTPStatus;
-import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class UserRepository {
 
@@ -559,17 +550,22 @@ public class UserRepository {
     private void setFeedBackCommonData(String feedback, String rate, String amount, JSONObject jsonObject) throws JSONException {
         jsonObject.put("token_id", AppPreferences.getAccessToken());
         jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-        jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
-        jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
+//        jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+//        jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
         jsonObject.put("_id", AppPreferences.getDriverId());
-        jsonObject.put("did", AppPreferences.getDriverId());
-        jsonObject.put("driver_id", AppPreferences.getDriverId());
+//        jsonObject.put("did", AppPreferences.getDriverId());
+//        jsonObject.put("driver_id", AppPreferences.getDriverId());
         jsonObject.put("pid", AppPreferences.getCallData().getPassId());
-        jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+//        jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
         jsonObject.put("received_amount", amount);
         jsonObject.put("rate", rate);
         jsonObject.put("feedback", feedback);
         jsonObject.put("is_dispatch", AppPreferences.getCallData().isDispatcher());
+//        if (StringUtils.isNotBlank(AppPreferences.getCallData().getCreator_type())) {
+//            jsonObject.put("creator_type", AppPreferences.getCallData().getCreator_type());
+//        } else {
+//            jsonObject.put("creator_type", "UnKnown");
+//        }
         jsonObject.put("lat", AppPreferences.getLatitude() + "");
         jsonObject.put("lng", AppPreferences.getLongitude() + "");
     }
@@ -867,10 +863,10 @@ public class UserRepository {
     }
 
 
-    public void requestZones(Context context, CitiesData city, UserDataHandler handler) {
+    public void requestZones(Context context, UserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.requestZones(context, city, mDataCallback);
+        mRestRequestHandler.requestZones(context, mDataCallback);
     }
 
 
@@ -906,7 +902,7 @@ public class UserRepository {
     }
 
 
-    public void topUpPassengerWallet(Context context, NormalCallData data,String amount, IUserDataHandler handler) {
+    public void topUpPassengerWallet(Context context, NormalCallData data, String amount, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.topUpPassengerWallet(mContext, data, amount, mDataCallback);

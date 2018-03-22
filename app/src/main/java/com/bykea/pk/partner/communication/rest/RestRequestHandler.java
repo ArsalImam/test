@@ -646,7 +646,7 @@ public class RestRequestHandler {
         }
     }
 
-    private class GenericRetrofitCallBack<T extends CommonResponse> implements Callback<T> {
+    public class GenericRetrofitCallBack<T extends CommonResponse> implements Callback<T> {
         private IResponseCallback mCallBack;
 
         public GenericRetrofitCallBack(IResponseCallback callBack) {
@@ -692,10 +692,10 @@ public class RestRequestHandler {
         requestCall.enqueue(new GenericRetrofitCallBack<UpdateRegIDResponse>(onResponseCallBack));
     }
 
-    public void requestZones(Context context, CitiesData city, IResponseCallback onResponseCallBack) {
+    public void requestZones(Context context, IResponseCallback onResponseCallBack) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
-        Call<GetZonesResponse> restCall = mRestClient.requestZones(city.get_id());
+        Call<GetZonesResponse> restCall = mRestClient.requestZones(AppPreferences.getLatitude() + "", AppPreferences.getLongitude() + "");
         restCall.enqueue(new GenericRetrofitCallBack<GetZonesResponse>(onResponseCallBack));
     }
 
@@ -758,7 +758,7 @@ public class RestRequestHandler {
 
     }
 
-    public void topUpPassengerWallet(Context context, NormalCallData callData, String amount,final IResponseCallback onResponseCallback) {
+    public void topUpPassengerWallet(Context context, NormalCallData callData, String amount, final IResponseCallback onResponseCallback) {
         mContext = context;
         this.mResponseCallBack = onResponseCallback;
         mRestClient = RestClient.getClient(mContext);
@@ -1004,7 +1004,7 @@ public class RestRequestHandler {
     public void autocomplete(Context context, String input, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000", Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
         call.enqueue(new Callback<PlaceAutoCompleteResponse>() {
             @Override
             public void onResponse(Response<PlaceAutoCompleteResponse> response, Retrofit retrofit) {

@@ -192,23 +192,23 @@ public class ChatActivity extends BaseActivity {
 
         }
 
-        @Override
-        public void onGetConversationId(final GetConversationIdResponse response) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+//        @Override
+//        public void onGetConversationId(final GetConversationIdResponse response) {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
 //                    Dialogs.INSTANCE.dismissDialog();
-                    loader.setVisibility(View.INVISIBLE);
-                    if (response.isSuccess() && StringUtils.isNotBlank(response.getConversationId())) {
-                        loader.setVisibility(View.VISIBLE);
-                        mCoversationId = response.getConversationId();
-                        repository.getConversationChat(mCurrentActivity, chatHandler,
-                                response.getConversationId());
-
-                    }
-                }
-            });
-        }
+//                    loader.setVisibility(View.INVISIBLE);
+//                    if (response.isSuccess() && StringUtils.isNotBlank(response.getConversationId())) {
+//                        loader.setVisibility(View.VISIBLE);
+//                        mCoversationId = response.getConversationId();
+//                        repository.getConversationChat(mCurrentActivity, chatHandler,
+//                                response.getConversationId());
+//
+//                    }
+//                }
+//            });
+//        }
 
         @Override
         public void onSendMessage(final SendMessageResponse response) {

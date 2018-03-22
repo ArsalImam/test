@@ -10,13 +10,13 @@
         android:id="@+id/llNewRequest"
         android:layout_width="@dimen/_250sdp"
         android:layout_height="@dimen/_160sdp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:background="@drawable/white_bg_square"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="@dimen/padding.small"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
+        android:padding="@dimen/padding.small">
 
         <ImageView
             android:id="@+id/ivCallType"
@@ -89,29 +89,27 @@
         android:layout_gravity="bottom">
 
         <!--<com.bykea.pk.partner.widgets.FontTextView-->
-            <!--android:id="@+id/rejectCallBtn"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:background="@drawable/button_grey_square"-->
-            <!--android:gravity="center"-->
-            <!--android:text="Reject"-->
-            <!--android:textColor="@color/buttonTextColor"-->
-            <!--android:textSize="@dimen/textsize.normal"-->
-            <!--android:visibility="gone"-->
-            <!--app:fontName="MuseoSans_1.otf" />-->
+        <!--android:id="@+id/rejectCallBtn"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight="1"-->
+        <!--android:background="@drawable/button_grey_square"-->
+        <!--android:gravity="center"-->
+        <!--android:text="Reject"-->
+        <!--android:textColor="@color/buttonTextColor"-->
+        <!--android:textSize="@dimen/textsize.normal"-->
+        <!--android:visibility="gone"-->
+        <!--app:fontName="MuseoSans_1.otf" />-->
 
-        <com.bykea.pk.partner.widgets.FontTextView
+        <ImageView
             android:id="@+id/acceptCallBtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/button_green_square"
             android:gravity="center"
-            android:text="Accept"
-            android:textColor="@color/buttonTextColor"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="MuseoSans_1.otf" />
+            android:padding="@dimen/_3sdp"
+            android:src="@drawable/check_mark" />
 
     </LinearLayout>
 

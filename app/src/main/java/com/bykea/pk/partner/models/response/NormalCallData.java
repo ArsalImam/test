@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 public class NormalCallData extends CommonResponse {
 
     private String status;
-//    private String icon;
+    //    private String icon;
     private NormalCallData data;
     private String trip_charges;
 
@@ -71,6 +71,8 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("trip_type")
     private String callType;
     private boolean isDispatcher;
+    @SerializedName("cType")
+    private String creator_type;
 
 
     private String wallet_deduction;
@@ -403,5 +405,13 @@ public class NormalCallData extends CommonResponse {
 
     public void setDropoff_discount(String dropoff_discount) {
         this.dropoff_discount = dropoff_discount;
+    }
+
+    public String getCreator_type() {
+        return creator_type;
+    }
+
+    public void setCreator_type(String creator_type) {
+        this.creator_type = creator_type;
     }
 }

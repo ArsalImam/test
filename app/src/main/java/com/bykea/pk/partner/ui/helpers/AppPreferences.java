@@ -1053,4 +1053,26 @@ public class AppPreferences {
         return citiesData;
     }
 
+    public static void setObjectToSharedPref(Object object) {
+        mSharedPreferences
+                .edit()
+                .putString(object.getClass().getName(), new Gson().toJson(object))
+                .apply();
+    }
+
+    public static Object getObjectFromSharedPref(Class value) {
+        String data = mSharedPreferences.getString(value.getName(), StringUtils.EMPTY);
+        Object object = null;
+        if (StringUtils.isNotBlank(data)) {
+            object = new Gson().fromJson(data, value);
+        }
+        return object;
+    }
+
+    public static void clearObjectFromSharedPref(Class value) {
+        mSharedPreferences
+                .edit()
+                .putString(value.getName(), StringUtils.EMPTY)
+                .apply();
+    }
 }

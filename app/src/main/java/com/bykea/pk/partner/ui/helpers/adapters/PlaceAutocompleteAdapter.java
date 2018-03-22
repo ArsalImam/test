@@ -107,7 +107,7 @@ public class PlaceAutocompleteAdapter
                                         ArrayList<Predictions> resultList = response.getPredictions();
                                         if (resultList != null) {
                                             // The API successfully returned results.
-                                            if (StringUtils.isNotBlank(city)) {
+                                            /*if (StringUtils.isNotBlank(city)) {
                                                 Iterator<Predictions> it = resultList.iterator();
                                                 while (it.hasNext()) {
                                                     Predictions item = it.next();
@@ -125,7 +125,7 @@ public class PlaceAutocompleteAdapter
                                                         }
                                                     }
                                                 }
-                                            }
+                                            }*/
                                             if (resultList.size() > 0) {
                                                 mResultList = resultList;
                                                 results.values = mResultList;

@@ -44,6 +44,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import retrofit.Call;
 import retrofit.http.Body;
@@ -55,6 +56,7 @@ import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
 import retrofit.http.Query;
+import retrofit.http.QueryMap;
 import retrofit.http.Url;
 
 
@@ -98,7 +100,7 @@ interface IRestClient {
 
     @GET(ApiTags.GET_SETTINGS)
     Call<SettingsResponse> getSettings(@Query(Fields.USER_TYPE) String userTyp,
-                                       @Query("city") String city,
+                                       @Query("ctId") String city,
                                        @Query("s_ver") String settingsVersion);
 
 
@@ -255,6 +257,7 @@ interface IRestClient {
     Call<PlaceAutoCompleteResponse> getAutoCompletePlaces(@Query("input") String input,
                                                           @Query("location") String location,
                                                           @Query("components") String component,
+                                                          @Query("radius") String radius,
                                                           @Query("key") String googleMapApiKey);
 
 
@@ -274,7 +277,7 @@ interface IRestClient {
 
 
     @GET(ApiTags.GET_AREAS)
-    Call<GetZonesResponse> requestZones(@Query("city") String cityId);
+    Call<GetZonesResponse> requestZones(@Query("lat") String lat, @Query("lng") String lng);
 
     @GET(ApiTags.GET_ADDRESSES)
     Call<ZoneAreaResponse> requestZoneAreas(@Query("zid") String cityId);
@@ -287,6 +290,11 @@ interface IRestClient {
                                                        @Field("tId") String tripNo,
                                                        @Field("amount") String amount,
                                                        @Field("pId") String passId);
+
+
+//    @GET("/news")
+//    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(
+//            @QueryMap Map<String, String> params);
 
 
   /*  @FormUrlEncoded

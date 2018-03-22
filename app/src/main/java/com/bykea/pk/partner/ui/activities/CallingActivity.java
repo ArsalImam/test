@@ -56,7 +56,7 @@ public class CallingActivity extends BaseActivity {
 //    @Bind(R.id.rejectCallBtn)
 //    FontTextView rejectCallBtn;
     @Bind(R.id.acceptCallBtn)
-    FontTextView acceptCallBtn;
+    ImageView acceptCallBtn;
     @Bind(R.id.donut_progress)
     DonutProgress donutProgress;
     //    @Bind(R.id.distanceTv)

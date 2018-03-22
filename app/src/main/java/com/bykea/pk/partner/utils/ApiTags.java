@@ -76,8 +76,6 @@ public class ApiTags {
     public static final String TOP_UP_PASSENGER_WALLET = "/api/v1/driver/topupToPassenger";
 
 
-
-
     /******************************************************************************
      * SOCKET METHODS STRINGS                                                     *
      ******************************************************************************/

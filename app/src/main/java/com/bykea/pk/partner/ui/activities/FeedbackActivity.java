@@ -271,20 +271,18 @@ public class FeedbackActivity extends BaseActivity {
     private void updateUIICODelivery() {
         llReceiverInfo.setVisibility(View.VISIBLE);
         llReceiverInfo.setPadding(0, 0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen._8sdp));
-        if (StringUtils.isNotBlank(callData.getCodAmount()) && callData.isCod()) {
-            rlDeliveryStatus.setVisibility(View.VISIBLE);
-            rlCOD.setVisibility(View.VISIBLE);
-            tvAmountToGetLable.setText(" ٹوٹل");
-            ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
-//            String amount = callData.getCodAmountNotFormatted();
-//            TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
-            tvCOD.setText(callData.getCodAmount());
-            initAdapter(callData);
 
+        rlDeliveryStatus.setVisibility(View.VISIBLE);
+        tvAmountToGetLable.setText(" ٹوٹل");
+        ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
+        initAdapter(callData);
+
+        if (StringUtils.isNotBlank(callData.getCodAmount()) && callData.isCod()) {
+            rlCOD.setVisibility(View.VISIBLE);
+            tvCOD.setText(callData.getCodAmount());
         } else {
             rlCOD.setVisibility(View.GONE);
         }
-
     }
 
     private int selectedMsgPosition = 0;

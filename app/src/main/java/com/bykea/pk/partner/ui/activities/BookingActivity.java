@@ -358,11 +358,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.chatBtn:
-                if (!callData.isDispatcher()) {
+                if (callData.isDispatcher() || "iOSAPP".equalsIgnoreCase(callData.getCreator_type())) {
+                    Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                } else {
                     ActivityStackManager.getInstance()
                             .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
-                } else {
-                    Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                 }
                 break;
             case R.id.endAddressTv:
@@ -516,6 +516,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                                 Utils.appToast(mCurrentActivity, response.getMessage());
                                                 if (response.getData() != null) {
                                                     callData.setPassWallet(response.getData().getAmount());
+                                                    AppPreferences.setCallData(callData);
                                                     tvPWalletAmount.setText("Rs. " + callData.getPassWallet());
                                                 }
                                             }
@@ -1165,13 +1166,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    private void drawRoute(LatLng start, LatLng end, int routeType) {
+    private synchronized void drawRoute(LatLng start, LatLng end, int routeType) {
         if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
             LatLng currentLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
             if (PolyUtil.isLocationOnPath(currentLatLng, mRouteLatLng, false, 20)) {
                 Utils.redLog("Route", "isSameRoute " + " -> true");
                 for (int i = 0; i < mRouteLatLng.size(); i++) {
-                    if (PolyUtil.isLocationOnPath(currentLatLng, mRouteLatLng.subList(0, i), false, 10)) {
+                    if (PolyUtil.isLocationOnPath(currentLatLng, mRouteLatLng.subList(0, i), false, 20)) {
                         int lastIndex = i > 1 ? i - 1 : 0;
                         mRouteLatLng.subList(0, lastIndex).clear();
                         if (lastPolyLineLatLng == null) {
@@ -1198,8 +1199,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Utils.redLog("Route", "updatedTime -> " + time + " min");
                         updateEtaAndCallData(time + "", updatedDistance + "");
                         break;
-                    } else {
-                        Utils.redLog("Route", "isLatLngCovered -> true");
+//                    } else {
+//                        Utils.redLog("Route", "isLatLngCovered -> true");
+//                        break;
                     }
                 }
             } else {
@@ -1319,7 +1321,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
 
-    private void drawRouteToDropOff() {
+    private synchronized void drawRouteToDropOff() {
         if (StringUtils.isNotBlank(callData.getStartLat())
                 && StringUtils.isNotBlank(callData.getStartLng())
                 && StringUtils.isNotBlank(callData.getEndLat())
@@ -1469,7 +1471,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private BroadcastReceiver locationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (null != intent && intent.getAction().equalsIgnoreCase(Keys.LOCATION_UPDATE_BROADCAST) && AppPreferences.isLoggedIn()) {
+            if (null != intent && Keys.LOCATION_UPDATE_BROADCAST.equalsIgnoreCase(intent.getAction()) && AppPreferences.isLoggedIn()) {
                 /*UPDATING DRIVER CURRENT AND PREVIOUS LOCATION
                     FOR TRACKING AND UPDATING DRIVER MARKERS*/
 
@@ -1700,8 +1702,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private NetworkChangeListener networkChangeListener = new NetworkChangeListener() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase("android.location.GPS_ENABLED_CHANGE") ||
-                    intent.getAction().equalsIgnoreCase("android.location.PROVIDERS_CHANGED")) {
+            if ("android.location.GPS_ENABLED_CHANGE".equalsIgnoreCase(intent.getAction()) ||
+                    "android.location.PROVIDERS_CHANGED".equalsIgnoreCase(intent.getAction())) {
                 checkGps();
             } else {
                 if (Connectivity.isConnectedFast(context)) {

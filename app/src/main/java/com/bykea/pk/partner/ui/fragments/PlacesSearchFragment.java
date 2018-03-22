@@ -227,7 +227,7 @@ public class PlacesSearchFragment extends Fragment {
     }
 
     private void setLocation(double lat, double lng) {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 16.0f);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 14.0f);
         mGoogleMap.moveCamera(cameraUpdate);
         mGoogleMap.setOnCameraIdleListener(onCameraIdleListener);
     }
@@ -397,7 +397,7 @@ public class PlacesSearchFragment extends Fragment {
                     clearAutoComplete();
                     setAddress(placesResult.name, placesResult.latitude, placesResult.longitude);
                     mGoogleMap.getUiSettings().setScrollGesturesEnabled(false);
-                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(placesResult.latitude, placesResult.longitude), 16.0f), 1000, new GoogleMap.CancelableCallback() {
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(placesResult.latitude, placesResult.longitude), 14.0f), 1000, new GoogleMap.CancelableCallback() {
                         @Override
                         public void onFinish() {
                             mGoogleMap.getUiSettings().setScrollGesturesEnabled(true);

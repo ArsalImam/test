@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.helpers.adapters.CustomPagerAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.NonSwipeableViewPager;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,7 +39,7 @@ import butterknife.OnClick;
 
 public class SelectPlaceActivity extends BaseActivity {
     @Bind(R.id.vpFragments)
-    ViewPager mViewPager;
+    NonSwipeableViewPager mViewPager;
 
     @Bind(R.id.ivArea)
     ImageView ivArea;
@@ -194,7 +195,7 @@ public class SelectPlaceActivity extends BaseActivity {
             setSelected(ivSearch, R.drawable.ic_search_grey, tvSearch, tvSearchUrdu);
 //            setUnSelected(ivSaved, R.drawable.ic_star_grey, tvSaved, tvSavedUrdu);
             setUnSelected(ivRecent, R.drawable.ic_reload_grey, tvRecent, tvRecentUrdu);
-//            ((PlacesSearchFragment) mAdapter.getItem(position)).setInitMap();
+            ((PlacesSearchFragment) mAdapter.getItem(position)).setInitMap();
         } /*else if (position == 2) {
             setUnSelected(ivArea, R.drawable.ic_location_grey, tvArea, tvAreaUrdu);
             setUnSelected(ivSearch, R.drawable.ic_search_grey, tvSearch, tvSearchUrdu);

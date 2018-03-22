@@ -205,7 +205,7 @@ public class HomeFragment extends Fragment {
 
     private void initViews() {
         mCurrentActivity.setPilotData(AppPreferences.getPilotData());
-        if (Utils.isLicenceExpired(mCurrentActivity.getPilotData().getLicenseExpiry())) {
+        if (StringUtils.isNotBlank(mCurrentActivity.getPilotData().getLicenseExpiry()) && Utils.isLicenceExpired(mCurrentActivity.getPilotData().getLicenseExpiry())) {
             onUnauthorizedLicenceExpire();
         }
 
@@ -930,7 +930,7 @@ public class HomeFragment extends Fragment {
                 }
                 if (StringUtils.isNotBlank(latestVersion) && StringUtils.isNotBlank(currentVersion)) {
                     Utils.redLog("VERSION", "Current: " + currentVersion + " Play Store: " + latestVersion);
-                    if (!currentVersion.equalsIgnoreCase(latestVersion)) {
+                    if (Double.parseDouble(currentVersion) < Double.parseDouble(latestVersion)) {
                         if (!Dialogs.INSTANCE.isShowing()) {
                             Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "Important Notice", "Bykea partner app has been updated, " +
                                     "kindly update your app. Thank you", "https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
