@@ -78,7 +78,6 @@ public class ZoneFragment extends Fragment {
         }
         Utils.hideSoftKeyboard(this);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-//        ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
     }
 
     private void initZonesRv() {
@@ -114,8 +113,9 @@ public class ZoneFragment extends Fragment {
 
     private void getZones() {
         GetZonesResponse response = (GetZonesResponse) AppPreferences.getObjectFromSharedPref(GetZonesResponse.class);
-        if (response != null) {
-            mCallBack.onZonesResponse(response);
+        if (response != null && response.getData() != null
+                && response.getData().size() > 0 && Utils.isTimeWithInNDay(response.getTimeStamp(), 1)) {
+            onApiResponse(response);
         } else {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             mRepository.requestZones(mCurrentActivity, mCallBack);
@@ -127,25 +127,9 @@ public class ZoneFragment extends Fragment {
 
         @Override
         public void onZonesResponse(GetZonesResponse response) {
-            if (mCurrentActivity != null && getView() != null) {
-                AppPreferences.setObjectToSharedPref(response);
-                mSelectedCity = new CitiesData();
-                mSelectedCity.setName(response.getCityName());
-                initCityTextView();
-                mZoneList.clear();
-                if (response.getData() != null && response.getData().size() > 0) {
-                    mZoneList.addAll(response.getData());
-                }
-                mZoneAdapter.notifyDataSetChanged();
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Utils.hideSoftKeyboard(ZoneFragment.this);
-                        Utils.hideKeyboard(mCurrentActivity);
-                    }
-                });
-                Dialogs.INSTANCE.dismissDialog();
-            }
+            response.setTimeStamp(System.currentTimeMillis());
+            AppPreferences.setObjectToSharedPref(response);
+            onApiResponse(response);
         }
 
         @Override
@@ -156,11 +140,44 @@ public class ZoneFragment extends Fragment {
         }
 
         /*@Override
+        public void onUnauthorizedUser() {
+            if (mCurrentActivity != null && getView() != null) {
+                mCurrentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.logoutOnUnauthorizedUser(mCurrentActivity);
+                    }
+                });
+            }
+        }*/
+
+        /*@Override
         public void onCitiesResponse(GetCitiesResponse response) {
             if (mCurrentActivity != null && getView() != null) {
                 setCitiesAdapter();
             }
         }*/
     };
+
+    private void onApiResponse(GetZonesResponse response) {
+        if (mCurrentActivity != null && getView() != null) {
+            mSelectedCity = new CitiesData();
+            mSelectedCity.setName(response.getCityName());
+            initCityTextView();
+            mZoneList.clear();
+            if (response.getData() != null && response.getData().size() > 0) {
+                mZoneList.addAll(response.getData());
+            }
+            mZoneAdapter.notifyDataSetChanged();
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.hideSoftKeyboard(ZoneFragment.this);
+                    Utils.hideKeyboard(mCurrentActivity);
+                }
+            });
+            Dialogs.INSTANCE.dismissDialog();
+        }
+    }
 
 }

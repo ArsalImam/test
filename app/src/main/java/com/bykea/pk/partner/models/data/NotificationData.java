@@ -13,6 +13,7 @@ public class NotificationData {
     private String title;
     private String imageLink;
     private String launchUrl;
+    private String showActionButton;
 
     public boolean isActive() {
         return isActive;
@@ -48,5 +49,13 @@ public class NotificationData {
 
     public void setLaunchUrl(String launchUrl) {
         this.launchUrl = launchUrl;
+    }
+
+    public String getShowActionButton() {
+        return showActionButton;
+    }
+
+    public void setShowActionButton(String showActionButton) {
+        this.showActionButton = showActionButton;
     }
 }

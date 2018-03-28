@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class GetZonesResponse extends CommonResponse {
+    private long timeStamp;
     @SerializedName("city")
     private String cityName;
     private ArrayList<ZoneData> data;
@@ -25,5 +26,13 @@ public class GetZonesResponse extends CommonResponse {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

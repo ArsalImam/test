@@ -12,6 +12,7 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -234,6 +235,8 @@ public class AppPreferences {
             latLng.setLat(location.latitude + "");
             latLng.setLng(location.longitude + "");
             ArrayList<TrackingData> prevLatLngList = getTrackingData();
+//            int size = prevLatLngList.size();
+//            if (size > 0 && prevLatLngList.get(size - 1))
             prevLatLngList.add(latLng);
             String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<TrackingData>>() {
             }.getType());
@@ -1075,4 +1078,21 @@ public class AppPreferences {
                 .putString(value.getName(), StringUtils.EMPTY)
                 .apply();
     }
+
+
+    public static void setZoneAreas(ZoneAreaResponse object, String key) {
+        mSharedPreferences
+                .edit()
+                .putString(key, new Gson().toJson(object))
+                .apply();
+    }
+    public static ZoneAreaResponse getZoneAreas(String key) {
+        String data = mSharedPreferences.getString(key, StringUtils.EMPTY);
+        ZoneAreaResponse object = null;
+        if (StringUtils.isNotBlank(data)) {
+            object = new Gson().fromJson(data, ZoneAreaResponse.class);
+        }
+        return object;
+    }
+
 }

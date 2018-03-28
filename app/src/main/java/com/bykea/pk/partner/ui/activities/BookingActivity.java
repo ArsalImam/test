@@ -358,7 +358,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.chatBtn:
-                if (callData.isDispatcher() || "iOSAPP".equalsIgnoreCase(callData.getCreator_type())) {
+                if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
                     Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                 } else {
                     ActivityStackManager.getInstance()
@@ -871,7 +871,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //        } else {
 //            llTopLeft.setVisibility(View.GONE);
 //        }
-        if (Utils.isDeliveryService(callData.getCallType())) {
+        if (Utils.isDeliveryService(callData.getCallType()) && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
             ivTopUp.setVisibility(View.VISIBLE);
         } else {
             ivTopUp.setVisibility(View.INVISIBLE);
@@ -1664,9 +1664,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     Dialogs.INSTANCE.dismissDialog();
                     if (beginRideResponse.isSuccess()) {
                         hideButtonOnArrived();
-                        setStartedState();
                         callData = AppPreferences.getCallData();
                         callData.setStatus(TripStatus.ON_START_TRIP);
+                        setStartedState();
                         long startTripTime = System.currentTimeMillis();
                         AppPreferences.setStartTripTime(startTripTime);
                         AppPreferences.setPrevDistanceLatLng(Double.parseDouble(callData.getStartLat()),

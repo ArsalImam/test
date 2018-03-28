@@ -4,49 +4,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:layout_marginBottom="@dimen/admin_noti_tb_margin"
-    android:layout_marginLeft="@dimen/admin_noti_tb_margin"
-    android:layout_marginRight="@dimen/admin_noti_tb_margin"
-    android:layout_marginTop="@dimen/admin_noti_tb_margin"
-    android:background="@color/white"
+    android:layout_marginBottom="@dimen/_24sdp"
+    android:layout_marginLeft="@dimen/_8sdp"
+    android:layout_marginRight="@dimen/_8sdp"
+    android:layout_marginTop="@dimen/_24sdp"
     android:gravity="center">
 
-    <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/loader"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/_120sdp"
-        android:visibility="gone"
-        app:indicatorName="BallSpinFadeLoaderIndicator"
-        app:indicatorColor="@color/colorAccent" />
-
-
-    <ImageView
-        android:id="@+id/ivNotification"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:scaleType="fitXY" />
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="@dimen/_54sdp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/_8sdp"
+        android:background="@color/white">
 
-        <com.bykea.pk.partner.widgets.FontButton
-            android:id="@+id/ivPositive"
-            android:layout_width="@dimen/_160sdp"
-            android:layout_height="@dimen/_38sdp"
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/loader"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_120sdp"
+            android:visibility="gone"
+            app:indicatorColor="@color/colorAccent"
+            app:indicatorName="BallSpinFadeLoaderIndicator" />
+
+
+        <ImageView
+            android:id="@+id/ivNotification"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:scaleType="fitXY" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/button_green"
-            android:text="OK"
-            android:textColor="@color/white" />
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="@dimen/_54sdp">
+
+            <com.bykea.pk.partner.widgets.FontButton
+                android:id="@+id/ivPositive"
+                android:layout_width="@dimen/_160sdp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_green"
+                android:text="OK"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+
+
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/ivCross"
+        android:layout_width="@dimen/_26sdp"
+        android:layout_height="@dimen/_26sdp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/cross_icon_n" />
 
 </RelativeLayout>

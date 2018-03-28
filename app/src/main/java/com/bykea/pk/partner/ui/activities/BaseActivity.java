@@ -457,19 +457,19 @@ public class BaseActivity extends AppCompatActivity {
         notificationDialog.setContentView(R.layout.admin_notification_dialog);
         FontTextView msg = (FontTextView) notificationDialog.findViewById(R.id.tvMessage);
         FontTextView title = (FontTextView) notificationDialog.findViewById(R.id.title);
-        msg.setMovementMethod(new ScrollingMovementMethod());
         msg.setText(notificationData.getMessage());
+        msg.setMovementMethod(new ScrollingMovementMethod());
         title.setText(notificationData.getTitle());
-        FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
-        if (StringUtils.isNotBlank(notificationData.getLaunchUrl())) {
-            okIv.setText("VIEW DETAILS");
-        }
-        okIv.setOnClickListener(new View.OnClickListener() {
+        ImageView ivCross = (ImageView) notificationDialog.findViewById(R.id.ivCross);
+        ivCross.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                onNotificationOkClick(notificationData);
+            public void onClick(View view) {
+                AppPreferences.setAdminMsg(null);
+                dismissNotificationDialog();
             }
         });
+        FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
+        setActionButton(notificationData, okIv);
         notificationDialog.setCancelable(false);
         showNotificationDialog();
     }
@@ -479,16 +479,16 @@ public class BaseActivity extends AppCompatActivity {
         notificationDialog = new Dialog(mCurrentActivity, R.style.actionSheetTheme1);
         notificationDialog.setContentView(R.layout.admin_notification_dialog_image);
         final ImageView imageView = (ImageView) notificationDialog.findViewById(R.id.ivNotification);
-        FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
-        if (StringUtils.isNotBlank(notificationData.getLaunchUrl())) {
-            okIv.setText("VIEW DETAILS");
-        }
-        okIv.setOnClickListener(new View.OnClickListener() {
+        ImageView ivCross = (ImageView) notificationDialog.findViewById(R.id.ivCross);
+        ivCross.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                onNotificationOkClick(notificationData);
+            public void onClick(View view) {
+                AppPreferences.setAdminMsg(null);
+                dismissNotificationDialog();
             }
         });
+        FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
+        setActionButton(notificationData, okIv);
         notificationDialog.setCancelable(false);
         final Target target = new Target() {
             @Override
@@ -511,6 +511,21 @@ public class BaseActivity extends AppCompatActivity {
         };
         imageView.setTag(target);
         Picasso.with(mCurrentActivity).load(notificationData.getImageLink()).into(target);
+    }
+
+
+    private void setActionButton(final NotificationData notificationData, FontButton okIv) {
+        if (StringUtils.isNotBlank(notificationData.getShowActionButton())) {
+            okIv.setText(notificationData.getShowActionButton());
+            okIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onNotificationOkClick(notificationData);
+                }
+            });
+        } else {
+            okIv.setVisibility(View.GONE);
+        }
     }
 
     private void onNotificationOkClick(NotificationData notificationData) {

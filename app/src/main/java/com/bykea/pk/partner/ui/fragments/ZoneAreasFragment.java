@@ -25,6 +25,7 @@ import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.SelectPlaceActivity;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.ZoneAreaAdapter;
 import com.bykea.pk.partner.ui.helpers.adapters.ZoneDataSpinnerAdapter;
 import com.bykea.pk.partner.utils.Constants;
@@ -184,25 +185,23 @@ public class ZoneAreasFragment extends Fragment {
     }
 
     private void getZoneAreas(ZoneData zone) {
-        Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        mRepository.requestZoneAreas(mCurrentActivity, zone, mCallBack);
+        ZoneAreaResponse response = AppPreferences.getZoneAreas(zone.get_id());
+        if (response != null && response.getData() != null
+                && response.getData().size() > 0 && Utils.isTimeWithInNDay(response.getTimeStamp(), 1)) {
+            onApiResponse(response);
+        } else {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            mRepository.requestZoneAreas(mCurrentActivity, zone, mCallBack);
+        }
     }
 
     private UserDataHandler mCallBack = new UserDataHandler() {
 
         @Override
         public void onZoneAreasResponse(ZoneAreaResponse response) {
-            if (mCurrentActivity != null && getView() != null) {
-                Dialogs.INSTANCE.dismissDialog();
-                mZoneAreaList.clear();
-                if (response.getData() != null && response.getData().size() > 0
-                        && response.getData().get(0).getAreas() != null
-                        && response.getData().get(0).getAreas().size() > 0) {
-                    mZoneAreaList.addAll(response.getData().get(0).getAreas());
-                }
-                mZoneAreaAdapter.notifyDataSetChanged();
-                Utils.hideSoftKeyboard(ZoneAreasFragment.this);
-            }
+            response.setTimeStamp(System.currentTimeMillis());
+            AppPreferences.setZoneAreas(response, mSelectedZone.get_id());
+            onApiResponse(response);
         }
 
         @Override
@@ -212,6 +211,31 @@ public class ZoneAreasFragment extends Fragment {
             }
         }
 
+        /*@Override
+        public void onUnauthorizedUser() {
+            if (mCurrentActivity != null && getView() != null) {
+                mCurrentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.logoutOnUnauthorizedUser(mCurrentActivity);
+                    }
+                });
+            }
+        }*/
     };
+
+    private void onApiResponse(ZoneAreaResponse response) {
+        if (mCurrentActivity != null && getView() != null) {
+            Dialogs.INSTANCE.dismissDialog();
+            mZoneAreaList.clear();
+            if (response.getData() != null && response.getData().size() > 0
+                    && response.getData().get(0).getAreas() != null
+                    && response.getData().get(0).getAreas().size() > 0) {
+                mZoneAreaList.addAll(response.getData().get(0).getAreas());
+            }
+            mZoneAreaAdapter.notifyDataSetChanged();
+            Utils.hideSoftKeyboard(ZoneAreasFragment.this);
+        }
+    }
 
 }

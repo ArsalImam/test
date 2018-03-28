@@ -1496,7 +1496,10 @@ public class Utils {
     public static boolean isConnected(Context context, boolean showToast) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        NetworkInfo networkInfo = null;
+        if (connectivityManager != null) {
+            networkInfo = connectivityManager.getActiveNetworkInfo();
+        }
         if (null != networkInfo && networkInfo.isConnectedOrConnecting()) {
             return true;
         } else {
@@ -1515,5 +1518,7 @@ public class Utils {
         AppPreferences.setRecentPlaces(placesResult1);
     }
 
-
+    public static boolean isTimeWithInNDay(long time, int n) {
+        return (System.currentTimeMillis() - time) < (n * Constants.MILISEC_IN_DAY);
+    }
 }

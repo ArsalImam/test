@@ -19,12 +19,13 @@ public class ApiTags {
 
 
     //STAGING PRO
-    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
+//    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3001";
 //    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3002";
 
     //live
-//    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
+    /*TODO check onesignal id, google api key for maps, autocomplete, directions/geocoder/distancematrix*/
+    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
 
     //live Test
 //    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3001";

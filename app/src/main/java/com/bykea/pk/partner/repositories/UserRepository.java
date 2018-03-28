@@ -212,48 +212,6 @@ public class UserRepository {
         mRestRequestHandler.requestHeatMap(context, mDataCallback);
     }
 
-
-    public void requestLocationUpdate(Context context, IUserDataHandler handler) {
-
-        mContext = context;
-        mUserCallback = handler;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            Utils.redLog("token_id at Location", AppPreferences.getAccessToken());
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("_id", AppPreferences.getDriverId());
-            jsonObject.put("lat", AppPreferences.getLatitude());
-            jsonObject.put("lng", AppPreferences.getLongitude());
-            jsonObject.put("status", AppPreferences.getTripStatus());
-            Utils.redLog("Status", AppPreferences.getTripStatus());
-
-            // THIS CHECK IS FOR TRACKING DURING TRIP...
-            if (AppPreferences.isOnTrip()) {
-                jsonObject.put("eta", AppPreferences.getEta());
-                jsonObject.put("distance", AppPreferences.getEstimatedDistance());
-                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
-                jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
-                jsonObject.put("inCall", true);
-            } else {
-                //to free driver after trip Finished
-                if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus())) {
-                    jsonObject.put("inCall", true);
-                } else {
-                    jsonObject.put("inCall", false);
-                }
-            }
-            Utils.redLog("isInCall", jsonObject.get("inCall") + "");
-
-
-        } catch (Exception ex) {
-
-        }
-
-        mWebIORequestHandler.requestLocationUpdate(jsonObject, mDataCallback);
-
-    }
-
-
     public void requestLocationUpdate(Context context, IUserDataHandler handler,
                                       double lat, double lon) {
 

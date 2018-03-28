@@ -315,7 +315,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
-                        android:text=" ڈراپ اپ ڈسکاونٹ‎"
+                        android:text=" ڈراپ آف‎‎ ڈسکاونٹ‎"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="@dimen/textsize.normal"
                         app:fontName="jameel_noori_nastaleeq.ttf" />

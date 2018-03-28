@@ -59,16 +59,17 @@ public class Constants {
 
     //Staging
 //    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";   //Staging Server Key of Passenger
-    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyCJw1nRmfRZnfpd8MoBUZodz6dCdWOaINU"; //Latest Staging 9 Feb for Driver
+//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyCJw1nRmfRZnfpd8MoBUZodz6dCdWOaINU"; //Latest Staging 9 Feb for Driver
+
     //Live
-//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
 
     //Staging
-    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
+//    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
 
     //Live
-//    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
+    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
 
 
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
@@ -120,5 +121,7 @@ public class Constants {
     public static final String COUNTRY_CODE_AUTOCOMPLETE = "country:pk";
     public static final String PLACES_TITLE = "places_title";
     public static final float SAVED_PLACES_RADIUS = 200f;
+    public static final String SAVE_PLACE_RESULT = "SAVE_PLACE_RESULT";
+    public static final int SAVE_PLACE_REQUEST_CODE = 107;
 
 }

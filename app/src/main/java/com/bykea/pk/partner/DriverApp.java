@@ -22,6 +22,7 @@ import com.onesignal.OneSignal;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -146,6 +147,17 @@ public class DriverApp extends MultiDexApplication {
                 }
                 if (StringUtils.isNotBlank(notification.payload.bigPicture)) {
                     notificationData.setImageLink(notification.payload.bigPicture);
+                }
+
+                //show action button with value from notification (if any)
+                if (notification.payload.additionalData != null) {
+                    if (notification.payload.additionalData.has("showBtn")) {
+                        try {
+                            notificationData.setShowActionButton((String) notification.payload.additionalData.get("showBtn"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 AppPreferences.setAdminMsg(notificationData);
                 if (notification.isAppInFocus) {

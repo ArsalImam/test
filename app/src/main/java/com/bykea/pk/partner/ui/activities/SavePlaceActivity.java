@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +20,7 @@ import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.CustomMapView;
@@ -84,6 +87,8 @@ public class SavePlaceActivity extends BaseActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setTitleCustomToolbarUrdu("ڈائریکٹری میں شامل کریں");
         setInitMap(savedInstanceState);
+        etMobileNumber.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+
     }
 
 
@@ -234,6 +239,13 @@ public class SavePlaceActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.confirmBtn:
                 if (!addressTv.getText().toString().equalsIgnoreCase(getString(R.string.set_pickup_location))) {
+                    boolean isValidNumber = true;
+                    if (StringUtils.isNotBlank(etMobileNumber.getText().toString())) {
+                        isValidNumber = Utils.isValidNumber(mCurrentActivity, etMobileNumber);
+                    }
+                    if (!isValidNumber) {
+                        return;
+                    }
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
 
                     String address = addressTv.getText().toString();
@@ -245,17 +257,18 @@ public class SavePlaceActivity extends BaseActivity {
                     mSavedPlaceToServer.setLat(mGoogleMap.getCameraPosition().target.latitude);
                     mSavedPlaceToServer.setLng(mGoogleMap.getCameraPosition().target.longitude);
                     mSavedPlaceToServer.setEdited_address(StringUtils.isNotBlank(etEditedAddress.getText().toString()) ? etEditedAddress.getText().toString() : null);
-                    mSavedPlaceToServer.setEdited_name(StringUtils.isNotBlank(etEditedName.getText().toString()) ? etEditedName.getText().toString() : null);
+                    mSavedPlaceToServer.setEdited_name(StringUtils.isNotBlank(etEditedName.getText().toString()) ? StringUtils.capitalize(etEditedName.getText().toString()) : null);
                     mSavedPlaceToServer.setPhone(StringUtils.isNotBlank(etMobileNumber.getText().toString()) ? etMobileNumber.getText().toString() : null);
 
+                    if (StringUtils.isNotBlank(mSavedPlaceToServer.getEdited_name())) {
+                        mSavedPlaceToServer.setAddress(mSavedPlaceToServer.getEdited_name() + ", " + mSavedPlaceToServer.getAddress());
+                    }
                     String placeId = isPlaceSaved(mSavedPlaceToServer.getAddress(), mSavedPlaceToServer.getLat(), mSavedPlaceToServer.getLng());
                     if (StringUtils.isNotBlank(placeId)) {
                         //Place is already saved no need to call API
                         mSavedPlaceToServer.setPlaceId(placeId);
-                        AppPreferences.setSavedPlace(mSavedPlaceToServer);
-                        mCurrentActivity.finish();
-//                        mSavedPlaceToServer.setPlaceId(placeId);
-//                        new UserRepository().updateSavedPlace(mCurrentActivity, mSavedPlaceToServer, mCallBack);
+
+                        finishActivity();
                     } else {
                         new UserRepository().addSavedPlace(mCurrentActivity, mSavedPlaceToServer, mCallBack);
                     }
@@ -296,8 +309,7 @@ public class SavePlaceActivity extends BaseActivity {
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
                         mSavedPlaceToServer.setPlaceId(response.getPlaceId());
-                        AppPreferences.setSavedPlace(mSavedPlaceToServer);
-                        mCurrentActivity.finish();
+                        finishActivity();
                     }
                 });
             }
@@ -316,6 +328,15 @@ public class SavePlaceActivity extends BaseActivity {
             }
         }
     };
+
+    private void finishActivity() {
+        Intent returnIntent = new Intent();
+        //PlacesResult data model implements Parcelable so we could pass object in extras
+        returnIntent.putExtra(Constants.SAVE_PLACE_RESULT, mSavedPlaceToServer);
+        mCurrentActivity.setResult(Activity.RESULT_OK, returnIntent);
+        AppPreferences.setSavedPlace(mSavedPlaceToServer);
+        mCurrentActivity.finish();
+    }
 
     @Override
     protected void onResume() {

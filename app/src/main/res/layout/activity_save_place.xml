@@ -317,6 +317,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
                 android:hint="Mobile Number"
+                android:inputType="numberPassword"
                 android:maxLength="11"
                 android:maxLines="1"
                 android:paddingBottom="@dimen/_10sdp"
