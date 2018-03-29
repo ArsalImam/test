@@ -11,8 +11,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 19
-        versionName "4.0"
+        versionCode 20
+        versionName "4.1"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -99,7 +99,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
-    compile('com.instabug.library:instabug:4.10.2') {
+    compile('com.instabug.library:instabug:4.12.1') {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'com.google.android.gms:play-services-gcm:9.4.0'

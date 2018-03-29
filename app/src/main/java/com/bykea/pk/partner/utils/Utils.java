@@ -12,6 +12,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -32,12 +33,14 @@ import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 
@@ -1070,7 +1073,11 @@ public class Utils {
     }
 
     public static String getCommaFormattedAmount(String amount) {
-        return NumberFormat.getNumberInstance(Locale.US).format(Long.parseLong(amount)) + " ";
+        if (StringUtils.isNotBlank(amount) && amount.matches(Constants.REG_EX_DIGIT)) {
+            return NumberFormat.getNumberInstance(Locale.US).format(Long.parseLong(amount)) + " ";
+        } else {
+            return StringUtils.EMPTY;
+        }
 
     }
 
@@ -1221,8 +1228,11 @@ public class Utils {
 
     public static void openLinkInBrowser(String link, Context context) {
         if (StringUtils.isNotBlank(link)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-            context.startActivity(browserIntent);
+            try {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                context.startActivity(browserIntent);
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -1513,7 +1523,7 @@ public class Utils {
     public static void addRecentPlace(PlacesResult placesResult) {
         String recentResult = placesResult.address;
         int lastIndex = recentResult.lastIndexOf(',');
-        String name = recentResult.substring(0, lastIndex);
+        String name = lastIndex > 0 && lastIndex < recentResult.length() ? recentResult.substring(0, lastIndex) : recentResult;
         PlacesResult placesResult1 = new PlacesResult(name, recentResult, placesResult.latitude, placesResult.longitude);
         AppPreferences.setRecentPlaces(placesResult1);
     }
@@ -1521,4 +1531,64 @@ public class Utils {
     public static boolean isTimeWithInNDay(long time, int n) {
         return (System.currentTimeMillis() - time) < (n * Constants.MILISEC_IN_DAY);
     }
+
+
+
+    public static void scrollToBottom(final ScrollView mainScrollView) {
+        scrollThisToBottom(mainScrollView);
+        mainScrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                mainScrollView.getWindowVisibleDisplayFrame(r);
+                int screenHeight = mainScrollView.getRootView().getHeight();
+                // r.bottom is the position above soft keypad or device button.
+                // if keypad is shown, the r.bottom is smaller than that before.
+                int keypadHeight = screenHeight - r.bottom;
+                if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                    // keyboard is opened
+                    scrollThisToBottom(mainScrollView);
+                }
+            }
+        });
+    }
+
+    public static void scrollToTop(final ScrollView mainScrollView) {
+        scrollThisToTop(mainScrollView);
+        mainScrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                mainScrollView.getWindowVisibleDisplayFrame(r);
+                int screenHeight = mainScrollView.getRootView().getHeight();
+                // r.bottom is the position above soft keypad or device button.
+                // if keypad is shown, the r.bottom is smaller than that before.
+                int keypadHeight = screenHeight - r.bottom;
+                if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                    // keyboard is opened
+                    scrollThisToTop(mainScrollView);
+                }
+                mainScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+    }
+
+    private static void scrollThisToBottom(final ScrollView mainScrollView) {
+        mainScrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mainScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        }, 600);
+    }
+
+    private static void scrollThisToTop(final ScrollView mainScrollView) {
+        mainScrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mainScrollView.fullScroll(ScrollView.FOCUS_UP);
+            }
+        }, 600);
+    }
+
 }

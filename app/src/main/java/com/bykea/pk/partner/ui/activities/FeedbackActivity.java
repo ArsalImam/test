@@ -139,7 +139,7 @@ public class FeedbackActivity extends BaseActivity {
         initViews();
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
     }
@@ -175,7 +175,7 @@ public class FeedbackActivity extends BaseActivity {
             totalCharges = callData.getTotalFare();
         }
         TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
-        if (StringUtils.isNotBlank(callData.getCodAmountNotFormatted())) {
+        /*if (StringUtils.isNotBlank(callData.getCodAmountNotFormatted())) {
             String amount = callData.getCodAmountNotFormatted();
             if (isDeliveryType) {
                 if (callData.isCod()) {
@@ -184,7 +184,7 @@ public class FeedbackActivity extends BaseActivity {
             } else if (!isPurchaseType) {
                 TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
             }
-        }
+        }*/
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
 //        totalAmountTv.setText((StringUtils.isNotBlank(totalCharges) ? totalCharges : "N/A"));
         totalAmountTv.setText((StringUtils.isNotBlank(callData.getTrip_charges()) ? callData.getTrip_charges() : "N/A"));
@@ -312,14 +312,18 @@ public class FeedbackActivity extends BaseActivity {
                     });
                 }
                 selectedMsgPosition = position;
-                if (position == 0) {
-                    tvCOD.setPaintFlags(tvCOD.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                    totalCharges = "" + (Integer.parseInt(callData.getTotalFare()) + Integer.parseInt(callData.getCodAmountNotFormatted()));
-                } else {
-                    tvCOD.setPaintFlags(tvCOD.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    totalCharges = callData.getTotalFare();
+                if (StringUtils.isNotBlank(callData.getCodAmount()) && callData.isCod()) {
+                    if (position == 0) {
+//                        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
+                        tvCOD.setPaintFlags(tvCOD.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                        totalCharges = "" + (Integer.parseInt(callData.getTotalFare()) + Integer.parseInt(callData.getCodAmountNotFormatted()));
+                    } else {
+//                        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
+                        tvCOD.setPaintFlags(tvCOD.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        totalCharges = callData.getTotalFare();
+                    }
+                    tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
                 }
-                tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
             }
 
             @Override
@@ -452,7 +456,7 @@ public class FeedbackActivity extends BaseActivity {
         } else if (StringUtils.isBlank(receivedAmountEt.getText().toString())) {
             setEtError("Enter received amount");
             return false;
-        } else if (isDeliveryType && selectedMsgPosition == 0 && StringUtils.isBlank(etReceiverName.getText().toString())) {
+        } else if (isDeliveryType /*&& selectedMsgPosition == 0*/ && StringUtils.isBlank(etReceiverName.getText().toString())) {
             etReceiverName.setError("Required");
             etReceiverName.requestFocus();
             return false;

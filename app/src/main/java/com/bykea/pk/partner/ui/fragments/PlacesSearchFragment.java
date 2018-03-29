@@ -596,14 +596,22 @@ public class PlacesSearchFragment extends Fragment {
 
 
     private void finishLoading() {
+        try {
+            loader.setIndeterminate(false);
+            confirmBtn.setClickable(true);
+        } catch (Exception ignored) {
 
-        loader.setIndeterminate(false);
-        confirmBtn.setClickable(true);
+        }
+
     }
 
     private void startLoading() {
-        loader.setIndeterminate(true);
-        confirmBtn.setClickable(false);
+        try {
+            loader.setIndeterminate(true);
+            confirmBtn.setClickable(false);
+        } catch (Exception ignored) {
+
+        }
     }
 
 

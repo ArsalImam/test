@@ -44,9 +44,10 @@
             android:layout_gravity="center_horizontal"
             android:paddingBottom="@dimen/_54sdp">
 
-            <com.bykea.pk.partner.widgets.FontButton
+            <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/ivPositive"
                 android:layout_width="@dimen/_160sdp"
+                android:gravity="center"
                 android:layout_height="@dimen/_38sdp"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/button_green"

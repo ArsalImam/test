@@ -885,6 +885,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             llTopRight.setVisibility(View.INVISIBLE);
         }
+
+        if (Utils.isDeliveryService(callData.getCallType())) {
+            if (!callData.isCod()) {
+                llTopRight.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     private void setOnArrivedData() {

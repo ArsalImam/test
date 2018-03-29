@@ -158,6 +158,13 @@ public class DriverApp extends MultiDexApplication {
                             e.printStackTrace();
                         }
                     }
+                    if (notification.payload.additionalData.has("type")) {
+                        try {
+                            notificationData.setType((String) notification.payload.additionalData.get("type"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 AppPreferences.setAdminMsg(notificationData);
                 if (notification.isAppInFocus) {

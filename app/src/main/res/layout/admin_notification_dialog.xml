@@ -45,10 +45,11 @@
             app:fontName="roboto_regular.ttf" />
 
 
-        <com.bykea.pk.partner.widgets.FontButton
+        <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/ivPositive"
             android:layout_width="@dimen/_120sdp"
             android:layout_height="@dimen/_38sdp"
+            android:gravity="center"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/_24sdp"
             android:background="@drawable/button_green"

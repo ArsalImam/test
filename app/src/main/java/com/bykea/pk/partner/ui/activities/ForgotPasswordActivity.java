@@ -2,9 +2,13 @@ package com.bykea.pk.partner.ui.activities;
 
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
@@ -33,6 +37,9 @@ public class ForgotPasswordActivity extends BaseActivity {
     @Bind(R.id.sendBtn)
     Button sendBtn;
 
+
+    @Bind(R.id.mainScrollView)
+    ScrollView mainScrollView;
     private UserRepository repository;
     private ForgotPasswordActivity mCurrentActivity;
 
@@ -48,6 +55,18 @@ public class ForgotPasswordActivity extends BaseActivity {
         if (StringUtils.isNotBlank(AppPreferences.getPhoneNumber())) {
             phoneNumberEt.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber()));
         }
+
+        phoneNumberEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+                    Utils.hideSoftKeyboard(mCurrentActivity, phoneNumberEt);
+                    return true;
+                }
+                return false;
+            }
+        });
+        Utils.scrollToBottom(mainScrollView);
     }
 
 

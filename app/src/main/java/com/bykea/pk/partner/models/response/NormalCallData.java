@@ -338,9 +338,7 @@ public class NormalCallData extends CommonResponse {
     }
 
     public String getCodAmount() {
-        return StringUtils.isNotBlank(codAmount)
-                ? Utils.getCommaFormattedAmount(Long.parseLong(codAmount))
-                : StringUtils.EMPTY;
+        return Utils.getCommaFormattedAmount(codAmount);
     }
 
     public String getCodAmountNotFormatted() {

@@ -14,6 +14,7 @@ public class NotificationData {
     private String imageLink;
     private String launchUrl;
     private String showActionButton;
+    private String type;
 
     public boolean isActive() {
         return isActive;
@@ -57,5 +58,13 @@ public class NotificationData {
 
     public void setShowActionButton(String showActionButton) {
         this.showActionButton = showActionButton;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

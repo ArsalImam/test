@@ -38,8 +38,8 @@ import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.FontUtils;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -468,7 +468,14 @@ public class BaseActivity extends AppCompatActivity {
                 dismissNotificationDialog();
             }
         });
-        FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
+        FontTextView okIv = (FontTextView) notificationDialog.findViewById(R.id.ivPositive);
+        boolean isUrduNotification = StringUtils.isNotBlank(notificationData.getType()) &&
+                notificationData.getType().equalsIgnoreCase("urdu");
+        if (isUrduNotification) {
+            msg.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
+            title.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
+            okIv.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
+        }
         setActionButton(notificationData, okIv);
         notificationDialog.setCancelable(false);
         showNotificationDialog();
@@ -487,7 +494,12 @@ public class BaseActivity extends AppCompatActivity {
                 dismissNotificationDialog();
             }
         });
-        FontButton okIv = (FontButton) notificationDialog.findViewById(R.id.ivPositive);
+        FontTextView okIv = (FontTextView) notificationDialog.findViewById(R.id.ivPositive);
+        boolean isUrduNotification = StringUtils.isNotBlank(notificationData.getType()) &&
+                notificationData.getType().equalsIgnoreCase("urdu");
+        if (isUrduNotification) {
+            okIv.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
+        }
         setActionButton(notificationData, okIv);
         notificationDialog.setCancelable(false);
         final Target target = new Target() {
@@ -514,7 +526,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    private void setActionButton(final NotificationData notificationData, FontButton okIv) {
+    private void setActionButton(final NotificationData notificationData, FontTextView okIv) {
         if (StringUtils.isNotBlank(notificationData.getShowActionButton())) {
             okIv.setText(notificationData.getShowActionButton());
             okIv.setOnClickListener(new View.OnClickListener() {
