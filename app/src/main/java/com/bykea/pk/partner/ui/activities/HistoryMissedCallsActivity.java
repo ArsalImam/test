@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -126,10 +127,10 @@ public class HistoryMissedCallsActivity extends BaseActivity {
                             mHistoryAdapter.notifyDataSetChanged();
 
                         } else {
-                            noDataIv.setVisibility(View.VISIBLE);
+                            showNoTripData();
                         }
                     } else {
-                        noDataIv.setVisibility(View.VISIBLE);
+                        showNoTripData();
                         if (historyResponse.getCode() == HTTPStatus.UNAUTHORIZED) {
                             Utils.onUnauthorized(mCurrentActivity);
                         }
@@ -162,6 +163,11 @@ public class HistoryMissedCallsActivity extends BaseActivity {
         super.onDestroy();
         setToolbarLogo();
         hideToolbarTitle();
+    }
+
+    private void showNoTripData() {
+        noDataIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.no_data));
+        noDataIv.setVisibility(View.VISIBLE);
     }
 }
 

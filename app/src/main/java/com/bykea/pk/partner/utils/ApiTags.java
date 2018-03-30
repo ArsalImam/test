@@ -12,7 +12,7 @@ public class ApiTags {
 //    public static final String BASE_SERVER_URL = "http://172.16.0.60:3000";
 //    public static final String BASE_SERVER_URL = "http://192.168.8.103:3000";
 //    public static final String BASE_SERVER_URL = "http://172.16.0.60:3000";
-//    public static final String BASE_SERVER_URL = "http://172.16.0.75:3001";
+    public static final String BASE_SERVER_URL = "http://172.16.0.75:3000";
 
     //Jawad 8 Mar 2018
 //    public static final String BASE_SERVER_URL = "http://172.16.0.75:3001";
@@ -25,7 +25,7 @@ public class ApiTags {
 
     //live
     /*TODO check onesignal id, google api key for maps, autocomplete, directions/geocoder/distancematrix*/
-    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
+//    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
 
     //live Test
 //    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3001";
