@@ -1,9 +1,10 @@
 package com.bykea.pk.partner.repositories;
 
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.AccountNumbersResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
@@ -25,8 +26,8 @@ import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.HeatMapResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -35,7 +36,6 @@ import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
-import com.bykea.pk.partner.models.response.SettingsResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
@@ -151,7 +151,12 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     @Override
-    public void getAccountNumbers(AccountNumbersResponse walletHistoryResponse) {
+    public void getAccountNumbers(BankAccountListResponse walletHistoryResponse) {
+
+    }
+
+    @Override
+    public void onBankDetailsResponse(BankDetailsResponse response) {
 
     }
 
@@ -305,6 +310,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onTopUpPassWallet(TopUpPassWalletResponse response) {
+
+    }
+
+    @Override
+    public void onLocationUpdate(LocationResponse response) {
 
     }
 

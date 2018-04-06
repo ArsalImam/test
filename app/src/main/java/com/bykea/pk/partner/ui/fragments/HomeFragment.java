@@ -76,47 +76,48 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment {
 
-    @Bind(R.id.rlMain)
+    @BindView(R.id.rlMain)
     RelativeLayout rlMain;
-    @Bind(R.id.rlInactiveImage)
+    @BindView(R.id.rlInactiveImage)
     LinearLayout rlInactiveImage;
-    @Bind(R.id.mapPinIv)
+    @BindView(R.id.mapPinIv)
     ImageView mapPinIv;
-    @Bind(R.id.statusTv)
+    @BindView(R.id.statusTv)
     FontTextView statusTv;
-    @Bind(R.id.tvConnectionStatus)
+    @BindView(R.id.tvConnectionStatus)
     FontTextView tvConnectionStatus;
-    @Bind(R.id.tvFenceError)
+    @BindView(R.id.tvFenceError)
     AutoFitFontTextView tvFenceError;
-    @Bind(R.id.statusCheck)
+    @BindView(R.id.statusCheck)
     ImageView statusCheck;
-    @Bind(R.id.myRangeBar)
+    @BindView(R.id.myRangeBar)
     MyRangeBar myRangeBar;
-    @Bind(R.id.tvCihIndex1)
+    @BindView(R.id.tvCihIndex1)
     FontTextView tvCihIndex1;
-    @Bind(R.id.tvCihIndex2)
+    @BindView(R.id.tvCihIndex2)
     FontTextView tvCihIndex2;
-    @Bind(R.id.tvCihIndex3)
+    @BindView(R.id.tvCihIndex3)
     FontTextView tvCihIndex3;
-    @Bind(R.id.tvCihIndex4)
+    @BindView(R.id.tvCihIndex4)
     FontTextView tvCihIndex4;
-    @Bind(R.id.tvCihIndex5)
+    @BindView(R.id.tvCihIndex5)
     FontTextView tvCihIndex5;
-    @Bind(R.id.rl_setDestination)
+    @BindView(R.id.rl_setDestination)
     RelativeLayout rl_setDestination;
-    @Bind(R.id.rl_destinationSelected)
+    @BindView(R.id.rl_destinationSelected)
     LinearLayout rl_destinationSelected;
-    @Bind(R.id.rl_main_destination)
+    @BindView(R.id.rl_main_destination)
     RelativeLayout rl_main_destination;
-    @Bind(R.id.tv_destinationName)
+    @BindView(R.id.tv_destinationName)
     AutoFitFontTextView tv_destinationName;
 
     private UserRepository repository;
@@ -130,12 +131,12 @@ public class HomeFragment extends Fragment {
     private String currentVersion, latestVersion;
     private boolean isScreenInFront;
     private int[] cashInHand;
-
+    private Unbinder unbinder;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         mCurrentActivity = ((HomeActivity) getActivity());
         mCurrentActivity.hideToolbarTitle();
         mCurrentActivity.setToolbarLogo();
@@ -512,7 +513,7 @@ public class HomeFragment extends Fragment {
         clearMap();
         Utils.unbindDrawables(rlMain);
 //        mCurrentActivity.showToolbar();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

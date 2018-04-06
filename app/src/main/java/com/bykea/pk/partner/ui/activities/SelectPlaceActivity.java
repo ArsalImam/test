@@ -33,58 +33,58 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SelectPlaceActivity extends BaseActivity {
-    @Bind(R.id.vpFragments)
+    @BindView(R.id.vpFragments)
     NonSwipeableViewPager mViewPager;
 
-    @Bind(R.id.ivArea)
+    @BindView(R.id.ivArea)
     ImageView ivArea;
 
-    @Bind(R.id.ivRecent)
+    @BindView(R.id.ivRecent)
     ImageView ivRecent;
 
 
-    @Bind(R.id.ivSearch)
+    @BindView(R.id.ivSearch)
     ImageView ivSearch;
 
-    @Bind(R.id.ivSaved)
+    @BindView(R.id.ivSaved)
     ImageView ivSaved;
 
-    @Bind(R.id.tvArea)
+    @BindView(R.id.tvArea)
     FontTextView tvArea;
 
-    @Bind(R.id.tvAreaUrdu)
+    @BindView(R.id.tvAreaUrdu)
     FontTextView tvAreaUrdu;
 
-    @Bind(R.id.tvSearch)
+    @BindView(R.id.tvSearch)
     FontTextView tvSearch;
 
-    @Bind(R.id.tvSearchUrdu)
+    @BindView(R.id.tvSearchUrdu)
     FontTextView tvSearchUrdu;
 
-    @Bind(R.id.tvSaved)
+    @BindView(R.id.tvSaved)
     FontTextView tvSaved;
 
-    @Bind(R.id.tvSavedUrdu)
+    @BindView(R.id.tvSavedUrdu)
     FontTextView tvSavedUrdu;
 
-    @Bind(R.id.tvRecent)
+    @BindView(R.id.tvRecent)
     FontTextView tvRecent;
 
-    @Bind(R.id.tvRecentUrdu)
+    @BindView(R.id.tvRecentUrdu)
     FontTextView tvRecentUrdu;
 
-    @Bind(R.id.llTopBarRight)
+    @BindView(R.id.llTopBarRight)
     LinearLayout llTopBarRight;
 
-    @Bind(R.id.tvDrop)
+    @BindView(R.id.tvDrop)
     FontTextView tvDrop;
 
-    @Bind(R.id.tvPick)
+    @BindView(R.id.tvPick)
     FontTextView tvPick;
 
 

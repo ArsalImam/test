@@ -33,9 +33,9 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textStyle="bold"
-                tool:visibility="visible"
                 android:visibility="visible"
-                app:srcCompat="@drawable/ic_home_top_logo" />
+                app:srcCompat="@drawable/ic_home_top_logo"
+                tool:visibility="visible" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/tv_elaqa"
@@ -44,31 +44,55 @@
                 android:layout_gravity="center|top"
                 android:text="علاقہ"
                 android:textSize="@dimen/_24sdp"
-                app:fontName="jameel_noori_nastaleeq.ttf"
                 android:textStyle="bold"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
 
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:text="Title"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.title"
-                android:visibility="gone"
-                app:fontName="roboto_regular.ttf" />
+                android:orientation="horizontal">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:maxWidth="@dimen/_220sdp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_14sdp"
+                    android:visibility="visible"
+                    app:fontName="roboto_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvTitleUrdu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/_4sdp"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:maxWidth="@dimen/_220sdp"
+                    android:paddingRight="@dimen/_2sdp"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_14sdp"
+                    android:visibility="gone"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+            </LinearLayout>
 
         </FrameLayout>
 
 
         <RelativeLayout
             android:layout_width="@dimen/margin.xlarge"
-            android:layout_gravity="center"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
 
 
             <com.bykea.pk.partner.widgets.FontTextView
@@ -86,13 +110,14 @@
                 android:textSize="@dimen/textsize.small.medium"
                 android:visibility="invisible"
                 app:fontName="roboto_light.ttf" />
+
             <ImageView
                 android:id="@+id/rightIv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_2sdp"
                 android:layout_centerInParent="true"
-                android:visibility="invisible"/>
+                android:padding="@dimen/_2sdp"
+                android:visibility="invisible" />
 
         </RelativeLayout>
 

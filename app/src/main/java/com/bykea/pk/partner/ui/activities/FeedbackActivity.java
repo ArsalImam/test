@@ -43,83 +43,83 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
 public class FeedbackActivity extends BaseActivity {
 
-    /* @Bind(R.id.logo)
+    /* @BindView(R.id.logo)
      ImageView logo;*/
-    @Bind(R.id.tvTripId)
+    @BindView(R.id.tvTripId)
     FontTextView tvTripId;
-    @Bind(R.id.startAddressTv)
+    @BindView(R.id.startAddressTv)
     FontTextView startAddressTv;
-    @Bind(R.id.invoiceMsgTv)
+    @BindView(R.id.invoiceMsgTv)
     FontTextView invoiceMsgTv;
-    @Bind(R.id.endAddressTv)
+    @BindView(R.id.endAddressTv)
     FontTextView endAddressTv;
-    //    @Bind(R.id.callerNameTv)
+    //    @BindView(R.id.callerNameTv)
 //    FontTextView callerNameTv;
-    @Bind(R.id.totalAmountTv)
+    @BindView(R.id.totalAmountTv)
     FontTextView totalAmountTv;
 
-    @Bind(R.id.tvTotalTime)
+    @BindView(R.id.tvTotalTime)
     FontTextView tvTotalTime;
 
-    @Bind(R.id.tvTotalDistance)
+    @BindView(R.id.tvTotalDistance)
     FontTextView tvTotalDistance;
-    @Bind(R.id.receivedAmountEt)
+    @BindView(R.id.receivedAmountEt)
     FontEditText receivedAmountEt;
-    @Bind(R.id.llKharedari)
+    @BindView(R.id.llKharedari)
     LinearLayout llKharedari;
-    @Bind(R.id.llTotal)
+    @BindView(R.id.llTotal)
     LinearLayout llTotal;
-    @Bind(R.id.callerRb)
+    @BindView(R.id.callerRb)
     RatingBar callerRb;
-    //    @Bind(R.id.ratingValueTv)
+    //    @BindView(R.id.ratingValueTv)
 //    FontTextView ratingValueTv;
-    @Bind(R.id.feedbackBtn)
+    @BindView(R.id.feedbackBtn)
     ImageView feedbackBtn;
 
-    @Bind(R.id.tvWalletDeduction)
+    @BindView(R.id.tvWalletDeduction)
     FontTextView tvWalletDeduction;
-    @Bind(R.id.tvAmountToGet)
+    @BindView(R.id.tvAmountToGet)
     FontTextView tvAmountToGet;
-    @Bind(R.id.rlWalletDeduction)
+    @BindView(R.id.rlWalletDeduction)
     RelativeLayout rlWalletDeduction;
-    @Bind(R.id.rlPromoDeduction)
+    @BindView(R.id.rlPromoDeduction)
     RelativeLayout rlPromoDeduction;
-    @Bind(R.id.tvPromoDeduction)
+    @BindView(R.id.tvPromoDeduction)
     FontTextView tvPromoDeduction;
-    @Bind(R.id.tvCOD)
+    @BindView(R.id.tvCOD)
     FontTextView tvCOD;
-    @Bind(R.id.tvAmountToGetLable)
+    @BindView(R.id.tvAmountToGetLable)
     FontTextView tvAmountToGetLable;
-    @Bind(R.id.totalAmountTvLable)
+    @BindView(R.id.totalAmountTvLable)
     FontTextView totalAmountTvLable;
-    @Bind(R.id.rlCOD)
+    @BindView(R.id.rlCOD)
     RelativeLayout rlCOD;
-    @Bind(R.id.rlDeliveryStatus)
+    @BindView(R.id.rlDeliveryStatus)
     RelativeLayout rlDeliveryStatus;
-    @Bind(R.id.spDeliveryStatus)
+    @BindView(R.id.spDeliveryStatus)
     Spinner spDeliveryStatus;
-    @Bind(R.id.llReceiverInfo)
+    @BindView(R.id.llReceiverInfo)
     LinearLayout llReceiverInfo;
-    @Bind(R.id.ivRight0)
+    @BindView(R.id.ivRight0)
     ImageView ivRight0;
-    @Bind(R.id.etReceiverName)
+    @BindView(R.id.etReceiverName)
     FontEditText etReceiverName;
-    @Bind(R.id.etReceiverMobileNo)
+    @BindView(R.id.etReceiverMobileNo)
     FontEditText etReceiverMobileNo;
-    @Bind(R.id.kharedariAmountEt)
+    @BindView(R.id.kharedariAmountEt)
     FontEditText kharedariAmountEt;
 
-    @Bind(R.id.rlDropOffDiscount)
+    @BindView(R.id.rlDropOffDiscount)
     RelativeLayout rlDropOffDiscount;
 
-    @Bind(R.id.tvDropOffDiscount)
+    @BindView(R.id.tvDropOffDiscount)
     FontTextView tvDropOffDiscount;
 
 

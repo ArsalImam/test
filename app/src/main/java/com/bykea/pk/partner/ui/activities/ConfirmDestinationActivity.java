@@ -22,15 +22,15 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ConfirmDestinationActivity extends BaseActivity {
 
-    @Bind(R.id.addressTv)
+    @BindView(R.id.addressTv)
     FontTextView addressTv;
-    @Bind(R.id.confirmBtn)
+    @BindView(R.id.confirmBtn)
     FontTextView confirmBtn;
 
     private ConfirmDestinationActivity mCurrentActivity;

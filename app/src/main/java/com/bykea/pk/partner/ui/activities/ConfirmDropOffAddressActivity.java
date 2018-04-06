@@ -44,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -60,26 +60,26 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
     private String mAddressName = "";
     //    private CallRepository mCallRepository;
     Bundle bundle;
-    @Bind(R.id.tvFromName)
+    @BindView(R.id.tvFromName)
     AutoFitFontTextView addressTv;
-    @Bind(R.id.tvFromAddress)
+    @BindView(R.id.tvFromAddress)
     FontTextView tvFromAddress;
 
-    @Bind(R.id.confirmBtn)
+    @BindView(R.id.confirmBtn)
     FontTextView confirmBtn;
-    @Bind(R.id.tvCities)
+    @BindView(R.id.tvCities)
     Spinner tvCities;
-    @Bind(R.id.tvCitiesSingle)
+    @BindView(R.id.tvCitiesSingle)
     FontTextView tvCitiesSingle;
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
 
 
-    @Bind(R.id.autocomplete_places)
+    @BindView(R.id.autocomplete_places)
     AutoCompleteTextView mAutocompleteView;
 
 
-    @Bind(R.id.rlFrom)
+    @BindView(R.id.rlFrom)
     RelativeLayout rlFrom;
     private ArrayList<PlacesResult> cities;
     private String primaryText;

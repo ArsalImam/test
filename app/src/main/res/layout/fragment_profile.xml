@@ -173,14 +173,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
-            android:drawableRight="@drawable/right_arrow_green"
+            android:drawableLeft="@drawable/ic_left_arrowhead"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/padding.normal"
             android:paddingRight="@dimen/padding.small"
-            android:text="Personal Details"
+            android:text="ذاتی معلومات"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_regular.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <View
             android:layout_width="match_parent"
@@ -192,14 +192,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
-            android:drawableRight="@drawable/right_arrow_green"
+            android:drawableLeft="@drawable/ic_left_arrowhead"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/padding.normal"
             android:paddingRight="@dimen/padding.small"
-            android:text="Change Pin Code"
+            android:text="خفیہ کوڈ بدلیں"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_regular.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <View
             android:layout_width="match_parent"
@@ -211,14 +211,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
-            android:drawableRight="@drawable/right_arrow_green"
+            android:drawableLeft="@drawable/ic_left_arrowhead"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/padding.normal"
             android:paddingRight="@dimen/padding.small"
-            android:text="Terms of Services"
+            android:text="خدمات کی شرائط"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_regular.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <View
             android:layout_width="match_parent"
@@ -230,14 +230,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
-            android:drawableRight="@drawable/right_arrow_green"
+            android:drawableLeft="@drawable/ic_left_arrowhead"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/padding.normal"
             android:paddingRight="@dimen/padding.small"
-            android:text="License Information"
+            android:text="لائسنس کی معلومات"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_regular.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <View
             android:layout_width="match_parent"
@@ -249,14 +249,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
-            android:drawableRight="@drawable/right_arrow_green"
+            android:drawableLeft="@drawable/ic_left_arrowhead"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/padding.normal"
             android:paddingRight="@dimen/padding.small"
-            android:text="Motorbike Information"
+            android:text="موٹربائیک کی معلومات"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_regular.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <View
             android:layout_width="match_parent"
@@ -268,14 +268,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:background="@drawable/clickable_bg"
-            android:drawableRight="@drawable/right_arrow_green"
+            android:drawableLeft="@drawable/ic_left_arrowhead"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/padding.normal"
             android:paddingRight="@dimen/padding.small"
-            android:text="Bank Account Details"
+            android:text="بینک اکاؤنٹ کی معلومات"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_regular.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/tvVersion"

@@ -21,7 +21,7 @@ import com.instabug.library.Instabug;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -29,9 +29,9 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivity {
     private LoginActivity mCurrentActivity;
 
-    @Bind(R.id.pinCodeTv)
+    @BindView(R.id.pinCodeTv)
     FontEditText pinCodeTv;
-    @Bind(R.id.phoneNumberEt)
+    @BindView(R.id.phoneNumberEt)
     FontEditText phoneNumberEt;
 
     private UserRepository repository;

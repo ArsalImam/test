@@ -122,8 +122,8 @@ public class WebIO {
     }
 
     public boolean isSocketConnected() {
-        if (WebIO.getInstance() != null && WebIO.getInstance().getSocket() != null
-                && WebIO.getInstance().getSocket().connected()) {
+        if (getSocket() != null
+                && getSocket().connected()) {
             return true;
         } else {
             return false;
@@ -141,10 +141,12 @@ public class WebIO {
 
     public void clearConnectionData() {
         try {
-            WebIO.getInstance().getSocket().off();
-            WebIO.getInstance().getSocket().io().off();
-            WebIO.getInstance().getSocket().disconnect();
-            WebIO.getInstance().getSocket().close();
+            if (getSocket() != null) {
+                getSocket().off();
+                getSocket().io().off();
+                getSocket().disconnect();
+                getSocket().close();
+            }
             mWebIO = null;
             mSocket = null;
         } catch (NullPointerException e) {
@@ -159,7 +161,7 @@ public class WebIO {
         public void call(Object... args) {
             if (args != null && args.length > 0) {
                 Utils.redLog("onError", args[0].toString());
-                WebIO.getInstance().clearConnectionData();
+                clearConnectionData();
             }
         }
     };
@@ -169,7 +171,7 @@ public class WebIO {
         public void call(Object... args) {
             if (args != null && args.length > 0) {
                 Utils.redLog("onError", args[0].toString());
-                WebIO.getInstance().clearConnectionData();
+                clearConnectionData();
             }
         }
     };
@@ -194,10 +196,10 @@ public class WebIO {
     * updating socket for particular user when app establish connection
     * */
     private boolean isConnectionListenerAttached() {
-        if (WebIO.getInstance() != null && WebIO.getInstance().getSocket() != null &&
-                (WebIO.getInstance().getSocket().listeners(Socket.EVENT_CONNECT).size() > 0)) {
+        if (getSocket() != null &&
+                (getSocket().listeners(Socket.EVENT_CONNECT).size() > 0)) {
             boolean isAttached = false;
-            for (Emitter.Listener listener : WebIO.getInstance().getSocket().listeners(Socket.EVENT_CONNECT)) {
+            for (Emitter.Listener listener : getSocket().listeners(Socket.EVENT_CONNECT)) {
                 if (listener.getClass().getName().contains(WebIORequestHandler.class.getName())) {
                     isAttached = true;
                 }
@@ -239,8 +241,8 @@ public class WebIO {
     }
 
     private boolean isListenerRequired(String eventName) {
-        if (WebIO.getInstance() != null && WebIO.getInstance().getSocket() != null &&
-                (WebIO.getInstance().getSocket().listeners(eventName).size() > 0)) {
+        if (getSocket() != null &&
+                (getSocket().listeners(eventName).size() > 0)) {
             return false;
         } else {
             return true;

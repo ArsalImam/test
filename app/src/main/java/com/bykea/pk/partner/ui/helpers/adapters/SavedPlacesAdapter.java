@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -101,19 +101,19 @@ public class SavedPlacesAdapter extends RecyclerView.Adapter<SavedPlacesAdapter.
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        @Bind(R.id.tvPlaceName)
+        @BindView(R.id.tvPlaceName)
         FontTextView tvName;
 
-        @Bind(R.id.tvPlaceAddress)
+        @BindView(R.id.tvPlaceAddress)
         FontTextView tvAddress;
 
-        @Bind(R.id.tvDistance)
+        @BindView(R.id.tvDistance)
         FontTextView tvDist;
 
-        @Bind(R.id.ivStar)
+        @BindView(R.id.ivStar)
         ImageView ivStar;
 
-        @Bind(R.id.lineViewPlaces)
+        @BindView(R.id.lineViewPlaces)
         View lineViewPlaces;
 
         public ViewHolder(View view) {

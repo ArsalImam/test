@@ -20,7 +20,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.ui.activities.BankAccountActivity;
+import com.bykea.pk.partner.ui.activities.PostBankAccountActivity;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.ChangePinActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -37,54 +37,56 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class ProfileFragment extends Fragment {
 
 
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
 
-    @Bind(R.id.driverImage)
+    @BindView(R.id.driverImage)
     CircleImageView driverImage;
-    @Bind(R.id.driverNameTv)
+    @BindView(R.id.driverNameTv)
     FontTextView driverNameTv;
-    @Bind(R.id.driverAddressTv)
+    @BindView(R.id.driverAddressTv)
     FontTextView driverAddressTv;
-    @Bind(R.id.driverCityTv)
+    @BindView(R.id.driverCityTv)
     FontTextView driverCityTv;
-    @Bind(R.id.driverLatLngTv)
+    @BindView(R.id.driverLatLngTv)
     FontTextView driverLatLngTv;
-    @Bind(R.id.personalInfoTv)
+    @BindView(R.id.personalInfoTv)
     FontTextView personalInfoTv;
-    @Bind(R.id.pinCodeTv)
+    @BindView(R.id.pinCodeTv)
     FontTextView pinCodeTv;
-    @Bind(R.id.licenseInfoTv)
+    @BindView(R.id.licenseInfoTv)
     FontTextView licenseInfoTv;
-    @Bind(R.id.motorbikeInfoTv)
+    @BindView(R.id.motorbikeInfoTv)
     FontTextView motorbikeInfoTv;
-    @Bind(R.id.tvVersion)
+    @BindView(R.id.tvVersion)
     FontTextView tvVersion;
-    @Bind(R.id.bankAccDetailsTv)
+    @BindView(R.id.bankAccDetailsTv)
     FontTextView bankAccDetailsTv;
-    @Bind(R.id.llTop)
+    @BindView(R.id.llTop)
     LinearLayout llTop;
-    @Bind(R.id.ivHomePin)
+    @BindView(R.id.ivHomePin)
     ImageView ivHomePin;
 
     private UserRepository repository;
     private HomeActivity mCurrentActivity;
     private PersonalInfoData mPersonalInfo;
+    private Unbinder unbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -92,7 +94,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((BaseActivity) getActivity()).setToolbarTitle("Settings");
+        ((BaseActivity) getActivity()).setToolbarTitle("Settings", "سیٹنگز");
         ((BaseActivity) getActivity()).hideToolbarLogo();
         repository = new UserRepository();
         mCurrentActivity = (HomeActivity) getActivity();
@@ -109,7 +111,7 @@ public class ProfileFragment extends Fragment {
 //        driverLatLngTv.setText(user.getLat() + "," + user.getLng());
 
         if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
-           /* Picasso.with(mCurrentActivity).load(Utils.getImageLink(AppPreferences.getPilotData(mCurrentActivity).getPilotImage()))
+           /* Picasso.get().load(Utils.getImageLink(AppPreferences.getPilotData(mCurrentActivity).getPilotImage()))
                     .fit().centerInside()
                     .placeholder(R.drawable.profile_pic)
                     .into(driverImage);*/
@@ -130,8 +132,9 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        mCurrentActivity.hideUrduTitle();
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     private void getProfileData() {
@@ -163,7 +166,7 @@ public class ProfileFragment extends Fragment {
                     startActivity(intent3);
                     break;
                 case R.id.bankAccDetailsTv:
-                    Intent intent4 = new Intent(mCurrentActivity, BankAccountActivity.class);
+                    Intent intent4 = new Intent(mCurrentActivity, PostBankAccountActivity.class);
                     intent4.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent4);
                     break;

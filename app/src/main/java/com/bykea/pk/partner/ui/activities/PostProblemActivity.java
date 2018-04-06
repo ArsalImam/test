@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -21,13 +21,13 @@ public class PostProblemActivity extends BaseActivity {
     private PostProblemActivity mCurrentActivity;
     private String tripId, reason;
 
-    @Bind(R.id.submitBtn)
+    @BindView(R.id.submitBtn)
     FontButton submitBtn;
 
-    @Bind(R.id.etEmail)
+    @BindView(R.id.etEmail)
     FontEditText etEmail;
 
-    @Bind(R.id.etDetails)
+    @BindView(R.id.etDetails)
     FontEditText etDetails;
 
     @Override

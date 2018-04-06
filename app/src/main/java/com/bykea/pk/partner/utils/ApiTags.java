@@ -4,31 +4,23 @@ import com.bykea.pk.partner.BuildConfig;
 
 public class ApiTags {
 
-    //STAGING
-//    public static final String BASE_SERVER_URL = "http://35.166.136.116:3000";
-//    public static final String SOCKET_BASE_SERVER_URL = "http://35.166.136.116:3003";
+    //live test
+//    private static final String BASE_SERVER_URL_DEBUG = "http://172.16.0.75:3000";  //local
 
-    //LOCAL
-//    public static final String BASE_SERVER_URL = "http://172.16.0.60:3000";
-//    public static final String BASE_SERVER_URL = "http://192.168.8.103:3000";
-//    public static final String BASE_SERVER_URL = "http://172.16.0.60:3000";
-    public static final String BASE_SERVER_URL = "http://172.16.0.75:3000";
+    //staging
+    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";
+//    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3001";
+//    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3002";
+    //live test
+//    private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3001";
 
-    //Jawad 8 Mar 2018
-//    public static final String BASE_SERVER_URL = "http://172.16.0.75:3001";
+    private static final String BASE_SERVER_URL_LIVE = "https://secure.bykea.net:3000";
 
-
-    //STAGING PRO
-//    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3000";
-//    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3001";
-//    public static final String BASE_SERVER_URL = "https://staging.bykea.net:3002";
-
-    //live
-    /*TODO check onesignal id, google api key for maps, autocomplete, directions/geocoder/distancematrix*/
-//    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3000";
-
-    //live Test
-//    public static final String BASE_SERVER_URL = "https://secure.bykea.net:3001";
+    /*
+    * change url only for debug builds, never update BASE_SERVER_URL_LIVE
+    * */
+    public static final String BASE_SERVER_URL = BuildConfig.DEBUG ?
+            BASE_SERVER_URL_DEBUG : BASE_SERVER_URL_LIVE;
 
     //Bykea 2 (For Heat Map)
     public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
@@ -49,7 +41,8 @@ public class ApiTags {
     public static final String UPDATE_PROFILE_API = "/api/v1/driver/updateDriverProfile";
     public static final String GET_PROFILE_API = "/api/v1/driver/getProfile";
     public static final String GET_WALLET_LIST = "/api/v1/users/getWallets";
-    public static final String GET_BANK_ACCOUNT_LIST = "/api/v1/bankAccounts";
+    public static final String GET_BANK_ACCOUNT_LIST = "/api/v1/driver/bankAccounts";
+    public static final String GET_BANK_ACCOUNT_DETAILS = "/api/v1/driver/bankFranchises";
     public static final String GET_CONTACTS_NUMBERS = "/api/v1/contanctUs";
     public static final String GET_SERVICE_TYPE_API = "/api/v1/categories";
     public static final String GET_HISTORY_LIST = "/api/v1/users/getTripHistory";

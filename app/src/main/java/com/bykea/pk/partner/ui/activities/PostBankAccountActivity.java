@@ -13,20 +13,20 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class BankAccountActivity extends BaseActivity {
+public class PostBankAccountActivity extends BaseActivity {
 
-    @Bind(R.id.bankName)
+    @BindView(R.id.bankName)
     FontTextView bankName;
-    @Bind(R.id.bankAccountNumber)
+    @BindView(R.id.bankAccountNumber)
     FontTextView bankAccountNumber;
-    @Bind(R.id.callbtn)
+    @BindView(R.id.callbtn)
     FontTextView callbtn;
 
-    private BankAccountActivity mCurrentActivity;
+    private PostBankAccountActivity mCurrentActivity;
     private String financeNumber;
 
     @Override

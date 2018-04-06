@@ -22,7 +22,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProblemActivity extends BaseActivity {
@@ -36,13 +36,13 @@ public class ProblemActivity extends BaseActivity {
     public String selectedReason;
     public boolean isMain = true,isSubmitted = false;
 
-    @Bind(R.id.rvProblemList)
+    @BindView(R.id.rvProblemList)
     RecyclerView rvProblemList;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     FrameLayout toolbar;
-    @Bind(R.id.ivBackBtn)
+    @BindView(R.id.ivBackBtn)
     ImageView ivBackBtn;
-    @Bind(R.id.tvTitle)
+    @BindView(R.id.tvTitle)
     FontTextView tvTitle;
     private android.support.v4.app.FragmentManager fragmentManager;
 

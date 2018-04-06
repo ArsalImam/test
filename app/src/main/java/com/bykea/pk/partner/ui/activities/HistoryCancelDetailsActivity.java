@@ -18,45 +18,45 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class HistoryCancelDetailsActivity extends BaseActivity {
 
-    @Bind(R.id.startAddressTv)
+    @BindView(R.id.startAddressTv)
     FontTextView startAddressTv;
-    @Bind(R.id.endAddressTv)
+    @BindView(R.id.endAddressTv)
     FontTextView endAddressTv;
-    @Bind(R.id.nameTv)
+    @BindView(R.id.nameTv)
     FontTextView nameTv;
-    @Bind(R.id.timeTv)
+    @BindView(R.id.timeTv)
     FontTextView timeTv;
-    @Bind(R.id.totalAmountTv)
+    @BindView(R.id.totalAmountTv)
     FontTextView totalAmountTv;
-    @Bind(R.id.btnProblem)
+    @BindView(R.id.btnProblem)
     FontTextView btnProblem;
 
-    @Bind(R.id.serviceTypeTv)
+    @BindView(R.id.serviceTypeTv)
     FontTextView serviceTypeTv;
-    @Bind(R.id.tvCancelBy)
+    @BindView(R.id.tvCancelBy)
     FontTextView tvCancelBy;
-    @Bind(R.id.tvCancelFee)
+    @BindView(R.id.tvCancelFee)
     FontTextView tvCancelFee;
-    @Bind(R.id.dotted_line)
+    @BindView(R.id.dotted_line)
     DashedLine dotted_line;
-    @Bind(R.id.ic_pin)
+    @BindView(R.id.ic_pin)
     ImageView ic_pin;
-    @Bind(R.id.centerLine)
+    @BindView(R.id.centerLine)
     View centerLine;
-    @Bind(R.id.lastLine)
+    @BindView(R.id.lastLine)
     View lastLine;
 
 
-    @Bind(R.id.tvCancelFeeLabel)
+    @BindView(R.id.tvCancelFeeLabel)
     FontTextView tvCancelFeeLabel;
 
-    @Bind(R.id.tvTotalLabel)
+    @BindView(R.id.tvTotalLabel)
     FontTextView tvTotalLabel;
 
 

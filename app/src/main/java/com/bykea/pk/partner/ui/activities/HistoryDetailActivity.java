@@ -27,87 +27,87 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class HistoryDetailActivity extends BaseActivity {
 
-    @Bind(R.id.startAddressTv)
+    @BindView(R.id.startAddressTv)
     FontTextView startAddressTv;
-    @Bind(R.id.endAddressTv)
+    @BindView(R.id.endAddressTv)
     FontTextView endAddressTv;
-    @Bind(R.id.nameTv)
+    @BindView(R.id.nameTv)
     AutoFitFontTextView nameTv;
-    @Bind(R.id.timeTv)
+    @BindView(R.id.timeTv)
     FontTextView timeTv;/*
-    @Bind(R.id.dateTv)
+    @BindView(R.id.dateTv)
     FontTextView dateTv;*/
-    @Bind(R.id.totalDistanceTv)
+    @BindView(R.id.totalDistanceTv)
     FontTextView totalDistanceTv;
-    @Bind(R.id.totalTimeTv)
+    @BindView(R.id.totalTimeTv)
     FontTextView totalTimeTv;
-    @Bind(R.id.basefareTv)
+    @BindView(R.id.basefareTv)
     FontTextView basefareTv;
-    @Bind(R.id.totalAmountTv)
+    @BindView(R.id.totalAmountTv)
     FontTextView totalAmountTv;
 
-    @Bind(R.id.rlFeedbackMsg1)
+    @BindView(R.id.rlFeedbackMsg1)
     LinearLayout rlFeedbackMsg1;
-    @Bind(R.id.rlFeedbackMsg2)
+    @BindView(R.id.rlFeedbackMsg2)
     LinearLayout rlFeedbackMsg2;
 
 
-    @Bind(R.id.tvMsg1)
+    @BindView(R.id.tvMsg1)
     FontTextView tvMsg1;
-    @Bind(R.id.tvMsg2)
+    @BindView(R.id.tvMsg2)
     FontTextView tvMsg2;
-    @Bind(R.id.tvMsg3)
+    @BindView(R.id.tvMsg3)
     FontTextView tvMsg3;
-    @Bind(R.id.tvMsg4)
+    @BindView(R.id.tvMsg4)
     FontTextView tvMsg4;
-    @Bind(R.id.tvMsg5)
+    @BindView(R.id.tvMsg5)
     FontTextView tvMsg5;
-    @Bind(R.id.tvMsg6)
+    @BindView(R.id.tvMsg6)
     FontTextView tvMsg6;
 
 
-    @Bind(R.id.serviceTypeTv)
+    @BindView(R.id.serviceTypeTv)
     FontTextView serviceTypeTv;
-    @Bind(R.id.distancePriceTv)
+    @BindView(R.id.distancePriceTv)
     FontTextView distancePriceTv;
-    @Bind(R.id.timePriceTv)
+    @BindView(R.id.timePriceTv)
     FontTextView timePriceTv;
-    @Bind(R.id.fareTv)
+    @BindView(R.id.fareTv)
     FontTextView fareTv;
-    @Bind(R.id.promoTv)
+    @BindView(R.id.promoTv)
     FontTextView promoTv;
 
-    @Bind(R.id.dropOffDiscTv)
+    @BindView(R.id.dropOffDiscTv)
     FontTextView dropOffDiscTv;
 
-    @Bind(R.id.walletTv)
+    @BindView(R.id.walletTv)
     FontTextView walletTv;
-    @Bind(R.id.driverRb)
+    @BindView(R.id.driverRb)
     RatingBar driverRb;
-    @Bind(R.id.passengerRb)
+    @BindView(R.id.passengerRb)
     RatingBar passengerRb;
 
-    @Bind(R.id.btnProblem)
+    @BindView(R.id.btnProblem)
     FontTextView btnProblem;
 
 
-    @Bind(R.id.tvWaitMins)
+    @BindView(R.id.tvWaitMins)
     FontTextView tvWaitMins;
 
-    @Bind(R.id.tvWaitPrice)
+    @BindView(R.id.tvWaitPrice)
     FontTextView tvWaitPrice;
 
-    @Bind(R.id.rvComments)
+    @BindView(R.id.rvComments)
     RecyclerView rvComments;
     private CommentsAdapter mAdapter;
 
-    @Bind(R.id.flCommentsRv)
+    @BindView(R.id.flCommentsRv)
     FrameLayout flCommentsRv;
 //    private String tripNo;
 

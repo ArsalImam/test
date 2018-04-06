@@ -34,22 +34,24 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 public class WalletFragment extends Fragment {
 
-    @Bind(R.id.noDataIv)
+    @BindView(R.id.noDataIv)
     ImageView noDataIv;
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
-    @Bind(R.id.totalAmountTv)
+    @BindView(R.id.totalAmountTv)
     TextView totalAmountTv;
-    @Bind(R.id.llTitle)
+    @BindView(R.id.llTitle)
     LinearLayout llTitle;
-    @Bind(R.id.rlTop)
+    @BindView(R.id.rlTop)
     RelativeLayout rlTop;
+    private Unbinder unbinder;
 
     private UserRepository repository;
     private RecyclerView mRecyclerView;
@@ -71,7 +73,7 @@ public class WalletFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_wallet, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -151,7 +153,7 @@ public class WalletFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
 //        mCurrentActivity.hideWalletIcon();
     }
 

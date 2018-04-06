@@ -38,7 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -50,29 +50,29 @@ public class SavePlaceActivity extends BaseActivity {
     private CustomMapView mapView;
     private boolean isSearchedLoc;
 
-    @Bind(R.id.tvFromName)
+    @BindView(R.id.tvFromName)
     AutoFitFontTextView addressTv;
-    @Bind(R.id.tvPlaceName)
+    @BindView(R.id.tvPlaceName)
     FontTextView tvPlaceName;
 
-    @Bind(R.id.tvFromAddress)
+    @BindView(R.id.tvFromAddress)
     FontTextView tvFromAddress;
-    @Bind(R.id.tvPlaceAddress)
+    @BindView(R.id.tvPlaceAddress)
     FontTextView tvPlaceAddress;
 
-    @Bind(R.id.confirmBtn)
+    @BindView(R.id.confirmBtn)
     FrameLayout confirmBtn;
 
-    @Bind(R.id.etEditedName)
+    @BindView(R.id.etEditedName)
     FontEditText etEditedName;
 
-    @Bind(R.id.etEditedAddress)
+    @BindView(R.id.etEditedAddress)
     FontEditText etEditedAddress;
 
-    @Bind(R.id.etMobileNumber)
+    @BindView(R.id.etMobileNumber)
     FontEditText etMobileNumber;
 
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
 
     private SavedPlaces mSavedPlaceToServer;

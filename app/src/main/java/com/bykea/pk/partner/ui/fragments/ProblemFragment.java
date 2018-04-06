@@ -20,7 +20,7 @@ import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProblemFragment extends Fragment {
@@ -32,7 +32,7 @@ public class ProblemFragment extends Fragment {
     private String tripId ;
     String[] probReasons;
 
-    @Bind(R.id.rvProblemList)
+    @BindView(R.id.rvProblemList)
     RecyclerView rvProblemList;
 
     public ProblemFragment() {

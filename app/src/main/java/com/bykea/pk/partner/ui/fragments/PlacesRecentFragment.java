@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PlacesRecentFragment extends Fragment {
@@ -41,7 +41,7 @@ public class PlacesRecentFragment extends Fragment {
 
     private UserRepository mRepository;
 
-    @Bind(R.id.lvRecentPlaces)
+    @BindView(R.id.lvRecentPlaces)
     RecyclerView mLvRecentPlaces;
 
     private RecentPlacesAdapter mAdapterRecentPlaces;

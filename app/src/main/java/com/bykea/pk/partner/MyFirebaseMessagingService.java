@@ -1,10 +1,19 @@
 package com.bykea.pk.partner;
 
 import android.content.Intent;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 
+import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
+import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
@@ -100,7 +109,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
             } else if (remoteMessage.getData().get("event").equalsIgnoreCase("7")) {//when server inactive any driver via Cron job
                 if (AppPreferences.isLoggedIn()) {
-                    OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
+                    final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
                     /*
                     * Check Coordinates when there's any delay in FCM Push Notification and ignore
                     * this notification when there are different coordinates.
@@ -108,10 +117,45 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
                             && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
                             && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude())) {
-                        AppPreferences.setAdminMsg(null);
-                        AppPreferences.setAvailableStatus(false);
-                        mBus.post(Keys.INACTIVE_PUSH);
-                        Notifications.generateAdminNotification(this, data.getMessage());
+
+                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                            //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
+
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    final CountDownTimer countDownTimer = new CountDownTimer(15000, 15000) {
+                                        @Override
+                                        public void onTick(long l) {
+                                        }
+
+                                        @Override
+                                        public void onFinish() {
+                                            onInactiveByCronJob(data);
+                                        }
+                                    };
+                                    countDownTimer.start();
+                                    WebIO.getInstance().clearConnectionData();
+                                    new UserRepository().requestLocationUpdate(mContext, new UserDataHandler() {
+                                        @Override
+                                        public void onLocationUpdate(LocationResponse response) {
+                                            countDownTimer.cancel();
+                                            ActivityStackManager.getInstance().restartLocationService(mContext);
+                                        }
+
+                                        @Override
+                                        public void onError(int errorCode, String errorMessage) {
+                                            countDownTimer.cancel();
+                                            onLocationUpdateError(errorCode, errorMessage, data);
+                                        }
+                                    }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                                }
+                            });
+
+
+                        } else {
+                            onInactiveByCronJob(data);
+                        }
                     }
                 }
             } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("3"))) {
@@ -126,8 +170,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
                     AppPreferences.setAdminMsg(adminNotification);
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
-                    if (AppPreferences.getAvailableStatus()
-                            != adminNotification.isActive() && !AppPreferences.isOutOfFence() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
+                    if (AppPreferences.getAvailableStatus() != adminNotification.isActive()
+                            && !AppPreferences.isOutOfFence() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
                         AppPreferences.setAvailableStatus(adminNotification.isActive());
                         AppPreferences.setWalletAmountIncreased(!adminNotification.isActive());
                         mBus.post("INACTIVE-PUSH");
@@ -136,5 +180,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
             }
         }
+    }
+
+
+    private void onLocationUpdateError(int errorCode, String errorMessage, OfflineNotificationData data) {
+        if (errorCode == HTTPStatus.UNAUTHORIZED) {
+            Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
+            sendBroadcast(locationIntent);
+        } else if (errorCode == HTTPStatus.FENCE_ERROR) {
+            AppPreferences.setOutOfFence(true);
+            AppPreferences.setAvailableStatus(false);
+            mBus.post(Keys.INACTIVE_FENCE);
+        } else if (errorCode == HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT) {
+            if (StringUtils.isNotBlank(errorMessage)) {
+                AppPreferences.setWalletIncreasedError(errorMessage);
+            }
+            AppPreferences.setWalletAmountIncreased(true);
+            AppPreferences.setAvailableStatus(false);
+            mBus.post(Keys.INACTIVE_FENCE);
+        } else if (errorCode == HTTPStatus.FENCE_SUCCESS) {
+            AppPreferences.setOutOfFence(false);
+            AppPreferences.setAvailableStatus(true);
+            mBus.post(Keys.INACTIVE_FENCE);
+        } else {
+            onInactiveByCronJob(data);
+        }
+    }
+
+    private void onInactiveByCronJob(OfflineNotificationData data) {
+        AppPreferences.setAdminMsg(null);
+        AppPreferences.setAvailableStatus(false);
+        mBus.post(Keys.INACTIVE_PUSH);
+        Notifications.generateAdminNotification(mContext, data.getMessage());
     }
 }

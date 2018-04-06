@@ -799,6 +799,12 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
+    public static String calculateDistanceInKm(double newLat, double newLon, double prevLat, double prevLon) {
+        return "" + Math.round(((calculateDistance(newLat,
+                newLon, prevLat,
+                prevLon)) / 1000) * 10.0) / 10.0;
+    }
+
 
     public static boolean isValidNumber(Context context, FontEditText view) {
         String number = view.getText().toString();
@@ -912,7 +918,7 @@ public class Utils {
     }
 
     public static void loadImgPicasso(Context context, ImageView imageView, int placeHolder, String link) {
-        Picasso.with(context).load(link)
+        Picasso.get().load(link)
                 .fit().centerInside()
                 .placeholder(placeHolder)
                 .into(imageView, new Callback() {
@@ -922,10 +928,28 @@ public class Utils {
                     }
 
                     @Override
-                    public void onError() {
+                    public void onError(Exception e) {
                         redLog("Picasso", "onError");
                     }
                 });
+    }
+
+    public static void loadImgPicasso(Context context, ImageView imageView, String link) {
+        if (StringUtils.isNotBlank(link)) {
+            Picasso.get().load(link)
+                    .fit().centerInside()
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            redLog("Picasso", "onSuccess");
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            redLog("Picasso", "onError");
+                        }
+                    });
+        }
     }
 
     public static boolean isMockLocation(Location location, Context context) {
@@ -1138,7 +1162,7 @@ public class Utils {
         }
     }
 
-    public static String getCloudinaryLink(String icon, Context context) {
+    public static String getCloudinaryLink(String icon) {
 //        return "http://res.cloudinary.com/bykea/image/upload/w_" + getDimension(context) + ",h_" + getDimension(context) + ",c_scale/" + icon;
         return "http://res.cloudinary.com/bykea/image/upload/" + icon;
     }
@@ -1531,7 +1555,6 @@ public class Utils {
     public static boolean isTimeWithInNDay(long time, int n) {
         return (System.currentTimeMillis() - time) < (n * Constants.MILISEC_IN_DAY);
     }
-
 
 
     public static void scrollToBottom(final ScrollView mainScrollView) {

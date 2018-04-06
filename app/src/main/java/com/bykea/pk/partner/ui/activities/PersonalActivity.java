@@ -12,35 +12,35 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PersonalActivity extends BaseActivity {
-    @Bind(R.id.pilotName)
+    @BindView(R.id.pilotName)
     FontTextView pilotName;
 
-    @Bind(R.id.pilotImage)
+    @BindView(R.id.pilotImage)
     CircleImageView pilotImage;
 
-    @Bind(R.id.pilotAddress)
+    @BindView(R.id.pilotAddress)
     FontTextView pilotAddress;
 
-    @Bind(R.id.pilotCity)
+    @BindView(R.id.pilotCity)
     FontTextView pilotCity;
-    @Bind(R.id.pilotCnic)
+    @BindView(R.id.pilotCnic)
     FontTextView pilotCnic;
-    @Bind(R.id.pilotMobile)
+    @BindView(R.id.pilotMobile)
     FontTextView pilotMobile;
-    @Bind(R.id.pilotMobile2)
+    @BindView(R.id.pilotMobile2)
     FontTextView pilotMobile2;
-    @Bind(R.id.pilotMobile3)
+    @BindView(R.id.pilotMobile3)
     FontTextView pilotMobile3;
-    @Bind(R.id.pilotEmail)
+    @BindView(R.id.pilotEmail)
     FontTextView pilotEmail;
-    @Bind(R.id.pilotRegisteredDate)
+    @BindView(R.id.pilotRegisteredDate)
     FontTextView pilotRegisteredDate;
-    @Bind(R.id.pilotVerifiedDate)
+    @BindView(R.id.pilotVerifiedDate)
     FontTextView pilotVerifiedDate;
 
     PersonalActivity mCurrentActivity;

@@ -21,9 +21,8 @@
             android:layout_marginTop="@dimen/margin.normal"
             android:layout_marginBottom="@dimen/margin.normal"
             android:gravity="center"
-            android:text="START?"
             android:textColor="@color/textColorPrimary"
-            app:fontName="roboto_bold.ttf"
+            app:fontName="jameel_noori_nastaleeq.ttf"
             android:textSize="@dimen/_22sdp" />
 
 

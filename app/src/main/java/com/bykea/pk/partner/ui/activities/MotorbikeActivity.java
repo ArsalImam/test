@@ -9,22 +9,22 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MotorbikeActivity extends BaseActivity {
 
-    @Bind(R.id.vehicleBrand)
+    @BindView(R.id.vehicleBrand)
     FontTextView vehicleBrand;
-    @Bind(R.id.horsePower)
+    @BindView(R.id.horsePower)
     FontTextView horsePower;
-    @Bind(R.id.modelYear)
+    @BindView(R.id.modelYear)
     FontTextView modelYear;
-    @Bind(R.id.chasisNumber)
+    @BindView(R.id.chasisNumber)
     FontTextView chasisNumber;
-    @Bind(R.id.engineNumber)
+    @BindView(R.id.engineNumber)
     FontTextView engineNumber;
-    @Bind(R.id.exciseVerified)
+    @BindView(R.id.exciseVerified)
     FontTextView exciseVerified;
     MotorbikeActivity mCurrentActivity;
 

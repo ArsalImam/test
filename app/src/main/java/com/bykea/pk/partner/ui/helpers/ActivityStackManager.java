@@ -7,10 +7,12 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.IntentCompat;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
+import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
@@ -160,9 +162,12 @@ public class ActivityStackManager {
     public void startLauncherActivity(Context mContext) {
         PackageManager packageManager = mContext.getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(mContext.getPackageName());
-        ComponentName componentName = intent.getComponent();
-        Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
-        mContext.startActivity(mainIntent);
+        ComponentName componentName = null;
+        if (intent != null) {
+            componentName = intent.getComponent();
+            Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+            mContext.startActivity(mainIntent);
+        }
     }
 
     public void startCompletedDetailsActivity(TripHistoryData historyData, Context mContext) {
@@ -207,6 +212,12 @@ public class ActivityStackManager {
     public void startSavePlaceActivity(Context context, PlacesResult placesResult) {
         Intent intent = new Intent(context, SavePlaceActivity.class);
         intent.putExtra(Constants.Extras.SELECTED_ITEM, placesResult);
+        context.startActivity(intent);
+    }
+
+    public void startBankDetailsActivity(Context context, BankData data) {
+        Intent intent = new Intent(context, BanksDetailsActivity.class);
+        intent.putExtra(Constants.Extras.SELECTED_ITEM, data);
         context.startActivity(intent);
     }
 

@@ -16,6 +16,9 @@
 #   public *;
 #}
 -dontwarn okio.**
+-dontwarn okhttp3.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
 -dontwarn retrofit.**
 -dontwarn org.joda.**
 -keep class butterknife.** { *; }
@@ -35,6 +38,8 @@
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
 -keep class **$$ViewBinder { *; }
+# Retain generated class which implement Unbinder.
+-keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
 
 -renamesourcefileattribute SourceFile
 

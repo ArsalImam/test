@@ -59,7 +59,7 @@ import java.util.ArrayList;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import top.oply.opuslib.OpusEvent;
@@ -68,28 +68,28 @@ import top.oply.opuslib.OpusRecorder;
 
 public class ChatActivityNew extends BaseActivity {
 
-    @Bind(R.id.messageEdit)
+    @BindView(R.id.messageEdit)
     FontEditText messageEdit;
-    @Bind(R.id.chronometer)
+    @BindView(R.id.chronometer)
     Chronometer chronometer;
-    @Bind(R.id.voiceMsgLayout)
+    @BindView(R.id.voiceMsgLayout)
     FrameLayout voiceMsgLayout;
-    @Bind(R.id.chatSendButton)
+    @BindView(R.id.chatSendButton)
     ImageView chatSendButton;
-    @Bind(R.id.messagesContainer)
+    @BindView(R.id.messagesContainer)
     RecyclerView messagesContainer;
-    @Bind(R.id.backBtn)
+    @BindView(R.id.backBtn)
     ImageView backBtn;
-    @Bind(R.id.titleTv)
+    @BindView(R.id.titleTv)
     FontTextView titleTv;
-    @Bind(R.id.textLayout)
+    @BindView(R.id.textLayout)
     LinearLayout textLayout;
-    @Bind(R.id.container)
+    @BindView(R.id.container)
     RelativeLayout container;
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
 
-    @Bind(R.id.loader_audio)
+    @BindView(R.id.loader_audio)
     ProgressBar loader_audio;
 
     private OpusPlayerCallBack mCallBack;

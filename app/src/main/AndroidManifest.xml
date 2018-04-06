@@ -163,13 +163,16 @@
             android:name=".ui.activities.LicenseActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.BankAccountActivity"
+            android:name=".ui.activities.PostBankAccountActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.MotorbikeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.AccountsListActivity"
+            android:name=".ui.activities.BanksAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.BanksDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.PaymentRequestActivity"

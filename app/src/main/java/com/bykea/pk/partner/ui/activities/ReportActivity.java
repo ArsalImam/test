@@ -18,7 +18,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ReportActivity extends BaseActivity {
@@ -30,16 +30,16 @@ public class ReportActivity extends BaseActivity {
     private boolean isHelpShowing = false;
     private String[] contactReasongs;
 
-    @Bind(R.id.reportList)
+    @BindView(R.id.reportList)
     RecyclerView rvReportList;
 
-    @Bind(R.id.ivBackBtn)
+    @BindView(R.id.ivBackBtn)
     ImageView ivBackBtn;
-    @Bind(R.id.tvTitle)
+    @BindView(R.id.tvTitle)
     FontTextView tvTitle;
-    @Bind(R.id.tvTitleUrdu)
+    @BindView(R.id.tvTitleUrdu)
     FontTextView tvTitleUrdu;
-    @Bind(R.id.helpLayout)
+    @BindView(R.id.helpLayout)
     LinearLayout helpLayout;
 
     private String contactType;

@@ -5,17 +5,17 @@ import android.content.Context;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.AccountNumbersResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
@@ -38,6 +38,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -605,11 +606,16 @@ public class UserRepository {
         mRestRequestHandler.getSettings(mContext, mDataCallback);
     }
 
-    public void requestAccountNumbers(Context context, IUserDataHandler handler, String pageNo) {
+    public void requestBankAccounts(Context context, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.getAccountNumbers(mContext, mDataCallback, AppPreferences.getDriverId(),
-                AppPreferences.getAccessToken(), pageNo);
+        mRestRequestHandler.requestBankAccounts(mContext, mDataCallback);
+    }
+
+    public void requestBankAccountsDetails(Context context, String bankId, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestBankAccountsDetails(mContext, bankId, mDataCallback);
     }
 
     public void requestContactNumbers(Context context, IUserDataHandler handler) {
@@ -917,8 +923,11 @@ public class UserRepository {
                     case "WalletHistoryResponse":
                         mUserCallback.getWalletData((WalletHistoryResponse) object);
                         break;
-                    case "AccountNumbersResponse":
-                        mUserCallback.getAccountNumbers((AccountNumbersResponse) object);
+                    case "BankAccountListResponse":
+                        mUserCallback.getAccountNumbers((BankAccountListResponse) object);
+                        break;
+                    case "BankDetailsResponse":
+                        mUserCallback.onBankDetailsResponse((BankDetailsResponse) object);
                         break;
                     case "ContactNumbersResponse":
                         mUserCallback.getContactNumbers((ContactNumbersResponse) object);
@@ -1050,6 +1059,9 @@ public class UserRepository {
                         break;
                     case "TopUpPassWalletResponse":
                         mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);
+                        break;
+                    case "LocationResponse":
+                        mUserCallback.onLocationUpdate((LocationResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

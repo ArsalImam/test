@@ -16,7 +16,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 

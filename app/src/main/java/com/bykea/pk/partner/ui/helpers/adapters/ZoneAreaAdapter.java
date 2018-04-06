@@ -12,7 +12,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -49,10 +49,10 @@ public class ZoneAreaAdapter extends RecyclerView.Adapter<ZoneAreaAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.tvEnglishItem)
+        @BindView(R.id.tvEnglishItem)
         FontTextView tvEnglishItem;
 
-        @Bind(R.id.tvUrduItem)
+        @BindView(R.id.tvUrduItem)
         FontTextView tvUrduItem;
 
         public ViewHolder(final View itemView) {

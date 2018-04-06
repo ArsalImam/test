@@ -29,7 +29,7 @@ import com.bykea.pk.partner.utils.Utils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PlacesSavedFragment extends Fragment {
@@ -37,7 +37,7 @@ public class PlacesSavedFragment extends Fragment {
 
     private SelectPlaceActivity mCurrentActivity;
 
-    @Bind(R.id.lvRecentPlaces)
+    @BindView(R.id.lvRecentPlaces)
     RecyclerView mLvRecentPlaces;
 
     private SavedPlacesAdapter mAdapterRecentPlaces;

@@ -3,8 +3,9 @@ package com.bykea.pk.partner.communication.rest;
 
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
-import com.bykea.pk.partner.models.response.AccountNumbersResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
+import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
@@ -20,7 +21,6 @@ import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
-import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -44,7 +44,6 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.ResponseBody;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import retrofit.Call;
 import retrofit.http.Body;
@@ -56,7 +55,6 @@ import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
 import retrofit.http.Query;
-import retrofit.http.QueryMap;
 import retrofit.http.Url;
 
 
@@ -178,10 +176,17 @@ interface IRestClient {
                                                    @Query("user_type") String userType);
 
     @GET(ApiTags.GET_BANK_ACCOUNT_LIST)
-    Call<AccountNumbersResponse> getAccountNumbers(@Query("_id") String Id,
-                                                   @Query("token_id") String tokenId,
-                                                   @Query("user_type") String userType,
-                                                   @Query("page") String pageNo);
+    Call<BankAccountListResponse> getBankAccounts(@Query("_id") String Id,
+                                                  @Query("token_id") String tokenId,
+                                                  @Query("lat") String lat,
+                                                  @Query("lng") String lng);
+
+    @GET(ApiTags.GET_BANK_ACCOUNT_DETAILS)
+    Call<BankDetailsResponse> getBankAccountDetails(@Query("_id") String Id,
+                                                    @Query("token_id") String tokenId,
+                                                    @Query("lat") String lat,
+                                                    @Query("lng") String lng,
+                                                    @Query("bId") String bankId);
 
     @GET(ApiTags.PLACES_GEOCODER_EXT_URL)
     Call<GeocoderApi> callGeoCoderApi(@Query("latlng") String latLng,

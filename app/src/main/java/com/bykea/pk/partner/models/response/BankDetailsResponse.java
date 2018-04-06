@@ -1,24 +1,14 @@
 package com.bykea.pk.partner.models.response;
 
-import com.bykea.pk.partner.models.data.AccountsData;
+import com.bykea.pk.partner.models.data.BankData;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 
-public class AccountNumbersResponse extends CommonResponse {
+public class BankDetailsResponse extends CommonResponse {
 
-
-    ArrayList<AccountsData> data;
-
-    public ArrayList<AccountsData> getData() {
-        return data;
-    }
-
-    public void setData(ArrayList<AccountsData> data) {
-        this.data = data;
-    }
-
+    private ArrayList<BankData.BankAgentData> data;
 
     @SerializedName("next")
     String page;
@@ -39,5 +29,13 @@ public class AccountNumbersResponse extends CommonResponse {
 
     public void setPage(String page) {
         this.page = page;
+    }
+
+    public ArrayList<BankData.BankAgentData> getData() {
+        return data;
+    }
+
+    public void setData(ArrayList<BankData.BankAgentData> data) {
+        this.data = data;
     }
 }

@@ -15,22 +15,22 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Utils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
 public class EmergencyContactsFragment extends Fragment {
-    @Bind(R.id.hospitalCall)
+    @BindView(R.id.hospitalCall)
     ImageView hospitalCall;
 
-    @Bind(R.id.policeStationCall)
+    @BindView(R.id.policeStationCall)
     ImageView policeStationCall;
 
-    @Bind(R.id.ambulanceCall)
+    @BindView(R.id.ambulanceCall)
     ImageView ambulanceCall;
 
-    @Bind(R.id.fireBrigadeCall)
+    @BindView(R.id.fireBrigadeCall)
     ImageView fireBrigadeCall;
 
     private HomeActivity mCurrentActivity;

@@ -21,13 +21,13 @@ import com.bykea.pk.partner.utils.Utils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HistoryMissedCallsActivity extends BaseActivity {
-    @Bind(R.id.noDataIv)
+    @BindView(R.id.noDataIv)
     ImageView noDataIv;
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
 
     private UserRepository repository;

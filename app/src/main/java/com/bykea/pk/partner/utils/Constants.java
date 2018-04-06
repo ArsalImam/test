@@ -55,22 +55,14 @@ public class Constants {
 
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
+    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";//Staging Server Key of Passenger
+    private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
+    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
 
 
-    //Staging
-//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";   //Staging Server Key of Passenger
-//    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyCJw1nRmfRZnfpd8MoBUZodz6dCdWOaINU"; //Latest Staging 9 Feb for Driver
-
-    //Live
-    public static final String GOOGLE_PLACE_SERVER_API_KEY = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
-
-
-    //Staging
-//    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
-
-    //Live
-    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
-
+    public static final String GOOGLE_PLACE_SERVER_API_KEY = BuildConfig.DEBUG ? GOOGLE_PLACE_SERVER_API_KEY_DEBUG : GOOGLE_PLACE_SERVER_API_KEY_LIVE;
+    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = BuildConfig.DEBUG ? GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG : GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE;
 
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 

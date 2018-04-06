@@ -1,23 +1,17 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -41,31 +35,31 @@ import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
 public class CallingActivity extends BaseActivity {
-    @Bind(R.id.counterTv)
+    @BindView(R.id.counterTv)
     FontTextView counterTv;
-    //    @Bind(R.id.callerNameTv)
+    //    @BindView(R.id.callerNameTv)
 //    FontTextView callerNameTv;
-//    @Bind(R.id.startAddressTv)
+//    @BindView(R.id.startAddressTv)
 //    FontTextView startAddressTv;
-//    @Bind(R.id.rejectCallBtn)
+//    @BindView(R.id.rejectCallBtn)
 //    FontTextView rejectCallBtn;
-    @Bind(R.id.acceptCallBtn)
+    @BindView(R.id.acceptCallBtn)
     ImageView acceptCallBtn;
-    @Bind(R.id.donut_progress)
+    @BindView(R.id.donut_progress)
     DonutProgress donutProgress;
-    //    @Bind(R.id.distanceTv)
+    //    @BindView(R.id.distanceTv)
 //    FontTextView distanceTv;
-//    @Bind(R.id.timeTv)
+//    @BindView(R.id.timeTv)
 //    FontTextView timeTv;
-    @Bind(R.id.ivCallType)
+    @BindView(R.id.ivCallType)
     ImageView ivCallType;
-    @Bind(R.id.activity_calling)
+    @BindView(R.id.activity_calling)
     RelativeLayout activity_calling;
 
     private UserRepository repository;
@@ -385,8 +379,8 @@ public class CallingActivity extends BaseActivity {
         counterTv.setText("20");
         String icon = Utils.getServiceIcon(callData.getCallType());
         if (StringUtils.isNotBlank(icon)) {
-            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon, mCurrentActivity));
-            Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(icon, mCurrentActivity))
+            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
+            Picasso.get().load(Utils.getCloudinaryLink(icon))
                     .placeholder(Utils.getServiceIcon(callData))
                     .into(ivCallType, new Callback() {
                         @Override
@@ -395,7 +389,7 @@ public class CallingActivity extends BaseActivity {
                         }
 
                         @Override
-                        public void onError() {
+                        public void onError(Exception e) {
                             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnError");
                         }
                     });

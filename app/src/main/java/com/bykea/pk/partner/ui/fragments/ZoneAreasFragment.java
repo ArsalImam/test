@@ -35,18 +35,18 @@ import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ZoneAreasFragment extends Fragment {
 
-    @Bind(R.id.spCities)
+    @BindView(R.id.spCities)
     Spinner spCities;
 
-    @Bind(R.id.rvZones)
+    @BindView(R.id.rvZones)
     RecyclerView rvZoneAreas;
 
-    @Bind(R.id.ivRight0)
+    @BindView(R.id.ivRight0)
     ImageView ivRight0;
 
     private ZoneAreaAdapter mZoneAreaAdapter;

@@ -115,7 +115,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         if (chatMessages.get(position).getMessageType().equalsIgnoreCase("text")) {
             if (getItemViewType(position) == 1) {
                 /*if (StringUtils.isNotBlank(chatMessages.get(position).getSender().getImage())) {
-                    Picasso.with(context).load(Utils.getImageLink(chatMessages.get(position).getSender().getImage()))
+                    Picasso.get().load(Utils.getImageLink(chatMessages.get(position).getSender().getImage()))
                             .placeholder(R.drawable.profile_pic).into(viewHolder.imgPessanger);
                 }*/
                 viewHolder.contentLayout.setBackgroundResource(R.drawable.white_chat_box);
@@ -132,7 +132,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         } else {
             /*if (getItemViewType(position) == 1) {
                 if (StringUtils.isNotBlank(chatMessages.get(position).getSender().getImage())) {
-                    Picasso.with(context).load(Utils.getImageLink(chatMessages.get(position).getSender().getImage()))
+                    Picasso.get().load(Utils.getImageLink(chatMessages.get(position).getSender().getImage()))
                             .placeholder(R.drawable.profile_pic).into(viewHolder.imgPessanger);
                 }
             } else {

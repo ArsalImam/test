@@ -30,15 +30,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class TripHistoryFragment extends Fragment {
 
     //no_data
-    @Bind(R.id.noDataIv)
+    @BindView(R.id.noDataIv)
     ImageView noDataIv;
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
 
     private UserRepository repository;
@@ -53,6 +54,7 @@ public class TripHistoryFragment extends Fragment {
     private boolean loading = true;
     private int visibleThreshold = 10;
     int firstVisibleItem, visibleItemCount, totalItemCount;
+    private Unbinder unbinder;
 
     private HomeActivity mCurrentActivity;
 
@@ -60,7 +62,7 @@ public class TripHistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trip_history, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -154,7 +156,7 @@ public class TripHistoryFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
         mCurrentActivity.hideMissedCallIcon();
     }
 

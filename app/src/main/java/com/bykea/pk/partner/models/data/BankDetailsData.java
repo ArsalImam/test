@@ -4,7 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class AccountsData {
+import java.util.ArrayList;
+
+public class BankDetailsData {
 
     @SerializedName("account_title")
     String accountTitle;
@@ -13,6 +15,8 @@ public class AccountsData {
     @SerializedName("bank_name")
     String bankName;
     private String link;
+
+    private ArrayList<BankAgentData> agentsData;
 
     public String getAccountTitle() {
         return accountTitle;
@@ -28,5 +32,17 @@ public class AccountsData {
 
     public String getLink() {
         return StringUtils.isNotBlank(link) ? link : "https://www.bykea.com";
+    }
+
+    public ArrayList<BankAgentData> getAgentsData() {
+        return agentsData;
+    }
+
+    public void setAgentsData(ArrayList<BankAgentData> agentsData) {
+        this.agentsData = agentsData;
+    }
+
+    public class BankAgentData{
+
     }
 }

@@ -14,7 +14,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
@@ -59,7 +59,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.tvComment)
+        @BindView(R.id.tvComment)
         FontTextView tvComment;
 
         public ViewHolder(final View itemView) {

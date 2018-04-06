@@ -18,7 +18,7 @@ import com.bykea.pk.partner.widgets.FontEditText;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -28,11 +28,11 @@ public class ChangePinActivity extends BaseActivity {
     private ChangePinActivity mCurrentActivity;
     private UserRepository mUserRepository;
 
-    @Bind(R.id.tvOldPin)
+    @BindView(R.id.tvOldPin)
     FontEditText tvOldPin;
-    @Bind(R.id.tvNewPin)
+    @BindView(R.id.tvNewPin)
     FontEditText tvNewPin;
-    @Bind(R.id.saveBtn)
+    @BindView(R.id.saveBtn)
     FontButton saveBtn;
 
 

@@ -4,11 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
-import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
+import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
@@ -28,7 +28,7 @@ import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.AccountNumbersResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
@@ -511,34 +511,22 @@ public class RestRequestHandler {
 
     }
 
-    public void getAccountNumbers(Context context, final IResponseCallback onResponseCallBack,
-                                  String driverId, String accessToken, String pageNo) {
+    public void requestBankAccounts(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(context);
-        Call<AccountNumbersResponse> restCall = mRestClient.getAccountNumbers(driverId,
-                accessToken, "d", pageNo);
-//        restCall.enqueue(new GenericRetrofitCallBackSuccess<WalletHistoryResponse>(onResponseCallBack));
-        restCall.enqueue(new Callback<AccountNumbersResponse>() {
-            @Override
-            public void onResponse(Response<AccountNumbersResponse> response, Retrofit retrofit) {
-                if (response == null || response.body() == null) {
-                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + mContext.getString(R.string.error_try_again) + " ");
-                    return;
-                }
-                if (response.isSuccess()) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
-                }
-            }
+        Call<BankAccountListResponse> restCall = mRestClient.getBankAccounts(AppPreferences.getPilotData().getId(),
+                AppPreferences.getPilotData().getAccessToken(), "" + AppPreferences.getLatitude(), "" + AppPreferences.getLongitude());
+        restCall.enqueue(new GenericRetrofitCallBack<BankAccountListResponse>(onResponseCallBack));
+    }
 
-            @Override
-            public void onFailure(Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
-
+    public void requestBankAccountsDetails(Context context, String bankId, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getClient(context);
+        Call<BankDetailsResponse> restCall = mRestClient.getBankAccountDetails(AppPreferences.getPilotData().getId(),
+                AppPreferences.getPilotData().getAccessToken(), "" + AppPreferences.getLatitude(), "" + AppPreferences.getLongitude(), bankId);
+        restCall.enqueue(new GenericRetrofitCallBack<BankDetailsResponse>(onResponseCallBack));
     }
 
     public void getContactNumbers(Context context, final IResponseCallback onResponseCallBack,

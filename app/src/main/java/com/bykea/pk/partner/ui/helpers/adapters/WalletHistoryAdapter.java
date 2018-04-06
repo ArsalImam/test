@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WalletHistoryAdapter extends RecyclerView.Adapter<WalletHistoryAdapter.ItemHolder> {
@@ -119,23 +119,23 @@ public class WalletHistoryAdapter extends RecyclerView.Adapter<WalletHistoryAdap
 
     static class ItemHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.tvStatus)
+        @BindView(R.id.tvStatus)
         FontTextView tvStatus;
-        @Bind(R.id.tvTripId)
+        @BindView(R.id.tvTripId)
         FontTextView tvTripId;
-        @Bind(R.id.tvDate)
+        @BindView(R.id.tvDate)
         FontTextView tvDate;
-        /*@Bind(R.id.tvTime)
+        /*@BindView(R.id.tvTime)
         FontTextView tvTime;*/
-        @Bind(R.id.tvTripStatus)
+        @BindView(R.id.tvTripStatus)
         FontTextView tvTripStatus;
-        @Bind(R.id.tvTotalAmount)
+        @BindView(R.id.tvTotalAmount)
         FontTextView tvTotalAmount;
-        @Bind(R.id.tvTotalTripAmount)
+        @BindView(R.id.tvTotalTripAmount)
         FontTextView tvTotalTripAmount;
-        @Bind(R.id.tvBalance)
+        @BindView(R.id.tvBalance)
         FontTextView tvBalance;
-        @Bind(R.id.rlWalletItem)
+        @BindView(R.id.rlWalletItem)
         RelativeLayout rlWalletItem;
 
 

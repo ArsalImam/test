@@ -4,27 +4,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.AccountsData;
+import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class BankAccountsAdapter extends
         RecyclerView.Adapter<BankAccountsAdapter.ItemHolder> {
 
-    private static ArrayList<AccountsData> mAccountList;
+    private static ArrayList<BankData> mAccountList;
     private BaseActivity mContext;
+    private static MyOnItemClickListener myOnItemClickListener;
 
-    public BankAccountsAdapter(BaseActivity context,
-                               ArrayList<AccountsData> list) {
+    public BankAccountsAdapter(BaseActivity context, ArrayList<BankData> list) {
         mAccountList = list;
         mContext = context;
     }
@@ -33,17 +32,15 @@ public class BankAccountsAdapter extends
     public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view =
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_bank_accounts,
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_bank,
                         parent, false);
         return new ItemHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ItemHolder holder, int position) {
-        AccountsData data = mAccountList.get(position);
-        holder.bankName.setText(data.getBankName());
-        holder.accountTitle.setText(data.getAccountTitle());
-        holder.accountNumber.setText(data.getAccountNumber());
+        BankData data = mAccountList.get(position);
+        Utils.loadImgPicasso(mContext, holder.ivBank, Utils.getCloudinaryLink(data.getImg()));
     }
 
 
@@ -54,25 +51,31 @@ public class BankAccountsAdapter extends
 
     class ItemHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.bankName)
-        FontTextView bankName;
-        @Bind(R.id.accountTitle)
-        FontTextView accountTitle;
-        @Bind(R.id.accountNumber)
-        FontTextView accountNumber;
-        @Bind(R.id.tv_nearBy)
-        FontTextView tv_nearBy;
+        @BindView(R.id.ivBank)
+        ImageView ivBank;
 
 
         ItemHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            tv_nearBy.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.startCustomWebViewActivity(mContext, mAccountList.get(getLayoutPosition()).getLink(), "Kareebi Bank");
+                    if (myOnItemClickListener != null) {
+                        myOnItemClickListener.onItemClickListener(getLayoutPosition(), v
+                                , mAccountList.get(getLayoutPosition()));
+                    }
                 }
             });
         }
     }
+
+    public void setOnItemClickListener(MyOnItemClickListener itemClickListener) {
+        myOnItemClickListener = itemClickListener;
+    }
+
+    public interface MyOnItemClickListener {
+        void onItemClickListener(int position, View view, BankData data);
+    }
+
 }

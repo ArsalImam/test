@@ -1,9 +1,10 @@
 package com.bykea.pk.partner.repositories;
 
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.AccountNumbersResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
@@ -25,8 +26,8 @@ import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.HeatMapResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -35,7 +36,6 @@ import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
-import com.bykea.pk.partner.models.response.SettingsResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
@@ -92,7 +92,8 @@ public interface IUserDataHandler {
 
     void getWalletData(WalletHistoryResponse walletHistoryResponse);
 
-    void getAccountNumbers(AccountNumbersResponse walletHistoryResponse);
+    void getAccountNumbers(BankAccountListResponse walletHistoryResponse);
+    void onBankDetailsResponse(BankDetailsResponse response);
 
     void getContactNumbers(ContactNumbersResponse walletHistoryResponse);
 
@@ -160,6 +161,7 @@ public interface IUserDataHandler {
     void onZoneAreasResponse(ZoneAreaResponse response);
 
     void onTopUpPassWallet(TopUpPassWalletResponse response);
+    void onLocationUpdate(LocationResponse response);
 
     void onError(int errorCode, String errorMessage);
 }

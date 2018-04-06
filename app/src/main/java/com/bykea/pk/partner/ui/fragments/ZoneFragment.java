@@ -30,15 +30,15 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ZoneFragment extends Fragment {
 
-    @Bind(R.id.spCities)
+    @BindView(R.id.spCities)
     FontTextView spCities;
 
-    @Bind(R.id.rvZones)
+    @BindView(R.id.rvZones)
     RecyclerView rvZones;
 
 

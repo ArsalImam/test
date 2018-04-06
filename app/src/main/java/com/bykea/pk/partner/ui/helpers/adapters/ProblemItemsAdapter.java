@@ -11,7 +11,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProblemItemsAdapter extends RecyclerView.Adapter<ProblemItemsAdapter.ItemHolder> {
@@ -45,7 +45,7 @@ public class ProblemItemsAdapter extends RecyclerView.Adapter<ProblemItemsAdapte
 
     class ItemHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.tv_problem_item)
+        @BindView(R.id.tv_problem_item)
         FontTextView tv_problem_item;
 
         ItemHolder(final View itemView) {

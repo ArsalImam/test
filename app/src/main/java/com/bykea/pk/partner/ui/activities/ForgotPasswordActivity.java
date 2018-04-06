@@ -23,22 +23,22 @@ import com.bykea.pk.partner.widgets.FontEditText;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ForgotPasswordActivity extends BaseActivity {
 
 
-    @Bind(R.id.backBtn)
+    @BindView(R.id.backBtn)
     ImageView backBtn;
-    @Bind(R.id.phoneNumberEt)
+    @BindView(R.id.phoneNumberEt)
     FontEditText phoneNumberEt;
-    @Bind(R.id.sendBtn)
+    @BindView(R.id.sendBtn)
     Button sendBtn;
 
 
-    @Bind(R.id.mainScrollView)
+    @BindView(R.id.mainScrollView)
     ScrollView mainScrollView;
     private UserRepository repository;
     private ForgotPasswordActivity mCurrentActivity;

@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,13 +17,11 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -49,8 +46,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -67,7 +62,6 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.tracking.AbstractRouting;
-import com.bykea.pk.partner.tracking.RoadLocationListener;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
@@ -92,61 +86,60 @@ import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
 
-    @Bind(R.id.startAddressTv)
+    @BindView(R.id.startAddressTv)
     AutoFitFontTextView startAddressTv;
 
-    @Bind(R.id.tvTripId)
+    @BindView(R.id.tvTripId)
     FontTextView tvTripId;
 
-    @Bind(R.id.tvCodAmount)
+    @BindView(R.id.tvCodAmount)
     AutoFitFontTextView tvCodAmount;
 
-    @Bind(R.id.tvPWalletAmount)
+    @BindView(R.id.tvPWalletAmount)
     AutoFitFontTextView tvPWalletAmount;
 
-    @Bind(R.id.llTopRight)
+    @BindView(R.id.llTopRight)
     RelativeLayout llTopRight;
-    @Bind(R.id.callbtn)
+    @BindView(R.id.callbtn)
     ImageView callbtn;
-    @Bind(R.id.cancelBtn)
+    @BindView(R.id.cancelBtn)
     FontTextView cancelBtn;
-    @Bind(R.id.chatBtn)
+    @BindView(R.id.chatBtn)
     ImageView chatBtn;
-    /*    @Bind(R.id.callerIv)
+    /*    @BindView(R.id.callerIv)
         CircularImageView callerIv;*/
-    @Bind(R.id.callerNameTv)
+    @BindView(R.id.callerNameTv)
     FontTextView callerNameTv;
-    @Bind(R.id.TimeTv)
+    @BindView(R.id.TimeTv)
     FontTextView timeTv;
-    @Bind(R.id.distanceTv)
+    @BindView(R.id.distanceTv)
     FontTextView distanceTv;
-    @Bind(R.id.endAddressTv)
+    @BindView(R.id.endAddressTv)
     AutoFitFontTextView endAddressTv;
-    @Bind(R.id.tvEstimation)
+    @BindView(R.id.tvEstimation)
     FontTextView tvEstimation;
-    @Bind(R.id.jobBtn)
+    @BindView(R.id.jobBtn)
     FontTextView jobBtn;
-    @Bind(R.id.cvDirections)
+    @BindView(R.id.cvDirections)
     CardView cvDirections;
 
-    @Bind(R.id.cvLocation)
+    @BindView(R.id.cvLocation)
     CardView cvLocation;
-    @Bind(R.id.ivServiceIcon)
+    @BindView(R.id.ivServiceIcon)
     ImageView ivServiceIcon;
-    @Bind(R.id.tvCashWasooliLabel)
+    @BindView(R.id.tvCashWasooliLabel)
     FontTextView tvCashWasooliLabel;
-    @Bind(R.id.ivTopUp)
+    @BindView(R.id.ivTopUp)
     ImageView ivTopUp;
 
     private String canceOption = "Didn't show up";
@@ -451,7 +444,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 public void onClick(View v) {
                                     Dialogs.INSTANCE.dismissDialog();
                                 }
-                            }, "ARRIVED?");
+                            }, "پہنچ گئے؟");
                         }
                     }
                     //CHECK FOR BEGIN TRIP BUTTON CLICK
@@ -471,7 +464,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                             }
-                        }, "START?");
+                        }, "اسٹارٹ؟");
                     } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish))) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
@@ -486,7 +479,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                             }
-                        }, "FINISH?");
+                        }, "مکمل؟");
                     }
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
@@ -804,8 +797,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
             String icon = Utils.getServiceIcon(callData.getCallType());
             if (StringUtils.isNotBlank(icon)) {
-                Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon, mCurrentActivity));
-                Picasso.with(mCurrentActivity).load(Utils.getCloudinaryLink(icon, mCurrentActivity))
+                Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
+                Picasso.get().load(Utils.getCloudinaryLink(icon))
                         .placeholder(Utils.getServiceIcon(callData))
                         .into(ivServiceIcon, new Callback() {
                             @Override
@@ -814,7 +807,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }
 
                             @Override
-                            public void onError() {
+                            public void onError(Exception e) {
                                 Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnError");
                             }
                         });

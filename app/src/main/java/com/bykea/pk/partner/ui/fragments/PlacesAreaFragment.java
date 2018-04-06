@@ -54,7 +54,7 @@ public class PlacesAreaFragment extends Fragment {
         fragment.setRetainInstance(true);
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment, fragment.getClass().getName())
-                .addToBackStack(fragment.getClass().getName()).commit();
+                .addToBackStack(fragment.getClass().getName()).commitAllowingStateLoss();
     }
 }
 

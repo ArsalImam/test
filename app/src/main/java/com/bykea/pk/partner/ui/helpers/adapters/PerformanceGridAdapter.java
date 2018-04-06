@@ -13,7 +13,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PerformanceGridAdapter extends RecyclerView.Adapter<PerformanceGridAdapter.ItemHolder> {
@@ -53,9 +53,9 @@ public class PerformanceGridAdapter extends RecyclerView.Adapter<PerformanceGrid
 
     class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @Bind(R.id.tvKey)
+        @BindView(R.id.tvKey)
         FontTextView tvKey;
-        @Bind(R.id.tvValue)
+        @BindView(R.id.tvValue)
         FontTextView tvValue;
 
         ItemHolder(final View itemView) {

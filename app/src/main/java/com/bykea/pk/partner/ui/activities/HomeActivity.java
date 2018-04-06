@@ -30,7 +30,7 @@ import com.bykea.pk.partner.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends BaseActivity {
@@ -44,13 +44,13 @@ public class HomeActivity extends BaseActivity {
     private EventBus mBus = EventBus.getDefault();
     private PilotData pilotData;
 
-    @Bind(R.id.toolbarLine)
+    @BindView(R.id.toolbarLine)
     View toolbarLine;
-    @Bind(R.id.containerView)
+    @BindView(R.id.containerView)
     FrameLayout containerView;
-    @Bind(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @Bind(R.id.drawerMainActivity)
+    @BindView(R.id.drawerMainActivity)
     public DrawerLayout drawerLayout;
     private boolean isDialogShown, isSettingsApiFirstTimeCalled;
 

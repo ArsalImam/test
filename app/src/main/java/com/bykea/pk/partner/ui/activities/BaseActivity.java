@@ -378,6 +378,19 @@ public class BaseActivity extends AppCompatActivity {
         mTitleTv.setText(toolbarTitle);
     }
 
+    public void setToolbarTitle(String toolbarTitle, String urduText) {
+        if (null == mToolbar) getToolbar();
+        mTitleTv.setVisibility(View.VISIBLE);
+        mTitleTv.setText(toolbarTitle);
+        FontTextView urduTextView = (FontTextView) mToolbar.findViewById(R.id.tvTitleUrdu);
+        urduTextView.setVisibility(View.VISIBLE);
+        urduTextView.setText(urduText);
+    }
+
+    public void hideUrduTitle() {
+        findViewById(R.id.tvTitleUrdu).setVisibility(View.GONE);
+    }
+
     public void hideToolbarTitle() {
         if (null == mToolbar) getToolbar();
         mTitleTv.setVisibility(View.INVISIBLE);
@@ -512,7 +525,7 @@ public class BaseActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
                 Utils.redLog("Error", "onBitmapFailed");
             }
 
@@ -522,7 +535,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         };
         imageView.setTag(target);
-        Picasso.with(mCurrentActivity).load(notificationData.getImageLink()).into(target);
+        Picasso.get().load(notificationData.getImageLink()).into(target);
     }
 
 
@@ -582,6 +595,18 @@ public class BaseActivity extends AppCompatActivity {
         tvTitle.setVisibility(View.GONE);
         tvTitleUrdu.setVisibility(View.VISIBLE);
         tvTitleUrdu.setText(urdu);
+        setBackPress(findViewById(R.id.ivBackBtn));
+    }
+
+
+    public void setTitleCustomToolbarWithUrdu(String title, String name_urdu) {
+        final FontTextView ivTitle = (FontTextView) findViewById(R.id.tvTitle);
+        final FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
+        tvTitleUrdu.setVisibility(View.VISIBLE);
+        ivTitle.setText(title);
+        if (StringUtils.isNotBlank(name_urdu)) {
+            tvTitleUrdu.setText(name_urdu);
+        }
         setBackPress(findViewById(R.id.ivBackBtn));
     }
 

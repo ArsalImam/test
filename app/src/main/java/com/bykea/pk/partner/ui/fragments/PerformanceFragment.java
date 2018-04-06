@@ -31,36 +31,38 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 public class PerformanceFragment extends Fragment {
 
 
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
-    @Bind(R.id.data_layout)
+    @BindView(R.id.data_layout)
     LinearLayout data_layout;
+    private Unbinder unbinder;
 
     private GridLayoutManager layoutManager;
 
-//    @Bind(R.id.tvRideCounts)
+//    @BindView(R.id.tvRideCounts)
 //    FontTextView tvRideCounts;
 //
-//    @Bind(R.id.tvTime)
+//    @BindView(R.id.tvTime)
 //    FontTextView tvTime;
 //
-//    @Bind(R.id.tvAcceptanceRate)
+//    @BindView(R.id.tvAcceptanceRate)
 //    FontTextView tvAcceptanceRate;
 
-//    @Bind(R.id.tvRating)
+//    @BindView(R.id.tvRating)
 //    FontTextView tvRating;
 
-    @Bind(R.id.tvDate)
+    @BindView(R.id.tvDate)
     FontTextView tvDate;
 
-    @Bind(R.id.performanceList)
+    @BindView(R.id.performanceList)
     RecyclerView mRecyclerVeiw;
 
     private UserRepository repository;
@@ -77,7 +79,7 @@ public class PerformanceFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_performance, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -145,7 +147,7 @@ public class PerformanceFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
 

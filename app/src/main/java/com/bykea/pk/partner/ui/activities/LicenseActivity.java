@@ -10,18 +10,18 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LicenseActivity extends BaseActivity {
 
-    @Bind(R.id.vehiclePlateNo)
+    @BindView(R.id.vehiclePlateNo)
     FontTextView vehiclePlateNo;
-    @Bind(R.id.licenseNo)
+    @BindView(R.id.licenseNo)
     FontTextView licenseNo;
-    @Bind(R.id.licenseCity)
+    @BindView(R.id.licenseCity)
     FontTextView licenseCity;
-    @Bind(R.id.licenseExpDate)
+    @BindView(R.id.licenseExpDate)
     FontTextView licenseExpDate;
 
 

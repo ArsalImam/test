@@ -20,7 +20,7 @@ import com.bykea.pk.partner.widgets.FontUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -28,19 +28,19 @@ public class ReportPostActivity extends BaseActivity {
 
     private ReportPostActivity mCurrentActivity;
 
-    @Bind(R.id.submitBtn)
+    @BindView(R.id.submitBtn)
     FontTextView submitBtn;
 
-    @Bind(R.id.etEmail)
+    @BindView(R.id.etEmail)
     FontEditText etEmail;
 
-    @Bind(R.id.etDetails)
+    @BindView(R.id.etDetails)
     FontEditText etDetails;
 
-    @Bind(R.id.text_lay)
+    @BindView(R.id.text_lay)
     LinearLayout text_lay;
 
-    @Bind(R.id.editText_lay)
+    @BindView(R.id.editText_lay)
     LinearLayout editText_lay;
 
     private String reason, contactType;

@@ -5,16 +5,15 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.AccountsData;
-import com.bykea.pk.partner.models.response.AccountNumbersResponse;
+import com.bykea.pk.partner.models.data.BankData;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.adapters.BankAccountsAdapter;
-import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 
@@ -22,23 +21,21 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AccountsListActivity extends BaseActivity {
+public class BanksAccountActivity extends BaseActivity {
 
 
-    @Bind(R.id.bankAccountsView)
-    RecyclerView bankAccountsView;
-    @Bind(R.id.noDataIv)
-    ImageView noDataIv;
-    @Bind(R.id.loader)
+    @BindView(R.id.bankAccountsView)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.loader)
     ProgressBar loader;
-    private AccountsListActivity mCurrentActivity;
-    private UserRepository repository;
+    private BanksAccountActivity mCurrentActivity;
+    private UserRepository mRepository;
     private LinearLayoutManager mLayoutManager;
-    private ArrayList<AccountsData> mAccountsList;
-    private BankAccountsAdapter mAccountsAdapter;
+    private ArrayList<BankData> mList;
+    private BankAccountsAdapter mAdapter;
 
 
     private String nextPage = StringUtils.EMPTY;
@@ -56,32 +53,38 @@ public class AccountsListActivity extends BaseActivity {
         mCurrentActivity = this;
         ButterKnife.bind(this);
 
-        setToolbarTitle("Bank Accounts");
-        setBackNavigation();
-        hideToolbarLogo();
+        setTitleCustomToolbarWithUrdu("Bykea Bank","بائیکیا بینک" );
+//        setBackNavigation();
+//        hideToolbarLogo();
 
         initViews();
 
     }
 
     private void initViews() {
-        mAccountsList = new ArrayList<>();
-        repository = new UserRepository();
-        mAccountsAdapter = new BankAccountsAdapter(mCurrentActivity, mAccountsList);
+        mList = new ArrayList<>();
+        mRepository = new UserRepository();
+        mAdapter = new BankAccountsAdapter(mCurrentActivity, mList);
+        mAdapter.setOnItemClickListener(new BankAccountsAdapter.MyOnItemClickListener() {
+            @Override
+            public void onItemClickListener(int position, View view, BankData data) {
+                ActivityStackManager.getInstance().startBankDetailsActivity(mCurrentActivity, data);
+            }
+        });
 
         mLayoutManager = new LinearLayoutManager(mCurrentActivity);
-        bankAccountsView.setLayoutManager(mLayoutManager);
-        bankAccountsView.setItemAnimator(new DefaultItemAnimator());
-        bankAccountsView.setAdapter(mAccountsAdapter);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
 
 
-        bankAccountsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                visibleItemCount = bankAccountsView.getChildCount();
+                visibleItemCount = mRecyclerView.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();
                 firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
@@ -94,46 +97,40 @@ public class AccountsListActivity extends BaseActivity {
                 if (!loading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold) && StringUtils.isNotBlank(nextPage) && !nextPage.equalsIgnoreCase("0")) {
                     // End has been reached
-                    getHistory();
+                    callApi();
 
                     loading = true;
                 }
             }
-        });
-        getHistory();
+        });*/
+        callApi();
     }
 
-    private void getHistory() {
+    private void callApi() {
 
         loader.setVisibility(View.VISIBLE);
-        repository.requestAccountNumbers(mCurrentActivity, handler, nextPage);
+        mRepository.requestBankAccounts(mCurrentActivity, handler);
     }
 
 
     private UserDataHandler handler = new UserDataHandler() {
 
         @Override
-        public void getAccountNumbers(AccountNumbersResponse response) {
+        public void getAccountNumbers(BankAccountListResponse response) {
             loader.setVisibility(View.GONE);
             if (response.isSuccess()) {
                 if (response.getData().size() > 0) {
                     nextPage = response.getPage();
-                    noDataIv.setVisibility(View.GONE);
-                    mAccountsList.addAll(response.getData());
-                    mAccountsAdapter.notifyDataSetChanged();
-                } else {
-                    noDataIv.setVisibility(View.VISIBLE);
+                    mList.addAll(response.getData());
+                    mAdapter.notifyDataSetChanged();
                 }
-            } else {
-                noDataIv.setVisibility(View.VISIBLE);
             }
-
         }
 
         @Override
         public void onError(int errorCode, String errorMessage) {
             loader.setVisibility(View.GONE);
-            Dialogs.INSTANCE.showError(mCurrentActivity, noDataIv, errorMessage);
+            Utils.appToast(mCurrentActivity, errorMessage);
             if (errorCode == HTTPStatus.UNAUTHORIZED) {
                 Utils.onUnauthorized(mCurrentActivity);
             }

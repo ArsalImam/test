@@ -59,7 +59,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -75,37 +75,37 @@ public class PlacesSearchFragment extends Fragment {
     private String mAddressName = "";
     Bundle bundle;
 
-    @Bind(R.id.tvFromName)
+    @BindView(R.id.tvFromName)
     AutoFitFontTextView addressTv;
-    @Bind(R.id.tvPlaceName)
+    @BindView(R.id.tvPlaceName)
     FontTextView tvPlaceName;
-    @Bind(R.id.tvPlaceAddress)
+    @BindView(R.id.tvPlaceAddress)
     FontTextView tvPlaceAddress;
-    @Bind(R.id.tvFromAddress)
+    @BindView(R.id.tvFromAddress)
     FontTextView tvFromAddress;
 
-    @Bind(R.id.confirmBtn)
+    @BindView(R.id.confirmBtn)
     FrameLayout confirmBtn;
 
 
-    @Bind(R.id.autocomplete_places)
+    @BindView(R.id.autocomplete_places)
     DownOnlyAutoCompleteTextView mAutocompleteView;
 
-    @Bind(R.id.rlNoDriverFound)
+    @BindView(R.id.rlNoDriverFound)
     RelativeLayout rlNoDriverFound;
 
-    @Bind(R.id.loader)
+    @BindView(R.id.loader)
     ProgressBar loader;
 
-    @Bind(R.id.rlFrom)
+    @BindView(R.id.rlFrom)
     RelativeLayout rlFrom;
-    @Bind(R.id.rlDropDown)
+    @BindView(R.id.rlDropDown)
     RelativeLayout rlDropDown;
 
-    @Bind(R.id.rlSavePlace)
+    @BindView(R.id.rlSavePlace)
     RelativeLayout rlSavePlace;
 
-    @Bind(R.id.ivStar)
+    @BindView(R.id.ivStar)
     ImageView ivStar;
 
     private ArrayList<PlacesResult> cities;
@@ -388,7 +388,7 @@ public class PlacesSearchFragment extends Fragment {
 
 
     private void updateDropOff(final PlacesResult placesResult) {
-        if (mCurrentActivity != null && placesResult != null && mGoogleMap != null) {
+        if (mCurrentActivity != null && getView() != null && placesResult != null && mGoogleMap != null) {
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -417,10 +417,12 @@ public class PlacesSearchFragment extends Fragment {
 
 
     private void clearAutoComplete() {
-        mAutocompleteView.clearFocus();
-        mAutocompleteView.setFocusable(false);
-        mAutocompleteView.setFocusableInTouchMode(false);
-        mAutocompleteView.setText(StringUtils.EMPTY);
+        if (mAutocompleteView != null) {
+            mAutocompleteView.clearFocus();
+            mAutocompleteView.setFocusable(false);
+            mAutocompleteView.setFocusableInTouchMode(false);
+            mAutocompleteView.setText(StringUtils.EMPTY);
+        }
     }
 
 

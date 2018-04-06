@@ -1,16 +1,15 @@
 apply plugin: 'com.android.application'
-
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "com.bykea.pk.partner"
         manifestPlaceholders = [onesignal_app_id               : "65d93e99-8ef5-44b1-b6cd-d2de64b59cf4"
                                 /*for testing  ->*/ /*"efb89186-0b1b-4060-8985-fa8533a8b401"*/,
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "REMOTE"]
-        minSdkVersion 16
-        targetSdkVersion 25
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 20
         versionName "4.1"
         multiDexEnabled true
@@ -35,7 +34,6 @@ android {
     buildTypes {
         release {
             //key for live apps
-//            resValue "string", "google_api_client_key", '"AIzaSyB1ci22exVt0IhYxrihjVVYGboKQuAsEMU"'//EXT
             resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'//ASSET
 
             signingConfig signingConfigs.release
@@ -49,9 +47,7 @@ android {
         }
         debug {
             //key for staging apps
-//            resValue "string", "google_api_client_key", '"AIzaSyCEWBeRa_DqLFg3-qU5Qtu9HWSjUsjezjc"'
             resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'   //Latest staging 9 Feb
-//            resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'//Live Map Key Driver
 
             signingConfig signingConfigs.debug
             shrinkResources false // to remove unused resources. This will reduce APK size.
@@ -74,7 +70,7 @@ android {
             def requested = details.requested
             if (requested.group == 'com.android.support') {
                 if (!requested.name.startsWith("multidex")) {
-                    details.useVersion '25.2.0'
+                    details.useVersion '27.1.1'
                 }
             }
         }
@@ -111,32 +107,32 @@ dependencies {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'org.jsoup:jsoup:1.10.1'
-    compile 'com.google.dagger:dagger:2.10'
-    compile 'com.squareup.picasso:picasso:2.5.0'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:cardview-v7:25.2.0'
-    compile 'com.android.support:customtabs:25.2.0'
-    compile 'com.android.support:design:25.2.0'
-    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.google.dagger:dagger:2.14.1'
+    compile 'com.squareup.picasso:picasso:2.71828'
+    compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:customtabs:$rootProject.supportLibraryVersion"
+    compile "com.android.support:design:$rootProject.supportLibraryVersion"
+    compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
-    compile 'com.intuit.sdp:sdp-android:1.0.2'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'com.google.android.gms:play-services:11.0.4'
-    compile 'com.google.firebase:firebase-core:11.0.4'
-    compile 'com.google.firebase:firebase-messaging:11.0.4'
+    compile 'com.intuit.sdp:sdp-android:1.0.5'
+    compile 'org.apache.commons:commons-lang3:3.7'
+    compile 'com.google.android.gms:play-services:12.0.1'
+    compile 'com.google.firebase:firebase-core:12.0.1'
+    compile 'com.google.firebase:firebase-messaging:12.0.1'
     compile 'com.google.maps:google-maps-services:0.1.6'
     compile 'com.google.maps.android:android-maps-utils:0.5'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.android.support:multidex:1.0.3'
+    compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.googlecode.libphonenumber:libphonenumber:7.1.1'
     compile 'com.wang.avi:library:2.1.3'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.3.0'
     compile 'me.relex:circleindicator:1.2.1@aar'
-    compile 'com.android.support:support-v4:25.2.0'
     compile 'com.thefinestartist:finestwebview:1.2.7'
     compile 'com.mixpanel.android:mixpanel-android:5.1.4'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.3'
@@ -148,6 +144,7 @@ dependencies {
 //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     compile 'top.oply.opuslib:opuslib:1.0.2'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'de.hdodenhof:circleimageview:2.2.0'
 
 }

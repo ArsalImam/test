@@ -9,6 +9,7 @@ import android.provider.Settings;
 import android.view.View;
 
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.DriverApp;
@@ -64,6 +65,7 @@ public class SplashActivity extends BaseActivity {
         } else if (StringUtils.isBlank(AppPreferences.getADID())) {
             new AdvertisingIdTask().execute();
         }
+        Utils.redLog("BASE_SERVER_URL", ApiTags.BASE_SERVER_URL);
     }
 
 
