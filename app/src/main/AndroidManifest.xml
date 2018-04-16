@@ -21,12 +21,15 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-    <!--<uses-feature android:name="android.hardware.camera" />-->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
     <!-- <uses-feature android:glEsVersion="0x00030001" /> -->
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
+
 
     <application
         android:name=".DriverApp"
@@ -37,31 +40,24 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         tools:node="merge">
-        <activity
-            android:name=".ui.activities.LoginActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".ui.activities.LoginActivity" />
         <activity
             android:name=".ui.activities.HomeActivity"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.SplashActivity"
-            android:screenOrientation="portrait">
+            android:launchMode="singleTask" />
+        <activity android:name=".ui.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.activities.BaseActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".ui.activities.BaseActivity" />
         <activity
             android:name=".ui.activities.CallingActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme.Base" />
 
         <meta-data
@@ -77,6 +73,15 @@
             android:name="com.onesignal.NotificationOpened.DEFAULT"
             android:value="DISABLE" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <service
             android:name=".services.LocationService"
             android:enabled="true"
@@ -85,29 +90,20 @@
         <activity
             android:name=".ui.activities.BookingActivity"
             android:excludeFromRecents="false"
-            android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.FeedbackActivity"
-            android:screenOrientation="portrait" />
+            android:hardwareAccelerated="@bool/enable_hardwareAccelerated" />
+        <activity android:name=".ui.activities.FeedbackActivity" />
         <!-- CROPPING ACTIVITY -->
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:screenOrientation="portrait"
+
             android:theme="@style/Base.Theme.AppCompat" />
         <!--  <activity
               android:name=".ui.activities.PlacesActivity"
               android:label="DropOff"
-              android:screenOrientation="portrait" />-->
-        <activity
-            android:name=".ui.activities.HistoryDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.HistoryMissedCallsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.HistoryCancelDetailsActivity"
-            android:screenOrientation="portrait" />
+               />-->
+        <activity android:name=".ui.activities.HistoryDetailActivity" />
+        <activity android:name=".ui.activities.HistoryMissedCallsActivity" />
+        <activity android:name=".ui.activities.HistoryCancelDetailsActivity" />
 
         <receiver android:name=".services.BootReceiver">
             <intent-filter>
@@ -139,80 +135,46 @@
 
         <activity
             android:name=".ui.activities.ChatActivityNew"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.activities.ChangePinActivity"
             android:label="@string/title_activity_change_pin"
-            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.activities.PersonalActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.LicenseActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.PostBankAccountActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.MotorbikeActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.BanksAccountActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.BanksDetailsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.PaymentRequestActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".ui.activities.PersonalActivity" />
+        <activity android:name=".ui.activities.LicenseActivity" />
+        <activity android:name=".ui.activities.PostBankAccountActivity" />
+        <activity android:name=".ui.activities.MotorbikeActivity" />
+        <activity android:name=".ui.activities.BanksAccountActivity" />
+        <activity android:name=".ui.activities.BanksDetailsActivity" />
+        <activity android:name=".ui.activities.PaymentRequestActivity" />
         <activity
             android:name=".ui.activities.MyPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
-            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.helpers.webview.FinestWebViewCustomActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activities.ConfirmDropOffAddressActivity"
-            android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.ProblemActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.PostProblemActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.ReportActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.ReportPostActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.ForgotPasswordActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.SelectPlaceActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.SavePlaceActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.RegistrationActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.DocumentsRegistrationActivity"
-            android:screenOrientation="portrait" />
+            android:hardwareAccelerated="@bool/enable_hardwareAccelerated" />
+        <activity android:name=".ui.activities.ProblemActivity" />
+        <activity android:name=".ui.activities.PostProblemActivity" />
+        <activity android:name=".ui.activities.ReportActivity" />
+        <activity android:name=".ui.activities.ReportPostActivity" />
+        <activity android:name=".ui.activities.ForgotPasswordActivity" />
+        <activity android:name=".ui.activities.SelectPlaceActivity" />
+        <activity android:name=".ui.activities.SavePlaceActivity" />
+        <activity android:name=".ui.activities.RegistrationActivity" />
+        <activity android:name=".ui.activities.DocumentsRegistrationActivity" />
     </application>
 
 </manifest>

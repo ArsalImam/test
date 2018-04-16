@@ -157,6 +157,7 @@
     <string name="hint.promo">Referral Code (Optional)</string>
     <string name="hint.phone.number"><font size="16">11 Digit Mobile Number</font></string>
     <string name="hint.phone.number.14"><font size="14">11 Digit Mobile Number</font></string>
+    <string name="hint.phone.number.nofont">11 Digit Mobile No</string>
     <string name="search_hint">Search Address</string>
     <string name="toolbar.title.mobile.msg">Enter Your Mobile Number</string>
     <string name="button.text.submit">Submit</string>

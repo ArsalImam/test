@@ -44,6 +44,7 @@ import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Fields;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.ResponseBody;
@@ -145,7 +146,7 @@ interface IRestClient {
     Call<SignupUplodaImgResponse> uplodaDocumentImage(@Header("key") String key,
                                                       @Part("_id") RequestBody description,
                                                       @Part("image_type") RequestBody image_type,
-                                                      @Part("image\"; filename=\"BykeaDocument.jpg\" ")
+                                                      @Part("image\"; filename=\"BykeaDocument" + Constants.UPLOAD_IMG_EXT + "\" ")
                                                               RequestBody file);
 
 

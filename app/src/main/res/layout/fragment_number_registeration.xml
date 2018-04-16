@@ -16,7 +16,8 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom">
+            android:layout_gravity="bottom"
+            android:background="@color/black">
 
             <fragment
                 android:id="@+id/player_fragment"
@@ -38,7 +39,7 @@
                 android:layout_height="@dimen/_72sdp"
                 android:layout_gravity="center"
                 android:padding="@dimen/_8sdp"
-                android:src="@drawable/youtube" />
+                android:src="@drawable/youtube_1" />
 
 
         </FrameLayout>
@@ -77,22 +78,23 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/llIv1"
                 android:layout_alignTop="@id/llIv1"
-                android:paddingLeft="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
                 android:layout_toLeftOf="@id/llIv1"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
-                android:gravity="left|center_vertical"
-                android:hint="@string/hint.phone.number"
+                android:gravity="left|bottom"
+                android:hint="@string/hint.phone.number.nofont"
                 android:inputType="numberPassword"
                 android:maxLength="11"
+                android:paddingLeft="@dimen/_6sdp"
                 android:textColorHint="@color/secondaryColorLight"
-                android:textSize="@dimen/textsize.body2" />
+                android:textSize="@dimen/_20sdp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
-                android:layout_marginTop="-4dp"
                 android:layout_below="@+id/phoneNumberEt"
+                android:layout_marginTop="-4dp"
                 android:background="@color/textColorSecondary"
                 android:visibility="visible" />
 
@@ -144,6 +146,7 @@
                 android:layout_toLeftOf="@id/llIv2"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
+                android:dropDownVerticalOffset="@dimen/_42sdp"
                 android:gravity="left|center_vertical"
                 android:hint="@string/hint.phone.number"
                 android:inputType="numberPassword"
@@ -154,7 +157,6 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
-                android:layout_marginTop="-4dp"
                 android:layout_below="@+id/tvCity"
                 android:background="@color/textColorSecondary"
                 android:visibility="visible" />

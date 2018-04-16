@@ -24,11 +24,14 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -88,6 +91,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -1628,6 +1632,28 @@ public class Utils {
         });
     }
 
+    public static void scrollToBottom(final NestedScrollView mainScrollView) {
+        if (mainScrollView.getChildAt(0).getBottom() > (mainScrollView.getHeight() + mainScrollView.getScrollY())) {
+            scrollThisToBottom(mainScrollView);
+            mainScrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    Rect r = new Rect();
+                    mainScrollView.getWindowVisibleDisplayFrame(r);
+                    int screenHeight = mainScrollView.getRootView().getHeight();
+                    // r.bottom is the position above soft keypad or device button.
+                    // if keypad is shown, the r.bottom is smaller than that before.
+                    int keypadHeight = screenHeight - r.bottom;
+                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                        // keyboard is opened
+                        scrollThisToBottom(mainScrollView);
+                    }
+                    
+                }
+            });
+        }
+    }
+
     public static void scrollToTop(final ScrollView mainScrollView) {
         scrollThisToTop(mainScrollView);
         mainScrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -1649,6 +1675,15 @@ public class Utils {
     }
 
     private static void scrollThisToBottom(final ScrollView mainScrollView) {
+        mainScrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mainScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        }, 600);
+    }
+
+    private static void scrollThisToBottom(final NestedScrollView mainScrollView) {
         mainScrollView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1857,10 +1892,21 @@ public class Utils {
     }
 
 
-    public static void startCameraByIntent(Activity act) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        act.startActivityForResult(intent, Constants.REQUEST_CAMERA);
+    public static void startCameraByIntent(Activity act, File photoFile) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(act.getPackageManager()) != null) {
+            // Create the File where the photo should go
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(act,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                act.startActivityForResult(takePictureIntent, Constants.REQUEST_CAMERA);
+            }
+        }
     }
 
 

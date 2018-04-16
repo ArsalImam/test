@@ -65,7 +65,7 @@
                     android:maxWidth="@dimen/_220sdp"
                     android:textAllCaps="false"
                     android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_14sdp"
+                    android:textSize="@dimen/_16sdp"
                     android:visibility="visible"
                     app:fontName="roboto_regular.ttf" />
 
@@ -81,7 +81,7 @@
                     android:paddingTop="@dimen/_2sdp"
                     android:textAllCaps="false"
                     android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_14sdp"
+                    android:textSize="@dimen/_16sdp"
                     android:visibility="gone"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>

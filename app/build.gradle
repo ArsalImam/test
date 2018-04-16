@@ -34,7 +34,8 @@ android {
     buildTypes {
         release {
             //key for live apps
-            resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'//ASSET
+            resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'
+//ASSET
 
             signingConfig signingConfigs.release
             // to remove unused resources. This will reduce APK size.
@@ -47,7 +48,8 @@ android {
         }
         debug {
             //key for staging apps
-            resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'   //Latest staging 9 Feb
+            resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'
+            //Latest staging 9 Feb
 
             signingConfig signingConfigs.debug
             shrinkResources false // to remove unused resources. This will reduce APK size.
@@ -95,7 +97,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
-    compile('com.instabug.library:instabug:4.12.1') {
+    compile('com.instabug.library:instabug:4.13.1') {
         exclude group: 'com.google.android.gms'
     }
     //    compile 'com.google.android.gms:play-services-gcm:9.4.0'
@@ -146,6 +148,9 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'de.hdodenhof:circleimageview:2.2.0'
+    compile ('id.zelory:compressor:2.1.0') {
+        exclude group: 'io.reactivex.rxjava2'
+    }
 
 }
 apply plugin: 'com.google.gms.google-services'

@@ -127,4 +127,5 @@ public class Constants {
     public static final int SAVE_PLACE_REQUEST_CODE = 107;
     public final static int REQUEST_CAMERA = 23;
     public final static int REQUEST_GALLERY = 22;
+    public final static String UPLOAD_IMG_EXT = ".jpg";
 }
