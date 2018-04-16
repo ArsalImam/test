@@ -1,6 +1,8 @@
 package com.bykea.pk.partner.services;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -8,7 +10,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Looper;
@@ -85,13 +89,34 @@ public class LocationService extends Service {
         Utils.redLog("LocServ", "onCreate");
     }
 
+    private String getChannelID() {
+        String chanelId = "FOREGROUND_NOTI";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            String channelId = "some_channel_id";
+            CharSequence channelName = "Some Channel";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            chanelId = notificationChannel.getId();
+        }
+        return chanelId;
+    }
+
     private void createForegroundNotification() {
         Intent notificationIntent = new Intent(this, LocationService.class);
         notificationIntent.setAction(Constants.Actions.ON_NOTIFICATION_CLICK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "FOREGROUND_NOTI")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getChannelID())
                 .setContentTitle("Bykea Partner")
                 .setContentText("Location Service Is Running")
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)

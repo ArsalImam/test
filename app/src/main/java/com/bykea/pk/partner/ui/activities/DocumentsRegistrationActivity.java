@@ -134,8 +134,25 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
         etEmail.setOnFocusChangeListener(mFocusChangedListener);
         phoneNumberEt.setOnFocusChangeListener(mFocusChangedListener);
+        mainScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+// We take the last son in the scrollview
+                View view = (View) mainScrollView.getChildAt(mainScrollView.getChildCount() - 1);
+                int diff = (view.getBottom() - (mainScrollView.getHeight() + mainScrollView.getScrollY()));
+
+                // if diff is zero, then the bottom has been reached
+                if (diff <= 10) {
+                    isScrollViewAtBottom = true;
+                } else {
+                    isScrollViewAtBottom = false;
+                }
+            }
+        });
 
     }
+
+    private boolean isScrollViewAtBottom;
 
     private View.OnFocusChangeListener mFocusChangedListener = new View.OnFocusChangeListener() {
         @Override
@@ -143,9 +160,9 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             if (mCurrentActivity != null) {
                 if (hasFocus) {
                     mCurrentActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    if (!isScrollViewAtBottom) {
                         Utils.scrollToBottom(mainScrollView);
-                } else {
-                    Utils.hideKeyboard(mCurrentActivity);
+                    }
                 }
             }
 

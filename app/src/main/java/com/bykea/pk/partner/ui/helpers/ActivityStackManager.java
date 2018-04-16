@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
@@ -93,7 +94,12 @@ public class ActivityStackManager {
         if (!Utils.isServiceRunning(mContext, LocationService.class)) {
             Intent intent = new Intent(mContext, LocationService.class);
             intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
-            mContext.startService(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mContext.startForegroundService(intent);
+            } else {
+                mContext.startService(intent);
+            }
+
         }
     }
 
@@ -101,7 +107,11 @@ public class ActivityStackManager {
         if (Utils.isServiceRunning(mContext, LocationService.class)) {
             Intent intent = new Intent(mContext, LocationService.class);
             intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
-            mContext.startService(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mContext.startForegroundService(intent);
+            } else {
+                mContext.startService(intent);
+            }
         }
     }
 
@@ -122,7 +132,11 @@ public class ActivityStackManager {
             Intent intent = new Intent(mContext, LocationService.class);
             intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
             intent.putExtra(Constants.Extras.LOCATION_SERVICE_STATUS, STATUS);
-            mContext.startService(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mContext.startForegroundService(intent);
+            } else {
+                mContext.startService(intent);
+            }
         }
     }
 

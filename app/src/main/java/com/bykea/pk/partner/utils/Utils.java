@@ -1633,25 +1633,24 @@ public class Utils {
     }
 
     public static void scrollToBottom(final NestedScrollView mainScrollView) {
-        if (mainScrollView.getChildAt(0).getBottom() > (mainScrollView.getHeight() + mainScrollView.getScrollY())) {
-            scrollThisToBottom(mainScrollView);
-            mainScrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    Rect r = new Rect();
-                    mainScrollView.getWindowVisibleDisplayFrame(r);
-                    int screenHeight = mainScrollView.getRootView().getHeight();
-                    // r.bottom is the position above soft keypad or device button.
-                    // if keypad is shown, the r.bottom is smaller than that before.
-                    int keypadHeight = screenHeight - r.bottom;
-                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
-                        // keyboard is opened
-                        scrollThisToBottom(mainScrollView);
-                    }
-                    
+//        if (mainScrollView.getChildAt(0).getBottom() > (mainScrollView.getHeight() + mainScrollView.getScrollY())) {
+        scrollThisToBottom(mainScrollView);
+        mainScrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                mainScrollView.getWindowVisibleDisplayFrame(r);
+                int screenHeight = mainScrollView.getRootView().getHeight();
+                // r.bottom is the position above soft keypad or device button.
+                // if keypad is shown, the r.bottom is smaller than that before.
+                int keypadHeight = screenHeight - r.bottom;
+                if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                    // keyboard is opened
+                    scrollThisToBottom(mainScrollView);
                 }
-            });
-        }
+            }
+        });
+//        }
     }
 
     public static void scrollToTop(final ScrollView mainScrollView) {
