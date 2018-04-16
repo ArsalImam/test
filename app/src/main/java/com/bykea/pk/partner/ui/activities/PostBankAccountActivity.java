@@ -38,7 +38,7 @@ public class PostBankAccountActivity extends BaseActivity {
         mCurrentActivity = this;
         setToolbar();
         hideToolbarLogo();
-        setToolbarTitle("Bank Account Details");
+        setToolbarTitle("Bank Account", "بینک اکاؤنٹ");
         setBackNavigation();
         setData();
     }

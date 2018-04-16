@@ -81,7 +81,7 @@ public class WalletFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
-        mCurrentActivity.setToolbarTitle("Wallet");
+        mCurrentActivity.setToolbarTitle("Wallet", "بٹوا");
         mCurrentActivity.hideToolbarLogo();
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         initViews(view);
@@ -152,6 +152,7 @@ public class WalletFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        mCurrentActivity.hideUrduTitle();
         super.onDestroyView();
         unbinder.unbind();
 //        mCurrentActivity.hideWalletIcon();

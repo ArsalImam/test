@@ -19,6 +19,7 @@
         <enum name="roboto_bold.ttf" value="11" />
         <enum name="open_sans_light.ttf" value="12" />
         <enum name="jameel_noori_nastaleeq.ttf" value="13" />
+        <enum name="pak_nastaleeq_urdu.ttf" value="14" />
     </attr>
 
 

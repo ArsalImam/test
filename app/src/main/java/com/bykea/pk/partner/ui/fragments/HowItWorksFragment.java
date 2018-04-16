@@ -46,7 +46,7 @@ public class HowItWorksFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
-        mCurrentActivity.setToolbarTitle("How it works");
+        mCurrentActivity.setToolbarTitle("How it works", "طریقہ کار");
         mCurrentActivity.hideToolbarLogo();
 
         mRecyclerVeiw = (RecyclerView) view.findViewById(R.id.lvVideoDemo);
@@ -92,7 +92,8 @@ public class HowItWorksFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        mCurrentActivity.showToolbar();
+        mCurrentActivity.hideUrduTitle();
         super.onDestroyView();
-        ((HomeActivity) getActivity()).showToolbar();
     }
 }

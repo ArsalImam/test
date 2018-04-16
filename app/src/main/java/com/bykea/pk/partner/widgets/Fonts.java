@@ -14,7 +14,8 @@ public enum Fonts {
     Museo_Sans("MuseoSans_1.otf"),
     Roboto_Bold("roboto_bold.ttf"),
     Open_Sans_light("open_sans_light.ttf"),
-    Jameel_Noori_Nastaleeq("jameel_noori_nastaleeq.ttf");
+    Jameel_Noori_Nastaleeq("jameel_noori_nastaleeq.ttf"),
+    Pak_Nastaleeq_Urdu("pak_nastaleeq_urdu.ttf");
 
 
     private final String name;

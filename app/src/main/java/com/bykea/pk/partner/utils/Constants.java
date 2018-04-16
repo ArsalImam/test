@@ -79,7 +79,11 @@ public class Constants {
         public static final String TRIP_DETAILS = "TRIP_DETAILS";
         public static final String TRIP_DATA = "TRIP_DATA";
         public static final String SELECTED_ITEM = "SELECTED_ITEM";
+        public static final String SIGN_UP_DATA = "SIGN_UP_DATA";
+        public static final String DRIVER_ID = "DRIVER_ID";
+        public static final String SIGN_UP_IMG_BASE = "SIGN_UP_IMG_BASE";
         public static final String SELECTED_CITY = "SELECTED_CITY";
+        public static final String PHONE_NUMBER = "PHONE_NUMBER";
         public static final String LIST_ITEMS = "LIST_ITEMS";
         public static final String CALL_PENDING_API = "CALL_PENDING_API";
         public static final String NAVIGATE_TO_BOOKING_SCREEN = "NAVIGATE_TO_BOOKING_SCREEN";
@@ -89,6 +93,12 @@ public class Constants {
         public static final String TOP_BAR = "top_bar";
         public static final String DROP_OFF = "DROP_OFF";
         public static final String PICK_UP = "PICK_UP";
+    }
+
+    public static class Actions {
+        public final static String STARTFOREGROUND_ACTION = "STARTFOREGROUND_ACTION";
+        public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";
+        public final static String ON_NOTIFICATION_CLICK = "ON_NOTIFICATION_CLICK";
     }
 
     public static class AnalyticsEvents {
@@ -115,5 +125,6 @@ public class Constants {
     public static final float SAVED_PLACES_RADIUS = 200f;
     public static final String SAVE_PLACE_RESULT = "SAVE_PLACE_RESULT";
     public static final int SAVE_PLACE_REQUEST_CODE = 107;
-
+    public final static int REQUEST_CAMERA = 23;
+    public final static int REQUEST_GALLERY = 22;
 }

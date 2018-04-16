@@ -29,20 +29,20 @@
             android:id="@+id/oldPinLabel"
             android:layout_width="@dimen/_140sdp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:gravity="center"
-            android:padding="@dimen/_7sdp"
-            android:text="Old Pin Code"
+            android:padding="@dimen/_4sdp"
+            android:text="پرانا خفیہ کوڈ"
             android:textSize="@dimen/textsize.body2"
-            app:fontName="roboto_bold.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontEditText
             android:id="@+id/tvOldPin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/oldPinLabel"
+            android:layout_toLeftOf="@+id/oldPinLabel"
             android:maxLength="4"
             android:inputType="number"
             android:background="@color/transparent"
@@ -77,13 +77,13 @@
             android:id="@+id/newPinLabel"
             android:layout_width="@dimen/_140sdp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:gravity="center"
             android:padding="@dimen/_7sdp"
-            android:text="New Pin Code"
+            android:text="نیا خفیہ کوڈ"
             android:textSize="@dimen/textsize.body2"
-            app:fontName="roboto_bold.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontEditText
             android:id="@+id/tvNewPin"
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/newPinLabel"
+            android:layout_toLeftOf="@+id/newPinLabel"
             android:background="@color/transparent"
             android:gravity="center"
             android:hint="1234"

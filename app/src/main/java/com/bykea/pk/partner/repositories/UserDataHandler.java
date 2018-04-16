@@ -1,5 +1,10 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
+import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
+import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
+import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
+import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
@@ -315,6 +320,31 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onLocationUpdate(LocationResponse response) {
+
+    }
+
+    @Override
+    public void onSignUpSettingsResponse(SignUpSettingsResponse response) {
+
+    }
+
+    @Override
+    public void onSignUpAddNumberResponse(SignUpAddNumberResponse response) {
+
+    }
+
+    @Override
+    public void onSignUpImageResponse(SignupUplodaImgResponse response) {
+
+    }
+
+    @Override
+    public void onSignUpOptionalResponse(SignUpOptionalDataResponse response) {
+
+    }
+
+    @Override
+    public void onSignupCompleteResponse(SignUpCompleteResponse response) {
 
     }
 

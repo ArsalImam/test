@@ -1,20 +1,22 @@
 package com.bykea.pk.partner.services;
 
-import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.PowerManager;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -43,7 +45,6 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.squareup.okhttp.internal.Util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -63,7 +64,7 @@ public class LocationService extends Service {
     private boolean shouldCallLocApi = true;
     private int counter = 0;
 
-    private PowerManager.WakeLock wakeLock;
+    //    private PowerManager.WakeLock wakeLock;
     private EventBus mBus = EventBus.getDefault();
 
     private FusedLocationProviderClient mFusedLocationClient;
@@ -84,33 +85,67 @@ public class LocationService extends Service {
         Utils.redLog("LocServ", "onCreate");
     }
 
+    private void createForegroundNotification() {
+        Intent notificationIntent = new Intent(this, LocationService.class);
+        notificationIntent.setAction(Constants.Actions.ON_NOTIFICATION_CLICK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "FOREGROUND_NOTI")
+                .setContentTitle("Bykea Partner")
+                .setContentText("Location Service Is Running")
+                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true);
+        Notification notification = builder.build();
+        startForeground(877, notification);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Utils.redLog("LocServ", "onStartCommand");
-        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
-            STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
-        }
         mContext = getApplicationContext();
+        if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
+            if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
+                STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
+            }
+            init();
+            createForegroundNotification();
+        } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
+            stopForegroundService();
+        } else if (Constants.Actions.ON_NOTIFICATION_CLICK.equals(intent.getAction())) {
+            //TODO
+        }
+//        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
+//            STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
+//        }
+//        mContext = getApplicationContext();
         //acquire wake lock services to make service run
-        PowerManager mgr = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-        if (mgr != null) {
-            wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
-        }
-        if (wakeLock != null) {
-            wakeLock.acquire();
-        }
-        init();
+//        PowerManager mgr = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+//        if (mgr != null) {
+//            wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+//        }
+//        if (wakeLock != null) {
+//            wakeLock.acquire();
+//        }
+//        init();
         return START_STICKY;
+    }
+
+    private void stopForegroundService() {
+        stopForeground(true);
+        stopSelf();
     }
 
     @Override
     public void onDestroy() {
+        stopForeground(true);
         super.onDestroy();
         Utils.redLog("LocServ", "onDestroy");
         stopLocationUpdates();
-        if (wakeLock != null) {
-            wakeLock.release();
-        }
+//        if (wakeLock != null) {
+//            wakeLock.release();
+//        }
         cancelTimer();
     }
 
@@ -181,14 +216,20 @@ public class LocationService extends Service {
 
 
     protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
+        mLocationRequest = LocationRequest.create();
         int UPDATE_INTERVAL = 10000;
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         int FASTEST_INTERVAL = 5000;
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        int DISPLACEMENT = 1;
-//        mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
+        if (AppPreferences.isOnTrip()) {
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        } else {
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            if (Utils.hasLocationCoordinates()) {
+                int DISPLACEMENT = 10;
+                mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
+            }
+        }
     }
 
     protected void startLocationUpdates() {
@@ -352,6 +393,8 @@ public class LocationService extends Service {
                         }
                     }
                 }
+            } else if (Utils.hasLocationCoordinates()) {
+                stopForegroundService();
             }
             // restart the timer
             mCountDownTimer.start();

@@ -94,7 +94,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((BaseActivity) getActivity()).setToolbarTitle("Settings", "سیٹنگز");
+        if (getActivity() != null) {
+            ((BaseActivity) getActivity()).setToolbarTitle("Settings", "سیٹنگز");
+        }
         ((BaseActivity) getActivity()).hideToolbarLogo();
         repository = new UserRepository();
         mCurrentActivity = (HomeActivity) getActivity();

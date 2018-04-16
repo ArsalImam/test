@@ -33,7 +33,7 @@
     <string name="button.text.forgotPassword">Forgot Pin Code?</string>
     <string name="button.text.skipNow">Skip Now</string>
     <string name="button.text.sendCode">SEND ME VERIFICATION CODE</string>
-
+    <string name="error.job.title">Please select City</string>
 
     <!--Drop off for driver -->
 
@@ -69,7 +69,7 @@
     <string name="error.license.upload_images">Also upload image of that document.</string>
     <string name="error.license.set_expiry">Also set document Expiry date</string>
     <string name="error.license.set_name">Also provide document name</string>
-    <string name="error.picture.not_selected">Profile picture not selected.</string>
+    <string name="error.picture.not_selected">Picture not selected.</string>
     <string name="error_try_again">Something went wrong. Please try again later.</string>
     <string name="error.ride.destination">Please select destination</string>
 
@@ -933,6 +933,12 @@
     <string name="bookingProblem">بکنگ سے متعلق مسئلہ کے لئے بکنگ کی تفصیل\n میں جاکر پرابلم کے بٹن پے کلک کریں</string>
     <string name="loading">Loading…</string>
     <string name="verification_code_sent">We have sent an SMS with your new pin code</string>
+    <string name="profile_action_sheet_new.tv.camera">Camera</string>
+    <string name="profile_action_sheet_new.tv.gallery">Gallery</string>
+    <string name="btn.cancel">Cancel</string>
+    <string name="camera_permission">Please allow Camera Permissions</string>
+    <string name="permissions.docs">Camera Permission required to take Picture for your Profile &amp; Documents</string>
+    <string name="java.camera_permission.msg"><![CDATA[For the best Bykea experience, please enable Permission-> Camera in the application settings.]]></string>
 
 
 </resources>

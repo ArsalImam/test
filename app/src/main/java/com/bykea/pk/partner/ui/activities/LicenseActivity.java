@@ -38,7 +38,7 @@ public class LicenseActivity extends BaseActivity {
 
         setToolbar();
         hideToolbarLogo();
-        setToolbarTitle("License Information");
+        setToolbarTitle("License","لائسنس" );
         setBackNavigation();
 
         setData();
@@ -57,7 +57,7 @@ public class LicenseActivity extends BaseActivity {
                         REQUIRED_DATE_FORMAT));*/
                 //TODO Update date format
 //                licenseExpDate.setText(data.getLicense_expire());
-                licenseExpDate.setText(Utils.getFormattedDate(data.getLicense_expire(), CURRENT_DATE_FORMAT,
+                licenseExpDate.setText(Utils.getFormattedDate(data.getLicense_expire(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
                         REQUIRED_DATE_FORMAT));
 
             }

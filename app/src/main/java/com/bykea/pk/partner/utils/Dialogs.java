@@ -53,6 +53,8 @@ public enum Dialogs {
             if (null != mDialog && isShowing()) {
                 mDialog.dismiss();
             }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,6 +65,8 @@ public enum Dialogs {
             if (null != mAdminNotifiationDialog && mAdminNotifiationDialog.isShowing()) {
                 mAdminNotifiationDialog.dismiss();
             }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,6 +77,8 @@ public enum Dialogs {
             if (null != mDialog) {
                 mDialog.show();
             }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -580,6 +586,17 @@ public enum Dialogs {
         FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
         okIv.setOnClickListener(onClick);
         mDialog.setCancelable(false);
+        showDialog();
+    }
+
+
+    public void showSignUpSuccessDialog(Context context, View.OnClickListener onClick) {
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
+        mDialog.setContentView(R.layout.signup_success_dialog);
+        mDialog.setCancelable(false);
+        mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
         showDialog();
     }
 

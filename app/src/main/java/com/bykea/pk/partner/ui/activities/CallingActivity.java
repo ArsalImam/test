@@ -222,8 +222,7 @@ public class CallingActivity extends BaseActivity {
                             stopSound();
                             mCurrentActivity.finish();
                         } else {
-                            AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                            AppPreferences.setIsOnTrip(false);
+                            Utils.setCallIncomingState();
                             Dialogs.INSTANCE.showToast(mCurrentActivity
                                     , acceptCallResponse.getMessage());
 
@@ -288,7 +287,7 @@ public class CallingActivity extends BaseActivity {
             data.put("PassengerName", callData.getPassName());
             data.put("DriverName", AppPreferences.getPilotData().getFullName());
             data.put("type", callData.getCallType());
-            data.put("City", AppPreferences.getPilotData().getCity().getName());
+            data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
 
             if (isOnAccept) {
                 data.put("AcceptSeconds", acceptSeconds);

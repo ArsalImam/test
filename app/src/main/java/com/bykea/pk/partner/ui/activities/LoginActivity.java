@@ -1,7 +1,11 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.response.LoginResponse;
@@ -34,6 +38,9 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.phoneNumberEt)
     FontEditText phoneNumberEt;
 
+    @BindView(R.id.loginBtn)
+    ImageView loginBtn;
+
     private UserRepository repository;
 
     @Override
@@ -50,9 +57,42 @@ public class LoginActivity extends BaseActivity {
             AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
         }
         Utils.setOneSignalPlayerId();
+        if (Utils.isGetCitiesApiCallRequired()) {
+            repository.getCities(mCurrentActivity, handler);
+        }
+
+        disableBookingBtn();
+        phoneNumberEt.addTextChangedListener(mTextWatcher);
+        pinCodeTv.addTextChangedListener(mTextWatcher);
     }
 
-    @OnClick({R.id.loginBtn, R.id.forgotPassTv})
+    private TextWatcher mTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            validateFileds();
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
+
+    private void validateFileds() {
+        if (StringUtils.isNotBlank(pinCodeTv.getText().toString())
+                && Utils.isValidNumber(phoneNumberEt)) {
+            enableBookingBtn();
+        } else {
+            disableBookingBtn();
+        }
+    }
+
+    @OnClick({R.id.loginBtn, R.id.forgotPassTv, R.id.registerBtn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.loginBtn:
@@ -73,6 +113,9 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.forgotPassTv:
                 ActivityStackManager.getInstance().startForgotPasswordActivity(mCurrentActivity);
+                break;
+            case R.id.registerBtn:
+                ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
                 break;
         }
     }
@@ -160,5 +203,15 @@ public class LoginActivity extends BaseActivity {
 
         }
     };
+
+    private void disableBookingBtn() {
+        loginBtn.setEnabled(false);
+        loginBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_gray_round));
+    }
+
+    private void enableBookingBtn() {
+        loginBtn.setEnabled(true);
+        loginBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_green));
+    }
 
 }

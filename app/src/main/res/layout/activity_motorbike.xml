@@ -25,17 +25,6 @@
         android:background="@color/windowBackground">
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:text="Motorcycle Brand"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_bold.ttf" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/vehicleBrand"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -47,6 +36,18 @@
             android:textColor="@color/textColorSecondary"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_regular.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingRight="@dimen/padding.normal"
+            android:text="موٹرسائیکل برانڈ"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
     </LinearLayout>
 
@@ -60,17 +61,6 @@
         android:layout_height="@dimen/height.xlarge"
         android:layout_marginTop="@dimen/_1sdp"
         android:background="@color/windowBackground">
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:text="Horse Power"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/horsePower"
@@ -85,6 +75,18 @@
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_regular.ttf" />
 
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingRight="@dimen/padding.normal"
+            android:text="سی سی"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
     </LinearLayout>
 
     <View
@@ -97,17 +99,6 @@
         android:layout_height="@dimen/height.xlarge"
         android:layout_marginTop="@dimen/_1sdp"
         android:background="@color/windowBackground">
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:text="Model"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/modelYear"
@@ -122,6 +113,18 @@
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_regular.ttf" />
 
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingRight="@dimen/padding.normal"
+            android:text="ماڈل"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
     </LinearLayout>
 
     <View
@@ -134,17 +137,6 @@
         android:layout_height="@dimen/height.xlarge"
         android:layout_marginTop="@dimen/_1sdp"
         android:background="@color/windowBackground">
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:text="Chasis Number"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/chasisNumber"
@@ -159,6 +151,18 @@
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_regular.ttf" />
 
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingRight="@dimen/padding.normal"
+            android:text="چیسس نمبر"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
     </LinearLayout>
 
     <View
@@ -171,17 +175,6 @@
         android:layout_height="@dimen/height.xlarge"
         android:layout_marginTop="@dimen/_1sdp"
         android:background="@color/windowBackground">
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:text="Engine Number"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/engineNumber"
@@ -196,6 +189,18 @@
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_regular.ttf" />
 
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingRight="@dimen/padding.normal"
+            android:text="انجن نمبر"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
     </LinearLayout>
 
     <View
@@ -209,16 +214,6 @@
         android:layout_marginTop="@dimen/_1sdp"
         android:background="@color/windowBackground">
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:text="Verified on Excise"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/exciseVerified"
@@ -232,6 +227,17 @@
             android:textColor="@color/textColorSecondary"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_regular.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingRight="@dimen/padding.normal"
+            android:text="تصدیق شُدہ"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
     </LinearLayout>
 

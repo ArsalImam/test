@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -138,6 +139,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(final int requestCode,
                                            @NonNull String[] permissions, @NonNull final int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (mCurrentActivity != null) {
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -382,7 +384,7 @@ public class BaseActivity extends AppCompatActivity {
         if (null == mToolbar) getToolbar();
         mTitleTv.setVisibility(View.VISIBLE);
         mTitleTv.setText(toolbarTitle);
-        FontTextView urduTextView = (FontTextView) mToolbar.findViewById(R.id.tvTitleUrdu);
+        FontTextView urduTextView = mToolbar.findViewById(R.id.tvTitleUrdu);
         urduTextView.setVisibility(View.VISIBLE);
         urduTextView.setText(urduText);
     }

@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@color/windowBackground">
+    android:background="@color/windowBackground"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:gravity="top"
         android:orientation="vertical">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:gravity="center"
+            android:text="بائیکیا"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/_64sdp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:fontName="roboto_regular.ttf" />
 
         <ImageView
             android:layout_width="@dimen/_200sdp"
-            android:layout_height="@dimen/_130sdp"
-            android:layout_gravity="center_horizontal"
-            app:srcCompat="@drawable/ic_bykea_partner_logo" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:gravity="center"
+            android:src="@drawable/layer_2"
+            android:visibility="visible" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -34,33 +49,44 @@
                 android:id="@+id/llIv1"
                 android:layout_width="@dimen/_60sdp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:gravity="end">
 
                 <ImageView
                     android:id="@+id/ivMobileNumber"
                     android:layout_width="@dimen/_60sdp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:layout_centerInParent="true"
                     android:padding="@dimen/_8sdp"
                     app:srcCompat="@drawable/ic_mobile_number_simple" />
             </LinearLayout>
-
+            <!--<com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/ivMobileNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="right|bottom"
+                android:padding="@dimen/_8sdp"
+                android:text="موبائل نمبر"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf"
+                app:srcCompat="@drawable/ic_mobile_number_simple" />
+-->
             <com.bykea.pk.partner.widgets.FontEditText
                 android:id="@+id/phoneNumberEt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/llIv1"
                 android:layout_alignTop="@id/llIv1"
-                android:layout_marginLeft="@dimen/margin.normal"
-                android:layout_marginRight="@dimen/margin.normal"
-                android:layout_toRightOf="@id/llIv1"
+                android:layout_toLeftOf="@id/llIv1"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
                 android:gravity="left|center_vertical"
                 android:hint="@string/hint.phone.number"
                 android:inputType="numberPassword"
                 android:maxLength="11"
+                android:paddingLeft="@dimen/_6sdp"
                 android:textColorHint="@color/secondaryColorLight"
                 android:textSize="@dimen/textsize.body2" />
 
@@ -68,6 +94,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
                 android:layout_below="@+id/phoneNumberEt"
+                android:layout_marginTop="-6dp"
                 android:background="@color/textColorSecondary"
                 android:visibility="visible" />
 
@@ -89,17 +116,32 @@
                 android:id="@+id/llIv2"
                 android:layout_width="@dimen/_60sdp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:gravity="end">
 
                 <ImageView
                     android:id="@+id/ivKhufiaCode"
                     android:layout_width="@dimen/_52sdp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:layout_centerInParent="true"
                     android:padding="@dimen/_8sdp"
                     app:srcCompat="@drawable/ic_khufia_code" />
             </LinearLayout>
+
+
+            <!-- <com.bykea.pk.partner.widgets.FontTextView
+                 android:id="@+id/ivKhufiaCode"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentRight="true"
+                 android:gravity="right|bottom"
+                 android:padding="@dimen/_8sdp"
+                 android:text="خفیہ کوڈ"
+                 android:textColor="@color/colorAccent"
+                 android:textSize="@dimen/_14sdp"
+                 app:fontName="jameel_noori_nastaleeq.ttf"
+                 app:srcCompat="@drawable/ic_mobile_number_simple" />
+ -->
 
             <com.bykea.pk.partner.widgets.FontEditText
                 android:id="@+id/pinCodeTv"
@@ -107,15 +149,14 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/llIv2"
                 android:layout_alignTop="@id/llIv2"
-                android:layout_marginLeft="@dimen/margin.normal"
-                android:layout_marginRight="@dimen/margin.normal"
-                android:layout_toRightOf="@id/llIv2"
+                android:layout_toLeftOf="@id/llIv2"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
                 android:gravity="left|center_vertical"
                 android:hint="Pin Code"
                 android:inputType="numberPassword"
                 android:maxLength="4"
+                android:paddingLeft="@dimen/_6sdp"
                 android:textColorHint="@color/secondaryColorLight"
                 android:textSize="@dimen/textsize.body2" />
 
@@ -123,58 +164,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
                 android:layout_below="@+id/pinCodeTv"
+                android:layout_marginTop="-6dp"
                 android:background="@color/textColorSecondary"
                 android:visibility="visible" />
 
 
         </RelativeLayout>
-        <!--  <FontEditText
-              android:id="@+id/phoneNumberEt"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/edittext.height"
-              android:layout_marginLeft="@dimen/margin.normal"
-              android:layout_marginRight="@dimen/margin.normal"
-              android:layout_marginTop="@dimen/margin.medium"
-              android:drawablePadding="@dimen/padding.normal"
-              android:hint="@string/hint.emailAddress"
-              android:inputType="phone"
-              android:background="@drawable/edittext_bg"
-              android:imeOptions="actionNext"
-              android:paddingLeft="@dimen/padding.normal"
-              app:fontName="roboto_light.ttf"
-              android:maxLength="12"
-              android:textSize="14sp" />
 
-          <FontEditText
-              android:id="@+id/passwordTv"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/edittext.height"
-              android:layout_marginLeft="@dimen/margin.normal"
-              android:layout_marginRight="@dimen/margin.normal"
-              android:background="@drawable/edittext_bg"
-              android:layout_marginTop="@dimen/margin.small"
-              android:drawablePadding="@dimen/padding.normal"
-              android:hint="@string/hint.password"
-              android:inputType="numberPassword"
-              android:imeOptions="actionDone"
-              android:paddingLeft="@dimen/padding.normal"
-              android:maxLength="4"
-              app:fontName="roboto_light.ttf"
-              android:textSize="14sp" />
-              -->
-
-        <com.bykea.pk.partner.widgets.FontButton
-            android:id="@+id/loginBtn"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/button.next.height"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/margin.normal"
-            android:layout_marginRight="@dimen/margin.normal"
-            android:layout_marginTop="@dimen/margin.normal"
-            android:background="@drawable/button_green"
-            android:text="@string/button.text.login"
-            android:textAllCaps="true"
-            android:textColor="@color/white" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/forgotPassTv"
@@ -183,33 +179,61 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/margin.small"
             android:padding="@dimen/padding.tiny"
-            android:text="@string/button.text.forgotPassword"
-            android:textColor="@color/secondaryColorDark"
-            app:fontName="roboto_light.ttf" />
+            android:text="میں موجودہ بائیکیا پارٹنر ہوں اور خفیہ کوڈ بھول گیا ہوں"
+            android:textColor="@color/textColorPrimary1"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <ImageView
-            android:id="@+id/ivAccountKholain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/margin.large"
+            android:id="@+id/loginBtn"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/margin.normal"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:layout_marginTop="@dimen/margin.normal"
+            android:background="@drawable/button_green"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/correct_symbol" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.9dp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:background="@color/secondaryColorLight"
             android:visibility="visible" />
 
 
-        <Button
-            android:id="@+id/registerBtn"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/button.next.height"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/_50sdp"
-            android:layout_marginRight="@dimen/_50sdp"
-            android:layout_marginTop="@dimen/margin.tiny"
-            android:gravity="center"
-            android:text="@string/button.text.register"
-            android:textColor="@color/white"
-            android:visibility="invisible" />
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/registerBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/_14sdp"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_28sdp"
+                android:background="@drawable/button_green"
+                android:gravity="center"
+                android:paddingBottom="@dimen/_10sdp"
+                android:paddingTop="@dimen/_10sdp"
+                android:text="بائیکیا پارٹنر بننے کے لئے کلک کریں"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_18sdp"
+                android:visibility="visible"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+        </LinearLayout>
 
     </LinearLayout>
 
 
-</FrameLayout>
+</ScrollView>

@@ -46,7 +46,7 @@ public class ChangePinActivity extends BaseActivity {
         mUserRepository = new UserRepository();
         setToolbar();
         hideToolbarLogo();
-        setToolbarTitle("Change Pin Code");
+        setToolbarTitle("Pin Code", "خفیہ کوڈ");
         setBackNavigation();
 
     }

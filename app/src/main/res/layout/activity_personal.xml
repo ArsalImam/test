@@ -57,7 +57,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_4sdp"
+                android:layout_height="@dimen/_2sdp"
                 android:background="@color/divider" />
 
             <LinearLayout
@@ -66,33 +66,34 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="Address"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotAddress"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:background="@color/transparent"
+                    android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.small"
-                    android:text=""
+                    tools:text=" dhs dhjd hd hj djh djhd dh dh dhjd djh djhd hjd djh djhd jhd djhd jdh djh djhd djh djhd jdh djhd jhd djh dhjd jdh djhd "
                     android:textColor="@color/textColorSecondary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="پتہ"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -107,19 +108,6 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="City"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotCity"
@@ -136,6 +124,20 @@
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="شہر"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
             </LinearLayout>
 
             <View
@@ -149,26 +151,13 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="CNIC"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotCnic"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:background="@color/transparent"
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.small"
@@ -177,6 +166,19 @@
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="شناختی کارڈ"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
 
             <View
@@ -190,26 +192,13 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="Mobile (BYKEA)"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotMobile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:background="@color/transparent"
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.small"
@@ -217,6 +206,21 @@
                     android:textColor="@color/textColorSecondary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="موبائل 1"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
             </LinearLayout>
 
@@ -231,25 +235,13 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="Mobile (Personal 1)"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotMobile2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:background="@color/transparent"
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.small"
@@ -257,6 +249,20 @@
                     android:textColor="@color/textColorSecondary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="موبائل 2"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
             </LinearLayout>
 
@@ -271,18 +277,6 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="Mobile (Personal 2)"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotMobile3"
@@ -297,6 +291,18 @@
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="موبائل 3"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
 
             <View
@@ -310,18 +316,6 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="Email"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotEmail"
@@ -331,11 +325,24 @@
                     android:layout_weight="1"
                     android:background="@color/transparent"
                     android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/padding.small"
                     android:maxLines="2"
+                    android:paddingLeft="@dimen/padding.small"
                     android:textColor="@color/textColorSecondary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="ای میل"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -349,19 +356,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="Registered"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotRegisteredDate"
@@ -376,6 +370,19 @@
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="اندراج"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
             </LinearLayout>
 
             <View
@@ -390,18 +397,6 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:background="@color/windowBackground">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="@dimen/_14sdp"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:text="Verified"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/pilotVerifiedDate"
@@ -415,6 +410,19 @@
                     android:textColor="@color/textColorSecondary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:gravity="right"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingRight="@dimen/padding.normal"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:text="تصدیق"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 

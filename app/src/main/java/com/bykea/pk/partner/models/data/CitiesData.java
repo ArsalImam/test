@@ -9,6 +9,7 @@ public class CitiesData implements Parcelable {
     private String _id;
 
     private String name;
+    private String urduName;
 
     private String created_at;
 
@@ -30,6 +31,7 @@ public class CitiesData implements Parcelable {
     protected CitiesData(Parcel in) {
         _id = in.readString();
         name = in.readString();
+        urduName = in.readString();
         created_at = in.readString();
         lng = in.readString();
         city_code = in.readString();
@@ -146,6 +148,7 @@ public class CitiesData implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(_id);
         parcel.writeString(name);
+        parcel.writeString(urduName);
         parcel.writeString(created_at);
         parcel.writeString(lng);
         parcel.writeString(city_code);
@@ -154,6 +157,14 @@ public class CitiesData implements Parcelable {
         parcel.writeByte((byte) (is_from ? 1 : 0));
         parcel.writeByte((byte) (is_to ? 1 : 0));
         parcel.writeStringArray(loc);
+    }
+
+    public String getUrduName() {
+        return urduName;
+    }
+
+    public void setUrduName(String urduName) {
+        this.urduName = urduName;
     }
 }
 

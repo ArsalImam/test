@@ -8,10 +8,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -22,7 +24,9 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +40,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -45,8 +52,11 @@ import android.widget.Toast;
 
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.SignUpCity;
+import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
@@ -59,6 +69,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerFragment;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -310,6 +324,7 @@ public class Utils {
         return RequestBody.create(MediaType.parse("multipart/form-data"), str);
     }
 
+
     public static float dp2px(Resources resources, float dp) {
         final float scale = resources.getDisplayMetrics().density;
         return dp * scale + 0.5f;
@@ -417,18 +432,28 @@ public class Utils {
         window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
 
-    public static void setCallIncomingState() {
+    public static void setCallIncomingStateWithoutRestartingService() {
         AppPreferences.setIsOnTrip(false);
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
         AppPreferences.setIncomingCall(true);
         AppPreferences.clearTrackingData();
     }
 
+    public static void setCallIncomingState() {
+        AppPreferences.setIsOnTrip(false);
+        AppPreferences.setTripStatus(TripStatus.ON_FREE);
+        AppPreferences.setIncomingCall(true);
+        AppPreferences.clearTrackingData();
+        ActivityStackManager.getInstance().restartLocationService(DriverApp.getContext());
+    }
+
     public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -787,6 +812,20 @@ public class Utils {
         return index;
     }
 
+    public static int getCurrentCityIndex(ArrayList<SignUpCity> cities) {
+        LatLng currentLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        float shortestDistance = 0;
+        int index = 0;
+        for (int i = 0; i < cities.size(); i++) {
+            float distance = Utils.calculateDistance(currentLatLng.latitude, currentLatLng.longitude, cities.get(i).getGps().get(0), cities.get(i).getGps().get(1));
+            if (shortestDistance == 0 || distance < shortestDistance) {
+                shortestDistance = distance;
+                index = i;
+            }
+        }
+        return index;
+    }
+
 
     public static float calculateDistance(double newLat, double newLon, double prevLat, double prevLon) {
         Location newLocation = new Location(LocationManager.GPS_PROVIDER);
@@ -819,6 +858,19 @@ public class Utils {
         } else if (number.length() < 11) {
             view.setError(context.getString(R.string.error_phone_number_1));
             view.requestFocus();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean isValidNumber(FontEditText view) {
+        String number = view.getText().toString();
+        if (StringUtils.isBlank(number)) {
+            return false;
+        } else if (!number.startsWith("03")) {
+            return false;
+        } else if (number.length() < 11) {
             return false;
         } else {
             return true;
@@ -1612,6 +1664,242 @@ public class Utils {
                 mainScrollView.fullScroll(ScrollView.FOCUS_UP);
             }
         }, 600);
+    }
+
+    public static boolean hasLocationCoordinates() {
+        if (AppPreferences.getLatitude() == 0d || AppPreferences.getLongitude() == 0d) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static void loadImgURL(ImageView imageView, String link) {
+        if (StringUtils.isNotBlank(link)) {
+            Picasso.get().load(link)
+                    .fit().centerInside()
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            Utils.redLog("loadImgURL", "onSuccess");
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Utils.redLog("loadImgURL", "onError");
+                        }
+                    });
+
+        }
+    }
+
+
+    public static void fadeOutAndHideImage(final ImageView img) {
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setDuration(250);
+
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationEnd(Animation animation) {
+                img.setVisibility(View.GONE);
+            }
+
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            public void onAnimationStart(Animation animation) {
+            }
+        });
+
+        img.startAnimation(fadeOut);
+    }
+
+
+    public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView ivThumbnail, ImageView ytIcon, YouTubePlayerSupportFragment playerFragment) {
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
+            //TODO: Remove it when crash is resolved in latest YouTube App
+            watchYoutubeVideo(context, VIDEO_ID);
+            return;
+        }
+        fadeOutAndHideImage(ivThumbnail);
+        fadeOutAndHideImage(ytIcon);
+        if (playerFragment.getView() != null) {
+            playerFragment.getView().setVisibility(View.VISIBLE);
+        }
+        playerFragment.initialize(context.getString(R.string.google_api_client_key), new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
+                if (!wasRestored) {
+                    player.setShowFullscreenButton(false);
+                    // loadVideo() will auto play video
+                    // Use cueVideo() method, if you don't want to play it automatically
+                    player.loadVideo(VIDEO_ID);
+
+                    player.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+                }
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult errorReason) {
+                if (errorReason.isUserRecoverableError()) {
+                    errorReason.getErrorDialog(context, 1).show();
+                } else {
+                    String errorMessage = errorReason.toString();
+                    Utils.appToast(context, errorMessage);
+                }
+            }
+        });
+    }
+
+    public static void initPlayerFragment(final YouTubePlayerSupportFragment playerFragment, ImageView ytIcon, final ImageView ivThumbnail, final String VIDEO_ID) {
+        if (playerFragment.getView() != null) {
+            playerFragment.getView().setVisibility(View.INVISIBLE);
+        }
+        ytIcon.setVisibility(View.VISIBLE);
+
+        if (playerFragment.getView() != null) {
+            final ViewTreeObserver layoutObserver = playerFragment.getView().getViewTreeObserver();
+            layoutObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (playerFragment.getView() != null) {
+                        playerFragment.getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        ivThumbnail.getLayoutParams().height = playerFragment.getView().getHeight();
+                        ivThumbnail.requestLayout();
+                        Utils.loadImgURL(ivThumbnail, "https://img.youtube.com/vi/" + VIDEO_ID + "/0.jpg");
+                        playerFragment.getView().setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
+
+        }
+    }
+
+    public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView ivThumbnail, ImageView ytIcon, YouTubePlayerFragment playerFragment) {
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
+            //TODO: Remove it when crash is resolved in latest YouTube App
+            watchYoutubeVideo(context, VIDEO_ID);
+            return;
+        }
+        fadeOutAndHideImage(ivThumbnail);
+        fadeOutAndHideImage(ytIcon);
+        if (playerFragment.getView() != null) {
+            playerFragment.getView().setVisibility(View.VISIBLE);
+        }
+        playerFragment.initialize(context.getString(R.string.google_api_client_key), new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
+                if (!wasRestored) {
+                    player.setShowFullscreenButton(false);
+                    // loadVideo() will auto play video
+                    // Use cueVideo() method, if you don't want to play it automatically
+                    player.loadVideo(VIDEO_ID);
+
+                    player.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+                }
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult errorReason) {
+                if (errorReason.isUserRecoverableError()) {
+                    errorReason.getErrorDialog(context, 1).show();
+                } else {
+                    String errorMessage = errorReason.toString();
+                    Utils.appToast(context, errorMessage);
+                }
+            }
+        });
+    }
+
+    public static void initPlayerFragment(final YouTubePlayerFragment playerFragment, ImageView ytIcon, final ImageView ivThumbnail, final String VIDEO_ID) {
+        if (playerFragment.getView() != null) {
+            playerFragment.getView().setVisibility(View.INVISIBLE);
+        }
+        ytIcon.setVisibility(View.VISIBLE);
+
+        if (playerFragment.getView() != null) {
+            final ViewTreeObserver layoutObserver = playerFragment.getView().getViewTreeObserver();
+            layoutObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (playerFragment.getView() != null) {
+                        playerFragment.getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        ivThumbnail.getLayoutParams().height = playerFragment.getView().getHeight();
+                        ivThumbnail.requestLayout();
+                        Utils.loadImgURL(ivThumbnail, "https://img.youtube.com/vi/" + VIDEO_ID + "/0.jpg");
+                        playerFragment.getView().setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
+
+        }
+    }
+
+
+    public static void startCameraByIntent(Fragment act) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        act.startActivityForResult(intent, Constants.REQUEST_CAMERA);
+    }
+
+
+    public static void startGalleryByIntent(Fragment fragment) {
+        Intent intent1 = new Intent();
+        intent1.setAction(Intent.ACTION_GET_CONTENT);
+        intent1.addCategory(Intent.CATEGORY_OPENABLE);
+        intent1.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        intent1.setType("image/*");
+        fragment.startActivityForResult(intent1, Constants.REQUEST_GALLERY);
+    }
+
+
+    public static void startCameraByIntent(Activity act) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        act.startActivityForResult(intent, Constants.REQUEST_CAMERA);
+    }
+
+
+    public static void startGalleryByIntent(Activity fragment) {
+        Intent intent1 = new Intent();
+        intent1.setAction(Intent.ACTION_GET_CONTENT);
+        intent1.addCategory(Intent.CATEGORY_OPENABLE);
+        intent1.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        intent1.setType("image/*");
+        fragment.startActivityForResult(intent1, Constants.REQUEST_GALLERY);
+    }
+
+    public static int getOrientation(Activity activity, Uri photoUri) {
+        /* it's on the external media. */
+        int value;
+
+        Cursor cursor = activity.getContentResolver().query(photoUri,
+                new String[]{MediaStore.Images.ImageColumns.ORIENTATION},
+                null, null, null);
+
+        if (cursor.getCount() == 0) {
+            return -1;
+        }
+        cursor.moveToFirst();
+        value = cursor.getInt(0);
+        cursor.close();
+        return value;
+    }
+
+    public static long getFolderSize(File f) {
+        long size = 0;
+        if (f.isDirectory()) {
+            for (File file : f.listFiles()) {
+                size += getFolderSize(file);
+            }
+        } else {
+            size = f.length();
+        }
+        return size;
     }
 
 }

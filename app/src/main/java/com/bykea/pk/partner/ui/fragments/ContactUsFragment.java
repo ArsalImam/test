@@ -63,7 +63,7 @@ public class ContactUsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
-        mCurrentActivity.setToolbarTitle("Contact Us");
+        mCurrentActivity.setToolbarTitle("Contact Us", "رابطہ");
         mCurrentActivity.hideToolbarLogo();
 
         UserRepository repository = new UserRepository();
@@ -92,6 +92,7 @@ public class ContactUsFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        mCurrentActivity.hideUrduTitle();
         super.onDestroyView();
         unbinder.unbind();
     }

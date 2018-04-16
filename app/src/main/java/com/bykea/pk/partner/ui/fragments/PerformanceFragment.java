@@ -91,7 +91,7 @@ public class PerformanceFragment extends Fragment {
     }
 
     private void initViews() {
-        mCurrentActivity.setToolbarTitle("Performance");
+        mCurrentActivity.setToolbarTitle("Performance", "کارکردگی");
         mCurrentActivity.hideToolbarLogo();
         repository = new UserRepository();
         getDriverStats();
@@ -146,6 +146,7 @@ public class PerformanceFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        mCurrentActivity.hideUrduTitle();
         super.onDestroyView();
         unbinder.unbind();
     }

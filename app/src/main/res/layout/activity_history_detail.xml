@@ -91,24 +91,13 @@
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Customer Name"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
-
                 <com.bykea.pk.partner.widgets.AutoFitFontTextView
                     android:id="@+id/nameTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.5"
                     android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:maxLength="22"
                     android:maxLines="1"
                     android:textColor="@color/textColorPrimary"
@@ -116,41 +105,19 @@
                     app:fontName="roboto_light.ttf"
                     tools:text="Muhammad Salman Qureshi" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="کسٹمر کا نام"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
             </LinearLayout>
-            <!--
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/height.large"
-                            android:layout_marginLeft="@dimen/margin.normal"
-                            android:layout_marginRight="@dimen/margin.normal"
-
-                            android:gravity="center_vertical">
-
-
-                            <FontTextView
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:background="@color/windowBackground"
-                                android:gravity="left|center_vertical"
-                                android:text="Plate number"
-                                android:textColor="@color/textColorPrimary"
-                                android:textSize="@dimen/textsize.normal"
-                                app:fontName="roboto_regular.ttf" />
-
-                            <FontTextView
-                                android:id="@+id/plateTv"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:background="@color/windowBackground"
-                                android:gravity="right|center_vertical"
-                                android:text="ISL 1234"
-                                android:textColor="@color/textColorPrimary"
-                                android:textSize="@dimen/textsize.normal"
-                                app:fontName="roboto_light.ttf" />
-
-                        </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -160,28 +127,29 @@
                 android:gravity="center_vertical">
 
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Booking Time"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/timeTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_light.ttf" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="بکنگ ٹائیم"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
 
             <LinearLayout
@@ -191,28 +159,29 @@
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical">
 
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Service Type"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
-
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/serviceTypeTv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    android:background="@color/windowBackground"
+                    android:gravity="left|center_vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_light.ttf" />
+
+
+                <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="سروس"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_light.ttf" />
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -228,6 +197,17 @@
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical">
 
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/distancePriceTv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    android:background="@color/windowBackground"
+                    android:gravity="left|center_vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_light.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/totalDistanceTv"
@@ -235,22 +215,12 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="km"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/distancePriceTv"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="کلومیٹر"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_light.ttf" />
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -261,6 +231,17 @@
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical">
 
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/timePriceTv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    android:background="@color/windowBackground"
+                    android:gravity="left|center_vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_light.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/totalTimeTv"
@@ -268,22 +249,12 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="min"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/timePriceTv"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="منٹ"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_light.ttf" />
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -293,6 +264,17 @@
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvWaitPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    android:background="@color/windowBackground"
+                    android:gravity="left|center_vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_light.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/tvWaitMins"
@@ -300,22 +282,12 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
                     android:text="Waiting"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvWaitPrice"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_light.ttf" />
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -327,28 +299,29 @@
                 android:gravity="center_vertical">
 
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Base fare"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/basefareTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_light.ttf" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="بنیادی کرایہ"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
 
 
@@ -362,28 +335,29 @@
                 android:paddingTop="@dimen/_7sdp">
 
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Fare"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/fareTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_light.ttf" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="مکمل کرایہ"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
 
             <LinearLayout
@@ -395,28 +369,29 @@
                 android:paddingBottom="@dimen/_7sdp"
                 android:paddingTop="@dimen/_7sdp">
 
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Dropoff discount"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/dropOffDiscTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_light.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="Dropoff discount"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -430,27 +405,28 @@
                 android:paddingTop="@dimen/_7sdp">
 
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Promo"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/promoTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_light.ttf" />
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="پرومو"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -464,28 +440,29 @@
                 android:paddingTop="@dimen/_7sdp">
 
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Wallet"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/walletTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_light.ttf" />
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="والیٹ"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
 
 
@@ -504,29 +481,30 @@
 
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/totalAmountTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:background="@color/windowBackground"
                     android:gravity="left|center_vertical"
-                    android:paddingBottom="@dimen/_7sdp"
-                    android:paddingTop="@dimen/_7sdp"
-                    android:text="Total"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.large"
                     app:fontName="roboto_regular.ttf" />
 
+
                 <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/totalAmountTv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_7sdp"
+                    android:paddingTop="@dimen/_7sdp"
+                    android:text="ٹوٹل"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.large"
-                    app:fontName="roboto_regular.ttf" />
-
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
 
             <LinearLayout
@@ -538,30 +516,6 @@
                 android:paddingBottom="@dimen/_7sdp"
                 android:paddingTop="@dimen/_7sdp">
 
-                <!--
-
-                                <FontTextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:background="@color/windowBackground"
-                                    android:gravity="left|center_vertical"
-                                    android:text="Amount Top Up"
-                                    android:textColor="@color/colorAccent"
-                                    android:textSize="@dimen/textsize.medium"
-                                    app:fontName="roboto_regular.ttf" />
-
-                                <FontTextView
-                                    android:id="@+id/amountTopUpTv"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:background="@color/windowBackground"
-                                    android:gravity="right|center_vertical"
-                                    android:textColor="@color/textColorPrimary"
-                                    android:textSize="@dimen/textsize.medium"
-                                    app:fontName="roboto_regular.ttf" />
-                -->
 
             </LinearLayout>
 
@@ -582,15 +536,6 @@
                 android:paddingTop="@dimen/_7sdp">
 
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="left|center_vertical"
-                    android:text="Rating By Partner"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="roboto_regular.ttf" />
 
                 <RatingBar
                     android:id="@+id/driverRb"
@@ -606,6 +551,16 @@
                     android:stepSize="0.1" />
 
 
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="پارٹنر کی طرف سے ریٹنگ"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
 
             <View
@@ -626,16 +581,6 @@
                 android:paddingTop="@dimen/_7sdp">
 
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:text="Rating By Customer"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="roboto_regular.ttf" />
 
                 <RatingBar
                     android:id="@+id/passengerRb"
@@ -649,6 +594,17 @@
                     android:progressDrawable="@drawable/custom_rating_bar"
                     android:rating="0"
                     android:stepSize="0.1" />
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:text="کسٹمر کی طرف سے ریٹنگ"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -657,8 +613,8 @@
                 android:id="@+id/flCommentsRv"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_100sdp"
-                android:visibility="gone"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:visibility="gone">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rvComments"
@@ -832,10 +788,10 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:background="@drawable/button_gray_round"
                 android:gravity="center"
-                android:text="PROBLEM?"
+                android:text="مسئلہ درج کریں"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_20sdp"
-                app:fontName="roboto_bold.ttf" />
+                app:fontName="jameel_noori_nastaleeq.ttf" />
         </LinearLayout>
     </ScrollView>
 

@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.v4.content.IntentCompat;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
@@ -26,6 +25,7 @@ import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
+import com.bykea.pk.partner.ui.activities.RegistrationActivity;
 import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
@@ -91,7 +91,17 @@ public class ActivityStackManager {
 
     public void startLocationService(Context mContext) {
         if (!Utils.isServiceRunning(mContext, LocationService.class)) {
-            mContext.startService(new Intent(mContext, LocationService.class));
+            Intent intent = new Intent(mContext, LocationService.class);
+            intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
+            mContext.startService(intent);
+        }
+    }
+
+    public void stopLocationServiceForeGround(Context mContext) {
+        if (Utils.isServiceRunning(mContext, LocationService.class)) {
+            Intent intent = new Intent(mContext, LocationService.class);
+            intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
+            mContext.startService(intent);
         }
     }
 
@@ -110,6 +120,7 @@ public class ActivityStackManager {
         stopLocationService(mContext);
         if (!Utils.isServiceRunning(mContext, LocationService.class)) {
             Intent intent = new Intent(mContext, LocationService.class);
+            intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
             intent.putExtra(Constants.Extras.LOCATION_SERVICE_STATUS, STATUS);
             mContext.startService(intent);
         }
@@ -218,6 +229,11 @@ public class ActivityStackManager {
     public void startBankDetailsActivity(Context context, BankData data) {
         Intent intent = new Intent(context, BanksDetailsActivity.class);
         intent.putExtra(Constants.Extras.SELECTED_ITEM, data);
+        context.startActivity(intent);
+    }
+
+    public void startRegisterationActiivty(Context context) {
+        Intent intent = new Intent(context, RegistrationActivity.class);
         context.startActivity(intent);
     }
 

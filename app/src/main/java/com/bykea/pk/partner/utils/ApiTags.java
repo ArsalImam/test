@@ -25,6 +25,15 @@ public class ApiTags {
     //Bykea 2 (For Heat Map)
     public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
 
+    public static final String BASE_SERVER_URL_SIGN_UP = "http://34.210.28.53:5050";
+    public static final String BASE_SERVER_URL_SIGN_UP_X_API = "2151d3fd63118e4f7bcef56e8b488b079cbc8052afdb45252febdaa2b9868416";
+    public static final String SIGN_UP_SETTINGS = "/online_reg/setting";
+    public static final String SIGN_UP_ADD_NUMBER = "/online_reg/add";
+    public static final String SIGN_UP_UPLOAD_DOCUMENT = "/online_reg/image";
+    public static final String SIGN_UP_COMPLETE = "/online_reg/complete";
+    public static final String SIGN_UP_OPTIONAL_DATA = "/online_reg/optional";
+
+
     public static final String GOOGLE_API_BASE_URL = "https://maps.googleapis.com/";
     public static final String PLACES_GEOCODER_EXT_URL = "maps/api/geocode/json";
     public static final String EXTENDED_URL_GOOGLE_PLACE_AUTOCOMPLETE_API = "maps/api/place/autocomplete/json";

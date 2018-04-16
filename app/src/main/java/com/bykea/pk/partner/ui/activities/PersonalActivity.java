@@ -57,7 +57,7 @@ public class PersonalActivity extends BaseActivity {
         mCurrentActivity = this;
         setToolbar();
         hideToolbarLogo();
-        setToolbarTitle("Personal Details");
+        setToolbarTitle("Personal Details", "زاتی معلومات");
         setBackNavigation();
         setData();
     }

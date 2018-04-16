@@ -25,17 +25,6 @@
         android:background="@color/windowBackground">
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:text="Bank"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_bold.ttf" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/bankName"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -47,6 +36,18 @@
             android:textColor="@color/textColorSecondary"
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_regular.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingRight="@dimen/padding.normal"
+            android:text="بینک"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
     </LinearLayout>
 
@@ -61,17 +62,6 @@
         android:layout_marginTop="@dimen/_1sdp"
         android:background="@color/windowBackground">
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:maxLength="24"
-            android:paddingLeft="@dimen/padding.normal"
-            android:text="Bank Account"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="roboto_bold.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/bankAccountNumber"
@@ -86,6 +76,16 @@
             android:textSize="@dimen/textsize.normal"
             app:fontName="roboto_regular.ttf" />
 
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingRight="@dimen/padding.normal"
+            android:text="اکاؤنٹ نمبر"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
     </LinearLayout>
 
     <View
@@ -102,6 +102,7 @@
         android:textAllCaps="true"
         android:textColor="@color/textColorPrimary"
         android:textSize="@dimen/textsize.small.medium"
+        android:visibility="invisible"
         app:fontName="roboto_regular.ttf" />
 
     <com.bykea.pk.partner.widgets.FontTextView
@@ -112,10 +113,10 @@
         android:layout_marginRight="@dimen/margin.large"
         android:background="@drawable/button_green"
         android:gravity="center"
-        android:text="CALL"
+        android:text="تبدیلی کے لئے درخواست کریں"
         android:textColor="@color/buttonTextColor"
         android:textSize="@dimen/margin.normal"
-        app:fontName="roboto_bold.ttf" />
+        app:fontName="jameel_noori_nastaleeq.ttf" />
 
     <com.bykea.pk.partner.widgets.FontTextView
         android:layout_width="match_parent"
@@ -125,6 +126,7 @@
         android:text="Normal call charges may apply"
         android:textColor="@color/textColorPrimary"
         android:textSize="@dimen/textsize.small"
+        android:visibility="gone"
         app:fontName="roboto_regular.ttf" />
 
 </LinearLayout>

@@ -8,6 +8,11 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.SavedPlaces;
+import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
+import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
+import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
+import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
+import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
@@ -141,6 +146,7 @@ public class UserRepository {
         mUserCallback = handler;
         mRestRequestHandler.getMissedTripHistory(mContext, mDataCallback, pageNo);
     }
+/*
 
     public void requestUploadFile(Context context, IUserDataHandler handler, File file) {
         if (Connectivity.isConnectedFast(context)) {
@@ -149,6 +155,7 @@ public class UserRepository {
             mRestRequestHandler.uplaodDriverDocument(context, mDataCallback, file);
         }
     }
+*/
 
     public void uploadAudioFile(Context context, IUserDataHandler handler, File file) {
         if (Connectivity.isConnectedFast(context)) {
@@ -606,6 +613,36 @@ public class UserRepository {
         mRestRequestHandler.getSettings(mContext, mDataCallback);
     }
 
+    public void requestSignUpSettings(Context context, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestSignUpSettings(mContext, mDataCallback);
+    }
+
+    public void requestRegisterNumber(Context context, String phone, String city, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, mDataCallback);
+    }
+
+    public void postOptionalSignupData(Context context, String id, String email, String referenceNo, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.postOptionalSignupData(mContext, id, email, referenceNo, mDataCallback);
+    }
+/*
+    public void requestCompleteSignupData(Context context, String id, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestCompleteSignupData(mContext, id, mDataCallback);
+    }*/
+
+    public void uplodaDocumentImage(Context context, String id, String type, File imageFile, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.uplodaDocumentImage(mContext, id, type, imageFile, mDataCallback);
+    }
+
     public void requestBankAccounts(Context context, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
@@ -669,7 +706,7 @@ public class UserRepository {
             JSONObject properties = new JSONObject();
             properties.put("DriverID", pilotData.getId());
             properties.put("timestamp", Utils.getIsoDate());
-            properties.put("City", pilotData.getCity().getName());
+            properties.put("SignUpCity", pilotData.getCity().getName());
             properties.put("DriverName", pilotData.getFullName());
             properties.put("CurrentLocation", Utils.getCurrentLocation());
             properties.put("cih", AppPreferences.getCashInHands());
@@ -1062,6 +1099,21 @@ public class UserRepository {
                         break;
                     case "LocationResponse":
                         mUserCallback.onLocationUpdate((LocationResponse) object);
+                        break;
+                    case "SignUpSettingsResponse":
+                        mUserCallback.onSignUpSettingsResponse((SignUpSettingsResponse) object);
+                        break;
+                    case "SignUpAddNumberResponse":
+                        mUserCallback.onSignUpAddNumberResponse((SignUpAddNumberResponse) object);
+                        break;
+                    case "SignupUplodaImgResponse":
+                        mUserCallback.onSignUpImageResponse((SignupUplodaImgResponse) object);
+                        break;
+                    case "SignUpOptionalDataResponse":
+                        mUserCallback.onSignUpOptionalResponse((SignUpOptionalDataResponse) object);
+                        break;
+                    case "SignUpCompleteResponse":
+                        mUserCallback.onSignupCompleteResponse((SignUpCompleteResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

@@ -391,7 +391,7 @@ public class FeedbackActivity extends BaseActivity {
             properties.put("KM", callData.getDistanceCovered());
             properties.put("type", callData.getCallType());
             properties.put("timestamp", Utils.getIsoDate());
-            properties.put("City", AppPreferences.getPilotData().getCity().getName());
+            properties.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
 
             properties.put("PassengerName", callData.getPassName());
             properties.put("DriverName", AppPreferences.getPilotData().getFullName());

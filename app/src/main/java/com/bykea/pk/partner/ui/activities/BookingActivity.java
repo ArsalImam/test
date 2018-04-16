@@ -595,7 +595,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             properties.put("PassengerID", callData.getPassId());
             properties.put("DriverID", AppPreferences.getPilotData().getId());
             properties.put("timestamp", Utils.getIsoDate());
-            properties.put("City", AppPreferences.getPilotData().getCity().getName());
+            properties.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
             properties.put("PassengerName", callData.getPassName());
             properties.put("DriverName", AppPreferences.getPilotData().getFullName());
             properties.put("TripID", callData.getTripId());
@@ -639,7 +639,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             data.put("PassengerName", callData.getPassName());
             data.put("DriverName", AppPreferences.getPilotData().getFullName());
             data.put("type", callData.getCallType());
-            data.put("City", AppPreferences.getPilotData().getCity().getName());
+            data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
 
 
             if (TripStatus.ON_FINISH_TRIP.equalsIgnoreCase(status)) {
@@ -767,6 +767,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             progressDialogJobActivity.setMessage(getString(R.string.internet_error));
         }
         AppPreferences.setIsOnTrip(true);
+        ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
         mLocBearing = AppPreferences.getBearing() + "";
         mCurrentLocation = new Location("");
         mCurrentLocation.setLongitude(AppPreferences.getLongitude());
@@ -1588,7 +1589,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             data.put("DriverName", AppPreferences.getPilotData().getFullName());
                             data.put("CancelBeforeAcceptance", "No");
                             data.put("CancelReason", cancelReason);
-                            data.put("City", AppPreferences.getPilotData().getCity().getName());
+                            data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
 
                             Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data);
                         } catch (JSONException e) {

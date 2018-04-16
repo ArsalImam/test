@@ -2,6 +2,11 @@ package com.bykea.pk.partner.communication.rest;
 
 
 import com.bykea.pk.partner.models.data.SavedPlaces;
+import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
+import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
+import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
+import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
+import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
@@ -101,6 +106,48 @@ interface IRestClient {
                                        @Query("ctId") String city,
                                        @Query("s_ver") String settingsVersion);
 
+    @GET(ApiTags.SIGN_UP_SETTINGS)
+    Call<SignUpSettingsResponse> requestSignUpSettings(@Header("key") String key);
+
+    @FormUrlEncoded
+    @POST(ApiTags.SIGN_UP_ADD_NUMBER)
+    Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,
+                                                        @Field("phone") String phone,
+                                                        @Field("city") String city);
+
+    @FormUrlEncoded
+    @POST(ApiTags.SIGN_UP_COMPLETE)
+    Call<SignUpOptionalDataResponse> postOptionalSignupData(@Header("key") String key,
+                                                            @Field("_id") String id,
+                                                            @Field("email") String email,
+                                                            @Field("ref_number") String ref_number);
+
+    @FormUrlEncoded
+    @POST(ApiTags.SIGN_UP_OPTIONAL_DATA)
+    Call<SignUpOptionalDataResponse> postOptionalSignupDataJustRefNo(@Header("key") String key,
+                                                                     @Field("_id") String id,
+                                                                     @Field("ref_number") String ref_number);
+
+    @FormUrlEncoded
+    @POST(ApiTags.SIGN_UP_OPTIONAL_DATA)
+    Call<SignUpOptionalDataResponse> postOptionalSignupDataJustEmail(@Header("key") String key,
+                                                                     @Field("_id") String id,
+                                                                     @Field("email") String email);
+
+    @FormUrlEncoded
+    @POST(ApiTags.SIGN_UP_COMPLETE)
+    Call<SignUpCompleteResponse> requestCompleteSignupData(@Header("key") String key,
+                                                           @Field("_id") String id);
+
+
+    @Multipart
+    @POST(ApiTags.SIGN_UP_UPLOAD_DOCUMENT)
+    Call<SignupUplodaImgResponse> uplodaDocumentImage(@Header("key") String key,
+                                                      @Part("_id") RequestBody description,
+                                                      @Part("image_type") RequestBody image_type,
+                                                      @Part("image\"; filename=\"BykeaDocument.jpg\" ")
+                                                              RequestBody file);
+
 
     @FormUrlEncoded
     @POST(ApiTags.REGISTER_USER_API)
@@ -150,10 +197,6 @@ interface IRestClient {
     @POST(ApiTags.FORGOT_PASSWORD_API)
     Call<ForgotPasswordResponse> forgotPassword(@Field("phone") String phoneNumber);
 
-    @Multipart
-    @POST(ApiTags.UPLOAD_DRIVER_DOCUMENTS_API)
-    Call<UploadDocumentFile> uploadDocumentFile(@Part("file\"; filename=\"file.jpg\" ")
-                                                        RequestBody file);
 
     @Multipart
     @POST(ApiTags.UPLOAD_AUDIO_FILE_API)

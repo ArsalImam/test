@@ -456,7 +456,7 @@ public class HomeFragment extends Fragment {
 
         Notifications.removeAllNotifications(mCurrentActivity);
 
-        Utils.setCallIncomingState();
+        Utils.setCallIncomingStateWithoutRestartingService();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Keys.LOCATION_UPDATE_BROADCAST);
         mCurrentActivity.registerReceiver(myReceiver, intentFilter);
@@ -838,7 +838,7 @@ public class HomeFragment extends Fragment {
                                 ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
                             } else {
                                 AppPreferences.setDriverDestination(null);
-                                ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
+                                ActivityStackManager.getInstance().stopLocationServiceForeGround(mCurrentActivity);
                             }
                             setStatusBtn();
                         } else {

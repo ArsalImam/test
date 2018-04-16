@@ -1,5 +1,10 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
+import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
+import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
+import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
+import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
@@ -162,6 +167,11 @@ public interface IUserDataHandler {
 
     void onTopUpPassWallet(TopUpPassWalletResponse response);
     void onLocationUpdate(LocationResponse response);
+    void onSignUpSettingsResponse(SignUpSettingsResponse response);
+    void onSignUpAddNumberResponse(SignUpAddNumberResponse response);
+    void onSignUpImageResponse(SignupUplodaImgResponse response);
+    void onSignUpOptionalResponse(SignUpOptionalDataResponse response);
+    void onSignupCompleteResponse(SignUpCompleteResponse response);
 
     void onError(int errorCode, String errorMessage);
 }

@@ -27,7 +27,7 @@
     <dimen name="textsize.display3">@dimen/_46sdp</dimen>
     <dimen name="textsize.display4">112sp</dimen>
 
-
+    <dimen name="grid_line">0.5sp</dimen>
     <!--Views Width-->
     <dimen name="top.logo.width">@dimen/_70sdp</dimen>
     <dimen name="toolbar.view.width">@dimen/_56sdp</dimen>

@@ -37,7 +37,7 @@ public class MotorbikeActivity extends BaseActivity {
         mCurrentActivity = this;
         setToolbar();
         hideToolbarLogo();
-        setToolbarTitle("Motorbike Information");
+        setToolbarTitle("Motorbike", "موٹر سائیکل");
         setBackNavigation();
         setData();
     }

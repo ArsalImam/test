@@ -29,13 +29,8 @@ import butterknife.OnClick;
 
 public class ForgotPasswordActivity extends BaseActivity {
 
-
-    @BindView(R.id.backBtn)
-    ImageView backBtn;
     @BindView(R.id.phoneNumberEt)
     FontEditText phoneNumberEt;
-    @BindView(R.id.sendBtn)
-    Button sendBtn;
 
 
     @BindView(R.id.mainScrollView)
@@ -67,15 +62,15 @@ public class ForgotPasswordActivity extends BaseActivity {
             }
         });
         Utils.scrollToBottom(mainScrollView);
+        setBackNavigation();
+        setToolbarTitle("Forgot", "بھول گئے");
+        hideToolbarLogo();
     }
 
 
-    @OnClick({R.id.backBtn, R.id.sendBtn, R.id.phoneNumberEt})
+    @OnClick({R.id.sendBtn, R.id.phoneNumberEt})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.backBtn:
-                mCurrentActivity.onBackPressed();
-                break;
             case R.id.sendBtn:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt)) {
@@ -109,7 +104,7 @@ public class ForgotPasswordActivity extends BaseActivity {
                         }
                     });
                 } else {
-                    Dialogs.INSTANCE.showError(mCurrentActivity, sendBtn, commonResponse.getMessage());
+                    Utils.appToast(mCurrentActivity, commonResponse.getMessage());
                 }
             }
         }
@@ -117,7 +112,7 @@ public class ForgotPasswordActivity extends BaseActivity {
         @Override
         public void onError(int errorCode, String errorMessage) {
             Dialogs.INSTANCE.dismissDialog();
-            Dialogs.INSTANCE.showError(mCurrentActivity, sendBtn, errorMessage);
+            Utils.appToast(mCurrentActivity, errorMessage);
         }
     };
 }

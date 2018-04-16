@@ -5,6 +5,11 @@ import android.support.annotation.NonNull;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.SavedPlaces;
+import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
+import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
+import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
+import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
+import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
@@ -373,31 +378,32 @@ public class RestRequestHandler {
     }
 
     //THIS METHOD IS UPLOAD DRIVER DOCUMENT FILE
-    public void uplaodDriverDocument(Context context, final IResponseCallback onResponseCallback, File file) {
-        mContext = context;
-        mResponseCallBack = onResponseCallback;
-        mRestClient = RestClient.getClient(mContext);
-        Call<UploadDocumentFile> requestCall = mRestClient.uploadDocumentFile(Utils.convertFileToRequestBody(file));
-        requestCall.enqueue(new Callback<UploadDocumentFile>() {
-            @Override
-            public void onResponse(Response<UploadDocumentFile> response, Retrofit retrofit) {
-                if (null == response.body()) {
-                    mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
-                } else if (response.body().getCode() == HTTPStatus.OK ||
-                        response.body().getCode() == HTTPStatus.CREATED) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body().getCode(),
-                            response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                mResponseCallBack.onError(0, getErrorMessage(t));
-            }
-        });
-    }
+//    public void uplaodDriverDocument(Context context, final IResponseCallback onResponseCallback, File file) {
+//        mContext = context;
+//        mResponseCallBack = onResponseCallback;
+//        mRestClient = RestClient.getClient(mContext);
+//        Call<UploadDocumentFile> requestCall = mRestClient.uploadDocumentFile(Utils.convertStringToRequestBody(),
+//                Utils.convertStringToRequestBody(), Utils.convertFileToRequestBody(file));
+//        requestCall.enqueue(new Callback<UploadDocumentFile>() {
+//            @Override
+//            public void onResponse(Response<UploadDocumentFile> response, Retrofit retrofit) {
+//                if (null == response.body()) {
+//                    mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
+//                } else if (response.body().getCode() == HTTPStatus.OK ||
+//                        response.body().getCode() == HTTPStatus.CREATED) {
+//                    mResponseCallBack.onResponse(response.body());
+//                } else {
+//                    mResponseCallBack.onError(response.body().getCode(),
+//                            response.body().getMessage());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable t) {
+//                mResponseCallBack.onError(0, getErrorMessage(t));
+//            }
+//        });
+//    }
 
     //THIS METHOD IS TO GET SERVICE TYPES
     public void getServiceTypes(Context context, final IResponseCallback onResponseCallback) {
@@ -445,6 +451,121 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
+            }
+        });
+    }
+
+    public void requestSignUpSettings(Context context, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getBykeaSignUpApiClient();
+        Call<SignUpSettingsResponse> requestCall = mRestClient.requestSignUpSettings(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API);
+        requestCall.enqueue(new Callback<SignUpSettingsResponse>() {
+            @Override
+            public void onResponse(Response<SignUpSettingsResponse> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(), mContext.getString(R.string.error_try_again));
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
+    }
+
+    public void requestRegisterNumber(Context context, String phone, String city, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getBykeaSignUpApiClient();
+        Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
+                phone, city);
+        requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
+            @Override
+            public void onResponse(Response<SignUpAddNumberResponse> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
+    }
+
+
+    public void postOptionalSignupData(Context context, String id, String email, String referenceNo, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getBykeaSignUpApiClient();
+        Call<SignUpOptionalDataResponse> requestCall = mRestClient.postOptionalSignupData(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
+                id, StringUtils.isNotBlank(email) ? email : null, StringUtils.isNotBlank(referenceNo) ? referenceNo : null);
+        requestCall.enqueue(new Callback<SignUpOptionalDataResponse>() {
+            @Override
+            public void onResponse(Response<SignUpOptionalDataResponse> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
+    }
+
+    public void requestCompleteSignupData(Context context, String id, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getBykeaSignUpApiClient();
+        Call<SignUpCompleteResponse> requestCall = mRestClient.requestCompleteSignupData(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
+                id);
+        requestCall.enqueue(new Callback<SignUpCompleteResponse>() {
+            @Override
+            public void onResponse(Response<SignUpCompleteResponse> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
+    }
+
+    public void uplodaDocumentImage(Context context, String id, String type, File file, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getBykeaSignUpApiClient();
+        Call<SignupUplodaImgResponse> requestCall = mRestClient.uplodaDocumentImage(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
+                Utils.convertStringToRequestBody(id), Utils.convertStringToRequestBody(type), Utils.convertFileToRequestBody(file));
+        requestCall.enqueue(new Callback<SignupUplodaImgResponse>() {
+            @Override
+            public void onResponse(Response<SignupUplodaImgResponse> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
     }

@@ -21,6 +21,7 @@ class RestClient {
     private static IRestClient retrofitCalls;
     private static IRestClient retrofitGoogleApiCalls;
     private static IRestClient bykea2retrofitCalls;
+    private static IRestClient bykeaSignUpretrofitCalls;
 
 
     static IRestClient getClient(Context context) {
@@ -119,6 +120,34 @@ class RestClient {
             bykea2retrofitCalls = client.create(IRestClient.class);
         }
         return bykea2retrofitCalls;
+    }
+
+    static IRestClient getBykeaSignUpApiClient() {
+        if (bykeaSignUpretrofitCalls == null) {
+            OkHttpClient okHttpClient = new OkHttpClient();
+
+            // creating an SSLSocketFactory that uses our TrustManager
+//            SSLContext sslContext = Utils.getSSLContext(context);
+//            if (sslContext != null) {
+//                okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
+//            }
+
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
+                    HttpLoggingInterceptor.Level.NONE);
+
+
+            okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.interceptors().add(loggingInterceptor);
+            Retrofit.Builder builder = new Retrofit.Builder();
+            Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL_SIGN_UP)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            bykeaSignUpretrofitCalls = client.create(IRestClient.class);
+        }
+        return bykeaSignUpretrofitCalls;
     }
 
 }

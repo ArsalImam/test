@@ -11,6 +11,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.DashedLine;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -29,7 +30,7 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
     @BindView(R.id.endAddressTv)
     FontTextView endAddressTv;
     @BindView(R.id.nameTv)
-    FontTextView nameTv;
+    AutoFitFontTextView nameTv;
     @BindView(R.id.timeTv)
     FontTextView timeTv;
     @BindView(R.id.totalAmountTv)
