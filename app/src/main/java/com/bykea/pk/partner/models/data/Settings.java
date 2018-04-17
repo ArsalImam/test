@@ -67,7 +67,7 @@ public class Settings {
     }
 
     public String getTerms() {
-        return StringUtils.isNotBlank(terms) ? terms : "https://www.bykea.com/terms.html";
+        return StringUtils.isNotBlank(terms) ? terms : "https://www.bykea.com/partner-terms";
     }
 
     public String getApp_version() {

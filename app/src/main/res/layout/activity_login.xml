@@ -30,8 +30,8 @@
             android:layout_width="@dimen/_190sdp"
             android:layout_height="@dimen/_90sdp"
             android:layout_gravity="center"
-            android:gravity="center"
             android:layout_marginTop="@dimen/_10sdp"
+            android:gravity="center"
             android:src="@drawable/layer_2"
             android:visibility="visible" />
 
@@ -173,6 +173,31 @@
 
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin.small"
+            android:layout_marginBottom="@dimen/margin.small"
+            android:padding="@dimen/padding.tiny"
+            android:text="میں بائیکیا کے  شرائط و ضوابط سے اتفاق کرتا ہوں"
+            android:textColor="#273bff"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <ImageView
+            android:id="@+id/loginBtn"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/margin.normal"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:background="@drawable/button_green"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/correct_symbol" />
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/forgotPassTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -184,18 +209,6 @@
             android:textSize="@dimen/_14sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
-        <ImageView
-            android:id="@+id/loginBtn"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/margin.normal"
-            android:layout_marginRight="@dimen/margin.normal"
-            android:layout_marginTop="@dimen/margin.normal"
-            android:background="@drawable/button_green"
-            android:padding="@dimen/_10sdp"
-            android:src="@drawable/correct_symbol" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="0.9dp"
@@ -203,7 +216,7 @@
             android:layout_marginRight="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_18sdp"
             android:background="@color/secondaryColorLight"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
 
         <LinearLayout

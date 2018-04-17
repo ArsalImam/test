@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Your Photo"
-            android:textColor="@color/textColorPrimary1"
+            android:textColor="#828282"
             android:textSize="@dimen/_12sdp"
             app:fontName="roboto_regular.ttf" />
 

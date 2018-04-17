@@ -85,6 +85,7 @@ public class LoginActivity extends BaseActivity {
 
     private void validateFileds() {
         if (StringUtils.isNotBlank(pinCodeTv.getText().toString())
+                && pinCodeTv.getText().length() == 4
                 && Utils.isValidNumber(phoneNumberEt)) {
             enableBookingBtn();
         } else {
@@ -92,7 +93,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.loginBtn, R.id.forgotPassTv, R.id.registerBtn})
+    @OnClick({R.id.loginBtn, R.id.forgotPassTv, R.id.registerBtn, R.id.tvTerms})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.loginBtn:
@@ -116,6 +117,15 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.registerBtn:
                 ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
+                break;
+            case R.id.tvTerms:
+                if (AppPreferences.getSettings() != null) {
+                    Utils.startCustomWebViewActivity(mCurrentActivity,
+                            AppPreferences.getSettings().getSettings().getTerms(), "Terms of Services");
+                } else {
+                    Utils.startCustomWebViewActivity(mCurrentActivity,
+                            "https://www.bykea.com/partner-terms", "Terms of Services");
+                }
                 break;
         }
     }

@@ -107,6 +107,9 @@ interface IRestClient {
                                        @Query("ctId") String city,
                                        @Query("s_ver") String settingsVersion);
 
+    @GET(ApiTags.GET_SETTINGS)
+    Call<SettingsResponse> getSettings(@Query(Fields.USER_TYPE) String userTyp);
+
     @GET(ApiTags.SIGN_UP_SETTINGS)
     Call<SignUpSettingsResponse> requestSignUpSettings(@Header("key") String key);
 

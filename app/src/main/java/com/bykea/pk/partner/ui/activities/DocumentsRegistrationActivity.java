@@ -132,7 +132,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         checkPermissions();
         initAdapter();
 
-        etEmail.setOnFocusChangeListener(mFocusChangedListener);
+        /*etEmail.setOnFocusChangeListener(mFocusChangedListener);
         phoneNumberEt.setOnFocusChangeListener(mFocusChangedListener);
         mainScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
@@ -148,7 +148,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                     isScrollViewAtBottom = false;
                 }
             }
-        });
+        });*/
 
     }
 
@@ -165,7 +165,6 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                     }
                 }
             }
-
         }
     };
 
@@ -520,7 +519,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         mDocumnetList.get(selectedDocument).setUploaded(false);
         mAdapter.notifyItemChanged(selectedDocument);
 
-//        logFileSize(actualImage);
+        logFileSize(actualImage);
         String imgname = "BykeaDocument" + Constants.UPLOAD_IMG_EXT;
         String path1 = mCurrentActivity.getFilesDir().toString();
         File file = new File(path1, imgname);
@@ -534,7 +533,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        logFileSize(file);
+        logFileSize(file);
         imagPath = file.getAbsolutePath();
         startUploadImageTask(file);
     }

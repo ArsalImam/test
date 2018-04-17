@@ -53,12 +53,12 @@ public class SplashActivity extends BaseActivity {
 
 
         Utils.setOneSignalPlayerId();
+        if (AppPreferences.getSettings() == null
+                || AppPreferences.getSettings().getSettings() == null
+                || AppPreferences.getSettings().getRegion_services() == null) {
+            repository.requestSettings(mCurrentActivity, handler);
+        }
         if (AppPreferences.isLoggedIn()) {
-            if (AppPreferences.getSettings() == null
-                    || AppPreferences.getSettings().getSettings() == null
-                    || AppPreferences.getSettings().getRegion_services() == null) {
-                repository.requestSettings(mCurrentActivity, handler);
-            }
             if (Utils.isFcmIdUpdateRequired(true)) {
                 repository.updateRegid(this, handler);
             }

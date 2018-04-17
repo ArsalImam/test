@@ -58,6 +58,7 @@ import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
@@ -264,7 +265,15 @@ public class Utils {
         String regId = AppPreferences.getRegId();
         double currentLat = AppPreferences.getLatitude();
         double currentLng = AppPreferences.getLongitude();
+        SettingsData settingsData = AppPreferences.getSettings();
         AppPreferences.clear();
+
+        if (settingsData != null) {
+            AppPreferences.saveSettingsData(settingsData);
+            if (settingsData.getSettings().getCih_range() != null) {
+                AppPreferences.setCashInHandsRange(settingsData.getSettings().getCih_range());
+            }
+        }
         AppPreferences.setRegId(regId);
         AppPreferences.saveLocation(currentLat, currentLng);
 //        WebIO.getInstance().clearConnectionData();
@@ -312,8 +321,8 @@ public class Utils {
     }
 
     public static String getImageLink(String link) {
-        Utils.redLog("Image Url", "http://res.cloudinary.com/bykea/image/upload/" + Keys.NORMAL_IMAGE + link);
-        return "http://res.cloudinary.com/bykea/image/" + Keys.NORMAL_IMAGE + link;
+        Utils.redLog("Image Url", "http://res.cloudinary.com/bykea/image/upload/" + link);
+        return "http://res.cloudinary.com/bykea/image/" + link;
     }
 
     public static String getFileLink(String name) {

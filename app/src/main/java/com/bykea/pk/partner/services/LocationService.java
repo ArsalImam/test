@@ -86,6 +86,7 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        createForegroundNotification();
         Utils.redLog("LocServ", "onCreate");
     }
 
@@ -135,12 +136,12 @@ public class LocationService extends Service {
                 STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
             }
             init();
-            createForegroundNotification();
         } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
             stopForegroundService();
         } else if (Constants.Actions.ON_NOTIFICATION_CLICK.equals(intent.getAction())) {
             //TODO
         }
+
 //        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
 //            STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
 //        }

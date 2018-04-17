@@ -610,7 +610,11 @@ public class UserRepository {
     public void requestSettings(Context context, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.getSettings(mContext, mDataCallback);
+        if (AppPreferences.isLoggedIn()) {
+            mRestRequestHandler.getSettings(mContext, mDataCallback);
+        } else {
+            mRestRequestHandler.getSettingsBeforeLogin(mContext, mDataCallback);
+        }
     }
 
     public void requestSignUpSettings(Context context, IUserDataHandler handler) {
