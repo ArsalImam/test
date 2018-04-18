@@ -142,6 +142,8 @@ public class FeedbackActivity extends BaseActivity {
         if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
+
+        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
     }
 
     @OnTextChanged(value = R.id.receivedAmountEt,

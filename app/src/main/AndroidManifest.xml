@@ -40,7 +40,9 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         tools:node="merge">
-        <activity android:name=".ui.activities.LoginActivity" />
+        <activity
+            android:name=".ui.activities.LoginActivity"
+            android:theme="@style/NewTheme" />
         <activity
             android:name=".ui.activities.HomeActivity"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
@@ -173,8 +175,12 @@
         <activity android:name=".ui.activities.ForgotPasswordActivity" />
         <activity android:name=".ui.activities.SelectPlaceActivity" />
         <activity android:name=".ui.activities.SavePlaceActivity" />
-        <activity android:name=".ui.activities.RegistrationActivity" />
-        <activity android:name=".ui.activities.DocumentsRegistrationActivity" />
+        <activity
+            android:name=".ui.activities.RegistrationActivity"
+            android:theme="@style/NewTheme" />
+        <activity
+            android:name=".ui.activities.DocumentsRegistrationActivity"
+            android:theme="@style/NewTheme" />
     </application>
 
 </manifest>

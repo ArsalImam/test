@@ -838,7 +838,7 @@ public class HomeFragment extends Fragment {
                                 ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
                             } else {
                                 AppPreferences.setDriverDestination(null);
-                                ActivityStackManager.getInstance().stopLocationServiceForeGround(mCurrentActivity);
+                                ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
                             }
                             setStatusBtn();
                         } else {

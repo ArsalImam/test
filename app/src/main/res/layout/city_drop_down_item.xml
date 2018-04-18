@@ -24,7 +24,7 @@
             android:gravity="left"
             android:text="Cook"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_14sdp"
+            android:textSize="@dimen/_18sdp"
             app:fontName="roboto_light.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
@@ -33,11 +33,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:paddingEnd="@dimen/_28sdp"
-            android:paddingRight="@dimen/_28sdp"
             android:text="نوکرئ"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_14sdp"
+            android:textSize="@dimen/_18sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
     </LinearLayout>

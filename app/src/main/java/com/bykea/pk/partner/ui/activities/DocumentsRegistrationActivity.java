@@ -1,14 +1,11 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,10 +18,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DocumentsData;
 import com.bykea.pk.partner.models.data.Images;
-import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpUserData;
@@ -38,18 +35,14 @@ import com.bykea.pk.partner.ui.helpers.adapters.DocumentsGridAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Dialogs_new;
-import com.bykea.pk.partner.utils.FileUtils;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
-import com.bykea.pk.partner.utils.PathUtil;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.google.android.youtube.player.YouTubePlayerFragment;
-import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,7 +73,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     NestedScrollView mainScrollView;
 
     private boolean isImgCompressing;
-    private String imagPath;
+    //    private String imagPath;
     private String DRIVER_ID;
     private String BASE_IMG_URL;
 
@@ -89,7 +82,11 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     private String VIDEO_ID;
     private YouTubePlayerFragment playerFragment;
     private UserRepository mUserRepository;
-    private SignUpUserData signUpData;
+    private SignUpUserData signUpData;//todo save insta
+
+    private DocumentsGridAdapter mAdapter;
+//    private int selectedDocument;
+
 
     public DocumentsRegistrationActivity() {
         // Required empty public constructor
@@ -98,11 +95,16 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        if (BuildConfig.DEBUG) {
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+//            Utils.redLog("DocumentsRegistrationActivity", "onCreate");
+//        }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         setContentView(R.layout.activity_documents_registeration);
         ButterKnife.bind(this);
         mUserRepository = new UserRepository();
         mCurrentActivity = this;
+        mUserRepository.setCallback(mCallback);
         mCurrentActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         initView();
     }
@@ -130,11 +132,11 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             }
         }
         checkPermissions();
-        initAdapter();
+        initAdapter(getDocumentsData());
 
-        /*etEmail.setOnFocusChangeListener(mFocusChangedListener);
-        phoneNumberEt.setOnFocusChangeListener(mFocusChangedListener);
-        mainScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+//        etEmail.setOnFocusChangeListener(mFocusChangedListener);
+//        phoneNumberEt.setOnFocusChangeListener(mFocusChangedListener);
+        /*mainScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 // We take the last son in the scrollview
@@ -168,18 +170,16 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         }
     };
 
-    private ArrayList<DocumentsData> mDocumnetList = new ArrayList<>();
-    private DocumentsGridAdapter mAdapter;
-    private int selectedDocument;
 
-    private void initAdapter() {
-        if (mDocumnetList.size() == 0) {
-            mDocumnetList = getDocumentsData();
-            mAdapter = new DocumentsGridAdapter(mCurrentActivity, mDocumnetList, new DocumentsGridAdapter.OnItemClickListener() {
+    private void initAdapter(ArrayList<DocumentsData> list) {
+        if (DocumentsGridAdapter.getmInstanceForNullCheck() == null) {
+            mAdapter = DocumentsGridAdapter.getInstance();
+            mAdapter.init(list, new DocumentsGridAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClickListener(int position, int prevPosition) {
                     if (!isImgCompressing) {
-                        selectedDocument = position;
+                        mAdapter.setSelectedItemIndex(position);
+//                        selectedDocument = position;
                         startPickImageDialog();
                     }
                 }
@@ -189,11 +189,12 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
                 }
             });
-
-            initRv();
         } else {
-            initRv();
+            mAdapter = DocumentsGridAdapter.getInstance();
         }
+
+        initRv();
+
     }
 
 
@@ -216,6 +217,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setAdapter(mAdapter);
+        Utils.redLog("DocumentsRegistration", "initRv -> adapter = " + mAdapter.toString());
     }
 
     private static final String TYPE_SELFIE = "selfie";
@@ -267,9 +269,15 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.ytIcon, R.id.nextBtn})
+    @OnClick({R.id.ytIcon, R.id.nextBtn, R.id.rlRef, R.id.rlEmail})
     public void onClick(View view) {
         switch (view.getId()) {
+            /*case R.id.rlEmail:
+            case R.id.rlRef:
+                if (!isScrollViewAtBottom) {
+                    Utils.scrollToBottom(mainScrollView);
+                }
+                break;*/
             case R.id.ytIcon:
                 Utils.playVideo(mCurrentActivity, VIDEO_ID, ivThumbnail, ytIcon, playerFragment);
                 break;
@@ -284,7 +292,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
     private boolean isValidData() {
         boolean valid = true;
-        for (DocumentsData data : mDocumnetList) {
+        for (DocumentsData data : mAdapter.getItemsList()) {
             if (!data.isUploaded()) {
                 valid = false;
                 break;
@@ -307,15 +315,18 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         Dialogs.INSTANCE.showSignUpSuccessDialog(mCurrentActivity, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Dialogs.INSTANCE.dismissDialog();
+//                Dialogs.INSTANCE.dismissDialog();
                 mCurrentActivity.finish();
                 ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
+                    DocumentsGridAdapter.getInstance().resetTheInstance();
+                }
             }
         });
     }
 
     private File createImageFile() throws IOException {
-        String imageFileName = "BykeaDocument";
+        String imageFileName = "BykeaDocument" + mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType();
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -324,7 +335,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        imagPath = image.getAbsolutePath();
+        mAdapter.setImgPath(image.getAbsolutePath());
         return image;
     }
 
@@ -335,7 +346,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             public void onClick(View v) {
                 Dialogs.INSTANCE.dismissDialog();
                 try {
-                    Utils.startCameraByIntent(mCurrentActivity, createImageFile());
+                    mAdapter.getItem(mAdapter.getSelectedItemIndex()).setImageUri(Utils.startCameraByIntent(mCurrentActivity, createImageFile()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -372,18 +383,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                 InputStream istream = null;
                 try {
                     istream = mCurrentActivity.getContentResolver().openInputStream(data.getData());
-
-                    /*Uri photo = data.getData();
-                    int oritation = Utils.getOrientation(mCurrentActivity, photo);
-                    Utils.redLog("file orietation: ", "" + oritation);
-                    Matrix matrix = new Matrix();
-
-                    if (oritation > 0) {
-                        matrix.postRotate(oritation);
-                    }*/
-//                    Bitmap map1 = BitmapFactory.decodeStream(istream);
-
-//                    compressImage(map1);
+                    mAdapter.getItem(mAdapter.getSelectedItemIndex()).setImageUri(data.getData());
                     if (istream != null) {
 
                         File file = new File(getCacheDir(), "cacheFileAppeal.srl");
@@ -407,65 +407,16 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
                         compressImage(file);
                     }
-
-                    /*Uri photo = data.getData();
-                    File imgFile = FileUtils.getFile(mCurrentActivity, photo);
-                    if (imgFile.exists()) {
-                        compressImage(imgFile);
-                    }*/
-
-
-                    /*map1 = Bitmap.createScaledBitmap(map1, 600, 600, true);
-
-                    map1 = Bitmap.createBitmap(map1, 0, 0, 600, 600, matrix,
-                            true);
-                    FileOutputStream fos = new FileOutputStream(file);
-                    map1.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                    map1.recycle();
-                    if (istream != null) {
-                        istream.close();
-                    }
-                    fos.close();
-                    imagPath = file.getAbsolutePath();
-                    if (photo != null) {
-                        startUploadImageTask(imagPath);
-                    } else {
-                        Utils.appToast(mCurrentActivity, getString(R.string.error_try_again));
-                    }*/
                 } catch (Exception e) {
                     e.printStackTrace();
                     Utils.appToast(mCurrentActivity, getString(R.string.error_try_again));
                 }
             } else if (requestCode == Constants.REQUEST_CAMERA) {
                 try {
-                    /*Matrix matrix = new Matrix();
-                    matrix.postRotate(90);
-                    Bundle extra = data.getExtras();
-                    Bitmap map1 = null;
-                    if (extra != null) {
-                        map1 = (Bitmap) extra.get("data");
-                    }*/
-                    File imgFile = new File(imagPath);
+                    File imgFile = new File(mAdapter.getImgPath());
                     if (imgFile.exists()) {
                         compressImage(imgFile);
                     }
-
-                    /*if (map1 != null) {
-                        map = Bitmap.createScaledBitmap(map1, 400, 400, true);
-                    }
-                    FileOutputStream fos = new FileOutputStream(file);
-                    if (map != null) {
-                        map.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                    }
-                    fos.close();
-                    if (map != null) {
-                        map.recycle();
-                    }
-                    imagPath = file.getAbsolutePath();
-                    //                        mCurrentActivity.getUser().setLocalImage(file.getAbsolutePath());
-//                        profileImageView.setImageBitmap(map1);
-                    startUploadImageTask(imagPath);*/
-
                 } catch (Exception e) {
                     e.printStackTrace();
                     Utils.appToast(mCurrentActivity, getString(R.string.error_try_again));
@@ -476,19 +427,12 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (StringUtils.isNotBlank(imagPath)) {
-            outState.putString("photopath", imagPath);
-        }
-        super.onSaveInstanceState(outState);
-    }
 
    /* private void compressImage(Bitmap bitmap) {
         isImgCompressing = true;
-        mDocumnetList.get(selectedDocument).setUploading(true);
-        mDocumnetList.get(selectedDocument).setUploaded(false);
-        mAdapter.notifyItemChanged(selectedDocument);
+        mDocumnetList.get( mAdapter.getSelectedItemIndex()).setUploading(true);
+        mDocumnetList.get( mAdapter.getSelectedItemIndex()).setUploaded(false);
+        mAdapter.notifyItemChanged( mAdapter.getSelectedItemIndex());
 
         String imgname = "BykeaDocument" + ".webp";
         String path1 = mCurrentActivity.getFilesDir().toString();
@@ -515,11 +459,11 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
     private void compressImage(File actualImage) {
         isImgCompressing = true;
-        mDocumnetList.get(selectedDocument).setUploading(true);
-        mDocumnetList.get(selectedDocument).setUploaded(false);
-        mAdapter.notifyItemChanged(selectedDocument);
+        mAdapter.getItem(mAdapter.getSelectedItemIndex()).setUploading(true);
+        mAdapter.getItem(mAdapter.getSelectedItemIndex()).setUploaded(false);
+        mAdapter.notifyItemChanged(mAdapter.getSelectedItemIndex());
 
-        logFileSize(actualImage);
+//        logFileSize(actualImage);
         String imgname = "BykeaDocument" + Constants.UPLOAD_IMG_EXT;
         String path1 = mCurrentActivity.getFilesDir().toString();
         File file = new File(path1, imgname);
@@ -533,8 +477,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logFileSize(file);
-        imagPath = file.getAbsolutePath();
+//        logFileSize(file);
+        mAdapter.setImgPath(file.getAbsolutePath());
         startUploadImageTask(file);
     }
 
@@ -550,16 +494,32 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     }
 
     private void startUploadImageTask(File file) {
+        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> adapter = " + mAdapter.toString());
         mUserRepository.uplodaDocumentImage(mCurrentActivity, DRIVER_ID,
-                mDocumnetList.get(selectedDocument).getType(), file, mCallback);
+                mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType(), file, mCallback);
         isImgCompressing = false;
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        if (StringUtils.isNotBlank(imagPath)) {
+//            outState.putString("photopath", imagPath);
+//        }
+        outState.putInt("selectedDocument", mAdapter.getSelectedItemIndex());
+        outState.putParcelableArrayList("mDocumnetList", mAdapter.getItemsList());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("photopath")) {
-                imagPath = savedInstanceState.getString("photopath");
+//                imagPath = savedInstanceState.getString("photopath");
+//                selectedDocument = savedInstanceState.getInt("selectedDocument");
+//                ArrayList<DocumentsData> list = savedInstanceState.getParcelableArrayList("mDocumnetList");
+//                mAdapter.setItemsList(list);
+//                initAdapter(list);
 //                if (StringUtils.isNotBlank(imagPath)) {
 //                    Picasso.with(mCurrentActivity).load(imagPath).placeholder(R.drawable.place_holder)
 //                            .into(profileImageView);
@@ -571,9 +531,9 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     }
 
     private int getSelectedDocument(String type) {
-        int index = selectedDocument;
-        for (int i = 0; i < mDocumnetList.size(); i++) {
-            if (type.equalsIgnoreCase(mDocumnetList.get(i).getType())) {
+        int index = mAdapter.getSelectedItemIndex();
+        for (int i = 0; i < mAdapter.getItemsList().size(); i++) {
+            if (type.equalsIgnoreCase(mAdapter.getItem(i).getType())) {
                 index = i;
                 break;
             }
@@ -604,10 +564,13 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
                         int currentSelectedDocument = getSelectedDocument(response.getType());
-                        mDocumnetList.get(currentSelectedDocument).setUploaded(true);
-                        mDocumnetList.get(currentSelectedDocument).setUploading(false);
-                        mDocumnetList.get(currentSelectedDocument).setImage(getCompleteImgUrl(response.getType(), response.getLink()));
+                        mAdapter.getItem(currentSelectedDocument).setUploaded(true);
+                        mAdapter.getItem(currentSelectedDocument).setUploading(false);
+                        mAdapter.getItem(currentSelectedDocument).setImage(getCompleteImgUrl(response.getType(), response.getLink()));
                         mAdapter.notifyItemChanged(currentSelectedDocument);
+                        Utils.redLog("DocumentsRegistration", "onSignUpImageResponse -> adapter = " + mAdapter.toString());
+//                        initAdapter(mAdapter.getItemsList());
+//                        mAdapter.notifyDataSetChanged();
                     }
                 });
             }
@@ -617,8 +580,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         public void onError(int errorCode, String errorMessage) {
             if (mCurrentActivity != null) {
                 Dialogs.INSTANCE.dismissDialog();
-                mDocumnetList.get(selectedDocument).setUploading(false);
-                mAdapter.notifyItemChanged(selectedDocument);
+                mAdapter.getItem(mAdapter.getSelectedItemIndex()).setUploading(false);
+                mAdapter.notifyItemChanged(mAdapter.getSelectedItemIndex());
                 Utils.appToast(mCurrentActivity, errorMessage);
             }
         }

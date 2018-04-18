@@ -32,7 +32,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_10sdp"
             android:gravity="center"
-            android:src="@drawable/layer_2"
+            android:src="@drawable/layer_3"
             android:visibility="visible" />
 
         <RelativeLayout

@@ -3,6 +3,8 @@ package com.bykea.pk.partner.utils;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,6 +16,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -266,8 +269,13 @@ public class Utils {
         double currentLat = AppPreferences.getLatitude();
         double currentLng = AppPreferences.getLongitude();
         SettingsData settingsData = AppPreferences.getSettings();
+        SignUpSettingsResponse signUpSettingsResponse = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
+
         AppPreferences.clear();
 
+        if (signUpSettingsResponse != null) {
+            AppPreferences.setObjectToSharedPref(signUpSettingsResponse);
+        }
         if (settingsData != null) {
             AppPreferences.saveSettingsData(settingsData);
             if (settingsData.getSettings().getCih_range() != null) {
@@ -1900,21 +1908,23 @@ public class Utils {
     }
 
 
-    public static void startCameraByIntent(Activity act, File photoFile) {
+    public static Uri startCameraByIntent(Activity act, File photoFile) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+        Uri photoURI = null;
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(act.getPackageManager()) != null) {
             // Create the File where the photo should go
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(act,
+                photoURI = FileProvider.getUriForFile(act,
                         "com.example.android.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 act.startActivityForResult(takePictureIntent, Constants.REQUEST_CAMERA);
             }
         }
+        return photoURI;
     }
 
 
@@ -1954,6 +1964,27 @@ public class Utils {
             size = f.length();
         }
         return size;
+    }
+
+    public static String getChannelID() {
+        String chanelId = "FG_NOTI_BYKEA_P";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            String channelId = "bykea_p_channel_id";
+            CharSequence channelName = "Bykea Partner Notification Channel";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            chanelId = notificationChannel.getId();
+        }
+        return chanelId;
     }
 
 }

@@ -914,6 +914,10 @@ public class UserRepository {
     }
 
 
+    public void setCallback(IUserDataHandler handler) {
+        mUserCallback = handler;
+    }
+
     private IResponseCallback mDataCallback = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {
@@ -1105,7 +1109,10 @@ public class UserRepository {
                         mUserCallback.onLocationUpdate((LocationResponse) object);
                         break;
                     case "SignUpSettingsResponse":
-                        mUserCallback.onSignUpSettingsResponse((SignUpSettingsResponse) object);
+                        SignUpSettingsResponse response = (SignUpSettingsResponse) object;
+                        response.setTimeStamp(System.currentTimeMillis());
+                        AppPreferences.setObjectToSharedPref(response);
+                        mUserCallback.onSignUpSettingsResponse(response);
                         break;
                     case "SignUpAddNumberResponse":
                         mUserCallback.onSignUpAddNumberResponse((SignUpAddNumberResponse) object);

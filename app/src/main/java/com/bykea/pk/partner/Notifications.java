@@ -25,6 +25,7 @@ import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,10 +55,6 @@ public class Notifications {
         this.mContext = mContext;
     }
 
-    public void showNotificationMessage(String title, String message, String timeStamp, Intent intent) {
-        showNotificationMessage(title, message, timeStamp, intent, null);
-    }
-
     public static void removeAllNotifications(Context context) {
         try {
             NotificationManager nMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -67,96 +64,6 @@ public class Notifications {
         }
     }
 
-
-    public void showNotificationMessage(final String title, final String message, final String timeStamp, Intent intent, String imageUrl) {
-        // Check for empty push message
-        if (StringUtils.isBlank(message))
-            return;
-
-
-        // notification icon
-        final int icon = R.mipmap.ic_launcher;
-
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        mContext,
-                        0,
-                        intent,
-                        PendingIntent.FLAG_CANCEL_CURRENT
-                );
-
-        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                mContext);
-
-        final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                + "://" + mContext.getPackageName() + R.raw.notification_sound);
-
-        if (!StringUtils.isBlank(imageUrl)) {
-
-            if (imageUrl != null && imageUrl.length() > 4 && Patterns.WEB_URL.matcher(imageUrl).matches()) {
-
-                Bitmap bitmap = getBitmapFromURL(imageUrl);
-
-                if (bitmap != null) {
-                    showBigNotification(bitmap, mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-                } else {
-                    showSmallNotification(mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-                }
-            }
-        } else {
-            showSmallNotification(mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-            playNotificationSound();
-        }
-    }
-
-
-    private void showSmallNotification(NotificationCompat.Builder mBuilder, int icon,
-                                       String title, String message, String timeStamp,
-                                       PendingIntent resultPendingIntent, Uri alarmSound) {
-
-        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-
-        inboxStyle.addLine(message);
-
-        Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
-                .setAutoCancel(true)
-                .setContentTitle(title)
-                .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
-                .setStyle(inboxStyle)
-                .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
-                .setContentText(message)
-                .build();
-
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, notification);
-    }
-
-    private void showBigNotification(Bitmap bitmap, NotificationCompat.Builder mBuilder, int icon, String title, String message, String timeStamp, PendingIntent resultPendingIntent, Uri alarmSound) {
-        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
-        bigPictureStyle.setBigContentTitle(title);
-        bigPictureStyle.setSummaryText(Html.fromHtml(message).toString());
-        bigPictureStyle.bigPicture(bitmap);
-        Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
-                .setAutoCancel(true)
-                .setContentTitle(title)
-                .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
-                .setStyle(bigPictureStyle)
-                .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
-                .setContentText(message)
-                .build();
-
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID_BIG_IMAGE, notification);
-    }
 
     /**
      * Downloading push notification image before displaying it in
@@ -234,38 +141,6 @@ public class Notifications {
         return 0;
     }
 
-    /*public static void createChatNotification(Context context, ReceivedMessage receivedMessage) {
-
-        if (receivedMessage.getData().getMessage().contains(".wav")) {
-            receivedMessage.getData().setMessage("Voice Message");
-        }
-
-        NotificationManager nManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Uri soundUri = Uri.parse("android.resource://"
-                + context.getPackageName() + "/"
-                + R.raw.chat_alert_sound);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                context)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(context.getString(R.string.myAppName))
-                .setContentText("" + receivedMessage.getData().getMessage())
-                .setSound(soundUri).setAutoCancel(true);
-
-        Intent targetIntent = new Intent(context, ChatActivity.class);
-        targetIntent.putExtra(Tags.CHAT_CONVERSATION_ID, receivedMessage.getData().getConversationId());
-        targetIntent.putExtra("chat", true);
-
-        PendingIntent contentIntent = PendingIntent       //  06-03-2015 14:45 oclock
-                .getActivity(context, 0,
-                        targetIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(contentIntent);
-
-        nManager.notify(Constants.CHAT_NOTIFICATION_ID, builder.build());
-    }*/
-
     public static void createNotification(Context context, String message, int id) {
 
         NotificationManager nManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -275,7 +150,7 @@ public class Notifications {
                 + R.raw.notification_sound);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                context)
+                context, Utils.getChannelID())
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentTitle(Constants.APP_NAME)
                 .setContentText("" + message)
@@ -301,7 +176,7 @@ public class Notifications {
                 + R.raw.notification_sound);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                context)
+                context, Utils.getChannelID())
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentTitle(Constants.APP_NAME)
                 .setContentText("" + message)
@@ -338,7 +213,7 @@ public class Notifications {
 
 
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context)
+                new NotificationCompat.Builder(context, Utils.getChannelID())
                         .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                         .setContentTitle("Notification")
                         .setContentText(msg)
@@ -370,7 +245,7 @@ public class Notifications {
                 + R.raw.notification_sound);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                context)
+                context, Utils.getChannelID())
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentTitle(Constants.BYKEA)
                 .setContentText("" + receivedMessage.getData().getMessage())

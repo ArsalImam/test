@@ -94,24 +94,25 @@ public class ActivityStackManager {
         if (!Utils.isServiceRunning(mContext, LocationService.class)) {
             Intent intent = new Intent(mContext, LocationService.class);
             intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mContext.startForegroundService(intent);
-            } else {
-                mContext.startService(intent);
-            }
+            startService(mContext, intent);
 
         }
+    }
+
+    private void startService(Context mContext, Intent intent) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            mContext.startForegroundService(intent);
+//        } else {
+//            mContext.startService(intent);
+//        }
+        mContext.startService(intent);
     }
 
     public void stopLocationServiceForeGround(Context mContext) {
         if (Utils.isServiceRunning(mContext, LocationService.class)) {
             Intent intent = new Intent(mContext, LocationService.class);
             intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mContext.startForegroundService(intent);
-            } else {
-                mContext.startService(intent);
-            }
+            startService(mContext, intent);
         }
     }
 
@@ -132,11 +133,7 @@ public class ActivityStackManager {
             Intent intent = new Intent(mContext, LocationService.class);
             intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
             intent.putExtra(Constants.Extras.LOCATION_SERVICE_STATUS, STATUS);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mContext.startForegroundService(intent);
-            } else {
-                mContext.startService(intent);
-            }
+            startService(mContext, intent);
         }
     }
 

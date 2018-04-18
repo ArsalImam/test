@@ -1,21 +1,17 @@
 package com.bykea.pk.partner.services;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
@@ -68,7 +64,7 @@ public class LocationService extends Service {
     private boolean shouldCallLocApi = true;
     private int counter = 0;
 
-    //    private PowerManager.WakeLock wakeLock;
+    private PowerManager.WakeLock wakeLock;
     private EventBus mBus = EventBus.getDefault();
 
     private FusedLocationProviderClient mFusedLocationClient;
@@ -76,6 +72,7 @@ public class LocationService extends Service {
     private LocationCallback mLocationCallback;
 
     private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
+    private final int NOTIF_ID = 877;
     private LatLng lastApiCallLatLng;
 
     @Override
@@ -86,52 +83,44 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        createForegroundNotification();
+//        startForeground(NOTIF_ID, getForgroundNotification());
         Utils.redLog("LocServ", "onCreate");
     }
 
-    private String getChannelID() {
-        String chanelId = "FOREGROUND_NOTI";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            String channelId = "some_channel_id";
-            CharSequence channelName = "Some Channel";
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(notificationChannel);
-            }
-            chanelId = notificationChannel.getId();
+    private String getNotificationMsg() {
+        String msg = "Your Status: ACTIVE";
+        if (AppPreferences.isOnTrip()) {
+            NormalCallData callData = AppPreferences.getCallData();
+            msg = "TRIP# " + callData.getTripNo() + " is in " + StringUtils.capitalize(callData.getStatus()) + " state";
+        } else if (!AppPreferences.getAvailableStatus()) {
+            msg = "Your Status: INACTIVE";
         }
-        return chanelId;
+        return msg;
     }
 
-    private void createForegroundNotification() {
+    private Notification getForgroundNotification() {
         Intent notificationIntent = new Intent(this, LocationService.class);
         notificationIntent.setAction(Constants.Actions.ON_NOTIFICATION_CLICK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getChannelID())
+        String msg = getNotificationMsg();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Utils.getChannelID())
                 .setContentTitle("Bykea Partner")
-                .setContentText("Location Service Is Running")
+                .setContentText(msg)
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentIntent(pendingIntent)
-                .setOngoing(true);
-        Notification notification = builder.build();
-        startForeground(877, notification);
+                .setOngoing(true).setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(msg));
+        return builder.build();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Utils.redLog("LocServ", "onStartCommand");
         mContext = getApplicationContext();
-        if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
+        /*if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
             if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
                 STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
             }
@@ -140,26 +129,26 @@ public class LocationService extends Service {
             stopForegroundService();
         } else if (Constants.Actions.ON_NOTIFICATION_CLICK.equals(intent.getAction())) {
             //TODO
-        }
+        }*/
 
-//        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
-//            STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
-//        }
-//        mContext = getApplicationContext();
-        //acquire wake lock services to make service run
-//        PowerManager mgr = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-//        if (mgr != null) {
-//            wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
-//        }
-//        if (wakeLock != null) {
-//            wakeLock.acquire();
-//        }
-//        init();
+        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
+            STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
+        }
+        mContext = getApplicationContext();
+//        acquire wake lock services to make service run
+        PowerManager mgr = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+        if (mgr != null) {
+            wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+        }
+        if (wakeLock != null) {
+            wakeLock.acquire();
+        }
+        init();
         return START_STICKY;
     }
 
     private void stopForegroundService() {
-        stopForeground(true);
+//        stopForeground(true);
         stopSelf();
     }
 
@@ -169,9 +158,9 @@ public class LocationService extends Service {
         super.onDestroy();
         Utils.redLog("LocServ", "onDestroy");
         stopLocationUpdates();
-//        if (wakeLock != null) {
-//            wakeLock.release();
-//        }
+        if (wakeLock != null) {
+            wakeLock.release();
+        }
         cancelTimer();
     }
 
@@ -537,9 +526,18 @@ public class LocationService extends Service {
                     }
                 }
             }
-        }
+        } /*else if (Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION.equalsIgnoreCase(event)) {
+            updateNotification();
+        }*/
     }
 
+    private void updateNotification() {
+        Notification notification = getForgroundNotification();
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (mNotificationManager != null) {
+            mNotificationManager.notify(NOTIF_ID, notification);
+        }
+    }
     /*@Override
     public void onTaskRemoved(Intent rootIntent) {
         Utils.redLog("LocServ", "onTaskRemoved");

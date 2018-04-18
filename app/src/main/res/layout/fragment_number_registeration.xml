@@ -116,7 +116,8 @@
                 android:layout_width="@dimen/_60sdp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:gravity="end|center">
+                android:gravity="end|center"
+                android:paddingTop="@dimen/_4sdp">
 
 
                 <ImageView
@@ -140,17 +141,18 @@
             <Spinner
                 android:id="@+id/tvCity"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_200sdp"
                 android:layout_alignBottom="@id/llIv2"
                 android:layout_alignTop="@id/llIv2"
                 android:layout_toLeftOf="@id/llIv2"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
-                android:dropDownVerticalOffset="@dimen/_42sdp"
+                android:dropDownVerticalOffset="@dimen/_38sdp"
                 android:gravity="left|center_vertical"
                 android:hint="@string/hint.phone.number"
                 android:inputType="numberPassword"
                 android:maxLength="11"
+                android:paddingTop="@dimen/_4sdp"
                 android:textColorHint="@color/secondaryColorLight"
                 android:textSize="@dimen/textsize.body2" />
 

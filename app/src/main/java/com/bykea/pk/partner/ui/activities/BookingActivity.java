@@ -82,6 +82,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -207,6 +208,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
+
+        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
     }
 
 
@@ -1565,6 +1568,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, arrivedResponse.getMessage());
                     }
+                    EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
                 }
             });
         }
@@ -1606,6 +1610,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, cancelRideResponse.getMessage());
                     }
+                    EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
                 }
             });
         }
@@ -1648,7 +1653,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         mCurrentActivity.finish();
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, endRideResponse.getMessage());
-
                     }
                 }
             });
@@ -1680,6 +1684,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, beginRideResponse.getMessage());
                     }
+                    EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
                 }
             });
         }

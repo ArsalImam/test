@@ -12,6 +12,8 @@ public class SignUpSettingsResponse {
     private int code;
     private String main_video;
     private String image_base_url;
+    private long timeStamp;
+
 
     private ArrayList<SignUpCity> city;
 
@@ -45,6 +47,14 @@ public class SignUpSettingsResponse {
 
     public void setImage_base_url(String image_base_url) {
         this.image_base_url = image_base_url;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public class Videocity {

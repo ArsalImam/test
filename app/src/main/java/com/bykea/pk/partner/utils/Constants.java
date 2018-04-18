@@ -95,6 +95,10 @@ public class Constants {
         public static final String PICK_UP = "PICK_UP";
     }
 
+    public static class Broadcast {
+        public static final String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
+    }
+
     public static class Actions {
         public final static String STARTFOREGROUND_ACTION = "STARTFOREGROUND_ACTION";
         public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";

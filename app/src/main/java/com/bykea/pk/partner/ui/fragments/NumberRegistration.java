@@ -22,7 +22,9 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.DocumentsRegistrationActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.CityDropDownAdapter;
+import com.bykea.pk.partner.ui.helpers.adapters.DocumentsGridAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
@@ -100,8 +102,13 @@ public class NumberRegistration extends Fragment {
     }
 
     private void setZonesAdapter() {
-        Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        mUserRepository.requestSignUpSettings(mCurrentActivity, mCallback);
+        SignUpSettingsResponse response = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
+        if (response != null && Utils.isTimeWithInNDay(response.getTimeStamp(), 1)) {
+            mCallback.onSignUpSettingsResponse(response);
+        } else {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            mUserRepository.requestSignUpSettings(mCurrentActivity, mCallback);
+        }
     }
 
 
@@ -201,6 +208,9 @@ public class NumberRegistration extends Fragment {
     }
 
     private void nextActivity(SignUpAddNumberResponse response) {
+        if(DocumentsGridAdapter.getmInstanceForNullCheck() != null){
+            DocumentsGridAdapter.getInstance().resetTheInstance();
+        }
         Intent intent = new Intent(mCurrentActivity, DocumentsRegistrationActivity.class);
         intent.putExtra(Constants.Extras.PHONE_NUMBER, phoneNumberEt.getText().toString());
         intent.putExtra(Constants.Extras.SELECTED_ITEM, mSelectedCity);
