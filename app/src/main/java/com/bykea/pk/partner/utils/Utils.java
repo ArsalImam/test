@@ -329,8 +329,7 @@ public class Utils {
     }
 
     public static String getImageLink(String link) {
-        Utils.redLog("Image Url", "http://res.cloudinary.com/bykea/image/upload/" + link);
-        return "http://res.cloudinary.com/bykea/image/" + link;
+        return "http://res.cloudinary.com/bykea/image/upload/" + link;
     }
 
     public static String getFileLink(String name) {

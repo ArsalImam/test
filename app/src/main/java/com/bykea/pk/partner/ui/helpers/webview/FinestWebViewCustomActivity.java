@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.helpers.webview;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
@@ -19,6 +20,7 @@ public class FinestWebViewCustomActivity extends FinestWebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCurrentActivity = this;
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         close.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ic_arrow_back_48px));
     }

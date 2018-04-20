@@ -10,8 +10,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 20
-        versionName "4.1"
+        versionCode 21
+        versionName "4.2"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -52,10 +52,10 @@ android {
             //Latest staging 9 Feb
 
             signingConfig signingConfigs.debug
-            shrinkResources false // to remove unused resources. This will reduce APK size.
-//            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-//                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
+            shrinkResources true // to remove unused resources. This will reduce APK size.
+            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
 
         }
     }
@@ -66,6 +66,7 @@ android {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
+        exclude 'META-INF/rxjava.properties'
     }
     configurations.all {
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -148,9 +149,7 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'de.hdodenhof:circleimageview:2.2.0'
-    compile ('id.zelory:compressor:2.1.0') {
-        exclude group: 'io.reactivex.rxjava2'
-    }
+    compile 'id.zelory:compressor:2.1.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

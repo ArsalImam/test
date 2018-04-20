@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +39,9 @@ public class BankDetailsAdapter extends
         mContext = context;
     }
 
+    @NonNull
     @Override
-    public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view =
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_bank_accounts,
@@ -48,7 +50,7 @@ public class BankDetailsAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(ItemHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
         BankData.BankAgentData data = mAccountList.get(position);
         String distance = Utils.calculateDistanceInKm(data.getLoc().get(0),
                 data.getLoc().get(1), AppPreferences.getLatitude(), AppPreferences.getLongitude()) + " KM";
@@ -61,13 +63,6 @@ public class BankDetailsAdapter extends
             holder.rlAgentName.setVisibility(View.GONE);
             holder.rlDirection1.setVisibility(View.VISIBLE);
             holder.tvDistance1.setText(distance);
-        }
-
-        if (StringUtils.isNotBlank(data.getContactPerson())) {
-            holder.llContactPerson.setVisibility(View.VISIBLE);
-            holder.tvContactPerson.setText(data.getContactPerson());
-        } else {
-            holder.llContactPerson.setVisibility(View.GONE);
         }
 
         holder.tvAddress.setText(data.getAddress());
@@ -86,8 +81,7 @@ public class BankDetailsAdapter extends
         FontTextView tvAgentName;
         @BindView(R.id.tvAddress)
         FontTextView tvAddress;
-        @BindView(R.id.tvContactPerson)
-        FontTextView tvContactPerson;
+
         @BindView(R.id.tvPhone)
         FontTextView tvPhone;
 
@@ -102,9 +96,6 @@ public class BankDetailsAdapter extends
 
         @BindView(R.id.rlAgentName)
         RelativeLayout rlAgentName;
-
-        @BindView(R.id.llContactPerson)
-        LinearLayout llContactPerson;
 
 
         ItemHolder(final View itemView) {

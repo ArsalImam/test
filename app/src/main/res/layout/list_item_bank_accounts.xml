@@ -20,7 +20,6 @@
             android:id="@+id/rlDirection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/llAgentName"
             android:layout_alignParentRight="true"
             android:layout_gravity="right|bottom"
             android:background="@drawable/button_green_round"
@@ -34,7 +33,7 @@
                 android:layout_marginRight="@dimen/_4sdp"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_12sdp"
+                android:textSize="@dimen/_14sdp"
                 tools:text="8 KM" />
 
             <ImageView
@@ -57,21 +56,19 @@
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
                 android:maxLines="1"
-                android:text="Agent Name"
-                android:textColor="@color/textColorPerformance"
-                android:textSize="@dimen/_12sdp"
+                android:text="Branch Name"
+                android:textColor="@color/textColorPrimary2"
+                android:textSize="@dimen/_14sdp"
                 app:fontName="roboto_bold.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/tvAgentName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_3sdp"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:textColor="@color/textColorPrimary2"
+                android:textSize="@dimen/_14sdp"
                 app:fontName="roboto_regular.ttf"
                 tools:text="Memon Electric Store" />
         </LinearLayout>
@@ -94,7 +91,8 @@
             android:layout_gravity="right|bottom"
             android:background="@drawable/button_green_round"
             android:padding="@dimen/_8sdp"
-            android:visibility="gone">
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/tvDistance1"
@@ -104,7 +102,7 @@
                 android:layout_marginRight="@dimen/_4sdp"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_12sdp"
+                android:textSize="@dimen/_14sdp"
                 tools:text="8 KM" />
 
             <ImageView
@@ -127,98 +125,54 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="Address"
-                android:textColor="@color/textColorPerformance"
-                android:textSize="@dimen/_12sdp"
-                app:fontName="roboto_regular.ttf" />
+                android:textColor="@color/textColorPrimary2"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="roboto_bold.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/tvAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:paddingRight="@dimen/_4sdp"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/_12sdp"
-                app:fontName="roboto_bold.ttf"
+                android:paddingRight="@dimen/_2sdp"
+                android:textColor="@color/textColorPrimary2"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="roboto_regular.ttf"
                 tools:text="Shop No 6 Hawa Manzil Young Husband Road Karadar Karachi" />
         </LinearLayout>
     </RelativeLayout>
 
 
-    <LinearLayout
-
-        android:id="@+id/llContactPerson"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/llPhone"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/_12sdp"
-        android:paddingRight="@dimen/_12sdp">
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:maxLines="1"
-            android:text="OMNI CONTACT PERSON"
-            android:textColor="@color/textColorPerformance"
-            android:textSize="@dimen/_12sdp"
-            app:fontName="roboto_regular.ttf" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/tvContactPerson"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_12sdp"
-            app:fontName="roboto_bold.ttf"
-            tools:text="Aqeel" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_6sdp"
         android:paddingBottom="@dimen/_12sdp"
         android:paddingLeft="@dimen/_12sdp"
         android:paddingRight="@dimen/_12sdp">
 
+        <ImageView
+            android:id="@+id/ivCall"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:src="@drawable/telephone_symbol_button" />
+
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvPhone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:maxLines="1"
-            android:text="MOBILE NUMBER"
-            android:textColor="@color/textColorPerformance"
-            android:textSize="@dimen/_12sdp"
-            app:fontName="roboto_regular.ttf" />
+            android:layout_alignBottom="@+id/ivCall"
+            android:layout_alignTop="@+id/ivCall"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/_3sdp"
+            android:layout_toRightOf="@+id/ivCall"
+            android:gravity="center"
+            android:textColor="@color/textColorPrimary2"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="roboto_regular.ttf"
+            tools:text="03135744774" />
 
-        <LinearLayout
-            android:id="@+id/llPhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_3sdp">
-
-            <ImageView
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
-                android:src="@drawable/telephone_symbol" />
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/tvPhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/_3sdp"
-                android:textColor="@color/blue_ultra_dark"
-                android:textSize="@dimen/_14sdp"
-                app:fontName="roboto_bold.ttf"
-                tools:text="03135744774" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"

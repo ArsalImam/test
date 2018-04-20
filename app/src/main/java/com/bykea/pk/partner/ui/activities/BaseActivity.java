@@ -69,6 +69,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mCurrentActivity = this;
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         mEventBus.register(mCurrentActivity);
         progressDialog = new ProgressDialog(mCurrentActivity);
         progressDialog.setCancelable(false);

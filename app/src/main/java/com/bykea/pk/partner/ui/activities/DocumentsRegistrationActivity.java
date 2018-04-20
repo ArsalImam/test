@@ -217,7 +217,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setAdapter(mAdapter);
-        Utils.redLog("DocumentsRegistration", "initRv -> adapter = " + mAdapter.toString());
+//        Utils.redLog("DocumentsRegistration", "initRv -> adapter = " + mAdapter.toString());
+//        Utils.redLog("DocumentsRegistration", "initRv -> mCurrentActivity = " + mCurrentActivity.toString());
     }
 
     private static final String TYPE_SELFIE = "selfie";
@@ -232,13 +233,13 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         String nicFront = isDocAlreadyUploaded(TYPE_NIC_FR);
         String nicBack = isDocAlreadyUploaded(TYPE_NIC_BK);
         String bike_paper = isDocAlreadyUploaded(TYPE_BIKE_PAPER);
-        String License = isDocAlreadyUploaded(TYPE_LICENSE);
+        String license = isDocAlreadyUploaded(TYPE_LICENSE);
 
         documentsData.add(new DocumentsData("آپ کی سیلفی", "Your Photo", selfie, TYPE_SELFIE, StringUtils.isNotBlank(selfie)));
         documentsData.add(new DocumentsData("شناختی کارڈ", "NIC (Front)", nicFront, TYPE_NIC_FR, StringUtils.isNotBlank(nicFront)));
         documentsData.add(new DocumentsData("شناختی کارڈ", "NIC (Back)", nicBack, TYPE_NIC_BK, StringUtils.isNotBlank(nicBack)));
         documentsData.add(new DocumentsData("بائیک کےکاغذات", "Bike Papers", bike_paper, TYPE_BIKE_PAPER, StringUtils.isNotBlank(bike_paper)));
-        documentsData.add(new DocumentsData("لائسنس", TYPE_LICENSE, License, TYPE_LICENSE, StringUtils.isNotBlank(License)));
+        documentsData.add(new DocumentsData("لائسنس", "License", license, TYPE_LICENSE, StringUtils.isNotBlank(license)));
         return documentsData;
     }
 
@@ -494,7 +495,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     }
 
     private void startUploadImageTask(File file) {
-        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> adapter = " + mAdapter.toString());
+//        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> adapter = " + mAdapter.toString());
+//        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> mCurrentActivity = " + mCurrentActivity.toString());
         mUserRepository.uplodaDocumentImage(mCurrentActivity, DRIVER_ID,
                 mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType(), file, mCallback);
         isImgCompressing = false;
@@ -568,9 +570,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                         mAdapter.getItem(currentSelectedDocument).setUploading(false);
                         mAdapter.getItem(currentSelectedDocument).setImage(getCompleteImgUrl(response.getType(), response.getLink()));
                         mAdapter.notifyItemChanged(currentSelectedDocument);
-                        Utils.redLog("DocumentsRegistration", "onSignUpImageResponse -> adapter = " + mAdapter.toString());
-//                        initAdapter(mAdapter.getItemsList());
-//                        mAdapter.notifyDataSetChanged();
+//                        Utils.redLog("DocumentsRegistration", "onSignUpImageResponse -> adapter = " + mAdapter.toString());
+//                        Utils.redLog("DocumentsRegistration", "onSignUpImageResponse -> mCurrentActivity = " + mCurrentActivity.toString());
                     }
                 });
             }

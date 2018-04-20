@@ -208,7 +208,7 @@ public class NumberRegistration extends Fragment {
     }
 
     private void nextActivity(SignUpAddNumberResponse response) {
-        if(DocumentsGridAdapter.getmInstanceForNullCheck() != null){
+        if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
             DocumentsGridAdapter.getInstance().resetTheInstance();
         }
         Intent intent = new Intent(mCurrentActivity, DocumentsRegistrationActivity.class);

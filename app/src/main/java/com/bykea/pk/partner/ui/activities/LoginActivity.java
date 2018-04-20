@@ -175,7 +175,7 @@ public class LoginActivity extends BaseActivity {
                                 if (StringUtils.isBlank(loginResponse.getLink())) {
                                     loginResponse.setLink("https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
                                 }
-                                Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "Update App", loginResponse.getMessage(), loginResponse.getLink());
+                                Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "اعلان !", loginResponse.getMessage(), loginResponse.getLink());
                             } else if (loginResponse.getCode() == 900) {
 
                                 if (loginResponse.getMessage().toLowerCase().contains("your license has expired")) {

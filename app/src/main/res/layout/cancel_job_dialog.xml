@@ -60,6 +60,10 @@
                     android:id="@+id/optionBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_gravity="right"
+                    android:gravity="right"
+                    android:inputType="text"
                     android:layout_marginBottom="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_8sdp">
 

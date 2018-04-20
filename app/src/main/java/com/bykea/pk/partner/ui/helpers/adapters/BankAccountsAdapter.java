@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,9 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
+
+import org.jcodec.common.StringUtils;
 
 import java.util.ArrayList;
 
@@ -28,8 +32,9 @@ public class BankAccountsAdapter extends
         mContext = context;
     }
 
+    @NonNull
     @Override
-    public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view =
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_bank,
@@ -38,8 +43,9 @@ public class BankAccountsAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(ItemHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
         BankData data = mAccountList.get(position);
+        holder.tvMsg.setText(data.getMsg());
         Utils.loadImgPicasso(mContext, holder.ivBank, Utils.getCloudinaryLink(data.getImg()));
     }
 
@@ -53,6 +59,9 @@ public class BankAccountsAdapter extends
 
         @BindView(R.id.ivBank)
         ImageView ivBank;
+
+        @BindView(R.id.tvMsg)
+        FontTextView tvMsg;
 
 
         ItemHolder(final View itemView) {
