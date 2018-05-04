@@ -213,9 +213,27 @@ public class AppPreferences {
         return mSharedPreferences.getBoolean(Keys.LOGIN_STATUS, false);
     }
 
+    public static void setSignUpApiCalled(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.SIGN_UP_API_CALL_CHECK, value)
+                .apply();
+    }
+
+    public static boolean isSignUpApiCalled() {
+        return mSharedPreferences.getBoolean(Keys.SIGN_UP_API_CALL_CHECK, false);
+    }
+
+    private static boolean isLocationAccurate(float accuracy) {
+        if (AppPreferences.isLoggedIn()) {
+            return accuracy < 100f;
+        } else {
+            return accuracy < 10000f;
+        }
+    }
 
     public static void saveLocation(LatLng location, String bearing, float accuracy, boolean isMock) {
-        if (location.latitude != 0.0 && location.longitude != 0.0 && accuracy < 100f) {
+        if (location.latitude != 0.0 && location.longitude != 0.0 && isLocationAccurate(accuracy)) {
             SharedPreferences.Editor ed = mSharedPreferences.edit();
             ed.putString(Keys.LATITUDE, location.latitude + "");
             ed.putString(Keys.LONGITUDE, location.longitude + "");
@@ -1086,6 +1104,7 @@ public class AppPreferences {
                 .putString(key, new Gson().toJson(object))
                 .apply();
     }
+
     public static ZoneAreaResponse getZoneAreas(String key) {
         String data = mSharedPreferences.getString(key, StringUtils.EMPTY);
         ZoneAreaResponse object = null;

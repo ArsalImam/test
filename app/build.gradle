@@ -10,8 +10,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 21
-        versionName "4.2"
+        versionCode 22
+        versionName "4.3"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -52,10 +52,10 @@ android {
             //Latest staging 9 Feb
 
             signingConfig signingConfigs.debug
-            shrinkResources true // to remove unused resources. This will reduce APK size.
-            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
+//            shrinkResources true // to remove unused resources. This will reduce APK size.
+//            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+//                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
 
         }
     }
@@ -150,6 +150,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'de.hdodenhof:circleimageview:2.2.0'
     compile 'id.zelory:compressor:2.1.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.19.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

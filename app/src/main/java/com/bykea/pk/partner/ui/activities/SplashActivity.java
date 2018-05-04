@@ -66,6 +66,7 @@ public class SplashActivity extends BaseActivity {
             new AdvertisingIdTask().execute();
         }
         Utils.redLog("BASE_SERVER_URL", ApiTags.BASE_SERVER_URL);
+        Utils.printHashKey(mCurrentActivity);
     }
 
 

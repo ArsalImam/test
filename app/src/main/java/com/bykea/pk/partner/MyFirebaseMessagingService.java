@@ -35,6 +35,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private Notifications notifications;
     private EventBus mBus = EventBus.getDefault();
     private MyFirebaseMessagingService mContext;
+    private boolean isCountDownTimerRunning;
+    final CountDownTimer countDownTimer = new CountDownTimer(15000, 15000) {
+        @Override
+        public void onTick(long l) {
+        }
+
+        @Override
+        public void onFinish() {
+            isCountDownTimerRunning = false;
+            onInactiveByCronJob("App Offline Hochuke Hain!");//TODO update msg
+        }
+    };
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -108,56 +120,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     WebIORequestHandler.getInstance().registerChatListener();
                 }
             } else if (remoteMessage.getData().get("event").equalsIgnoreCase("7")) {//when server inactive any driver via Cron job
-                if (AppPreferences.isLoggedIn()) {
-                    final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
-                    /*
-                    * Check Coordinates when there's any delay in FCM Push Notification and ignore
-                    * this notification when there are different coordinates.
-                    * */
-                    if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
-                            && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
-                            && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude())) {
-
-                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
-                            //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
-
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    final CountDownTimer countDownTimer = new CountDownTimer(15000, 15000) {
-                                        @Override
-                                        public void onTick(long l) {
-                                        }
-
-                                        @Override
-                                        public void onFinish() {
-                                            onInactiveByCronJob(data);
-                                        }
-                                    };
-                                    countDownTimer.start();
-                                    WebIO.getInstance().clearConnectionData();
-                                    new UserRepository().requestLocationUpdate(mContext, new UserDataHandler() {
-                                        @Override
-                                        public void onLocationUpdate(LocationResponse response) {
-                                            countDownTimer.cancel();
-                                            ActivityStackManager.getInstance().restartLocationService(mContext);
-                                        }
-
-                                        @Override
-                                        public void onError(int errorCode, String errorMessage) {
-                                            countDownTimer.cancel();
-                                            onLocationUpdateError(errorCode, errorMessage, data);
-                                        }
-                                    }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
-                                }
-                            });
-
-
-                        } else {
-                            onInactiveByCronJob(data);
-                        }
-                    }
-                }
+                onInactivePushReceived(remoteMessage, gson);
             } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("3"))) {
                 if (AppPreferences.isLoggedIn()) {
                     NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
@@ -177,6 +140,51 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         mBus.post("INACTIVE-PUSH");
                     }
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
+                }
+            }
+        }
+    }
+
+    private synchronized void onInactivePushReceived(RemoteMessage remoteMessage, Gson gson) {
+        if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() ||
+                AppPreferences.isOutOfFence())) {
+            final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
+            /*
+            * Check Coordinates when there's any delay in FCM Push Notification and ignore
+            * this notification when there are different coordinates.
+            * */
+            if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
+                    && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
+                    && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude()) && !isCountDownTimerRunning) {
+
+                if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                    //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            countDownTimer.cancel();
+                            isCountDownTimerRunning = true;
+                            countDownTimer.start();
+                            WebIO.getInstance().clearConnectionData();
+                            new UserRepository().requestLocationUpdate(mContext, new UserDataHandler() {
+                                @Override
+                                public void onLocationUpdate(LocationResponse response) {
+                                    countDownTimer.cancel();
+                                    isCountDownTimerRunning = false;
+                                    ActivityStackManager.getInstance().restartLocationService(mContext);
+                                }
+
+                                @Override
+                                public void onError(int errorCode, String errorMessage) {
+//                                            countDownTimer.cancel();
+                                    onLocationUpdateError(errorCode, errorMessage, data);
+                                }
+                            }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                        }
+                    });
+                } else {
+                    onInactiveByCronJob(data.getMessage());
                 }
             }
         }
@@ -202,15 +210,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             AppPreferences.setOutOfFence(false);
             AppPreferences.setAvailableStatus(true);
             mBus.post(Keys.INACTIVE_FENCE);
-        } else {
-            onInactiveByCronJob(data);
-        }
+        } /*else {
+            onInactiveByCronJob(data.getMessage());
+        }*/
     }
 
-    private void onInactiveByCronJob(OfflineNotificationData data) {
+    private void onInactiveByCronJob(String data) {
         AppPreferences.setAdminMsg(null);
         AppPreferences.setAvailableStatus(false);
         mBus.post(Keys.INACTIVE_PUSH);
-        Notifications.generateAdminNotification(mContext, data.getMessage());
+        Notifications.generateAdminNotification(mContext, data);
     }
 }

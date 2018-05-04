@@ -383,7 +383,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
                 if (!address.equalsIgnoreCase(tvFromAddress.getText().toString())) {
                     address = addressTv.getText().toString() + ", " + tvFromAddress.getText().toString();
                 }
-                PlacesResult placesResult = new PlacesResult("DropOffAddress", address,
+                PlacesResult placesResult = new PlacesResult(address, address,
                         mGoogleMap.getCameraPosition().target.latitude, mGoogleMap.getCameraPosition().target.longitude);
                 Intent returnIntent = new Intent();
                 //PlacesResult data model implements Parcelable so we could pass object in extras

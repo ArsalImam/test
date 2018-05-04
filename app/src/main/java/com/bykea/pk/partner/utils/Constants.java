@@ -117,6 +117,10 @@ public class Constants {
         public final static String ON_ARRIVED = EYE_BALL + REPLACE + "-Arrived";
         public final static String ON_START = EYE_BALL + REPLACE + "-Started";
         public final static String ON_STATUS_UPDATE = EYE_BALL + "-StatusUpdate";
+        public final static String ON_SIGN_UP_BTN_CLICK = "SignupButton";
+        public final static String ON_SIGN_UP_MOBILE_ENTERED = "SignupMobile";
+        public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
+
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
 //        public final static String ON_FEEDBACK = EYE_BALL+ REPLACE   + "-Feedback";//already logged against passenger

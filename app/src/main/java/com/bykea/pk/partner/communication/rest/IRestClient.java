@@ -117,6 +117,7 @@ interface IRestClient {
     @POST(ApiTags.SIGN_UP_ADD_NUMBER)
     Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,
                                                         @Field("phone") String phone,
+                                                        @Field("imei") String imei,
                                                         @Field("city") String city);
 
     @FormUrlEncoded

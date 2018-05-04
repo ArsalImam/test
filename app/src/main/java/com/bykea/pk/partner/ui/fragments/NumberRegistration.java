@@ -32,6 +32,9 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -188,6 +191,20 @@ public class NumberRegistration extends Fragment {
         }
     };
 
+    private void logAnalyticsEvent() {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("PhoneNo", phoneNumberEt.getText().toString());
+            data.put("CityId", mSelectedCity.get_id());
+            data.put("IMEI", Utils.getDeviceId(mCurrentActivity));
+            Utils.logFacebookEvent(mCurrentActivity, Constants.AnalyticsEvents.ON_SIGN_UP_MOBILE_ENTERED, data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @OnClick({R.id.ytIcon, R.id.nextBtn, R.id.llIv2})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -197,6 +214,7 @@ public class NumberRegistration extends Fragment {
             case R.id.nextBtn:
                 if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                    logAnalyticsEvent();
                     mUserRepository.requestRegisterNumber(mCurrentActivity, phoneNumberEt.getText().toString(),
                             mSelectedCity.get_id(), mCallback);
                 }
@@ -211,6 +229,7 @@ public class NumberRegistration extends Fragment {
         if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
             DocumentsGridAdapter.getInstance().resetTheInstance();
         }
+        AppPreferences.setSignUpApiCalled(true);
         Intent intent = new Intent(mCurrentActivity, DocumentsRegistrationActivity.class);
         intent.putExtra(Constants.Extras.PHONE_NUMBER, phoneNumberEt.getText().toString());
         intent.putExtra(Constants.Extras.SELECTED_ITEM, mSelectedCity);

@@ -16,6 +16,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Utils;
@@ -24,6 +25,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.instabug.library.Instabug;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -116,6 +119,7 @@ public class LoginActivity extends BaseActivity {
                 ActivityStackManager.getInstance().startForgotPasswordActivity(mCurrentActivity);
                 break;
             case R.id.registerBtn:
+                logAnalyticsEvent();
                 ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
                 break;
             case R.id.tvTerms:
@@ -222,6 +226,18 @@ public class LoginActivity extends BaseActivity {
     private void enableBookingBtn() {
         loginBtn.setEnabled(true);
         loginBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_green));
+    }
+
+
+    private void logAnalyticsEvent() {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("timestamp", System.currentTimeMillis());
+            Utils.logFacebookEvent(mCurrentActivity, Constants.AnalyticsEvents.ON_SIGN_UP_BTN_CLICK, data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 }

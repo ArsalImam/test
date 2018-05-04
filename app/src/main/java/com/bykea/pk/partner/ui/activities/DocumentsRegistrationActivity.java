@@ -29,6 +29,7 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.DocumentsGridAdapter;
@@ -41,6 +42,8 @@ import com.bykea.pk.partner.widgets.FontEditText;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,6 +56,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.zelory.compressor.Compressor;
+import okhttp3.internal.Util;
 
 public class DocumentsRegistrationActivity extends BaseActivity {
     @BindView(R.id.phoneNumberEt)
@@ -269,6 +273,19 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         Utils.initPlayerFragment(playerFragment, ytIcon, ivThumbnail, VIDEO_ID);
     }
 
+    private void logAnalyticsEvent() {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("DriverId", DRIVER_ID);
+            data.put("Email", etEmail.getText().toString());
+            data.put("Reference", phoneNumberEt.getText().toString());
+            Utils.logFacebookEvent(mCurrentActivity, Constants.AnalyticsEvents.ON_SIGN_UP_COMPLETE, data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @OnClick({R.id.ytIcon, R.id.nextBtn, R.id.rlRef, R.id.rlEmail})
     public void onClick(View view) {
@@ -283,7 +300,10 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                 Utils.playVideo(mCurrentActivity, VIDEO_ID, ivThumbnail, ytIcon, playerFragment);
                 break;
             case R.id.nextBtn:
-                if (isValidData()) {
+                Utils.redLog("DocumentsRegistrationActivity", "onClick - > nextBtn");
+                if (isValidData() && AppPreferences.isSignUpApiCalled()) {
+                    AppPreferences.setSignUpApiCalled(false);
+                    logAnalyticsEvent();
                     mUserRepository.postOptionalSignupData(mCurrentActivity, DRIVER_ID,
                             etEmail.getText().toString(), phoneNumberEt.getText().toString(), mCallback);
                 }
@@ -308,6 +328,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             valid = false;
         } else if (StringUtils.isNotBlank(phoneNumberEt.getText().toString())) {
             valid = Utils.isValidNumber(mCurrentActivity, phoneNumberEt);
+        } else if (!Utils.isConnected(mCurrentActivity, true)) {
+            valid = false;
         }
         return valid;
     }
@@ -580,6 +602,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         @Override
         public void onError(int errorCode, String errorMessage) {
             if (mCurrentActivity != null) {
+                AppPreferences.setSignUpApiCalled(false);
                 Dialogs.INSTANCE.dismissDialog();
                 mAdapter.getItem(mAdapter.getSelectedItemIndex()).setUploading(false);
                 mAdapter.notifyItemChanged(mAdapter.getSelectedItemIndex());

@@ -482,7 +482,7 @@ public class RestRequestHandler {
         mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getBykeaSignUpApiClient();
         Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                phone, city);
+                phone, Utils.getDeviceId(context), city);
         requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
             @Override
             public void onResponse(Response<SignUpAddNumberResponse> response, Retrofit retrofit) {

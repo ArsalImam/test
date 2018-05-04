@@ -14,6 +14,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
+import com.facebook.appevents.AppEventsLogger;
 import com.instabug.library.Instabug;
 import com.instabug.library.invocation.InstabugInvocationEvent;
 import com.onesignal.OSNotification;
@@ -45,6 +46,8 @@ public class DriverApp extends MultiDexApplication {
         if (mContext == null) {
             mContext = this;
         }
+        AppEventsLogger.activateApp(this);
+
         mBasicComponent = DaggerBasicComponent.builder()
                 .sharedPrefModule(new SharedPrefModule())
                 .build();

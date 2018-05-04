@@ -16,6 +16,7 @@ public class Keys {
     public static final String AVAILABLE_STATUS_API_CALL = "AVAILABLE_STATUS_API_CALL";
     public static final String VERIFIED_STATUS = "VERIFIED_STATUS";
     public static final String LOGIN_STATUS = "LOGIN_STATUS";
+    public static final String SIGN_UP_API_CALL_CHECK = "SIGN_UP_API_CALL_CHECK";
 
 
     public static final String FULL_NAME = "full_name";
