@@ -179,7 +179,9 @@ public class WebIO {
     public void onConnect(Emitter.Listener connectCallBack) {
 
         try {
-            WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT, connectCallBack);
+            if (!isConnectionListenerAttached()) {
+                WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT, connectCallBack);
+            }
             on(Socket.EVENT_CONNECT_TIMEOUT, onTimeOutError); //timeout
             on(Socket.EVENT_ERROR, onError);
             on(Socket.EVENT_CONNECT_ERROR, onError);

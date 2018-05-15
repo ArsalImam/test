@@ -8,6 +8,7 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.request.SignupAddRequest;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
@@ -118,8 +119,13 @@ interface IRestClient {
     Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,
                                                         @Field("phone") String phone,
                                                         @Field("imei") String imei,
+                                                        @Field("mobile_brand") String mobile_brand,
+                                                        @Field("mobile_model") String mobile_model,
+                                                        @Field("geoloc") String geoloc,
                                                         @Field("city") String city);
-
+//    @POST(ApiTags.SIGN_UP_ADD_NUMBER)
+//    Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,
+//                                                        @Body SignupAddRequest body);
     @FormUrlEncoded
     @POST(ApiTags.SIGN_UP_COMPLETE)
     Call<SignUpOptionalDataResponse> postOptionalSignupData(@Header("key") String key,

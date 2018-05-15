@@ -1603,7 +1603,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Utils.setCallIncomingState();
                         AppPreferences.setWalletAmountIncreased(!cancelRideResponse.isAvailable());
                         AppPreferences.setAvailableStatus(cancelRideResponse.isAvailable());
-
+                        dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
                         /*dataRepository.requestLocationUpdate(mCurrentActivity);*/ // Required to reduce availability status delay
                         ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                         finish();

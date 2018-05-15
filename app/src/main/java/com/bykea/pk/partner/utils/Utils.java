@@ -2035,4 +2035,15 @@ public class Utils {
         AppEventsLogger.newLogger(context).logEvent(EVENT, bundle);
         FirebaseAnalytics.getInstance(context).logEvent(EVENT, bundle);
     }
+
+    public static String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        return StringUtils.capitalize(manufacturer);
+    }
+
+    public static String getDeviceModel() {
+        String model = Build.MODEL;
+        return StringUtils.capitalize(model);
+    }
+
 }

@@ -724,6 +724,7 @@ public class UserRepository {
             jsonObject.put("lat", AppPreferences.getLatitude());
             jsonObject.put("lng", AppPreferences.getLongitude());
             jsonObject.put("cih", AppPreferences.getCashInHands());
+            jsonObject.put("imei", Utils.getDeviceId(mContext));
 
             if (status && AppPreferences.getDriverDestination() != null) {
                 jsonObject.put("eLat", AppPreferences.getDriverDestination().latitude);

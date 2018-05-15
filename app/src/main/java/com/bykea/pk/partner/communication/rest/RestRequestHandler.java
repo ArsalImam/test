@@ -12,6 +12,7 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.request.SignupAddRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
@@ -481,8 +482,23 @@ public class RestRequestHandler {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getBykeaSignUpApiClient();
+//        ArrayList<Double> loc = new ArrayList<>();
+//        loc.add(AppPreferences.getLatitude());
+//        loc.add(AppPreferences.getLongitude());
+//        SignupAddRequest request = new SignupAddRequest();
+//        request.setCity(city);
+//        request.setGeoloc(loc);
+//        request.setImei(Utils.getDeviceId(context));
+//        request.setPhone(phone);
+//        request.setMobile_brand(Utils.getDeviceName());
+//        request.setMobile_model(Utils.getDeviceModel());
+//        Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API, request);
+
+
         Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                phone, Utils.getDeviceId(context), city);
+                phone, Utils.getDeviceId(context), Utils.getDeviceName(), Utils.getDeviceModel(), AppPreferences.getLatitude() + "," + AppPreferences.getLongitude(), city);
+
+
         requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
             @Override
             public void onResponse(Response<SignUpAddNumberResponse> response, Retrofit retrofit) {
