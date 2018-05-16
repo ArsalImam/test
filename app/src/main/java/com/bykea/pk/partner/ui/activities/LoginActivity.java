@@ -53,6 +53,7 @@ public class LoginActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(this);
+        callSettingsApiIfRequired();
         ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
         repository = new UserRepository();
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
@@ -67,6 +68,15 @@ public class LoginActivity extends BaseActivity {
         disableBookingBtn();
         phoneNumberEt.addTextChangedListener(mTextWatcher);
         pinCodeTv.addTextChangedListener(mTextWatcher);
+    }
+
+    private void callSettingsApiIfRequired() {
+        if (AppPreferences.getSettings() == null
+                || AppPreferences.getSettings().getSettings() == null
+                || StringUtils.isBlank(AppPreferences.getSettings().getSettings().getPartner_signup_url())
+                || AppPreferences.getSettings().getRegion_services() == null) {
+            new UserRepository().requestSettings(mCurrentActivity, handler);
+        }
     }
 
     private TextWatcher mTextWatcher = new TextWatcher() {

@@ -3,11 +3,14 @@ package com.bykea.pk.partner.communication.rest;
 import android.content.Context;
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 
 import com.bykea.pk.partner.utils.Utils;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -141,7 +144,13 @@ class RestClient {
             okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
             okHttpClient.interceptors().add(loggingInterceptor);
             Retrofit.Builder builder = new Retrofit.Builder();
-            Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL_SIGN_UP)
+            String signUpUrl = "http://54.189.207.7:5050";
+            if (AppPreferences.getSettings() != null
+                    && AppPreferences.getSettings().getSettings() != null
+                    && StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getPartner_signup_url())) {
+                signUpUrl = AppPreferences.getSettings().getSettings().getPartner_signup_url();
+            }
+            Retrofit client = builder.baseUrl(signUpUrl)
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

@@ -862,13 +862,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showWalletAmount() {
-//        if (!callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-//            llTopLeft.setVisibility(View.VISIBLE);
         tvPWalletAmount.setText("Rs. " + callData.getPassWallet());
-//        } else {
-//            llTopLeft.setVisibility(View.GONE);
-//        }
-        if (Utils.isDeliveryService(callData.getCallType()) && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
+        if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
+                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
             ivTopUp.setVisibility(View.VISIBLE);
         } else {
             ivTopUp.setVisibility(View.INVISIBLE);
@@ -1604,7 +1600,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         AppPreferences.setWalletAmountIncreased(!cancelRideResponse.isAvailable());
                         AppPreferences.setAvailableStatus(cancelRideResponse.isAvailable());
                         dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
-                        /*dataRepository.requestLocationUpdate(mCurrentActivity);*/ // Required to reduce availability status delay
                         ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                         finish();
                     } else {

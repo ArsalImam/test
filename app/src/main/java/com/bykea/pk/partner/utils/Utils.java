@@ -281,6 +281,7 @@ public class Utils {
             AppPreferences.setObjectToSharedPref(signUpSettingsResponse);
         }
         if (settingsData != null) {
+            settingsData.getSettings().setPartner_signup_url(StringUtils.EMPTY);
             AppPreferences.saveSettingsData(settingsData);
             if (settingsData.getSettings().getCih_range() != null) {
                 AppPreferences.setCashInHandsRange(settingsData.getSettings().getCih_range());
@@ -1473,6 +1474,10 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "Delivery");
     }
 
+    public static boolean isCourierService(String callType) {
+        return StringUtils.containsIgnoreCase(callType, "Courier");
+    }
+
     public static boolean isPurchaseService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Bring")
                 || StringUtils.containsIgnoreCase(callType, "Purchase");
@@ -1556,6 +1561,8 @@ public class Utils {
                 return R.drawable.jama_karo;
             case "carryvan":
                 return R.drawable.carry_van;
+            case "courier":
+                return R.drawable.courier;
             default:
                 return R.drawable.ride;
         }
@@ -1628,7 +1635,7 @@ public class Utils {
         AppPreferences.setRecentPlaces(placesResult1);
     }
 
-    public static boolean isTimeWithInNDay(long time, int n) {
+    public static boolean isTimeWithInNDay(long time, double n) {
         return (System.currentTimeMillis() - time) < (n * Constants.MILISEC_IN_DAY);
     }
 

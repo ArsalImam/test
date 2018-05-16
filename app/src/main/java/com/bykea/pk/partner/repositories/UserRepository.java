@@ -710,7 +710,7 @@ public class UserRepository {
             JSONObject properties = new JSONObject();
             properties.put("DriverID", pilotData.getId());
             properties.put("timestamp", Utils.getIsoDate());
-            properties.put("SignUpCity", pilotData.getCity().getName());
+            properties.put("SignUpCity", pilotData.getCity() != null ? pilotData.getCity().getName() : "N/A");
             properties.put("DriverName", pilotData.getFullName());
             properties.put("CurrentLocation", Utils.getCurrentLocation());
             properties.put("cih", AppPreferences.getCashInHands());

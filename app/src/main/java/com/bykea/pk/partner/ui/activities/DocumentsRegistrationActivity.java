@@ -302,8 +302,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             case R.id.nextBtn:
                 Utils.redLog("DocumentsRegistrationActivity", "onClick - > nextBtn");
                 if (isValidData() && AppPreferences.isSignUpApiCalled()) {
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     AppPreferences.setSignUpApiCalled(false);
-                    logAnalyticsEvent();
                     mUserRepository.postOptionalSignupData(mCurrentActivity, DRIVER_ID,
                             etEmail.getText().toString(), phoneNumberEt.getText().toString(), mCallback);
                 }
@@ -574,6 +574,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
+                        logAnalyticsEvent();
                         showSuccessDialog();
                     }
                 });
@@ -602,7 +603,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         @Override
         public void onError(int errorCode, String errorMessage) {
             if (mCurrentActivity != null) {
-                AppPreferences.setSignUpApiCalled(false);
+                AppPreferences.setSignUpApiCalled(true);
                 Dialogs.INSTANCE.dismissDialog();
                 mAdapter.getItem(mAdapter.getSelectedItemIndex()).setUploading(false);
                 mAdapter.notifyItemChanged(mAdapter.getSelectedItemIndex());

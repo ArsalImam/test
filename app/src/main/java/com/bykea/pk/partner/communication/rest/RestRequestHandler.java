@@ -467,7 +467,7 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), mContext.getString(R.string.error_try_again));
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, mContext.getString(R.string.error_try_again));
                 }
             }
 
@@ -505,7 +505,7 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
                 }
             }
 
@@ -529,7 +529,7 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
                 }
             }
 
@@ -552,7 +552,7 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
                 }
             }
 
@@ -575,7 +575,7 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
                 }
             }
 

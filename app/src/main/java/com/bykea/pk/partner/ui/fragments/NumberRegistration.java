@@ -106,7 +106,7 @@ public class NumberRegistration extends Fragment {
 
     private void setZonesAdapter() {
         SignUpSettingsResponse response = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
-        if (response != null && Utils.isTimeWithInNDay(response.getTimeStamp(), 1)) {
+        if (response != null && Utils.isTimeWithInNDay(response.getTimeStamp(), 0.5)) {
             mCallback.onSignUpSettingsResponse(response);
         } else {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -176,6 +176,7 @@ public class NumberRegistration extends Fragment {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
+                        logAnalyticsEvent();
                         nextActivity(response);
                     }
                 });
@@ -214,7 +215,6 @@ public class NumberRegistration extends Fragment {
             case R.id.nextBtn:
                 if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                    logAnalyticsEvent();
                     mUserRepository.requestRegisterNumber(mCurrentActivity, phoneNumberEt.getText().toString(),
                             mSelectedCity.get_id(), mCallback);
                 }

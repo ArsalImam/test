@@ -10,8 +10,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 22
-        versionName "4.3"
+        versionCode 23
+        versionName "4.4"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
