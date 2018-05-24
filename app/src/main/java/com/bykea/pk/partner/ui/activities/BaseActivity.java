@@ -69,6 +69,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mCurrentActivity = this;
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         mEventBus.register(mCurrentActivity);
         progressDialog = new ProgressDialog(mCurrentActivity);
         progressDialog.setCancelable(false);
@@ -612,6 +613,17 @@ public class BaseActivity extends AppCompatActivity {
             tvTitleUrdu.setText(name_urdu);
         }
         setBackPress(findViewById(R.id.ivBackBtn));
+    }
+
+    public void setTitleCustomToolbarWithUrduHideBackBtn(String title, String name_urdu) {
+        final FontTextView ivTitle = (FontTextView) findViewById(R.id.tvTitle);
+        final FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
+        tvTitleUrdu.setVisibility(View.VISIBLE);
+        ivTitle.setText(title);
+        if (StringUtils.isNotBlank(name_urdu)) {
+            tvTitleUrdu.setText(name_urdu);
+        }
+        findViewById(R.id.ivBackBtn).setVisibility(View.INVISIBLE);
     }
 
     private void setBackPress(View view) {

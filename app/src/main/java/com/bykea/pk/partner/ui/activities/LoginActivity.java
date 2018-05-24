@@ -16,6 +16,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Utils;
@@ -24,6 +25,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.instabug.library.Instabug;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,6 +53,7 @@ public class LoginActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(this);
+        callSettingsApiIfRequired();
         ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
         repository = new UserRepository();
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
@@ -64,6 +68,15 @@ public class LoginActivity extends BaseActivity {
         disableBookingBtn();
         phoneNumberEt.addTextChangedListener(mTextWatcher);
         pinCodeTv.addTextChangedListener(mTextWatcher);
+    }
+
+    private void callSettingsApiIfRequired() {
+        if (AppPreferences.getSettings() == null
+                || AppPreferences.getSettings().getSettings() == null
+                || StringUtils.isBlank(AppPreferences.getSettings().getSettings().getPartner_signup_url())
+                || AppPreferences.getSettings().getRegion_services() == null) {
+            new UserRepository().requestSettings(mCurrentActivity, handler);
+        }
     }
 
     private TextWatcher mTextWatcher = new TextWatcher() {
@@ -116,6 +129,7 @@ public class LoginActivity extends BaseActivity {
                 ActivityStackManager.getInstance().startForgotPasswordActivity(mCurrentActivity);
                 break;
             case R.id.registerBtn:
+                logAnalyticsEvent();
                 ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
                 break;
             case R.id.tvTerms:
@@ -175,7 +189,7 @@ public class LoginActivity extends BaseActivity {
                                 if (StringUtils.isBlank(loginResponse.getLink())) {
                                     loginResponse.setLink("https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
                                 }
-                                Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "Update App", loginResponse.getMessage(), loginResponse.getLink());
+                                Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "اعلان !", loginResponse.getMessage(), loginResponse.getLink());
                             } else if (loginResponse.getCode() == 900) {
 
                                 if (loginResponse.getMessage().toLowerCase().contains("your license has expired")) {
@@ -222,6 +236,18 @@ public class LoginActivity extends BaseActivity {
     private void enableBookingBtn() {
         loginBtn.setEnabled(true);
         loginBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_green));
+    }
+
+
+    private void logAnalyticsEvent() {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("timestamp", System.currentTimeMillis());
+            Utils.logFacebookEvent(mCurrentActivity, Constants.AnalyticsEvents.ON_SIGN_UP_BTN_CLICK, data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 }

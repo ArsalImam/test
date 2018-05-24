@@ -8,9 +8,11 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.request.SignupAddRequest;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
+import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
@@ -117,14 +119,28 @@ interface IRestClient {
     @POST(ApiTags.SIGN_UP_ADD_NUMBER)
     Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,
                                                         @Field("phone") String phone,
+                                                        @Field("imei") String imei,
+                                                        @Field("mobile_brand") String mobile_brand,
+                                                        @Field("mobile_model") String mobile_model,
+                                                        @Field("geoloc") String geoloc,
+                                                        @Field("cnic") String cnic,
                                                         @Field("city") String city);
 
+    //    @POST(ApiTags.SIGN_UP_ADD_NUMBER)
+//    Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,
+//                                                        @Body SignupAddRequest body);
     @FormUrlEncoded
     @POST(ApiTags.SIGN_UP_COMPLETE)
     Call<SignUpOptionalDataResponse> postOptionalSignupData(@Header("key") String key,
                                                             @Field("_id") String id,
                                                             @Field("email") String email,
                                                             @Field("ref_number") String ref_number);
+
+    @FormUrlEncoded
+    @POST(ApiTags.SIGN_UP_BIOMETRIC_VERIFICATION)
+    Call<BiometricApiResponse> postBiometricVerification(@Header("key") String key,
+                                                         @Field("_id") String id,
+                                                         @Field("verification_status") boolean verification_status);
 
     @FormUrlEncoded
     @POST(ApiTags.SIGN_UP_OPTIONAL_DATA)

@@ -463,7 +463,7 @@ public class PlacesSearchFragment extends Fragment {
         switch (v.getId()) {
             case R.id.confirmBtn:
                 if (!addressTv.getText().toString().equalsIgnoreCase(getString(R.string.set_pickup_location))) {
-                    PlacesResult placesResult = new PlacesResult("DropOffAddress", getAddress(),
+                    PlacesResult placesResult = new PlacesResult(getAddress(), getAddress(),
                             mGoogleMap.getCameraPosition().target.latitude, mGoogleMap.getCameraPosition().target.longitude);
                     Utils.addRecentPlace(placesResult);
                     Intent returnIntent = new Intent();

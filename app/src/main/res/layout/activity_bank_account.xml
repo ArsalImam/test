@@ -10,7 +10,7 @@
     tools:context=".ui.activities.PostBankAccountActivity">
 
 
-    <include layout="@layout/toolbar" />
+    <include layout="@layout/custom_toolbar" />
 
     <View
         android:id="@+id/toolbarLine"

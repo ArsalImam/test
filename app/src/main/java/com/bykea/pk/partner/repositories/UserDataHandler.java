@@ -11,6 +11,7 @@ import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
+import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -345,6 +346,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onSignupCompleteResponse(SignUpCompleteResponse response) {
+
+    }
+
+    @Override
+    public void onBiometricApiResponse(BiometricApiResponse response) {
 
     }
 

@@ -32,6 +32,10 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -41,6 +45,8 @@ import butterknife.OnClick;
 public class NumberRegistration extends Fragment {
     @BindView(R.id.phoneNumberEt)
     FontEditText phoneNumberEt;
+    @BindView(R.id.cnicEt)
+    FontEditText cnicEt;
     @BindView(R.id.ytIcon)
     ImageView ytIcon;
 
@@ -84,11 +90,12 @@ public class NumberRegistration extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mUserRepository = new UserRepository();
         if (mServiceCities.size() == 0) {
-            setZonesAdapter();
+            setCitiesAdapter();
         } else {
-            initZonesAdapter();
+            initAdapter();
         }
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+        cnicEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         Utils.hideSoftKeyboard(this);
         mCurrentActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.colorAccent));
@@ -101,9 +108,9 @@ public class NumberRegistration extends Fragment {
 
     }
 
-    private void setZonesAdapter() {
+    private void setCitiesAdapter() {
         SignUpSettingsResponse response = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
-        if (response != null && Utils.isTimeWithInNDay(response.getTimeStamp(), 1)) {
+        if (response != null && Utils.isTimeWithInNDay(response.getTimeStamp(), 0.5)) {
             mCallback.onSignUpSettingsResponse(response);
         } else {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -112,7 +119,7 @@ public class NumberRegistration extends Fragment {
     }
 
 
-    private void initZonesAdapter() {
+    private void initAdapter() {
         initYouTube();
         spCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -159,7 +166,7 @@ public class NumberRegistration extends Fragment {
                         mServiceCities.addAll(response.getCity());
                         dataAdapter1 = new CityDropDownAdapter(mCurrentActivity, mServiceCities);
                         VIDEO_ID = response.getMain_video();
-                        initZonesAdapter();
+                        initAdapter();
                         Dialogs.INSTANCE.dismissDialog();
                     }
                 });
@@ -173,6 +180,7 @@ public class NumberRegistration extends Fragment {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
+                        logAnalyticsEvent();
                         nextActivity(response);
                     }
                 });
@@ -188,6 +196,35 @@ public class NumberRegistration extends Fragment {
         }
     };
 
+    private void logAnalyticsEvent() {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("PhoneNo", phoneNumberEt.getText().toString());
+            data.put("CityId", mSelectedCity.get_id());
+            data.put("IMEI", Utils.getDeviceId(mCurrentActivity));
+            Utils.logFacebookEvent(mCurrentActivity, Constants.AnalyticsEvents.ON_SIGN_UP_MOBILE_ENTERED, data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isValidData() {
+        boolean isValid = true;
+        if (!Utils.isValidNumber(mCurrentActivity, phoneNumberEt)) {
+            isValid = false;
+        } else if (StringUtils.isBlank(cnicEt.getText().toString())) {
+            cnicEt.setError("CNIC is Required.");
+            cnicEt.requestFocus();
+            isValid = false;
+        } else if (cnicEt.getText().toString().length() < 13) {
+            cnicEt.setError("Please enter a valid CNIC No.");
+            cnicEt.requestFocus();
+            isValid = false;
+        }
+        return isValid;
+    }
+
     @OnClick({R.id.ytIcon, R.id.nextBtn, R.id.llIv2})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -195,10 +232,10 @@ public class NumberRegistration extends Fragment {
                 Utils.playVideo(mCurrentActivity, VIDEO_ID, ivThumbnail, ytIcon, playerFragment);
                 break;
             case R.id.nextBtn:
-                if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt)) {
+                if (isValidData()) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     mUserRepository.requestRegisterNumber(mCurrentActivity, phoneNumberEt.getText().toString(),
-                            mSelectedCity.get_id(), mCallback);
+                            mSelectedCity.get_id(), cnicEt.getText().toString(), mCallback);
                 }
                 break;
             case R.id.llIv2:
@@ -207,14 +244,18 @@ public class NumberRegistration extends Fragment {
         }
     }
 
+
     private void nextActivity(SignUpAddNumberResponse response) {
-        if(DocumentsGridAdapter.getmInstanceForNullCheck() != null){
+        if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
             DocumentsGridAdapter.getInstance().resetTheInstance();
         }
+        AppPreferences.setSignUpApiCalled(true);
         Intent intent = new Intent(mCurrentActivity, DocumentsRegistrationActivity.class);
+        intent.putExtra(Constants.Extras.CNIC, cnicEt.getText().toString());
         intent.putExtra(Constants.Extras.PHONE_NUMBER, phoneNumberEt.getText().toString());
         intent.putExtra(Constants.Extras.SELECTED_ITEM, mSelectedCity);
         intent.putExtra(Constants.Extras.DRIVER_ID, response.get_id());
+        intent.putExtra(Constants.Extras.IS_BIOMETRIC_VERIFIED, response.isVerification());
         intent.putExtra(Constants.Extras.SIGN_UP_IMG_BASE, mApiRespinse.getImage_base_url());
         intent.putExtra(Constants.Extras.SIGN_UP_DATA, response.getData());
         startActivity(intent);

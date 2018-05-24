@@ -8,10 +8,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -281,12 +283,15 @@ public enum Dialogs {
             for (String msg : cancelMessages) {
                 RadioButton radioButton = new RadioButton(context);
                 radioButton.setText(msg);
-//                if (id == 0) {
-//                    radioButton.setChecked(true);
-//                }
                 radioButton.setId(id++);
                 radioButton.setTextColor(ContextCompat.getColor(context, R.color.textColorPrimary));
-                rprms = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    radioButton.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                }
+                radioButton.setGravity(Gravity.RIGHT);
+                radioButton.setPadding((int) context.getResources().getDimension(R.dimen._3sdp), 0, (int) context.getResources().getDimension(R.dimen._3sdp), 0);
+                radioButton.setTypeface(FontUtils.getFonts(context, "jameel_noori_nastaleeq.ttf"));
+                rprms = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT);
                 radioGroup.addView(radioButton, rprms);
             }
         }
@@ -539,7 +544,7 @@ public enum Dialogs {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
-        mDialog.setContentView(R.layout.dialog_alert);
+        mDialog.setContentView(R.layout.dialog_alert_update_app);
         mDialog.setCancelable(false);
         mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
 
@@ -553,8 +558,8 @@ public enum Dialogs {
             }
         });
         ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(message);
-        ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
 
+        ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
         showDialog();
     }
 
@@ -595,6 +600,20 @@ public enum Dialogs {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
         mDialog.setContentView(R.layout.signup_success_dialog);
+        mDialog.setCancelable(false);
+        mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
+        showDialog();
+    }
+
+    public void showVerificationDialog(Context context, boolean success, View.OnClickListener onClick) {
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
+        if (success) {
+            mDialog.setContentView(R.layout.verification_success_dialog);
+        } else {
+            mDialog.setContentView(R.layout.verification_unsuccessful_dialog);
+        }
         mDialog.setCancelable(false);
         mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
         showDialog();

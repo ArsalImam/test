@@ -57,6 +57,7 @@ public class Constants {
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";//Staging Server Key of Passenger
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+
     private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
     private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
 
@@ -79,11 +80,13 @@ public class Constants {
         public static final String TRIP_DETAILS = "TRIP_DETAILS";
         public static final String TRIP_DATA = "TRIP_DATA";
         public static final String SELECTED_ITEM = "SELECTED_ITEM";
+        public static final String SELECTED_INDEX = "SELECTED_INDEX";
         public static final String SIGN_UP_DATA = "SIGN_UP_DATA";
         public static final String DRIVER_ID = "DRIVER_ID";
         public static final String SIGN_UP_IMG_BASE = "SIGN_UP_IMG_BASE";
         public static final String SELECTED_CITY = "SELECTED_CITY";
         public static final String PHONE_NUMBER = "PHONE_NUMBER";
+        public static final String CNIC = "CNIC";
         public static final String LIST_ITEMS = "LIST_ITEMS";
         public static final String CALL_PENDING_API = "CALL_PENDING_API";
         public static final String NAVIGATE_TO_BOOKING_SCREEN = "NAVIGATE_TO_BOOKING_SCREEN";
@@ -93,6 +96,8 @@ public class Constants {
         public static final String TOP_BAR = "top_bar";
         public static final String DROP_OFF = "DROP_OFF";
         public static final String PICK_UP = "PICK_UP";
+        public static final String IS_FINGER_PRINTS_SUCCESS = "IS_FINGER_PRINTS_SUCCESS";
+        public static final String IS_BIOMETRIC_VERIFIED = "IS_FINGER_PRINTS_SUCCESS";
     }
 
     public static class Broadcast {
@@ -103,6 +108,9 @@ public class Constants {
         public final static String STARTFOREGROUND_ACTION = "STARTFOREGROUND_ACTION";
         public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";
         public final static String ON_NOTIFICATION_CLICK = "ON_NOTIFICATION_CLICK";
+    }
+    public static class RequestCode {
+        public final static int SCAN_FINGER_PRINTS = 123;
     }
 
     public static class AnalyticsEvents {
@@ -116,6 +124,10 @@ public class Constants {
         public final static String ON_ARRIVED = EYE_BALL + REPLACE + "-Arrived";
         public final static String ON_START = EYE_BALL + REPLACE + "-Started";
         public final static String ON_STATUS_UPDATE = EYE_BALL + "-StatusUpdate";
+        public final static String ON_SIGN_UP_BTN_CLICK = "SignupButton";
+        public final static String ON_SIGN_UP_MOBILE_ENTERED = "SignupMobile";
+        public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
+
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
 //        public final static String ON_FEEDBACK = EYE_BALL+ REPLACE   + "-Feedback";//already logged against passenger

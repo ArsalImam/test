@@ -29,6 +29,8 @@
 -keep class com.instabug.** { *; }
 -keep class top.oply.opuslib.** { *; }
 -keep class java.io.** { *; }
+-keep class id.zelory.** { *; }
+-keep class io.reactivex.** { *; }
 -keep class com.wang.** { *; }
 -keep class com.onesignal.** { *; }
 -keep class android.support.** { *; }

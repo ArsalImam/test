@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--<uses-permission android:name="android.permission.CALL_PHONE" />-->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -38,11 +38,13 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:node="merge">
         <activity
             android:name=".ui.activities.LoginActivity"
-            android:theme="@style/NewTheme" />
+            android:theme="@style/NewTheme"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.activities.HomeActivity"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
@@ -74,6 +76,11 @@
         <meta-data
             android:name="com.onesignal.NotificationOpened.DEFAULT"
             android:value="DISABLE" />
+
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -146,6 +153,8 @@
         <activity android:name=".ui.activities.PersonalActivity" />
         <activity android:name=".ui.activities.LicenseActivity" />
         <activity android:name=".ui.activities.PostBankAccountActivity" />
+        <activity android:name=".ui.activities.ScannFingerPrintsActivity" />
+        <activity android:name=".ui.activities.JsBankFingerSelectionActivity" />
         <activity android:name=".ui.activities.MotorbikeActivity" />
         <activity android:name=".ui.activities.BanksAccountActivity" />
         <activity android:name=".ui.activities.BanksDetailsActivity" />
@@ -153,17 +162,14 @@
         <activity
             android:name=".ui.activities.MyPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
-
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.helpers.webview.FinestWebViewCustomActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activities.ConfirmDropOffAddressActivity"
@@ -181,6 +187,25 @@
         <activity
             android:name=".ui.activities.DocumentsRegistrationActivity"
             android:theme="@style/NewTheme" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
     </application>
+
 
 </manifest>

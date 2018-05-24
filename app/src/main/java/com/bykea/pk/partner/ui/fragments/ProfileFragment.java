@@ -123,9 +123,9 @@ public class ProfileFragment extends Fragment {
         String appVersion = "v " + Utils.getVersion(mCurrentActivity);
         if (BuildConfig.DEBUG) {
             if (ApiTags.BASE_SERVER_URL.contains("staging")) {
-                appVersion = appVersion + " - Staging URLs";
+                appVersion = appVersion + " - Staging URLs " + ApiTags.BASE_SERVER_URL;
             } else {
-                appVersion = appVersion + " - Live URLs";
+                appVersion = appVersion + " - Live URLs " + ApiTags.BASE_SERVER_URL;
             }
         }
         tvVersion.setText(appVersion);

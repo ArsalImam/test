@@ -62,7 +62,7 @@
              android:layout_gravity="center_horizontal"
              android:layout_marginTop="@dimen/margin.normal"
              android:text="@string/toolbar.title.mobileVerification"
-             android:textColor="@color/colorPrimaryDark"
+             android:textColor="@color/colorAccentDark"
              android:textSize="@dimen/textsize.title"
              android:textStyle="bold"
              app:fontName="MuseoSans_1.otf" />

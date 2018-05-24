@@ -846,15 +846,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
-        endAddressTv.setVisibility(View.VISIBLE);
+        showDropOff();
         startAddressTv.setVisibility(View.GONE);
         cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
     }
 
+    private void showDropOff() {
+        if (Utils.isCourierService(callData.getCallType())) {
+            endAddressTv.setVisibility(View.GONE);
+        } else {
+            endAddressTv.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void setStartedState() {
         startAddressTv.setVisibility(View.GONE);
-        endAddressTv.setVisibility(View.VISIBLE);
+        showDropOff();
         cvDirections.setVisibility(View.VISIBLE);
         jobBtn.setText(getString(R.string.button_text_finish));
         setOnStartData();
@@ -862,13 +870,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showWalletAmount() {
-//        if (!callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-//            llTopLeft.setVisibility(View.VISIBLE);
         tvPWalletAmount.setText("Rs. " + callData.getPassWallet());
-//        } else {
-//            llTopLeft.setVisibility(View.GONE);
-//        }
-        if (Utils.isDeliveryService(callData.getCallType()) && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
+        if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
+                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
             ivTopUp.setVisibility(View.VISIBLE);
         } else {
             ivTopUp.setVisibility(View.INVISIBLE);
@@ -1558,7 +1562,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData = AppPreferences.getCallData();
                         callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
                         AppPreferences.setCallData(callData);
-                        endAddressTv.setVisibility(View.VISIBLE);
+                        showDropOff();
                         startAddressTv.setVisibility(View.GONE);
                         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
                         setOnArrivedData();
@@ -1603,8 +1607,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Utils.setCallIncomingState();
                         AppPreferences.setWalletAmountIncreased(!cancelRideResponse.isAvailable());
                         AppPreferences.setAvailableStatus(cancelRideResponse.isAvailable());
-
-                        /*dataRepository.requestLocationUpdate(mCurrentActivity);*/ // Required to reduce availability status delay
+                        dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
                         ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                         finish();
                     } else {

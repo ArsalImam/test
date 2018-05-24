@@ -10,8 +10,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 20
-        versionName "4.1"
+        versionCode 23
+        versionName "4.4"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -52,7 +52,7 @@ android {
             //Latest staging 9 Feb
 
             signingConfig signingConfigs.debug
-            shrinkResources false // to remove unused resources. This will reduce APK size.
+//            shrinkResources true // to remove unused resources. This will reduce APK size.
 //            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'),
 //                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
@@ -66,6 +66,7 @@ android {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
+        exclude 'META-INF/rxjava.properties'
     }
     configurations.all {
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -89,6 +90,13 @@ repositories {
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     maven { url "https://jitpack.io" }
     maven { url "https://maven.google.com" }
+    maven {
+        url 'http://artifactory.paysyslabs.com/instascan-complete'
+        credentials {
+            username = "jsbank-developer"
+            password = "AP9N3fsG4oAMheeKJuxJDhNVQaE"
+        }
+    }
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -148,9 +156,9 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'de.hdodenhof:circleimageview:2.2.0'
-    compile ('id.zelory:compressor:2.1.0') {
-        exclude group: 'io.reactivex.rxjava2'
-    }
+    compile 'id.zelory:compressor:2.1.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.19.0'
+    compile 'com.paysyslabs:instascan:1.1.7.2-SNAPSHOT'
 
 }
 apply plugin: 'com.google.gms.google-services'

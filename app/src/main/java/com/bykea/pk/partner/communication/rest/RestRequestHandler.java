@@ -12,8 +12,10 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.request.SignupAddRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
+import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
@@ -466,7 +468,7 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), mContext.getString(R.string.error_try_again));
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, mContext.getString(R.string.error_try_again));
                 }
             }
 
@@ -477,19 +479,34 @@ public class RestRequestHandler {
         });
     }
 
-    public void requestRegisterNumber(Context context, String phone, String city, final IResponseCallback onResponseCallBack) {
+    public void requestRegisterNumber(Context context, String phone, String city, String cnic, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getBykeaSignUpApiClient();
+//        ArrayList<Double> loc = new ArrayList<>();
+//        loc.add(AppPreferences.getLatitude());
+//        loc.add(AppPreferences.getLongitude());
+//        SignupAddRequest request = new SignupAddRequest();
+//        request.setCity(city);
+//        request.setGeoloc(loc);
+//        request.setImei(Utils.getDeviceId(context));
+//        request.setPhone(phone);
+//        request.setMobile_brand(Utils.getDeviceName());
+//        request.setMobile_model(Utils.getDeviceModel());
+//        Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API, request);
+
+
         Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                phone, city);
+                phone, Utils.getDeviceId(context), Utils.getDeviceName(), Utils.getDeviceModel(), AppPreferences.getLatitude() + "," + AppPreferences.getLongitude(), cnic, city);
+
+
         requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
             @Override
             public void onResponse(Response<SignUpAddNumberResponse> response, Retrofit retrofit) {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
                 }
             }
 
@@ -513,7 +530,30 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
+    }
+
+    public void postBiometricVerification(Context context, String id, boolean isVerified, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getBykeaSignUpApiClient();
+        Call<BiometricApiResponse> requestCall = mRestClient.postBiometricVerification(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
+                id, isVerified);
+        requestCall.enqueue(new Callback<BiometricApiResponse>() {
+            @Override
+            public void onResponse(Response<BiometricApiResponse> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
                 }
             }
 
@@ -536,7 +576,7 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
                 }
             }
 
@@ -559,7 +599,7 @@ public class RestRequestHandler {
                 if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
-                    mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
                 }
             }
 

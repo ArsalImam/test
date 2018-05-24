@@ -132,6 +132,7 @@ public class HomeFragment extends Fragment {
     private boolean isScreenInFront;
     private int[] cashInHand;
     private Unbinder unbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -933,8 +934,8 @@ public class HomeFragment extends Fragment {
                     Utils.redLog("VERSION", "Current: " + currentVersion + " Play Store: " + latestVersion);
                     if (Double.parseDouble(currentVersion) < Double.parseDouble(latestVersion)) {
                         if (!Dialogs.INSTANCE.isShowing()) {
-                            Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "Important Notice", "Bykea partner app has been updated, " +
-                                    "kindly update your app. Thank you", "https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
+                            Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "اعلان !", "بائيکیا پارٹنر ایپ کو برائے مہربانی فوراً اپڈیٹ کریں۔"
+                                    , "https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
 
                         }
                     }

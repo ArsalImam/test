@@ -23,7 +23,7 @@
         android:background="@drawable/bg_textview_clickable"
         android:text="@string/profile_action_sheet_new.tv.camera"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="@color/colorAccentDark"/>
 
     <View
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/bg_textview_clickable"
         android:text="@string/profile_action_sheet_new.tv.gallery"
-        android:textColor="@color/colorPrimaryDark" />
+        android:textColor="@color/colorAccentDark" />
 
     <View
         android:layout_width="match_parent"
@@ -61,6 +61,6 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:background="@drawable/bg_textview_clickable"
-        android:textColor="@color/colorPrimaryDark" />
+        android:textColor="@color/colorAccentDark" />
 
 </LinearLayout>

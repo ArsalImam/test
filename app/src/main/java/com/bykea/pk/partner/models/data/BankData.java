@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 public class BankData implements Parcelable {
@@ -12,11 +14,13 @@ public class BankData implements Parcelable {
     private String img;
 
     @SerializedName("account_title")
-    String accountTitle;
+    private String accountTitle;
     @SerializedName("account_number")
-    String accountNumber;
+    private String accountNumber;
     @SerializedName("bank_name")
-    String bankName;
+    private String bankName;
+
+    private String msg;
 
     private ArrayList<BankAgentData> agentsData;
 
@@ -92,6 +96,14 @@ public class BankData implements Parcelable {
         parcel.writeString(bankName);
     }
 
+    public String getMsg() {
+        return StringUtils.isNotBlank(msg) ? msg : StringUtils.EMPTY;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
     public class BankAgentData {
         @SerializedName("ph")
         private String phone;
@@ -101,26 +113,17 @@ public class BankData implements Parcelable {
 
         private String address;
 
-        @SerializedName("agentName")
-        private String contactPerson;
-
         private ArrayList<Double> loc;
 
         public String getPhone() {
             return phone;
         }
 
-        public void setPhone(String phone) {
-            this.phone = phone;
-        }
 
         public String getAgentName() {
             return agentName;
         }
 
-        public void setAgentName(String agentName) {
-            this.agentName = agentName;
-        }
 
         public String getAddress() {
             return address;
@@ -130,20 +133,9 @@ public class BankData implements Parcelable {
             this.address = address;
         }
 
-        public String getContactPerson() {
-            return contactPerson;
-        }
-
-        public void setContactPerson(String contactPerson) {
-            this.contactPerson = contactPerson;
-        }
-
         public ArrayList<Double> getLoc() {
             return loc;
         }
 
-        public void setLoc(ArrayList<Double> loc) {
-            this.loc = loc;
-        }
     }
 }

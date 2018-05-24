@@ -82,7 +82,7 @@
         app:rangeCount="5"
         app:ripple="false"
         app:sliderRadiusPercent=".25"
-        app:slider_color="@color/colorPrimaryDark"
+        app:slider_color="@color/colorAccentDark"
         app:slotRadiusPercent=".20"
         app:stroke_color="@color/secondaryColor"
         app:stroke_width="1" />

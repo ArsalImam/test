@@ -14,6 +14,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -27,7 +28,6 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -37,6 +37,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -72,6 +73,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.GoogleMap;
@@ -95,11 +97,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.text.NumberFormat;
@@ -265,6 +268,7 @@ public class Utils {
 
     private static void clearData(Context context) {
 //        Utils.resetMixPanel(context, false);
+        FirebaseAnalytics.getInstance(context).resetAnalyticsData();
         String regId = AppPreferences.getRegId();
         double currentLat = AppPreferences.getLatitude();
         double currentLng = AppPreferences.getLongitude();
@@ -277,6 +281,7 @@ public class Utils {
             AppPreferences.setObjectToSharedPref(signUpSettingsResponse);
         }
         if (settingsData != null) {
+            settingsData.getSettings().setPartner_signup_url(StringUtils.EMPTY);
             AppPreferences.saveSettingsData(settingsData);
             if (settingsData.getSettings().getCih_range() != null) {
                 AppPreferences.setCashInHandsRange(settingsData.getSettings().getCih_range());
@@ -329,8 +334,7 @@ public class Utils {
     }
 
     public static String getImageLink(String link) {
-        Utils.redLog("Image Url", "http://res.cloudinary.com/bykea/image/upload/" + link);
-        return "http://res.cloudinary.com/bykea/image/" + link;
+        return "http://res.cloudinary.com/bykea/image/upload/" + link;
     }
 
     public static String getFileLink(String name) {
@@ -863,6 +867,10 @@ public class Utils {
         return "" + Math.round(((calculateDistance(newLat,
                 newLon, prevLat,
                 prevLon)) / 1000) * 10.0) / 10.0;
+    }
+
+    public static String upto2decimalPlaces(double value) {
+        return "" + Math.round(value * 100.0) / 100.0;
     }
 
 
@@ -1470,6 +1478,10 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "Delivery");
     }
 
+    public static boolean isCourierService(String callType) {
+        return StringUtils.containsIgnoreCase(callType, "Courier");
+    }
+
     public static boolean isPurchaseService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Bring")
                 || StringUtils.containsIgnoreCase(callType, "Purchase");
@@ -1553,6 +1565,8 @@ public class Utils {
                 return R.drawable.jama_karo;
             case "carryvan":
                 return R.drawable.carry_van;
+            case "courier":
+                return R.drawable.courier;
             default:
                 return R.drawable.ride;
         }
@@ -1625,7 +1639,7 @@ public class Utils {
         AppPreferences.setRecentPlaces(placesResult1);
     }
 
-    public static boolean isTimeWithInNDay(long time, int n) {
+    public static boolean isTimeWithInNDay(long time, double n) {
         return (System.currentTimeMillis() - time) < (n * Constants.MILISEC_IN_DAY);
     }
 
@@ -1916,10 +1930,15 @@ public class Utils {
         if (takePictureIntent.resolveActivity(act.getPackageManager()) != null) {
             // Create the File where the photo should go
             // Continue only if the File was successfully created
+
             if (photoFile != null) {
-                photoURI = FileProvider.getUriForFile(act,
-                        "com.example.android.fileprovider",
-                        photoFile);
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                    photoURI = Uri.fromFile(photoFile);
+                } else {
+                    photoURI = FileProvider.getUriForFile(act,
+                            "com.example.android.fileprovider",
+                            photoFile);
+                }
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 act.startActivityForResult(takePictureIntent, Constants.REQUEST_CAMERA);
             }
@@ -1987,4 +2006,59 @@ public class Utils {
         return chanelId;
     }
 
+    public static void printHashKey(Context pContext) {
+        try {
+            PackageInfo info = pContext.getPackageManager().getPackageInfo(pContext.getPackageName(), PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String hashKey = new String(Base64.encode(md.digest(), 0));
+                Utils.redLog("fbKeyHash", "printHashKey() Hash Key: " + hashKey);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            Utils.redLog("fbKeyHash", "printHashKey()" + e.getMessage());
+        } catch (Exception e) {
+            Utils.redLog("fbKeyHash", "printHashKey()" + e.getMessage());
+        }
+    }
+
+
+    public static void logFacebookEvent(Context context, String EVENT, JSONObject data) {
+        int count = 0;
+        Bundle bundle = new Bundle();
+        Iterator iterator = data.keys();
+        while (iterator.hasNext()) {
+            if (count == 10) {
+                break;
+            }
+            count++;
+            String key = (String) iterator.next();
+            String value = null;
+            try {
+                value = data.getString(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            key = key.toLowerCase().replace("-", "_").replace(" ", "_");
+            bundle.putString(key, value);
+        }
+        //Facebook Events
+        AppEventsLogger.newLogger(context).logEvent(EVENT, bundle);
+        FirebaseAnalytics.getInstance(context).logEvent(EVENT, bundle);
+    }
+
+    public static String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        return StringUtils.capitalize(manufacturer);
+    }
+
+    public static String getDeviceModel() {
+        String model = Build.MODEL;
+        return StringUtils.capitalize(model);
+    }
+
+    public static boolean isInactiveCheckRequired() {
+        long diff = (System.currentTimeMillis() - AppPreferences.getInactiveCheckTime());
+        return !(diff <= 15000);
+    }
 }

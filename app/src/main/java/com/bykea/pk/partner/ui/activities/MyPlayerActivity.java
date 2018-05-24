@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,6 +25,7 @@ public class MyPlayerActivity extends YouTubeBaseActivity implements  YouTubePla
         super.onCreate(savedInstanceState);
 //        setupVideoView();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 

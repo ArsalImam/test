@@ -16,6 +16,7 @@ public class Keys {
     public static final String AVAILABLE_STATUS_API_CALL = "AVAILABLE_STATUS_API_CALL";
     public static final String VERIFIED_STATUS = "VERIFIED_STATUS";
     public static final String LOGIN_STATUS = "LOGIN_STATUS";
+    public static final String SIGN_UP_API_CALL_CHECK = "SIGN_UP_API_CALL_CHECK";
 
 
     public static final String FULL_NAME = "full_name";
@@ -156,5 +157,6 @@ public class Keys {
     public static final String RECENT_PLACES = "RECENT_PLACES_NEW";
     public static final String SAVED_PLACES = "SAVED_PLACES_NEW";
     public static final String IS_SAVED_PLACES_API_CALLED = "IS_SAVED_PLACES_API_CALLED";
+    public static final String INACTIVE_CHECK_TIME = "INACTIVE_CHECK_TIME";
 
 }
