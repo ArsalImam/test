@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -633,6 +634,16 @@ public class BaseActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+    }
+    private long mLastClickTime;
+
+    public boolean checkClickTime() {
+        long currentTime = SystemClock.elapsedRealtime();
+        if (mLastClickTime != 0 && (currentTime - mLastClickTime < 1000)) {
+            return true;
+        }
+        mLastClickTime = currentTime;
+        return false;
     }
 
 }

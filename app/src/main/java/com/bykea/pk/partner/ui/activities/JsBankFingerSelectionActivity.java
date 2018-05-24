@@ -64,42 +64,6 @@ public class JsBankFingerSelectionActivity extends BaseActivity implements View.
         }
     }
 
-    @OnClick({R.id.rightThumb, R.id.rightIndexFinger, R.id.rightMiddleFinger, R.id.rightRingFinger, R.id.rightLittleFinger, R.id.leftThumb, R.id.leftIndexFinger, R.id.leftMiddleFinger, R.id.leftRingFinger, R.id.leftLittleFinger,})
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.rightThumb:
-                callScanActivity(1);
-                break;
-            case R.id.rightIndexFinger:
-                callScanActivity(2);
-                break;
-            case R.id.rightMiddleFinger:
-                callScanActivity(3);
-                break;
-            case R.id.rightRingFinger:
-                callScanActivity(4);
-                break;
-            case R.id.rightLittleFinger:
-                callScanActivity(5);
-                break;
-            case R.id.leftThumb:
-                callScanActivity(6);
-                break;
-            case R.id.leftIndexFinger:
-                callScanActivity(7);
-                break;
-            case R.id.leftMiddleFinger:
-                callScanActivity(8);
-                break;
-            case R.id.leftRingFinger:
-                callScanActivity(9);
-                break;
-            case R.id.leftLittleFinger:
-                callScanActivity(10);
-                break;
-        }
-    }
-
     @Override
     public boolean onTouch(View v, MotionEvent ev) {
         final int action = ev.getAction();
@@ -110,46 +74,47 @@ public class JsBankFingerSelectionActivity extends BaseActivity implements View.
             case MotionEvent.ACTION_DOWN:
                 return true;
             case MotionEvent.ACTION_UP:
-                // On the UP, we do the click action.
-                // The hidden image (image_areas) has three different hotspots on it.
-                // The colors are red, blue, and yellow.
-                // Use image_areas to determine which region the user touched.
-                int touchColor = getHotspotColor(R.id.image_areas, evX, evY);
+                if (!checkClickTime()) {
+                    // On the UP, we do the click action.
+                    // The hidden image (image_areas) has three different hotspots on it.
+                    // The colors are red, blue, and yellow.
+                    // Use image_areas to determine which region the user touched.
+                    int touchColor = getHotspotColor(R.id.image_areas, evX, evY);
 
-                // Compare the touchColor to the expected values. Switch to a different image, depending on what color was touched.
-                // Note that we use a Color Tool object to test whether the observed color is close enough to the real color to
-                // count as a match. We do this because colors on the screen do not match the map exactly because of scaling and
-                // varying pixel density.
+                    // Compare the touchColor to the expected values. Switch to a different image, depending on what color was touched.
+                    // Note that we use a Color Tool object to test whether the observed color is close enough to the real color to
+                    // count as a match. We do this because colors on the screen do not match the map exactly because of scaling and
+                    // varying pixel density.
 //                ColorTool ct = new ColorTool();
-                int tolerance = 25;
+                    int tolerance = 25;
 //                nextImage = R.drawable.p2_ship_default;
-                if (closeMatch(resources.getColor(R.color.colorOne), touchColor, tolerance)) {
-                    callScanActivity(1);
-                } else if (closeMatch(resources.getColor(R.color.colorTwo), touchColor, tolerance)) {
-                    callScanActivity(2);
-                } else if (closeMatch(resources.getColor(R.color.colorThree), touchColor, tolerance)) {
-                    callScanActivity(3);
-                } else if (closeMatch(resources.getColor(R.color.colorFour), touchColor, tolerance)) {
-                    callScanActivity(4);
-                } else if (closeMatch(resources.getColor(R.color.colorFive), touchColor, tolerance)) {
-                    callScanActivity(5);
-                } else if (closeMatch(resources.getColor(R.color.colorSix), touchColor, tolerance)) {
-                    callScanActivity(6);
-                } else if (closeMatch(resources.getColor(R.color.colorSeven), touchColor, tolerance)) {
-                    callScanActivity(7);
-                } else if (closeMatch(resources.getColor(R.color.colorEight), touchColor, tolerance)) {
-                    callScanActivity(8);
-                } else if (closeMatch(resources.getColor(R.color.colorNine), touchColor, tolerance)) {
-                    callScanActivity(9);
-                } else if (closeMatch(resources.getColor(R.color.colorTen), touchColor, tolerance)) {
-                    callScanActivity(10);
+                    if (closeMatch(resources.getColor(R.color.colorOne), touchColor, tolerance)) {
+                        callScanActivity(1);
+                    } else if (closeMatch(resources.getColor(R.color.colorTwo), touchColor, tolerance)) {
+                        callScanActivity(2);
+                    } else if (closeMatch(resources.getColor(R.color.colorThree), touchColor, tolerance)) {
+                        callScanActivity(3);
+                    } else if (closeMatch(resources.getColor(R.color.colorFour), touchColor, tolerance)) {
+                        callScanActivity(4);
+                    } else if (closeMatch(resources.getColor(R.color.colorFive), touchColor, tolerance)) {
+                        callScanActivity(5);
+                    } else if (closeMatch(resources.getColor(R.color.colorSix), touchColor, tolerance)) {
+                        callScanActivity(6);
+                    } else if (closeMatch(resources.getColor(R.color.colorSeven), touchColor, tolerance)) {
+                        callScanActivity(7);
+                    } else if (closeMatch(resources.getColor(R.color.colorEight), touchColor, tolerance)) {
+                        callScanActivity(8);
+                    } else if (closeMatch(resources.getColor(R.color.colorNine), touchColor, tolerance)) {
+                        callScanActivity(9);
+                    } else if (closeMatch(resources.getColor(R.color.colorTen), touchColor, tolerance)) {
+                        callScanActivity(10);
+                    }
                 }
                 break;
             default:
         }
         return true;
     }
-
 
 
     public boolean closeMatch(int color1, int color2, int tolerance) {
@@ -163,7 +128,7 @@ public class JsBankFingerSelectionActivity extends BaseActivity implements View.
         Log.e("Touch", s);
     }
 
-    public int getHotspotColor(int hotspotId, int x, int y) {
+    private synchronized int getHotspotColor(int hotspotId, int x, int y) {
         ImageView img = (ImageView) findViewById(hotspotId);
         if (img == null) {
             Log.d("MainActivity", "Hot spot image not found");
