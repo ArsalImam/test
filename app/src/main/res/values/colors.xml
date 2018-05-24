@@ -56,5 +56,17 @@
     <color name="secondaryColor4">#c2c2c2</color>
     <color name="yellowStar">#F7D722</color>
 
+    <!--FINGER DETECTION COLORS-->
+    <color name="colorOne">#F47B20</color>
+    <color name="colorTwo">#F01915</color>
+    <color name="colorThree">#5F06CB</color>
+    <color name="colorFour">#04AA3E</color>
+    <color name="colorFive">#037367</color>
+    <color name="colorSix">#A75D01</color>
+    <color name="colorSeven">#6C0004</color>
+    <color name="colorEight">#A008B4</color>
+    <color name="colorNine">#CADA06</color>
+    <color name="colorTen">#016896</color>
+
 
 </resources>
