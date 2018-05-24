@@ -146,8 +146,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private synchronized void onInactivePushReceived(RemoteMessage remoteMessage, Gson gson) {
-        if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() ||
-                AppPreferences.isOutOfFence())) {
+        if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() || AppPreferences.isOutOfFence()) && Utils.isInactiveCheckRequired()) {
+            AppPreferences.setInactiveCheckTime(System.currentTimeMillis());
             final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
             /*
             * Check Coordinates when there's any delay in FCM Push Notification and ignore

@@ -22,6 +22,7 @@ import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
+import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -623,16 +624,22 @@ public class UserRepository {
         mRestRequestHandler.requestSignUpSettings(mContext, mDataCallback);
     }
 
-    public void requestRegisterNumber(Context context, String phone, String city, IUserDataHandler handler) {
+    public void requestRegisterNumber(Context context, String phone, String city, String cnic, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, mDataCallback);
+        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, cnic, mDataCallback);
     }
 
     public void postOptionalSignupData(Context context, String id, String email, String referenceNo, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.postOptionalSignupData(mContext, id, email, referenceNo, mDataCallback);
+    }
+
+    public void postBiometricVerification(Context context, String id, boolean isVerified, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.postBiometricVerification(mContext, id, isVerified, mDataCallback);
     }
 /*
     public void requestCompleteSignupData(Context context, String id, IUserDataHandler handler) {
@@ -1126,6 +1133,9 @@ public class UserRepository {
                         break;
                     case "SignUpCompleteResponse":
                         mUserCallback.onSignupCompleteResponse((SignUpCompleteResponse) object);
+                        break;
+                    case "BiometricApiResponse":
+                        mUserCallback.onBiometricApiResponse((BiometricApiResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

@@ -22,6 +22,7 @@ import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DocumentsData;
 import com.bykea.pk.partner.models.data.Images;
+import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpUserData;
@@ -78,9 +79,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
     private boolean isImgCompressing;
     //    private String imagPath;
-    private String DRIVER_ID;
-    private String BASE_IMG_URL;
-
+    private String DRIVER_ID, CNIC, BASE_IMG_URL;
+    private boolean isBiometricVerRequired;
     private DocumentsRegistrationActivity mCurrentActivity;
     private SignUpCity mSelectedCity;
     private String VIDEO_ID;
@@ -122,6 +122,8 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             signUpData = getIntent().getExtras().getParcelable(Constants.Extras.SIGN_UP_DATA);
             DRIVER_ID = getIntent().getExtras().getString(Constants.Extras.DRIVER_ID);
             BASE_IMG_URL = getIntent().getExtras().getString(Constants.Extras.SIGN_UP_IMG_BASE);
+            CNIC = getIntent().getExtras().getString(Constants.Extras.CNIC);
+            isBiometricVerRequired = getIntent().getExtras().getBoolean(Constants.Extras.IS_BIOMETRIC_VERIFIED);
             if (signUpData != null) {
                 if (StringUtils.isNotBlank(signUpData.getRef_number())) {
                     phoneNumberEt.setText(signUpData.getRef_number());
@@ -339,10 +341,14 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
 //                Dialogs.INSTANCE.dismissDialog();
-                mCurrentActivity.finish();
-                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
-                    DocumentsGridAdapter.getInstance().resetTheInstance();
+                if (isBiometricVerRequired) {
+                    nextActivity();
+                } else {
+                    ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                    if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
+                        DocumentsGridAdapter.getInstance().resetTheInstance();
+                    }
+                    mCurrentActivity.finish();
                 }
             }
         });
@@ -671,7 +677,20 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         return hasPermission;
     }
 
-
+    private void nextActivity() {
+        if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
+            DocumentsGridAdapter.getInstance().resetTheInstance();
+        }
+        AppPreferences.setSignUpApiCalled(true);
+        Intent intent = new Intent(mCurrentActivity, JsBankFingerSelectionActivity.class);
+        intent.putExtra(Constants.Extras.CNIC, CNIC);
+        intent.putExtra(Constants.Extras.SELECTED_ITEM, mSelectedCity);
+        intent.putExtra(Constants.Extras.DRIVER_ID, DRIVER_ID);
+        intent.putExtra(Constants.Extras.SIGN_UP_DATA, signUpData);
+        startActivity(intent);
+        Dialogs.INSTANCE.dismissDialog();
+        mCurrentActivity.finish();
+    }
     /*private boolean checkPermissions() {
         boolean hasPermission = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

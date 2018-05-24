@@ -605,4 +605,18 @@ public enum Dialogs {
         showDialog();
     }
 
+    public void showVerificationDialog(Context context, boolean success, View.OnClickListener onClick) {
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
+        if (success) {
+            mDialog.setContentView(R.layout.verification_success_dialog);
+        } else {
+            mDialog.setContentView(R.layout.verification_unsuccessful_dialog);
+        }
+        mDialog.setCancelable(false);
+        mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
+        showDialog();
+    }
+
 }

@@ -12,6 +12,7 @@ public class SignUpAddNumberResponse {
     private int code;
     private String message;
     private String _id;
+    private boolean verification;
 
     private SignUpUserData data;
 
@@ -48,4 +49,11 @@ public class SignUpAddNumberResponse {
     }
 
 
+    public boolean isVerification() {
+        return verification;
+    }
+
+    public void setVerification(boolean verification) {
+        this.verification = verification;
+    }
 }

@@ -846,15 +846,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
-        endAddressTv.setVisibility(View.VISIBLE);
+        showDropOff();
         startAddressTv.setVisibility(View.GONE);
         cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
     }
 
+    private void showDropOff() {
+        if (Utils.isCourierService(callData.getCallType())) {
+            endAddressTv.setVisibility(View.GONE);
+        } else {
+            endAddressTv.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void setStartedState() {
         startAddressTv.setVisibility(View.GONE);
-        endAddressTv.setVisibility(View.VISIBLE);
+        showDropOff();
         cvDirections.setVisibility(View.VISIBLE);
         jobBtn.setText(getString(R.string.button_text_finish));
         setOnStartData();
@@ -1554,7 +1562,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData = AppPreferences.getCallData();
                         callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
                         AppPreferences.setCallData(callData);
-                        endAddressTv.setVisibility(View.VISIBLE);
+                        showDropOff();
                         startAddressTv.setVisibility(View.GONE);
                         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
                         setOnArrivedData();

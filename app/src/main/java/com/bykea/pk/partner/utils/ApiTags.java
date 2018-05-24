@@ -8,11 +8,15 @@ public class ApiTags {
 //    private static final String BASE_SERVER_URL_DEBUG = "http://172.16.0.75 :3001";  //local
 
     //staging
-//    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";
+    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";
 //    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3001";
 //    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3002";
     //live test
-    private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3001";
+//    private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3001";
+
+
+
+
 
     private static final String BASE_SERVER_URL_LIVE = "https://secure.bykea.net:3000";
 
@@ -32,6 +36,7 @@ public class ApiTags {
     public static final String SIGN_UP_UPLOAD_DOCUMENT = "/online_reg/image";
     public static final String SIGN_UP_COMPLETE = "/online_reg/complete";
     public static final String SIGN_UP_OPTIONAL_DATA = "/online_reg/optional";
+    public static final String SIGN_UP_BIOMETRIC_VERIFICATION = "/online_reg/biometric";
 
 
     public static final String GOOGLE_API_BASE_URL = "https://maps.googleapis.com/";

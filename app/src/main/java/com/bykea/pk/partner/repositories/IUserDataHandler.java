@@ -11,6 +11,7 @@ import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
+import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -172,6 +173,7 @@ public interface IUserDataHandler {
     void onSignUpImageResponse(SignupUplodaImgResponse response);
     void onSignUpOptionalResponse(SignUpOptionalDataResponse response);
     void onSignupCompleteResponse(SignUpCompleteResponse response);
+    void onBiometricApiResponse(BiometricApiResponse response);
 
     void onError(int errorCode, String errorMessage);
 }

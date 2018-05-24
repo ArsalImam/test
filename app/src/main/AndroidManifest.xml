@@ -153,6 +153,8 @@
         <activity android:name=".ui.activities.PersonalActivity" />
         <activity android:name=".ui.activities.LicenseActivity" />
         <activity android:name=".ui.activities.PostBankAccountActivity" />
+        <activity android:name=".ui.activities.ScannFingerPrintsActivity" />
+        <activity android:name=".ui.activities.JsBankFingerSelectionActivity" />
         <activity android:name=".ui.activities.MotorbikeActivity" />
         <activity android:name=".ui.activities.BanksAccountActivity" />
         <activity android:name=".ui.activities.BanksDetailsActivity" />

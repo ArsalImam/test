@@ -26,12 +26,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/margin.normal"
             android:gravity="center"
-            android:text="Your booking will be cancelled"
+            android:text=" آپکی بکنگ کینسل ہو جائے گی۔"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/textsize.title"
-            app:fontName="roboto_bold.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/messageTv"
@@ -39,9 +38,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Tell us why and help us to improve"
+            android:text=" کینسل کرنے کی وجہ بتائیں۔"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.small.medium" />
+            android:textSize="@dimen/textsize.small.medium"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.ScrollViewMaxHeight
             android:id="@+id/svRB"
@@ -74,20 +74,16 @@
     </LinearLayout>
 
 
-    <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/positiveBtn"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/margin.small"
-            android:layout_weight="1"
-            android:background="@drawable/button_red"
-            android:gravity="center"
-            android:padding="@dimen/_8sdp"
-            android:text="Submit"
-            android:textColor="@color/buttonTextColor"
-            android:textSize="@dimen/textsize.large"
-            app:fontName="roboto_bold.ttf" />
+    <ImageView
+        android:id="@+id/positiveBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_44sdp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/margin.small"
+        android:background="@drawable/button_square_red"
+        android:gravity="center"
+        android:padding="@dimen/_8sdp"
+        android:src="@drawable/correct_symbol_square" />
 
 
 </LinearLayout>

@@ -869,6 +869,10 @@ public class Utils {
                 prevLon)) / 1000) * 10.0) / 10.0;
     }
 
+    public static String upto2decimalPlaces(double value) {
+        return "" + Math.round(value * 100.0) / 100.0;
+    }
+
 
     public static boolean isValidNumber(Context context, FontEditText view) {
         String number = view.getText().toString();
@@ -2053,4 +2057,8 @@ public class Utils {
         return StringUtils.capitalize(model);
     }
 
+    public static boolean isInactiveCheckRequired() {
+        long diff = (System.currentTimeMillis() - AppPreferences.getInactiveCheckTime());
+        return !(diff <= 15000);
+    }
 }

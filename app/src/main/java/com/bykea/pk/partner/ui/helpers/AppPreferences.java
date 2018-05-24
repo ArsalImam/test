@@ -1113,5 +1113,15 @@ public class AppPreferences {
         }
         return object;
     }
+    public static void setInactiveCheckTime(long value) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.INACTIVE_CHECK_TIME, value)
+                .apply();
+    }
+
+    public static long getInactiveCheckTime() {
+        return mSharedPreferences.getLong(Keys.INACTIVE_CHECK_TIME, 0);
+    }
 
 }

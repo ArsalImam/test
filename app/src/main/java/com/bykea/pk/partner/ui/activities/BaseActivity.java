@@ -615,6 +615,17 @@ public class BaseActivity extends AppCompatActivity {
         setBackPress(findViewById(R.id.ivBackBtn));
     }
 
+    public void setTitleCustomToolbarWithUrduHideBackBtn(String title, String name_urdu) {
+        final FontTextView ivTitle = (FontTextView) findViewById(R.id.tvTitle);
+        final FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
+        tvTitleUrdu.setVisibility(View.VISIBLE);
+        ivTitle.setText(title);
+        if (StringUtils.isNotBlank(name_urdu)) {
+            tvTitleUrdu.setText(name_urdu);
+        }
+        findViewById(R.id.ivBackBtn).setVisibility(View.INVISIBLE);
+    }
+
     private void setBackPress(View view) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override

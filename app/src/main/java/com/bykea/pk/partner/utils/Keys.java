@@ -157,5 +157,6 @@ public class Keys {
     public static final String RECENT_PLACES = "RECENT_PLACES_NEW";
     public static final String SAVED_PLACES = "SAVED_PLACES_NEW";
     public static final String IS_SAVED_PLACES_API_CALLED = "IS_SAVED_PLACES_API_CALLED";
+    public static final String INACTIVE_CHECK_TIME = "INACTIVE_CHECK_TIME";
 
 }

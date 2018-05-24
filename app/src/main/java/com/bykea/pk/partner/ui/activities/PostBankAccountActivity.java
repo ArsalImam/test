@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -36,10 +37,7 @@ public class PostBankAccountActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         mCurrentActivity = this;
-        setToolbar();
-        hideToolbarLogo();
-        setToolbarTitle("Bank Account", "بینک اکاؤنٹ");
-        setBackNavigation();
+        setTitleCustomToolbarWithUrdu("Bank Account", "بینک اکاؤنٹ");
         setData();
     }
 
@@ -56,9 +54,9 @@ public class PostBankAccountActivity extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.callbtn:
-                if(StringUtils.isNotBlank(financeNumber)) {
+                if (StringUtils.isNotBlank(financeNumber)) {
                     Utils.callingIntent(mCurrentActivity, financeNumber);
-                }else {
+                } else {
                     Dialogs.INSTANCE.showToast(mCurrentActivity, "Number not available.");
                 }
                 break;

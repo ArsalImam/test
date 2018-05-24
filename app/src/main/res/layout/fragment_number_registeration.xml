@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/margin.small"
+            android:layout_marginTop="@dimen/_6sdp"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/_21sdp"
@@ -57,19 +57,29 @@
 
             <LinearLayout
                 android:id="@+id/llIv1"
-                android:layout_width="@dimen/_60sdp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:gravity="end">
 
-                <ImageView
-                    android:id="@+id/ivMobileNumber"
-                    android:layout_width="@dimen/_60sdp"
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:padding="@dimen/_8sdp"
-                    android:scaleType="fitEnd"
-                    app:srcCompat="@drawable/ic_mobile_number_simple" />
+                    android:paddingBottom="@dimen/_4sdp"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:text="موبائل نمبر"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/_14sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <!--  <ImageView
+                      android:id="@+id/ivMobileNumber"
+                      android:layout_width="@dimen/_60sdp"
+                      android:layout_height="wrap_content"
+                      android:layout_centerInParent="true"
+                      android:padding="@dimen/_8sdp"
+                      android:scaleType="fitEnd"
+                      app:srcCompat="@drawable/ic_mobile_number_simple" />-->
             </LinearLayout>
 
             <com.bykea.pk.partner.widgets.FontEditText
@@ -78,11 +88,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/llIv1"
                 android:layout_alignTop="@id/llIv1"
-                android:layout_marginBottom="@dimen/_6sdp"
                 android:layout_toLeftOf="@id/llIv1"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
-                android:gravity="left|bottom"
+                android:gravity="left|center"
                 android:hint="@string/hint.phone.number.nofont"
                 android:inputType="numberPassword"
                 android:maxLength="11"
@@ -105,7 +114,72 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/margin.small"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/_21sdp"
+            android:paddingRight="@dimen/_21sdp">
+
+            <LinearLayout
+                android:id="@+id/llIv3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="end">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/_4sdp"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:text="شناختی کارڈ نمبر"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/_14sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <!--  <ImageView
+                      android:id="@+id/ivMobileNumber"
+                      android:layout_width="@dimen/_60sdp"
+                      android:layout_height="wrap_content"
+                      android:layout_centerInParent="true"
+                      android:padding="@dimen/_8sdp"
+                      android:scaleType="fitEnd"
+                      app:srcCompat="@drawable/ic_mobile_number_simple" />-->
+            </LinearLayout>
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/cnicEt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/llIv3"
+                android:layout_alignTop="@id/llIv3"
+                android:layout_toLeftOf="@id/llIv3"
+                android:background="@color/transparent"
+                android:backgroundTint="@color/transparent"
+                android:gravity="left|center"
+                android:hint="CNIC Number"
+                android:inputType="numberPassword"
+                android:maxLength="13"
+                android:paddingLeft="@dimen/_6sdp"
+                android:textColorHint="@color/secondaryColorLight"
+                android:textSize="@dimen/_20sdp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_below="@+id/cnicEt"
+                android:layout_marginTop="-4dp"
+                android:background="@color/textColorSecondary"
+                android:visibility="visible" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_6sdp"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/_21sdp"
@@ -113,35 +187,45 @@
 
             <LinearLayout
                 android:id="@+id/llIv2"
-                android:layout_width="@dimen/_60sdp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:gravity="end|center"
-                android:paddingTop="@dimen/_4sdp">
+                android:gravity="end|center">
 
 
                 <ImageView
                     android:id="@+id/ivRight0"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
+                    android:layout_marginRight="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
                     android:padding="@dimen/_2sdp"
                     android:src="@drawable/polygon" />
 
-                <ImageView
+                <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:padding="@dimen/_8sdp"
-                    android:scaleType="fitEnd"
-                    app:srcCompat="@drawable/ic_shehar" />
+                    android:paddingBottom="@dimen/_4sdp"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:text="شہر"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/_14sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+                <!-- <ImageView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_centerInParent="true"
+                     android:padding="@dimen/_8sdp"
+                     android:scaleType="fitEnd"
+                     app:srcCompat="@drawable/ic_shehar" />-->
             </LinearLayout>
 
             <Spinner
                 android:id="@+id/tvCity"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp"
+                android:layout_height="@dimen/_190sdp"
                 android:layout_alignBottom="@id/llIv2"
                 android:layout_alignTop="@id/llIv2"
                 android:layout_toLeftOf="@id/llIv2"

@@ -22,6 +22,7 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
+import com.bykea.pk.partner.ui.activities.JsBankFingerSelectionActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
@@ -245,6 +246,7 @@ public class ActivityStackManager {
 
     public void startRegisterationActiivty(Context context) {
         Intent intent = new Intent(context, RegistrationActivity.class);
+//        Intent intent = new Intent(context, JsBankFingerSelectionActivity.class);
         context.startActivity(intent);
     }
 

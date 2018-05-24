@@ -69,7 +69,7 @@
                         android:padding="@dimen/_7sdp"
                         android:maxLength="75"
                         android:text=""
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
                         app:fontName="roboto_regular.ttf" />
@@ -120,7 +120,7 @@
                         android:padding="@dimen/_7sdp"
                         android:maxLength="50"
                         android:text=""
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
                         app:fontName="roboto_regular.ttf" />
@@ -171,7 +171,7 @@
                         android:inputType="text"
                         android:padding="@dimen/_7sdp"
                         android:text=""
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
                         app:fontName="roboto_regular.ttf" />
@@ -222,7 +222,7 @@
                         android:padding="@dimen/_7sdp"
                         android:text=""
                         android:maxLength="16"
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
                         app:fontName="roboto_regular.ttf" />
@@ -273,7 +273,7 @@
                         android:text=""
                         android:maxLength="15"
                         android:inputType="phone"
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
                         app:fontName="roboto_regular.ttf" />
@@ -324,7 +324,7 @@
                         android:text=""
                         android:maxLength="20"
                         android:inputType="number"
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
                         app:fontName="roboto_regular.ttf" />

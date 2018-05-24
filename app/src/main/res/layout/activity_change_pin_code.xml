@@ -51,7 +51,7 @@
             android:maxWidth="@dimen/_220sdp"
             android:padding="@dimen/_7sdp"
             android:text=""
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorAccentDark"
             android:textColorHint="@color/secondaryColorLight"
             android:textSize="@dimen/textsize.body2"
             app:fontName="roboto_regular.ttf" />
@@ -99,7 +99,7 @@
             android:maxLength="4"
             android:padding="@dimen/_7sdp"
             android:text=""
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorAccentDark"
             android:textColorHint="@color/secondaryColorLight"
             android:textSize="@dimen/textsize.body2"
             app:fontName="roboto_regular.ttf" />

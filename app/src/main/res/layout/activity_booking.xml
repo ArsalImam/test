@@ -298,6 +298,7 @@
         <com.bykea.pk.partner.widgets.AutoFitFontTextView
             android:id="@+id/startAddressTv"
             android:layout_width="match_parent"
+            tools:visibility="gone"
             android:layout_height="@dimen/_28sdp"
             android:layout_gravity="center_horizontal"
             android:background="@color/secondaryColorLight"
@@ -318,6 +319,7 @@
         <com.bykea.pk.partner.widgets.AutoFitFontTextView
             android:id="@+id/endAddressTv"
             android:layout_width="match_parent"
+            tools:visibility="visible"
             android:layout_height="@dimen/_28sdp"
             android:layout_gravity="center_horizontal"
             android:background="@color/secondaryColorLight"
