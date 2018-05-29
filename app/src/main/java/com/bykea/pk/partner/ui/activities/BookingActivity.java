@@ -496,7 +496,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 setDriverLocation();
                 break;
             case R.id.ivTopUp:
-                Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, new StringCallBack() {
+                Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, Utils.isCourierService(callData.getCallType()), new StringCallBack() {
                     @Override
                     public void onCallBack(String msg) {
                         if (StringUtils.isNotBlank(msg)) {

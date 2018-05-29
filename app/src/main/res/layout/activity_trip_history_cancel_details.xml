@@ -259,7 +259,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="Cancelled By"
+                    android:text="کینسل کرنے والا‎"
                     android:textColor="@color/finestBlack"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -296,7 +296,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="Cancellation Fee"
+                    android:text="کینسل فیس"
                     android:textColor="@color/finestBlack"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />

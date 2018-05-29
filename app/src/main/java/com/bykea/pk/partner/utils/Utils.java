@@ -1487,12 +1487,20 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "Purchase");
     }
 
-    public static boolean isValidTopUpAmount(String amount) {
+    public static boolean isValidTopUpAmount(String amount, boolean isCourierType) {
         boolean valid = true;
-        if (StringUtils.isNotBlank(amount) && AppPreferences.getSettings() != null
-                && StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getPartner_topup_limit())
-                && Integer.parseInt(amount) > Integer.parseInt(AppPreferences.getSettings().getSettings().getPartner_topup_limit())) {
-            valid = false;
+        if (isCourierType) {
+            if (StringUtils.isNotBlank(amount) && AppPreferences.getSettings() != null
+                    && StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getVan_partner_topup_limit())
+                    && Integer.parseInt(amount) > Integer.parseInt(AppPreferences.getSettings().getSettings().getVan_partner_topup_limit())) {
+                valid = false;
+            }
+        } else {
+            if (StringUtils.isNotBlank(amount) && AppPreferences.getSettings() != null
+                    && StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getPartner_topup_limit())
+                    && Integer.parseInt(amount) > Integer.parseInt(AppPreferences.getSettings().getSettings().getPartner_topup_limit())) {
+                valid = false;
+            }
         }
         return valid;
     }

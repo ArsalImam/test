@@ -352,7 +352,7 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showTopUpDialog(final Context context, final StringCallBack callBack) {
+    public void showTopUpDialog(final Context context, final boolean isCourierType, final StringCallBack callBack) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
@@ -368,11 +368,15 @@ public enum Dialogs {
         mDialog.findViewById(R.id.ivPositive).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString())) {
+                if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString(), isCourierType)) {
                     dismissDialog();
                     callBack.onCallBack(receivedAmountEt.getText().toString());
                 } else {
-                    receivedAmountEt.setError("Amount can't be more than " + AppPreferences.getSettings().getSettings().getPartner_topup_limit());
+                    String msg = "Amount can't be more than " + AppPreferences.getSettings().getSettings().getPartner_topup_limit();
+                    if (isCourierType) {
+                        msg = "Amount can't be more than " + AppPreferences.getSettings().getSettings().getVan_partner_topup_limit();
+                    }
+                    receivedAmountEt.setError(msg);
                 }
             }
         });

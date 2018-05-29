@@ -27,6 +27,7 @@ public class Settings {
     private String terms;
     private String cih_range;
     private String partner_topup_limit;
+    private String van_partner_topup_limit;
     private String partner_signup_url ;
 
     public String getCancel_time() {
@@ -101,5 +102,13 @@ public class Settings {
 
     public void setPartner_signup_url(String partner_signup_url) {
         this.partner_signup_url = partner_signup_url;
+    }
+
+    public String getVan_partner_topup_limit() {
+        return van_partner_topup_limit;
+    }
+
+    public void setVan_partner_topup_limit(String van_partner_topup_limit) {
+        this.van_partner_topup_limit = van_partner_topup_limit;
     }
 }
