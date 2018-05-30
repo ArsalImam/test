@@ -191,7 +191,7 @@ public class CallingActivity extends BaseActivity {
                     public void run() {
                         ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                         stopSound();
-                        mCurrentActivity.finish();
+                        finishActivity();
                     }
                 });
             }
@@ -220,7 +220,7 @@ public class CallingActivity extends BaseActivity {
                             AppPreferences.setIsOnTrip(true);
                             ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                             stopSound();
-                            mCurrentActivity.finish();
+                            finishActivity();
                         } else {
                             Utils.setCallIncomingState();
                             Dialogs.INSTANCE.showToast(mCurrentActivity
@@ -248,7 +248,7 @@ public class CallingActivity extends BaseActivity {
                     }
                     ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     stopSound();
-                    mCurrentActivity.finish();
+                    finishActivity();
                 }
             });
         }
@@ -262,11 +262,16 @@ public class CallingActivity extends BaseActivity {
                     Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
                     ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     stopSound();
-                    mCurrentActivity.finish();
+                    finishActivity();
                 }
             });
         }
     };
+
+    private void finishActivity() {
+        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        mCurrentActivity.finish();
+    }
 
     private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
         try {
@@ -331,7 +336,7 @@ public class CallingActivity extends BaseActivity {
                 repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                mCurrentActivity.finish();
+                finishActivity();
             }
         }
     };
@@ -413,7 +418,7 @@ public class CallingActivity extends BaseActivity {
                             AppPreferences.setTripStatus(TripStatus.ON_FREE);
                             stopSound();
                             ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, "", mCurrentActivity);
-                            mCurrentActivity.finish();
+                            finishActivity();
                         }
                     }
                 }
