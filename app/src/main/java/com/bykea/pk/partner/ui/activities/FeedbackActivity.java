@@ -142,7 +142,6 @@ public class FeedbackActivity extends BaseActivity {
         if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
-
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
     }
 
@@ -171,6 +170,7 @@ public class FeedbackActivity extends BaseActivity {
         callData = AppPreferences.getCallData();
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
         isPurchaseType = Utils.isPurchaseService(callData.getCallType());
+        etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
         if (StringUtils.isNotBlank(callData.getTotalFare())) {

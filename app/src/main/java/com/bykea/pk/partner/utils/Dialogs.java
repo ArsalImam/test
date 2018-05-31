@@ -176,6 +176,37 @@ public enum Dialogs {
     }
 
 
+    public void showAlertDialogWithTickCross(Context context, View.OnClickListener positive,
+                                             View.OnClickListener negative, String title, String message) {
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_alert_tick_cross);
+        if (null == negative)
+            mDialog.setCancelable(true);
+        else
+            mDialog.setCancelable(false);
+
+        if (negative == null) {
+            mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+        } else {
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(negative);
+        }
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
+        FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
+        messageTv.setTypeface(FontUtils.getFonts(context, "jameel_noori_nastaleeq.ttf"));
+        messageTv.setText(message);
+        messageTv.setTextSize(context.getResources().getDimension(R.dimen._7sdp));
+        if (StringUtils.isNotBlank(title)) {
+            ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
+        } else {
+            mDialog.findViewById(R.id.titleTv).setVisibility(View.GONE);
+        }
+
+        showDialog();
+    }
+
+
     public void showAlertDialog(Context context, String title, String message, View.OnClickListener onClick) {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
