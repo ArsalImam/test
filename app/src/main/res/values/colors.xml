@@ -68,5 +68,11 @@
     <color name="colorNine">#CADA06</color>
     <color name="colorTen">#016896</color>
 
-
+    <color name="d9d9d9">#d9d9d9</color>
+    <color name="bbbbbb">#bbbbbb</color>
+    <color name="a2a2a2">#a2a2a2</color>
+    <color name="F8F8F8">#F8F8F8</color>
+    <color name="F41714">#F41714</color>
+    <color name="f2f2f2">#f2f2f2</color>
+    <color name="last_item_color">#f2f2f2</color>
 </resources>

@@ -1,89 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:layout_marginBottom="@dimen/_32sdp"
-    android:layout_marginLeft="@dimen/_12sdp"
-    android:layout_marginRight="@dimen/_12sdp"
-    android:layout_marginTop="@dimen/_32sdp"
-    android:background="@drawable/country_dialog_bg"
+    android:layout_marginBottom="@dimen/_12sdp"
+    android:layout_marginLeft="@dimen/_22sdp"
+    android:layout_marginRight="@dimen/_22sdp"
+    android:layout_marginTop="@dimen/_12sdp"
+    android:background="@color/transparent"
     android:gravity="center"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/_4sdp"
-    android:paddingTop="@dimen/_4sdp">
+    android:orientation="vertical">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvItems"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/llBottom"
+        android:background="@drawable/dialog_white_bg_top_round" />
+
 
     <LinearLayout
+        android:id="@+id/llBottom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/_8sdp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/dialog_white_bg_bottom_round"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/_6sdp"
+        android:paddingTop="@dimen/_6sdp"
+        android:weightSum="2">
 
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/titleTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text=" آپکی بکنگ کینسل ہو جائے گی۔"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.title"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/messageTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text=" کینسل کرنے کی وجہ بتائیں۔"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.small.medium"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-
-        <com.bykea.pk.partner.widgets.ScrollViewMaxHeight
-            android:id="@+id/svRB"
+        <ImageView
+            android:id="@+id/ivNegative"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:maxHeight="@dimen/_260sdp">
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_weight="1"
+            android:background="@drawable/button_grey_light_round"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/close_browser"
+            tools:visibility="visible" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <RadioGroup
-                    android:id="@+id/optionBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_gravity="right"
-                    android:gravity="right"
-                    android:inputType="text"
-                    android:layout_marginBottom="@dimen/_8sdp"
-                    android:layout_marginTop="@dimen/_8sdp">
-
-                </RadioGroup>
-            </LinearLayout>
-        </com.bykea.pk.partner.widgets.ScrollViewMaxHeight>
+        <ImageView
+            android:id="@+id/ivPositive"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_weight="1"
+            android:background="@drawable/button_red_round"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/correct_symbol" />
 
     </LinearLayout>
 
-
-    <ImageView
-        android:id="@+id/positiveBtn"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_44sdp"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/margin.small"
-        android:background="@drawable/button_square_red"
-        android:gravity="center"
-        android:padding="@dimen/_8sdp"
-        android:src="@drawable/correct_symbol_square" />
-
-
-</LinearLayout>
+</RelativeLayout>
