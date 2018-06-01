@@ -13,14 +13,14 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:maxLines="1"
-        android:paddingBottom="@dimen/_4sdp"
+        android:paddingBottom="@dimen/_3sdp"
         android:paddingEnd="@dimen/_16sdp"
         android:paddingLeft="@dimen/_6sdp"
         android:paddingRight="@dimen/_16sdp"
         android:paddingStart="@dimen/_6sdp"
-        android:paddingTop="@dimen/_4sdp"
+        android:paddingTop="@dimen/_3sdp"
         android:textColor="@color/white"
-        android:textSize="@dimen/_16sdp"
+        android:textSize="@dimen/_17sdp"
         app:fontName="jameel_noori_nastaleeq.ttf"
         tools:text="پارٹنر اپنی لوکیشن سے نہیں ہل رہا" />
 

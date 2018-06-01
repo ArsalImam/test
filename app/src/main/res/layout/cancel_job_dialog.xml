@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/llBottom"
-        android:background="@drawable/dialog_white_bg_top_round" />
+        android:background="@drawable/dialog_white_bg_top_round"
+        android:paddingBottom="@dimen/_40sdp" />
 
 
     <LinearLayout

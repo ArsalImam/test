@@ -40,7 +40,7 @@ public class CancelReasonDialogAdapter extends RecyclerView.Adapter<CancelReason
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         String data = mList.get(i);
-        holder.tv_item.setText(data);
+        holder.tv_item.setText(" " + data + " ");
         if (selectedIndex == i) {
             holder.singleViewLine.setVisibility(View.VISIBLE);
             holder.tv_item.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.white));
