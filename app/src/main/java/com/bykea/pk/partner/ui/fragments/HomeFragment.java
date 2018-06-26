@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -560,13 +561,7 @@ public class HomeFragment extends Fragment {
                 setDriverLocation();
                 break;
             case R.id.tvDemand:
-                if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
-                        StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
-                    String demandLink = AppPreferences.getSettings().getSettings().getDemand();
-//                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
-                    String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
-                    Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
-                }
+                demandClick();
                 break;
             case R.id.tvNotice:
                 if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
@@ -594,6 +589,39 @@ public class HomeFragment extends Fragment {
                 break;
         }
     }
+
+    private void demandClick() {
+
+        if (AppPreferences.getPilotData()!=null && AppPreferences.getPilotData().getService_type() != null
+                && AppPreferences.getPilotData().getService_type().equalsIgnoreCase("van")){
+
+            Fragment fragment = new DeliveryScheduleFragment();
+            /*Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.Extras.SELECTED_ITEM, item);
+            bundle.putParcelable(Constants.Extras.SELECTED_CITY, mSelectedCity);
+            bundle.putParcelableArrayList(Constants.Extras.LIST_ITEMS, mZoneList);
+            fragment.setArguments(bundle);*/
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    .replace(R.id.containerView, fragment)
+                    .commit();
+            HomeActivity.visibleFragmentNumber = 7;
+            return;
+        }
+
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
+            String demandLink = AppPreferences.getSettings().getSettings().getDemand();
+//                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
+            String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
+            Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
+        }
+
+
+    }
+
+
 
     private void callAvailableStatusAPI(boolean status) {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
@@ -916,6 +944,8 @@ public class HomeFragment extends Fragment {
         mapView.onLowMemory();
         super.onLowMemory();
     }
+
+
 
 
     public void getCurrentVersion() {
