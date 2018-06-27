@@ -15,6 +15,7 @@ import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
+import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
 import com.bykea.pk.partner.ui.activities.ForgotPasswordActivity;
 import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
@@ -216,6 +217,12 @@ public class ActivityStackManager {
     public void startReportActivity(Context mContext, String cTtype) {
         Intent intent = new Intent(mContext, ReportActivity.class);
         intent.putExtra(Constants.Extras.CONTACT_TYPE, cTtype);
+        mContext.startActivity(intent);
+    }
+
+    public void startDeliveryScheduleDetailActivity(Context mContext) {
+        Intent intent = new Intent(mContext, DeliveryScheduleDetailActivity.class);
+        //intent.putExtra(Constants.Extras.CONTACT_TYPE, cTtype);
         mContext.startActivity(intent);
     }
 

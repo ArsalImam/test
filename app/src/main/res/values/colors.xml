@@ -20,6 +20,7 @@
     <color name="secondaryColor">#c0c0c0</color>
     <color name="secondaryColorLight">#e5e5e5</color>
     <color name="secondaryColorLightest">#eaeaea</color>
+    <color name="secondaryColorLightest1">#eaeaea</color>
     <color name="secondaryColorDark">#303030</color>
 
     <color name="colorAccent">#04aa32</color>
@@ -75,4 +76,6 @@
     <color name="F41714">#F41714</color>
     <color name="f2f2f2">#f2f2f2</color>
     <color name="last_item_color">#f2f2f2</color>
+
+    <color name="dark_gray">#6c6c6c</color>
 </resources>
