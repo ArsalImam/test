@@ -101,6 +101,7 @@
         <item>Performance</item>
         <item>How it works</item>
         <item>Contact Us</item>
+        <item>Testing</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -112,6 +113,7 @@
         <item>کارکردگی</item>
         <item>طریقہ کار</item>
         <item>رابطہ‎</item>
+        <item>ٹیسٹنگ</item>
     </string-array>
     <!--
     <string-array name="navDrawerIcons">

@@ -73,7 +73,7 @@ public class TripHistoryFragment extends Fragment {
         mCurrentActivity.setToolbarTitle("Bookings", "تفصیلات");
         mCurrentActivity.hideToolbarLogo();
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
         initViews(view);
     }
 

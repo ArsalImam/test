@@ -87,6 +87,7 @@ public class PerformanceFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
         initViews();
     }
 

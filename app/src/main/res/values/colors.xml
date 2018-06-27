@@ -44,6 +44,7 @@
 
     <!--SOLID COLORS USED FOR DIFFERENT PURPOSES-->
     <color name="black">#000000</color>
+    <color name="black_3a3a3a">#3a3a3a</color>
     <color name="black.transparent.inactive">#D8000000</color>
     <color name="grey">#a4a1a1</color>
     <color name="blue">#3f8bef</color>
@@ -52,6 +53,7 @@
     <color name="blue_light">#ADEAFF</color>
     <color name="white">#FFFFFF</color>
     <color name="yellow_dd">#fdfd96</color>
+    <color name="yellow_fcfcc3">#fcfcc3</color>
     <color name="yellow">#FAFFAD</color>
     <color name="secondaryColorUltraLight">#e5e5e5</color>
     <color name="secondaryColor4">#c2c2c2</color>
@@ -78,4 +80,5 @@
     <color name="last_item_color">#f2f2f2</color>
 
     <color name="dark_gray">#6c6c6c</color>
+    <color name="Color_DarkRed">#d80027</color>
 </resources>

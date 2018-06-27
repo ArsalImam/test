@@ -534,6 +534,12 @@ public class MyRangeBar extends View {
             if (rippleRadius != 0) {
                 canvas.save();
                 ripplePaint.setColor(Color.GRAY);
+
+                paint.setColor(Color.WHITE);
+                paint.setTextSize(18f);
+                paint.setAntiAlias(true);
+                paint.setTextAlign(Paint.Align.CENTER);
+
                 outerPath.reset();
                 outerPath.addCircle(downX, downY, rippleRadius,
                         Path.Direction.CW);

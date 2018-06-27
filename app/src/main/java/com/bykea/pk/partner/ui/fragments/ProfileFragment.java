@@ -100,6 +100,7 @@ public class ProfileFragment extends Fragment {
         ((BaseActivity) getActivity()).hideToolbarLogo();
         repository = new UserRepository();
         mCurrentActivity = (HomeActivity) getActivity();
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
         setInfoUI();
         getProfileData();
     }

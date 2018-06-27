@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/windowBackground"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_centerInParent="true"
+                android:id="@+id/achaconnectionTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="اچھا کنکشن"
+                android:textColor="@color/black_3a3a3a"
+                android:textSize="@dimen/_18sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:background="@color/yellow_fcfcc3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp">
+
+        <ImageView
+            android:id="@+id/editBtn"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_12sdp"
+            android:src="@drawable/pencil_icon"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_toRightOf="@+id/editBtn"
+            android:layout_toLeftOf="@+id/manzilTv"
+            android:layout_centerInParent="true"
+            android:id="@+id/muntakhibEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="منتخب کریں"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/manzilTv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="منزل"
+            android:padding="@dimen/_8sdp"
+            android:background="@color/Color_DarkRed"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>
