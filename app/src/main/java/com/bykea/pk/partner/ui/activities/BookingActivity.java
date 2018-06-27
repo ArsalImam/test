@@ -802,9 +802,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
             }
 
-            if (StringUtils.isNotBlank(callData.getDistance()))
-                ;
-
         }
     }
 

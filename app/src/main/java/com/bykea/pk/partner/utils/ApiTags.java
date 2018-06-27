@@ -13,6 +13,7 @@ public class ApiTags {
 //    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3002";
     //live test
 //    private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3001";
+//    private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3000";
 
 
 

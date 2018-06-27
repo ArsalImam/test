@@ -18,31 +18,19 @@ public class PilotData {
     private String pilotImage;
     @SerializedName("phone")
     private String phoneNo;
-    private String pincode;
     private String vendor_id;
-    private boolean is_vendor;
     private City city;
-    @SerializedName("plate_no")
-    private String plateNo;
+
     @SerializedName("license_expire")
     private String licenseExpiry;
-    @SerializedName("vehicle_type")
-    private String vehicleType;
     @SerializedName("is_available")
     private boolean available;
 
     private String rating;
-    private String service_type;
 
     private String lat;
     private String lng;
     private String reg_id;
-
-    private String verified_trips;
-
-    private String tripCount;
-    private String timeCount;
-    private String acceptance_rate;
 
     @SerializedName("cih")
     private String cashInHand;
@@ -127,18 +115,6 @@ public class PilotData {
         return "+" + phoneNo;
     }
 
-    public void setPhoneNo(String phoneNo) {
-        this.phoneNo = phoneNo;
-    }
-
-    public String getPincode() {
-        return pincode;
-    }
-
-    public void setPincode(String pincode) {
-        this.pincode = pincode;
-    }
-
     public City getCity() {
         return city;
     }
@@ -147,14 +123,6 @@ public class PilotData {
         this.city = city;
     }
 
-
-    public String getPlateNo() {
-        return plateNo;
-    }
-
-    public void setPlateNo(String plateNo) {
-        this.plateNo = plateNo;
-    }
 
 
     public String getLicenseExpiry() {
@@ -165,77 +133,16 @@ public class PilotData {
         this.licenseExpiry = licenseExpiry;
     }
 
-    public String getVehicleType() {
-        return vehicleType;
-    }
-
-    public void setVehicleType(String vehicleType) {
-        this.vehicleType = vehicleType;
-    }
-
-
-    public String getAcceptance_rate() {
-        return acceptance_rate;
-    }
-
-    public void setAcceptance_rate(String acceptance_rate) {
-        this.acceptance_rate = acceptance_rate;
-    }
-
-    public String getVerified_trips() {
-        return verified_trips;
-    }
-
-    public void setVerified_trips(String verified_trips) {
-        this.verified_trips = verified_trips;
-    }
-
-    public String getService_type() {
-        return service_type;
-    }
-
-    public void setService_type(String service_type) {
-        this.service_type = service_type;
-    }
-
     public boolean is_vendor() {
         return StringUtils.isNotBlank(getVendor_id());
-    }
-
-    public void setIs_vendor(boolean is_vendor) {
-        this.is_vendor = is_vendor;
     }
 
     public String getVendor_id() {
         return vendor_id;
     }
 
-    public void setVendor_id(String vendor_id) {
-        this.vendor_id = vendor_id;
-    }
-
-    public String getTripCount() {
-        return tripCount;
-    }
-
-    public void setTripCount(String tripCount) {
-        this.tripCount = tripCount;
-    }
-
-    public String getTimeCount() {
-        return timeCount;
-    }
-
-    public void setTimeCount(String timeCount) {
-        this.timeCount = timeCount;
-    }
-
     public int getCashInHand() {
         return StringUtils.isNoneBlank(cashInHand) ? Integer.parseInt(cashInHand) : 0;
-    }
-
-    public void setCashInHand(String cashInHand) {
-        this.cashInHand = cashInHand;
     }
 
     public String getReg_id() {

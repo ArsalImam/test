@@ -160,7 +160,9 @@ public class PerformanceFragment extends Fragment {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        loader.setVisibility(View.GONE);
+                        if (loader != null) {
+                            loader.setVisibility(View.GONE);
+                        }
                         if (response.isSuccess()) {
 
                             if (StringUtils.isNotBlank(response.getData().getDate())) {

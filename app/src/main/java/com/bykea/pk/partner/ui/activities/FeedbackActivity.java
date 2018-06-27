@@ -177,16 +177,6 @@ public class FeedbackActivity extends BaseActivity {
             totalCharges = callData.getTotalFare();
         }
         TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
-        /*if (StringUtils.isNotBlank(callData.getCodAmountNotFormatted())) {
-            String amount = callData.getCodAmountNotFormatted();
-            if (isDeliveryType) {
-                if (callData.isCod()) {
-                    TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
-                }
-            } else if (!isPurchaseType) {
-                TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
-            }
-        }*/
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
 //        totalAmountTv.setText((StringUtils.isNotBlank(totalCharges) ? totalCharges : "N/A"));
         totalAmountTv.setText((StringUtils.isNotBlank(callData.getTrip_charges()) ? callData.getTrip_charges() : "N/A"));

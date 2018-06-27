@@ -109,6 +109,7 @@ public class Constants {
         public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";
         public final static String ON_NOTIFICATION_CLICK = "ON_NOTIFICATION_CLICK";
     }
+
     public static class RequestCode {
         public final static int SCAN_FINGER_PRINTS = 123;
     }
