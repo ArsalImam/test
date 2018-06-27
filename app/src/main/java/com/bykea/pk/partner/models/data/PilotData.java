@@ -27,6 +27,7 @@ public class PilotData {
     private boolean available;
 
     private String rating;
+    private String service_type;
 
     private String lat;
     private String lng;
@@ -151,6 +152,14 @@ public class PilotData {
 
     public void setReg_id(String reg_id) {
         this.reg_id = reg_id;
+    }
+
+    public String getService_type() {
+        return service_type;
+    }
+
+    public void setService_type(String service_type) {
+        this.service_type = service_type;
     }
 
     public class City {

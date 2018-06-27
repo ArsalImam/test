@@ -58,6 +58,7 @@
         android:weightSum="5">
 
         <FrameLayout
+            android:id="@+id/callBtn"
             android:background="@drawable/button_gray"
             android:layout_width="0dp"
             android:layout_height="match_parent"

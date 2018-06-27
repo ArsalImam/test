@@ -34,10 +34,9 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
 
     @BindView(R.id.deliverySchedulerv)
     RecyclerView mRecyclerVeiw;
-    private LinearLayoutManager mLayoutManager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dilevery_schedule, container, false);
         unbinder = ButterKnife.bind(this, view);
@@ -59,12 +58,12 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
 
         DividerItemDecoration horizontalDecoration = new DividerItemDecoration(mRecyclerVeiw.getContext(),
                 DividerItemDecoration.VERTICAL);
-        Drawable horizontalDivider = ContextCompat.getDrawable(getActivity(), R.drawable.divider_rv);
 
-        horizontalDecoration.setDrawable(horizontalDivider);
+        horizontalDecoration.setDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.divider_rv));
+
         mRecyclerVeiw.addItemDecoration(horizontalDecoration);
 
-        mLayoutManager = new LinearLayoutManager(mCurrentActivity);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mCurrentActivity);
         mRecyclerVeiw.setLayoutManager(mLayoutManager);
 
         populateList();

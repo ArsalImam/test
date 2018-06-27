@@ -592,8 +592,8 @@ public class HomeFragment extends Fragment {
 
     private void demandClick() {
 
-        if (AppPreferences.getPilotData()!=null && AppPreferences.getPilotData().getService_type() != null
-                && AppPreferences.getPilotData().getService_type().equalsIgnoreCase("van")){
+        if (AppPreferences.getPilotData() != null && StringUtils.isNotBlank(AppPreferences.getPilotData().getService_type())
+                && AppPreferences.getPilotData().getService_type().equalsIgnoreCase("van")) {
 
             Fragment fragment = new DeliveryScheduleFragment();
             /*Bundle bundle = new Bundle();
@@ -601,7 +601,7 @@ public class HomeFragment extends Fragment {
             bundle.putParcelable(Constants.Extras.SELECTED_CITY, mSelectedCity);
             bundle.putParcelableArrayList(Constants.Extras.LIST_ITEMS, mZoneList);
             fragment.setArguments(bundle);*/
-            getActivity().getSupportFragmentManager()
+            mCurrentActivity.getSupportFragmentManager()
                     .beginTransaction()
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.containerView, fragment)
@@ -620,7 +620,6 @@ public class HomeFragment extends Fragment {
 
 
     }
-
 
 
     private void callAvailableStatusAPI(boolean status) {
@@ -944,8 +943,6 @@ public class HomeFragment extends Fragment {
         mapView.onLowMemory();
         super.onLowMemory();
     }
-
-
 
 
     public void getCurrentVersion() {

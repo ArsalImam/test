@@ -50,7 +50,7 @@ public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliverySchedu
         return list.size();
     }
 
-    class ViewHoder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class ViewHoder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.addressTv)
         TextView addressTv;
@@ -72,10 +72,17 @@ public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliverySchedu
 
         @Override
         public void onClick(View v) {
-            int pos = getAdapterPosition();
-            onClickListener.directionClick(pos);
-            onClickListener.callClick(pos);
-            onClickListener.confirmClick(pos);
+            switch (v.getId()) {
+                case R.id.directionBtn:
+                    onClickListener.directionClick(getAdapterPosition());
+                    break;
+                case R.id.callBtn:
+                    onClickListener.callClick(getAdapterPosition());
+                    break;
+                case R.id.assignBtn:
+                    onClickListener.confirmClick(getAdapterPosition());
+                    break;
+            }
         }
     }
 
@@ -83,9 +90,11 @@ public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliverySchedu
         this.onClickListener = onClickListener;
     }
 
-    public interface onClickListener{
+    public interface onClickListener {
         void directionClick(int pos);
+
         void callClick(int pos);
+
         void confirmClick(int pos);
     }
 }
