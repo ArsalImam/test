@@ -86,7 +86,7 @@ def releaseTime() {
 
 repositories {
     mavenCentral()
-    jcenter();
+    jcenter()
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     maven { url "https://jitpack.io" }
     maven { url "https://maven.google.com" }
