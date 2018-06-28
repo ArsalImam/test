@@ -39,4 +39,5 @@
         <attr name="stroke_width" format="float"/>
         <attr name="ripple" format="boolean"/>
     </declare-styleable>
+
 </resources>

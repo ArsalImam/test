@@ -30,7 +30,8 @@
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circleImageView3"
                 android:layout_width="@dimen/_75sdp"
-                android:layout_height="@dimen/_100sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_marginTop="6dp"
                 android:src="@drawable/driverimg"
                 app:civ_border_color="@color/d9d9d9"
                 app:civ_border_width="1dp"
@@ -43,8 +44,8 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="@dimen/_90sdp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_25sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -55,18 +56,19 @@
                 android:id="@+id/textView2"
                 android:layout_width="@dimen/_70sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"
                 android:background="@drawable/score_board_bg"
                 android:gravity="center"
                 android:text="سکور 4.4"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf"
-                app:layout_constraintBottom_toBottomOf="@+id/circleImageView3"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.483"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView3"
-                app:layout_constraintVertical_bias="0.826" />
+                app:layout_constraintVertical_bias="0.823" />
 
 
         </android.support.constraint.ConstraintLayout>

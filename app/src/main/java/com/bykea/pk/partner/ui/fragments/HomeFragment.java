@@ -50,6 +50,7 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.MyRangeBar;
+import com.bykea.pk.partner.widgets.MyRangeBarRupay;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -101,7 +102,7 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.statusCheck)
     ImageView statusCheck;
     @BindView(R.id.myRangeBar)
-    MyRangeBar myRangeBar;
+    MyRangeBarRupay myRangeBar;
     @BindView(R.id.tvCihIndex1)
     FontTextView tvCihIndex1;
     @BindView(R.id.tvCihIndex2)
@@ -187,7 +188,7 @@ public class HomeFragment extends Fragment {
         myRangeBar.refreshDrawableState();
         myRangeBar.invalidate();
         myRangeBar.setCurrentIndex(currentIndex);
-        myRangeBar.setOnSlideListener(new MyRangeBar.OnSlideListener() {
+        myRangeBar.setOnSlideListener(new MyRangeBarRupay.OnSlideListener() {
             @Override
             public void onSlide(int index) {
                 Utils.redLog("Cash In Hand", "" + cashInHand[index]);
