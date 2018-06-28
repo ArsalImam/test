@@ -143,6 +143,7 @@ public class HomeFragment extends Fragment {
         mCurrentActivity.hideToolbarTitle();
         mCurrentActivity.setToolbarLogo();
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.hideStatusCompletely();
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         return view;
     }

@@ -88,6 +88,7 @@ public class PerformanceFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.hideStatusCompletely();
         initViews();
     }
 

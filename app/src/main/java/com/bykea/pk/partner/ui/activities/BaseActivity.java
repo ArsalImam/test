@@ -359,6 +359,19 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
+    public void setStatusButtonForBismilla(String title) {
+        if (null == mToolbar) getToolbar();
+        status.setVisibility(View.VISIBLE);
+        status.setText(title);
+        status.setTextColor(getResources().getColor(R.color.color_darker_red));
+        status.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
     public void setToolbarLogo() {
         if (null == mToolbar) getToolbar();
         mLogo.setVisibility(View.VISIBLE);

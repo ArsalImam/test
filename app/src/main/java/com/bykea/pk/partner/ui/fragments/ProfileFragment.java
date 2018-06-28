@@ -101,6 +101,7 @@ public class ProfileFragment extends Fragment {
         repository = new UserRepository();
         mCurrentActivity = (HomeActivity) getActivity();
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.hideStatusCompletely();
         setInfoUI();
         getProfileData();
     }

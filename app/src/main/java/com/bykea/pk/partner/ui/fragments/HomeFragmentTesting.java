@@ -26,6 +26,7 @@ public class HomeFragmentTesting extends Fragment {
         //mCurrentActivity.hideToolbarTitle();
         mCurrentActivity.hideToolbarLogo();
         mCurrentActivity.setToolbarLogoBismilla();
+        mCurrentActivity.setStatusButtonForBismilla("ڈیمانڈ");
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.GONE);
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         return view;
