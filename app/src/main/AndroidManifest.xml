@@ -47,7 +47,8 @@
         <activity
             android:name=".ui.activities.HomeActivity"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:exported="true"/>
         <activity android:name=".ui.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

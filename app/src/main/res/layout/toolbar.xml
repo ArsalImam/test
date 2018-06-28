@@ -39,12 +39,13 @@
                 tool:visibility="gone" />
 
             <FrameLayout
-                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
                 android:id="@+id/logo_bismilla"
                 android:background="@drawable/bismilla_round1"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/_150sdp"
-                android:layout_height="@dimen/_45sdp">
+                android:layout_height="@dimen/_47sdp">
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/bismillaTv"

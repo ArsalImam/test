@@ -117,7 +117,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView cancelBtn;
     @BindView(R.id.chatBtn)
     ImageView chatBtn;
-    /*    @BindView(R.id.callerIv)
+        /*@BindView(R.id.callerIv)
         CircularImageView callerIv;*/
     @BindView(R.id.callerNameTv)
     FontTextView callerNameTv;

@@ -47,6 +47,7 @@
     <color name="black_3a3a3a">#3a3a3a</color>
     <color name="black.transparent.inactive">#D8000000</color>
     <color name="grey">#a4a1a1</color>
+    <color name="blue_lightest">#0295bf</color>
     <color name="blue">#3f8bef</color>
     <color name="blue_ultra_dark">#3A83BB</color>
     <color name="blue_dark">#4E8FFF</color>
@@ -81,4 +82,5 @@
 
     <color name="dark_gray">#6c6c6c</color>
     <color name="Color_DarkRed">#d80027</color>
+    <color name="color.darker_515151">#515151</color>
 </resources>

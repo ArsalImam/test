@@ -369,6 +369,8 @@ public class BaseActivity extends AppCompatActivity {
     public void setToolbarLogoBismilla() {
         if (null == mToolbar) getToolbar();
         frameLayout_bismilla.setVisibility(View.VISIBLE);
+        mTitleTv.setVisibility(View.GONE);
+
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
 
