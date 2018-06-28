@@ -597,11 +597,6 @@ public class HomeFragment extends Fragment {
                 && AppPreferences.getPilotData().getService_type().equalsIgnoreCase("van")) {
 
             Fragment fragment = new DeliveryScheduleFragment();
-            /*Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.Extras.SELECTED_ITEM, item);
-            bundle.putParcelable(Constants.Extras.SELECTED_CITY, mSelectedCity);
-            bundle.putParcelableArrayList(Constants.Extras.LIST_ITEMS, mZoneList);
-            fragment.setArguments(bundle);*/
             mCurrentActivity.getSupportFragmentManager()
                     .beginTransaction()
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
