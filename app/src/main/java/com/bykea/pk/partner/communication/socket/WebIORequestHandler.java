@@ -386,40 +386,8 @@ public class WebIORequestHandler {
                     } else {
                         Utils.appToastDebug(DriverApp.getContext(), normalCallData.getMessage());
                     }
-                } else if (normalCallData.getData() != null && normalCallData.getData().isTripDetailsAdded()) {
-                    NormalCallData callData = AppPreferences.getCallData();
-                    callData.setEndAddress(normalCallData.getData().getEndAddress());
-                    callData.setEndLat(normalCallData.getData().getEndLat());
-                    callData.setEndLng(normalCallData.getData().getEndLng());
-                    callData.setStatus(normalCallData.getData().getStatus());
-
-                    callData.setComplete_address(normalCallData.getData().getComplete_address());
-                    callData.setRec_no(normalCallData.getData().getRec_no());
-                    callData.setRecName(normalCallData.getData().getRecName());
-                    callData.setAmount_parcel_value(normalCallData.getData().getAmount_parcel_value());
-                    callData.setCodAmount(normalCallData.getData().getCodAmountNotFormatted());
-                    callData.setOrder_no(normalCallData.getData().getOrder_no());
-                    callData.setCod(normalCallData.getData().isWalletDeposit());
-                    callData.setWalletDeposit(normalCallData.getData().isWalletDeposit());
-                    callData.setReturnRun(normalCallData.getData().isReturnRun());
-
-                    AppPreferences.setCallData(callData);
-                    Intent intent = new Intent(Keys.TRIP_DATA_UPDATED);
-                    intent.putExtra("action", Keys.TRIP_DATA_UPDATED);
-//                    DriverApp.getContext().sendBroadcast(intent);
-                    EventBus.getDefault().post(intent);
-                } else if (normalCallData.getData() != null && StringUtils.isNotBlank(normalCallData.getData().getEndAddress()) &&
-                        !normalCallData.getData().getEndAddress().equalsIgnoreCase(AppPreferences.getCallData().getEndAddress())) {
-                    NormalCallData callData = AppPreferences.getCallData();
-                    callData.setEndAddress(normalCallData.getData().getEndAddress());
-                    callData.setEndLat(normalCallData.getData().getEndLat());
-                    callData.setEndLng(normalCallData.getData().getEndLng());
-                    callData.setStatus(normalCallData.getData().getStatus());
-                    AppPreferences.setCallData(callData);
-                    Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-                    intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
-//                    DriverApp.getContext().sendBroadcast(intent);
-                    EventBus.getDefault().post(intent);
+                } else {
+                    Utils.updateTripData(normalCallData);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

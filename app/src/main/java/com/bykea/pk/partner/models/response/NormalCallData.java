@@ -83,6 +83,7 @@ public class NormalCallData extends CommonResponse {
     private String codAmount;
     @SerializedName("is_cod")
     private boolean isCod;
+    @SerializedName("tripDetail")
     private boolean tripDetailsAdded;
 
     private String details;

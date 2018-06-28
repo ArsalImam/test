@@ -29,6 +29,8 @@ import com.bykea.pk.partner.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import okhttp3.internal.Util;
+
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FCM Messaging Service";
@@ -107,6 +109,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         }
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING)) {
                         ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
+                    } else {
+                        Utils.updateTripData(callData);
                     }
                 }
             } else if (remoteMessage.getData().get("event").equalsIgnoreCase("2")) {

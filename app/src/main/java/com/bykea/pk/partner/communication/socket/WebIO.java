@@ -226,9 +226,7 @@ public class WebIO {
             return false;
 
         }
-        if (AppPreferences.isLoggedIn()
-                && (AppPreferences.getAvailableStatus() ||
-                AppPreferences.isOutOfFence())) {
+        if (Utils.canSendLocation()) {
             AppPreferences.setLocationEmitTime();
             WebIO.getInstance().getSocket().emit(event, params);
         }

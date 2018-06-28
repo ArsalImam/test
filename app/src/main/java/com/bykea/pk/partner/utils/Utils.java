@@ -93,6 +93,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -2069,4 +2070,50 @@ public class Utils {
         long diff = (System.currentTimeMillis() - AppPreferences.getInactiveCheckTime());
         return !(diff <= 15000);
     }
+
+
+    public static void updateTripData(NormalCallData callData) {
+        if (callData.getData() != null) {
+            if (callData.getData().isTripDetailsAdded()) {
+                NormalCallData currentcallData = AppPreferences.getCallData();
+                currentcallData.setEndAddress(callData.getData().getEndAddress());
+                currentcallData.setEndLat(callData.getData().getEndLat());
+                currentcallData.setEndLng(callData.getData().getEndLng());
+                currentcallData.setStatus(callData.getStatus());
+
+                currentcallData.setComplete_address(callData.getData().getComplete_address());
+                currentcallData.setRec_no(callData.getData().getRec_no());
+                currentcallData.setRecName(callData.getData().getRecName());
+                currentcallData.setAmount_parcel_value(callData.getData().getAmount_parcel_value());
+                currentcallData.setCodAmount(callData.getData().getCodAmountNotFormatted());
+                currentcallData.setOrder_no(callData.getData().getOrder_no());
+                currentcallData.setCod(callData.getData().isWalletDeposit());
+                currentcallData.setWalletDeposit(callData.getData().isWalletDeposit());
+                currentcallData.setReturnRun(callData.getData().isReturnRun());
+
+                AppPreferences.setCallData(currentcallData);
+                Intent intent = new Intent(Keys.TRIP_DATA_UPDATED);
+                intent.putExtra("action", Keys.TRIP_DATA_UPDATED);
+                EventBus.getDefault().post(intent);
+            } else if (StringUtils.isNotBlank(callData.getData().getEndAddress()) &&
+                    !callData.getData().getEndAddress().equalsIgnoreCase(AppPreferences.getCallData().getEndAddress())) {
+                NormalCallData currentcallData = AppPreferences.getCallData();
+                currentcallData.setEndAddress(callData.getData().getEndAddress());
+                currentcallData.setEndLat(callData.getData().getEndLat());
+                currentcallData.setEndLng(callData.getData().getEndLng());
+                currentcallData.setStatus(callData.getData().getStatus());
+                AppPreferences.setCallData(currentcallData);
+                Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
+                intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                EventBus.getDefault().post(intent);
+            }
+        }
+    }
+
+    public static boolean canSendLocation() {
+        return AppPreferences.isLoggedIn()
+                && (AppPreferences.getAvailableStatus() ||
+                AppPreferences.isOutOfFence() || AppPreferences.isOnTrip());
+    }
+
 }
