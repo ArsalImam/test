@@ -5,7 +5,7 @@ import com.bykea.pk.partner.BuildConfig;
 public class ApiTags {
 
     //live test
-//    private static final String BASE_SERVER_URL_DEBUG = "http://172.16.0.75 :3001";  //local
+//    private static final String BASE_SERVER_URL_DEBUG = "http://172.16.0.58:3001";  //local
 
     //staging
     private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";

@@ -96,6 +96,7 @@ public class Keys {
     /*JOB ACTIVITY CANCEL JOB LISTENER*/
     public static final String BROADCAST_CANCEL_RIDE = "BROADCAST_CANCEL_RIDE";
     public static final String BROADCAST_DROP_OFF_UPDATED = "BROADCAST_DROP_OFF_UPDATED";
+    public static final String TRIP_DATA_UPDATED = "TRIP_DATA_UPDATED";
     public static final String BROADCAST_CANCEL_BY_ADMIN = "BROADCAST_CANCEL_BY_ADMIN";
     public static final String BROADCAST_COMPLETE_BY_ADMIN = "BROADCAST_COMPLETE_BY_ADMIN";
     public static final String BROADCAST_MESSAGE_RECEIVE = "BROADCAST_MESSAGE_RECEIVE_DRIVER";
