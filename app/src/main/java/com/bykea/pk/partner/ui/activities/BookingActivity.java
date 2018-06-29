@@ -1679,7 +1679,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
                     jobBtn.setEnabled(true);
-                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
+                    Utils.appToast(mCurrentActivity, error);
+//                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
                 }
             });
         }
@@ -1775,6 +1776,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
                         callData = AppPreferences.getCallData();
                         updateDropOff();
+                    }
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
+                        playNotificationSound();
+                        Utils.appToast(mCurrentActivity, "Trip Details has been Added by Passenger.");
+                        callData = AppPreferences.getCallData();
+                        updateDropOff();
+                        showWalletAmount();
                     }
                 }
             });

@@ -386,20 +386,8 @@ public class WebIORequestHandler {
                     } else {
                         Utils.appToastDebug(DriverApp.getContext(), normalCallData.getMessage());
                     }
-                } else if (StringUtils.isNotBlank(normalCallData.getData().getEndAddress()) &&
-                        !normalCallData.getData().getEndAddress().equalsIgnoreCase(AppPreferences.getCallData().getEndAddress())) {
-                    NormalCallData callData = AppPreferences.getCallData();
-                    callData.setEndAddress(normalCallData.getData().getEndAddress());
-                    callData.setEndLat(normalCallData.getData().getEndLat());
-                    callData.setEndLng(normalCallData.getData().getEndLng());
-                    callData.setStatus(normalCallData.getData().getStatus());
-                    AppPreferences.setCallData(callData);
-                    Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-                    intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
-//                    DriverApp.getContext().sendBroadcast(intent);
-                    EventBus.getDefault().post(intent);
                 } else {
-                    Utils.redLog(Constants.TAG_CALL, normalCallData.getMessage() + "");
+                    Utils.updateTripData(normalCallData);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
