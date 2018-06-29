@@ -39,6 +39,7 @@
                 tool:visibility="gone" />
 
             <FrameLayout
+                android:visibility="gone"
                 android:layout_marginTop="@dimen/_6sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
                 android:id="@+id/logo_bismilla"

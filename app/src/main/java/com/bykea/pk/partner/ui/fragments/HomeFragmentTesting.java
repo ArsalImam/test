@@ -1,16 +1,21 @@
 package com.bykea.pk.partner.ui.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class HomeFragmentTesting extends Fragment {
@@ -22,6 +27,13 @@ public class HomeFragmentTesting extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_testing, container, false);
         unbinder = ButterKnife.bind(this, view);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = ((HomeActivity) getActivity());
         //mCurrentActivity.hideToolbarTitle();
         mCurrentActivity.hideToolbarLogo();
@@ -29,6 +41,17 @@ public class HomeFragmentTesting extends Fragment {
         mCurrentActivity.setStatusButtonForBismilla("ڈیمانڈ");
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.GONE);
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        return view;
+    }
+
+    @OnClick ( { R.id.shahkarBtn } )
+    public void onClick(View view){
+        switch (view.getId()){
+
+            case R.id.shahkarBtn:{
+                view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.slide_right_out));
+                ActivityStackManager.getInstance().startShahkarActivity(mCurrentActivity);
+                break;
+            }
+        }
     }
 }

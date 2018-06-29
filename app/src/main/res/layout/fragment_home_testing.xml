@@ -108,7 +108,7 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:id="@+id/shahkar"
+                    android:id="@+id/shahkarBtn"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_50sdp"
                     android:layout_alignParentRight="true"
@@ -119,7 +119,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_below="@+id/shahkar"
+                    android:layout_below="@+id/shahkarBtn"
                     android:layout_marginTop="@dimen/_10sdp">
 
                     <ImageView

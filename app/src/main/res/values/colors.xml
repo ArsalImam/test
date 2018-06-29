@@ -45,6 +45,7 @@
     <!--SOLID COLORS USED FOR DIFFERENT PURPOSES-->
     <color name="black">#000000</color>
     <color name="black_3a3a3a">#3a3a3a</color>
+    <color name="black_414141">#414141</color>
     <color name="black.transparent.inactive">#D8000000</color>
     <color name="grey">#a4a1a1</color>
     <color name="blue_lightest">#0295bf</color>

@@ -46,9 +46,9 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.activities.HomeActivity"
+            android:exported="true"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
-            android:launchMode="singleTask"
-            android:exported="true"/>
+            android:launchMode="singleTask" />
         <activity android:name=".ui.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -201,8 +201,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.DeliveryScheduleDetailActivity"
-            android:exported="true"/>
+        <activity
+            android:name=".ui.activities.DeliveryScheduleDetailActivity"
+            android:exported="true" />
+        <activity android:name=".ui.activities.ShahkarActivity"></activity>
     </application>
 
 </manifest>
