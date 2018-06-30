@@ -32,7 +32,7 @@ public class ShahkarAdapter extends RecyclerView.Adapter<ShahkarAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        if (list == null && list.size()==0) return;
+        if (list == null || list.size()==0) return;
 
         holder.numberTv.setText(String.valueOf(list.get(position).getNumber()));
         holder.nameTv.setText(list.get(position).getName());

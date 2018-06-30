@@ -28,6 +28,7 @@ import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
+import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
 import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
@@ -186,6 +187,11 @@ public class ActivityStackManager {
 
     public void startShahkarActivity(Context mContext) {
         Intent intent = new Intent(mContext, ShahkarActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    public void startStatsActivity(Context mContext) {
+        Intent intent = new Intent(mContext, RankingActivity.class);
         mContext.startActivity(intent);
     }
 

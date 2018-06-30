@@ -17,23 +17,28 @@
         android:background="@color/colorAccent"
         android:focusableInTouchMode="true" />
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_150sdp">
+        android:layout_height="@dimen/_130sdp">
 
         <ImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/maxresdefault_1"
+            android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <ImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent" />
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="پچھلے مہینے کے  شاہکار"
+            android:textSize="@dimen/_27sdp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"

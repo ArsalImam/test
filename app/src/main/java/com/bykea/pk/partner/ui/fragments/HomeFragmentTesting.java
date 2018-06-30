@@ -43,13 +43,19 @@ public class HomeFragmentTesting extends Fragment {
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    @OnClick ( { R.id.shahkarBtn } )
+    @OnClick ( { R.id.shahkarBtn, R.id.statsBtn } )
     public void onClick(View view){
         switch (view.getId()){
 
             case R.id.shahkarBtn:{
-                view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.slide_right_out));
+                view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 ActivityStackManager.getInstance().startShahkarActivity(mCurrentActivity);
+                break;
+            }
+
+            case R.id.statsBtn:{
+                view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
+                ActivityStackManager.getInstance().startStatsActivity(mCurrentActivity);
                 break;
             }
         }
