@@ -48,13 +48,13 @@ public class HomeFragmentTesting extends Fragment {
         switch (view.getId()){
 
             case R.id.shahkarBtn:{
-                view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
+                //view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 ActivityStackManager.getInstance().startShahkarActivity(mCurrentActivity);
                 break;
             }
 
             case R.id.statsBtn:{
-                view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
+                //view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 ActivityStackManager.getInstance().startStatsActivity(mCurrentActivity);
                 break;
             }

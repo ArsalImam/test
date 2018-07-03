@@ -29,13 +29,17 @@
             android:layout_height="match_parent" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:gravity="center"
             android:text="پچھلے مہینے کے  شاہکار"
-            android:textSize="@dimen/_27sdp"
+            android:textSize="@dimen/_30sdp"
             android:textStyle="bold"
+            android:shadowDx="0.0"
+            android:shadowDy="3.0"
             android:textColor="@color/white"
+            android:shadowColor="@color/shadow_gray"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
     </RelativeLayout>

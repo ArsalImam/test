@@ -62,6 +62,15 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.activity_calling)
     RelativeLayout activity_calling;
 
+    @BindView(R.id.kharidariPriceLayout)
+    RelativeLayout kharidariPriceLayout;
+
+    @BindView(R.id.CODPriceLayout)
+    RelativeLayout CODPriceLayout;
+
+    @BindView(R.id.wapsiBtn)
+    ImageView wapsiBtn;
+
     private UserRepository repository;
     private MediaPlayer _mpSound;
     private CallingActivity mCurrentActivity;
@@ -381,6 +390,30 @@ public class CallingActivity extends BaseActivity {
 //        timeTv.setText(callData.getArivalTime() + " min");
 //        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
+
+        switch (callData.getCallType()){
+            case "Purchase":{
+                kharidariPriceLayout.setVisibility(View.VISIBLE);
+                CODPriceLayout.setVisibility(View.GONE);
+                wapsiBtn.setVisibility(View.GONE);
+                break;
+            }
+
+            case "Ride":{
+                kharidariPriceLayout.setVisibility(View.GONE);
+                CODPriceLayout.setVisibility(View.GONE);
+                wapsiBtn.setVisibility(View.GONE);
+                break;
+            }
+
+            case "Delivery":{
+                kharidariPriceLayout.setVisibility(View.GONE);
+                CODPriceLayout.setVisibility(View.VISIBLE);
+                wapsiBtn.setVisibility(View.VISIBLE);
+                break;
+            }
+        }
+
         String icon = Utils.getServiceIcon(callData.getCallType());
         if (StringUtils.isNotBlank(icon)) {
             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));

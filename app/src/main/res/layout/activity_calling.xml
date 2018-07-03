@@ -1,118 +1,498 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_calling"
+    android:background="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/calling_bg">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/llNewRequest"
-        android:layout_width="@dimen/_250sdp"
-        android:layout_height="@dimen/_160sdp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/white_bg_square"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/padding.small">
-
-        <ImageView
-            android:id="@+id/ivCallType"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/ride" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/llTimer"
+        android:id="@+id/headerLayout"
+        android:orientation="horizontal"
+        android:layout_margin="@dimen/_16sdp"
+        android:background="@drawable/bg_call_header"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/llBottom"
-        android:layout_below="@+id/llNewRequest"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="@dimen/_100sdp">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@color/transparent">
+        <LinearLayout
+          android:layout_gravity="center"
+          android:layout_marginLeft="@dimen/_16sdp"
+          android:orientation="vertical"
+          android:layout_weight="1"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_width="@dimen/_200sdp"
-                android:layout_height="@dimen/_200sdp"
-                android:layout_gravity="center"
-                android:background="@drawable/green_circle_bg" />
-
-            <ImageView
-                android:layout_width="@dimen/_200sdp"
-                android:layout_height="@dimen/_200sdp"
-                android:layout_gravity="center"
-                android:background="@drawable/green_circle_outline_bg" />
-
-            <com.bykea.pk.partner.widgets.DonutProgress
-                android:id="@+id/donut_progress"
-                android:layout_width="@dimen/_190sdp"
-                android:layout_height="@dimen/_190sdp"
-                android:layout_gravity="center"
-                app:donut_finished_color="@color/windowBackground"
-                app:donut_finished_stroke_width="@dimen/_6sdp"
-                app:donut_max="20"
-                app:donut_progress="20"
-                app:donut_tick_stroke_width="@dimen/_3sdp"
-                app:donut_unfinished_stroke_width="@dimen/_6sdp" />
-
+          <LinearLayout
+              android:orientation="vertical"
+              android:gravity="center"
+              android:background="@drawable/rating_circle_call"
+              android:layout_width="@dimen/_41sdp"
+              android:layout_height="@dimen/_41sdp">
 
             <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/counterTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:gravity="center"
                 android:layout_gravity="center"
-                android:maxLength="2"
-                android:textColor="@color/buttonTextColor"
-                android:textSize="@dimen/_90sdp"
-                app:fontName="roboto_regular.ttf" />
+                android:textSize="@dimen/_15sdp"
+                android:text="4.4"
+                app:fontName="open_sans_regular.ttf"/>
 
-        </FrameLayout>
+              <com.bykea.pk.partner.widgets.FontTextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textColor="@color/color_191919"
+                  android:gravity="center"
+                  android:layout_gravity="center"
+                  android:textSize="@dimen/_6sdp"
+                  android:text="rating"
+                  app:fontName="open_sans_regular.ttf"/>
+
+          </LinearLayout>
+
+          <com.bykea.pk.partner.widgets.FontTextView
+              android:layout_marginTop="@dimen/_4sdp"
+              android:layout_marginLeft="@dimen/_8sdp"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="@color/color_5a5a5a"
+              android:gravity="center"
+              android:textSize="@dimen/_10sdp"
+              android:text="کسٹمر "
+              app:fontName="jameel_noori_nastaleeq.ttf"/>
 
 
-    </LinearLayout>
+      </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/llBottom"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height.xlarge"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom">
-
-        <!--<com.bykea.pk.partner.widgets.FontTextView-->
-        <!--android:id="@+id/rejectCallBtn"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_weight="1"-->
-        <!--android:background="@drawable/button_grey_square"-->
-        <!--android:gravity="center"-->
-        <!--android:text="Reject"-->
-        <!--android:textColor="@color/buttonTextColor"-->
-        <!--android:textSize="@dimen/textsize.normal"-->
-        <!--android:visibility="gone"-->
-        <!--app:fontName="MuseoSans_1.otf" />-->
-
-        <ImageView
-            android:id="@+id/acceptCallBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/button_green_square"
+        <LinearLayout
             android:gravity="center"
-            android:padding="@dimen/_3sdp"
-            android:src="@drawable/check_mark" />
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivCallType"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:src="@drawable/ride" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="end"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/_16sdp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/distance_circle_call"
+                android:layout_width="@dimen/_41sdp"
+                android:layout_height="@dimen/_41sdp">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/_15sdp"
+                    android:text="0.2"
+                    app:fontName="open_sans_regular.ttf"/>
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_191919"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/_6sdp"
+                    android:text="km"
+                    app:fontName="open_sans_regular.ttf"/>
+
+            </LinearLayout>
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginRight="@dimen/_16sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_5a5a5a"
+                android:gravity="center"
+                android:textSize="@dimen/_10sdp"
+                android:text="دور"
+                app:fontName="jameel_noori_nastaleeq.ttf"/>
+
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
-    <!--</RelativeLayout>-->
+    <ScrollView
+        android:paddingBottom="@dimen/_8sdp"
+        android:layout_above="@+id/acceptCallBtn"
+        android:layout_below="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_24sdp"
+                android:layout_marginRight="@dimen/_24sdp">
+
+                <LinearLayout
+                    android:id="@+id/circle_distance_layout"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
+                    android:background="@drawable/distance_green_circle_call"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="9"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15sdp"
+                        app:fontName="open_sans_regular.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="km"
+                        android:textColor="@color/color_191919"
+                        android:textSize="@dimen/_6sdp"
+                        app:fontName="open_sans_regular.ttf" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@color/color_e8e8e8"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <LinearLayout
+                    android:id="@+id/circle_manzil_layout"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/circle_manzil_call"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="منزل"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_15sdp"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@color/color_e8e8e8"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/circle_distance_layout" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/destinationTv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Sadar Town"
+                    android:textColor="@color/color_5a5a5a"
+                    android:textSize="@dimen/_10sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.035"
+                    app:layout_constraintLeft_toRightOf="@id/circle_distance_layout"
+                    app:layout_constraintRight_toLeftOf="@+id/circle_manzil_layout"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_gravity="center"
+                android:id="@+id/llTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/transparent">
+
+                    <ImageView
+                        android:layout_width="@dimen/_110sdp"
+                        android:layout_height="@dimen/_110sdp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/green_circle_bg" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_110sdp"
+                        android:layout_height="@dimen/_110sdp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/green_circle_outline_bg" />
+
+                    <com.bykea.pk.partner.widgets.DonutProgress
+                        android:id="@+id/donut_progress"
+                        android:layout_width="@dimen/_100sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="center"
+                        app:donut_finished_color="@color/windowBackground"
+                        app:donut_finished_stroke_width="@dimen/_6sdp"
+                        app:donut_max="20"
+                        app:donut_progress="20"
+                        app:donut_tick_stroke_width="@dimen/_1sdp"
+                        app:donut_unfinished_stroke_width="@dimen/_6sdp" />
+
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/counterTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:maxLength="2"
+                        android:textColor="@color/buttonTextColor"
+                        android:textSize="@dimen/_40sdp"
+                        app:fontName="roboto_regular.ttf" />
+
+                </FrameLayout>
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:background="@drawable/bg_border_call"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginLeft="@dimen/_60sdp"
+                android:layout_marginRight="@dimen/_50sdp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:text="Rs. 120"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="کرائے کی کمائی"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:background="@drawable/bg_border_call"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginLeft="@dimen/_60sdp"
+                android:layout_marginRight="@dimen/_50sdp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:text="Rs. 56"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="کیش کی وصولی"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/kharidariPriceLayout"
+                android:visibility="gone"
+                android:background="@drawable/bg_border_call"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginLeft="@dimen/_60sdp"
+                android:layout_marginRight="@dimen/_50sdp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:text="Rs. 1,000"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="خریداری کی رقم"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/wapsiBtn"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/_16sdp"
+                    android:src="@drawable/wapsi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:id="@+id/CODPriceLayout"
+                    android:visibility="visible"
+                    android:background="@drawable/bg_border_call"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_60sdp"
+                    android:layout_marginRight="@dimen/_50sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_8sdp"
+                        android:text="Rs. 35,000"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        app:fontName="open_sans_regular.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/CODlbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/_8sdp"
+                        android:text="کی وصولی"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        app:fontName="open_sans_regular.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/CODlbl"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/_8sdp"
+                        android:text="COD"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        app:fontName="open_sans_regular.ttf" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+
+
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+    <ImageView
+        android:id="@+id/acceptCallBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/button_green_square"
+        android:gravity="center"
+        android:src="@drawable/check_mark" />
 
 </RelativeLayout>
