@@ -101,6 +101,7 @@
         <item>Performance</item>
         <item>How it works</item>
         <item>Contact Us</item>
+        <item>Testing</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -112,6 +113,7 @@
         <item>کارکردگی</item>
         <item>طریقہ کار</item>
         <item>رابطہ‎</item>
+        <item>ٹیسٹنگ</item>
     </string-array>
     <!--
     <string-array name="navDrawerIcons">
@@ -941,6 +943,7 @@
     <string name="camera_permission">Please allow Camera Permissions</string>
     <string name="permissions.docs">Camera Permission required to take Picture for your Profile &amp; Documents</string>
     <string name="java.camera_permission.msg"><![CDATA[For the best Bykea experience, please enable Permission-> Camera in the application settings.]]></string>
+    <string name="ranking_footer_text">ایپ میں اپنی منزل منتخب کر کے اپنے دفتر، دوکان، کارخانے، یونیورسٹی یا گھر \n  جاتے ہوئے راستے کی بکنگز لیں اور ہزاروں کمائیں۔ مرضی کی بکنگ پر بونس لاگو نہیں ہے</string>
 
 
 </resources>

@@ -19,6 +19,7 @@ import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
+import com.bykea.pk.partner.ui.fragments.HomeFragmentTesting;
 import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
 import com.bykea.pk.partner.ui.fragments.PerformanceFragment;
 import com.bykea.pk.partner.ui.fragments.ProfileFragment;
@@ -137,6 +138,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     }
                     break;
                 case 7://this case is for logout footer part click.
+                    if (HomeActivity.visibleFragmentNumber != 7) {
+                        updateCurrentFragment(new HomeFragmentTesting(), 7);
+                    }
+                    break;
+
+                case 8://this case is for logout footer part click.
                     Dialogs.INSTANCE.showLogoutDialog(context, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

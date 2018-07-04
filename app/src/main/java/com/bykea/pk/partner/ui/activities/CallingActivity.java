@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,6 +28,7 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.gson.Gson;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -61,6 +63,15 @@ public class CallingActivity extends BaseActivity {
     ImageView ivCallType;
     @BindView(R.id.activity_calling)
     RelativeLayout activity_calling;
+
+    @BindView(R.id.kharidariPriceLayout)
+    RelativeLayout kharidariPriceLayout;
+
+    @BindView(R.id.CODPriceLayout)
+    RelativeLayout CODPriceLayout;
+
+    @BindView(R.id.wapsiBtn)
+    ImageView wapsiBtn;
 
     private UserRepository repository;
     private MediaPlayer _mpSound;
@@ -375,12 +386,34 @@ public class CallingActivity extends BaseActivity {
 
     private void setInitialData() {
         NormalCallData callData = AppPreferences.getCallData();
+        Log.d("callData", new Gson().toJson(callData));
         logMixpanelEvent(callData, false);
 //        callerNameTv.setText(callData.getPassName());
 //        startAddressTv.setText(callData.getStartAddress());
 //        timeTv.setText(callData.getArivalTime() + " min");
 //        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
+
+        if (Utils.isPurchaseService(callData.getCallType())){
+            kharidariPriceLayout.setVisibility(View.VISIBLE);
+            CODPriceLayout.setVisibility(View.GONE);
+            wapsiBtn.setVisibility(View.GONE);
+        }
+
+        if (Utils.isRideService(callData.getCallType())){
+            kharidariPriceLayout.setVisibility(View.GONE);
+            CODPriceLayout.setVisibility(View.GONE);
+            wapsiBtn.setVisibility(View.GONE);
+        }
+
+        if (Utils.isDeliveryService(callData.getCallType())){
+            kharidariPriceLayout.setVisibility(View.GONE);
+            CODPriceLayout.setVisibility(View.VISIBLE);
+            wapsiBtn.setVisibility(View.VISIBLE);
+        }
+
+
+
         String icon = Utils.getServiceIcon(callData.getCallType());
         if (StringUtils.isNotBlank(icon)) {
             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));

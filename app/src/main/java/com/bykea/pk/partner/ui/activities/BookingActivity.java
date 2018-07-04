@@ -117,7 +117,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView cancelBtn;
     @BindView(R.id.chatBtn)
     ImageView chatBtn;
-    /*    @BindView(R.id.callerIv)
+        /*@BindView(R.id.callerIv)
         CircularImageView callerIv;*/
     @BindView(R.id.callerNameTv)
     FontTextView callerNameTv;
@@ -1513,6 +1513,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 mCurrentActivity.finish();
             }
         }, null, "Trip Completed", msg);
+
+        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
     }
 
     private UserDataHandler driversDataHandler = new UserDataHandler() {
@@ -1796,6 +1798,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             MediaPlayer
                     .create(mCurrentActivity, R.raw.notification_sound)
                     .start();
+        }
+    }
+
+    private void logAnalyticsEvent(String event) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("timestamp", System.currentTimeMillis());
+            Utils.logFacebookEvent(mCurrentActivity, event, data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

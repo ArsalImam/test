@@ -28,10 +28,12 @@ import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
+import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
 import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
+import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -180,6 +182,16 @@ public class ActivityStackManager {
     public void startCancelDetailsActivity(TripHistoryData data, Context mContext) {
         Intent intent = new Intent(mContext, HistoryCancelDetailsActivity.class);
         intent.putExtra(Constants.Extras.TRIP_DETAILS, data);
+        mContext.startActivity(intent);
+    }
+
+    public void startShahkarActivity(Context mContext) {
+        Intent intent = new Intent(mContext, ShahkarActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    public void startStatsActivity(Context mContext) {
+        Intent intent = new Intent(mContext, RankingActivity.class);
         mContext.startActivity(intent);
     }
 

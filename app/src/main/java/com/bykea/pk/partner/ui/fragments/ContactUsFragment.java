@@ -66,6 +66,8 @@ public class ContactUsFragment extends Fragment {
         mCurrentActivity.setToolbarTitle("Contact Us", "رابطہ");
         mCurrentActivity.hideToolbarLogo();
 
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.hideStatusCompletely();
         UserRepository repository = new UserRepository();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         repository.requestContactNumbers(mCurrentActivity, handler);

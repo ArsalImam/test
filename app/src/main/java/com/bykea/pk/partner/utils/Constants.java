@@ -128,6 +128,8 @@ public class Constants {
         public final static String ON_SIGN_UP_BTN_CLICK = "SignupButton";
         public final static String ON_SIGN_UP_MOBILE_ENTERED = "SignupMobile";
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
+        public final static String ON_LOGIN_SUCCESS= "LoginSuccessful";
+        public final static String ON_RIDE_COMPLETE= "RideComplete";
 
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger

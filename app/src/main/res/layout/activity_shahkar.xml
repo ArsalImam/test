@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    tools:context=".ui.activities.ShahkarActivity">
+
+    <include layout="@layout/toolbar" />
+
+    <View
+        android:id="@+id/toolbarLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent"
+        android:focusableInTouchMode="true" />
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_130sdp">
+
+        <ImageView
+            android:scaleType="fitXY"
+            android:src="@drawable/maxresdefault_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="پچھلے مہینے کے  شاہکار"
+            android:textSize="@dimen/_30sdp"
+            android:textStyle="bold"
+            android:shadowDx="0.0"
+            android:shadowDy="3.0"
+            android:textColor="@color/white"
+            android:shadowColor="@color/shadow_gray"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black.transparent.1"
+        android:focusableInTouchMode="true" />
+
+    <LinearLayout
+        android:weightSum="10"
+        android:background="@color/secondaryColorUltraLight"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="@dimen/_50sdp"
+            android:background="@color/black.transparent.1"
+            android:focusableInTouchMode="true" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="نمبر"
+            android:textSize="@dimen/_16sdp"
+            android:textColor="@color/black_414141"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="@dimen/_50sdp"
+            android:background="@color/black.transparent.1"
+            android:focusableInTouchMode="true" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_weight="4"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="نام"
+            android:textSize="@dimen/_16sdp"
+            android:textColor="@color/black_414141"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="@dimen/_50sdp"
+            android:background="@color/black.transparent.1"
+            android:focusableInTouchMode="true" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="بکنگز"
+            android:textSize="@dimen/_16sdp"
+            android:textColor="@color/black_414141"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="@dimen/_50sdp"
+            android:background="@color/black.transparent.1"
+            android:focusableInTouchMode="true" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="اسکور"
+            android:textSize="@dimen/_16sdp"
+            android:textColor="@color/black_414141"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="@dimen/_50sdp"
+            android:background="@color/black.transparent.1"
+            android:focusableInTouchMode="true" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="کمائی"
+            android:textSize="@dimen/_16sdp"
+            android:textColor="@color/black_414141"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black.transparent.1"
+        android:focusableInTouchMode="true" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/shahkar_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

@@ -99,7 +99,7 @@
             android:id="@+id/footerlayout"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_60sdp">
+            android:layout_height="@dimen/_55sdp">
 
             <FrameLayout
                 android:background="#d80027"
@@ -128,7 +128,7 @@
                 android:text="اسٹارٹ"
                 android:textAllCaps="true"
                 android:textColor="@color/buttonTextColor"
-                android:textSize="@dimen/_24sdp"
+                android:textSize="@dimen/textsize.large"
                 android:textStyle="bold"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 

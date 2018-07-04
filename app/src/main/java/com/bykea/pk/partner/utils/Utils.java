@@ -62,6 +62,8 @@ import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.RankingStatsTypeModel;
+import com.bykea.pk.partner.models.data.RankingWeeklyStatsModel;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
@@ -1479,6 +1481,10 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "Delivery");
     }
 
+    public static boolean isRideService(String callType) {
+        return StringUtils.containsIgnoreCase(callType, "Ride");
+    }
+
     public static boolean isCourierService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Courier");
     }
@@ -2115,5 +2121,7 @@ public class Utils {
                 && (AppPreferences.getAvailableStatus() ||
                 AppPreferences.isOutOfFence() || AppPreferences.isOnTrip());
     }
+
+
 
 }
