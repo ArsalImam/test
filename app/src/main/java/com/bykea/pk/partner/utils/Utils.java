@@ -1481,6 +1481,10 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "Delivery");
     }
 
+    public static boolean isRideService(String callType) {
+        return StringUtils.containsIgnoreCase(callType, "Ride");
+    }
+
     public static boolean isCourierService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Courier");
     }
@@ -2117,5 +2121,7 @@ public class Utils {
                 && (AppPreferences.getAvailableStatus() ||
                 AppPreferences.isOutOfFence() || AppPreferences.isOnTrip());
     }
+
+
 
 }
