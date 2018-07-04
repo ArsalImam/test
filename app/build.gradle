@@ -15,6 +15,10 @@ android {
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
+
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
     }
 
     signingConfigs {
@@ -58,6 +62,8 @@ android {
 //                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
 
         }
+
+
     }
     dexOptions {
         javaMaxHeapSize "4g"
