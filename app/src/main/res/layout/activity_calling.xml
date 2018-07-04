@@ -15,18 +15,20 @@
         android:background="@drawable/bg_call_header"
         android:orientation="horizontal">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/_16sdp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:gravity="left"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/_16sdp">
 
             <LinearLayout
+                android:id="@+id/llRating"
                 android:layout_width="@dimen/_41sdp"
                 android:layout_height="@dimen/_41sdp"
+                android:layout_centerHorizontal="true"
                 android:background="@drawable/rating_circle_call"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -56,6 +58,8 @@
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/llRating"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="کسٹمر "
                 android:textColor="@color/color_5a5a5a"
@@ -63,12 +67,7 @@
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -86,23 +85,21 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="@dimen/_16sdp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:gravity="right"
+            android:orientation="vertical"
+            android:paddingRight="@dimen/_16sdp">
 
             <LinearLayout
+                android:id="@+id/llDistance"
                 android:layout_width="@dimen/_41sdp"
                 android:layout_height="@dimen/_41sdp"
+                android:layout_centerHorizontal="true"
                 android:background="@drawable/distance_circle_call"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -132,6 +129,8 @@
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/llDistance"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="دور"
                 android:textColor="@color/color_5a5a5a"
@@ -139,7 +138,7 @@
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
     </LinearLayout>
@@ -152,17 +151,16 @@
         android:paddingBottom="@dimen/_8sdp">
 
         <LinearLayout
-            android:layout_marginLeft="@dimen/_24sdp"
-            android:layout_marginRight="@dimen/_24sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_24sdp"
+            android:layout_marginRight="@dimen/_24sdp"
             android:orientation="vertical">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_round_calling_layout"
-                >
+                android:background="@drawable/bg_round_calling_layout">
 
                 <LinearLayout
                     android:id="@+id/circle_distance_layout"
