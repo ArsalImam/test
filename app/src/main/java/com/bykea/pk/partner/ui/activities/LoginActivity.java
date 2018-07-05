@@ -129,7 +129,7 @@ public class LoginActivity extends BaseActivity {
                 ActivityStackManager.getInstance().startForgotPasswordActivity(mCurrentActivity);
                 break;
             case R.id.registerBtn:
-                logAnalyticsEvent();
+                logAnalyticsEvent(Constants.AnalyticsEvents.ON_SIGN_UP_BTN_CLICK);
                 ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
                 break;
             case R.id.tvTerms:
@@ -182,6 +182,8 @@ public class LoginActivity extends BaseActivity {
                             // Connect socket
                             DriverApp.getApplication().connect();
 //                            Utils.setMixPanelUserId(mCurrentActivity);
+
+                            logAnalyticsEvent(Constants.AnalyticsEvents.ON_LOGIN_SUCCESS);
 
                             mCurrentActivity.finish();
                         } else {
@@ -239,11 +241,11 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    private void logAnalyticsEvent() {
+    private void logAnalyticsEvent(String event) {
         try {
             JSONObject data = new JSONObject();
             data.put("timestamp", System.currentTimeMillis());
-            Utils.logFacebookEvent(mCurrentActivity, Constants.AnalyticsEvents.ON_SIGN_UP_BTN_CLICK, data);
+            Utils.logFacebookEvent(mCurrentActivity, event, data);
 
         } catch (JSONException e) {
             e.printStackTrace();

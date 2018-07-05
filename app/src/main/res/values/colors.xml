@@ -20,6 +20,7 @@
     <color name="secondaryColor">#c0c0c0</color>
     <color name="secondaryColorLight">#e5e5e5</color>
     <color name="secondaryColorLightest">#eaeaea</color>
+    <color name="secondaryColorLightest1">#eaeaea</color>
     <color name="secondaryColorDark">#303030</color>
 
     <color name="colorAccent">#04aa32</color>
@@ -33,6 +34,8 @@
     <color name="buttonTextColor">#FFFFFF</color>
     <color name="buttonGrey">#656565</color>
 
+    <color name="divider_light">#e2e2e2</color>
+
     <color name="divider">#cecece</color>
 
     <color name="color.darker_red">#ba0c0c</color>
@@ -43,14 +46,22 @@
 
     <!--SOLID COLORS USED FOR DIFFERENT PURPOSES-->
     <color name="black">#000000</color>
+    <color name="black_3a3a3a">#3a3a3a</color>
+    <color name="black_414141">#414141</color>
+    <color name="color_138f39">#138f39</color>
+    <color name="color_6b6b6b">#6b6b6b</color>
     <color name="black.transparent.inactive">#D8000000</color>
     <color name="grey">#a4a1a1</color>
+    <color name="color_c8c8c8">#c8c8c8</color>
+    <color name="blue_lightest">#0295bf</color>
     <color name="blue">#3f8bef</color>
     <color name="blue_ultra_dark">#3A83BB</color>
     <color name="blue_dark">#4E8FFF</color>
+    <color name="blue_0194be">#0194be</color>
     <color name="blue_light">#ADEAFF</color>
     <color name="white">#FFFFFF</color>
     <color name="yellow_dd">#fdfd96</color>
+    <color name="yellow_fcfcc3">#fcfcc3</color>
     <color name="yellow">#FAFFAD</color>
     <color name="secondaryColorUltraLight">#e5e5e5</color>
     <color name="secondaryColor4">#c2c2c2</color>
@@ -68,5 +79,21 @@
     <color name="colorNine">#CADA06</color>
     <color name="colorTen">#016896</color>
 
+    <color name="d9d9d9">#d9d9d9</color>
+    <color name="bbbbbb">#bbbbbb</color>
+    <color name="a2a2a2">#a2a2a2</color>
+    <color name="F8F8F8">#F8F8F8</color>
+    <color name="F41714">#F41714</color>
+    <color name="f2f2f2">#f2f2f2</color>
+    <color name="last_item_color">#f2f2f2</color>
 
+    <color name="dark_gray">#6c6c6c</color>
+    <color name="Color_DarkRed">#d80027</color>
+    <color name="color.darker_515151">#515151</color>
+
+    <color name="shadow_gray">#59000000</color>
+
+    <color name="color_191919">#191919</color>
+    <color name="color_5a5a5a">#5a5a5a</color>
+    <color name="color_e8e8e8">#e8e8e8</color>
 </resources>

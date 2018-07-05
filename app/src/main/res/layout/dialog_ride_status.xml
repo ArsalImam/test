@@ -18,12 +18,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/margin.normal"
             android:layout_marginBottom="@dimen/margin.normal"
+            android:layout_marginTop="@dimen/margin.normal"
             android:gravity="center"
             android:textColor="@color/textColorPrimary"
-            app:fontName="jameel_noori_nastaleeq.ttf"
-            android:textSize="@dimen/_22sdp" />
+            android:textSize="@dimen/_22sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
     </LinearLayout>
@@ -40,7 +40,8 @@
             android:orientation="horizontal"
             android:weightSum="2">
 
-            <com.bykea.pk.partner.widgets.FontTextView
+
+            <ImageView
                 android:id="@+id/negativeBtn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height.xlarge"
@@ -48,22 +49,20 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_grey_square"
                 android:gravity="center"
-                android:text="CANCEL"
-                android:textColor="@color/buttonTextColor"
-                app:fontName="MuseoSans_1.otf" />
+                android:padding="@dimen/_11sdp"
+                android:src="@drawable/close_browser" />
 
-            <com.bykea.pk.partner.widgets.FontTextView
+            <ImageView
                 android:id="@+id/positiveBtn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height.xlarge"
                 android:layout_gravity="center_horizontal"
-                android:layout_toRightOf="@id/negativeBtn"
                 android:layout_weight="1"
                 android:background="@drawable/button_green_square"
                 android:gravity="center"
-                android:text="OK"
-                android:textColor="@color/buttonTextColor"
-                app:fontName="MuseoSans_1.otf" />
+                android:padding="@dimen/_11sdp"
+                android:src="@drawable/correct_symbol_square" />
+
 
         </LinearLayout>
 

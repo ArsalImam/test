@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -56,6 +57,7 @@ public class BaseActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private FontTextView mTitleTv, status;
     private ImageView mLogo, rightIv;
+    private FrameLayout frameLayout_bismilla;
     private BaseActivity mCurrentActivity;
     private final EventBus mEventBus = EventBus.getDefault();
     private boolean isScreenInFront;
@@ -322,6 +324,7 @@ public class BaseActivity extends AppCompatActivity {
     private void initToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mLogo = (ImageView) mToolbar.findViewById(R.id.logo);
+        frameLayout_bismilla = mToolbar.findViewById(R.id.logo_bismilla);
         mTitleTv = (FontTextView) mToolbar.findViewById(R.id.title);
         status = (FontTextView) mToolbar.findViewById(R.id.status);
         rightIv = (ImageView) mToolbar.findViewById(R.id.rightIv);
@@ -356,15 +359,38 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
+    public void setStatusButtonForBismilla(String title) {
+        if (null == mToolbar) getToolbar();
+        status.setVisibility(View.VISIBLE);
+        status.setText(title);
+        status.setTextColor(getResources().getColor(R.color.color_darker_red));
+        status.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
     public void setToolbarLogo() {
         if (null == mToolbar) getToolbar();
         mLogo.setVisibility(View.VISIBLE);
+        frameLayout_bismilla.setVisibility(View.GONE);
+//        getToolbar().setLogo(R.drawable.top_logo);
+    }
+
+    public void setToolbarLogoBismilla() {
+        if (null == mToolbar) getToolbar();
+        frameLayout_bismilla.setVisibility(View.VISIBLE);
+        mTitleTv.setVisibility(View.GONE);
+
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
 
     public void hideToolbarLogo() {
         if (null == mToolbar) getToolbar();
         mLogo.setVisibility(View.GONE);
+        frameLayout_bismilla.setVisibility(View.GONE);
 //        getToolbar().setLogo(null);
     }
 
@@ -633,6 +659,16 @@ public class BaseActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+    }
+    private long mLastClickTime;
+
+    public boolean checkClickTime() {
+        long currentTime = SystemClock.elapsedRealtime();
+        if (mLastClickTime != 0 && (currentTime - mLastClickTime < 1000)) {
+            return true;
+        }
+        mLastClickTime = currentTime;
+        return false;
     }
 
 }

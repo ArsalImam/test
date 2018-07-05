@@ -142,7 +142,6 @@ public class FeedbackActivity extends BaseActivity {
         if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
-
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
     }
 
@@ -171,22 +170,13 @@ public class FeedbackActivity extends BaseActivity {
         callData = AppPreferences.getCallData();
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
         isPurchaseType = Utils.isPurchaseService(callData.getCallType());
+        etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
         if (StringUtils.isNotBlank(callData.getTotalFare())) {
             totalCharges = callData.getTotalFare();
         }
         TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
-        /*if (StringUtils.isNotBlank(callData.getCodAmountNotFormatted())) {
-            String amount = callData.getCodAmountNotFormatted();
-            if (isDeliveryType) {
-                if (callData.isCod()) {
-                    TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
-                }
-            } else if (!isPurchaseType) {
-                TOP_UP_LIMIT = TOP_UP_LIMIT + Integer.parseInt(amount);
-            }
-        }*/
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
 //        totalAmountTv.setText((StringUtils.isNotBlank(totalCharges) ? totalCharges : "N/A"));
         totalAmountTv.setText((StringUtils.isNotBlank(callData.getTrip_charges()) ? callData.getTrip_charges() : "N/A"));

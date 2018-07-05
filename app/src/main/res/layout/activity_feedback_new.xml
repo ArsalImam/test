@@ -488,7 +488,7 @@
                         android:background="@android:color/transparent"
                         android:gravity="left|center_vertical"
                         android:hint="Mobile #"
-                        android:inputType="number"
+                        android:inputType="numberPassword"
                         android:maxLength="11"
                         android:maxWidth="@dimen/_220sdp"
                         android:padding="@dimen/_7sdp"

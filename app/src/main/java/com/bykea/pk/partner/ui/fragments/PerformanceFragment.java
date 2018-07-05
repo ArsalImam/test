@@ -87,6 +87,8 @@ public class PerformanceFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.hideStatusCompletely();
         initViews();
     }
 
@@ -160,7 +162,9 @@ public class PerformanceFragment extends Fragment {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        loader.setVisibility(View.GONE);
+                        if (loader != null) {
+                            loader.setVisibility(View.GONE);
+                        }
                         if (response.isSuccess()) {
 
                             if (StringUtils.isNotBlank(response.getData().getDate())) {

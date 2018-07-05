@@ -385,8 +385,7 @@ public class LocationService extends Service {
 
         @Override
         public void onFinish() {
-            if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() ||
-                    AppPreferences.isOutOfFence() || AppPreferences.isOnTrip())) {
+            if (Utils.canSendLocation()) {
                 synchronized (this) {
                     double lat = AppPreferences.getLatitude();
                     double lon = AppPreferences.getLongitude();
@@ -512,8 +511,7 @@ public class LocationService extends Service {
     @Subscribe
     public void onEvent(String event) {
         if (Constants.ON_SOCKET_CONNECTED.equalsIgnoreCase(event)) {
-            if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() ||
-                    AppPreferences.isOutOfFence() || AppPreferences.isOnTrip())) {
+            if (Utils.canSendLocation()) {
                 synchronized (this) {
                     double lat = AppPreferences.getLatitude();
                     double lon = AppPreferences.getLongitude();

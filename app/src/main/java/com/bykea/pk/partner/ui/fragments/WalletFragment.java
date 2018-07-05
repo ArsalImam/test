@@ -84,6 +84,8 @@ public class WalletFragment extends Fragment {
         mCurrentActivity.setToolbarTitle("Wallet", "بٹوا");
         mCurrentActivity.hideToolbarLogo();
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.hideStatusCompletely();
         initViews(view);
     }
 

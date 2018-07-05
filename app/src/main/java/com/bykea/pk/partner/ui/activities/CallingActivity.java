@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,6 +28,7 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.gson.Gson;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -61,6 +63,15 @@ public class CallingActivity extends BaseActivity {
     ImageView ivCallType;
     @BindView(R.id.activity_calling)
     RelativeLayout activity_calling;
+
+    @BindView(R.id.kharidariPriceLayout)
+    RelativeLayout kharidariPriceLayout;
+
+    @BindView(R.id.CODPriceLayout)
+    RelativeLayout CODPriceLayout;
+
+    @BindView(R.id.wapsiBtn)
+    ImageView wapsiBtn;
 
     private UserRepository repository;
     private MediaPlayer _mpSound;
@@ -191,7 +202,7 @@ public class CallingActivity extends BaseActivity {
                     public void run() {
                         ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                         stopSound();
-                        mCurrentActivity.finish();
+                        finishActivity();
                     }
                 });
             }
@@ -220,7 +231,7 @@ public class CallingActivity extends BaseActivity {
                             AppPreferences.setIsOnTrip(true);
                             ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                             stopSound();
-                            mCurrentActivity.finish();
+                            finishActivity();
                         } else {
                             Utils.setCallIncomingState();
                             Dialogs.INSTANCE.showToast(mCurrentActivity
@@ -248,7 +259,7 @@ public class CallingActivity extends BaseActivity {
                     }
                     ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     stopSound();
-                    mCurrentActivity.finish();
+                    finishActivity();
                 }
             });
         }
@@ -262,11 +273,16 @@ public class CallingActivity extends BaseActivity {
                     Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
                     ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     stopSound();
-                    mCurrentActivity.finish();
+                    finishActivity();
                 }
             });
         }
     };
+
+    private void finishActivity() {
+        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        mCurrentActivity.finish();
+    }
 
     private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
         try {
@@ -331,7 +347,7 @@ public class CallingActivity extends BaseActivity {
                 repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                mCurrentActivity.finish();
+                finishActivity();
             }
         }
     };
@@ -370,12 +386,29 @@ public class CallingActivity extends BaseActivity {
 
     private void setInitialData() {
         NormalCallData callData = AppPreferences.getCallData();
+        Log.d("callData", new Gson().toJson(callData));
         logMixpanelEvent(callData, false);
 //        callerNameTv.setText(callData.getPassName());
 //        startAddressTv.setText(callData.getStartAddress());
 //        timeTv.setText(callData.getArivalTime() + " min");
 //        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
+
+        if (Utils.isPurchaseService(callData.getCallType())) {
+            kharidariPriceLayout.setVisibility(View.VISIBLE);
+            CODPriceLayout.setVisibility(View.GONE);
+            wapsiBtn.setVisibility(View.GONE);
+        } else if (Utils.isDeliveryService(callData.getCallType())) {
+            kharidariPriceLayout.setVisibility(View.GONE);
+            CODPriceLayout.setVisibility(View.VISIBLE);
+            wapsiBtn.setVisibility(View.VISIBLE);
+        } else {
+            kharidariPriceLayout.setVisibility(View.GONE);
+            CODPriceLayout.setVisibility(View.GONE);
+            wapsiBtn.setVisibility(View.GONE);
+        }
+
+
         String icon = Utils.getServiceIcon(callData.getCallType());
         if (StringUtils.isNotBlank(icon)) {
             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
@@ -413,7 +446,7 @@ public class CallingActivity extends BaseActivity {
                             AppPreferences.setTripStatus(TripStatus.ON_FREE);
                             stopSound();
                             ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, "", mCurrentActivity);
-                            mCurrentActivity.finish();
+                            finishActivity();
                         }
                     }
                 }

@@ -13,6 +13,9 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.RadioButton;
@@ -23,6 +26,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.ui.helpers.adapters.CancelReasonDialogAdapter;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontEditText;
@@ -33,6 +37,7 @@ import com.google.android.exoplayer.BuildConfig;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public enum Dialogs {
     INSTANCE;
@@ -176,6 +181,37 @@ public enum Dialogs {
     }
 
 
+    public void showAlertDialogWithTickCross(Context context, View.OnClickListener positive,
+                                             View.OnClickListener negative, String title, String message) {
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_alert_tick_cross);
+        if (null == negative)
+            mDialog.setCancelable(true);
+        else
+            mDialog.setCancelable(false);
+
+        if (negative == null) {
+            mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+        } else {
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(negative);
+        }
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
+        FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
+        messageTv.setTypeface(FontUtils.getFonts(context, "jameel_noori_nastaleeq.ttf"));
+        messageTv.setText(message);
+        messageTv.setTextSize(context.getResources().getDimension(R.dimen._7sdp));
+        if (StringUtils.isNotBlank(title)) {
+            ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
+        } else {
+            mDialog.findViewById(R.id.titleTv).setVisibility(View.GONE);
+        }
+
+        showDialog();
+    }
+
+
     public void showAlertDialog(Context context, String title, String message, View.OnClickListener onClick) {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
@@ -275,37 +311,29 @@ public enum Dialogs {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
         mDialog.setContentView(R.layout.cancel_job_dialog);
-        final RadioGroup radioGroup = (RadioGroup) mDialog.findViewById(R.id.optionBtn);
-        RadioGroup.LayoutParams rprms;
-        ArrayList<String> cancelMessages = AppPreferences.getSettings().getPredefine_messages().getCancel();
-        if (cancelMessages.size() > 0) {
-            int id = 0;
-            for (String msg : cancelMessages) {
-                RadioButton radioButton = new RadioButton(context);
-                radioButton.setText(msg);
-                radioButton.setId(id++);
-                radioButton.setTextColor(ContextCompat.getColor(context, R.color.textColorPrimary));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    radioButton.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                }
-                radioButton.setGravity(Gravity.RIGHT);
-                radioButton.setPadding((int) context.getResources().getDimension(R.dimen._3sdp), 0, (int) context.getResources().getDimension(R.dimen._3sdp), 0);
-                radioButton.setTypeface(FontUtils.getFonts(context, "jameel_noori_nastaleeq.ttf"));
-                rprms = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT);
-                radioGroup.addView(radioButton, rprms);
-            }
-        }
-        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+        final ArrayList<String> cancelMessages = AppPreferences.getSettings().getPredefine_messages().getCancel();
+        final RecyclerView recyclerView = mDialog.findViewById(R.id.rvItems);
+        final CancelReasonDialogAdapter adapter = new CancelReasonDialogAdapter(context, cancelMessages);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setAdapter(adapter);
+        mDialog.findViewById(R.id.ivPositive).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (radioGroup.getCheckedRadioButtonId() != -1) {
+                if (adapter.getSelectedIndex() != 999) {
                     dismissDialog();
-                    int selectedId = radioGroup.getCheckedRadioButtonId();
-                    RadioButton radioButton = (RadioButton) mDialog.findViewById(selectedId);
-                    callBack.onCallBack("" + radioButton.getText());
+                    callBack.onCallBack("" + cancelMessages.get(adapter.getSelectedIndex()));
                 } else {
                     Utils.appToast(context, "Please select Cancellation Reason.");
                 }
+            }
+        });
+        mDialog.findViewById(R.id.ivNegative).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
             }
         });
         showDialog();
@@ -352,7 +380,7 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showTopUpDialog(final Context context, final StringCallBack callBack) {
+    public void showTopUpDialog(final Context context, final boolean isCourierType, final StringCallBack callBack) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
@@ -368,11 +396,15 @@ public enum Dialogs {
         mDialog.findViewById(R.id.ivPositive).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString())) {
+                if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString(), isCourierType)) {
                     dismissDialog();
                     callBack.onCallBack(receivedAmountEt.getText().toString());
                 } else {
-                    receivedAmountEt.setError("Amount can't be more than " + AppPreferences.getSettings().getSettings().getPartner_topup_limit());
+                    String msg = "Amount can't be more than " + AppPreferences.getSettings().getSettings().getPartner_topup_limit();
+                    if (isCourierType) {
+                        msg = "Amount can't be more than " + AppPreferences.getSettings().getSettings().getVan_partner_topup_limit();
+                    }
+                    receivedAmountEt.setError(msg);
                 }
             }
         });

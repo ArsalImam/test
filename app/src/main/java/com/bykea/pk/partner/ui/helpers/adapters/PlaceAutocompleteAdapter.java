@@ -107,25 +107,6 @@ public class PlaceAutocompleteAdapter
                                         ArrayList<Predictions> resultList = response.getPredictions();
                                         if (resultList != null) {
                                             // The API successfully returned results.
-                                            /*if (StringUtils.isNotBlank(city)) {
-                                                Iterator<Predictions> it = resultList.iterator();
-                                                while (it.hasNext()) {
-                                                    Predictions item = it.next();
-                                                    if (item.getStructured_formatting() != null
-                                                            && StringUtils.isNotBlank(item.getStructured_formatting().getSecondary_text()) && StringUtils.isNotBlank(city)) {
-                                                        if (city.equalsIgnoreCase("Rawalpindi")) {
-                                                            if (!item.getStructured_formatting().getSecondary_text().contains(city) &&
-                                                                    !item.getStructured_formatting().getSecondary_text().contains("Islamabad")) {
-                                                                it.remove();
-                                                            }
-                                                        } else {
-                                                            if (!item.getStructured_formatting().getSecondary_text().contains(city)) {
-                                                                it.remove();
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }*/
                                             if (resultList.size() > 0) {
                                                 mResultList = resultList;
                                                 results.values = mResultList;

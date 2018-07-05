@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -49,6 +50,7 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.MyRangeBar;
+import com.bykea.pk.partner.widgets.MyRangeBarRupay;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -100,7 +102,7 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.statusCheck)
     ImageView statusCheck;
     @BindView(R.id.myRangeBar)
-    MyRangeBar myRangeBar;
+    MyRangeBarRupay myRangeBar;
     @BindView(R.id.tvCihIndex1)
     FontTextView tvCihIndex1;
     @BindView(R.id.tvCihIndex2)
@@ -141,6 +143,8 @@ public class HomeFragment extends Fragment {
         mCurrentActivity = ((HomeActivity) getActivity());
         mCurrentActivity.hideToolbarTitle();
         mCurrentActivity.setToolbarLogo();
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.hideStatusCompletely();
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         return view;
     }
@@ -184,7 +188,7 @@ public class HomeFragment extends Fragment {
         myRangeBar.refreshDrawableState();
         myRangeBar.invalidate();
         myRangeBar.setCurrentIndex(currentIndex);
-        myRangeBar.setOnSlideListener(new MyRangeBar.OnSlideListener() {
+        myRangeBar.setOnSlideListener(new MyRangeBarRupay.OnSlideListener() {
             @Override
             public void onSlide(int index) {
                 Utils.redLog("Cash In Hand", "" + cashInHand[index]);
@@ -560,13 +564,7 @@ public class HomeFragment extends Fragment {
                 setDriverLocation();
                 break;
             case R.id.tvDemand:
-                if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
-                        StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
-                    String demandLink = AppPreferences.getSettings().getSettings().getDemand();
-//                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
-                    String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
-                    Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
-                }
+                demandClick();
                 break;
             case R.id.tvNotice:
                 if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
@@ -594,6 +592,33 @@ public class HomeFragment extends Fragment {
                 break;
         }
     }
+
+    private void demandClick() {
+
+        if (AppPreferences.getPilotData() != null && StringUtils.isNotBlank(AppPreferences.getPilotData().getService_type())
+                && AppPreferences.getPilotData().getService_type().equalsIgnoreCase("van")) {
+
+            Fragment fragment = new DeliveryScheduleFragment();
+            mCurrentActivity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    .replace(R.id.containerView, fragment)
+                    .commit();
+            HomeActivity.visibleFragmentNumber = 7;
+            return;
+        }
+
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
+            String demandLink = AppPreferences.getSettings().getSettings().getDemand();
+//                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
+            String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
+            Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
+        }
+
+
+    }
+
 
     private void callAvailableStatusAPI(boolean status) {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {

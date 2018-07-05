@@ -284,7 +284,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="Waiting"
+                    android:text="ویٹینگ چارجز"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -388,7 +388,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="Dropoff discount"
+                    android:text="ڈراپ آف ڈسکاونٹ"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />

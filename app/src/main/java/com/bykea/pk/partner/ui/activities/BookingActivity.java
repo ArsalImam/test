@@ -117,7 +117,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView cancelBtn;
     @BindView(R.id.chatBtn)
     ImageView chatBtn;
-    /*    @BindView(R.id.callerIv)
+        /*@BindView(R.id.callerIv)
         CircularImageView callerIv;*/
     @BindView(R.id.callerNameTv)
     FontTextView callerNameTv;
@@ -383,28 +383,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.cancelBtn:
-                //Code Reverted for XTime
-                /*if (Utils.isCancelAfterXMin()) {
-                    //TODO Don't show reason dialog
-                    Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            //TODO Cancel Trip
-                            dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler,
-                                    "");
-                        }
-                    }, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Dialogs.INSTANCE.dismissDialog();
-                        }
-                    }, "Cancel Trip", "Cancel If No Show");
-                } else*/
                 if (Utils.isCancelAfter5Min()) {
-
                     String msg = "پہنچنے کے " + AppPreferences.getSettings().getSettings().getCancel_time() + " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
-                    Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
+                    Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Dialogs.INSTANCE.dismissDialog();
@@ -447,7 +428,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 public void onClick(View v) {
                                     Dialogs.INSTANCE.dismissDialog();
                                 }
-                            }, "پہنچ گئے؟");
+                            }, " پہنچ گئے؟");
                         }
                     }
                     //CHECK FOR BEGIN TRIP BUTTON CLICK
@@ -467,7 +448,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                             }
-                        }, "اسٹارٹ؟");
+                        }, " اسٹارٹ؟");
                     } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish))) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
@@ -482,7 +463,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                             }
-                        }, "مکمل؟");
+                        }, " مکمل؟");
                     }
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
@@ -496,7 +477,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 setDriverLocation();
                 break;
             case R.id.ivTopUp:
-                Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, new StringCallBack() {
+                Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, Utils.isCourierService(callData.getCallType()), new StringCallBack() {
                     @Override
                     public void onCallBack(String msg) {
                         if (StringUtils.isNotBlank(msg)) {
@@ -820,9 +801,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             } else {
                 ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
             }
-
-            if (StringUtils.isNotBlank(callData.getDistance()))
-                ;
 
         }
     }
@@ -1535,6 +1513,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 mCurrentActivity.finish();
             }
         }, null, "Trip Completed", msg);
+
+        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
     }
 
     private UserDataHandler driversDataHandler = new UserDataHandler() {
@@ -1701,7 +1681,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
                     jobBtn.setEnabled(true);
-                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
+                    Utils.appToast(mCurrentActivity, error);
+//                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
                 }
             });
         }
@@ -1798,6 +1779,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData = AppPreferences.getCallData();
                         updateDropOff();
                     }
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
+                        playNotificationSound();
+                        Utils.appToast(mCurrentActivity, "Trip Details has been Added by Passenger.");
+                        callData = AppPreferences.getCallData();
+                        updateDropOff();
+                        showWalletAmount();
+                    }
                 }
             });
 
@@ -1810,6 +1798,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             MediaPlayer
                     .create(mCurrentActivity, R.raw.notification_sound)
                     .start();
+        }
+    }
+
+    private void logAnalyticsEvent(String event) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("timestamp", System.currentTimeMillis());
+            Utils.logFacebookEvent(mCurrentActivity, event, data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

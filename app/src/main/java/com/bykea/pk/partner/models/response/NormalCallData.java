@@ -83,9 +83,22 @@ public class NormalCallData extends CommonResponse {
     private String codAmount;
     @SerializedName("is_cod")
     private boolean isCod;
+    @SerializedName("tripDetail")
+    private boolean tripDetailsAdded;
 
     private String details;
     private String dropoff_discount;
+
+    private String amount_parcel_value;
+    @SerializedName("return_run")
+    private boolean isReturnRun;
+    @SerializedName("wallet_deposit")
+    private boolean isWalletDeposit;
+    @SerializedName("cAddr")
+    private String complete_address;
+    private String sub_type;
+    private String recName;
+    private String order_no;
 
 
     public String getDistanceCovered() {
@@ -411,5 +424,69 @@ public class NormalCallData extends CommonResponse {
 
     public void setCreator_type(String creator_type) {
         this.creator_type = creator_type;
+    }
+
+    public boolean isTripDetailsAdded() {
+        return tripDetailsAdded;
+    }
+
+    public void setTripDetailsAdded(boolean tripDetailsAdded) {
+        this.tripDetailsAdded = tripDetailsAdded;
+    }
+
+    public String getAmount_parcel_value() {
+        return amount_parcel_value;
+    }
+
+    public void setAmount_parcel_value(String amount_parcel_value) {
+        this.amount_parcel_value = amount_parcel_value;
+    }
+
+    public boolean isReturnRun() {
+        return isReturnRun;
+    }
+
+    public void setReturnRun(boolean returnRun) {
+        isReturnRun = returnRun;
+    }
+
+    public boolean isWalletDeposit() {
+        return isWalletDeposit;
+    }
+
+    public void setWalletDeposit(boolean walletDeposit) {
+        isWalletDeposit = walletDeposit;
+    }
+
+    public String getComplete_address() {
+        return complete_address;
+    }
+
+    public void setComplete_address(String complete_address) {
+        this.complete_address = complete_address;
+    }
+
+    public String getSub_type() {
+        return sub_type;
+    }
+
+    public void setSub_type(String sub_type) {
+        this.sub_type = sub_type;
+    }
+
+    public String getRecName() {
+        return recName;
+    }
+
+    public void setRecName(String recName) {
+        this.recName = recName;
+    }
+
+    public String getOrder_no() {
+        return order_no;
+    }
+
+    public void setOrder_no(String order_no) {
+        this.order_no = order_no;
     }
 }

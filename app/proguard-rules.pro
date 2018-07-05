@@ -34,11 +34,15 @@
 -keep class com.wang.** { *; }
 -keep class com.onesignal.** { *; }
 -keep class android.support.** { *; }
+-keep class org.opencv.** { *; }
+-keep class org.codehaus.mojo.** { *; }
 -keep interface android.support.** { *; }
 -dontwarn butterknife.internal.**
 -dontwarn com.instabug.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
+-dontwarn org.opencv.**
+-dontwarn org.codehaus.mojo.**
 -keep class **$$ViewBinder { *; }
 # Retain generated class which implement Unbinder.
 -keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
