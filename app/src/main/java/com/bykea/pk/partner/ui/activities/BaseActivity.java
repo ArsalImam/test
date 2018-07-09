@@ -62,6 +62,7 @@ public class BaseActivity extends AppCompatActivity {
     private FontTextView mTitleTv, status, demandBtn;
     private ImageView mLogo, rightIv;
     private FrameLayout frameLayout_bismilla;
+    private FrameLayout frameLayout_khudaHafiz;
     private BaseActivity mCurrentActivity;
     private final EventBus mEventBus = EventBus.getDefault();
     private boolean isScreenInFront;
@@ -331,6 +332,7 @@ public class BaseActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mLogo = (ImageView) mToolbar.findViewById(R.id.logo);
         frameLayout_bismilla = mToolbar.findViewById(R.id.logo_bismilla);
+        frameLayout_khudaHafiz = mToolbar.findViewById(R.id.logo_khudaHafiz);
         mTitleTv = (FontTextView) mToolbar.findViewById(R.id.title);
         status = (FontTextView) mToolbar.findViewById(R.id.status);
         demandBtn = (FontTextView) mToolbar.findViewById(R.id.demandBtn);
@@ -380,11 +382,23 @@ public class BaseActivity extends AppCompatActivity {
         if (null == mToolbar) getToolbar();
         mLogo.setVisibility(View.VISIBLE);
         frameLayout_bismilla.setVisibility(View.GONE);
+        frameLayout_khudaHafiz.setVisibility(View.GONE);
 //        getToolbar().setLogo(R.drawable.top_logo);
+    }
+
+    public void showBismillah(){
+        frameLayout_khudaHafiz.setVisibility(View.GONE);
+        frameLayout_bismilla.setVisibility(View.VISIBLE);
+    }
+
+    public void showKhudaHafiz(){
+        frameLayout_khudaHafiz.setVisibility(View.VISIBLE);
+        frameLayout_bismilla.setVisibility(View.GONE);
     }
 
     public void setToolbarLogoBismilla(View.OnClickListener listener) {
         if (null == mToolbar) getToolbar();
+        frameLayout_khudaHafiz.setVisibility(View.GONE);
         frameLayout_bismilla.setVisibility(View.VISIBLE);
         mTitleTv.setVisibility(View.GONE);
 
@@ -393,10 +407,22 @@ public class BaseActivity extends AppCompatActivity {
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
 
+    public void setToolbarLogoKhudaHafiz(View.OnClickListener listener) {
+        if (null == mToolbar) getToolbar();
+        frameLayout_khudaHafiz.setVisibility(View.VISIBLE);
+        frameLayout_bismilla.setVisibility(View.GONE);
+        mTitleTv.setVisibility(View.GONE);
+
+        frameLayout_khudaHafiz.setOnClickListener(listener);
+
+//        getToolbar().setLogo(R.drawable.top_logo);
+    }
+
     public void hideToolbarLogo() {
         if (null == mToolbar) getToolbar();
         mLogo.setVisibility(View.GONE);
         frameLayout_bismilla.setVisibility(View.GONE);
+        frameLayout_khudaHafiz.setVisibility(View.GONE);
 //        getToolbar().setLogo(null);
     }
 
