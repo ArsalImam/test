@@ -117,8 +117,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView cancelBtn;
     @BindView(R.id.chatBtn)
     ImageView chatBtn;
-        /*@BindView(R.id.callerIv)
-        CircularImageView callerIv;*/
+    /*@BindView(R.id.callerIv)
+    CircularImageView callerIv;*/
     @BindView(R.id.callerNameTv)
     FontTextView callerNameTv;
     @BindView(R.id.TimeTv)
@@ -142,6 +142,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView tvCashWasooliLabel;
     @BindView(R.id.ivTopUp)
     ImageView ivTopUp;
+    @BindView(R.id.llDetails)
+    RelativeLayout llDetails;
+    @BindView(R.id.tvDetailsNotEntered)
+    FontTextView tvDetailsNotEntered;
+    @BindView(R.id.tvCustomerName)
+    FontTextView tvCustomerName;
+    @BindView(R.id.tvCustomerPhone)
+    FontTextView tvCustomerPhone;
+    @BindView(R.id.tvDetailsAddress)
+    FontTextView tvDetailsAddress;
 
     private String canceOption = "Didn't show up";
 
@@ -350,7 +360,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
 
     @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
-            R.id.endAddressTv, R.id.ivTopUp})
+            R.id.endAddressTv, R.id.ivTopUp, R.id.tvCustomerPhone})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.chatBtn:
@@ -380,6 +390,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     showCallPassengerDialog();
                 } else {
                     Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                }
+                break;
+            case R.id.tvCustomerPhone:
+                if (StringUtils.isNotBlank(tvCustomerPhone.getText().toString())) {
+                    Utils.callingIntent(mCurrentActivity, tvCustomerPhone.getText().toString());
                 }
                 break;
             case R.id.cancelBtn:
@@ -869,6 +884,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!callData.isCod()) {
                 llTopRight.setVisibility(View.INVISIBLE);
             }
+            if (checkIfDetailsAdded()) {
+                llDetails.setVisibility(View.VISIBLE);
+                tvDetailsNotEntered.setVisibility(View.GONE);
+
+                tvCustomerName.setText(callData.getRecName());
+                tvCustomerPhone.setText(callData.getRec_no());
+                if (StringUtils.isNotBlank(callData.getComplete_address())) {
+                    tvDetailsAddress.setVisibility(View.VISIBLE);
+                    tvDetailsAddress.setText(callData.getComplete_address());
+                } else {
+                    tvDetailsAddress.setVisibility(View.GONE);
+                }
+            } else {
+                tvDetailsNotEntered.setVisibility(View.VISIBLE);
+                llDetails.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -886,7 +917,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 StringUtils.isNotBlank(callData.getEndLng()) &&
                 StringUtils.isNotBlank(callData.getEndAddress())) {
             endAddressTv.setText(callData.getEndAddress());
-            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
+            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary676767));
             startAddressTv.setText(callData.getStartAddress());
         } else {
             updateEtaAndCallData("0", "0");
@@ -1814,4 +1845,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             e.printStackTrace();
         }
     }
+
+
+    private boolean checkIfDetailsAdded() {
+        boolean isAdded = true;
+        if (StringUtils.isBlank(callData.getRecName())) {
+            isAdded = false;
+        } else if (StringUtils.isBlank(callData.getRec_no())) {
+            isAdded = false;
+        } else if (StringUtils.isBlank(callData.getCodAmount())) {
+            isAdded = false;
+        }
+        return isAdded;
+    }
+
 }
