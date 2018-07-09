@@ -399,16 +399,10 @@ public class CallingActivity extends BaseActivity {
 
         if (Utils.isDeliveryService(callData.getCallType())){
             kharidariPriceLayout.setVisibility(View.GONE);
-            CODPriceLayout.setVisibility(View.GONE);
-            wapsiBtn.setVisibility(View.GONE);
-        } else if (Utils.isDeliveryService(callData.getCallType())) {
-            kharidariPriceLayout.setVisibility(View.GONE);
-            CODPriceLayout.setVisibility(View.VISIBLE);
-            wapsiBtn.setVisibility(View.VISIBLE);
+
         } else {
             kharidariPriceLayout.setVisibility(View.GONE);
-            CODPriceLayout.setVisibility(View.GONE);
-            wapsiBtn.setVisibility(View.GONE);
+
         }
 
 
