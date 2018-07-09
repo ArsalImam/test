@@ -388,8 +388,9 @@ public class CallingActivity extends BaseActivity {
 //        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
 
-        if (Utils.isPurchaseService(callData.getCallType())){
+        if (Utils.isPurchaseService(callData.getCallType())) {
             kharidariPriceLayout.setVisibility(View.VISIBLE);
+
         }
 
         if (Utils.isRideService(callData.getCallType())){
@@ -398,8 +399,17 @@ public class CallingActivity extends BaseActivity {
 
         if (Utils.isDeliveryService(callData.getCallType())){
             kharidariPriceLayout.setVisibility(View.GONE);
+            CODPriceLayout.setVisibility(View.GONE);
+            wapsiBtn.setVisibility(View.GONE);
+        } else if (Utils.isDeliveryService(callData.getCallType())) {
+            kharidariPriceLayout.setVisibility(View.GONE);
+            CODPriceLayout.setVisibility(View.VISIBLE);
+            wapsiBtn.setVisibility(View.VISIBLE);
+        } else {
+            kharidariPriceLayout.setVisibility(View.GONE);
+            CODPriceLayout.setVisibility(View.GONE);
+            wapsiBtn.setVisibility(View.GONE);
         }
-
 
 
         String icon = Utils.getServiceIcon(callData.getCallType());
