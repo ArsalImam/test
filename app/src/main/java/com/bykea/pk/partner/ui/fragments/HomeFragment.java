@@ -604,7 +604,7 @@ public class HomeFragment extends Fragment {
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.containerView, fragment)
                     .commit();
-            HomeActivity.visibleFragmentNumber = 7;
+            HomeActivity.visibleFragmentNumber = 8;
             return;
         }
 

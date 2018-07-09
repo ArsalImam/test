@@ -28,18 +28,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <com.bykea.pk.partner.widgets.FontTextView
+        <com.bykea.pk.partner.widgets.OutlineTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text="پچھلے مہینے کے  شاہکار"
-            android:textSize="@dimen/_30sdp"
+            android:textSize="@dimen/_32sdp"
             android:textStyle="bold"
-            android:shadowDx="0.0"
-            android:shadowDy="3.0"
+            app:outlineWidth="@dimen/_2sdp"
+            app:outlineColor="@color/shadow_gray"
             android:textColor="@color/white"
-            android:shadowColor="@color/shadow_gray"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
     </RelativeLayout>
@@ -70,7 +69,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="نمبر"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/_18sdp"
             android:textColor="@color/black_414141"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
@@ -87,7 +86,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="نام"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/_18sdp"
             android:textColor="@color/black_414141"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
@@ -104,7 +103,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="بکنگز"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/_18sdp"
             android:textColor="@color/black_414141"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
@@ -121,7 +120,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="اسکور"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/_18sdp"
             android:textColor="@color/black_414141"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
@@ -138,7 +137,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="کمائی"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/_18sdp"
             android:textColor="@color/black_414141"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 

@@ -23,10 +23,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
@@ -55,7 +59,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class BaseActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 203;
     private Toolbar mToolbar;
-    private FontTextView mTitleTv, status;
+    private FontTextView mTitleTv, status, demandBtn;
     private ImageView mLogo, rightIv;
     private FrameLayout frameLayout_bismilla;
     private BaseActivity mCurrentActivity;
@@ -65,6 +69,8 @@ public class BaseActivity extends AppCompatActivity {
     private Dialog notificationDialog;
     private final String ACCESS_FINE_LOCATION = "android.permission.ACCESS_FINE_LOCATION";
     private final String PHONE_STATE = "android.permission.READ_PHONE_STATE";
+
+    private RelativeLayout statusLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -327,6 +333,8 @@ public class BaseActivity extends AppCompatActivity {
         frameLayout_bismilla = mToolbar.findViewById(R.id.logo_bismilla);
         mTitleTv = (FontTextView) mToolbar.findViewById(R.id.title);
         status = (FontTextView) mToolbar.findViewById(R.id.status);
+        demandBtn = (FontTextView) mToolbar.findViewById(R.id.demandBtn);
+        statusLayout = (RelativeLayout) mToolbar.findViewById(R.id.statusLayout);
         rightIv = (ImageView) mToolbar.findViewById(R.id.rightIv);
     }
 
@@ -359,17 +367,13 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    public void setStatusButtonForBismilla(String title) {
+    public void setDemandButtonForBismilla(String title) {
         if (null == mToolbar) getToolbar();
-        status.setVisibility(View.VISIBLE);
-        status.setText(title);
-        status.setTextColor(getResources().getColor(R.color.color_darker_red));
-        status.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        statusLayout.setVisibility(View.GONE);
+        demandBtn.setVisibility(View.VISIBLE);
+        demandBtn.setText(title);
+
+
     }
 
     public void setToolbarLogo() {
@@ -379,10 +383,12 @@ public class BaseActivity extends AppCompatActivity {
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
 
-    public void setToolbarLogoBismilla() {
+    public void setToolbarLogoBismilla(View.OnClickListener listener) {
         if (null == mToolbar) getToolbar();
         frameLayout_bismilla.setVisibility(View.VISIBLE);
         mTitleTv.setVisibility(View.GONE);
+
+        frameLayout_bismilla.setOnClickListener(listener);
 
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
@@ -396,6 +402,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public void hideStatusCompletely() {
         status.setVisibility(View.GONE);
+        demandBtn.setVisibility(View.GONE);
     }
 
     public void hideToolbarBackNav() {

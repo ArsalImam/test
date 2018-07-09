@@ -76,7 +76,7 @@
             app:layout_constraintStart_toEndOf="@+id/rankingImg1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.495"
-            app:srcCompat="@drawable/avatar_ranking1" />
+            app:srcCompat="@drawable/avatar_ranking2" />
 
         <TextView
             android:id="@+id/rankingTv2"
@@ -103,7 +103,7 @@
             app:layout_constraintEnd_toEndOf="@+id/flyingArrowImg"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/avatar_ranking1" />
+            app:srcCompat="@drawable/avatar_ranking3" />
 
         <TextView
             android:id="@+id/rankingTv3"
@@ -173,7 +173,7 @@
                     android:gravity="center"
                     android:background="@color/color_6b6b6b"
                     android:layout_gravity="center"
-                    android:text="ہفتہ وار بونس"
+                    android:text="ہفتہ وار بکنگز"
                     android:textSize="@dimen/_20sdp"
                     android:textColor="@color/white"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -194,7 +194,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_16sdp"
                 android:gravity="right"
-                android:lineSpacingExtra="@dimen/_25sdp"
+                android:lineSpacingExtra="@dimen/_20sdp"
                 android:layout_gravity="center"
                 android:text="@string/ranking_footer_text"
                 android:textSize="@dimen/_9sdp"

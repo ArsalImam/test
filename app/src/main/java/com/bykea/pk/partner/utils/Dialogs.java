@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.utils;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -16,10 +17,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bykea.pk.partner.R;
@@ -27,6 +34,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.CancelReasonDialogAdapter;
+import com.bykea.pk.partner.ui.helpers.adapters.WeekAdapter;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontEditText;
@@ -36,8 +44,12 @@ import com.google.android.exoplayer.BuildConfig;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
 public enum Dialogs {
     INSTANCE;
@@ -302,6 +314,100 @@ public enum Dialogs {
         try {
             dialog.show();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showAlert(final List<String> list, final TextView tv, final Activity mCurrentActivity) {
+        dismissDialog();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mCurrentActivity);
+        final LayoutInflater li = LayoutInflater.from(mCurrentActivity);
+        View promptsView = li.inflate(R.layout.dropdown_weeks_layout, null);
+        alertDialogBuilder.setView(promptsView);
+
+        mDialog = alertDialogBuilder.create();
+
+        final ListView lv = promptsView
+                .findViewById(R.id.lv);
+
+        final WeekAdapter arrayAdapter = new WeekAdapter(mCurrentActivity, R.layout.week_item, list);
+        lv.setAdapter(arrayAdapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                try{
+                    if (list.get(position).equalsIgnoreCase("Current Week")){
+                        setCalenderCurrentWeek(tv); //week start from friday to thursday
+                    }else {
+                        setlastDayofWeek(tv); //week start from friday
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                //tv.setText(list.get(position));
+                mDialog.dismiss();
+            }
+        });
+
+        mDialog.show();
+        mDialog.setCanceledOnTouchOutside(false);
+    }
+
+    private void setlastDayofWeek(TextView tv) {
+        try {
+            Calendar calendar=Calendar.getInstance();
+            Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
+            // get the starting and ending date
+            // Set the calendar to sunday of the current week
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+            System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
+
+            //int i = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
+            calendar.add(Calendar.DATE, -7);
+
+
+            // Print dates of the current week starting on Sunday
+            DateFormat df = new SimpleDateFormat("d MMM");
+            String startDate = "", endDate = "";
+
+            startDate = df.format(calendar.getTime());
+            calendar.add(Calendar.DATE, 6);
+            endDate = df.format(calendar.getTime());
+
+            System.out.println("Start Date = " + startDate);
+            System.out.println("End Date = " + endDate);
+
+            tv.setText(startDate + " - " + endDate);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void setCalenderCurrentWeek(TextView tv) {
+        try {
+            Calendar calendar=Calendar.getInstance();
+            Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
+            // get the starting and ending date
+            // Set the calendar to sunday of the current week
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+            System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
+
+            // Print dates of the current week starting on Sunday
+            DateFormat df = new SimpleDateFormat("d MMM");
+            String startDate = "", endDate = "";
+
+            startDate = df.format(calendar.getTime());
+            calendar.add(Calendar.DATE, 6);
+            endDate = df.format(calendar.getTime());
+
+            System.out.println("Start Date = " + startDate);
+            System.out.println("End Date = " + endDate);
+
+            tv.setText(startDate + " - " + endDate);
+        }catch (Exception e){
             e.printStackTrace();
         }
     }

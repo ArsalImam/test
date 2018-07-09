@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,7 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <include
+        android:visibility="gone"
+        android:id="@+id/llTopActive"
+        layout="@layout/home_testing_driver_on_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.google.android.gms.maps.MapView
+        android:visibility="gone"
+        android:layout_below="@+id/llTopActive"
+        android:layout_above="@+id/line"
+        android:id="@+id/homeMapFragment"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <LinearLayout
+        android:visibility="visible"
         android:id="@+id/layoutupper"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_100sdp"
@@ -131,13 +149,15 @@
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/priceTv"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_4sdp"
                         android:layout_toRightOf="@+id/walletImg"
                         android:text="Rs. 10,255"
                         android:textSize="@dimen/_14sdp"
-                        app:fontName="open_sans_regular.ttf" />
+                        android:textColor="@color/grey_hex_51"
+                        app:fontName="open_sans_semi_bold.ttf" />
 
                 </RelativeLayout>
 
@@ -149,6 +169,7 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:visibility="visible"
         android:id="@+id/layoutDuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -164,19 +185,19 @@
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:text="8 Jun - 14 Jun"
-            android:textColor="@color/color.darker_515151"
-            android:textSize="@dimen/_16sdp"
-            android:textStyle="bold"
-            app:fontName="open_sans_regular.ttf" />
+            android:textColor="@color/black"
+            android:textSize="@dimen/_18sdp"
+            app:fontName="open_sans_semi_bold.ttf" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/durationBtn"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_12sdp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginRight="@dimen/_4sdp"
             android:layout_toRightOf="@+id/durationTv"
-            app:srcCompat="@drawable/ic_keyboard_arrow_down_black_24dp" />
+            app:srcCompat="@drawable/dropdown" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/label"
@@ -195,6 +216,8 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/driverStatsLayout"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/line"
@@ -229,7 +252,6 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="بکنگز"
                     android:textColor="@color/black"
@@ -263,7 +285,6 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="مکمل بکنگز"
                     android:textColor="@color/black"
@@ -297,7 +318,6 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="کمائی"
                     android:textColor="@color/black"
@@ -331,7 +351,6 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="وقت"
                     android:textColor="@color/black"
@@ -341,6 +360,11 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <View
+            android:layout_weight="0.1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -368,7 +392,6 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="کینسل"
                     android:textColor="@color/black"
@@ -402,7 +425,6 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="تکمیل"
                     android:textColor="@color/black"
@@ -436,7 +458,6 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="قبولیت"
                     android:textColor="@color/black"
@@ -470,7 +491,6 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="ریٹنگ"
                     android:textColor="@color/black"
