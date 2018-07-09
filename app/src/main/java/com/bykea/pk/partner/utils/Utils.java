@@ -1951,7 +1951,7 @@ public class Utils {
                     photoURI = Uri.fromFile(photoFile);
                 } else {
                     photoURI = FileProvider.getUriForFile(act,
-                            "com.example.android.fileprovider",
+                            act.getApplicationContext().getPackageName() + ".fileprovider",
                             photoFile);
                 }
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -2121,7 +2121,6 @@ public class Utils {
                 && (AppPreferences.getAvailableStatus() ||
                 AppPreferences.isOutOfFence() || AppPreferences.isOnTrip());
     }
-
 
 
 }

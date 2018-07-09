@@ -229,7 +229,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="Sadar Town"
+                    tools:text="Sadar Town"
                     android:textColor="@color/color_5a5a5a"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf"
@@ -310,7 +310,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/_8sdp"
-                    android:text="Rs. 120"
+                    tools:text="Rs. 120"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -341,7 +341,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/_8sdp"
-                    android:text="Rs. 56"
+                    tools:text="Rs. 56"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -367,6 +367,7 @@
                 android:layout_marginRight="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/bg_border_call"
+                tools:visibility="visible"
                 android:visibility="gone">
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -420,7 +421,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/_8sdp"
-                        android:text="Rs. 35,000"
+                        tools:text="Rs. 35,000"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
