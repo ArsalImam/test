@@ -1951,7 +1951,7 @@ public class Utils {
                     photoURI = Uri.fromFile(photoFile);
                 } else {
                     photoURI = FileProvider.getUriForFile(act,
-                            "com.example.android.fileprovider",
+                            "com.bykea.pk.partner.fileprovider",
                             photoFile);
                 }
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);

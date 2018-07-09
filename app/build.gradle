@@ -96,13 +96,13 @@ repositories {
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     maven { url "https://jitpack.io" }
     maven { url "https://maven.google.com" }
-    maven {
+    /*maven {
         url 'http://artifactory.paysyslabs.com/instascan-complete'
         credentials {
             username = "jsbank-developer"
             password = "AP9N3fsG4oAMheeKJuxJDhNVQaE"
         }
-    }
+    }*/
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -164,7 +164,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'com.facebook.android:facebook-android-sdk:4.19.0'
-    implementation 'com.paysyslabs:instascan:1.1.7.2-SNAPSHOT'
+    //implementation 'com.paysyslabs:instascan:1.1.7.2-SNAPSHOT'
 
 }
 apply plugin: 'com.google.gms.google-services'
