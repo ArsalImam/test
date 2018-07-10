@@ -63,10 +63,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -75,6 +78,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.Gravity.CENTER;
 
 public class HomeFragmentTesting extends Fragment {
 
@@ -93,6 +97,8 @@ public class HomeFragmentTesting extends Fragment {
     private Location mPrevLocToShow;
 
     private int[] cashInHand;
+
+    private Polygon mDemandPolygon;
 
     @BindView(R.id.previusDurationBtn)
     ImageView previusDurationBtn;
@@ -717,6 +723,9 @@ public class HomeFragmentTesting extends Fragment {
                 return;
             }
             mGoogleMap = googleMap;
+
+            createDemandShapeonGoogleMap(mGoogleMap);
+
             Utils.formatMap(mGoogleMap);
             mGoogleMap.clear();
             if (mCurrentActivity != null && !Permissions.hasLocationPermissions(mCurrentActivity)) {
@@ -762,6 +771,42 @@ public class HomeFragmentTesting extends Fragment {
 //            updateHeatMapUI(data);
         }
     };
+
+    private void createDemandShapeonGoogleMap(GoogleMap map) {
+        try{
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void createDashedLine(GoogleMap map, LatLng latLngOrig, LatLng latLngDest, int color){
+        double difLat = latLngDest.latitude - latLngOrig.latitude;
+        double difLng = latLngDest.longitude - latLngOrig.longitude;
+
+        double zoom = map.getCameraPosition().zoom;
+
+        double divLat = difLat / (zoom * 2);
+        double divLng = difLng / (zoom * 2);
+
+        LatLng tmpLatOri = latLngOrig;
+
+        for(int i = 0; i < (zoom * 2); i++){
+            LatLng loopLatLng = tmpLatOri;
+
+            if(i > 0){
+                loopLatLng = new LatLng(tmpLatOri.latitude + (divLat * 0.25f), tmpLatOri.longitude + (divLng * 0.25f));
+            }
+
+            Polyline polyline = map.addPolyline(new PolylineOptions()
+                    .add(loopLatLng)
+                    .add(new LatLng(tmpLatOri.latitude + divLat, tmpLatOri.longitude + divLng))
+                    .color(color)
+                    .width(5f));
+
+            tmpLatOri = new LatLng(tmpLatOri.latitude + divLat, tmpLatOri.longitude + divLng);
+        }
+    }
 
     private boolean enableLocation() {
         if (ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

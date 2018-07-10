@@ -231,26 +231,7 @@ public class LocationService extends Service {
 
 
     protected void createLocationRequest() {
-
-        //testing
-
         mLocationRequest = LocationRequest.create();
-        int UPDATE_INTERVAL = 20000;
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        int FASTEST_INTERVAL = 20000;
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        if (AppPreferences.isOnTrip()) {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        } else {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-            if (Utils.hasLocationCoordinates()) {
-                int DISPLACEMENT = 10;
-                mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
-            }
-        }
-
-        //working
-        /*mLocationRequest = LocationRequest.create();
         int UPDATE_INTERVAL = 10000;
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         int FASTEST_INTERVAL = 5000;
@@ -263,7 +244,7 @@ public class LocationService extends Service {
                 int DISPLACEMENT = 10;
                 mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
             }
-        }*/
+        }
     }
 
     protected void startLocationUpdates() {
