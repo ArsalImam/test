@@ -24,8 +24,8 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="Rs. 2,500"
-            android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_414141"
+            android:textColor="@color/black_404040"
+            android:textSize="@dimen/_12sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <View
@@ -42,8 +42,8 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="Rs. 5,000"
-            android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_414141"
+            android:textColor="@color/black_404040"
+            android:textSize="@dimen/_12sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <View
@@ -60,8 +60,8 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="Rs. 20,000"
-            android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_414141"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black_404040"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
@@ -74,7 +74,7 @@
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/statsTypeTv"
             android:layout_width="0dp"
-            android:layout_weight="1.5"
+            android:layout_weight="1.8"
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_gravity="center"

@@ -45,8 +45,8 @@
                 android:id="@+id/logo_bismilla"
                 android:background="@drawable/bismilla_round1"
                 android:layout_gravity="center"
-                android:layout_width="@dimen/_150sdp"
-                android:layout_height="@dimen/_47sdp">
+                android:layout_width="@dimen/_170sdp"
+                android:layout_height="@dimen/_45sdp">
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/bismillaTv"
@@ -58,6 +58,30 @@
                     android:textSize="@dimen/_20sdp"
                     android:textStyle="bold"
                     android:textColor="@color/white"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:id="@+id/logo_khudaHafiz"
+                android:background="@drawable/khudahafiz_round"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/_170sdp"
+                android:layout_height="@dimen/_45sdp">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/mKhudaHafizTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="اللہ حافظ"
+                    android:textSize="@dimen/_20sdp"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_282828"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </FrameLayout>
@@ -98,7 +122,7 @@
                     android:id="@+id/tvTitleUrdu"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/_4sdp"
+                    android:layout_marginLeft="@dimen/_6sdp"
                     android:gravity="center"
                     android:maxLines="2"
                     android:maxWidth="@dimen/_220sdp"
@@ -113,8 +137,24 @@
 
         </FrameLayout>
 
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/demandBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin.normal"
+            android:background="@drawable/button_plane"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="ڈیمانڈ"
+            android:textColor="@color/Color_DarkRed"
+            android:textSize="@dimen/_20sdp"
+            android:visibility="gone"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
         <RelativeLayout
+            android:id="@+id/statusLayout"
             android:layout_width="@dimen/margin.xlarge"
             android:layout_height="match_parent"
             android:layout_gravity="center">
@@ -135,6 +175,8 @@
                 android:textSize="@dimen/textsize.small.medium"
                 android:visibility="invisible"
                 app:fontName="roboto_light.ttf" />
+
+
 
             <ImageView
                 android:id="@+id/rightIv"

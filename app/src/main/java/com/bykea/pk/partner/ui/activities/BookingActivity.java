@@ -1537,15 +1537,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void onCompleteByAdmin(String msg) {
         Utils.setCallIncomingState();
+
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
             @Override
             public void onCallBack(String msg) {
+
                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                 mCurrentActivity.finish();
             }
         }, null, "Trip Completed", msg);
 
-        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
+
     }
 
     private UserDataHandler driversDataHandler = new UserDataHandler() {
@@ -1635,6 +1637,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
+                    logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
 //                    jobBtn.setEnabled(true);
                     if (endRideResponse.isSuccess()) {
                         endAddressTv.setEnabled(false);

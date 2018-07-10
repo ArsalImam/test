@@ -8,6 +8,7 @@
     android:background="@color/white">
 
     <LinearLayout
+        android:gravity="center"
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_100sdp"
@@ -20,9 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:gravity="left"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/_16sdp">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/llRating"
@@ -61,7 +61,7 @@
                 android:layout_below="@+id/llRating"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
-                android:text="کسٹمر "
+                android:text=" کسٹمر"
                 android:textColor="@color/color_5a5a5a"
                 android:textSize="@dimen/_12sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -91,9 +91,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:gravity="right"
-            android:orientation="vertical"
-            android:paddingRight="@dimen/_16sdp">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/llDistance"
@@ -212,7 +211,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="منزل"
+                        android:text="منزل "
                         android:textColor="@color/white"
                         android:textSize="@dimen/_15sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -229,10 +228,10 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
-                    tools:text="Sadar Town"
+                    android:text="Sadar Town"
                     android:textColor="@color/color_5a5a5a"
                     android:textSize="@dimen/_12sdp"
-                    app:fontName="jameel_noori_nastaleeq.ttf"
+                    app:fontName="open_sans_regular.ttf"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHorizontal_bias="0.035"
                     app:layout_constraintLeft_toRightOf="@id/circle_distance_layout"
@@ -298,10 +297,9 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_marginLeft="@dimen/_50sdp"
-                android:layout_marginRight="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:background="@drawable/bg_border_call">
 
@@ -310,10 +308,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/_8sdp"
-                    tools:text="Rs. 120"
+                    android:text=" Rs. 120"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
-                    app:fontName="jameel_noori_nastaleeq.ttf" />
+                    app:fontName="open_sans_semi_bold.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
@@ -321,7 +319,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="کرائے کی کمائی"
+                    android:text=" کرائے کی کمائی"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -329,10 +327,9 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_marginLeft="@dimen/_50sdp"
-                android:layout_marginRight="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/bg_border_call">
 
@@ -341,10 +338,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/_8sdp"
-                    tools:text="Rs. 56"
+                    android:text=" Rs. 56"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
-                    app:fontName="jameel_noori_nastaleeq.ttf" />
+                    app:fontName="open_sans_regular.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
@@ -352,7 +349,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="کیش کی وصولی"
+                    android:text=" کیش کی وصولی "
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -361,13 +358,11 @@
 
             <RelativeLayout
                 android:id="@+id/kharidariPriceLayout"
-                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_marginLeft="@dimen/_50sdp"
-                android:layout_marginRight="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/bg_border_call"
-                tools:visibility="visible"
                 android:visibility="gone">
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -375,10 +370,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/_8sdp"
-                    android:text="Rs. 1,000"
+                    android:text=" Rs. 1,000"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
-                    app:fontName="jameel_noori_nastaleeq.ttf" />
+                    app:fontName="open_sans_regular.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
@@ -386,74 +381,12 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="خریداری کی رقم"
+                    android:text=" خریداری کی رقم "
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/wapsiBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/_16sdp"
-                    android:src="@drawable/wapsi"
-                    android:visibility="gone" />
-
-                <RelativeLayout
-                    android:id="@+id/CODPriceLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_40sdp"
-                    android:layout_marginLeft="@dimen/_50sdp"
-                    android:layout_marginRight="@dimen/_40sdp"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:background="@drawable/bg_border_call"
-                    android:visibility="visible">
-
-                    <com.bykea.pk.partner.widgets.FontTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/_8sdp"
-                        tools:text="Rs. 35,000"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_12sdp"
-                        app:fontName="jameel_noori_nastaleeq.ttf" />
-
-                    <com.bykea.pk.partner.widgets.FontTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/_8sdp"
-                        android:layout_toLeftOf="@+id/CODlbl"
-                        android:text="کی وصولی"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_12sdp"
-                        app:fontName="jameel_noori_nastaleeq.ttf" />
-
-                    <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/CODlbl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/_8sdp"
-                        android:text="COD"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_12sdp"
-                        app:fontName="open_sans_regular.ttf" />
-
-                </RelativeLayout>
-
-
-            </RelativeLayout>
-
 
         </LinearLayout>
 

@@ -67,12 +67,6 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.kharidariPriceLayout)
     RelativeLayout kharidariPriceLayout;
 
-    @BindView(R.id.CODPriceLayout)
-    RelativeLayout CODPriceLayout;
-
-    @BindView(R.id.wapsiBtn)
-    ImageView wapsiBtn;
-
     private UserRepository repository;
     private MediaPlayer _mpSound;
     private CallingActivity mCurrentActivity;
@@ -396,16 +390,16 @@ public class CallingActivity extends BaseActivity {
 
         if (Utils.isPurchaseService(callData.getCallType())) {
             kharidariPriceLayout.setVisibility(View.VISIBLE);
-            CODPriceLayout.setVisibility(View.GONE);
-            wapsiBtn.setVisibility(View.GONE);
-        } else if (Utils.isDeliveryService(callData.getCallType())) {
+
+        }
+
+        if (Utils.isRideService(callData.getCallType())){
             kharidariPriceLayout.setVisibility(View.GONE);
-            CODPriceLayout.setVisibility(View.VISIBLE);
-            wapsiBtn.setVisibility(View.VISIBLE);
-        } else {
+        }
+
+        if (Utils.isDeliveryService(callData.getCallType())){
             kharidariPriceLayout.setVisibility(View.GONE);
-            CODPriceLayout.setVisibility(View.GONE);
-            wapsiBtn.setVisibility(View.GONE);
+
         }
 
 
