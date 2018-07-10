@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical"
+<RelativeLayout android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/windowBackground"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_marginTop="@dimen/_8sdp"
@@ -29,8 +34,8 @@
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_toRightOf="@+id/achaconnectionTv"
             android:src="@drawable/wifi_connection_signal_symbol"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp" />
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp" />
 
 
     </RelativeLayout>
@@ -41,30 +46,42 @@
         android:layout_height="@dimen/_1sdp"/>
 
     <RelativeLayout
+        android:layout_gravity="center"
         android:background="@color/yellow_fcfcc3"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp">
 
-        <ImageView
+        <RelativeLayout
+            android:paddingLeft="@dimen/_12sdp"
+            android:paddingRight="@dimen/_12sdp"
             android:id="@+id/editBtn"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/_12sdp"
-            android:src="@drawable/pencil_icon"
-            android:layout_width="@dimen/_14sdp"
-            android:layout_height="@dimen/_14sdp" />
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/pencil_icon"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp" />
+
+        </RelativeLayout>
+
+
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
             android:layout_toRightOf="@+id/editBtn"
             android:layout_toLeftOf="@+id/manzilTv"
-            android:layout_centerInParent="true"
-            android:id="@+id/muntakhibEt"
+            android:id="@+id/muntakhibTv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
             android:text="منتخب کریں"
-            android:textSize="@dimen/_16sdp"
+            android:ellipsize="middle"
+            android:textSize="@dimen/_14sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
@@ -89,6 +106,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"/>
 
+    </LinearLayout>
 
 
-</LinearLayout>
+
+</RelativeLayout>

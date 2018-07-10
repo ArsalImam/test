@@ -49,6 +49,8 @@ public class HowItWorksFragment extends Fragment {
         mCurrentActivity.setToolbarTitle("How it works", "طریقہ کار");
         mCurrentActivity.hideToolbarLogo();
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.findViewById(R.id.statusLayout).setVisibility(View.VISIBLE);
+        mCurrentActivity.hideStatusCompletely();
 
         mRecyclerVeiw = (RecyclerView) view.findViewById(R.id.lvVideoDemo);
         String[] videoLinks = AppPreferences.getSettings().getSettings().getVideos().split(",");

@@ -76,7 +76,7 @@
             app:layout_constraintStart_toEndOf="@+id/rankingImg1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.495"
-            app:srcCompat="@drawable/avatar_ranking1" />
+            app:srcCompat="@drawable/avatar_ranking2" />
 
         <TextView
             android:id="@+id/rankingTv2"
@@ -103,7 +103,7 @@
             app:layout_constraintEnd_toEndOf="@+id/flyingArrowImg"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/avatar_ranking1" />
+            app:srcCompat="@drawable/avatar_ranking3" />
 
         <TextView
             android:id="@+id/rankingTv3"
@@ -130,6 +130,93 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_light"
+                android:focusableInTouchMode="true" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp">
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/priceTv_driver1"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Rs. 2,500"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/priceTv_driver2"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Rs. 5,000"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/priceTv_driver3"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Rs. 20,000"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_404040"
+                    app:fontName="open_sans_regular.ttf" />
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/statsTypeTv"
+                    android:layout_width="0dp"
+                    android:layout_weight="1.8"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="کریڈیٹ"
+                    android:background="@color/blue_0194be"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -173,7 +260,7 @@
                     android:gravity="center"
                     android:background="@color/color_6b6b6b"
                     android:layout_gravity="center"
-                    android:text="ہفتہ وار بونس"
+                    android:text="ہفتہ وار بکنگز"
                     android:textSize="@dimen/_20sdp"
                     android:textColor="@color/white"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -194,7 +281,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_16sdp"
                 android:gravity="right"
-                android:lineSpacingExtra="@dimen/_25sdp"
+                android:lineSpacingExtra="@dimen/_20sdp"
                 android:layout_gravity="center"
                 android:text="@string/ranking_footer_text"
                 android:textSize="@dimen/_9sdp"

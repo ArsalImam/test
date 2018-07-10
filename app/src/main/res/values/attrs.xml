@@ -40,4 +40,11 @@
         <attr name="ripple" format="boolean"/>
     </declare-styleable>
 
+
+        <declare-styleable name="OutlineTextView" >
+            <attr name="outlineColor" format="color" />
+            <attr name="outlineWidth" format="dimension" />
+        </declare-styleable>
+
+
 </resources>

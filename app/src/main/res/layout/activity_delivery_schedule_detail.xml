@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text="2.5  km"
                 android:textColor="@color/dark_gray"
-                android:textSize="@dimen/_22sdp"
+                android:textSize="@dimen/_18sdp"
                 app:fontName="open_sans_regular.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
@@ -45,7 +45,7 @@
                 android:text="21 Street, Block 5"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:textColor="@color/dark_gray"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_12sdp"
                 app:fontName="open_sans_regular.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
@@ -55,41 +55,52 @@
                 android:text="3 hrs 45 mins"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:textColor="@color/dark_gray"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_12sdp"
                 app:fontName="open_sans_regular.ttf" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:gravity="center"
             android:layout_above="@+id/footerlayout"
             android:layout_below="@+id/layoutupper"
-            android:gravity="center"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/directionBtn"
-                android:src="@drawable/direction_large"
-                android:layout_width="@dimen/_80sdp"
-                android:layout_height="@dimen/_80sdp" />
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/nameTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fazal Hussain"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:textColor="@color/dark_gray"
-                android:textSize="@dimen/_18sdp"
-                app:fontName="open_sans_regular.ttf" />
+                <ImageView
+                    android:id="@+id/directionBtn"
+                    android:src="@drawable/direction_large"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="@dimen/_80sdp" />
 
-            <ImageView
-                android:layout_marginTop="@dimen/_16sdp"
-                android:id="@+id/callbtn"
-                android:src="@drawable/whatsapp"
-                android:layout_width="@dimen/_80sdp"
-                android:layout_height="@dimen/_80sdp" />
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/nameTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fazal Hussain"
+                    android:layout_marginTop="@dimen/_24sdp"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="@dimen/_16sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <ImageView
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:id="@+id/callbtn"
+                    android:src="@drawable/whatsapp"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_70sdp" />
+
+
+            </LinearLayout>
+
+
 
 
         </LinearLayout>
@@ -102,10 +113,14 @@
             android:layout_height="@dimen/_55sdp">
 
             <FrameLayout
-                android:background="#d80027"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#d80027"/>
 
                 <ImageView
                     android:padding="16dp"
@@ -128,7 +143,7 @@
                 android:text="اسٹارٹ"
                 android:textAllCaps="true"
                 android:textColor="@color/buttonTextColor"
-                android:textSize="@dimen/textsize.large"
+                android:textSize="@dimen/textsize.xlarge"
                 android:textStyle="bold"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
