@@ -19,12 +19,10 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_16sdp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:gravity="left"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/_16sdp">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/llRating"
@@ -93,9 +91,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:gravity="right"
-            android:orientation="vertical"
-            android:paddingRight="@dimen/_16sdp">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/llDistance"

@@ -400,9 +400,6 @@ public class CallingActivity extends BaseActivity {
         if (Utils.isDeliveryService(callData.getCallType())){
             kharidariPriceLayout.setVisibility(View.GONE);
 
-        } else {
-            kharidariPriceLayout.setVisibility(View.GONE);
-
         }
 
 
