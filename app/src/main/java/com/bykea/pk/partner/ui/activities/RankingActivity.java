@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.RankingStatsTypeModel;
@@ -27,6 +28,15 @@ public class RankingActivity extends BaseActivity {
 
     @BindView(R.id.stats_weekly_rv)
     RecyclerView mRecyclerView2;
+
+    @BindView(R.id.priceTv_driver1)
+    TextView priceTv_driver1;
+
+    @BindView(R.id.priceTv_driver2)
+    TextView priceTv_driver2;
+
+    @BindView(R.id.priceTv_driver3)
+    TextView priceTv_driver3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +64,13 @@ public class RankingActivity extends BaseActivity {
 
         List<RankingStatsTypeModel> list = new ArrayList<>();
 
-        list.add(new RankingStatsTypeModel("Rs. 2,500", "Rs. 5,000",
-                "Rs. 20,000", "کریڈیٹ"));
+        /*list.add(new RankingStatsTypeModel("Rs. 2,500", "Rs. 5,000",
+                "Rs. 20,000", "کریڈیٹ"));*/
+
+        priceTv_driver1.setText("Rs. 2,500");
+        priceTv_driver2.setText( "Rs. 5,000");
+        priceTv_driver3.setText("Rs. 20,000");
+        
 
         list.add(new RankingStatsTypeModel("15%", "10%",
                 "5%", " کمیشن"));
