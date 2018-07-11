@@ -1849,9 +1849,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private boolean checkIfDetailsAdded() {
         boolean isAdded = true;
-        if (StringUtils.isBlank(callData.getRecName())) {
+        /*if (StringUtils.isBlank(callData.getRecName())) {
             isAdded = false;
-        } else if (StringUtils.isBlank(callData.getRec_no())) {
+        } else */if (StringUtils.isBlank(callData.getRec_no())) {
             isAdded = false;
         } else if (StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;
