@@ -1547,7 +1547,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }, null, "Trip Completed", msg);
 
-
+        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
     }
 
     private UserDataHandler driversDataHandler = new UserDataHandler() {
@@ -1637,9 +1637,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
-                    logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
 //                    jobBtn.setEnabled(true);
                     if (endRideResponse.isSuccess()) {
+                        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
                         endAddressTv.setEnabled(false);
                         callData = AppPreferences.getCallData();
 //                        endAddressTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_red_circle, 0, 0, 0);
@@ -1849,9 +1849,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private boolean checkIfDetailsAdded() {
         boolean isAdded = true;
-        if (StringUtils.isBlank(callData.getRecName())) {
+        /*if (StringUtils.isBlank(callData.getRecName())) {
             isAdded = false;
-        } else if (StringUtils.isBlank(callData.getRec_no())) {
+        } else */if (StringUtils.isBlank(callData.getRec_no())) {
             isAdded = false;
         } else if (StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;
