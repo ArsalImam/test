@@ -281,7 +281,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_16sdp"
                 android:gravity="right"
-                android:lineSpacingExtra="@dimen/_20sdp"
+                android:lineSpacingExtra="@dimen/_8sdp"
                 android:layout_gravity="center"
                 android:text="@string/ranking_footer_text"
                 android:textSize="@dimen/_9sdp"

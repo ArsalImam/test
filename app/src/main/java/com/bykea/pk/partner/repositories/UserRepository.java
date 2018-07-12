@@ -64,6 +64,7 @@ import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.models.response.UploadDocumentFile;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
@@ -163,6 +164,15 @@ public class UserRepository {
             mContext = context;
             mUserCallback = handler;
             mRestRequestHandler.uploadAudioFile(mContext, mDataCallback, file);
+        }
+
+    }
+
+    public void uploadImageFile(Context context, IUserDataHandler handler, File file) {
+        if (Connectivity.isConnectedFast(context)) {
+            mContext = context;
+            mUserCallback = handler;
+            mRestRequestHandler.uploadImageFile(mContext, mDataCallback, file);
         }
 
     }
@@ -1005,6 +1015,9 @@ public class UserRepository {
                         break;
                     case "UploadAudioFile":
                         mUserCallback.onUploadAudioFile((UploadAudioFile) object);
+                        break;
+                    case "UploadImageFile":
+                        mUserCallback.onUploadImageFile((UploadImageFile) object);
                         break;
                     case "UploadDocumentFile":
                         mUserCallback.onUploadFile((UploadDocumentFile) object);
