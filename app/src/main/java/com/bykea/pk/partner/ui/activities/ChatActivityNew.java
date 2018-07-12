@@ -760,12 +760,6 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         }
     }
 
-    public void getImageFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, Constants.PICK_IMAGE_REQUEST);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

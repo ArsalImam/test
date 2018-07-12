@@ -29,8 +29,8 @@
         android:layout_height="match_parent" />
 
     <FrameLayout
-        android:id="@+id/mapPinIv"
         android:visibility="gone"
+        android:id="@+id/mapPinIv"
         android:padding="@dimen/_4sdp"
         android:layout_marginRight="@dimen/_12sdp"
         android:layout_marginBottom="@dimen/_16sdp"
