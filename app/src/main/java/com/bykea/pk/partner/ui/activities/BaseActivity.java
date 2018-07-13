@@ -369,11 +369,13 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    public void setDemandButtonForBismilla(String title) {
+    public void setDemandButtonForBismilla(String title, View.OnClickListener listener) {
         if (null == mToolbar) getToolbar();
         statusLayout.setVisibility(View.GONE);
         demandBtn.setVisibility(View.VISIBLE);
         demandBtn.setText(title);
+
+        demandBtn.setOnClickListener(listener);
 
 
     }

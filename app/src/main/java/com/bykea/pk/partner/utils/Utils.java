@@ -143,6 +143,12 @@ public class Utils {
         }
     }
 
+    public void getImageFromGallery(Activity activity) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        activity.startActivityForResult(intent, Constants.PICK_IMAGE_REQUEST);
+    }
+
     public static void appToast(Context context, String message) {
         try {
             if (StringUtils.isNotBlank(message)) {

@@ -76,6 +76,7 @@ public class Keys {
     public static final String LAST_MESSAGE_ID = "last_msg_id";
     public static final String CHAT_TYPE_TEXT = "text";
     public static final String CHAT_TYPE_VOICE = "file";
+    public static final String CHAT_TYPE_IMAGE = "image";
     public static final String CHAT_CONVERSATION_ID = "refId";
     public static final String CHAT_RECEIVER_ID = "RECEIVER_ID";
 

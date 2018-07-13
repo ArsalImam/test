@@ -31,6 +31,7 @@ import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.google.gson.Gson;
@@ -358,6 +359,36 @@ public class RestRequestHandler {
         requestCall.enqueue(new Callback<UploadAudioFile>() {
             @Override
             public void onResponse(Response<UploadAudioFile> response, Retrofit retrofit) {
+                Utils.deleteFile(file);
+                if (null == response.body()) {
+                    mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
+                } else if (response.body().getCode() == HTTPStatus.OK ||
+                        response.body().getCode() == HTTPStatus.CREATED) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(),
+                            response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Utils.deleteFile(file);
+                mResponseCallBack.onError(0, getErrorMessage(t));
+            }
+        });
+
+    }
+
+    //THIS METHOD IS TO UPLOAD IMAGE FILE
+    public void uploadImageFile(Context context, IResponseCallback responseCallBack, final File file) {
+        mContext = context;
+        mResponseCallBack = responseCallBack;
+        mRestClient = RestClient.getClient(mContext);
+        Call<UploadImageFile> requestCall = mRestClient.uploadImageFile(Utils.convertFileToRequestBody(file));
+        requestCall.enqueue(new Callback<UploadImageFile>() {
+            @Override
+            public void onResponse(Response<UploadImageFile> response, Retrofit retrofit) {
                 Utils.deleteFile(file);
                 if (null == response.body()) {
                     mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));

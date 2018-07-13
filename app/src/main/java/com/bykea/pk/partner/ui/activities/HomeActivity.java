@@ -21,6 +21,7 @@ import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
+import com.bykea.pk.partner.ui.fragments.HomeFragmentTesting;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -66,7 +67,7 @@ public class HomeActivity extends BaseActivity {
         initViews();
         setupDrawerToggle();
         //Add the Very First i.e Squad Fragment to the Container
-        HomeFragment mainFragment = new HomeFragment();
+        HomeFragmentTesting mainFragment = new HomeFragmentTesting();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.containerView, mainFragment, null);
         fragmentTransaction.commit();
@@ -135,7 +136,7 @@ public class HomeActivity extends BaseActivity {
 
                 if (visibleFragmentNumber == 3) showToolbar();
                 //Add the Very First i.e Squad Fragment to the Container
-                HomeFragment homeFragment = new HomeFragment();
+                HomeFragmentTesting homeFragment = new HomeFragmentTesting();
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.fade_in,
                         R.anim.fade_out);

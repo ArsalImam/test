@@ -1,23 +1,33 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.provider.MediaStore;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -25,8 +35,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.bykea.pk.partner.Compression.ImageCompression;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.ui.helpers.OpusPlayerCallBack;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -43,6 +55,7 @@ import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.ChatAdapterNewDF;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
@@ -54,6 +67,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -62,11 +76,13 @@ import javax.net.ssl.SSLSocketFactory;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
 import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusRecorder;
 //import top.oply.opuslib.OpusService;
 
-public class ChatActivityNew extends BaseActivity {
+public class ChatActivityNew extends BaseActivity implements ImageCompression.onImageCompressListener {
 
     @BindView(R.id.messageEdit)
     FontEditText messageEdit;
@@ -76,6 +92,7 @@ public class ChatActivityNew extends BaseActivity {
     FrameLayout voiceMsgLayout;
     @BindView(R.id.chatSendButton)
     ImageView chatSendButton;
+
     @BindView(R.id.messagesContainer)
     RecyclerView messagesContainer;
     @BindView(R.id.backBtn)
@@ -123,6 +140,8 @@ public class ChatActivityNew extends BaseActivity {
     private SSLSocketFactory defaultSslSocketFactory;
 
     private UserRepository repository;
+    private CardView mRevealView;
+    private boolean hidden = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +165,7 @@ public class ChatActivityNew extends BaseActivity {
     }
 
     private void init() {
+
         messageList = new ArrayList<>();
         NormalCallData callData = AppPreferences.getCallData();
         String details = callData.getDetails();
@@ -280,6 +300,30 @@ public class ChatActivityNew extends BaseActivity {
         }
 
         @Override
+        public void onUploadImageFile(final UploadImageFile uploadImageFile) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        if (uploadImageFile.isSuccess()) {
+                            messageList.add(makeMsg(uploadImageFile.getImagePath(), Keys.CHAT_TYPE_IMAGE
+                                    , AppPreferences.getDriverId(),
+                                    AppPreferences.getPilotData().getFullName(),
+                                    AppPreferences.getPilotData().getPilotImage(), false));
+                            chatAdapter.notifyDataSetChanged();
+                            scrollDown();
+                            repository.sendMessage(mCurrentActivity, chatHandler,
+                                    uploadImageFile.getImagePath(), mCoversationId, mReceiversId, Keys.CHAT_TYPE_IMAGE,
+                                    AppPreferences.getCallData().getTripId());
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        @Override
         public void onError(final int errorCode, final String error) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -382,6 +426,7 @@ public class ChatActivityNew extends BaseActivity {
             }
         });
         messageEdit.addTextChangedListener(watcher);
+
         chatSendButton.setOnTouchListener(new View.OnTouchListener() {
                                               private long startTime;
 
@@ -618,9 +663,12 @@ public class ChatActivityNew extends BaseActivity {
         }
     };
 
-    @OnClick(R.id.backBtn)
-    public void onClick() {
+    @OnClick()
+    public void onClick(View view) {
+
     }
+
+
 
     public void setCallBack(OpusPlayerCallBack mCallBack) {
         this.mCallBack = mCallBack;
@@ -628,6 +676,20 @@ public class ChatActivityNew extends BaseActivity {
 
     public boolean isInFront() {
         return isInFront;
+    }
+
+    @Override
+    public void onImageCompress(String imagePath) {
+        uploadImage(imagePath);
+    }
+
+    private void uploadImage(String imagePath) {
+        File file = new File(imagePath);
+        repository.uploadImageFile(mCurrentActivity,
+                chatHandler, file);
+
+
+
     }
 
     //define a broadcast receiver
@@ -696,5 +758,25 @@ public class ChatActivityNew extends BaseActivity {
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case Constants.PICK_IMAGE_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    Uri selectedImage = data.getData();
+                    ImageCompression compression = new ImageCompression(mCurrentActivity, this);
+                    compression.execute(getRealPathFromURI(selectedImage));
+                }
+        }
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        Log.d("path", cursor.getString(idx));
+        return cursor.getString(idx);
     }
 }

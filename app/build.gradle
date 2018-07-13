@@ -176,5 +176,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:4.19.0'
     implementation 'com.paysyslabs:instascan:1.1.7.2-SNAPSHOT'
 
+    implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
+
 }
 apply plugin: 'com.google.gms.google-services'
