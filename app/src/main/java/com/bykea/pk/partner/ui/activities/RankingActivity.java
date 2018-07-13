@@ -1,16 +1,13 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.RankingStatsTypeModel;
 import com.bykea.pk.partner.models.data.RankingWeeklyStatsModel;
-import com.bykea.pk.partner.ui.helpers.adapters.RankingStatsTypeAdapter;
 import com.bykea.pk.partner.ui.helpers.adapters.RankingWeeklyStatsAdapter;
 
 import java.util.ArrayList;
@@ -23,9 +20,6 @@ public class RankingActivity extends BaseActivity {
 
     private RankingActivity mCurrentActivity;
 
-    @BindView(R.id.stats_rv)
-    RecyclerView mRecyclerView1;
-
     @BindView(R.id.stats_weekly_rv)
     RecyclerView mRecyclerView2;
 
@@ -37,6 +31,33 @@ public class RankingActivity extends BaseActivity {
 
     @BindView(R.id.priceTv_driver3)
     TextView priceTv_driver3;
+
+    @BindView(R.id.commisionTv_driver1)
+    TextView commisionTv_driver1;
+
+    @BindView(R.id.commisionTv_driver2)
+    TextView commisionTv_driver2;
+
+    @BindView(R.id.commisionTv_driver3)
+    TextView commisionTv_driver3;
+
+    @BindView(R.id.bookingTv_driver1)
+    TextView bookingTv_driver1;
+
+    @BindView(R.id.bookingTv_driver2)
+    TextView bookingTv_driver2;
+
+    @BindView(R.id.bookingTv_driver3)
+    TextView bookingTv_driver3;
+
+    @BindView(R.id.insuranceTv_driver1)
+    TextView insuranceTv_driver1;
+
+    @BindView(R.id.insuranceTv_driver2)
+    TextView insuranceTv_driver2;
+
+    @BindView(R.id.insuranceTv_driver3)
+    TextView insuranceTv_driver3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +77,10 @@ public class RankingActivity extends BaseActivity {
     }
 
     private void setupRecyclerview() {
-        mRecyclerView1.setHasFixedSize(true);
+
         mRecyclerView2.setHasFixedSize(true);
 
-        mRecyclerView1.setLayoutManager(newLLM());
+
         mRecyclerView2.setLayoutManager(newLLM());
 
         List<RankingStatsTypeModel> list = new ArrayList<>();
@@ -70,19 +91,21 @@ public class RankingActivity extends BaseActivity {
         priceTv_driver1.setText("Rs. 2,500");
         priceTv_driver2.setText( "Rs. 5,000");
         priceTv_driver3.setText("Rs. 20,000");
-        
 
-        list.add(new RankingStatsTypeModel("15%", "10%",
-                "5%", " کمیشن"));
+        commisionTv_driver1.setText("15%");
+        commisionTv_driver2.setText("10%");
+        commisionTv_driver3.setText("5%");
 
-        list.add(new RankingStatsTypeModel("صرف رائیڈ", "رائیڈ اور خریداری",
-                "تمام", "بکنگز"));
+        bookingTv_driver1.setText("صرف رائیڈ");
+        bookingTv_driver2.setText("رائیڈ اور خریداری");
+        bookingTv_driver3.setText("تمام");
 
-        list.add(new RankingStatsTypeModel("نو انشورنس", "فری",
-                "فری", "انشورنس"));
+        insuranceTv_driver1.setText("نو انشورنس");
+        insuranceTv_driver2.setText("فری");
+        insuranceTv_driver3.setText("فری");
 
-        RankingStatsTypeAdapter adapter = new RankingStatsTypeAdapter(list);
-        mRecyclerView1.setAdapter(adapter);
+
+
 
         List<RankingWeeklyStatsModel> list_weekly = new ArrayList<>();
 

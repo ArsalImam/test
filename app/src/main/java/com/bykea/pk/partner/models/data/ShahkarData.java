@@ -1,20 +1,12 @@
 package com.bykea.pk.partner.models.data;
 
-public class ShahkarModel {
+public class ShahkarData {
 
     private int number;
     private String name;
     private int booking;
     private float score;
-    private int kamai;
-
-    public ShahkarModel(int number, String name, int booking, float score, int kamai) {
-        this.number = number;
-        this.name = name;
-        this.booking = booking;
-        this.score = score;
-        this.kamai = kamai;
-    }
+    private int earning;
 
     public int getNumber() {
         return number;
@@ -48,11 +40,11 @@ public class ShahkarModel {
         this.score = score;
     }
 
-    public int getKamai() {
-        return kamai;
+    public int getEarning() {
+        return earning;
     }
 
-    public void setKamai(int kamai) {
-        this.kamai = kamai;
+    public void setEarning(int earning) {
+        this.earning = earning;
     }
 }

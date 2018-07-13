@@ -28,6 +28,7 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
@@ -904,6 +905,13 @@ public class RestRequestHandler {
         mRestClient = RestClient.getClient(mContext);
         Call<GetZonesResponse> restCall = mRestClient.requestZones(AppPreferences.getLatitude() + "", AppPreferences.getLongitude() + "");
         restCall.enqueue(new GenericRetrofitCallBack<GetZonesResponse>(onResponseCallBack));
+    }
+
+    public void requestShahkar(Context context, IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<ShahkarResponse> restCall = mRestClient.requestShahkar(AppPreferences.getDriverId(), AppPreferences.getAccessToken());
+        restCall.enqueue(new GenericRetrofitCallBack<ShahkarResponse>(onResponseCallBack));
     }
 
     public void requestZoneAreas(Context context, ZoneData zone, IResponseCallback onResponseCallBack) {
