@@ -46,7 +46,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.869"
-            app:srcCompat="@drawable/avatar_ranking1" />
+            app:srcCompat="@drawable/avatar_ranking2" />
 
         <TextView
             android:id="@+id/rankingTv1"
@@ -76,7 +76,7 @@
             app:layout_constraintStart_toEndOf="@+id/rankingImg1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.495"
-            app:srcCompat="@drawable/avatar_ranking2" />
+            app:srcCompat="@drawable/avatar_ranking1" />
 
         <TextView
             android:id="@+id/rankingTv2"
@@ -284,7 +284,7 @@
                 android:lineSpacingExtra="@dimen/_8sdp"
                 android:layout_gravity="center"
                 android:text="@string/ranking_footer_text"
-                android:textSize="@dimen/_9sdp"
+                android:textSize="@dimen/_10sdp"
                 android:textColor="@color/black_414141"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
