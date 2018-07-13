@@ -55,6 +55,7 @@ import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
@@ -892,6 +893,12 @@ public class UserRepository {
         mRestRequestHandler.requestZones(context, mDataCallback);
     }
 
+    public void requestShahkar(Context context, UserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestShahkar(context, mDataCallback);
+    }
+
 
     public void requestZoneAreas(Context context, ZoneData zone, UserDataHandler handler) {
         mContext = context;
@@ -1153,6 +1160,10 @@ public class UserRepository {
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);
                         break;
+                    case "ShahkarResponse":{
+                        mUserCallback.onShahkarResponse((ShahkarResponse) object);
+                        break;
+                    }
                 }
             } else {
                 Utils.redLog("UserRepo", "mUserCallback is Null");

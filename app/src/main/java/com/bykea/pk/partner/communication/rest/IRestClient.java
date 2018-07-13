@@ -34,6 +34,7 @@ import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
@@ -364,6 +365,9 @@ interface IRestClient {
                                                        @Field("tId") String tripNo,
                                                        @Field("amount") String amount,
                                                        @Field("pId") String passId);
+
+    @GET(ApiTags.GET_SHAHKAR)
+    Call<ShahkarResponse> requestShahkar(@Query("_id") String id, @Query("token_id") String accessToken);
 
 
 //    @GET("/news")
