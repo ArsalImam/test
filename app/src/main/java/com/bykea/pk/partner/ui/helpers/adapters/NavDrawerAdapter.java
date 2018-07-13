@@ -109,7 +109,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
                 case 1:
                     if (HomeActivity.visibleFragmentNumber != 1) {
-                        updateCurrentFragment(new HomeFragment(),1);
+                        updateCurrentFragment(new HomeFragmentTesting(),1);
                     }
                     break;
                 case 2:
@@ -139,7 +139,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
                 case 7://this case is for logout footer part click.
                     if (HomeActivity.visibleFragmentNumber != 7) {
-                        updateCurrentFragment(new HomeFragmentTesting(), 7);
+                        updateCurrentFragment(new HomeFragment(), 7);
                     }
                     break;
 

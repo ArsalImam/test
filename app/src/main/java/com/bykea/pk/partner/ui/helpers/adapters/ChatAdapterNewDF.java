@@ -1,6 +1,8 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -108,7 +111,24 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
             viewHolder.txtMessage.setVisibility(View.VISIBLE);
             viewHolder.txtMessageVoice.setVisibility(View.GONE);
+            viewHolder.image.setVisibility(View.GONE);
+        } else if (chatMessages.get(position).getMessageType().equalsIgnoreCase("Image")) {
+            viewHolder.audioLayout.setVisibility(View.GONE);
+            viewHolder.txtMessage.setVisibility(View.GONE);
+            viewHolder.txtMessageVoice.setVisibility(View.GONE);
+            viewHolder.image.setVisibility(View.VISIBLE);
+            final String url = Utils.getFileLink(chatMessages.get(position)
+                    .getMessage());
+            Picasso.get().load(url).into(viewHolder.image);
+
+            if (getItemViewType(position) == 1) {
+                viewHolder.contentLayout.setBackgroundResource(R.drawable.white_chat_box);
+            } else {
+                viewHolder.contentLayout.setBackgroundResource(R.drawable.green_chat_box);
+            }
+
         } else {
+            viewHolder.image.setVisibility(View.GONE);
             viewHolder.contentLayout.setBackgroundResource(R.color.transparent);
             viewHolder.audioLayout.setVisibility(View.VISIBLE);
             viewHolder.txtMessage.setVisibility(View.GONE);
@@ -325,13 +345,14 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
         public ImageView imgPessanger;
         public LinearLayout audioLayout;
         public FrameLayout contentLayout;
+        ImageView image;
         Context context;
 
 
         public ViewHolder(View itemView, int itemType, Context context) {
             super(itemView);
             this.context = context;
-
+            image = itemView.findViewById(R.id.image);
             txtDate = (TextView) itemView.findViewById(R.id.txtDate);
             txtMessage = (TextView) itemView.findViewById(R.id.txtMessage);
             txtMessageVoice = (TextView) itemView.findViewById(R.id.txtMessageVoice);

@@ -19,7 +19,7 @@
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_centerInParent="true"
-                android:id="@+id/achaconnectionTv"
+                android:id="@+id/achaconnectionTv1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -30,9 +30,10 @@
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <ImageView
+                android:id="@+id/connectionStatusIv1"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/_4sdp"
-                android:layout_toRightOf="@+id/achaconnectionTv"
+                android:layout_toRightOf="@+id/achaconnectionTv1"
                 android:src="@drawable/wifi_connection_signal_symbol"
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="@dimen/_18sdp" />
@@ -54,15 +55,15 @@
                 android:layout_marginLeft="@dimen/_8sdp"
                 android:layout_marginRight="@dimen/_8sdp"
                 android:layout_toLeftOf="@+id/muntakhibTvUrdu"
-                android:id="@+id/muntakhibTv"
+                android:id="@+id/muntakhibTv1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:text="Khayaban-e-Shamsheer"
+                android:text=""
                 android:ellipsize="middle"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_14sdp"
                 android:textColor="@color/grey_hex_28"
                 app:fontName="open_sans_light.ttf" />
 

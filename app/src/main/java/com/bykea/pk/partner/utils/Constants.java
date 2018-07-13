@@ -68,6 +68,7 @@ public class Constants {
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
     public static final String REPLACE_CITY = "-replace-";
+    public static final int PICK_IMAGE_REQUEST = 1001;
 
 
     public static class Extras {

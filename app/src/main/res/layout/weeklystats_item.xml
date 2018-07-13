@@ -24,7 +24,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="Rs. 2,500"
-            android:textSize="@dimen/_18sdp"
+            android:textSize="@dimen/_16sdp"
             android:textColor="@color/black_414141"
             app:fontName="open_sans_semi_bold.ttf" />
 
@@ -42,7 +42,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="Rs. 5,000"
-            android:textSize="@dimen/_18sdp"
+            android:textSize="@dimen/_16sdp"
             android:textColor="@color/black_414141"
             app:fontName="open_sans_semi_bold.ttf" />
 

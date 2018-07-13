@@ -41,6 +41,7 @@ import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.models.response.UploadDocumentFile;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
@@ -221,6 +222,11 @@ interface IRestClient {
     @Multipart
     @POST(ApiTags.UPLOAD_AUDIO_FILE_API)
     Call<UploadAudioFile> uploadAudioFile(@Part("file\"; filename=\"audio.wav\" ")
+                                                  RequestBody file);
+
+    @Multipart
+    @POST(ApiTags.UPLOAD_AUDIO_FILE_API)
+    Call<UploadImageFile> uploadImageFile(@Part("file\"; filename=\"image.webp\" ")
                                                   RequestBody file);
 
 

@@ -12,8 +12,7 @@
         android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_marginTop="@dimen/_8sdp"
-        android:layout_marginBottom="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -30,6 +29,7 @@
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <ImageView
+            android:id="@+id/connectionStatusIv"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_toRightOf="@+id/achaconnectionTv"
@@ -46,15 +46,16 @@
         android:layout_height="@dimen/_1sdp"/>
 
     <RelativeLayout
+        android:id="@+id/editBtn"
         android:layout_gravity="center"
         android:background="@color/yellow_fcfcc3"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp">
+        android:layout_height="@dimen/_35sdp">
 
         <RelativeLayout
+            android:id="@+id/edit"
             android:paddingLeft="@dimen/_12sdp"
             android:paddingRight="@dimen/_12sdp"
-            android:id="@+id/editBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
@@ -67,21 +68,18 @@
 
         </RelativeLayout>
 
-
-
         <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_marginLeft="@dimen/_8sdp"
-            android:layout_marginRight="@dimen/_8sdp"
-            android:layout_toRightOf="@+id/editBtn"
+            android:layout_marginRight="@dimen/_12sdp"
+            android:layout_toRightOf="@+id/edit"
             android:layout_toLeftOf="@+id/manzilTv"
             android:id="@+id/muntakhibTv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:layout_centerVertical="true"
             android:text="منتخب کریں"
-            android:ellipsize="middle"
-            android:textSize="@dimen/_14sdp"
+            android:ellipsize="start"
+            android:textSize="@dimen/_10sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView

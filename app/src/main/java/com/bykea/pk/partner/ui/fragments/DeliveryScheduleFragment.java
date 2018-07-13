@@ -41,6 +41,8 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         View view = inflater.inflate(R.layout.fragment_dilevery_schedule, container, false);
         unbinder = ButterKnife.bind(this, view);
 
+
+
         return view;
     }
 
@@ -49,6 +51,10 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         super.onViewCreated(view, savedInstanceState);
 
         mCurrentActivity = ((HomeActivity) getActivity());
+
+        mCurrentActivity.hideStatusCompletely();
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+
         //mCurrentActivity.hideToolbarTitle();
         mCurrentActivity.hideToolbarLogo();
         mCurrentActivity.setToolbarTitle("Karachi", "");
@@ -105,4 +111,5 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
     public void confirmClick(int pos) {
 
     }
+
 }
