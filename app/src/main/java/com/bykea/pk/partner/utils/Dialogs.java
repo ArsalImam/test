@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -18,14 +17,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +43,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 public enum Dialogs {
@@ -341,7 +335,7 @@ public enum Dialogs {
                     if (list.get(position).equalsIgnoreCase("Current Week")){
                         setCalenderCurrentWeek(tv); //week start from friday to thursday
                     }else {
-                        setlastDayofWeek(tv); //week start from friday
+                        setlastWeek(tv); //week start from friday
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -356,7 +350,7 @@ public enum Dialogs {
         mDialog.setCanceledOnTouchOutside(false);
     }
 
-    private void setlastDayofWeek(TextView tv) {
+    public static void setlastWeek(TextView tv) {
         try {
             Calendar calendar=Calendar.getInstance();
             Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));

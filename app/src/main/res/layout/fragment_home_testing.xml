@@ -177,27 +177,41 @@
         android:layout_marginLeft="@dimen/_12sdp"
         android:layout_marginRight="@dimen/_12sdp">
 
+        <ImageView
+            android:id="@+id/previusDurationBtn"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_4sdp"
+            app:srcCompat="@drawable/back_arrow" />
+
         <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_toRightOf="@+id/previusDurationBtn"
             android:id="@+id/durationTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:text="8 Jun - 14 Jun"
             android:textColor="@color/black"
-            android:textSize="@dimen/_18sdp"
+            android:textSize="@dimen/_17sdp"
             app:fontName="open_sans_semi_bold.ttf" />
 
         <ImageView
+            android:visibility="gone"
             android:id="@+id/durationBtn"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_6sdp"
             android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_height="@dimen/_25sdp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginRight="@dimen/_4sdp"
             android:layout_toRightOf="@+id/durationTv"
-            app:srcCompat="@drawable/dropdown" />
+            app:srcCompat="@drawable/forward_arrow" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/label"
@@ -216,6 +230,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:layout_marginTop="@dimen/_4sdp"
         android:id="@+id/driverStatsLayout"
         android:visibility="visible"
         android:layout_width="match_parent"

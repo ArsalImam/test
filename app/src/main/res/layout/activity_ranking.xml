@@ -137,6 +137,93 @@
                 android:background="@color/divider_light"
                 android:focusableInTouchMode="true" />
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp">
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/priceTv_driver1"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Rs. 2,500"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/priceTv_driver2"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Rs. 5,000"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/priceTv_driver3"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Rs. 20,000"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_404040"
+                    app:fontName="open_sans_regular.ttf" />
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/statsTypeTv"
+                    android:layout_width="0dp"
+                    android:layout_weight="1.8"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="کریڈیٹ"
+                    android:background="@color/blue_0194be"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_light"
+                android:focusableInTouchMode="true" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/stats_rv"
                 android:layout_width="match_parent"

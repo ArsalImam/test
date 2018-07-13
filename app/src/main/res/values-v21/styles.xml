@@ -4,29 +4,8 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="MaterialTransitionAnimations" parent="AppTheme">
-        <!-- SPECIFY ENTER AND EXIT TRANSITIONS-->
-        <item name="android:windowEnterTransition">@android:transition/explode</item>
-        <item name="android:windowExitTransition">@android:transition/explode</item>
-
-        <!-- SPECIFY SHARED ELEMENT TRANSITIONS-->
-        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
-        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
-
-    </style>
-
     <style name="toolbarIconColor" parent="AppTheme">
         <item name="android:textColorSecondary">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
-        <item name="android:actionMenuTextColor">@color/textColorPrimary</item>
-    </style>
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
-
-
     </style>
 
 

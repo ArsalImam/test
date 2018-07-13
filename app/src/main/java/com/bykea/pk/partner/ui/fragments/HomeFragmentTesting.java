@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -62,10 +63,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -74,6 +78,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.Gravity.CENTER;
 
 public class HomeFragmentTesting extends Fragment {
 
@@ -92,6 +97,14 @@ public class HomeFragmentTesting extends Fragment {
     private Location mPrevLocToShow;
 
     private int[] cashInHand;
+
+    private Polygon mDemandPolygon;
+
+    @BindView(R.id.previusDurationBtn)
+    ImageView previusDurationBtn;
+
+    @BindView(R.id.durationBtn)
+    ImageView durationBtn;
 
     @BindView(R.id.myRangeBar)
     MyRangeBarRupay myRangeBar;
@@ -152,15 +165,25 @@ public class HomeFragmentTesting extends Fragment {
 
         mCurrentActivity = ((HomeActivity) getActivity());
         mCurrentActivity.hideToolbarLogo();
-        mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
+
+
+        mKhudaHafizClick();
+
+        mBismillaClick();
+
+
+
+        mCurrentActivity.setDemandButtonForBismilla("ڈیمانڈ");
+        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.GONE);
+        mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        return view;
+    }
+
+    private void mKhudaHafizClick() {
+        mCurrentActivity.setToolbarLogoKhudaHafiz(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mapView.setVisibility(View.VISIBLE);
-                headerTopActiveLayout.setVisibility(View.VISIBLE);
-                headerTopUnActiveLayout.setVisibility(View.GONE);
-                layoutUpper.setVisibility(View.GONE);
-                layoutDuration.setVisibility(View.GONE);
-                driverStatsLayout.setVisibility(View.GONE);
 
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (AppPreferences.getAvailableStatus()) {
@@ -169,22 +192,74 @@ public class HomeFragmentTesting extends Fragment {
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
+                                mCurrentActivity.showBismillah();
+                                mapView.setVisibility(View.GONE);
+                                headerTopActiveLayout.setVisibility(View.GONE);
+                                headerTopUnActiveLayout.setVisibility(View.VISIBLE);
+                                layoutUpper.setVisibility(View.VISIBLE);
+                                layoutDuration.setVisibility(View.VISIBLE);
+                                driverStatsLayout.setVisibility(View.VISIBLE);
                             }
                         });
                     } else {
                         callAvailableStatusAPI(true);
+                        mCurrentActivity.showBismillah();
+                        mapView.setVisibility(View.GONE);
+                        headerTopActiveLayout.setVisibility(View.GONE);
+                        headerTopUnActiveLayout.setVisibility(View.VISIBLE);
+                        layoutUpper.setVisibility(View.VISIBLE);
+                        layoutDuration.setVisibility(View.VISIBLE);
+                        driverStatsLayout.setVisibility(View.VISIBLE);
                     }
+
+
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity
                             , mapPinIv, getString(R.string.error_internet_connectivity));
                 }
             }
         });
-        mCurrentActivity.setDemandButtonForBismilla("ڈیمانڈ");
-        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.GONE);
-        mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
 
-        return view;
+    private void mBismillaClick() {
+        mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                    if (AppPreferences.getAvailableStatus()) {
+                        Dialogs.INSTANCE.showInactiveConfirmationDialog(mCurrentActivity, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Dialogs.INSTANCE.dismissDialog();
+                                callAvailableStatusAPI(false);
+                                mCurrentActivity.showKhudaHafiz();
+                                mapView.setVisibility(View.VISIBLE);
+                                headerTopActiveLayout.setVisibility(View.VISIBLE);
+                                headerTopUnActiveLayout.setVisibility(View.GONE);
+                                layoutUpper.setVisibility(View.GONE);
+                                layoutDuration.setVisibility(View.GONE);
+                                driverStatsLayout.setVisibility(View.GONE);
+                            }
+                        });
+                    } else {
+                        callAvailableStatusAPI(true);
+                        mCurrentActivity.showKhudaHafiz();
+                        mapView.setVisibility(View.VISIBLE);
+                        headerTopActiveLayout.setVisibility(View.VISIBLE);
+                        headerTopUnActiveLayout.setVisibility(View.GONE);
+                        layoutUpper.setVisibility(View.GONE);
+                        layoutDuration.setVisibility(View.GONE);
+                        driverStatsLayout.setVisibility(View.GONE);
+                    }
+
+
+                } else {
+                    Dialogs.INSTANCE.showError(mCurrentActivity
+                            , mapPinIv, getString(R.string.error_internet_connectivity));
+                }
+            }
+        });
     }
 
     private void callAvailableStatusAPI(boolean status) {
@@ -198,7 +273,10 @@ public class HomeFragmentTesting extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mapView.onCreate(savedInstanceState);
+        if (mapView != null){
+            mapView.onCreate(savedInstanceState);
+        }
+
 //        mapView.onResume();
         try {
             MapsInitializer.initialize(mCurrentActivity.getApplicationContext());
@@ -216,6 +294,8 @@ public class HomeFragmentTesting extends Fragment {
         Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
 
         setDestination();
+        initRangeBar();
+        AppPreferences.setAvailableAPICalling(false);
     }
 
     private void checkGooglePlayService() {
@@ -311,6 +391,7 @@ public class HomeFragmentTesting extends Fragment {
             mapView.setVisibility(View.GONE);
             headerTopActiveLayout.setVisibility(View.GONE);
             headerTopUnActiveLayout.setVisibility(View.VISIBLE);
+            mCurrentActivity.showBismillah();
             layoutUpper.setVisibility(View.VISIBLE);
             layoutDuration.setVisibility(View.VISIBLE);
             driverStatsLayout.setVisibility(View.VISIBLE);
@@ -324,7 +405,7 @@ public class HomeFragmentTesting extends Fragment {
         } else {        //active state
 
             myRangeBar.setEnabled(false);
-
+            mCurrentActivity.showKhudaHafiz();
             mapView.setVisibility(View.VISIBLE);
             headerTopActiveLayout.setVisibility(View.VISIBLE);
             headerTopUnActiveLayout.setVisibility(View.GONE);
@@ -642,6 +723,9 @@ public class HomeFragmentTesting extends Fragment {
                 return;
             }
             mGoogleMap = googleMap;
+
+            createDemandShapeonGoogleMap(mGoogleMap);
+
             Utils.formatMap(mGoogleMap);
             mGoogleMap.clear();
             if (mCurrentActivity != null && !Permissions.hasLocationPermissions(mCurrentActivity)) {
@@ -688,6 +772,42 @@ public class HomeFragmentTesting extends Fragment {
         }
     };
 
+    private void createDemandShapeonGoogleMap(GoogleMap map) {
+        try{
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void createDashedLine(GoogleMap map, LatLng latLngOrig, LatLng latLngDest, int color){
+        double difLat = latLngDest.latitude - latLngOrig.latitude;
+        double difLng = latLngDest.longitude - latLngOrig.longitude;
+
+        double zoom = map.getCameraPosition().zoom;
+
+        double divLat = difLat / (zoom * 2);
+        double divLng = difLng / (zoom * 2);
+
+        LatLng tmpLatOri = latLngOrig;
+
+        for(int i = 0; i < (zoom * 2); i++){
+            LatLng loopLatLng = tmpLatOri;
+
+            if(i > 0){
+                loopLatLng = new LatLng(tmpLatOri.latitude + (divLat * 0.25f), tmpLatOri.longitude + (divLng * 0.25f));
+            }
+
+            Polyline polyline = map.addPolyline(new PolylineOptions()
+                    .add(loopLatLng)
+                    .add(new LatLng(tmpLatOri.latitude + divLat, tmpLatOri.longitude + divLng))
+                    .color(color)
+                    .width(5f));
+
+            tmpLatOri = new LatLng(tmpLatOri.latitude + divLat, tmpLatOri.longitude + divLng);
+        }
+    }
+
     private boolean enableLocation() {
         if (ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -713,13 +833,20 @@ public class HomeFragmentTesting extends Fragment {
 
     }
 
-    @OnClick ( { R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn } )
+    @OnClick ( { R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn } )
     public void onClick(View view){
         switch (view.getId()){
 
-            case R.id.durationTv:
+            case R.id.previusDurationBtn:{
+                Dialogs.INSTANCE.setlastWeek(durationTv);
+                durationBtn.setVisibility(View.VISIBLE);
+                previusDurationBtn.setVisibility(View.GONE);
+                break;
+            }
             case R.id.durationBtn:{
-                showWeekPopup();
+                Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
+                durationBtn.setVisibility(View.GONE);
+                previusDurationBtn.setVisibility(View.VISIBLE);
                 break;
             }
 
@@ -747,15 +874,7 @@ public class HomeFragmentTesting extends Fragment {
         }
     }
 
-    private void showWeekPopup() {
-        List<String> list = new ArrayList<>();
 
-        list.add("Current Week");
-
-        list.add("Last Week");
-
-        Dialogs.INSTANCE.showAlert(list, durationTv, mCurrentActivity);
-    }
 
     private void setHomeLocation() {
         if (!AppPreferences.getAvailableStatus()) {
