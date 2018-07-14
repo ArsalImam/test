@@ -8,9 +8,9 @@ public class ApiTags {
 //    private static final String BASE_SERVER_URL_DEBUG = "http://172.16.0.58:3001";  //local
 
     //staging
-    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";
+    //private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";
 
-      //private static final String BASE_SERVER_URL_DEBUG = "http://192.168.0.148:3055";
+      private static final String BASE_SERVER_URL_DEBUG = "http://192.168.0.148:3055";
 //    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3001";
 //    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3002";
     //live test
@@ -84,7 +84,10 @@ public class ApiTags {
     public static final String GET_ADDRESSES = "/api/v1/users/getZoneAreas";
     public static final String TOP_UP_PASSENGER_WALLET = "/api/v1/driver/topupToPassenger";
 
+    //HOME SCREEN DRIVER STATS
+
     public static final String GET_SHAHKAR = "/api/v1/driver/driverShahkar?";
+    public static final String GET_BONUS_CHART = "/api/v1/driver/driverBonusChart?";
 
 
     /******************************************************************************

@@ -7,6 +7,7 @@ import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.PilotData;
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -899,6 +900,12 @@ public class UserRepository {
         mRestRequestHandler.requestShahkar(context, mDataCallback);
     }
 
+    public void requestBonusChart(Context context, UserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestBonusChart(context, mDataCallback);
+    }
+
 
     public void requestZoneAreas(Context context, ZoneData zone, UserDataHandler handler) {
         mContext = context;
@@ -1157,13 +1164,16 @@ public class UserRepository {
                     case "BiometricApiResponse":
                         mUserCallback.onBiometricApiResponse((BiometricApiResponse) object);
                         break;
+                    case "ShahkarResponse":
+                        mUserCallback.onShahkarResponse((ShahkarResponse) object);
+                        break;
+                    case "RankingResponse":
+                        mUserCallback.onBonusChartResponse((RankingResponse) object);
+                        break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);
                         break;
-                    case "ShahkarResponse":{
-                        mUserCallback.onShahkarResponse((ShahkarResponse) object);
-                        break;
-                    }
+
                 }
             } else {
                 Utils.redLog("UserRepo", "mUserCallback is Null");

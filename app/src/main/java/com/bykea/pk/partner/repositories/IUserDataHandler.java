@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
 import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
@@ -171,6 +172,7 @@ public interface IUserDataHandler {
     void onZoneAreasResponse(ZoneAreaResponse response);
 
     void onShahkarResponse(ShahkarResponse response);
+    void onBonusChartResponse(RankingResponse response);
 
     void onTopUpPassWallet(TopUpPassWalletResponse response);
     void onLocationUpdate(LocationResponse response);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -912,6 +913,14 @@ public class RestRequestHandler {
         mRestClient = RestClient.getClient(mContext);
         Call<ShahkarResponse> restCall = mRestClient.requestShahkar(AppPreferences.getDriverId(), AppPreferences.getAccessToken());
         restCall.enqueue(new GenericRetrofitCallBack<ShahkarResponse>(onResponseCallBack));
+    }
+
+    public void requestBonusChart(Context context, IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<RankingResponse> restCall = mRestClient.requestBonusStats(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
+                AppPreferences.getPilotData().getCity().get_id());
+        restCall.enqueue(new GenericRetrofitCallBack<RankingResponse>(onResponseCallBack));
     }
 
     public void requestZoneAreas(Context context, ZoneData zone, IResponseCallback onResponseCallBack) {

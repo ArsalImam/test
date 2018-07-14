@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
 import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
@@ -323,6 +324,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onShahkarResponse(ShahkarResponse response) {
+
+    }
+
+    @Override
+    public void onBonusChartResponse(RankingResponse response) {
 
     }
 

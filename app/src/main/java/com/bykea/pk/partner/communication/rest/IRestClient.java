@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.communication.rest;
 
 
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -368,6 +369,10 @@ interface IRestClient {
 
     @GET(ApiTags.GET_SHAHKAR)
     Call<ShahkarResponse> requestShahkar(@Query("_id") String id, @Query("token_id") String accessToken);
+
+    @GET(ApiTags.GET_BONUS_CHART)
+    Call<RankingResponse> requestBonusStats(@Query("_id") String id, @Query("token_id") String accessToken,
+                                            @Query("city") String city_id);
 
 
 //    @GET("/news")

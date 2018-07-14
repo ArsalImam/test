@@ -6,9 +6,19 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.RankingStatsTypeModel;
-import com.bykea.pk.partner.models.data.RankingWeeklyStatsModel;
+import com.bykea.pk.partner.models.data.HaftaBookingBonusModel;
+import com.bykea.pk.partner.models.data.Ranking;
+import com.bykea.pk.partner.models.data.RankingPosition;
+import com.bykea.pk.partner.models.data.RankingResponse;
+import com.bykea.pk.partner.models.data.WeeklyBonus;
+import com.bykea.pk.partner.models.response.GetZonesResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.RankingWeeklyStatsAdapter;
+import com.bykea.pk.partner.utils.Dialogs;
+import com.thefinestartist.finestwebview.enums.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +69,21 @@ public class RankingActivity extends BaseActivity {
     @BindView(R.id.insuranceTv_driver3)
     TextView insuranceTv_driver3;
 
+    @BindView(R.id.rankingTv1)
+    TextView ranking_goldTv;
+
+    @BindView(R.id.rankingTv2)
+    TextView ranking_silverTv;
+
+    @BindView(R.id.rankingTv3)
+    TextView ranking_plateniumTv;
+
+
+
+    private UserRepository mRepository;
+    private RankingWeeklyStatsAdapter adapter;
+    private List<HaftaBookingBonusModel> listHaftaBonusBooking;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,12 +93,106 @@ public class RankingActivity extends BaseActivity {
         ButterKnife.bind(this);
         mCurrentActivity = this;
 
+        mRepository = new UserRepository();
+
         setBackNavigation();
 
         setToolbarTitle("Ranking", "درجہ بندی");
         hideToolbarLogo();
 
         setupRecyclerview();
+
+        getBonusData();
+    }
+
+    private void getBonusData() {
+        RankingResponse response = (RankingResponse) AppPreferences.getObjectFromSharedPref(GetZonesResponse.class);
+        if (response != null && response.getData() != null) {
+            onApiResponse(response);
+        } else {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            mRepository.requestBonusChart(mCurrentActivity, mCallBack);
+        }
+    }
+
+    private void onApiResponse(RankingResponse response) {
+        if (mCurrentActivity != null) {
+
+            if (response.getData() != null) {
+
+
+                for (WeeklyBonus weeklyBonus : response.getData().
+                        getWeeklyBonus()) {
+                    listHaftaBonusBooking.add(new HaftaBookingBonusModel(weeklyBonus.getBonus(),
+                            weeklyBonus.getBooking()));
+                }
+
+                for (Ranking ranking : response.getData().getRanking()) {
+
+                    switch (ranking.getRank()) {
+                        case "1": {
+
+                            priceTv_driver2.setText(ranking.getCredit());
+                            commisionTv_driver2.setText(ranking.getComision());
+                            bookingTv_driver2.setText(ranking.getBooking());
+                            insuranceTv_driver2.setText(ranking.getInsurance());
+
+                            break;
+                        }
+
+                        case "2": {
+                            priceTv_driver1.setText(ranking.getCredit());
+                            commisionTv_driver1.setText(ranking.getComision());
+                            bookingTv_driver1.setText(ranking.getBooking());
+                            insuranceTv_driver1.setText(ranking.getInsurance());
+                            break;
+                        }
+
+                        case "3": {
+                            priceTv_driver3.setText(ranking.getCredit());
+                            commisionTv_driver3.setText(ranking.getComision());
+                            bookingTv_driver3.setText(ranking.getBooking());
+                            insuranceTv_driver3.setText(ranking.getInsurance());
+                            break;
+                        }
+
+
+                    }
+                }
+
+                for (RankingPosition rankingPosition : response.getData().getPosition()) {
+                    switch (rankingPosition.getName()){
+
+
+
+                        case "Gold":{
+                            ranking_goldTv.setText(rankingPosition.getScore());
+                            break;
+                        }
+
+                        case "Silver":{
+                            ranking_silverTv.setText(rankingPosition.getScore());
+                            break;
+                        }
+
+                        case "Platinum":{
+                            ranking_plateniumTv.setText(rankingPosition.getScore());
+                            break;
+                        }
+                    }
+
+                }
+
+
+
+
+
+                adapter.notifyDataSetChanged();
+
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }
+
     }
 
     private void setupRecyclerview() {
@@ -83,52 +202,30 @@ public class RankingActivity extends BaseActivity {
 
         mRecyclerView2.setLayoutManager(newLLM());
 
-        List<RankingStatsTypeModel> list = new ArrayList<>();
+        listHaftaBonusBooking = new ArrayList<>();
 
-        /*list.add(new RankingStatsTypeModel("Rs. 2,500", "Rs. 5,000",
-                "Rs. 20,000", "کریڈیٹ"));*/
-
-        priceTv_driver1.setText("Rs. 2,500");
-        priceTv_driver2.setText( "Rs. 5,000");
-        priceTv_driver3.setText("Rs. 20,000");
-
-        commisionTv_driver1.setText("15%");
-        commisionTv_driver2.setText("10%");
-        commisionTv_driver3.setText("5%");
-
-        bookingTv_driver1.setText("صرف رائیڈ");
-        bookingTv_driver2.setText("رائیڈ اور خریداری");
-        bookingTv_driver3.setText("تمام");
-
-        insuranceTv_driver1.setText("نو انشورنس");
-        insuranceTv_driver2.setText("فری");
-        insuranceTv_driver3.setText("فری");
-
-
-
-
-        List<RankingWeeklyStatsModel> list_weekly = new ArrayList<>();
-
-        list_weekly.add(new RankingWeeklyStatsModel("Rs. 5,500", "105"));
-
-        list_weekly.add(new RankingWeeklyStatsModel("4,000", "90"));
-
-        list_weekly.add(new RankingWeeklyStatsModel("3,000", "75"));
-
-        list_weekly.add(new RankingWeeklyStatsModel("2,200", "60"));
-
-        list_weekly.add(new RankingWeeklyStatsModel("1,500", "45"));
-
-        list_weekly.add(new RankingWeeklyStatsModel("900", "30"));
-
-        list_weekly.add(new RankingWeeklyStatsModel("400", "15"));
-
-        RankingWeeklyStatsAdapter adapter1 = new RankingWeeklyStatsAdapter(list_weekly);
-        mRecyclerView2.setAdapter(adapter1);
+        adapter = new RankingWeeklyStatsAdapter(listHaftaBonusBooking);
+        mRecyclerView2.setAdapter(adapter);
     }
 
     private LinearLayoutManager newLLM() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mCurrentActivity);
         return linearLayoutManager;
     }
+
+    private UserDataHandler mCallBack = new UserDataHandler() {
+
+        @Override
+        public void onBonusChartResponse(RankingResponse response) {
+            AppPreferences.setObjectToSharedPref(response);
+            onApiResponse(response);
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            if (mCurrentActivity != null) {
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }
+    };
 }
