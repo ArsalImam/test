@@ -83,11 +83,9 @@ public class ShahkarActivity extends BaseActivity {
     private void setupRecyclerview() {
         mRecyclerView.setHasFixedSize(true);
 
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mCurrentActivity);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(Utils.newLLM(mCurrentActivity));
 
         listShahkar = new ArrayList<>();
-
 
         adapter = new ShahkarAdapter(listShahkar);
         mRecyclerView.setAdapter(adapter);
@@ -108,4 +106,14 @@ public class ShahkarActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        listShahkar = null;
+        mCurrentActivity = null;
+        adapter = null;
+        mRepository = null;
+        mRecyclerView = null;
+    }
 }

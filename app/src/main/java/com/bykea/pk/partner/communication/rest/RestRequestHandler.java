@@ -20,6 +20,7 @@ import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
@@ -921,6 +922,14 @@ public class RestRequestHandler {
         Call<RankingResponse> restCall = mRestClient.requestBonusStats(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
                 AppPreferences.getPilotData().getCity().get_id());
         restCall.enqueue(new GenericRetrofitCallBack<RankingResponse>(onResponseCallBack));
+    }
+
+    public void requestPerformanceData(Context context, IResponseCallback onResponseCallBack, int weekStatus) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<DriverPerformanceResponse> restCall = mRestClient.requestDriverPerformance(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
+                weekStatus);
+        restCall.enqueue(new GenericRetrofitCallBack<DriverPerformanceResponse>(onResponseCallBack));
     }
 
     public void requestZoneAreas(Context context, ZoneData zone, IResponseCallback onResponseCallBack) {

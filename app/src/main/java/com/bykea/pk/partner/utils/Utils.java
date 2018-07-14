@@ -36,6 +36,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -145,6 +146,11 @@ public class Utils {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         activity.startActivityForResult(intent, Constants.PICK_IMAGE_REQUEST);
+    }
+
+    public static LinearLayoutManager newLLM(Activity activity) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
+        return linearLayoutManager;
     }
 
     public static void appToast(Context context, String message) {

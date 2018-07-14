@@ -22,6 +22,7 @@ import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -173,6 +174,7 @@ public interface IUserDataHandler {
 
     void onShahkarResponse(ShahkarResponse response);
     void onBonusChartResponse(RankingResponse response);
+    void onDriverPerformanceResponse(DriverPerformanceResponse response);
 
     void onTopUpPassWallet(TopUpPassWalletResponse response);
     void onLocationUpdate(LocationResponse response);

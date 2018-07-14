@@ -22,6 +22,7 @@ import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -329,6 +330,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onBonusChartResponse(RankingResponse response) {
+
+    }
+
+    @Override
+    public void onDriverPerformanceResponse(DriverPerformanceResponse response) {
 
     }
 

@@ -33,6 +33,7 @@ import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -906,6 +907,12 @@ public class UserRepository {
         mRestRequestHandler.requestBonusChart(context, mDataCallback);
     }
 
+    public void requestDriverPerformance(Context context, UserDataHandler handler, int weekStatus) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestPerformanceData(context, mDataCallback, weekStatus);
+    }
+
 
     public void requestZoneAreas(Context context, ZoneData zone, UserDataHandler handler) {
         mContext = context;
@@ -1169,6 +1176,9 @@ public class UserRepository {
                         break;
                     case "RankingResponse":
                         mUserCallback.onBonusChartResponse((RankingResponse) object);
+                        break;
+                    case "DriverPerformanceResponse":
+                        mUserCallback.onDriverPerformanceResponse((DriverPerformanceResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

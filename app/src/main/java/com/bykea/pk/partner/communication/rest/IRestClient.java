@@ -19,6 +19,7 @@ import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
@@ -373,6 +374,10 @@ interface IRestClient {
     @GET(ApiTags.GET_BONUS_CHART)
     Call<RankingResponse> requestBonusStats(@Query("_id") String id, @Query("token_id") String accessToken,
                                             @Query("city") String city_id);
+
+    @GET(ApiTags.GET_DRIVER_PERFORMANCE)
+    Call<DriverPerformanceResponse> requestDriverPerformance(@Query("_id") String id, @Query("token_id") String accessToken,
+                                                             @Query("date") int dateCode); // 0 for current week data || -1 for previus week
 
 
 //    @GET("/news")

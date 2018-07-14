@@ -12,13 +12,12 @@ import com.bykea.pk.partner.models.data.RankingPosition;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.WeeklyBonus;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.RankingWeeklyStatsAdapter;
 import com.bykea.pk.partner.utils.Dialogs;
-import com.thefinestartist.finestwebview.enums.Position;
+import com.bykea.pk.partner.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +25,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.bykea.pk.partner.utils.Utils.newLLM;
+
 public class RankingActivity extends BaseActivity {
 
     private RankingActivity mCurrentActivity;
 
     @BindView(R.id.stats_weekly_rv)
-    RecyclerView mRecyclerView2;
+    RecyclerView mRecyclerView;
 
     @BindView(R.id.priceTv_driver1)
     TextView priceTv_driver1;
@@ -183,10 +184,6 @@ public class RankingActivity extends BaseActivity {
 
                 }
 
-
-
-
-
                 adapter.notifyDataSetChanged();
 
                 Dialogs.INSTANCE.dismissDialog();
@@ -197,21 +194,18 @@ public class RankingActivity extends BaseActivity {
 
     private void setupRecyclerview() {
 
-        mRecyclerView2.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
 
 
-        mRecyclerView2.setLayoutManager(newLLM());
+        mRecyclerView.setLayoutManager(Utils.newLLM(mCurrentActivity));
 
         listHaftaBonusBooking = new ArrayList<>();
 
         adapter = new RankingWeeklyStatsAdapter(listHaftaBonusBooking);
-        mRecyclerView2.setAdapter(adapter);
+        mRecyclerView.setAdapter(adapter);
     }
 
-    private LinearLayoutManager newLLM() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mCurrentActivity);
-        return linearLayoutManager;
-    }
+
 
     private UserDataHandler mCallBack = new UserDataHandler() {
 
@@ -228,4 +222,35 @@ public class RankingActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mCurrentActivity = null;
+        listHaftaBonusBooking = null;
+        mRecyclerView = null;
+
+        priceTv_driver1 = null;
+        commisionTv_driver1 = null;
+        bookingTv_driver1 = null;
+        insuranceTv_driver1 = null;
+
+        priceTv_driver2 = null;
+        commisionTv_driver2 = null;
+        bookingTv_driver2 = null;
+        insuranceTv_driver2 = null;
+
+        priceTv_driver3 = null;
+        commisionTv_driver3 = null;
+        bookingTv_driver3 = null;
+        insuranceTv_driver3 = null;
+
+        ranking_goldTv = null;
+        ranking_plateniumTv = null;
+        ranking_silverTv = null;
+
+        mRepository = null;
+
+
+    }
 }

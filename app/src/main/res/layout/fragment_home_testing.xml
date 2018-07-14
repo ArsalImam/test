@@ -90,13 +90,13 @@
 
 
             <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/textView2"
+                android:id="@+id/totalScoreTv"
                 android:layout_width="@dimen/_70sdp"
                 android:layout_height="@dimen/_20sdp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/score_board_bg"
                 android:gravity="center"
-                android:text="سکور 4.4"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf"
@@ -167,7 +167,7 @@
                         android:src="@drawable/wallet_filled_money_tool_1" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/priceTv"
+                        android:id="@+id/totalBalanceTv"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -274,6 +274,7 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/weeklybookingTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_booking"
@@ -312,6 +313,7 @@
                     android:background="@drawable/circle_mukamal_booking"
                     android:gravity="center"
                     android:text="9"
+                    android:id="@+id/mukamalBookingTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -345,6 +347,7 @@
                     android:background="@drawable/circle_kamai"
                     android:gravity="center"
                     android:text="10,150"
+                    android:id="@+id/kamaiTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -378,6 +381,7 @@
                     android:background="@drawable/circle_wqt"
                     android:gravity="center"
                     android:text="08:10"
+                    android:id="@+id/wqtTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -416,6 +420,7 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/cancelTv"
                     android:background="@drawable/circle_cancel"
                     android:gravity="center"
                     android:text="10%"
@@ -452,6 +457,7 @@
                     android:background="@drawable/circle_takmeel"
                     android:gravity="center"
                     android:text="70%"
+                    android:id="@+id/takmeelTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -485,6 +491,7 @@
                     android:background="@drawable/circle_qabooliat"
                     android:gravity="center"
                     android:text="80%"
+                    android:id="@+id/qboliyatTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -518,6 +525,7 @@
                     android:background="@drawable/circle_rating"
                     android:gravity="center"
                     android:text="4.1"
+                    android:id="@+id/ratingTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
