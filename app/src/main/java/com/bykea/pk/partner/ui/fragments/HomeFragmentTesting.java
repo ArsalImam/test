@@ -400,12 +400,16 @@ public class HomeFragmentTesting extends Fragment {
     }
 
     private void getDriverPerformanceData() {
-        DriverPerformanceResponse response = (DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(GetZonesResponse.class);
-        if (response != null && response.getData() != null) {
-            onApiResponse(response);
-        } else {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            repository.requestDriverPerformance(mCurrentActivity, handler, 0);
+        try{
+            DriverPerformanceResponse response = (DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class);
+            if (response != null && response.getData() != null) {
+                onApiResponse(response);
+            } else {
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                repository.requestDriverPerformance(mCurrentActivity, handler, 0);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -415,7 +419,15 @@ public class HomeFragmentTesting extends Fragment {
             if (response.getData() != null) {
                 weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
                 weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
-                weeklyKamaiTv.setText(response.getData().getWeeklyBalance());
+
+                try {
+                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0":
+                            response.getData().getWeeklyBalance();
+                    weeklyKamaiTv.setText(weeklyBalance);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+
                 weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
                 weeklyCancelTv.setText(response.getData().getCancelPercentage() + "%");
@@ -423,7 +435,15 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + "%");
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                totalBalanceTv.setText("Rs. " +response.getData().getTotalBalance());
+                try {
+                    String balance = Integer.valueOf(response.getData().getTotalBalance()) < 0 ? "0":
+                            response.getData().getTotalBalance();
+
+                    totalBalanceTv.setText("Rs. " +balance);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+
                 totalScoreTv.setText("سکور " + response.getData().getTotalRating());
 
             }

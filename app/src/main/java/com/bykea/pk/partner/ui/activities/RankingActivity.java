@@ -107,12 +107,16 @@ public class RankingActivity extends BaseActivity {
     }
 
     private void getBonusData() {
-        RankingResponse response = (RankingResponse) AppPreferences.getObjectFromSharedPref(GetZonesResponse.class);
-        if (response != null && response.getData() != null) {
-            onApiResponse(response);
-        } else {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            mRepository.requestBonusChart(mCurrentActivity, mCallBack);
+        try{
+            RankingResponse response = (RankingResponse) AppPreferences.getObjectFromSharedPref(RankingResponse.class);
+            if (response != null && response.getData() != null) {
+                onApiResponse(response);
+            } else {
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                mRepository.requestBonusChart(mCurrentActivity, mCallBack);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

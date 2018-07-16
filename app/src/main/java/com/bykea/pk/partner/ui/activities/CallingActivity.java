@@ -67,6 +67,26 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.kharidariPriceLayout)
     RelativeLayout kharidariPriceLayout;
 
+    @BindView(R.id.cashKiWasooliTv)
+    FontTextView cashKiWasooliTv;
+
+    @BindView(R.id.kraiKiKamaiTv)
+    FontTextView kraiKiKamaiTv;
+
+    @BindView(R.id.destinationTv)
+    FontTextView destinationTv;
+
+    @BindView(R.id.estimatedDistanceTv)
+    FontTextView estimatedDistanceTv;
+
+    @BindView(R.id.kharidariKiRaqamTv)
+    FontTextView kharidariKiRaqamTv;
+
+    @BindView(R.id.distanceAwayTv)
+    FontTextView distanceAwayTv;
+
+
+
     private UserRepository repository;
     private MediaPlayer _mpSound;
     private CallingActivity mCurrentActivity;
@@ -390,7 +410,7 @@ public class CallingActivity extends BaseActivity {
 
         if (Utils.isPurchaseService(callData.getCallType())) {
             kharidariPriceLayout.setVisibility(View.VISIBLE);
-
+            kharidariKiRaqamTv.setText(callData.getCodAmount());
         }
 
         if (Utils.isRideService(callData.getCallType())){
@@ -424,6 +444,18 @@ public class CallingActivity extends BaseActivity {
         } else {
             ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
         }
+
+       try{
+           kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
+           String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
+                   String.valueOf(callData.getCashKiWasooli());
+           cashKiWasooliTv.setText(cashKiWasoliValue);
+           estimatedDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
+           destinationTv.setText(callData.getEndAddress());
+           distanceAwayTv.setText(callData.getDistance());
+       }catch (Exception e){
+            e.printStackTrace();
+       }
     }
 
 
