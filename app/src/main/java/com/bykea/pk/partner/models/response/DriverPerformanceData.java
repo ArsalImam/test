@@ -7,18 +7,31 @@ public class DriverPerformanceData {
     @SerializedName("booking")
     private int driverBooking;
 
+    @SerializedName("cBooking")
     private int completedBooking;
+
+    @SerializedName("wBalance")
     private String weeklyBalance;
 
+    @SerializedName("tBalance")
     private String totalBalance;
 
     @SerializedName("time")
     private String driverOnTime;
 
+    @SerializedName("wRating")
     private float weeklyRating;
+
+    @SerializedName("tRating")
     private float totalRating;
+
+    @SerializedName("aPerc")
     private int acceptancePercentage;
+
+    @SerializedName("cPerc")
     private int completedPercentage;
+
+    @SerializedName("cnPerc")
     private int cancelPercentage;
 
     public int getDriverBooking() {

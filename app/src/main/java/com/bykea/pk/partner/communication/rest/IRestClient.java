@@ -28,6 +28,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
@@ -379,7 +380,9 @@ interface IRestClient {
     Call<DriverPerformanceResponse> requestDriverPerformance(@Query("_id") String id, @Query("token_id") String accessToken,
                                                              @Query("date") int dateCode); // 0 for current week data || -1 for previus week
 
-
+    @GET(ApiTags.GET_LOAD_BOARD)
+    Call<LoadBoardResponse> requestLoadBoard(@Query("_id") String id, @Query("token_id") String accessToken,
+                                                       @Query("lat") String lat,@Query("lng") String lng);
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(
 //            @QueryMap Map<String, String> params);

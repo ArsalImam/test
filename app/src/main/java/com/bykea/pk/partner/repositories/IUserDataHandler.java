@@ -35,6 +35,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -175,6 +176,8 @@ public interface IUserDataHandler {
     void onShahkarResponse(ShahkarResponse response);
     void onBonusChartResponse(RankingResponse response);
     void onDriverPerformanceResponse(DriverPerformanceResponse response);
+
+    void onLoadBoardResponse(LoadBoardResponse response);
 
     void onTopUpPassWallet(TopUpPassWalletResponse response);
     void onLocationUpdate(LocationResponse response);

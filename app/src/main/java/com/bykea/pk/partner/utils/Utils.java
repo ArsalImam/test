@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.utils;
 
+import android.Manifest;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -20,6 +21,8 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -30,6 +33,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -67,6 +71,7 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -99,6 +104,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -876,6 +882,20 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
+    public static String getLocationAddress(String lat, String lng, Activity activity){
+
+        Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(Double.valueOf(lat), Double.valueOf(lng), 1);
+            return addresses.get(0).getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
     public static String calculateDistanceInKm(double newLat, double newLon, double prevLat, double prevLon) {
         return "" + Math.round(((calculateDistance(newLat,
                 newLon, prevLat,
@@ -1058,6 +1078,23 @@ public class Utils {
             isMock = false;
         }
         return isMock;
+    }
+
+    public static void phoneCall(Activity activity, String phone) {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CALL_PHONE}, 1);
+            return;
+        }
+
+        activity.startActivity(intent);
     }
 
     public static boolean areThereMockPermissionApps(Context context) {

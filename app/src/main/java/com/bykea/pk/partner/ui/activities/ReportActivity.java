@@ -53,9 +53,10 @@ public class ReportActivity extends BaseActivity {
         ButterKnife.bind(mCurrentActivity);
         helpLayout.setVisibility(View.GONE);
         setGreenActionBarTitle("Report", "رپورٹ");
+        contactType = getIntent().getStringExtra(Constants.Extras.CONTACT_TYPE);
         createData();
         initRecyclerView();
-        contactType = getIntent().getStringExtra(Constants.Extras.CONTACT_TYPE);
+
     }
 
     private void initRecyclerView() {
@@ -80,8 +81,15 @@ public class ReportActivity extends BaseActivity {
 
     private void createData() {
         mReportList = new ArrayList<>();
-        contactReasongs = AppPreferences.getSettings().getPredefine_messages().getContact_reason();
-        Collections.addAll(mReportList, contactReasongs);
+        if (contactType.equalsIgnoreCase("f")){
+            contactReasongs = AppPreferences.getSettings().getPredefine_messages().getContact_reason_finance();
+        }else {
+            contactReasongs = AppPreferences.getSettings().getPredefine_messages().getContact_reason();
+        }
+        if (contactReasongs != null){
+            Collections.addAll(mReportList, contactReasongs);
+        }
+
 //        mReportList.add("App me masla hai");
 //        mReportList.add("Mujhay request nahi arahi");
 //        mReportList.add("Guarantee me masla he");

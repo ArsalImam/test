@@ -55,14 +55,8 @@ public class ShahkarActivity extends BaseActivity {
 
     private void getShahkarData() {
         try{
-            ShahkarResponse response = (ShahkarResponse) AppPreferences.getObjectFromSharedPref(ShahkarResponse.class);
-            if (response != null && response.getData() != null
-                    && response.getData().size() > 0 ) {
-                onApiResponse(response);
-            } else {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 mRepository.requestShahkar(mCurrentActivity, mCallBack);
-            }
         }catch (Exception e){
             e.printStackTrace();
         }

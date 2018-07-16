@@ -249,7 +249,6 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_marginTop="@dimen/_4sdp"
         android:id="@+id/driverStatsLayout"
         android:visibility="visible"
         android:layout_width="match_parent"
@@ -261,6 +260,7 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
@@ -399,12 +399,8 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_weight="0.1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"/>
-
         <LinearLayout
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"

@@ -5,7 +5,11 @@ import com.bykea.pk.partner.BuildConfig;
 public class ApiTags {
 
     //live test
+    //ALi
 //    private static final String BASE_SERVER_URL_DEBUG = "http://172.16.0.58:3001";  //local
+
+    //Shehryar server
+      //private static final String BASE_SERVER_URL_DEBUG = "http://192.168.0.122:3000";
 
     //staging
      private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";
@@ -89,6 +93,9 @@ public class ApiTags {
     public static final String GET_SHAHKAR = "/api/v1/driver/driverShahkar?";
     public static final String GET_BONUS_CHART = "/api/v1/driver/driverBonusChart?";
     public static final String GET_DRIVER_PERFORMANCE = "/api/v1/driver/performance?";
+
+    //LOAD BOARD
+    public static final String GET_LOAD_BOARD = "/api/v1/driver/load-board?";
 
 
     /******************************************************************************

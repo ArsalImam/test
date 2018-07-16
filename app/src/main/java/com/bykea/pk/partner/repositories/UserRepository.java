@@ -46,6 +46,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -913,6 +914,12 @@ public class UserRepository {
         mRestRequestHandler.requestPerformanceData(context, mDataCallback, weekStatus);
     }
 
+    public void requestLoadBoard(Context context, UserDataHandler handler, String lat, String lng) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestLoadBoard(context, mDataCallback, lat, lng);
+    }
+
 
     public void requestZoneAreas(Context context, ZoneData zone, UserDataHandler handler) {
         mContext = context;
@@ -1179,6 +1186,9 @@ public class UserRepository {
                         break;
                     case "DriverPerformanceResponse":
                         mUserCallback.onDriverPerformanceResponse((DriverPerformanceResponse) object);
+                        break;
+                    case "LoadBoardResponse":
+                        mUserCallback.onLoadBoardResponse((LoadBoardResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

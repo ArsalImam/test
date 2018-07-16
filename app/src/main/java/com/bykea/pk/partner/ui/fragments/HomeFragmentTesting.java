@@ -401,13 +401,8 @@ public class HomeFragmentTesting extends Fragment {
 
     private void getDriverPerformanceData() {
         try{
-            DriverPerformanceResponse response = (DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class);
-            if (response != null && response.getData() != null) {
-                onApiResponse(response);
-            } else {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, 0);
-            }
         }catch (Exception e){
             e.printStackTrace();
         }

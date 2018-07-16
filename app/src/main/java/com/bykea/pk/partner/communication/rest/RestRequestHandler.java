@@ -26,6 +26,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
@@ -37,6 +38,7 @@ import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -930,6 +932,14 @@ public class RestRequestHandler {
         Call<DriverPerformanceResponse> restCall = mRestClient.requestDriverPerformance(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
                 weekStatus);
         restCall.enqueue(new GenericRetrofitCallBack<DriverPerformanceResponse>(onResponseCallBack));
+    }
+
+    public void requestLoadBoard(Context context, IResponseCallback onResponseCallBack, String lat, String lng) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<LoadBoardResponse> restCall = mRestClient.requestLoadBoard(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
+                lat, lng);
+        restCall.enqueue(new GenericRetrofitCallBack<LoadBoardResponse>(onResponseCallBack));
     }
 
     public void requestZoneAreas(Context context, ZoneData zone, IResponseCallback onResponseCallBack) {
