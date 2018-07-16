@@ -186,6 +186,7 @@
                         app:fontName="open_sans_regular.ttf" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/estimatedDistanceUnitTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -300,6 +301,7 @@
             </LinearLayout>
 
             <RelativeLayout
+                android:id="@+id/kraiKiKamaiLayout"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
@@ -331,6 +333,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/cashKiWasooliLayout"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"

@@ -1522,6 +1522,13 @@ public class Utils {
         return valid;
     }
 
+    public static boolean isSkipDropOff(NormalCallData callData) {
+        if (callData.getEstimatedDistance() == 0.0){
+            return true;
+        }
+        return false;
+    }
+
 
     public static class AudioTime implements Serializable {
         private String mFormat = "%02d:%02d:%02d";
