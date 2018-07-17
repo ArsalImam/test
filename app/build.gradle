@@ -59,6 +59,10 @@ android {
             // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
+
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
         }
         debug {
             //key for staging apps
