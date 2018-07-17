@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.communication.rest;
 
 
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -18,6 +19,7 @@ import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
@@ -26,6 +28,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
@@ -34,6 +37,7 @@ import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
@@ -41,6 +45,7 @@ import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.models.response.UploadDocumentFile;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
@@ -223,6 +228,11 @@ interface IRestClient {
     Call<UploadAudioFile> uploadAudioFile(@Part("file\"; filename=\"audio.wav\" ")
                                                   RequestBody file);
 
+    @Multipart
+    @POST(ApiTags.UPLOAD_AUDIO_FILE_API)
+    Call<UploadImageFile> uploadImageFile(@Part("file\"; filename=\"image.webp\" ")
+                                                  RequestBody file);
+
 
     @GET(ApiTags.GET_SERVICE_TYPE_API)
     Call<ServiceTypeResponse> getServiceTypes();
@@ -359,7 +369,20 @@ interface IRestClient {
                                                        @Field("amount") String amount,
                                                        @Field("pId") String passId);
 
+    @GET(ApiTags.GET_SHAHKAR)
+    Call<ShahkarResponse> requestShahkar(@Query("_id") String id, @Query("token_id") String accessToken);
 
+    @GET(ApiTags.GET_BONUS_CHART)
+    Call<RankingResponse> requestBonusStats(@Query("_id") String id, @Query("token_id") String accessToken,
+                                            @Query("city") String city_id);
+
+    @GET(ApiTags.GET_DRIVER_PERFORMANCE)
+    Call<DriverPerformanceResponse> requestDriverPerformance(@Query("_id") String id, @Query("token_id") String accessToken,
+                                                             @Query("date") int dateCode); // 0 for current week data || -1 for previus week
+
+    @GET(ApiTags.GET_LOAD_BOARD)
+    Call<LoadBoardResponse> requestLoadBoard(@Query("_id") String id, @Query("token_id") String accessToken,
+                                                       @Query("lat") String lat,@Query("lng") String lng);
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(
 //            @QueryMap Map<String, String> params);

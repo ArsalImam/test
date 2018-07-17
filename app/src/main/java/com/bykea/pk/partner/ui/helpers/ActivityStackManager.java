@@ -232,9 +232,9 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startDeliveryScheduleDetailActivity(Context mContext) {
+    public void startDeliveryScheduleDetailActivity(Context mContext, int pos) {
         Intent intent = new Intent(mContext, DeliveryScheduleDetailActivity.class);
-        //intent.putExtra(Constants.Extras.CONTACT_TYPE, cTtype);
+        intent.putExtra(Constants.Extras.POSITION_DELIVERY_SCHEDULE, pos);
         mContext.startActivity(intent);
     }
 

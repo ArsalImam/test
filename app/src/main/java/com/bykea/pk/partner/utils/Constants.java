@@ -68,6 +68,7 @@ public class Constants {
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
     public static final String REPLACE_CITY = "-replace-";
+    public static final int PICK_IMAGE_REQUEST = 1001;
 
 
     public static class Extras {
@@ -98,6 +99,8 @@ public class Constants {
         public static final String PICK_UP = "PICK_UP";
         public static final String IS_FINGER_PRINTS_SUCCESS = "IS_FINGER_PRINTS_SUCCESS";
         public static final String IS_BIOMETRIC_VERIFIED = "IS_FINGER_PRINTS_SUCCESS";
+
+        public static final String POSITION_DELIVERY_SCHEDULE = "POSITION_DELIVERY_SCHEDULE";
     }
 
     public static class Broadcast {
@@ -113,6 +116,8 @@ public class Constants {
     public static class RequestCode {
         public final static int SCAN_FINGER_PRINTS = 123;
     }
+
+
 
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";

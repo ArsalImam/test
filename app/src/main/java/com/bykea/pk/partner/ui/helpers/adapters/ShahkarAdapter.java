@@ -8,16 +8,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.ShahkarModel;
+import com.bykea.pk.partner.models.data.ShahkarData;
 
 import java.text.DecimalFormat;
 import java.util.List;
 
 public class ShahkarAdapter extends RecyclerView.Adapter<ShahkarAdapter.ViewHolder> {
 
-    List<ShahkarModel> list;
+    List<ShahkarData> list;
 
-    public ShahkarAdapter(List<ShahkarModel> list) {
+    public ShahkarAdapter(List<ShahkarData> list) {
         this.list = list;
     }
 
@@ -40,7 +40,7 @@ public class ShahkarAdapter extends RecyclerView.Adapter<ShahkarAdapter.ViewHold
 
         DecimalFormat formatter = new DecimalFormat("#,###,###");
 
-        holder.kamaiTv.setText(formatter.format(list.get(position).getKamai()));
+        holder.kamaiTv.setText(formatter.format(list.get(position).getEarning()));
         holder.rattingTv.setText(String.valueOf(list.get(position).getScore()));
 
     }

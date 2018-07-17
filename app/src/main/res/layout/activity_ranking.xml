@@ -46,7 +46,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.869"
-            app:srcCompat="@drawable/avatar_ranking1" />
+            app:srcCompat="@drawable/avatar_ranking2" />
 
         <TextView
             android:id="@+id/rankingTv1"
@@ -76,7 +76,7 @@
             app:layout_constraintStart_toEndOf="@+id/rankingImg1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.495"
-            app:srcCompat="@drawable/avatar_ranking2" />
+            app:srcCompat="@drawable/avatar_ranking1" />
 
         <TextView
             android:id="@+id/rankingTv2"
@@ -144,7 +144,7 @@
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="@dimen/_50sdp"
+                    android:layout_height="match_parent"
                     android:background="@color/divider_light"
                     android:focusableInTouchMode="true" />
 
@@ -152,17 +152,16 @@
                     android:id="@+id/priceTv_driver1"
                     android:layout_width="0dp"
                     android:layout_weight="2"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:text="Rs. 2,500"
                     android:textColor="@color/black_404040"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf" />
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="@dimen/_50sdp"
+                    android:layout_height="match_parent"
                     android:background="@color/divider_light"
                     android:focusableInTouchMode="true" />
 
@@ -170,17 +169,16 @@
                     android:id="@+id/priceTv_driver2"
                     android:layout_width="0dp"
                     android:layout_weight="2"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:text="Rs. 5,000"
                     android:textColor="@color/black_404040"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf" />
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="@dimen/_50sdp"
+                    android:layout_height="match_parent"
                     android:background="@color/divider_light"
                     android:focusableInTouchMode="true" />
 
@@ -188,10 +186,9 @@
                     android:id="@+id/priceTv_driver3"
                     android:layout_width="0dp"
                     android:layout_weight="2"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:text="Rs. 20,000"
                     android:textSize="@dimen/_12sdp"
                     android:textColor="@color/black_404040"
                     app:fontName="open_sans_regular.ttf" />
@@ -199,7 +196,7 @@
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="@dimen/_50sdp"
+                    android:layout_height="match_parent"
                     android:background="@color/divider_light"
                     android:focusableInTouchMode="true" />
 
@@ -224,10 +221,257 @@
                 android:background="@color/divider_light"
                 android:focusableInTouchMode="true" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/stats_rv"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="@dimen/_35sdp">
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/commisionTv_driver1"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/commisionTv_driver2"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/commisionTv_driver3"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_404040"
+                    app:fontName="open_sans_regular.ttf" />
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/statsTypeTv_comission"
+                    android:layout_width="0dp"
+                    android:layout_weight="1.8"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="کمیشن"
+                    android:background="@color/blue_0194be"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_light"
+                android:focusableInTouchMode="true" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp">
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/bookingTv_driver1"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/bookingTv_driver2"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/bookingTv_driver3"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_404040"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/statsTypeTv_booking"
+                    android:layout_width="0dp"
+                    android:layout_weight="1.8"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="بکنگز"
+                    android:background="@color/blue_0194be"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_light"
+                android:focusableInTouchMode="true" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp">
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/insuranceTv_driver1"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/insuranceTv_driver2"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black_404040"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/insuranceTv_driver3"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_404040"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@color/divider_light"
+                    android:focusableInTouchMode="true" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/statsTypeTv_insurance"
+                    android:layout_width="0dp"
+                    android:layout_weight="1.8"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="انشورنس"
+                    android:background="@color/blue_0194be"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_light"
+                android:focusableInTouchMode="true" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -271,25 +515,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/color_c8c8c8"/>
-
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_16sdp"
                 android:gravity="right"
-                android:lineSpacingExtra="@dimen/_20sdp"
+                android:lineSpacingExtra="@dimen/_8sdp"
                 android:layout_gravity="center"
                 android:text="@string/ranking_footer_text"
-                android:textSize="@dimen/_9sdp"
+                android:textSize="@dimen/_12sdp"
                 android:textColor="@color/black_414141"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
         </LinearLayout>
+
+
 
 
     </ScrollView>

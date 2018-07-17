@@ -10,12 +10,15 @@ import com.bykea.pk.partner.R;
 
 public class FontTextView extends TextView {
 
+    AttributeSet attributeSet;
+
     public FontTextView(Context context) {
         super(context);
     }
 
     public FontTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.attributeSet = attrs;
         applyAttributes(context, attrs);
     }
 
@@ -28,6 +31,16 @@ public class FontTextView extends TextView {
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.FontTextView);
         String fontName = Fonts.values()[a.getInt(R.styleable.FontTextView_fontName, 0)].getName();
+        a.recycle();
+        if (!isInEditMode() && !TextUtils.isEmpty(fontName)) {
+            setTypeface(FontUtils.getFonts(getContext(), fontName));
+        }
+    }
+
+    public void setAttr(Context context, String fontNames){
+        TypedArray a = context.obtainStyledAttributes(attributeSet,
+                R.styleable.FontTextView);
+        String fontName = fontNames;
         a.recycle();
         if (!isInEditMode() && !TextUtils.isEmpty(fontName)) {
             setTypeface(FontUtils.getFonts(getContext(), fontName));

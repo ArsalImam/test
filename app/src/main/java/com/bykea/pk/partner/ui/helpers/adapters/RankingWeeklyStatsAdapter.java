@@ -8,15 +8,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.RankingWeeklyStatsModel;
+import com.bykea.pk.partner.models.data.HaftaBookingBonusModel;
 
 import java.util.List;
 
 public class RankingWeeklyStatsAdapter extends RecyclerView.Adapter<RankingWeeklyStatsAdapter.ViewHolder> {
 
-    List<RankingWeeklyStatsModel> list;
+    List<HaftaBookingBonusModel> list;
 
-    public RankingWeeklyStatsAdapter(List<RankingWeeklyStatsModel> list) {
+    public RankingWeeklyStatsAdapter(List<HaftaBookingBonusModel> list) {
         this.list = list;
     }
 
@@ -33,7 +33,7 @@ public class RankingWeeklyStatsAdapter extends RecyclerView.Adapter<RankingWeekl
         if (list == null || list.size()==0) return;
 
         holder.bonusTv.setText(list.get(position).getBonus());
-        holder.bookingTv.setText(list.get(position).getBookingCount());
+        holder.bookingTv.setText(list.get(position).getBooking());
     }
 
     @Override

@@ -10,8 +10,10 @@
     android:paddingTop="@dimen/_20sdp">
 
     <com.bykea.pk.partner.widgets.FontTextView
+        android:paddingRight="@dimen/_8sdp"
+        android:layout_toLeftOf="@+id/directionBtn"
         android:id="@+id/addressTv"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="21 Street, Block 5"
         android:textColor="@color/dark_gray"

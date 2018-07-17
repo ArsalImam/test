@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -19,20 +20,25 @@ import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -358,6 +364,36 @@ public class RestRequestHandler {
         requestCall.enqueue(new Callback<UploadAudioFile>() {
             @Override
             public void onResponse(Response<UploadAudioFile> response, Retrofit retrofit) {
+                Utils.deleteFile(file);
+                if (null == response.body()) {
+                    mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
+                } else if (response.body().getCode() == HTTPStatus.OK ||
+                        response.body().getCode() == HTTPStatus.CREATED) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(),
+                            response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Utils.deleteFile(file);
+                mResponseCallBack.onError(0, getErrorMessage(t));
+            }
+        });
+
+    }
+
+    //THIS METHOD IS TO UPLOAD IMAGE FILE
+    public void uploadImageFile(Context context, IResponseCallback responseCallBack, final File file) {
+        mContext = context;
+        mResponseCallBack = responseCallBack;
+        mRestClient = RestClient.getClient(mContext);
+        Call<UploadImageFile> requestCall = mRestClient.uploadImageFile(Utils.convertFileToRequestBody(file));
+        requestCall.enqueue(new Callback<UploadImageFile>() {
+            @Override
+            public void onResponse(Response<UploadImageFile> response, Retrofit retrofit) {
                 Utils.deleteFile(file);
                 if (null == response.body()) {
                     mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
@@ -873,6 +909,37 @@ public class RestRequestHandler {
         mRestClient = RestClient.getClient(mContext);
         Call<GetZonesResponse> restCall = mRestClient.requestZones(AppPreferences.getLatitude() + "", AppPreferences.getLongitude() + "");
         restCall.enqueue(new GenericRetrofitCallBack<GetZonesResponse>(onResponseCallBack));
+    }
+
+    public void requestShahkar(Context context, IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<ShahkarResponse> restCall = mRestClient.requestShahkar(AppPreferences.getDriverId(), AppPreferences.getAccessToken());
+        restCall.enqueue(new GenericRetrofitCallBack<ShahkarResponse>(onResponseCallBack));
+    }
+
+    public void requestBonusChart(Context context, IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<RankingResponse> restCall = mRestClient.requestBonusStats(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
+                AppPreferences.getPilotData().getCity().get_id());
+        restCall.enqueue(new GenericRetrofitCallBack<RankingResponse>(onResponseCallBack));
+    }
+
+    public void requestPerformanceData(Context context, IResponseCallback onResponseCallBack, int weekStatus) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<DriverPerformanceResponse> restCall = mRestClient.requestDriverPerformance(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
+                weekStatus);
+        restCall.enqueue(new GenericRetrofitCallBack<DriverPerformanceResponse>(onResponseCallBack));
+    }
+
+    public void requestLoadBoard(Context context, IResponseCallback onResponseCallBack, String lat, String lng) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<LoadBoardResponse> restCall = mRestClient.requestLoadBoard(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
+                lat, lng);
+        restCall.enqueue(new GenericRetrofitCallBack<LoadBoardResponse>(onResponseCallBack));
     }
 
     public void requestZoneAreas(Context context, ZoneData zone, IResponseCallback onResponseCallBack) {

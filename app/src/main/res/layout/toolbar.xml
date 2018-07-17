@@ -122,7 +122,7 @@
                     android:id="@+id/tvTitleUrdu"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/_6sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
                     android:gravity="center"
                     android:maxLines="2"
                     android:maxWidth="@dimen/_220sdp"
@@ -150,6 +150,7 @@
             android:textColor="@color/Color_DarkRed"
             android:textSize="@dimen/_20sdp"
             android:visibility="gone"
+            android:clickable="true"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
 

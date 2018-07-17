@@ -7,6 +7,7 @@ import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.PilotData;
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -32,6 +33,7 @@ import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -44,6 +46,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -55,6 +58,7 @@ import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
@@ -64,6 +68,7 @@ import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
 import com.bykea.pk.partner.models.response.UploadDocumentFile;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
@@ -163,6 +168,15 @@ public class UserRepository {
             mContext = context;
             mUserCallback = handler;
             mRestRequestHandler.uploadAudioFile(mContext, mDataCallback, file);
+        }
+
+    }
+
+    public void uploadImageFile(Context context, IUserDataHandler handler, File file) {
+        if (Connectivity.isConnectedFast(context)) {
+            mContext = context;
+            mUserCallback = handler;
+            mRestRequestHandler.uploadImageFile(mContext, mDataCallback, file);
         }
 
     }
@@ -882,6 +896,30 @@ public class UserRepository {
         mRestRequestHandler.requestZones(context, mDataCallback);
     }
 
+    public void requestShahkar(Context context, UserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestShahkar(context, mDataCallback);
+    }
+
+    public void requestBonusChart(Context context, UserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestBonusChart(context, mDataCallback);
+    }
+
+    public void requestDriverPerformance(Context context, UserDataHandler handler, int weekStatus) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestPerformanceData(context, mDataCallback, weekStatus);
+    }
+
+    public void requestLoadBoard(Context context, UserDataHandler handler, String lat, String lng) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestLoadBoard(context, mDataCallback, lat, lng);
+    }
+
 
     public void requestZoneAreas(Context context, ZoneData zone, UserDataHandler handler) {
         mContext = context;
@@ -1005,6 +1043,9 @@ public class UserRepository {
                         break;
                     case "UploadAudioFile":
                         mUserCallback.onUploadAudioFile((UploadAudioFile) object);
+                        break;
+                    case "UploadImageFile":
+                        mUserCallback.onUploadImageFile((UploadImageFile) object);
                         break;
                     case "UploadDocumentFile":
                         mUserCallback.onUploadFile((UploadDocumentFile) object);
@@ -1137,9 +1178,22 @@ public class UserRepository {
                     case "BiometricApiResponse":
                         mUserCallback.onBiometricApiResponse((BiometricApiResponse) object);
                         break;
+                    case "ShahkarResponse":
+                        mUserCallback.onShahkarResponse((ShahkarResponse) object);
+                        break;
+                    case "RankingResponse":
+                        mUserCallback.onBonusChartResponse((RankingResponse) object);
+                        break;
+                    case "DriverPerformanceResponse":
+                        mUserCallback.onDriverPerformanceResponse((DriverPerformanceResponse) object);
+                        break;
+                    case "LoadBoardResponse":
+                        mUserCallback.onLoadBoardResponse((LoadBoardResponse) object);
+                        break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);
                         break;
+
                 }
             } else {
                 Utils.redLog("UserRepo", "mUserCallback is Null");
