@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
@@ -11,7 +10,6 @@ import com.bykea.pk.partner.models.data.Ranking;
 import com.bykea.pk.partner.models.data.RankingPosition;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.WeeklyBonus;
-import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -24,8 +22,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.bykea.pk.partner.utils.Utils.newLLM;
 
 public class RankingActivity extends BaseActivity {
 
@@ -71,13 +67,15 @@ public class RankingActivity extends BaseActivity {
     TextView insuranceTv_driver3;
 
     @BindView(R.id.rankingTv1)
-    TextView ranking_goldTv;
+    TextView ranking_bronzeTv;
 
     @BindView(R.id.rankingTv2)
     TextView ranking_silverTv;
 
     @BindView(R.id.rankingTv3)
-    TextView ranking_plateniumTv;
+    TextView ranking_goldTv;
+
+    //ranking_goldTv
 
 
 
@@ -133,6 +131,18 @@ public class RankingActivity extends BaseActivity {
                     switch (ranking.getRank()) {
                         case "1": {
 
+                            priceTv_driver3.setText(ranking.getCredit());
+                            commisionTv_driver3.setText(ranking.getComision());
+                            bookingTv_driver3.setText(ranking.getBooking());
+                            insuranceTv_driver3.setText(ranking.getInsurance());
+
+
+
+                            break;
+                        }
+
+                        case "2": {
+
                             priceTv_driver2.setText(ranking.getCredit());
                             commisionTv_driver2.setText(ranking.getComision());
                             bookingTv_driver2.setText(ranking.getBooking());
@@ -141,19 +151,11 @@ public class RankingActivity extends BaseActivity {
                             break;
                         }
 
-                        case "2": {
+                        case "3": {
                             priceTv_driver1.setText(ranking.getCredit());
                             commisionTv_driver1.setText(ranking.getComision());
                             bookingTv_driver1.setText(ranking.getBooking());
                             insuranceTv_driver1.setText(ranking.getInsurance());
-                            break;
-                        }
-
-                        case "3": {
-                            priceTv_driver3.setText(ranking.getCredit());
-                            commisionTv_driver3.setText(ranking.getComision());
-                            bookingTv_driver3.setText(ranking.getBooking());
-                            insuranceTv_driver3.setText(ranking.getInsurance());
                             break;
                         }
 
@@ -167,17 +169,17 @@ public class RankingActivity extends BaseActivity {
 
 
                         case "Gold":{
-                            ranking_goldTv.setText(rankingPosition.getScore());
-                            break;
-                        }
-
-                        case "Silver":{
                             ranking_silverTv.setText(rankingPosition.getScore());
                             break;
                         }
 
+                        case "Silver":{
+                            ranking_bronzeTv.setText(rankingPosition.getScore());
+                            break;
+                        }
+
                         case "Platinum":{
-                            ranking_plateniumTv.setText(rankingPosition.getScore());
+                            ranking_goldTv.setText(rankingPosition.getScore());
                             break;
                         }
                     }
@@ -246,7 +248,7 @@ public class RankingActivity extends BaseActivity {
         insuranceTv_driver3 = null;
 
         ranking_goldTv = null;
-        ranking_plateniumTv = null;
+        ranking_bronzeTv = null;
         ranking_silverTv = null;
 
         mRepository = null;

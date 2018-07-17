@@ -173,7 +173,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_4sdp"
                         android:layout_toRightOf="@+id/walletImg"
-                        android:text="Rs. 10,255"
+                        android:text="Rs 10,255"
                         android:textSize="@dimen/_14sdp"
                         android:textColor="@color/grey_hex_51"
                         app:fontName="open_sans_semi_bold.ttf" />
