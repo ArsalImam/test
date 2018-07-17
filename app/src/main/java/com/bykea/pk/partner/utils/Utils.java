@@ -2,6 +2,7 @@ package com.bykea.pk.partner.utils;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -74,6 +75,7 @@ import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
+import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -1080,21 +1082,15 @@ public class Utils {
         return isMock;
     }
 
+
     public static void phoneCall(Activity activity, String phone) {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CALL_PHONE}, 1);
-            return;
+        if (activity != null && !Permissions.hasCallPermissions(activity)) {
+            Permissions.getCallPermission(activity);
+        }else {
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+            activity.startActivity(intent);
         }
 
-        activity.startActivity(intent);
     }
 
     public static boolean areThereMockPermissionApps(Context context) {
@@ -1560,11 +1556,13 @@ public class Utils {
     }
 
     public static boolean isSkipDropOff(NormalCallData callData) {
-        if (callData.getEstimatedDistance() == 0.0){
-            return true;
+        if (StringUtils.isNotBlank(callData.getEndAddress())){
+            return false;
         }
-        return false;
+        return true;
     }
+
+
 
 
     public static class AudioTime implements Serializable {

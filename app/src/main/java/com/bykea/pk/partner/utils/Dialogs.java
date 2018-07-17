@@ -360,7 +360,7 @@ public enum Dialogs {
             System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
 
             //int i = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
-            calendar.add(Calendar.DATE, -7);
+            calendar.add(Calendar.DATE, -14);
 
 
             // Print dates of the current week starting on Sunday
@@ -388,6 +388,10 @@ public enum Dialogs {
             // Set the calendar to sunday of the current week
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
             System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
+
+            //int i = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
+            calendar.add(Calendar.DATE, -7);
+
 
             // Print dates of the current week starting on Sunday
             DateFormat df = new SimpleDateFormat("d MMM");

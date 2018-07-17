@@ -436,15 +436,7 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + "%");
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                try {
-                    String balance = Integer.valueOf(response.getData().getTotalBalance()) < 0 ? "0":
-                            response.getData().getTotalBalance();
-
-                    totalBalanceTv.setText("Rs. " +balance);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-
+                totalBalanceTv.setText("Rs. " +response.getData().getTotalBalance());
                 totalScoreTv.setText("سکور " + response.getData().getTotalRating());
 
             }

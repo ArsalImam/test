@@ -509,7 +509,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                                 if (response.getData() != null) {
                                                     callData.setPassWallet(response.getData().getAmount());
                                                     AppPreferences.setCallData(callData);
-                                                    tvPWalletAmount.setText("Rs. " + callData.getPassWallet());
+                                                    tvPWalletAmount.setText("Rs " + callData.getPassWallet());
                                                 }
                                             }
                                         });
@@ -863,7 +863,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showWalletAmount() {
-        tvPWalletAmount.setText("Rs. " + callData.getPassWallet());
+        tvPWalletAmount.setText("Rs " + callData.getPassWallet());
         if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
                 && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
             ivTopUp.setVisibility(View.VISIBLE);
@@ -872,7 +872,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
             llTopRight.setVisibility(View.VISIBLE);
-            tvCodAmount.setText("Rs. " + callData.getCodAmount());
+            tvCodAmount.setText("Rs " + callData.getCodAmount());
             if (Utils.isPurchaseService(callData.getCallType())) {
                 tvCashWasooliLabel.setText("خریداری کی رقم");
             }
