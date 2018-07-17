@@ -341,15 +341,12 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
 //                Dialogs.INSTANCE.dismissDialog();
-                if (isBiometricVerRequired) {
-                    nextActivity();
-                } else {
+
                     ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
                     if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
                         DocumentsGridAdapter.getInstance().resetTheInstance();
                     }
                     mCurrentActivity.finish();
-                }
             }
         });
     }

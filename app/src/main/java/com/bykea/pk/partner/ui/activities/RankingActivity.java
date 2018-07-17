@@ -133,27 +133,33 @@ public class RankingActivity extends BaseActivity {
                     switch (ranking.getRank()) {
                         case "1": {
 
-                            priceTv_driver2.setText(ranking.getCredit());
-                            commisionTv_driver2.setText(ranking.getComision());
-                            bookingTv_driver2.setText(ranking.getBooking());
-                            insuranceTv_driver2.setText(ranking.getInsurance());
+                            priceTv_driver3.setText(ranking.getCredit());
+                            commisionTv_driver3.setText(ranking.getComision());
+                            bookingTv_driver3.setText(ranking.getBooking());
+                            insuranceTv_driver3.setText(ranking.getInsurance());
+
+
 
                             break;
                         }
 
                         case "2": {
+
                             priceTv_driver1.setText(ranking.getCredit());
                             commisionTv_driver1.setText(ranking.getComision());
                             bookingTv_driver1.setText(ranking.getBooking());
                             insuranceTv_driver1.setText(ranking.getInsurance());
+
                             break;
                         }
 
                         case "3": {
-                            priceTv_driver3.setText(ranking.getCredit());
-                            commisionTv_driver3.setText(ranking.getComision());
-                            bookingTv_driver3.setText(ranking.getBooking());
-                            insuranceTv_driver3.setText(ranking.getInsurance());
+
+                            priceTv_driver2.setText(ranking.getCredit());
+                            commisionTv_driver2.setText(ranking.getComision());
+                            bookingTv_driver2.setText(ranking.getBooking());
+                            insuranceTv_driver2.setText(ranking.getInsurance());
+
                             break;
                         }
 

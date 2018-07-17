@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.models.response;
 
-import com.dft.onyxcamera.licensing.License;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
