@@ -520,18 +520,27 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_16sdp"
                 android:gravity="right"
-                android:lineSpacingExtra="@dimen/_8sdp"
                 android:layout_gravity="center"
                 android:text="@string/ranking_footer_text"
                 android:textSize="@dimen/_12sdp"
                 android:textColor="@color/black_414141"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_16sdp"
+                android:layout_marginRight="@dimen/_16sdp"
+                android:gravity="right"
+                android:lineSpacingExtra="@dimen/_8sdp"
+                android:layout_gravity="center"
+                android:text="@string/ranking_footer_text2"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black_414141"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
         </LinearLayout>
-
-
-
 
     </ScrollView>
 

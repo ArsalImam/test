@@ -453,7 +453,7 @@ public class CallingActivity extends BaseActivity {
                    String.valueOf(callData.getCashKiWasooli());
            cashKiWasooliTv.setText(cashKiWasoliValue);
            customerRatingTv.setText(callData.getRating());
-           if (Utils.isSkipDropOff(callData) && Utils.isRideService(callData.getCallType())){
+           if (Utils.isSkipDropOff(callData)){
                estimatedDistanceTv.setText("?");
                destinationTv.setText("منتخب نہیں کی گئی");
                cashKiWasooliLayout.setVisibility(View.GONE);

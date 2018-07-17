@@ -254,7 +254,7 @@ public class HomeFragmentTesting extends Fragment {
                         .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                         .replace(R.id.containerView, fragment)
                         .commit();
-                HomeActivity.visibleFragmentNumber = 8;
+                HomeActivity.visibleFragmentNumber = 7;
                 return;
             }
 
@@ -403,7 +403,7 @@ public class HomeFragmentTesting extends Fragment {
     private void getDriverPerformanceData() {
         try{
             DriverPerformanceResponse response = (DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class);
-            if (response.getData() != null){
+            if (response != null && response.getData() != null){
                 onApiResponse(response);
             }else {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -436,7 +436,7 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + "%");
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                totalBalanceTv.setText("Rs. " +response.getData().getTotalBalance());
+                totalBalanceTv.setText("Rs " +response.getData().getTotalBalance());
                 totalScoreTv.setText("سکور " + response.getData().getTotalRating());
 
             }

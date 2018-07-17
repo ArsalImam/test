@@ -137,13 +137,8 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                         updateCurrentFragment(new ContactUsFragment(), 6);
                     }
                     break;
-                case 7://this case is for logout footer part click.
-                    if (HomeActivity.visibleFragmentNumber != 7) {
-                        updateCurrentFragment(new HomeFragment(), 7);
-                    }
-                    break;
 
-                case 8://this case is for logout footer part click.
+                case 7://this case is for logout footer part click.
                     Dialogs.INSTANCE.showLogoutDialog(context, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
