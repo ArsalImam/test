@@ -249,6 +249,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:weightSum="4.2"
         android:id="@+id/driverStatsLayout"
         android:visibility="visible"
         android:layout_width="match_parent"
@@ -538,6 +539,11 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"/>
 
 
     </LinearLayout>
