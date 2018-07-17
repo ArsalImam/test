@@ -208,6 +208,8 @@ public class HomeFragmentTesting extends Fragment {
     @BindView(R.id.totalBalanceTv)
     FontTextView totalBalanceTv;
 
+    public static int WEEK_STATUS = 0;
+
 
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
@@ -407,7 +409,7 @@ public class HomeFragmentTesting extends Fragment {
                 onApiResponse(response);
             }else {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                repository.requestDriverPerformance(mCurrentActivity, handler, 0);
+                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -437,7 +439,12 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
                 totalBalanceTv.setText("Rs " +response.getData().getTotalBalance());
-                totalScoreTv.setText("سکور " + response.getData().getTotalRating());
+                if (WEEK_STATUS == 0){
+                    totalScoreTv.setText("-");
+                }else {
+                    totalScoreTv.setText("سکور " + response.getData().getTotalRating());
+                }
+
 
             }
 
@@ -1038,7 +1045,8 @@ public class HomeFragmentTesting extends Fragment {
                 Dialogs.INSTANCE.setlastWeek(durationTv);
                 durationBtn.setVisibility(View.VISIBLE);
                 previusDurationBtn.setVisibility(View.GONE);
-                repository.requestDriverPerformance(mCurrentActivity, handler, -1);
+                WEEK_STATUS = -1;
+                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 break;
             }
 
@@ -1051,7 +1059,8 @@ public class HomeFragmentTesting extends Fragment {
                 Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
                 durationBtn.setVisibility(View.GONE);
                 previusDurationBtn.setVisibility(View.VISIBLE);
-                repository.requestDriverPerformance(mCurrentActivity, handler, 0);
+                WEEK_STATUS = 0;
+                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 break;
             }
 
