@@ -34,6 +34,10 @@ public class DriverPerformanceData {
     @SerializedName("cnPerc")
     private int cancelPercentage;
 
+    @SerializedName("score")
+    String score;
+
+
     public int getDriverBooking() {
         return driverBooking;
     }
@@ -112,5 +116,13 @@ public class DriverPerformanceData {
 
     public void setCancelPercentage(int cancelPercentage) {
         this.cancelPercentage = cancelPercentage;
+    }
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
     }
 }

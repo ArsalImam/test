@@ -451,13 +451,13 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
                 totalBalanceTv.setText("Rs " +response.getData().getTotalBalance());
-                if (WEEK_STATUS == 0){
-                    totalScoreTv.setText("-");
-                }else {
-                    totalScoreTv.setText("سکور " + response.getData().getTotalRating());
+                if (response.getData().getScore() != null){
+                    if (response.getData().getScore().contains("-")){
+                        totalScoreTv.setText(response.getData().getScore());
+                    }else {
+                        totalScoreTv.setText("سکور " + response.getData().getScore());
+                    }
                 }
-
-
 
 
             }

@@ -48,6 +48,15 @@
             app:layout_constraintVertical_bias="0.869"
             app:srcCompat="@drawable/avatar_ranking2" />
 
+        <android.support.v4.widget.Space
+            android:id="@+id/marginSpacer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/rankingImg1"
+            app:layout_constraintLeft_toLeftOf="@id/rankingImg1"
+            app:layout_constraintRight_toRightOf="@id/rankingImg1" />
+
         <TextView
             android:id="@+id/rankingTv1"
             android:layout_width="@dimen/_50sdp"
@@ -60,11 +69,9 @@
             android:background="@drawable/ranking_bg"
             android:gravity="center"
             android:text="5"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/marginSpacer"
             app:layout_constraintEnd_toEndOf="@+id/rankingImg1"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/rankingImg1"
-            app:layout_constraintTop_toTopOf="@+id/rankingImg1"
             app:layout_constraintVertical_bias="0.937" />
 
         <ImageView
@@ -78,6 +85,15 @@
             app:layout_constraintVertical_bias="0.495"
             app:srcCompat="@drawable/avatar_ranking1" />
 
+        <android.support.v4.widget.Space
+            android:id="@+id/marginSpacer1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/rankingImg2"
+            app:layout_constraintLeft_toLeftOf="@id/rankingImg2"
+            app:layout_constraintRight_toRightOf="@id/rankingImg2" />
+
         <TextView
             android:id="@+id/rankingTv2"
             android:layout_width="@dimen/_50sdp"
@@ -86,11 +102,10 @@
             android:background="@drawable/ranking_bg"
             android:gravity="center"
             android:text="5"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/marginSpacer1"
             app:layout_constraintEnd_toEndOf="@+id/rankingImg2"
             app:layout_constraintHorizontal_bias="0.45"
             app:layout_constraintStart_toStartOf="@+id/rankingImg2"
-            app:layout_constraintTop_toTopOf="@+id/rankingImg2"
             app:layout_constraintVertical_bias="0.691" />
 
         <ImageView
@@ -105,6 +120,16 @@
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/avatar_ranking3" />
 
+        <android.support.v4.widget.Space
+            android:id="@+id/marginSpacer2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/rankingImg3"
+            app:layout_constraintLeft_toLeftOf="@id/rankingImg3"
+            app:layout_constraintRight_toRightOf="@id/rankingImg3" />
+
+
         <TextView
             android:id="@+id/rankingTv3"
             android:layout_width="@dimen/_50sdp"
@@ -113,14 +138,13 @@
             android:background="@drawable/ranking_bg"
             android:gravity="center"
             android:text="5"
-            app:layout_constraintBottom_toBottomOf="@+id/flyingArrowImg"
+            app:layout_constraintTop_toBottomOf="@+id/marginSpacer2"
             app:layout_constraintEnd_toEndOf="@+id/rankingImg3"
             app:layout_constraintStart_toStartOf="@+id/rankingImg3"
-            app:layout_constraintTop_toTopOf="@+id/rankingImg3"
             app:layout_constraintVertical_bias="0.484" />
     </android.support.constraint.ConstraintLayout>
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3">
@@ -511,7 +535,7 @@
             </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/stats_weekly_rv"
+                android:id="@+id/stats_weekly_lv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -542,7 +566,7 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 
 </LinearLayout>

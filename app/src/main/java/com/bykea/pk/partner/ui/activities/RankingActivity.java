@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
@@ -27,8 +28,8 @@ public class RankingActivity extends BaseActivity {
 
     private RankingActivity mCurrentActivity;
 
-    @BindView(R.id.stats_weekly_rv)
-    RecyclerView mRecyclerView;
+    @BindView(R.id.stats_weekly_lv)
+    RecyclerView lv;
 
     @BindView(R.id.priceTv_driver1)
     TextView priceTv_driver1;
@@ -197,15 +198,15 @@ public class RankingActivity extends BaseActivity {
 
     private void setupRecyclerview() {
 
-        mRecyclerView.setHasFixedSize(true);
+        lv.setHasFixedSize(true);
 
 
-        mRecyclerView.setLayoutManager(Utils.newLLM(mCurrentActivity));
+        lv.setLayoutManager(Utils.newLLM(mCurrentActivity));
 
         listHaftaBonusBooking = new ArrayList<>();
 
         adapter = new RankingWeeklyStatsAdapter(listHaftaBonusBooking);
-        mRecyclerView.setAdapter(adapter);
+        lv.setAdapter(adapter);
     }
 
 
@@ -231,7 +232,7 @@ public class RankingActivity extends BaseActivity {
         super.onDestroy();
         mCurrentActivity = null;
         listHaftaBonusBooking = null;
-        mRecyclerView = null;
+        lv = null;
 
         priceTv_driver1 = null;
         commisionTv_driver1 = null;
