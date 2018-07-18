@@ -437,10 +437,6 @@ public class BaseActivity extends AppCompatActivity {
         demandBtn.setVisibility(View.GONE);
     }
 
-    public void showMissed(){
-        rightIv.setVisibility(View.VISIBLE);
-    }
-
     public void hideToolbarBackNav() {
         getToolbar().setNavigationIcon(null);
         getToolbar().setNavigationOnClickListener(null);
