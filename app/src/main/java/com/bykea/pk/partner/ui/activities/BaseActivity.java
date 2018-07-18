@@ -437,6 +437,10 @@ public class BaseActivity extends AppCompatActivity {
         demandBtn.setVisibility(View.GONE);
     }
 
+    public void showMissed(){
+        rightIv.setVisibility(View.VISIBLE);
+    }
+
     public void hideToolbarBackNav() {
         getToolbar().setNavigationIcon(null);
         getToolbar().setNavigationOnClickListener(null);
@@ -478,6 +482,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public void showMissedCallIcon(final View.OnClickListener onClick) {
         if (null != rightIv) {
+            mCurrentActivity.findViewById(R.id.statusLayout).setVisibility(View.VISIBLE);
             rightIv.setVisibility(View.VISIBLE);
             rightIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.miss_call_icon));
             rightIv.setPadding(5, 5, 5, 5);

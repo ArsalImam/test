@@ -12,17 +12,16 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
+            android:gravity="center"
             android:layout_marginBottom="@dimen/_4sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <com.bykea.pk.partner.widgets.FontTextView
-                android:layout_centerInParent="true"
                 android:id="@+id/achaconnectionTv1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_gravity="center"
                 android:text="اچھا کنکشن"
                 android:textColor="@color/color_cc1311"
                 android:textSize="@dimen/_18sdp"
