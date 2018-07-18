@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
 import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
@@ -21,6 +22,7 @@ import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
@@ -33,6 +35,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -323,6 +326,21 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onShahkarResponse(ShahkarResponse response) {
+
+    }
+
+    @Override
+    public void onBonusChartResponse(RankingResponse response) {
+
+    }
+
+    @Override
+    public void onDriverPerformanceResponse(DriverPerformanceResponse response) {
+
+    }
+
+    @Override
+    public void onLoadBoardResponse(LoadBoardResponse response) {
 
     }
 

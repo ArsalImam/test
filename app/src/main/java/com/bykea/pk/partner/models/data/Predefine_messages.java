@@ -8,6 +8,7 @@ public class Predefine_messages {
 
     private String[] reasons;
     private String[] contact_reason;
+    private String[] contact_reason_finance;
 
     public ArrayList<String> getCancel() {
         return cancel;
@@ -31,5 +32,13 @@ public class Predefine_messages {
 
     public void setContact_reason(String[] contact_reason) {
         this.contact_reason = contact_reason;
+    }
+
+    public String[] getContact_reason_finance() {
+        return contact_reason_finance;
+    }
+
+    public void setContact_reason_finance(String[] contact_reason_finance) {
+        this.contact_reason_finance = contact_reason_finance;
     }
 }

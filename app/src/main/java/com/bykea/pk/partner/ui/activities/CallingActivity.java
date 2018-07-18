@@ -7,8 +7,10 @@ import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.bykea.pk.partner.DriverApp;
@@ -66,6 +68,41 @@ public class CallingActivity extends BaseActivity {
 
     @BindView(R.id.kharidariPriceLayout)
     RelativeLayout kharidariPriceLayout;
+
+    @BindView(R.id.cashKiWasooliLayout)
+    RelativeLayout cashKiWasooliLayout;
+
+    @BindView(R.id.kraiKiKamaiLayout)
+    RelativeLayout kraiKiKamaiLayout;
+
+    @BindView(R.id.cashKiWasooliTv)
+    FontTextView cashKiWasooliTv;
+
+    @BindView(R.id.kraiKiKamaiTv)
+    FontTextView kraiKiKamaiTv;
+
+    @BindView(R.id.destinationTv)
+    FontTextView destinationTv;
+
+    @BindView(R.id.estimatedDistanceTv)
+    FontTextView estimatedDistanceTv;
+
+    @BindView(R.id.kharidariKiRaqamTv)
+    FontTextView kharidariKiRaqamTv;
+
+    @BindView(R.id.distanceAwayTv)
+    FontTextView distanceAwayTv;
+
+    @BindView(R.id.customerRatingTv)
+    FontTextView customerRatingTv;
+
+    @BindView(R.id.estimatedDistanceUnitTv)
+    FontTextView estimatedDistaneUnitTv;
+
+    @BindView(R.id.circle_distance_layout)
+    LinearLayout circle_distance_layout;
+
+
 
     private UserRepository repository;
     private MediaPlayer _mpSound;
@@ -388,21 +425,6 @@ public class CallingActivity extends BaseActivity {
 //        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
 
-        if (Utils.isPurchaseService(callData.getCallType())) {
-            kharidariPriceLayout.setVisibility(View.VISIBLE);
-
-        }
-
-        if (Utils.isRideService(callData.getCallType())){
-            kharidariPriceLayout.setVisibility(View.GONE);
-        }
-
-        if (Utils.isDeliveryService(callData.getCallType())){
-            kharidariPriceLayout.setVisibility(View.GONE);
-
-        }
-
-
         String icon = Utils.getServiceIcon(callData.getCallType());
         if (StringUtils.isNotBlank(icon)) {
             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
@@ -424,6 +446,50 @@ public class CallingActivity extends BaseActivity {
         } else {
             ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
         }
+
+       try{
+           kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
+           String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
+                   String.valueOf(callData.getCashKiWasooli());
+           cashKiWasooliTv.setText(cashKiWasoliValue);
+           customerRatingTv.setText(callData.getRating());
+           if (Utils.isSkipDropOff(callData)){
+               estimatedDistanceTv.setText("?");
+               destinationTv.setText("منتخب نہیں کی گئی");
+               cashKiWasooliLayout.setVisibility(View.GONE);
+               kraiKiKamaiLayout.setVisibility(View.GONE);
+               kharidariPriceLayout.setVisibility(View.GONE);
+               destinationTv.setAttr(mCurrentActivity, "jameel_noori_nastaleeq.ttf");
+               destinationTv.setGravity(Gravity.CENTER);
+               circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.rating_circle_call));
+               estimatedDistaneUnitTv.setVisibility(View.GONE);
+
+           }else {
+               cashKiWasooliLayout.setVisibility(View.VISIBLE);
+               kraiKiKamaiLayout.setVisibility(View.VISIBLE);
+               circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.distance_green_circle_call));
+               estimatedDistaneUnitTv.setVisibility(View.VISIBLE);
+               estimatedDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
+               destinationTv.setText(callData.getEndAddress());
+               distanceAwayTv.setText(callData.getDistance());
+           }
+
+           if (Utils.isPurchaseService(callData.getCallType())) {
+               kharidariPriceLayout.setVisibility(View.VISIBLE);
+               kharidariKiRaqamTv.setText(callData.getCodAmount());
+           }
+
+           if (Utils.isRideService(callData.getCallType())){
+               kharidariPriceLayout.setVisibility(View.GONE);
+           }
+
+           if (Utils.isDeliveryService(callData.getCallType())){
+               kharidariPriceLayout.setVisibility(View.GONE);
+
+           }
+       }catch (Exception e){
+            e.printStackTrace();
+       }
     }
 
 

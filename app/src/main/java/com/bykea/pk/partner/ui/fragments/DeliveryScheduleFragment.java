@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.fragments;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +16,23 @@ import android.view.WindowManager;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DileveryScheduleModel;
+import com.bykea.pk.partner.models.data.RankingResponse;
+import com.bykea.pk.partner.models.response.LoadBoardBody;
+import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.DeliveryScheduleAdapter;
+import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +45,9 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
 
     @BindView(R.id.deliverySchedulerv)
     RecyclerView mRecyclerVeiw;
+    private UserRepository mRepository;
+    private ArrayList<DileveryScheduleModel> list;
+    private DeliveryScheduleAdapter adapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -51,6 +65,8 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         super.onViewCreated(view, savedInstanceState);
 
         mCurrentActivity = ((HomeActivity) getActivity());
+
+        mRepository = new UserRepository();
 
         mCurrentActivity.hideStatusCompletely();
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
@@ -72,19 +88,34 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(mCurrentActivity);
         mRecyclerVeiw.setLayoutManager(mLayoutManager);
 
-        populateList();
+
+
+        setupRecyclerview();
+
+        getLoadBoardData();
 
 
     }
 
-    private void populateList() {
-        List<DileveryScheduleModel> list = new ArrayList<>();
+    private void getLoadBoardData() {
+        try{
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                mRepository.requestLoadBoard(mCurrentActivity, mCallBack, String.valueOf(AppPreferences.getLatitude()),
+                        String.valueOf(AppPreferences.getLongitude()));
 
-        list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
-        list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
-        list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
-        DeliveryScheduleAdapter adapter = new DeliveryScheduleAdapter(list);
+    private void setupRecyclerview() {
+        list = new ArrayList<>();
+
+        /*list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
+        list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
+        list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));*/
+
+        adapter = new DeliveryScheduleAdapter(list);
         adapter.setOnClickListener(this);
         mRecyclerVeiw.setAdapter(adapter);
 
@@ -99,7 +130,7 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
 
     @Override
     public void directionClick(int pos) {
-        ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity);
+        ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity, pos);
     }
 
     @Override
@@ -111,5 +142,55 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
     public void confirmClick(int pos) {
 
     }
+
+    private UserDataHandler mCallBack = new UserDataHandler() {
+
+        @Override
+        public void onLoadBoardResponse(LoadBoardResponse response) {
+            onApiResponse(response);
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            if (mCurrentActivity != null) {
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }
+    };
+
+    private void onApiResponse(LoadBoardResponse response) {
+
+        try{
+            AppPreferences.setObjectToSharedPref(response);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+            for (LoadBoardBody loadBoardBody: response.getLoadBoardBody()){
+                Date date = (Date)simpleDateFormat.parse(loadBoardBody.getDateTime());
+
+
+                String timeDuration = DateUtils.getRelativeTimeSpanString(
+                        date.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+
+                double distance = Double.valueOf(Double.valueOf(loadBoardBody.getDistance())/1000);
+
+                String address = Utils.getLocationAddress(loadBoardBody.getLatlng().get(0),
+                        loadBoardBody.getLatlng().get(1), mCurrentActivity);
+
+
+                list.add(new DileveryScheduleModel(Utils.formatAddress(address), timeDuration, String.format("%.1f",distance) + " km"));
+            }
+
+            adapter.notifyDataSetChanged();
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        Dialogs.INSTANCE.dismissDialog();
+
+    }
+
 
 }

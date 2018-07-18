@@ -1,6 +1,8 @@
 package com.bykea.pk.partner.utils;
 
+import android.Manifest;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -20,6 +22,8 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -30,12 +34,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -62,14 +68,14 @@ import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
-import com.bykea.pk.partner.models.data.RankingStatsTypeModel;
-import com.bykea.pk.partner.models.data.RankingWeeklyStatsModel;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
+import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -100,6 +106,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -147,6 +154,11 @@ public class Utils {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         activity.startActivityForResult(intent, Constants.PICK_IMAGE_REQUEST);
+    }
+
+    public static LinearLayoutManager newLLM(Activity activity) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
+        return linearLayoutManager;
     }
 
     public static void appToast(Context context, String message) {
@@ -872,6 +884,20 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
+    public static String getLocationAddress(String lat, String lng, Activity activity){
+
+        Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(Double.valueOf(lat), Double.valueOf(lng), 1);
+            return addresses.get(0).getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
     public static String calculateDistanceInKm(double newLat, double newLon, double prevLat, double prevLon) {
         return "" + Math.round(((calculateDistance(newLat,
                 newLon, prevLat,
@@ -1054,6 +1080,17 @@ public class Utils {
             isMock = false;
         }
         return isMock;
+    }
+
+
+    public static void phoneCall(Activity activity, String phone) {
+        if (activity != null && !Permissions.hasCallPermissions(activity)) {
+            Permissions.getCallPermission(activity);
+        }else {
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+            activity.startActivity(intent);
+        }
+
     }
 
     public static boolean areThereMockPermissionApps(Context context) {
@@ -1517,6 +1554,15 @@ public class Utils {
         }
         return valid;
     }
+
+    public static boolean isSkipDropOff(NormalCallData callData) {
+        if (StringUtils.isNotBlank(callData.getEndAddress())){
+            return false;
+        }
+        return true;
+    }
+
+
 
 
     public static class AudioTime implements Serializable {

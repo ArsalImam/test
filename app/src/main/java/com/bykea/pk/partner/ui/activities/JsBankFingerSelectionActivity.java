@@ -147,10 +147,10 @@ public class JsBankFingerSelectionActivity extends BaseActivity implements View.
     }
 
     private void callScanActivity(int index) {
-        Intent intent = new Intent(mCurrentActivity, ScannFingerPrintsActivity.class);
+        /*Intent intent = new Intent(mCurrentActivity, ScannFingerPrintsActivity.class);
         intent.putExtra(Constants.Extras.CNIC, CNIC);
         intent.putExtra(Constants.Extras.SELECTED_INDEX, index);
-        startActivityForResult(intent, Constants.RequestCode.SCAN_FINGER_PRINTS);
+        startActivityForResult(intent, Constants.RequestCode.SCAN_FINGER_PRINTS);*/
     }
 
     private boolean isVerified;

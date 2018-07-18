@@ -43,6 +43,18 @@ public class Permissions {
         }
     }
 
+    public static boolean hasCallPermissions(Context context) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            String permission1 = "android.permission.CALL_PHONE";
+//            String permission2 = "android.permission.ACCESS_COARSE_LOCATION";
+            int res1 = context.checkCallingOrSelfPermission(permission1);
+//            int res2 = context.checkCallingOrSelfPermission(permission2);
+            return (res1 == PackageManager.PERMISSION_GRANTED);
+        } else {
+            return true;
+        }
+    }
+
     public static boolean hasCallPermission(Context context) {
         return (context.checkCallingOrSelfPermission("android.permission.CALL_PHONE") ==
                 PackageManager.PERMISSION_GRANTED);
@@ -60,6 +72,11 @@ public class Permissions {
 
     public static void getLocationPermissions(Fragment context) {
         String[] permissions = {"android.permission.ACCESS_FINE_LOCATION"};
+        context.requestPermissions(permissions, LOCATION_PERMISSION);
+    }
+
+    public static void getCallPermissions(Activity context) {
+        String[] permissions = {"android.permission.CALL_PHONE"};
         context.requestPermissions(permissions, LOCATION_PERMISSION);
     }
 

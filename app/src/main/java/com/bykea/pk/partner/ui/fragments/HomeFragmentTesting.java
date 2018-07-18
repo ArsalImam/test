@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.fragments;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,9 +31,12 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -44,7 +46,6 @@ import com.bykea.pk.partner.ui.activities.SelectPlaceActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.DrawPolygonAsync;
-import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -88,7 +89,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
-import static android.view.Gravity.CENTER;
 
 public class HomeFragmentTesting extends Fragment {
 
@@ -178,9 +178,43 @@ public class HomeFragmentTesting extends Fragment {
     @BindView(R.id.muntakhibTv1)
     FontTextView muntakhibTv1;
 
+    @BindView(R.id.weeklybookingTv)
+    FontTextView weeklyBookingTv;
+
+    @BindView(R.id.mukamalBookingTv)
+    FontTextView weeklyMukamalBookingTv;
+
+    @BindView(R.id.kamaiTv)
+    FontTextView weeklyKamaiTv;
+
+    @BindView(R.id.wqtTv)
+    FontTextView weeklyTimeTv;
+
+    @BindView(R.id.cancelTv)
+    FontTextView weeklyCancelTv;
+
+    @BindView(R.id.takmeelTv)
+    FontTextView weeklyTakmeelTv;
+
+    @BindView(R.id.qboliyatTv)
+    FontTextView weeklyQaboliatTv;
+
+    @BindView(R.id.ratingTv)
+    FontTextView weeklyratingTv;
+
+    @BindView(R.id.totalScoreTv)
+    FontTextView totalScoreTv;
+
+    @BindView(R.id.totalBalanceTv)
+    FontTextView totalBalanceTv;
+
+    public static int WEEK_STATUS = 0;
+
 
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -222,7 +256,7 @@ public class HomeFragmentTesting extends Fragment {
                         .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                         .replace(R.id.containerView, fragment)
                         .commit();
-                HomeActivity.visibleFragmentNumber = 8;
+                HomeActivity.visibleFragmentNumber = 7;
                 return;
             }
 
@@ -364,6 +398,58 @@ public class HomeFragmentTesting extends Fragment {
 
         initRangeBar();
         AppPreferences.setAvailableAPICalling(false);
+
+
+    }
+
+    private void getDriverPerformanceData() {
+        try{
+            DriverPerformanceResponse response = (DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class);
+            if (response != null && response.getData() != null){
+                onApiResponse(response);
+            }else {
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void onApiResponse(DriverPerformanceResponse response) {
+        if (mCurrentActivity != null) {
+
+            if (response.getData() != null) {
+                weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
+                weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
+
+                try {
+                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0":
+                            response.getData().getWeeklyBalance();
+                    weeklyKamaiTv.setText(weeklyBalance);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+
+                weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
+
+                weeklyCancelTv.setText(response.getData().getCancelPercentage() + "%");
+                weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + "%");
+                weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + "%");
+                weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
+
+                totalBalanceTv.setText("Rs " +response.getData().getTotalBalance());
+                if (WEEK_STATUS == 0){
+                    totalScoreTv.setText("-");
+                }else {
+                    totalScoreTv.setText("سکور " + response.getData().getTotalRating());
+                }
+
+
+            }
+
+            Dialogs.INSTANCE.dismissDialog();
+        }
     }
 
     private void checkGooglePlayService() {
@@ -464,8 +550,10 @@ public class HomeFragmentTesting extends Fragment {
         if (mCurrentActivity == null || getView() == null) {
             return;
         }
-        if (!AppPreferences.getAvailableStatus()) {     //inactive state
+        if (!AppPreferences.getAvailableStatus()) {
 
+            //inactive state
+            getDriverPerformanceData();
 
             myRangeBar.setEnabled(true);
             mapPinIv.setVisibility(View.GONE);
@@ -479,6 +567,7 @@ public class HomeFragmentTesting extends Fragment {
 
             if (AppPreferences.getDriverDestination() == null) {
                 muntakhibTv.setText("منتخب کریں");
+                muntakhibTv1.setText("");
                 muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf" );
             } else {
 
@@ -625,6 +714,12 @@ public class HomeFragmentTesting extends Fragment {
                     }
                 });
             }
+        }
+
+        @Override
+        public void onDriverPerformanceResponse(DriverPerformanceResponse response) {
+            AppPreferences.setObjectToSharedPref(response);
+            onApiResponse(response);
         }
 
         @Override
@@ -950,6 +1045,8 @@ public class HomeFragmentTesting extends Fragment {
                 Dialogs.INSTANCE.setlastWeek(durationTv);
                 durationBtn.setVisibility(View.VISIBLE);
                 previusDurationBtn.setVisibility(View.GONE);
+                WEEK_STATUS = -1;
+                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 break;
             }
 
@@ -962,6 +1059,8 @@ public class HomeFragmentTesting extends Fragment {
                 Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
                 durationBtn.setVisibility(View.GONE);
                 previusDurationBtn.setVisibility(View.VISIBLE);
+                WEEK_STATUS = 0;
+                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 break;
             }
 
@@ -1086,6 +1185,8 @@ public class HomeFragmentTesting extends Fragment {
         }
         return false;
     }
+
+
 
 
 

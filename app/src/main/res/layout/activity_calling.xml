@@ -34,6 +34,7 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/customerRatingTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -104,6 +105,7 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/distanceAwayTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -178,11 +180,13 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:text="9"
+                        android:id="@+id/estimatedDistanceTv"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_15sdp"
                         app:fontName="open_sans_regular.ttf" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/estimatedDistanceUnitTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -297,6 +301,7 @@
             </LinearLayout>
 
             <RelativeLayout
+                android:id="@+id/kraiKiKamaiLayout"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
@@ -304,6 +309,7 @@
                 android:background="@drawable/bg_border_call">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/kraiKiKamaiTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -327,6 +333,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/cashKiWasooliLayout"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
@@ -334,6 +341,7 @@
                 android:background="@drawable/bg_border_call">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/cashKiWasooliTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -366,6 +374,7 @@
                 android:visibility="gone">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/kharidariKiRaqamTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"

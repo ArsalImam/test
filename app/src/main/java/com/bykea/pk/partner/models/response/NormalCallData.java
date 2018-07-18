@@ -44,6 +44,15 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("est_time")
     private String arivalTime;
 
+    @SerializedName("est")
+    private int kraiKiKamai;
+
+    @SerializedName("dist")
+    private float estimatedDistance;
+
+    @SerializedName("payable")
+    private int cashKiWasooli;
+
     @SerializedName("passenger_id")
     private String passId;
     @SerializedName("full_name")
@@ -488,5 +497,29 @@ public class NormalCallData extends CommonResponse {
 
     public void setOrder_no(String order_no) {
         this.order_no = order_no;
+    }
+
+    public int getKraiKiKamai() {
+        return kraiKiKamai;
+    }
+
+    public void setKraiKiKamai(int kraiKiKamai) {
+        this.kraiKiKamai = kraiKiKamai;
+    }
+
+    public float getEstimatedDistance() {
+        return estimatedDistance;
+    }
+
+    public void setEstimatedDistance(float estimatedDistance) {
+        this.estimatedDistance = estimatedDistance;
+    }
+
+    public int getCashKiWasooli() {
+        return cashKiWasooli;
+    }
+
+    public void setCashKiWasooli(int cashKiWasooli) {
+        this.cashKiWasooli = cashKiWasooli;
     }
 }

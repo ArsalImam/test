@@ -53,7 +53,6 @@
         <item>Performance</item>
         <item>How it works</item>
         <item>Contact Us</item>
-        <item>Testing</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -126,7 +125,9 @@
     <string name="camera_permission">Please allow Camera Permissions</string>
     <string name="permissions.docs">Camera Permission required to take Picture for your Profile &amp; Documents</string>
     <string name="java.camera_permission.msg"><![CDATA[For the best Bykea experience, please enable Permission-> Camera in the application settings.]]></string>
-    <string name="ranking_footer_text">ایپ میں اپنی منزل منتخب کر کے اپنے دفتر، دوکان، کارخانے، یونیورسٹی یا گھر \n  جاتے ہوئے راستے کی بکنگز لیں اور ہزاروں کمائیں۔ مرضی کی بکنگ پر بونس لاگو نہیں ہے</string>
+    <string name="ranking_footer_text">1) بونس کی کمائی کرائے کی کمائی کے علاوہ</string>
+
+    <string name="ranking_footer_text2">2) بونس حاصل کرنے کے لئے ریٹنگ، فلفلمنٹ، قبولیت کی شرائط مکمل کرنا ضروری ہے</string>
 
 
 </resources>
