@@ -45,7 +45,7 @@ public class ShahkarActivity extends BaseActivity {
 
         setBackNavigation();
 
-        setToolbarTitle("Top 10 Partners");
+        setToolbarTitle(getResources().getString(R.string.top_10_text));
         hideToolbarLogo();
 
         setupRecyclerview();

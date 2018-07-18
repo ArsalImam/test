@@ -123,6 +123,7 @@
                     android:background="#d80027"/>
 
                 <ImageView
+                    android:id="@+id/closeBtn"
                     android:padding="16dp"
                     android:layout_marginTop="@dimen/_2sdp"
                     android:layout_gravity="center"
@@ -134,6 +135,7 @@
             </FrameLayout>
 
             <com.bykea.pk.partner.widgets.FontTextView
+                android:visibility="gone"
                 android:id="@+id/assignBtn"
                 android:layout_width="0dp"
                 android:layout_weight="1"

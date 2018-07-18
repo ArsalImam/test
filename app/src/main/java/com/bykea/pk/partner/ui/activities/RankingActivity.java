@@ -96,7 +96,8 @@ public class RankingActivity extends BaseActivity {
 
         setBackNavigation();
 
-        setToolbarTitle("Ranking", "درجہ بندی");
+        setToolbarTitle(getResources().getString(R.string.ranking_english_header_text),
+                getResources().getString(R.string.ranking_urdu_header_text));
         hideToolbarLogo();
 
         setupRecyclerview();

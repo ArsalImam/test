@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
@@ -16,6 +17,8 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,9 +41,13 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
     @BindView(R.id.durationTv)
     FontTextView durationTv;
 
+    @BindView(R.id.closeBtn)
+    ImageView closeBtn;
+
     private DeliveryScheduleDetailActivity mCurrentActivity;
 
     private String phone;
+    private String destination;
 
 
     @Override
@@ -50,7 +57,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(mCurrentActivity);
-        setTitleCustomToolbarWithUrdu("XYZ123", "");
+
 
         getCustomerData();
     }
@@ -60,6 +67,8 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
             int pos = getIntent().getIntExtra(Constants.Extras.POSITION_DELIVERY_SCHEDULE, 0);
             LoadBoardResponse response = (LoadBoardResponse) AppPreferences.getObjectFromSharedPref(LoadBoardResponse.class);
             if (response.getLoadBoardBody() != null) {
+                setTitleCustomToolbarWithUrdu(response.getLoadBoardBody().get(pos).
+                        getCustomerResponses().getFullName(), "");
                 nameTv.setText(response.getLoadBoardBody().get(pos).getCustomerResponses().getFullName());
                 phone = response.getLoadBoardBody().get(pos).getCustomerResponses().getMobileNumber();
 
@@ -76,6 +85,9 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
 
                 String address = Utils.getLocationAddress(response.getLoadBoardBody().get(pos).getLatlng().get(0),
                         response.getLoadBoardBody().get(pos).getLatlng().get(1), mCurrentActivity);
+
+                destination = response.getLoadBoardBody().get(pos).getLatlng().get(0) + "," +
+                        response.getLoadBoardBody().get(pos).getLatlng().get(1);
                 addressTv.setText(Utils.formatAddress(address));
 
             }
@@ -84,16 +96,36 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.callbtn})
+    @OnClick({R.id.callbtn, R.id.closeBtn, R.id.directionBtn})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.callBtn: {
+            case R.id.callbtn: {
                 Utils.phoneCall(mCurrentActivity, phone);
+                break;
+            }
+
+            case R.id.directionBtn: {
+                navigateToGoogleMap();
+                break;
+            }
+
+            case R.id.closeBtn: {
+                onBackPressed();
                 break;
             }
         }
     }
 
+    private void navigateToGoogleMap() {
+        try{
+            String currentLocation = Utils.getCurrentLocation();
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse("http://maps.google.com/maps?saddr=" + currentLocation + "&daddr="+destination));
+            startActivity(intent);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
 }

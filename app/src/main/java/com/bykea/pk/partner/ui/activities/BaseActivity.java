@@ -70,6 +70,7 @@ public class BaseActivity extends AppCompatActivity {
     private Dialog notificationDialog;
     private final String ACCESS_FINE_LOCATION = "android.permission.ACCESS_FINE_LOCATION";
     private final String PHONE_STATE = "android.permission.READ_PHONE_STATE";
+    private final String CALL_STATE = "android.permission.CALL_PHONE";
 
     private RelativeLayout statusLayout;
 
@@ -123,12 +124,15 @@ public class BaseActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
             int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), PHONE_STATE);
+            int call = ContextCompat.checkSelfPermission(getApplicationContext(), CALL_STATE);
             if (location != PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE}, 1010);
             } else if (location == PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{PHONE_STATE}, 1010);
             } else if (location != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION}, 1010);
+            }else if (call != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{CALL_STATE}, 1010);
             } else {
                 hasPermission = true;
             }
@@ -670,9 +674,12 @@ public class BaseActivity extends AppCompatActivity {
         final FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
         tvTitleUrdu.setVisibility(View.VISIBLE);
         ivTitle.setText(title);
+        tvTitleUrdu.setVisibility(View.GONE);
         if (StringUtils.isNotBlank(name_urdu)) {
+            tvTitleUrdu.setVisibility(View.VISIBLE);
             tvTitleUrdu.setText(name_urdu);
         }
+
         setBackPress(findViewById(R.id.ivBackBtn));
     }
 

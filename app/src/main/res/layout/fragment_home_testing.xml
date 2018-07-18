@@ -51,7 +51,7 @@
         android:visibility="visible"
         android:id="@+id/layoutupper"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_100sdp"
+        android:layout_height="@dimen/_95sdp"
         android:layout_below="@+id/llTop"
         android:layout_marginLeft="@dimen/_8sdp"
         android:layout_marginRight="@dimen/_8sdp"
@@ -65,7 +65,7 @@
             android:gravity="center">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/circleImageView3"
+                android:id="@+id/driverImageView"
                 android:layout_width="@dimen/_75sdp"
                 android:layout_height="@dimen/_60sdp"
                 android:layout_marginTop="6dp"
@@ -202,7 +202,6 @@
             android:layout_height="@dimen/_25sdp"
             android:paddingTop="@dimen/_6sdp"
             android:paddingBottom="@dimen/_6sdp"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginRight="@dimen/_4sdp"
             app:srcCompat="@drawable/back_arrow" />
@@ -212,8 +211,6 @@
             android:id="@+id/durationTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="@dimen/_8sdp"
             android:text="8 Jun - 14 Jun"
             android:textColor="@color/black"
             android:textSize="@dimen/_17sdp"
@@ -226,7 +223,6 @@
             android:paddingBottom="@dimen/_6sdp"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_25sdp"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginRight="@dimen/_4sdp"
             android:layout_toRightOf="@+id/durationTv"
@@ -237,9 +233,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_4sdp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:text="آپ کا حساب فجر سے پہلے اپڈیٹ ہوگا"
             android:textColor="@color/blue_lightest"
             android:textSize="@dimen/_10sdp"
@@ -249,7 +244,7 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:weightSum="4.2"
+        android:weightSum="4"
         android:id="@+id/driverStatsLayout"
         android:visibility="visible"
         android:layout_width="match_parent"
@@ -261,7 +256,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/_4sdp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
@@ -280,7 +275,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_booking"
                     android:gravity="center"
-                    android:text="12"
+                    android:text="?"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -313,7 +308,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_mukamal_booking"
                     android:gravity="center"
-                    android:text="9"
+                    android:text="?"
                     android:id="@+id/mukamalBookingTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
@@ -347,7 +342,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_kamai"
                     android:gravity="center"
-                    android:text="10,150"
+                    android:text="?"
                     android:id="@+id/kamaiTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
@@ -381,7 +376,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_wqt"
                     android:gravity="center"
-                    android:text="08:10"
+                    android:text="?"
                     android:id="@+id/wqtTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
@@ -401,7 +396,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
@@ -420,7 +414,7 @@
                     android:id="@+id/cancelTv"
                     android:background="@drawable/circle_cancel"
                     android:gravity="center"
-                    android:text="10%"
+                    android:text="?"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -453,7 +447,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_takmeel"
                     android:gravity="center"
-                    android:text="70%"
+                    android:text="?"
                     android:id="@+id/takmeelTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
@@ -487,7 +481,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_qabooliat"
                     android:gravity="center"
-                    android:text="80%"
+                    android:text="?"
                     android:id="@+id/qboliyatTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
@@ -521,7 +515,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_rating"
                     android:gravity="center"
-                    android:text="4.1"
+                    android:text="?"
                     android:id="@+id/ratingTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
@@ -539,11 +533,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.2"/>
 
 
     </LinearLayout>

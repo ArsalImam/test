@@ -129,5 +129,14 @@
 
     <string name="ranking_footer_text2">2) بونس حاصل کرنے کے لئے ریٹنگ، فلفلمنٹ، قبولیت کی شرائط مکمل کرنا ضروری ہے</string>
 
+    <string name="ranking_english_header_text">Ranking</string>
+    <string name="ranking_urdu_header_text">درجہ بندی</string>
+
+    <string name="muntakhib_text_urdu">منتخب کریں</string>
+    <string name="muntakhib_manzil_urdu">منتخب منزل</string>
+    <string name="address_not_set_urdu">آپکو شہر بھر کی بکنگ ملیں گی۔</string>
+    <string name="muntakhib_manzil_krey_urdu">منزل منتخب نہیں ہے:</string>
+
+    <string name="top_10_text">Top 10 Partners</string>
 
 </resources>
