@@ -78,13 +78,13 @@ public class BanksAccountActivity extends BaseActivity {
         mRecyclerView.setAdapter(mAdapter);
 
 
-        /*mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*lv.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                visibleItemCount = mRecyclerView.getChildCount();
+                visibleItemCount = lv.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();
                 firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 

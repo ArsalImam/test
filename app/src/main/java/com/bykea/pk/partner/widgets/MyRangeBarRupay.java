@@ -177,6 +177,7 @@ public class MyRangeBarRupay extends View {
             updateRadius(getHeight());
             // Compute drawing position again
             preComputeDrawingPosition();
+            setInitialIndex(1);
         }
     }
 

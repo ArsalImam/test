@@ -208,6 +208,12 @@ public class HomeFragmentTesting extends Fragment {
     @BindView(R.id.totalBalanceTv)
     FontTextView totalBalanceTv;
 
+    @BindView(R.id.driverImageView)
+    ImageView driverImageView;
+
+    @BindView(R.id.muntakhibTvUrdu)
+    FontTextView muntakhibTvUrdu;
+
     public static int WEEK_STATUS = 0;
 
 
@@ -286,6 +292,8 @@ public class HomeFragmentTesting extends Fragment {
                         Dialogs.INSTANCE.showInactiveConfirmationDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                WEEK_STATUS = 0;
+                                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
                                 mCurrentActivity.showBismillah();
@@ -420,6 +428,10 @@ public class HomeFragmentTesting extends Fragment {
         if (mCurrentActivity != null) {
 
             if (response.getData() != null) {
+                if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
+                    Utils.loadImgPicasso(mCurrentActivity, driverImageView, R.drawable.profile_pic,
+                            Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
+                }
                 weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
                 weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
@@ -439,10 +451,12 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
                 totalBalanceTv.setText("Rs " +response.getData().getTotalBalance());
-                if (WEEK_STATUS == 0){
-                    totalScoreTv.setText("-");
-                }else {
-                    totalScoreTv.setText("سکور " + response.getData().getTotalRating());
+                if (response.getData().getScore() != null){
+                    if (response.getData().getScore().contains("-")){
+                        totalScoreTv.setText(response.getData().getScore());
+                    }else {
+                        totalScoreTv.setText("سکور " + response.getData().getScore());
+                    }
                 }
 
 
@@ -566,7 +580,7 @@ public class HomeFragmentTesting extends Fragment {
             driverStatsLayout.setVisibility(View.VISIBLE);
 
             if (AppPreferences.getDriverDestination() == null) {
-                muntakhibTv.setText("منتخب کریں");
+                muntakhibTv.setText(getResources().getString(R.string.muntakhib_text_urdu));
                 muntakhibTv1.setText("");
                 muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf" );
             } else {
@@ -574,6 +588,7 @@ public class HomeFragmentTesting extends Fragment {
                 muntakhibTv.setText(AppPreferences.getDriverDestination().address);
                 muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf" );
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
+
             }
         } else {        //active state
 
@@ -591,7 +606,13 @@ public class HomeFragmentTesting extends Fragment {
 
                 muntakhibTv.setText(AppPreferences.getDriverDestination().address);
                 muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf" );
+                muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf");
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
+                muntakhibTvUrdu.setText(getResources().getString(R.string.muntakhib_manzil_urdu));
+            }else {
+                muntakhibTvUrdu.setText(getResources().getString(R.string.muntakhib_manzil_krey_urdu));
+                muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
+                muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             }
         }
 
@@ -1046,6 +1067,7 @@ public class HomeFragmentTesting extends Fragment {
                 durationBtn.setVisibility(View.VISIBLE);
                 previusDurationBtn.setVisibility(View.GONE);
                 WEEK_STATUS = -1;
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 break;
             }
@@ -1060,6 +1082,7 @@ public class HomeFragmentTesting extends Fragment {
                 durationBtn.setVisibility(View.GONE);
                 previusDurationBtn.setVisibility(View.VISIBLE);
                 WEEK_STATUS = 0;
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 break;
             }

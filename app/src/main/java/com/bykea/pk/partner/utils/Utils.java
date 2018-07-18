@@ -1084,12 +1084,9 @@ public class Utils {
 
 
     public static void phoneCall(Activity activity, String phone) {
-        if (activity != null && !Permissions.hasCallPermissions(activity)) {
-            Permissions.getCallPermission(activity);
-        }else {
+
             Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
             activity.startActivity(intent);
-        }
 
     }
 

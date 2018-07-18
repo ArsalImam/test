@@ -10,13 +10,11 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DileveryScheduleModel;
-import com.instabug.library.core.ui.BaseContract;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliveryScheduleAdapter.ViewHoder> {
 
@@ -64,10 +62,19 @@ public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliverySchedu
         @BindView(R.id.directionBtn)
         ImageView directionBtn;
 
+        @BindView(R.id.callbtn)
+        ImageView callBtn;
+
+        @BindView(R.id.assignBtn)
+        TextView assignBtn;
+
         public ViewHoder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             directionBtn.setOnClickListener(this);
+            callBtn.setOnClickListener(this);
+            assignBtn.setOnClickListener(this);
+
         }
 
         @Override
@@ -76,11 +83,11 @@ public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliverySchedu
                 case R.id.directionBtn:
                     onClickListener.directionClick(getAdapterPosition());
                     break;
-                case R.id.callBtn:
+                case R.id.callbtn:
                     onClickListener.callClick(getAdapterPosition());
                     break;
                 case R.id.assignBtn:
-                    onClickListener.confirmClick(getAdapterPosition());
+                    onClickListener.assignClick(getAdapterPosition());
                     break;
             }
         }
@@ -95,6 +102,6 @@ public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliverySchedu
 
         void callClick(int pos);
 
-        void confirmClick(int pos);
+        void assignClick(int pos);
     }
 }

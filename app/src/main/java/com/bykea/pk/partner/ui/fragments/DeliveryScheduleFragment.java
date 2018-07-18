@@ -135,12 +135,12 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
 
     @Override
     public void callClick(int pos) {
-
+        ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity, pos);
     }
 
     @Override
-    public void confirmClick(int pos) {
-
+    public void assignClick(int pos) {
+        ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity, pos);
     }
 
     private UserDataHandler mCallBack = new UserDataHandler() {
