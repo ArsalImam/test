@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.repositories;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
@@ -289,6 +290,8 @@ public class UserRepository {
         } catch (Exception ignored) {
 
         }
+
+        Log.d("updateLocationJson", jsonObject.toString());
 
         mWebIORequestHandler.requestLocationUpdate(jsonObject, mDataCallback);
 
