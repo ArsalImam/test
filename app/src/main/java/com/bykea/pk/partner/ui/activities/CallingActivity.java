@@ -160,7 +160,7 @@ public class CallingActivity extends BaseActivity {
         if (AppPreferences.isOnTrip()) {
             AppPreferences.setIncomingCall(false);
         } else {
-            AppPreferences.setTripStatus(TripStatus.ON_FREE);
+            //AppPreferences.setTripStatus(TripStatus.ON_FREE);
             AppPreferences.setIncomingCall(true);
         }
         AppPreferences.setCallingActivityOnForeground(false);
@@ -353,17 +353,14 @@ public class CallingActivity extends BaseActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {
+            progress = (20800-millisUntilFinished)/1000;
             if (progress >= 20) {
                 timer.onFinish();
             } else {
                 if (!_mpSound.isPlaying()) _mpSound.start();
-                progress = progress + 0.1f;
+                //progress = progress + 0.1f;
                 donutProgress.setProgress(progress);
-                counter += 1;
-                if (counter == 10) {
-                    counter = 0;
-                    counterTv.setText((20 - total++) + "");
-                }
+                counterTv.setText( String.valueOf(((int)(millisUntilFinished/1000))));
             }
         }
 
@@ -375,6 +372,7 @@ public class CallingActivity extends BaseActivity {
             acceptCallBtn.setEnabled(false);
             stopSound();
             if (!isFreeDriverApiCalled) {
+                Utils.setCallIncomingStateWithoutRestartingService();
                 repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
