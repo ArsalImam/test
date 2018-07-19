@@ -354,13 +354,18 @@ public class CallingActivity extends BaseActivity {
         @Override
         public void onTick(long millisUntilFinished) {
             progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT-millisUntilFinished)/1000;
+            Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished+":"+progress+":"+counterTv.getText().toString());
             if (progress >= 20) {
                 timer.onFinish();
             } else {
                 if (!_mpSound.isPlaying()) _mpSound.start();
                 //progress = progress + 0.1f;
                 donutProgress.setProgress(progress);
-                counterTv.setText( String.valueOf(((int)(millisUntilFinished/1000))));
+                try {
+                    counterTv.setText(String.valueOf((int)(millisUntilFinished/1000)));
+                }catch (NumberFormatException e){
+                    e.printStackTrace();
+                }
             }
         }
 
