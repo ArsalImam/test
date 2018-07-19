@@ -21,6 +21,7 @@ public class Constants {
     public static final String TAG_LOCATION = "LocationUpdate";
     public static final String TAG_GOOGLE_MAP = "GOOGLE MAP TRACKING";
 
+    public static final int RIDE_ACCEPTANCE_TIMEOUT = 20800;
     public static final String SETTINGS_DATA_EXTRAS = "SETTINGS_DATA_EXTRAS";
 
     public static final String CLOUDINARY_BASE_URL = "http://res.cloudinary.com/bykea/image/upload/";

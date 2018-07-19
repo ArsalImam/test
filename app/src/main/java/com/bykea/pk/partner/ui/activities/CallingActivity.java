@@ -349,11 +349,11 @@ public class CallingActivity extends BaseActivity {
         }
     }
 
-    private CountDownTimer timer = new CountDownTimer(20800, 100) {
+    private CountDownTimer timer = new CountDownTimer(Constants.RIDE_ACCEPTANCE_TIMEOUT, 100) {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            progress = (20800-millisUntilFinished)/1000;
+            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT-millisUntilFinished)/1000;
             if (progress >= 20) {
                 timer.onFinish();
             } else {
