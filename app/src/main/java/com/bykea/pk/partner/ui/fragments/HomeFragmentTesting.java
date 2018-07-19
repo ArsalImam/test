@@ -644,7 +644,7 @@ public class HomeFragmentTesting extends Fragment {
 
         Notifications.removeAllNotifications(mCurrentActivity);
 
-        Utils.setCallIncomingStateWithoutRestartingService();
+        //Utils.setCallIncomingStateWithoutRestartingService();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Keys.LOCATION_UPDATE_BROADCAST);
         mCurrentActivity.registerReceiver(myReceiver, intentFilter);

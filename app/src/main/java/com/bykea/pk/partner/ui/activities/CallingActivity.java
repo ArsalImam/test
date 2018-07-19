@@ -160,7 +160,7 @@ public class CallingActivity extends BaseActivity {
         if (AppPreferences.isOnTrip()) {
             AppPreferences.setIncomingCall(false);
         } else {
-            AppPreferences.setTripStatus(TripStatus.ON_FREE);
+            //AppPreferences.setTripStatus(TripStatus.ON_FREE);
             AppPreferences.setIncomingCall(true);
         }
         AppPreferences.setCallingActivityOnForeground(false);
@@ -349,11 +349,11 @@ public class CallingActivity extends BaseActivity {
         }
     }
 
-    private CountDownTimer timer = new CountDownTimer(20800, 100) {
+    private CountDownTimer timer = new CountDownTimer(Constants.RIDE_ACCEPTANCE_TIMEOUT, 100) {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            progress = (20800 - millisUntilFinished)/1000;
+            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT-millisUntilFinished)/1000;
             Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished+":"+progress+":"+counterTv.getText().toString());
             if (progress >= 20) {
                 timer.onFinish();
@@ -361,17 +361,11 @@ public class CallingActivity extends BaseActivity {
                 if (!_mpSound.isPlaying()) _mpSound.start();
                 //progress = progress + 0.1f;
                 donutProgress.setProgress(progress);
-                counter += 1;
                 try {
                     counterTv.setText(String.valueOf((int)(millisUntilFinished/1000)));
                 }catch (NumberFormatException e){
                     e.printStackTrace();
                 }
-
-                /*if (counter == 10) {
-                    counter = 0;
-                    counterTv.setText((20 - total++) + "");
-                }*/
             }
         }
 
@@ -383,11 +377,11 @@ public class CallingActivity extends BaseActivity {
             acceptCallBtn.setEnabled(false);
             stopSound();
             if (!isFreeDriverApiCalled) {
-                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                finishActivity();
+                Utils.setCallIncomingStateWithoutRestartingService();
                 repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
-
+                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                finishActivity();
             }
         }
     };
