@@ -291,7 +291,7 @@ public class UserRepository {
 
         }
 
-        Log.d("updateLocationJson", jsonObject.toString());
+        Log.d("FREEONCALL", jsonObject.toString());
 
         mWebIORequestHandler.requestLocationUpdate(jsonObject, mDataCallback);
 

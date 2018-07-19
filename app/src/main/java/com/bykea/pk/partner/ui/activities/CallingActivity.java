@@ -160,7 +160,7 @@ public class CallingActivity extends BaseActivity {
         if (AppPreferences.isOnTrip()) {
             AppPreferences.setIncomingCall(false);
         } else {
-            AppPreferences.setTripStatus(TripStatus.ON_FREE);
+            //AppPreferences.setTripStatus(TripStatus.ON_FREE);
             AppPreferences.setIncomingCall(true);
         }
         AppPreferences.setCallingActivityOnForeground(false);
@@ -383,10 +383,12 @@ public class CallingActivity extends BaseActivity {
             acceptCallBtn.setEnabled(false);
             stopSound();
             if (!isFreeDriverApiCalled) {
-                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                finishActivity();
+
+                Utils.setCallIncomingStateWithoutRestartingService();
                 repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
+                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                finishActivity();
 
             }
         }
