@@ -31,12 +31,10 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
-import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
-import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -219,7 +217,7 @@ public class HomeFragmentTesting extends Fragment {
 
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
-
+    private boolean isCalled;
 
 
     @Override
@@ -235,8 +233,6 @@ public class HomeFragmentTesting extends Fragment {
         mKhudaHafizClick();
 
         mBismillaClick();
-
-
 
         mCurrentActivity.setDemandButtonForBismilla("ڈیمانڈ", new View.OnClickListener() {
             @Override
@@ -293,7 +289,7 @@ public class HomeFragmentTesting extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 WEEK_STATUS = 0;
-                                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
+                                getDriverPerformanceData();
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
                                 mCurrentActivity.showBismillah();
@@ -412,13 +408,12 @@ public class HomeFragmentTesting extends Fragment {
 
     private void getDriverPerformanceData() {
         try{
-            DriverPerformanceResponse response = (DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class);
-            if (response != null && response.getData() != null){
-                onApiResponse(response);
-            }else {
+            if (!isCalled){
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
+                isCalled = true;
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -656,6 +651,7 @@ public class HomeFragmentTesting extends Fragment {
             }
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
+        Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
         if (enableLocation()) return;
         super.onResume();
     }
@@ -1150,6 +1146,7 @@ public class HomeFragmentTesting extends Fragment {
     public void onPause() {
         super.onPause();
         isScreenInFront = false;
+        isCalled = false;
         mCurrentActivity.unregisterReceiver(myReceiver);
 //        if (countDownTimer != null) {
 //            countDownTimer.cancel();

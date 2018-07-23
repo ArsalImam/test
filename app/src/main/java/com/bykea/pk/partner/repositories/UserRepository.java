@@ -908,6 +908,7 @@ public class UserRepository {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.requestBonusChart(context, mDataCallback);
+
     }
 
     public void requestDriverPerformance(Context context, UserDataHandler handler, int weekStatus) {

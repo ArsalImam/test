@@ -58,6 +58,7 @@ public class NumberRegistration extends Fragment {
 
     @BindView(R.id.tvCity)
     Spinner spCities;
+
     private RegistrationActivity mCurrentActivity;
     private ArrayList<SignUpCity> mServiceCities = new ArrayList<>();
     private SignUpCity mSelectedCity;
