@@ -63,6 +63,7 @@ public class ActivityStackManager {
     public void startHomeActivity(boolean firstTime, Context mContext) {
         Intent intent = new Intent(mContext, HomeActivity.class);
         if (firstTime) {
+            intent.putExtra("isLogin", "yes");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                     Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }

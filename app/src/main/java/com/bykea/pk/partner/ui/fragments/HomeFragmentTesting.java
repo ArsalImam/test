@@ -690,6 +690,7 @@ public class HomeFragmentTesting extends Fragment {
         tvCihIndex3.setText(Utils.getFormattedNumber(cashInHand[2]));
         tvCihIndex4.setText(Utils.getFormattedNumber(cashInHand[3]));
         tvCihIndex5.setText(Utils.getFormattedNumber(cashInHand[4]));
+
         int length = cashInHand.length;
         int value = AppPreferences.getCashInHands();
         for (int i = 0; i < length; i++) {
@@ -697,6 +698,11 @@ public class HomeFragmentTesting extends Fragment {
                 currentIndex = i;
             }
         }
+
+        if (getActivity().getIntent().getStringExtra("isLogin") != null){
+            currentIndex = 1;
+        }
+
         myRangeBar.refreshDrawableState();
         myRangeBar.invalidate();
         myRangeBar.setCurrentIndex(currentIndex);
