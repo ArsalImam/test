@@ -395,7 +395,6 @@ public enum Dialogs {
 
             if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY){
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
-                startDate = df.format(calendar.getTime());
             } else {
                 if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY){
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
