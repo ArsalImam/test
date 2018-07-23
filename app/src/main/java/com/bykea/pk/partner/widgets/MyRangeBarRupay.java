@@ -167,7 +167,7 @@ public class MyRangeBarRupay extends View {
                 return true;
             }
         });
-        currentIndex = 0;
+        currentIndex = 1;
     }
 
 
