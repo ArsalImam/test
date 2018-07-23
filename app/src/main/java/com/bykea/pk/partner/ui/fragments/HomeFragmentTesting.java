@@ -697,6 +697,7 @@ public class HomeFragmentTesting extends Fragment {
                 currentIndex = i;
             }
         }
+
         myRangeBar.refreshDrawableState();
         myRangeBar.invalidate();
         myRangeBar.setCurrentIndex(currentIndex);
