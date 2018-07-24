@@ -139,4 +139,9 @@
 
     <string name="top_10_text">Top 10 Partners</string>
 
+    <string name="unwan_text">عنوان</string>
+    <string name="raqam_text">رقم</string>
+    <string name="transfer_text">ٹرانسفر</string>
+    <string name="balance_text">بیلینس</string>
+
 </resources>
