@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
@@ -358,6 +359,7 @@ public class AppPreferences {
     }
 
     public static void setTripStatus(String value) {
+        Log.d("FREEONCALL", value);
         mSharedPreferences
                 .edit()
                 .putString(Keys.TRIP_STATUS, value)

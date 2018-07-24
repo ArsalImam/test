@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.repositories;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
@@ -290,6 +291,7 @@ public class UserRepository {
 
         }
 
+        Log.d("FREEONCALL", jsonObject.toString());
         mWebIORequestHandler.requestLocationUpdate(jsonObject, mDataCallback);
 
     }
@@ -906,6 +908,7 @@ public class UserRepository {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.requestBonusChart(context, mDataCallback);
+
     }
 
     public void requestDriverPerformance(Context context, UserDataHandler handler, int weekStatus) {

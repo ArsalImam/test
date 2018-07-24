@@ -167,7 +167,7 @@ public class MyRangeBarRupay extends View {
                 return true;
             }
         });
-        currentIndex = 0;
+        currentIndex = 1;
     }
 
 
@@ -177,7 +177,6 @@ public class MyRangeBarRupay extends View {
             updateRadius(getHeight());
             // Compute drawing position again
             preComputeDrawingPosition();
-            setInitialIndex(1);
         }
     }
 

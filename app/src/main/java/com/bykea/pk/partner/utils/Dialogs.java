@@ -352,21 +352,25 @@ public enum Dialogs {
 
     public static void setlastWeek(TextView tv) {
         try {
+            DateFormat df = new SimpleDateFormat("d MMM");
+            String startDate = "", endDate = "";
             Calendar calendar=Calendar.getInstance();
             Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
             // get the starting and ending date
-            // Set the calendar to sunday of the current week
-            calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
-            System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
-
-            //int i = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
-            calendar.add(Calendar.DATE, -14);
+            // Set the calendar to friday of the current week
 
 
-            // Print dates of the current week starting on Sunday
-            DateFormat df = new SimpleDateFormat("d MMM");
-            String startDate = "", endDate = "";
+            if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY){
+                calendar.add(Calendar.DATE, -7);
+            }else if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY){
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+            } else {
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+                System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
+                calendar.add(Calendar.DATE, -14);
+            }
 
+            // Print dates of the current week starting on friday
             startDate = df.format(calendar.getTime());
             calendar.add(Calendar.DATE, 6);
             endDate = df.format(calendar.getTime());
@@ -382,21 +386,25 @@ public enum Dialogs {
 
     public static void setCalenderCurrentWeek(TextView tv) {
         try {
+            String startDate = "", endDate = "";
             Calendar calendar=Calendar.getInstance();
+            DateFormat df = new SimpleDateFormat("d MMM");
             Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
             // get the starting and ending date
-            // Set the calendar to sunday of the current week
-            calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
-            System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
+            // Set the calendar to friday of the current week
 
-            //int i = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
-            calendar.add(Calendar.DATE, -7);
+            if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY){
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+            } else {
+                if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY){
+                    calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+                    System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
+                    calendar.add(Calendar.DATE, -7);
+                }
 
+            }
 
-            // Print dates of the current week starting on Sunday
-            DateFormat df = new SimpleDateFormat("d MMM");
-            String startDate = "", endDate = "";
-
+            // Print dates of the current week starting on Friday
             startDate = df.format(calendar.getTime());
             calendar.add(Calendar.DATE, 6);
             endDate = df.format(calendar.getTime());
