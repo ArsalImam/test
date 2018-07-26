@@ -94,7 +94,7 @@ public class ProblemActivity extends BaseActivity {
     }
 
     private void initProblemList() {
-        mAdapter = new ProblemItemsAdapter(mProblemList);
+        mAdapter = new ProblemItemsAdapter(mProblemList, mCurrentActivity);
         mLayoutManager = new LinearLayoutManager(mCurrentActivity);
         rvProblemList.setLayoutManager(mLayoutManager);
         rvProblemList.setItemAnimator(new DefaultItemAnimator());
