@@ -77,6 +77,15 @@ android {
 
         }
 
+        flavorDimensions "driver"
+        productFlavors {
+            staging {
+                dimension "driver"
+            }
+            production {
+                dimension "driver"
+            }
+        }
 
     }
     dexOptions {
