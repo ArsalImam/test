@@ -33,7 +33,7 @@ public class FontEditText extends EditText {
         String fontName = Fonts.values()[a.getInt(R.styleable.FontTextView_fontName, 0)].getName();
         a.recycle();
         if (!isInEditMode() && !TextUtils.isEmpty(fontName)) {
-            setTypeface(FontUtils.getFonts(getContext(), fontName));
+            setTypeface(FontUtils.getFonts(fontName));
         }
     }
 

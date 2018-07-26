@@ -110,7 +110,7 @@ public class SplashActivity extends BaseActivity {
                             }
                         } else {
                             if (!Dialogs.INSTANCE.isShowing()) {
-                                Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
+                                Dialogs.INSTANCE.showAlertDialog(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         Dialogs.INSTANCE.dismissDialog();
@@ -184,7 +184,7 @@ public class SplashActivity extends BaseActivity {
                             AppPreferences.saveLoginStatus(false);
                             AppPreferences.setPilotData(null);
                             HomeActivity.visibleFragmentNumber = 0;
-                            Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
+                            Dialogs.INSTANCE.showAlertDialog( new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Dialogs.INSTANCE.dismissDialog();

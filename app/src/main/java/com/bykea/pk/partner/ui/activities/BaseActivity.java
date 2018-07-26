@@ -556,9 +556,9 @@ public class BaseActivity extends AppCompatActivity {
         boolean isUrduNotification = StringUtils.isNotBlank(notificationData.getType()) &&
                 notificationData.getType().equalsIgnoreCase("urdu");
         if (isUrduNotification) {
-            msg.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
-            title.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
-            okIv.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
+            msg.setTypeface(FontUtils.getFonts( "jameel_noori_nastaleeq.ttf"));
+            title.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
+            okIv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         }
         setActionButton(notificationData, okIv);
         notificationDialog.setCancelable(false);
@@ -582,7 +582,7 @@ public class BaseActivity extends AppCompatActivity {
         boolean isUrduNotification = StringUtils.isNotBlank(notificationData.getType()) &&
                 notificationData.getType().equalsIgnoreCase("urdu");
         if (isUrduNotification) {
-            okIv.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
+            okIv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         }
         setActionButton(notificationData, okIv);
         notificationDialog.setCancelable(false);

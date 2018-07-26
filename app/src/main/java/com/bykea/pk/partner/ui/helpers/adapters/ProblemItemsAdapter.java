@@ -43,9 +43,9 @@ public class ProblemItemsAdapter extends RecyclerView.Adapter<ProblemItemsAdapte
     public void onBindViewHolder(ItemHolder holder, int position) {
         holder.tv_problem_item.setText(mProblemList.get(position));
         if (isUrdu) {
-            holder.tv_problem_item.setTypeface(FontUtils.getFonts(context, "jameel_noori_nastaleeq.ttf"));
+            holder.tv_problem_item.setTypeface(FontUtils.getFonts( "jameel_noori_nastaleeq.ttf"));
         } else {
-            holder.tv_problem_item.setTypeface(FontUtils.getFonts(context, "roboto_regular.ttf"));
+            holder.tv_problem_item.setTypeface(FontUtils.getFonts( "roboto_regular.ttf"));
         }
     }
 

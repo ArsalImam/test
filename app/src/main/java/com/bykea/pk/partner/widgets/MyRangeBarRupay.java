@@ -581,7 +581,7 @@ public class MyRangeBarRupay extends View {
         textPaint.setTextSize(getContext().getResources().getDimension(R.dimen._9sdp));
         textPaint.setAntiAlias(true);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setTypeface(FontUtils.getFonts(getContext(), "jameel_noori_nastaleeq.ttf"));
+        textPaint.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         canvas.drawText("روپے", currentSlidingX, y0, textPaint);
 
         drawRippleEffect(canvas);
