@@ -60,7 +60,7 @@ public class ReportActivity extends BaseActivity {
     }
 
     private void initRecyclerView() {
-        mAdapter = new ProblemItemsAdapter(mReportList);
+        mAdapter = new ProblemItemsAdapter(mReportList, mCurrentActivity);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(mCurrentActivity);
         rvReportList.setLayoutManager(mLayoutManager);
         rvReportList.setItemAnimator(new DefaultItemAnimator());

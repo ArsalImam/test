@@ -87,7 +87,7 @@ public class ReportPostActivity extends BaseActivity {
         editText_lay.setVisibility(View.GONE);
         text_lay.setVisibility(View.VISIBLE);
         submitBtn.setText(backScreen);
-        submitBtn.setTypeface(FontUtils.getFonts(mCurrentActivity, "roboto_bold.ttf"));
+        submitBtn.setTypeface(FontUtils.getFonts("roboto_bold.ttf"));
 
 //        mCurrentActivity.isSubmitted = true;
     }
