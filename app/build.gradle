@@ -77,6 +77,37 @@ android {
 
         }
 
+        flavorDimensions "driver"
+        productFlavors {
+            local {
+                dimension "driver"
+                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.0.122:3000\""
+            }
+            staging {
+                dimension "driver"
+                buildConfigField "String", "FLAVOR_URL", "\"https://staging.bykea.net:3000\""
+            }
+            livetesting {
+                dimension "driver"
+                buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3001\""
+            }
+            production {
+                dimension "driver"
+                buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3000\""
+            }
+        }
+
+        applicationVariants.all { variant ->
+            variant.mergedFlavor.versionName = android.defaultConfig.versionName + "-" + releaseTime()
+            variant.outputs.all { output ->
+                def apkName = "bykea-partner-v" + variant.mergedFlavor.versionName + "-c" + android.defaultConfig.versionCode
+
+                apkName += "-" + variant.productFlavors[0].name + "-" + variant.buildType.name
+                apkName += ".apk"
+
+                outputFileName = new File("../../" + apkName)
+            }
+        }
 
     }
     dexOptions {
@@ -100,7 +131,7 @@ android {
     }
 }
 
-def releaseTime() {
+static def releaseTime() {
     return new Date().format("MMM-dd")
 }
 
