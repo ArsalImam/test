@@ -24,7 +24,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
@@ -161,11 +160,11 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showAlertDialog(View.OnClickListener positive,
+    public void showAlertDialog(Context context, View.OnClickListener positive,
                                 View.OnClickListener negative, String title, String message) {
-        if (null == DriverApp.getContext()) return;
+        if (null == context) return;
         dismissDialog();
-        mDialog = new Dialog(DriverApp.getContext(), R.style.actionSheetTheme);
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_alert);
         if (null == negative)
             mDialog.setCancelable(true);
@@ -181,18 +180,18 @@ public enum Dialogs {
         FontTextView messageTv = ((FontTextView) mDialog.findViewById(R.id.messageTv));
         messageTv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         messageTv.setText(message);
-        messageTv.setTextSize(DriverApp.getContext().getResources().getDimension(R.dimen._7sdp));
+        messageTv.setTextSize(context.getResources().getDimension(R.dimen._7sdp));
         ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
 
         showDialog();
     }
 
 
-    public void showAlertDialogWithTickCross(View.OnClickListener positive,
+    public void showAlertDialogWithTickCross(Context context, View.OnClickListener positive,
                                              View.OnClickListener negative, String title, String message) {
-        if (null == DriverApp.getContext()) return;
+        if (null == context) return;
         dismissDialog();
-        mDialog = new Dialog(DriverApp.getContext(), R.style.actionSheetTheme);
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_alert_tick_cross);
         if (null == negative)
             mDialog.setCancelable(true);
@@ -208,7 +207,7 @@ public enum Dialogs {
         FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
         messageTv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         messageTv.setText(message);
-        messageTv.setTextSize(DriverApp.getContext().getResources().getDimension(R.dimen._7sdp));
+        messageTv.setTextSize(context.getResources().getDimension(R.dimen._7sdp));
         if (StringUtils.isNotBlank(title)) {
             ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
         } else {
