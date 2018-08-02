@@ -400,7 +400,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             case R.id.cancelBtn:
                 if (Utils.isCancelAfter5Min()) {
                     String msg = "پہنچنے کے " + AppPreferences.getSettings().getSettings().getCancel_time() + " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
-                    Dialogs.INSTANCE.showAlertDialogWithTickCross(this, new View.OnClickListener() {
+                    Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Dialogs.INSTANCE.dismissDialog();
