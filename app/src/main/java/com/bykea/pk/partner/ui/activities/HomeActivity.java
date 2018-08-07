@@ -25,6 +25,7 @@ import com.bykea.pk.partner.ui.fragments.HomeFragmentTesting;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
@@ -84,7 +85,6 @@ public class HomeActivity extends BaseActivity {
 //        Utils.setMixPanelUserId(mCurrentActivity);
 
 
-
     }
 
     @Override
@@ -136,16 +136,20 @@ public class HomeActivity extends BaseActivity {
 
                 if (visibleFragmentNumber == 3) showToolbar();
                 //Add the Very First i.e Squad Fragment to the Container
-                HomeFragmentTesting homeFragment = new HomeFragmentTesting();
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.anim.fade_in,
-                        R.anim.fade_out);
-                fragmentTransaction.replace(R.id.containerView, homeFragment, null);
-                fragmentTransaction.commit();
-                recyclerViewAdapter.notifyDataSetChanged();
-                visibleFragmentNumber = 1;
+                showHomeFragment();
             }
         }
+    }
+
+    private void showHomeFragment() {
+        HomeFragmentTesting homeFragment = new HomeFragmentTesting();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.fade_in,
+                R.anim.fade_out);
+        fragmentTransaction.replace(R.id.containerView, homeFragment, null);
+        fragmentTransaction.commit();
+        recyclerViewAdapter.notifyDataSetChanged();
+        visibleFragmentNumber = 1;
     }
 
     @Override
@@ -255,6 +259,14 @@ public class HomeActivity extends BaseActivity {
         Fragment currentFragment = mCurrentActivity.getSupportFragmentManager().findFragmentById(R.id.containerView);
         if (currentFragment instanceof HomeFragment) {
             ((HomeFragment) currentFragment).onEvent(action);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null && intent.getBooleanExtra(Constants.Extras.NAVIGATE_TO_HOME_SCREEN, false)) {
+            showHomeFragment();
         }
     }
 }

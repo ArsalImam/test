@@ -10,6 +10,7 @@ import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -44,7 +45,7 @@ public class ReportPostActivity extends BaseActivity {
     LinearLayout editText_lay;
 
     private String reason, contactType;
-    private final String backScreen = "BACK TO REPORTS";
+    private final String backScreen = "BACK TO HOME SCREEN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,7 @@ public class ReportPostActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.submitBtn:
                 if (submitBtn.getText().toString().equalsIgnoreCase(backScreen)) {
-                    mCurrentActivity.finish();
+                    ActivityStackManager.getInstance().startHomeActivity(mCurrentActivity);
                 } else {
                     if (isValid()) {
                         submitProblem();
