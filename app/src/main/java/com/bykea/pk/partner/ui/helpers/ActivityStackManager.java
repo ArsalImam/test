@@ -70,10 +70,11 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    /*
-    * clears activity stack before starting HomeActivity (if activity is already running it will not launch new instance)
-    * HomeFragment will be loaded from onNewIntent method of HomeActivity
-    * */
+    /**
+     * clears activity stack before starting HomeActivity (if activity is already running it will not launch new instance)
+     * HomeFragment will be loaded from onNewIntent method of HomeActivity
+     * @param context calling activity
+     */
     public void startHomeActivity(Context context) {
         Intent intent = new Intent(context, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
