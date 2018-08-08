@@ -273,9 +273,9 @@ public class LocationService extends Service {
                     float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
                     if (Utils.isValidLocation(/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), */distance)) {
                         addLatLng(lat, lon, distance > 0f);
-                        if ((distance > 1000) && !isDirectionApiRunning) {
-                            getRouteLatLng(lat, lon, lastLat, lastLng);
-                        }
+//                        if ((distance > 1000) && !isDirectionApiRunning) {
+//                            getRouteLatLng(lat, lon, lastLat, lastLng);
+//                        }
                     } else {
                         addLatLng(Double.parseDouble(lastLat), Double.parseDouble(lastLng), false);
                     }
