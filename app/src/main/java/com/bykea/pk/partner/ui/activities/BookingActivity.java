@@ -35,8 +35,8 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
+//import com.google.android.gms.location.places.Place;
+//import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -156,10 +156,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private String canceOption = "Didn't show up";
 
     //GOOGLE NEAR BY PLACE SEARCH VIEW
-    protected GoogleApiClient mGoogleApiClient;
+//    protected GoogleApiClient mGoogleApiClient;
     private PlaceAutocompleteAdapter mAdapter;
     private AutoCompleteTextView mAutocompleteView;
-    private Place place = null;
+//    private Place place = null;
 
     public static boolean isJobActivityLive = false;
     //    private List<com.google.maps.model.LatLng> mCapturedLocations;
@@ -200,10 +200,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         AppPreferences.setStatsApiCallRequired(true);
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
-        mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
-                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
-                .addApi(Places.GEO_DATA_API)
-                .build();
+//        mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
+//                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
+//                .addApi(Places.GEO_DATA_API)
+//                .build();
 
 
         mapView = (MapView) findViewById(R.id.jobMapFragment);
@@ -683,7 +683,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
         registerReceiver(locationReceiver, new IntentFilter(Keys.LOCATION_UPDATE_BROADCAST));
     }
 
@@ -714,7 +714,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     protected void onStop() {
         super.onStop();
         AppPreferences.setJobActivityOnForeground(false);
-        mGoogleApiClient.disconnect();
+//        mGoogleApiClient.disconnect();
 
     }
 
