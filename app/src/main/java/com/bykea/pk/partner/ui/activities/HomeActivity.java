@@ -141,6 +141,11 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * This method loads home fragment with in HomeActivity context.
+     *
+     * @return nothing
+     */
     private void showHomeFragment() {
         HomeFragmentTesting homeFragment = new HomeFragmentTesting();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -262,6 +267,13 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * This method handles new intent when activity is started with Intent.FLAG_ACTIVITY_CLEAR_TOP.
+     * When Constants.Extras.NAVIGATE_TO_HOME_SCREEN is set to true with Extras while staring HomeActivity it
+     * will load HomeFragment even if any other Fragment from side bar menu is already loaded.
+     *
+     * @see Intent.FLAG_ACTIVITY_CLEAR_TOP
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
