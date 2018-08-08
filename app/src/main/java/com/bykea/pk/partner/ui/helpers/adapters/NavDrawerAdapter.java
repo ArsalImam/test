@@ -145,9 +145,10 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                             if (Connectivity.isConnectedFast(context)) {
                                 AppPreferences.setAvailableStatus(false);
                                 Dialogs.INSTANCE.dismissDialog();
-                                Dialogs.INSTANCE.showLoader(context);
+//                                Dialogs.INSTANCE.showLoader(context);
                                 UserRepository repository = new UserRepository();
-                                repository.requestPilotLogout(context, handler);
+                                repository.requestPilotLogout(context, new UserDataHandler());
+                                Utils.logout(context);
                             }
                         }
                     });
@@ -262,7 +263,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         }
     }
 
-    private UserDataHandler handler = new UserDataHandler() {
+    /*private UserDataHandler handler = new UserDataHandler() {
 
         @Override
         public void onPilotLogout(LogoutResponse logoutResponse) {
@@ -279,6 +280,6 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                 Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
             }
         }
-    };
+    };*/
 
 }
