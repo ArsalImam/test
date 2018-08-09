@@ -263,23 +263,4 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         }
     }
 
-    /*private UserDataHandler handler = new UserDataHandler() {
-
-        @Override
-        public void onPilotLogout(LogoutResponse logoutResponse) {
-            Dialogs.INSTANCE.dismissDialog();
-            Utils.logout(context);
-        }
-
-        @Override
-        public void onError(int errorCode, String error) {
-            Dialogs.INSTANCE.dismissDialog();
-            if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                Utils.logout(context);
-            } else {
-                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
-            }
-        }
-    };*/
-
 }
