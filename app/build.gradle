@@ -203,7 +203,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'me.grantland:autofittextview:0.2.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 //    debugimplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 //    releaseimplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     implementation 'top.oply.opuslib:opuslib:1.0.2'
@@ -215,6 +215,5 @@ dependencies {
     //implementation 'com.paysyslabs:instascan:1.1.7.2-SNAPSHOT'
 
     implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
-    testCompile 'org.mockito:mockito-core:2.7.1'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -15,7 +15,7 @@ public class UtilsUnitTest {
 
     /**
      * Test method to validate Email Address.
-     * true when Correct Email address
+     * This test case will be considered correct/pass when Email address is Correct
      */
 
     /*@Test
@@ -26,7 +26,7 @@ public class UtilsUnitTest {
 
     /**
      * Test method to validate Phone No.
-     * @return true when Correct Phone No is used
+     * This test case will be considered correct/pass when Phone No format is correct
      */
 
     @Test
@@ -37,16 +37,24 @@ public class UtilsUnitTest {
 
     /**
      * Test method to validate Phone No.
-     * @return false when Phone No is not correct
+     * This test case will be considered correct/pass when Phone No format is not correct
      */
 
     @Test
     public void phoneNoValidatorToCheckWrongPhNoFormat() throws NullPointerException {
         assertFalse(isValidNumber("92389833"));
+        assertFalse(isValidNumber("+92389833"));
+        assertFalse(isValidNumber("04135744774"));
+        assertFalse(isValidNumber("83628ehduhuf"));
+        assertFalse(isValidNumber("0-3284e093278r9nciu"));
     }
 
 
-    public static boolean isValidNumber(String number) {
+    /**
+     * Same Method as in Utils but removed dependencies on Context and FontEditText
+     * //TODO use Utils method in instrumentations tests
+     */
+    private boolean isValidNumber(String number) {
         if (StringUtils.isBlank(number)) {
             return false;
         } else if (!number.startsWith("03")) {
@@ -58,18 +66,24 @@ public class UtilsUnitTest {
         }
     }
 
+
     /**
-     * This test method is to check if 2 strings are equal
+     * Test method to convert double to 2 decimal points
+     * This test case will be considered correct/pass when any double no will have 2 or less digits after point
      */
-    @Test
-    public void stringEqualsIgnoreCase() {
-        String str = "someString";
-        String str1 = "someString";
-        assertThat(str.equalsIgnoreCase(str1), is(true));
-    }
 
     @Test
-    public void stringNotEqualsIgnoreCase() {
-        assertThat("SomeString".equalsIgnoreCase("SomeDiffString"), is(false));
+    public void convertDoubleTo2DecimalPlaces() {
+        String convertedNo = Utils.upto2decimalPlaces(5.333293);
+        assertTrue(convertedNo.split("\\.")[1].length() <= 2);
+        convertedNo = Utils.upto2decimalPlaces(0.1);
+        assertTrue(convertedNo.split("\\.")[1].length() <= 2);
+        convertedNo = Utils.upto2decimalPlaces(19.22);
+        assertTrue(convertedNo.split("\\.")[1].length() <= 2);
+        convertedNo = Utils.upto2decimalPlaces(129.094);
+        assertTrue(convertedNo.split("\\.")[1].length() <= 2);
+        convertedNo = Utils.upto2decimalPlaces(129.);
+        assertTrue(convertedNo.split("\\.")[1].length() <= 2);
     }
+
 }
