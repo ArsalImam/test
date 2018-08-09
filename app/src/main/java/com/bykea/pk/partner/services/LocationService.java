@@ -273,6 +273,7 @@ public class LocationService extends Service {
                     float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
                     if (Utils.isValidLocation(/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), */distance)) {
                         addLatLng(lat, lon, distance > 0f);
+                        //Removing Google Directions API call to avoid duplicate GPS entries. Check https://bykeapk.atlassian.net/browse/BS-1042 for details 
 //                        if ((distance > 1000) && !isDirectionApiRunning) {
 //                            getRouteLatLng(lat, lon, lastLat, lastLng);
 //                        }
