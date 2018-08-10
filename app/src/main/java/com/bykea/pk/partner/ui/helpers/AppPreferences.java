@@ -1115,6 +1115,7 @@ public class AppPreferences {
         }
         return object;
     }
+
     public static void setInactiveCheckTime(long value) {
         mSharedPreferences
                 .edit()
@@ -1124,6 +1125,29 @@ public class AppPreferences {
 
     public static long getInactiveCheckTime() {
         return mSharedPreferences.getLong(Keys.INACTIVE_CHECK_TIME, 0);
+    }
+
+    /**
+     * This method gets local server url stored in shared pref.
+     *
+     * @param key shared pref. key for local url
+     * @return Local URL String
+     */
+    public static String getBASEUrl(String key) {
+        return mSharedPreferences.getString(key, BuildConfig.FLAVOR_URL);
+    }
+
+    /**
+     * This method saves base url in shared pref. that we are getting from users on
+     * local flavoured builds via input dialog
+     *
+     * @param value value for local url
+     */
+    public static void setSavedBASEUrl(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.BASE_URL_LOCAL, value)
+                .apply();
     }
 
 }

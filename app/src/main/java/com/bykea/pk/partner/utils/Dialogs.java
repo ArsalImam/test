@@ -20,10 +20,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
@@ -35,7 +40,6 @@ import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
-import com.google.android.exoplayer.BuildConfig;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -354,15 +358,15 @@ public enum Dialogs {
         try {
             DateFormat df = new SimpleDateFormat("d MMM");
             String startDate = "", endDate = "";
-            Calendar calendar=Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance();
             Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
             // get the starting and ending date
             // Set the calendar to friday of the current week
 
 
-            if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY){
+            if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
                 calendar.add(Calendar.DATE, -7);
-            }else if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY){
+            } else if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY) {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
             } else {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
@@ -379,7 +383,7 @@ public enum Dialogs {
             System.out.println("End Date = " + endDate);
 
             tv.setText(startDate + " - " + endDate);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -387,16 +391,16 @@ public enum Dialogs {
     public static void setCalenderCurrentWeek(TextView tv) {
         try {
             String startDate = "", endDate = "";
-            Calendar calendar=Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance();
             DateFormat df = new SimpleDateFormat("d MMM");
             Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
             // get the starting and ending date
             // Set the calendar to friday of the current week
 
-            if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY){
+            if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY) {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
             } else {
-                if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY){
+                if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY) {
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
                     System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
                     calendar.add(Calendar.DATE, -7);
@@ -413,7 +417,7 @@ public enum Dialogs {
             System.out.println("End Date = " + endDate);
 
             tv.setText(startDate + " - " + endDate);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -763,4 +767,57 @@ public enum Dialogs {
         showDialog();
     }
 
+    /**
+     * This method shows a dialog to enter base url for local builds
+     *
+     * @param activity    calling activity
+     * @param dataHandler call back handler
+     */
+    public void showInputAlert(final Activity activity, final StringCallBack dataHandler) {
+        try {
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+            alertDialogBuilder.setTitle("Enter Your IP");
+
+            final EditText input = new EditText(DriverApp.getContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+            input.setTextColor(activity.getResources().getColor(R.color.black));
+            input.setText(BuildConfig.FLAVOR_URL);
+            alertDialogBuilder.setView(input);
+
+            alertDialogBuilder.setPositiveButton("OK", null);
+
+            alertDialogBuilder.setCancelable(false);
+
+            final AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                @Override
+                public void onShow(DialogInterface dialog) {
+
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            if (input.getText().length() == 0) {
+                                Utils.appToast(activity, "enter your ip");
+                            } else if (!Utils.isValidUrl(input.getText().toString())) {
+                                Utils.appToast(activity, "enter valid url");
+                            } else {
+                                dataHandler.onCallBack(input.getText().toString());
+                                alertDialog.dismiss();
+                            }
+                        }
+                    });
+                }
+            });
+            alertDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

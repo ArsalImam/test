@@ -8,9 +8,12 @@ import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.view.View;
 
+import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Keys;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -37,22 +40,53 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mCurrentActivity = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        mCurrentActivity = this;
-        repository = new UserRepository();
         Utils.setFullScreen(mCurrentActivity);
         // Resets API Key requirement to "false" after 24 hours if there was any error while getting address via Reverse Geo Coding method without using API key.
         if (AppPreferences.isGeoCoderApiKeyRequired() && Utils.isGeoCoderApiKeyCheckRequired()) {
             AppPreferences.setGeoCoderApiKeyRequired(false);
         }
+        Utils.setOneSignalPlayerId();
+    }
+
+
+    @Override
+    public void onEvent(String action) {
+        super.onEvent(action);
+        if (action.equalsIgnoreCase(Constants.ON_PERMISSIONS_GRANTED)) {
+            if (BuildConfig.FLAVOR.equalsIgnoreCase("local")) {
+                if (BuildConfig.FLAVOR_URL.equalsIgnoreCase(ApiTags.LOCAL_BASE_URL) ||
+                        !Utils.isValidUrl(ApiTags.LOCAL_BASE_URL)) {
+                    Dialogs.INSTANCE.showInputAlert(mCurrentActivity, new StringCallBack() {
+                        @Override
+                        public void onCallBack(String localUrl) {
+                            ApiTags.LOCAL_BASE_URL = localUrl;
+                            ApiTags.BASE_SERVER_URL = ApiTags.LOCAL_BASE_URL;
+                            AppPreferences.setSavedBASEUrl(ApiTags.BASE_SERVER_URL);
+                            init();
+                        }
+                    });
+                } else {
+                    init();
+                }
+            } else {
+                init();
+            }
+        }
+    }
+
+    /**
+     * This method call all required apis once base url is set and then it will start a timer that
+     * will decide which activity needs to be started as launch next activity
+     */
+    private void init() {
+        repository = new UserRepository();
         if (Utils.isGetCitiesApiCallRequired()) {
             repository.getCities(mCurrentActivity, handler);
         }
-
-
-        Utils.setOneSignalPlayerId();
         if (AppPreferences.isLoggedIn()) {
             if (Utils.isFcmIdUpdateRequired(true)) {
                 repository.updateRegid(this, handler);
@@ -61,16 +95,7 @@ public class SplashActivity extends BaseActivity {
             new AdvertisingIdTask().execute();
         }
         Utils.redLog("BASE_SERVER_URL", ApiTags.BASE_SERVER_URL);
-//        Utils.printHashKey(mCurrentActivity);
-    }
-
-
-    @Override
-    public void onEvent(String action) {
-        super.onEvent(action);
-        if (action.equalsIgnoreCase(Constants.ON_PERMISSIONS_GRANTED)) {
-            startTimer();
-        }
+        startTimer();
     }
 
     private void startTimer() {

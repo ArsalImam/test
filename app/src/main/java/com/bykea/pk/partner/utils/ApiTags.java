@@ -3,6 +3,7 @@ package com.bykea.pk.partner.utils;
 import android.content.res.Resources;
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 
 public class ApiTags {
 
@@ -11,18 +12,18 @@ public class ApiTags {
 //    private static final String BASE_SERVER_URL_DEBUG = "http://172.16.0.58:3001";  //local
 
     //Shehryar server
-      //private static final String BASE_SERVER_URL_DEBUG = "http://192.168.0.122:3000";
+    //private static final String BASE_SERVER_URL_DEBUG = "http://192.168.0.122:3000";
 
     //staging
-     //private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";
+    //private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3000";
 
-      //private static final String BASE_SERVER_URL_DEBUG = "http://192.168.0.148:3055";
-      //private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3001";
+    //private static final String BASE_SERVER_URL_DEBUG = "http://192.168.0.148:3055";
+    //private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3001";
 //    private static final String BASE_SERVER_URL_DEBUG = "https://staging.bykea.net:3002";
     //live test
 //    private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3001";
 //    private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3000";
-      //private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3001";
+    //private static final String BASE_SERVER_URL_DEBUG = "https://secure.bykea.net:3001";
 
 
     //private static final String BASE_SERVER_URL_LIVE = "https://secure.bykea.net:3000";
@@ -30,10 +31,12 @@ public class ApiTags {
     /*
     * change url only for debug builds, never update BASE_SERVER_URL_LIVE
     * */
-    public static final String BASE_SERVER_URL = BuildConfig.FLAVOR_URL;
-            // Other options below:
-            //Resources.getSystem().getString(R.string.flavor_url);
-            //BuildConfig.DEBUG ? BASE_SERVER_URL_DEBUG : BASE_SERVER_URL_LIVE;
+    public static String LOCAL_BASE_URL = AppPreferences.getBASEUrl(Keys.BASE_URL_LOCAL);
+    public static String BASE_SERVER_URL = BuildConfig.FLAVOR.equalsIgnoreCase("local") ? LOCAL_BASE_URL : BuildConfig.FLAVOR_URL;
+
+    // Other options below:
+    //Resources.getSystem().getString(R.string.flavor_url);
+    //BuildConfig.DEBUG ? BASE_SERVER_URL_DEBUG : BASE_SERVER_URL_LIVE;
 
     //Bykea 2 (For Heat Map)
     public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
