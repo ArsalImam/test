@@ -2171,5 +2171,14 @@ public class Utils {
                 AppPreferences.isOutOfFence() || AppPreferences.isOnTrip());
     }
 
+    /**
+     * This method validates URLs
+     *
+     * @return true when url format is correct and false when it is incorrect
+     */
+    public static boolean isValidUrl(String url) {
+        return Patterns.WEB_URL.matcher(url).matches();
+    }
+
 
 }
