@@ -1130,6 +1130,7 @@ public class AppPreferences {
     /**
      * This method gets local server url stored in shared pref.
      *
+     * @param key shared pref. key for local url
      * @return Local URL String
      */
     public static String getBASEUrl(String key) {
@@ -1139,6 +1140,8 @@ public class AppPreferences {
     /**
      * This method saves base url in shared pref. that we are getting from users on
      * local flavoured builds via input dialog
+     *
+     * @param value value for local url
      */
     public static void setSavedBASEUrl(String value) {
         mSharedPreferences
