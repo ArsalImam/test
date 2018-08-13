@@ -9,6 +9,7 @@ buildscript {
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -214,6 +215,7 @@ dependencies {
     //implementation 'com.paysyslabs:instascan:1.1.7.2-SNAPSHOT'
 
     implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 
 }
 apply plugin: 'com.google.gms.google-services'
