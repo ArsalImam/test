@@ -884,7 +884,7 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
-    public static String getLocationAddress(String lat, String lng, Activity activity){
+    public static String getLocationAddress(String lat, String lng, Activity activity) {
 
         Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
@@ -1085,8 +1085,8 @@ public class Utils {
 
     public static void phoneCall(Activity activity, String phone) {
 
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-            activity.startActivity(intent);
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+        activity.startActivity(intent);
 
     }
 
@@ -1553,13 +1553,11 @@ public class Utils {
     }
 
     public static boolean isSkipDropOff(NormalCallData callData) {
-        if (StringUtils.isNotBlank(callData.getEndAddress())){
+        if (StringUtils.isNotBlank(callData.getEndAddress())) {
             return false;
         }
         return true;
     }
-
-
 
 
     public static class AudioTime implements Serializable {
@@ -2049,6 +2047,11 @@ public class Utils {
         return size;
     }
 
+    /**
+     * This method creates Notification Chanel for OS version >= Android o
+     *
+     * @return notification chanel id
+     */
     public static String getChannelID() {
         String chanelId = "FG_NOTI_BYKEA_P";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
