@@ -104,26 +104,29 @@ public class ActivityStackManager {
         }
     }
 
+    /*
+    * This method check for Android version of device and starts location service as foreground
+    * service when OS is greater or equal to Android O
+    */
     private void startService(Context mContext, Intent intent) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            mContext.startForegroundService(intent);
-//        } else {
-//            mContext.startService(intent);
-//        }
-        mContext.startService(intent);
-    }
-
-    public void stopLocationServiceForeGround(Context mContext) {
-        if (Utils.isServiceRunning(mContext, LocationService.class)) {
-            Intent intent = new Intent(mContext, LocationService.class);
-            intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
-            startService(mContext, intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mContext.startForegroundService(intent);
+        } else {
+            mContext.startService(intent);
         }
     }
 
-    public void stopLocationService(Context mContext) {
-        if (Utils.isServiceRunning(mContext, LocationService.class)) {
-            mContext.stopService(new Intent(mContext, LocationService.class));
+    /**
+     * This method stops Location Service.
+     *
+     * @param context Calling Context
+     * @see Constants.Actions.STOPFOREGROUND_ACTION
+     */
+    public void stopLocationService(Context context) {
+        if (Utils.isServiceRunning(context, LocationService.class)) {
+            Intent intent = new Intent(context, LocationService.class);
+            intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
+            startService(context, intent);
         }
     }
 
