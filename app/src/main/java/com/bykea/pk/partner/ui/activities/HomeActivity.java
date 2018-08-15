@@ -143,8 +143,6 @@ public class HomeActivity extends BaseActivity {
 
     /**
      * This method loads home fragment with in HomeActivity context.
-     *
-     * @return nothing
      */
     private void showHomeFragment() {
         HomeFragmentTesting homeFragment = new HomeFragmentTesting();
