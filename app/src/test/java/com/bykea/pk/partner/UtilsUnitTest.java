@@ -26,49 +26,6 @@ public class UtilsUnitTest {
 
 
     /**
-     * Test method to validate Phone No.
-     * This test case will be considered correct/pass when Phone No format is correct
-     */
-
-    @Test
-    public void phoneNoValidator() throws NullPointerException {
-        assertTrue(isValidNumber("03135744774"));
-    }
-
-
-    /**
-     * Test method to validate Phone No.
-     * This test case will be considered correct/pass when Phone No format is not correct
-     */
-
-    @Test
-    public void phoneNoValidatorToCheckWrongPhNoFormat() throws NullPointerException {
-        assertFalse(isValidNumber("92389833"));
-        assertFalse(isValidNumber("+92389833"));
-        assertFalse(isValidNumber("04135744774"));
-        assertFalse(isValidNumber("83628ehduhuf"));
-        assertFalse(isValidNumber("0-3284e093278r9nciu"));
-    }
-
-
-    /**
-     * Same Method as in Utils but removed dependencies on Context and FontEditText
-     * //TODO use Utils method in instrumentations tests
-     */
-    private boolean isValidNumber(String number) {
-        if (StringUtils.isBlank(number)) {
-            return false;
-        } else if (!number.startsWith("03")) {
-            return false;
-        } else if (number.length() < 11) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-
-    /**
      * Test method to convert double to 2 decimal points
      * This test case will be considered correct/pass when any double no will have 2 or less digits after point
      */
