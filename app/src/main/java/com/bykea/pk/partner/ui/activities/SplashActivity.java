@@ -9,6 +9,8 @@ import android.provider.Settings;
 import android.view.View;
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.communication.rest.RestRequestHandler;
+import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.ApiTags;
@@ -66,6 +68,8 @@ public class SplashActivity extends BaseActivity {
                             ApiTags.LOCAL_BASE_URL = localUrl;
                             ApiTags.BASE_SERVER_URL = ApiTags.LOCAL_BASE_URL;
                             AppPreferences.setSavedBASEUrl(ApiTags.BASE_SERVER_URL);
+                            WebIO.getInstance().clearConnectionData();
+                            new RestRequestHandler().clearRetrofitClient();
                             init();
                         }
                     });

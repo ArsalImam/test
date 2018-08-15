@@ -1300,4 +1300,12 @@ public class RestRequestHandler {
         });
 
     }
+
+    /**
+     * This method clears Singleton instance of Bykea's retrofit client when URL is changed for Local builds
+     */
+    public void clearRetrofitClient() {
+        RestClient.clearBykeaRetrofitClient();
+    }
+
 }
