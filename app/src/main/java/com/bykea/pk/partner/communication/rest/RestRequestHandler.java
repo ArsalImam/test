@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
@@ -1020,6 +1021,9 @@ public class RestRequestHandler {
         if (error instanceof IOException) {
             Utils.redLog("Retrofit Error", "TimeOut " + String.valueOf(error.getCause()));
             errorMsg = mContext.getString(R.string.internet_error);
+            //To prompt user to input base url for local builds again in case when URL is not working/wrong url. (BS-1017)
+            AppPreferences.setSavedBASEUrl(BuildConfig.FLAVOR_URL);
+            ApiTags.LOCAL_BASE_URL = BuildConfig.FLAVOR_URL;
         } else if (error instanceof IllegalStateException) {
             Utils.redLog("Retrofit Error", "ConversionError " + String.valueOf(error.getCause()));
             errorMsg = mContext.getString(R.string.error_try_again);
