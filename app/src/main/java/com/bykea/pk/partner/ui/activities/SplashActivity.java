@@ -1,11 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.Settings;
 import android.view.View;
 
 import com.bykea.pk.partner.BuildConfig;
@@ -15,7 +11,6 @@ import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.Keys;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -67,7 +62,7 @@ public class SplashActivity extends BaseActivity {
                         public void onCallBack(String localUrl) {
                             ApiTags.LOCAL_BASE_URL = localUrl;
                             ApiTags.BASE_SERVER_URL = ApiTags.LOCAL_BASE_URL;
-                            AppPreferences.setSavedBASEUrl(ApiTags.BASE_SERVER_URL);
+                            AppPreferences.setLocalBaseUrl(ApiTags.BASE_SERVER_URL);
                             WebIO.getInstance().clearConnectionData();
                             new RestRequestHandler().clearRetrofitClient();
                             init();

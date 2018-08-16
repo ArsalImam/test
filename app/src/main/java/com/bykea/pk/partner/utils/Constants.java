@@ -153,4 +153,15 @@ public class Constants {
     public final static int REQUEST_CAMERA = 23;
     public final static int REQUEST_GALLERY = 22;
     public final static String UPLOAD_IMG_EXT = ".jpg";
+
+
+    /**
+     * This inner class will contain Constants for Log Tags and Error Log Messages
+     */
+    public static class LogTags {
+        public final static String RETROFIT_ERROR = "Retrofit Error";
+        public final static String TIME_OUT_ERROR = "TimeOut ";
+        public final static String CONVERSION_ERROR = "ConversionError ";
+        public final static String OTHER_ERROR = "Other Error ";
+    }
 }

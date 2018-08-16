@@ -1,7 +1,5 @@
 package com.bykea.pk.partner.utils;
 
-import android.content.res.Resources;
-
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 
@@ -31,7 +29,7 @@ public class ApiTags {
     /*
     * change url only for debug builds, never update BASE_SERVER_URL_LIVE
     * */
-    public static String LOCAL_BASE_URL = AppPreferences.getBASEUrl(Keys.BASE_URL_LOCAL);
+    public static String LOCAL_BASE_URL = AppPreferences.getLocalBaseUrl(Keys.BASE_URL_LOCAL);
     public static String BASE_SERVER_URL = BuildConfig.FLAVOR.equalsIgnoreCase("local") ? LOCAL_BASE_URL : BuildConfig.FLAVOR_URL;
 
     // Other options below:
