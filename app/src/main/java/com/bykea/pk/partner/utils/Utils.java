@@ -26,6 +26,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -884,7 +885,7 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
-    public static String getLocationAddress(String lat, String lng, Activity activity){
+    public static String getLocationAddress(String lat, String lng, Activity activity) {
 
         Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
@@ -1085,8 +1086,8 @@ public class Utils {
 
     public static void phoneCall(Activity activity, String phone) {
 
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-            activity.startActivity(intent);
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+        activity.startActivity(intent);
 
     }
 
@@ -1553,13 +1554,11 @@ public class Utils {
     }
 
     public static boolean isSkipDropOff(NormalCallData callData) {
-        if (StringUtils.isNotBlank(callData.getEndAddress())){
+        if (StringUtils.isNotBlank(callData.getEndAddress())) {
             return false;
         }
         return true;
     }
-
-
 
 
     public static class AudioTime implements Serializable {
@@ -2180,5 +2179,15 @@ public class Utils {
         return Patterns.WEB_URL.matcher(url).matches();
     }
 
+    /**
+     * This method plays an audio sound when cancel notification is displayed
+     *
+     * @param context calling context
+     */
+    public static void playCancelNotificationSound(Context context) {
+        MediaPlayer
+                .create(context, R.raw.notification_sound) //TODO add new sound for cancel notification when it's ready. See Ticket for details <a href="https://bykeapk.atlassian.net/browse/BS-1115">Jira Ticket</a>
+                .start();
+    }
 
 }

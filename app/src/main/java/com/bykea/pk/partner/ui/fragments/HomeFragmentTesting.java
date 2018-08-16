@@ -248,7 +248,7 @@ public class HomeFragmentTesting extends Fragment {
 
     private void demandClick() {
 
-        try{
+        try {
             if (AppPreferences.getPilotData() != null && StringUtils.isNotBlank(AppPreferences.getPilotData().getService_type())
                     && AppPreferences.getPilotData().getService_type().equalsIgnoreCase("van")) {
 
@@ -269,11 +269,9 @@ public class HomeFragmentTesting extends Fragment {
                 String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
                 Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-
 
 
     }
@@ -383,7 +381,7 @@ public class HomeFragmentTesting extends Fragment {
 //        mapView.onResume();
         try {
 
-                mapView.onCreate(savedInstanceState);
+            mapView.onCreate(savedInstanceState);
 
             MapsInitializer.initialize(mCurrentActivity.getApplicationContext());
         } catch (Exception e) {
@@ -407,14 +405,14 @@ public class HomeFragmentTesting extends Fragment {
     }
 
     private void getDriverPerformanceData() {
-        try{
-            if (!isCalled){
+        try {
+            if (!isCalled) {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 isCalled = true;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -431,7 +429,7 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
-                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0":
+                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
                             response.getData().getWeeklyBalance();
                     weeklyKamaiTv.setText(weeklyBalance);
                 } catch (NumberFormatException e) {
@@ -445,11 +443,11 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + "%");
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                totalBalanceTv.setText("Rs " +response.getData().getTotalBalance());
-                if (response.getData().getScore() != null){
-                    if (response.getData().getScore().contains("-")){
+                totalBalanceTv.setText("Rs " + response.getData().getTotalBalance());
+                if (response.getData().getScore() != null) {
+                    if (response.getData().getScore().contains("-")) {
                         totalScoreTv.setText(response.getData().getScore());
-                    }else {
+                    } else {
                         totalScoreTv.setText("سکور " + response.getData().getScore());
                     }
                 }
@@ -463,8 +461,6 @@ public class HomeFragmentTesting extends Fragment {
 
     private void checkGooglePlayService() {
         Utils.checkGooglePlayServicesVersion(mCurrentActivity);
-        initRangeBar();
-        AppPreferences.setAvailableAPICalling(false);
     }
 
     private void onUnauthorizedLicenceExpire() {
@@ -577,11 +573,11 @@ public class HomeFragmentTesting extends Fragment {
             if (AppPreferences.getDriverDestination() == null) {
                 muntakhibTv.setText(getResources().getString(R.string.muntakhib_text_urdu));
                 muntakhibTv1.setText("");
-                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf" );
+                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             } else {
 
                 muntakhibTv.setText(AppPreferences.getDriverDestination().address);
-                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf" );
+                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf");
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
 
             }
@@ -600,11 +596,11 @@ public class HomeFragmentTesting extends Fragment {
             if (null != AppPreferences.getDriverDestination()) {
 
                 muntakhibTv.setText(AppPreferences.getDriverDestination().address);
-                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf" );
+                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf");
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf");
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
                 muntakhibTvUrdu.setText(getResources().getString(R.string.muntakhib_manzil_urdu));
-            }else {
+            } else {
                 muntakhibTvUrdu.setText(getResources().getString(R.string.muntakhib_manzil_krey_urdu));
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
@@ -629,9 +625,9 @@ public class HomeFragmentTesting extends Fragment {
 
     @Override
     public void onResume() {
-        try{
+        try {
             mapView.onResume();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -699,7 +695,7 @@ public class HomeFragmentTesting extends Fragment {
             }
         }
 
-        if (getActivity().getIntent().getStringExtra("isLogin") != null){
+        if (getActivity().getIntent().getStringExtra("isLogin") != null) {
             currentIndex = 1;
         }
 
@@ -946,31 +942,7 @@ public class HomeFragmentTesting extends Fragment {
                                 , AppPreferences.getLongitude())
                         , 12.0f));
 
-            if (mCurrentActivity != null &&
-                    null != mCurrentActivity.getIntent() &&
-                    null != mCurrentActivity.getIntent().getExtras() &&
-                    mCurrentActivity.getIntent().getBooleanExtra("isCancelledTrip", false) &&
-                    !Dialogs.INSTANCE.isShowing()) {
-                if (!mCurrentActivity.isDialogShown() && getView() != null) {
-                    mCurrentActivity.setDialogShown(true);
-                    if (mCurrentActivity.getIntent().getBooleanExtra("isCanceledByAdmin", false)) {
-                        String message = mCurrentActivity.getIntent().getStringExtra("cancelMsg");
-                        Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
-                                new StringCallBack() {
-                                    @Override
-                                    public void onCallBack(String msg) {
-                                    }
-                                }, null, "Booking Cancelled", StringUtils.isNotBlank(message) ? message : "");
-                    } else {
-                        Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
-                                new StringCallBack() {
-                                    @Override
-                                    public void onCallBack(String msg) {
-                                    }
-                                }, null, "Booking Cancelled", "Passenger has cancelled the Trip");
-                    }
-                }
-            }
+            showCancelDialogIfRequired();
 
 //            ArrayList<HeatMapUpdatedResponse> data = new Gson().fromJson(getString(R.string.heat_map_data), new TypeToken<ArrayList<HeatMapUpdatedResponse>>() {
 //            }.getType());
@@ -984,6 +956,25 @@ public class HomeFragmentTesting extends Fragment {
             //addHeatMapPolyline();
         }
     };
+
+    /**
+     * This method checks if cancel dialog need to be shown or not by checking Intent Extras
+     */
+    private void showCancelDialogIfRequired() {
+        if (mCurrentActivity != null &&
+                null != mCurrentActivity.getIntent() &&
+                null != mCurrentActivity.getIntent().getExtras() &&
+                mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP, false) &&
+                !Dialogs.INSTANCE.isShowing()) {
+            if (!mCurrentActivity.isDialogShown() && getView() != null) {
+                mCurrentActivity.setDialogShown(true);
+                Utils.playCancelNotificationSound(mCurrentActivity);
+                String cancelMsg = mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP_BY_ADMIN, false)
+                        ? mCurrentActivity.getString(R.string.cancel_notification_by_admin) : mCurrentActivity.getString(R.string.cancel_notification);
+                Dialogs.INSTANCE.showCancelNotification(mCurrentActivity, cancelMsg);
+            }
+        }
+    }
 
     private void addHeatMapPolyline() {
         Polyline polyline = mGoogleMap.addPolyline(new PolylineOptions()
@@ -1002,7 +993,7 @@ public class HomeFragmentTesting extends Fragment {
         polyline.setJointType(JointType.ROUND);
 
         List<PatternItem> pattern = Arrays.<PatternItem>asList(
-                 new Dash(20), new Gap(10));
+                new Dash(20), new Gap(10));
 
         polyline.setPattern(pattern);
     }
@@ -1015,7 +1006,7 @@ public class HomeFragmentTesting extends Fragment {
         };
 
         float[] startpoints = {
-            0.2f, 1f
+                0.2f, 1f
         };
 
         Gradient gradient = new Gradient(colors, startpoints);
@@ -1024,11 +1015,11 @@ public class HomeFragmentTesting extends Fragment {
 
         // Get the data: latitude/longitude positions of police stations.
 
-            list = new ArrayList<>();
+        list = new ArrayList<>();
 
 
-                list.add(new LatLng(24.819258, 67.077928));
-                list.add(new LatLng(24.819258, 67.077928));
+        list.add(new LatLng(24.819258, 67.077928));
+        list.add(new LatLng(24.819258, 67.077928));
 
         // Create a heat map tile provider, passing it the latlngs of the police stations.
         mProvider = new HeatmapTileProvider.Builder()
@@ -1059,12 +1050,11 @@ public class HomeFragmentTesting extends Fragment {
     }
 
 
+    @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn, R.id.mapPinIv})
+    public void onClick(View view) {
+        switch (view.getId()) {
 
-    @OnClick ( { R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn, R.id.mapPinIv } )
-    public void onClick(View view){
-        switch (view.getId()){
-
-            case R.id.previusDurationBtn:{
+            case R.id.previusDurationBtn: {
                 Dialogs.INSTANCE.setlastWeek(durationTv);
                 durationBtn.setVisibility(View.VISIBLE);
                 previusDurationBtn.setVisibility(View.GONE);
@@ -1074,12 +1064,12 @@ public class HomeFragmentTesting extends Fragment {
                 break;
             }
 
-            case R.id.mapPinIv:{
+            case R.id.mapPinIv: {
                 setDriverLocation();
                 break;
             }
 
-            case R.id.durationBtn:{
+            case R.id.durationBtn: {
                 Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
                 durationBtn.setVisibility(View.GONE);
                 previusDurationBtn.setVisibility(View.VISIBLE);
@@ -1089,19 +1079,19 @@ public class HomeFragmentTesting extends Fragment {
                 break;
             }
 
-            case R.id.shahkarBtn:{
+            case R.id.shahkarBtn: {
                 //view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 ActivityStackManager.getInstance().startShahkarActivity(mCurrentActivity);
                 break;
             }
 
-            case R.id.statsBtn:{
+            case R.id.statsBtn: {
                 //view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 ActivityStackManager.getInstance().startStatsActivity(mCurrentActivity);
                 break;
             }
 
-            case R.id.editBtn:{
+            case R.id.editBtn: {
                 //view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
                     return;
@@ -1122,7 +1112,6 @@ public class HomeFragmentTesting extends Fragment {
                     , 12.0f));
         }
     }
-
 
 
     private void setHomeLocation() {
@@ -1211,9 +1200,6 @@ public class HomeFragmentTesting extends Fragment {
         }
         return false;
     }
-
-
-
 
 
 }

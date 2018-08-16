@@ -1527,11 +1527,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     };
 
 
-    private void cancelByPassenger(boolean isCanceledByAdmin, String cancelMsg) {
+    private void cancelByPassenger(boolean isCanceledByAdmin) {
         playNotificationSound();
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, cancelMsg, mCurrentActivity);
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, mCurrentActivity);
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, mCurrentActivity);
         mCurrentActivity.finish();
     }
 
@@ -1752,7 +1753,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     public void run() {
                         try {
                             if (response.getMessage().equalsIgnoreCase("Trip Not Found")) {
-                                cancelByPassenger(false, "");
+                                cancelByPassenger(false);
                             } else {
                                 if (shouldUpdateTripData(response.getData().getStatus())) {
                                     AppPreferences.setCallData(response.getData());
@@ -1797,11 +1798,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 @Override
                 public void run() {
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)) {
-                        cancelByPassenger(false, "");
+                        cancelByPassenger(false);
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
                         String message = intent.getStringExtra("msg");
-                        cancelByPassenger(true, message);
+                        cancelByPassenger(true);
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_COMPLETE_BY_ADMIN)) {
                         playNotificationSound();

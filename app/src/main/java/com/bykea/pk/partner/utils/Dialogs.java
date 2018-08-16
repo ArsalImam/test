@@ -820,4 +820,27 @@ public enum Dialogs {
             e.printStackTrace();
         }
     }
+
+
+    /**
+     * This method creates a dialog to show cancel notification
+     *
+     * @param context Calling context
+     * @param message notification message to show
+     */
+    public void showCancelNotification(Context context, String message) {
+        if (null == context) return;
+        dismissDialog();
+        final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+        dialog.setContentView(R.layout.dialog_cancel_notification);
+        dialog.setCancelable(false);
+        dialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        ((FontTextView) dialog.findViewById(R.id.messageTv)).setText(message);
+        dialog.show();
+    }
 }

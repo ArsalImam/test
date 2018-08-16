@@ -70,11 +70,14 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin, String cancelMsg, Context mContext) {
+    /**
+     * This method starts home activity with cancel extras that indicates we need to show cancel notification
+     */
+    public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin, Context mContext) {
         Intent intent = new Intent(mContext, HomeActivity.class);
-        intent.putExtra("isCancelledTrip", true);
-        intent.putExtra("isCanceledByAdmin", isCanceledByAdmin);
-        intent.putExtra("cancelMsg", cancelMsg);
+        intent.putExtra(Constants.Extras.IS_CANCELED_TRIP, true);
+        intent.putExtra(Constants.Extras.IS_CANCELED_TRIP_BY_ADMIN, isCanceledByAdmin);
+//        intent.putExtra("cancelMsg", cancelMsg);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mContext.startActivity(intent);

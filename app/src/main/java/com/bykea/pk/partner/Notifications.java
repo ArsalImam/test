@@ -183,7 +183,7 @@ public class Notifications {
                 .setSound(soundUri).setAutoCancel(true);
 
         Intent targetIntent = new Intent(context, HomeActivity.class);
-        targetIntent.putExtra("isCancelledTrip", true);
+        targetIntent.putExtra(Constants.Extras.IS_CANCELED_TRIP, true);
         targetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent contentIntent = PendingIntent
@@ -201,7 +201,7 @@ public class Notifications {
 
         Intent intent = new Intent();
         intent.setClass(context, HomeActivity.class);
-        intent.putExtra("isCancelledTrip", false);
+        intent.putExtra(Constants.Extras.IS_CANCELED_TRIP, false);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //        intent.putExtra("adminMsg", msg);
