@@ -2181,20 +2181,21 @@ public class Utils {
     }
 
     /**
-     * This method plays an audio sound for 3 secs when cancel notification is displayed
+     * This method plays an audio sound for 8 secs when cancel notification is displayed
      *
      * @param context calling context
      */
     public static void playCancelNotificationSound(Context context) {
         final MediaPlayer mediaPlayer = MediaPlayer
-                .create(context, R.raw.alert_signal);
+                .create(context, R.raw.one);
+        mediaPlayer.setLooping(true);
         mediaPlayer.start();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 mediaPlayer.stop();
             }
-        }, 3000);//millisec.
+        }, 8000);//millisec.
     }
 
 }
