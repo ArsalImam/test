@@ -121,6 +121,7 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(NOTIF_ID, getForegroundNotification());
         Utils.redLog("LocServ", "onStartCommand");
         mContext = getApplicationContext();
         if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
