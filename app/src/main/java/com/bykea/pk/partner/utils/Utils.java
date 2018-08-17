@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -2180,14 +2181,20 @@ public class Utils {
     }
 
     /**
-     * This method plays an audio sound when cancel notification is displayed
+     * This method plays an audio sound for 3 secs when cancel notification is displayed
      *
      * @param context calling context
      */
     public static void playCancelNotificationSound(Context context) {
-        MediaPlayer
-                .create(context, R.raw.notification_sound) //TODO add new sound for cancel notification when it's ready. See Ticket for details <a href="https://bykeapk.atlassian.net/browse/BS-1115">Jira Ticket</a>
-                .start();
+        final MediaPlayer mediaPlayer = MediaPlayer
+                .create(context, R.raw.alert_signal);
+        mediaPlayer.start();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.stop();
+            }
+        }, 3000);//millisec.
     }
 
 }
