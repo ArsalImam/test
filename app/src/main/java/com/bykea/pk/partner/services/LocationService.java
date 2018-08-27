@@ -26,6 +26,7 @@ import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.activities.SplashActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -103,7 +104,7 @@ public class LocationService extends Service {
      * @return Notification
      */
     private Notification getForegroundNotification() {
-        Intent notificationIntent = new Intent(this, LocationService.class);
+        Intent notificationIntent = new Intent(this, SplashActivity.class);
 //        notificationIntent.setAction(Constants.Actions.ON_NOTIFICATION_CLICK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
