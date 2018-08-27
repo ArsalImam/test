@@ -143,5 +143,6 @@
     <string name="raqam_text">رقم</string>
     <string name="transfer_text">ٹرانسفر</string>
     <string name="balance_text">بیلینس</string>
+    <string name="logout_text">\u0020لاگ آوٹ؟\u0020</string>
 
 </resources>
