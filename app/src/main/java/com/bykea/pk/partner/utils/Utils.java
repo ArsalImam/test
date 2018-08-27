@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -2183,5 +2184,22 @@ public class Utils {
         return Patterns.WEB_URL.matcher(url).matches();
     }
 
-
+    /**
+     * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
+     *
+     * @param context calling context
+     * @see Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     */
+    public static void disableBatteryOptimization(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = context.getPackageName();
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                context.startActivity(intent);
+            }
+        }
+    }
 }
