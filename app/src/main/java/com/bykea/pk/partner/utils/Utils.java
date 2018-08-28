@@ -491,7 +491,7 @@ public class Utils {
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
         AppPreferences.setIncomingCall(true);
         AppPreferences.clearTrackingData();
-        ActivityStackManager.getInstance().restartLocationService(DriverApp.getContext());
+        ActivityStackManager.getInstance().startLocationService(DriverApp.getContext());
     }
 
     public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
@@ -2054,14 +2054,42 @@ public class Utils {
      * @return notification chanel id
      */
     public static String getChannelID() {
-        String chanelId = "FG_NOTI_BYKEA_P";
+        String chanelId = "bykea_p_channel_id";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
-            String channelId = "bykea_p_channel_id";
+//            String channelId = "bykea_p_channel_id";
             CharSequence channelName = "Bykea Partner Notification Channel";
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            chanelId = notificationChannel.getId();
+        }
+        return chanelId;
+    }
+
+
+    /**
+     * This method creates Notification Chanel for OS version >= Android O
+     *
+     * @param context Calling context
+     * @return notification chanel id
+     */
+    public static String getChannelIDForOnGoingNotification(Context context) {
+        String chanelId = "bykea_p_channel_id_for_loc";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+//            String channelId = "bykea_p_channel_id";
+            CharSequence channelName = "Bykea Notification Channel";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);

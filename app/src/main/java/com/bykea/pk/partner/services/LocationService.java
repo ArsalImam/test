@@ -110,7 +110,7 @@ public class LocationService extends Service {
                 notificationIntent, 0);
 
         String msg = getNotificationMsg();
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Utils.getChannelID())
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Utils.getChannelIDForOnGoingNotification(this))
                 .setContentTitle("Bykea Partner")
                 .setContentText(msg)
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
@@ -137,7 +137,10 @@ public class LocationService extends Service {
     }
 
     private void stopForegroundService() {
+        stopLocationUpdates();
+        cancelTimer();
         stopForeground(true);
+        stopSelf();
     }
 
     @Override
@@ -392,12 +395,16 @@ public class LocationService extends Service {
                             shouldCallLocApi = true;
                         }
                     }
+                    // restart the timer
+                    mCountDownTimer.start();
                 }
             } else if (Utils.hasLocationCoordinates()) {
                 stopForegroundService();
+            } else {
+                // restart the timer
+                mCountDownTimer.start();
             }
-            // restart the timer
-            mCountDownTimer.start();
+
         }
     };
 
