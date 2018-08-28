@@ -8,7 +8,9 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -438,17 +440,17 @@ public class HomeFragmentTesting extends Fragment {
 
                 weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-                weeklyCancelTv.setText(response.getData().getCancelPercentage() + "%");
-                weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + "%");
-                weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + "%");
+                weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
+                weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
+                weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                totalBalanceTv.setText("Rs " + response.getData().getTotalBalance());
+                totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
                 if (response.getData().getScore() != null) {
-                    if (response.getData().getScore().contains("-")) {
+                    if (response.getData().getScore().contains(getString(R.string.minus_sign))) {
                         totalScoreTv.setText(response.getData().getScore());
                     } else {
-                        totalScoreTv.setText("سکور " + response.getData().getScore());
+                        totalScoreTv.setText(getString(R.string.score_urdu) + response.getData().getScore());
                     }
                 }
 
@@ -968,12 +970,43 @@ public class HomeFragmentTesting extends Fragment {
                 !Dialogs.INSTANCE.isShowing()) {
             if (!mCurrentActivity.isDialogShown() && getView() != null) {
                 mCurrentActivity.setDialogShown(true);
-                Utils.playCancelNotificationSound(mCurrentActivity);
+
+                final Runnable runnable = playCancelNotificationSound();
                 String cancelMsg = mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP_BY_ADMIN, false)
                         ? mCurrentActivity.getString(R.string.cancel_notification_by_admin) : mCurrentActivity.getString(R.string.cancel_notification);
-                Dialogs.INSTANCE.showCancelNotification(mCurrentActivity, cancelMsg);
+                Dialogs.INSTANCE.showCancelNotification(mCurrentActivity, cancelMsg, new StringCallBack() {
+                    @Override
+                    public void onCallBack(String msg) {
+                        if (runnable != null) {
+                            runnable.run();
+                        }
+                    }
+                });
             }
         }
+    }
+
+    /**
+     * This method plays an audio sound for 8 secs when cancel notification is displayed
+     *
+     * @return Runnable runnable handler to stop media player
+     */
+    private Runnable playCancelNotificationSound() {
+        final MediaPlayer mediaPlayer = android.media.MediaPlayer
+                .create(mCurrentActivity, R.raw.one);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.stop();
+                handler.removeCallbacks(this);
+            }
+        };
+        handler.postDelayed(runnable, 8000);//millisec.
+
+        return runnable;
     }
 
     private void addHeatMapPolyline() {

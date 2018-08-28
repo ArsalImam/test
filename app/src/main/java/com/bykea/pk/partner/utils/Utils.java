@@ -26,6 +26,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -2049,6 +2050,41 @@ public class Utils {
         return size;
     }
 
+    /**
+     * This method creates separate notification channel (On Android O and above) for Trip Cancel
+     * Notification which has different Sound URI.
+     */
+    public static String getChannelIDForCancelNotifications() {
+        String chanelId = "bykea_channel_id_for_cancel";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            CharSequence channelName = "Bykea Partner Notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+
+            Uri soundUri = Uri.parse("android.resource://"
+                    + DriverApp.getContext().getPackageName() + "/"
+                    + R.raw.one);
+
+            AudioAttributes att = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build();
+
+            notificationChannel.setSound(soundUri, att);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            chanelId = notificationChannel.getId();
+        }
+        return chanelId;
+    }
+
     public static String getChannelID() {
         String chanelId = "FG_NOTI_BYKEA_P";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -2180,22 +2216,5 @@ public class Utils {
         return Patterns.WEB_URL.matcher(url).matches();
     }
 
-    /**
-     * This method plays an audio sound for 8 secs when cancel notification is displayed
-     *
-     * @param context calling context
-     */
-    public static void playCancelNotificationSound(Context context) {
-        final MediaPlayer mediaPlayer = MediaPlayer
-                .create(context, R.raw.one);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mediaPlayer.stop();
-            }
-        }, 8000);//millisec.
-    }
 
 }

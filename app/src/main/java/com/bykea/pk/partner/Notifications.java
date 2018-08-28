@@ -173,10 +173,10 @@ public class Notifications {
 
         Uri soundUri = Uri.parse("android.resource://"
                 + context.getPackageName() + "/"
-                + R.raw.notification_sound);
+                + R.raw.one);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                context, Utils.getChannelID())
+                context, Utils.getChannelIDForCancelNotifications())
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentTitle(Constants.APP_NAME)
                 .setContentText("" + message)

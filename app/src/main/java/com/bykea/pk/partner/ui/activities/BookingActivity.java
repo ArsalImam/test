@@ -1532,7 +1532,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
         ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, mCurrentActivity);
-        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, mCurrentActivity);
         mCurrentActivity.finish();
     }
 

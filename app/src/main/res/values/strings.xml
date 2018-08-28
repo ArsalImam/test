@@ -145,5 +145,9 @@
     <string name="balance_text">بیلینس</string>
     <string name="cancel_notification">\u0020کسٹمر نے بکنگ کینسل کردی\u0020</string>
     <string name="cancel_notification_by_admin">\u0020ایڈمن نے بکنگ کینسل کردی\u0020</string>
+    <string name="score_urdu">\u0020سکور</string>
+    <string name="rs">Rs\u0020</string>
+    <string name="percentage_sign">%</string>
+    <string name="minus_sign">-</string>
 
 </resources>

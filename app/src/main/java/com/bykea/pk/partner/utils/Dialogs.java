@@ -827,8 +827,9 @@ public enum Dialogs {
      *
      * @param context Calling context
      * @param message notification message to show
+     * @param onClick Callback to notify that OK/Positive button is clicked
      */
-    public void showCancelNotification(Context context, String message) {
+    public void showCancelNotification(Context context, String message, final StringCallBack onClick) {
         if (null == context) return;
         dismissDialog();
         final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
@@ -838,6 +839,7 @@ public enum Dialogs {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                onClick.onCallBack(StringUtils.EMPTY);
             }
         });
         ((FontTextView) dialog.findViewById(R.id.messageTv)).setText(message);
