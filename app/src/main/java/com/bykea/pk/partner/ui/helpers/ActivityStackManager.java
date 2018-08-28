@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
@@ -122,7 +124,7 @@ public class ActivityStackManager {
      * @param context Calling Context
      * @see Constants.Actions.STOPFOREGROUND_ACTION
      */
-    public void stopLocationService(Context context) {
+    public synchronized void stopLocationService(Context context) {
         if (Utils.isServiceRunning(context, LocationService.class)) {
             Intent intent = new Intent(context, LocationService.class);
             intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
@@ -130,9 +132,22 @@ public class ActivityStackManager {
         }
     }
 
-    public void restartLocationService(Context mContext) {
-        stopLocationService(mContext);
-        startLocationService(mContext);
+    /**
+     * This method restarts location service by first stopping the service if it is already running
+     * and then calling startLocationService method to start Location service. Handler added to fix
+     * issue for android 8.0 and above where notification gets removed when we try to start service
+     * immediately after stopping it.
+     *
+     * @param context Calling Context
+     */
+    public void restartLocationService(final Context context) {
+        stopLocationService(context);
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startLocationService(context);
+            }
+        }, 1000);
     }
 
     public void restartLocationService(Context mContext, String STATUS) {

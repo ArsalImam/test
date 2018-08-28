@@ -1,8 +1,6 @@
 package com.bykea.pk.partner.utils;
 
-import android.Manifest;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -35,7 +33,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -64,19 +61,18 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
-import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
-import com.bykea.pk.partner.ui.fragments.HomeFragment;
+import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -92,8 +88,6 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.okhttp.MediaType;
@@ -491,7 +485,7 @@ public class Utils {
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
         AppPreferences.setIncomingCall(true);
         AppPreferences.clearTrackingData();
-        ActivityStackManager.getInstance().startLocationService(DriverApp.getContext());
+        ActivityStackManager.getInstance().restartLocationService(DriverApp.getContext());
     }
 
     public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
@@ -2049,7 +2043,7 @@ public class Utils {
     }
 
     /**
-     * This method creates Notification Chanel for OS version >= Android o
+     * This method creates Notification Channel for OS version >= Android o
      *
      * @return notification chanel id
      */
@@ -2059,8 +2053,8 @@ public class Utils {
             NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
 //            String channelId = "bykea_p_channel_id";
-            CharSequence channelName = "Bykea Partner Notification Channel";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
+            CharSequence channelName = "Bykea Notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
@@ -2076,7 +2070,8 @@ public class Utils {
 
 
     /**
-     * This method creates Notification Chanel for OS version >= Android O
+     * This method creates Separate Notification Channel for Foreground Location Service on devices
+     * with OS version >= Android O
      *
      * @param context Calling context
      * @return notification chanel id
@@ -2087,13 +2082,9 @@ public class Utils {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 //            String channelId = "bykea_p_channel_id";
-            CharSequence channelName = "Bykea Notification Channel";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
+            CharSequence channelName = "Bykea Active/Inactive Status";
+            int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(notificationChannel);
             }
