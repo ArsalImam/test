@@ -2053,6 +2053,8 @@ public class Utils {
     /**
      * This method creates separate notification channel (On Android O and above) for Trip Cancel
      * Notification which has different Sound URI.
+     *
+     * @return String of Channel ID
      */
     public static String getChannelIDForCancelNotifications() {
         String chanelId = "bykea_channel_id_for_cancel";
