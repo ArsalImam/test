@@ -143,6 +143,22 @@
     <string name="raqam_text">رقم</string>
     <string name="transfer_text">ٹرانسفر</string>
     <string name="balance_text">بیلینس</string>
-    <string name="blank_space">\u0020</string>
-
+    <!-- %1$s is argument of type string and \u0020 is blank space, normal space doesn't work when
+    string extracted from string.xml (added space with urdu text because Jameel nastaliqi font cuts some text)-->
+    <string name="problem_item">\u0020%1$s\u0020</string>
+    <string name="customer_name_urdu">\u0020کسٹمر کا نام\u0020</string>
+    <string name="booking_time_urdu">\u0020بکنگ ٹائیم\u0020</string>
+    <string name="service_urdu">\u0020سروس\u0020</string>
+    <string name="cancel_karne_wala">\u0020کینسل کرنے والا‎\u0020</string>
+    <string name="cancel_fee_urdu">\u0020کینسل فیس\u0020</string>
+    <string name="total_urdu">\u0020ٹوٹل\u0020</string>
+    <string name="masla_darj_karain">\u0020مسئلہ درج کریں\u0020</string>
+    <string name="waiting_charges_urdu">\u0020ویٹینگ چارجز\u0020</string>
+    <string name="buniyadi_karaya">\u0020بنیادی کرایہ\u0020</string>
+    <string name="mokamal_karaya">\u0020مکمل کرایہ\u0020</string>
+    <string name="drop_off_discount_urdu">\u0020ڈراپ آف ڈسکاونٹ\u0020</string>
+    <string name="promo_urdu">\u0020پرومو\u0020</string>
+    <string name="wallet_urdu">\u0020والیٹ\u0020</string>
+    <string name="partner_ki_taraf_se_rating">\u0020پارٹنر کی طرف سے ریٹنگ\u0020</string>
+    <string name="customer_ki_taraf_se_rating">\u0020کسٹمر کی طرف سے ریٹنگ\u0020</string>
 </resources>
