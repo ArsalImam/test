@@ -42,8 +42,6 @@ public class ContactUsFragment extends Fragment {
     FontTextView financeEmail;
     @BindView(R.id.financeWatsapp)
     FontTextView financeWatsapp;
-    @BindView(R.id.bankAccountNumber)
-    ImageView bankAccountNumber;
 
     private ContactNumbersResponse contactNumbers;
     private HomeActivity mCurrentActivity;
