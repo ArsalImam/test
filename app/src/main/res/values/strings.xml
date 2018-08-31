@@ -153,8 +153,5 @@
     <string name="rs">Rs\u0020</string>
     <string name="percentage_sign">%</string>
     <string name="minus_sign">-</string>
-    <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
-    <string name="invalid_phone">Invalid phone</string>
-    <string name="current_week">Current Week</string>
 
 </resources>
