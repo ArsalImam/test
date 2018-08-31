@@ -84,6 +84,7 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
 
+        Utils.disableBatteryOptimization(mCurrentActivity);
 
     }
 
