@@ -103,6 +103,8 @@ public class Constants {
         public static final String IS_BIOMETRIC_VERIFIED = "IS_FINGER_PRINTS_SUCCESS";
 
         public static final String POSITION_DELIVERY_SCHEDULE = "POSITION_DELIVERY_SCHEDULE";
+        public static final String IS_CANCELED_TRIP = "isCancelledTrip";
+        public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
     }
 
     public static class Broadcast {

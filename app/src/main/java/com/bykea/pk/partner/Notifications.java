@@ -173,17 +173,17 @@ public class Notifications {
 
         Uri soundUri = Uri.parse("android.resource://"
                 + context.getPackageName() + "/"
-                + R.raw.notification_sound);
+                + R.raw.one);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                context, Utils.getChannelID())
+                context, Utils.getChannelIDForCancelNotifications())
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentTitle(Constants.APP_NAME)
                 .setContentText("" + message)
                 .setSound(soundUri).setAutoCancel(true);
 
         Intent targetIntent = new Intent(context, HomeActivity.class);
-        targetIntent.putExtra("isCancelledTrip", true);
+        targetIntent.putExtra(Constants.Extras.IS_CANCELED_TRIP, true);
         targetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent contentIntent = PendingIntent
@@ -201,7 +201,7 @@ public class Notifications {
 
         Intent intent = new Intent();
         intent.setClass(context, HomeActivity.class);
-        intent.putExtra("isCancelledTrip", false);
+        intent.putExtra(Constants.Extras.IS_CANCELED_TRIP, false);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //        intent.putExtra("adminMsg", msg);
