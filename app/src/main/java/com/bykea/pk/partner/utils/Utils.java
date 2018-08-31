@@ -26,12 +26,15 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -884,7 +887,7 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
-    public static String getLocationAddress(String lat, String lng, Activity activity){
+    public static String getLocationAddress(String lat, String lng, Activity activity) {
 
         Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
@@ -1085,8 +1088,8 @@ public class Utils {
 
     public static void phoneCall(Activity activity, String phone) {
 
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-            activity.startActivity(intent);
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+        activity.startActivity(intent);
 
     }
 
@@ -1553,13 +1556,11 @@ public class Utils {
     }
 
     public static boolean isSkipDropOff(NormalCallData callData) {
-        if (StringUtils.isNotBlank(callData.getEndAddress())){
+        if (StringUtils.isNotBlank(callData.getEndAddress())) {
             return false;
         }
         return true;
     }
-
-
 
 
     public static class AudioTime implements Serializable {
@@ -2047,6 +2048,43 @@ public class Utils {
             size = f.length();
         }
         return size;
+    }
+
+    /**
+     * This method creates separate notification channel (On Android O and above) for Trip Cancel
+     * Notification which has different Sound URI.
+     *
+     * @return String of Channel ID
+     */
+    public static String getChannelIDForCancelNotifications() {
+        String chanelId = "bykea_channel_id_for_cancel";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            CharSequence channelName = "Bykea Partner Notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+
+            Uri soundUri = Uri.parse("android.resource://"
+                    + DriverApp.getContext().getPackageName() + "/"
+                    + R.raw.one);
+
+            AudioAttributes att = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build();
+
+            notificationChannel.setSound(soundUri, att);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            chanelId = notificationChannel.getId();
+        }
+        return chanelId;
     }
 
     public static String getChannelID() {
