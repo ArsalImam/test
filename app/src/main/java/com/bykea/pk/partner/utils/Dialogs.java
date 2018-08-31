@@ -337,7 +337,7 @@ public enum Dialogs {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 try {
-                    if (list.get(position).equalsIgnoreCase("Current Week")) {
+                    if (list.get(position).equalsIgnoreCase(mCurrentActivity.getString(R.string.current_week))) {
                         setCalenderCurrentWeek(tv); //week start from friday to thursday
                     } else {
                         setlastWeek(tv); //week start from friday
