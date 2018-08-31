@@ -1133,7 +1133,7 @@ public class AppPreferences {
      * @param key shared pref. key for local url
      * @return Local URL String
      */
-    public static String getBASEUrl(String key) {
+    public static String getLocalBaseUrl(String key) {
         return mSharedPreferences.getString(key, BuildConfig.FLAVOR_URL);
     }
 
@@ -1143,7 +1143,7 @@ public class AppPreferences {
      *
      * @param value value for local url
      */
-    public static void setSavedBASEUrl(String value) {
+    public static void setLocalBaseUrl(String value) {
         mSharedPreferences
                 .edit()
                 .putString(Keys.BASE_URL_LOCAL, value)

@@ -75,6 +75,7 @@ public class ActivityStackManager {
     /**
      * clears activity stack before starting HomeActivity (if activity is already running it will not launch new instance)
      * HomeFragment will be loaded from onNewIntent method of HomeActivity
+     *
      * @param context calling activity
      */
     public void startHomeActivity(Context context) {
@@ -162,7 +163,7 @@ public class ActivityStackManager {
             public void run() {
                 startLocationService(context);
             }
-        }, 1000);
+        }, Constants.RESTART_LOCATION_SERVICE_DELAY);
     }
 
     public void restartLocationService(Context mContext, String STATUS) {

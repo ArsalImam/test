@@ -206,7 +206,15 @@ public class LoginActivity extends BaseActivity {
 //                                Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity, loginResponse.getSupport(), loginResponse.getMessage());
                                 }
                             } else {
-                                Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, "Error", loginResponse.getMessage());
+                                String msg = StringUtils.containsIgnoreCase(loginResponse.getMessage(), getString(R.string.invalid_phone))
+                                        ? getString(R.string.invalid_phone_urdu) : loginResponse.getMessage();
+                                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, msg,
+                                        null, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Dialogs.INSTANCE.dismissDialog();
+                                            }
+                                        });
                             }
                         }
                     }
