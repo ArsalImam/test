@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -670,10 +671,10 @@ public enum Dialogs {
     public void showLogoutDialog(Context context,
                                  View.OnClickListener onClickListener) {
         dismissDialog();
-        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
         mDialog.setContentView(R.layout.logout_dialog);
-        FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
-        FontButton cancelIv = (FontButton) mDialog.findViewById(R.id.ivNegative);
+        ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+        ImageView cancelIv = mDialog.findViewById(R.id.ivNegative);
 
         cancelIv.setOnClickListener(new View.OnClickListener() {
             @Override
