@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
@@ -73,6 +75,7 @@ public class ActivityStackManager {
     /**
      * clears activity stack before starting HomeActivity (if activity is already running it will not launch new instance)
      * HomeFragment will be loaded from onNewIntent method of HomeActivity
+     *
      * @param context calling activity
      */
     public void startHomeActivity(Context context) {
@@ -119,32 +122,48 @@ public class ActivityStackManager {
         }
     }
 
+    /*
+    * This method check for Android version of device and starts location service as foreground
+    * service when OS is greater or equal to Android O
+    */
     private void startService(Context mContext, Intent intent) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            mContext.startForegroundService(intent);
-//        } else {
-//            mContext.startService(intent);
-//        }
-        mContext.startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mContext.startForegroundService(intent);
+        } else {
+            mContext.startService(intent);
+        }
     }
 
-    public void stopLocationServiceForeGround(Context mContext) {
-        if (Utils.isServiceRunning(mContext, LocationService.class)) {
-            Intent intent = new Intent(mContext, LocationService.class);
+    /**
+     * This method stops Location Service.
+     *
+     * @param context Calling Context
+     * @see Constants.Actions.STOPFOREGROUND_ACTION
+     */
+    public synchronized void stopLocationService(Context context) {
+        if (Utils.isServiceRunning(context, LocationService.class)) {
+            Intent intent = new Intent(context, LocationService.class);
             intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
-            startService(mContext, intent);
+            startService(context, intent);
         }
     }
 
-    public void stopLocationService(Context mContext) {
-        if (Utils.isServiceRunning(mContext, LocationService.class)) {
-            mContext.stopService(new Intent(mContext, LocationService.class));
-        }
-    }
-
-    public void restartLocationService(Context mContext) {
-        stopLocationService(mContext);
-        startLocationService(mContext);
+    /**
+     * This method restarts location service by first stopping the service if it is already running
+     * and then calling startLocationService method to start Location service. Handler added to fix
+     * issue for android 8.0 and above where notification gets removed when we try to start service
+     * immediately after stopping it.
+     *
+     * @param context Calling Context
+     */
+    public void restartLocationService(final Context context) {
+        stopLocationService(context);
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startLocationService(context);
+            }
+        }, Constants.RESTART_LOCATION_SERVICE_DELAY);
     }
 
     public void restartLocationService(Context mContext, String STATUS) {

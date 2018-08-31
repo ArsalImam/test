@@ -824,6 +824,35 @@ public enum Dialogs {
 
 
     /**
+     * This method shows a pop up dialog with Urdu text and Tick/Cross as Positive/Negative Button
+     * It will hide cross button when OnClickListener for negative button is null
+     *
+     * @param context  Calling Context
+     * @param message  Message to display
+     * @param negative OnClickListener for callback when Negative button is pressed
+     * @param positive OnClickListener for callback when Positive button is pressed
+     */
+    public void showAlertDialogUrduWithTickCross(Context context, String message,
+                                                 View.OnClickListener negative, View.OnClickListener positive) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+        mDialog.setContentView(R.layout.dialog_alert_tick_cross_urdu);
+
+        if (negative == null) {
+            mDialog.setCancelable(true);
+            mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+        } else {
+            mDialog.setCancelable(false);
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(negative);
+        }
+
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
+        FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
+        messageTv.setText(message);
+        showDialog();
+    }
+  
+    /**
      * This method creates a dialog to show cancel notification
      *
      * @param context Calling context
@@ -845,5 +874,5 @@ public enum Dialogs {
         });
         ((FontTextView) dialog.findViewById(R.id.messageTv)).setText(message);
         dialog.show();
-    }
+   }
 }

@@ -156,4 +156,5 @@ public class Constants {
     public final static int REQUEST_CAMERA = 23;
     public final static int REQUEST_GALLERY = 22;
     public final static String UPLOAD_IMG_EXT = ".jpg";
+    public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
 }
