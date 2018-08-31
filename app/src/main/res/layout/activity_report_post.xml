@@ -8,45 +8,45 @@
     android:orientation="vertical"
     tools:context="com.bykea.pk.partner.ui.activities.ReportPostActivity">
 
-    <include layout="@layout/custom_toolbar_green"/>
+    <include layout="@layout/custom_toolbar_green" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="@dimen/_30sdp"
         android:orientation="vertical"
         android:paddingLeft="@dimen/_15sdp"
         android:paddingRight="@dimen/_15sdp">
 
         <LinearLayout
             android:id="@+id/text_lay"
-            android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_6sdp"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/_30sdp"
-                android:textSize="@dimen/_30sdp"
-                android:textStyle="bold"
-                app:fontName="roboto_bold.ttf"
+                android:text=" شکریہ "
                 android:textColor="@color/colorAccent"
-                android:padding="@dimen/_9sdp"
-                android:text="THANK YOU" />
+                android:textSize="@dimen/_34sdp"
+                android:textStyle="bold"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="-18dp"
+                android:layout_marginLeft="@dimen/_36sdp"
+                android:layout_marginRight="@dimen/_36sdp"
                 android:gravity="center"
-                android:padding="@dimen/_9sdp"
-                android:textSize="@dimen/_18sdp"
-                app:fontName="roboto_regular.ttf"
-                android:lineSpacingExtra="@dimen/_20sdp"
-                android:text="Hamara Numainda Apse jald\nHee Rabta Karaiga" />
+                android:text=" ہمارا نمائندہ آپ سے جلد رابطہ کریگا "
+                android:textSize="@dimen/_28sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
 
         </LinearLayout>
 
@@ -54,8 +54,10 @@
             android:id="@+id/editText_lay"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_200sdp"
+            android:layout_marginTop="@dimen/_30sdp"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="visible"
+            tools:visibility="gone">
 
             <com.bykea.pk.partner.widgets.FontEditText
                 android:id="@+id/etEmail"
@@ -63,10 +65,10 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/square_outline_bg"
                 android:hint="Enter Email"
-                android:textColor="@color/textColorPrimary"
-                android:textColorHint="@color/Color_Gray"
                 android:inputType="textEmailAddress"
                 android:padding="@dimen/_9sdp"
+                android:textColor="@color/textColorPrimary"
+                android:textColorHint="@color/Color_Gray"
                 android:textSize="@dimen/textsize.body1" />
 
             <com.bykea.pk.partner.widgets.FontEditText
