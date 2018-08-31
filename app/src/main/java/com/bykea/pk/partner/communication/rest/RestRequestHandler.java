@@ -1,9 +1,9 @@
 package com.bykea.pk.partner.communication.rest;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
@@ -14,7 +14,6 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
-import com.bykea.pk.partner.models.request.SignupAddRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
@@ -39,7 +38,6 @@ import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -57,7 +55,6 @@ import com.bykea.pk.partner.models.response.SettingsResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
-import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
@@ -1018,13 +1015,16 @@ public class RestRequestHandler {
     private String getErrorMessage(Throwable error) {
         String errorMsg;
         if (error instanceof IOException) {
-            Utils.redLog("Retrofit Error", "TimeOut " + String.valueOf(error.getCause()));
+            Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.TIME_OUT_ERROR + String.valueOf(error.getCause()));
             errorMsg = mContext.getString(R.string.internet_error);
+            //To prompt user to input base url for local builds again in case when URL is not working/wrong url. (BS-1017)
+            AppPreferences.setLocalBaseUrl(BuildConfig.FLAVOR_URL);
+            ApiTags.LOCAL_BASE_URL = BuildConfig.FLAVOR_URL;
         } else if (error instanceof IllegalStateException) {
-            Utils.redLog("Retrofit Error", "ConversionError " + String.valueOf(error.getCause()));
+            Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.CONVERSION_ERROR + String.valueOf(error.getCause()));
             errorMsg = mContext.getString(R.string.error_try_again);
         } else {
-            Utils.redLog("Retrofit Error", "Other Error " + String.valueOf(error.getLocalizedMessage()));
+            Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.OTHER_ERROR + String.valueOf(error.getLocalizedMessage()));
             errorMsg = mContext.getString(R.string.error_try_again);
         }
         return errorMsg;
@@ -1300,4 +1300,12 @@ public class RestRequestHandler {
         });
 
     }
+
+    /**
+     * This method clears Singleton instance of Bykea's retrofit client when URL is changed for Local builds
+     */
+    public void clearRetrofitClient() {
+        RestClient.clearBykeaRetrofitClient();
+    }
+
 }
