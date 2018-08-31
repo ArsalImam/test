@@ -71,6 +71,18 @@ public class ActivityStackManager {
     }
 
     /**
+     * clears activity stack before starting HomeActivity (if activity is already running it will not launch new instance)
+     * HomeFragment will be loaded from onNewIntent method of HomeActivity
+     * @param context calling activity
+     */
+    public void startHomeActivity(Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(Constants.Extras.NAVIGATE_TO_HOME_SCREEN, true);
+        context.startActivity(intent);
+    }
+
+    /**
      * This method starts home activity with cancel extras that indicates we need to show cancel notification
      */
     public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin, Context mContext) {

@@ -92,6 +92,7 @@ public class Constants {
         public static final String LIST_ITEMS = "LIST_ITEMS";
         public static final String CALL_PENDING_API = "CALL_PENDING_API";
         public static final String NAVIGATE_TO_BOOKING_SCREEN = "NAVIGATE_TO_BOOKING_SCREEN";
+        public static final String NAVIGATE_TO_HOME_SCREEN = "NAVIGATE_TO_HOME_SCREEN";
         public static final String CHAT_MSG = "CHAT_MSG";
         public static final String HIDE_SEARCH = "HIDE_SEARCH";
         public static final String IS_FROM_VIEW_PAGER = "IS_FROM_VIEW_PAGER";
