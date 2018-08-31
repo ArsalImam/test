@@ -143,5 +143,8 @@
     <string name="raqam_text">رقم</string>
     <string name="transfer_text">ٹرانسفر</string>
     <string name="balance_text">بیلینس</string>
+    <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
+    <string name="invalid_phone">Invalid phone</string>
+    <string name="current_week">Current Week</string>
 
 </resources>
