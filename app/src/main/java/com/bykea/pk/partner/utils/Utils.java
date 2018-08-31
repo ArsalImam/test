@@ -1,8 +1,6 @@
 package com.bykea.pk.partner.utils;
 
-import android.Manifest;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -26,15 +24,17 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -63,19 +63,18 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
-import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
-import com.bykea.pk.partner.ui.fragments.HomeFragment;
+import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -91,8 +90,6 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.okhttp.MediaType;
@@ -884,7 +881,7 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
-    public static String getLocationAddress(String lat, String lng, Activity activity){
+    public static String getLocationAddress(String lat, String lng, Activity activity) {
 
         Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
@@ -1085,8 +1082,8 @@ public class Utils {
 
     public static void phoneCall(Activity activity, String phone) {
 
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-            activity.startActivity(intent);
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+        activity.startActivity(intent);
 
     }
 
@@ -1553,13 +1550,11 @@ public class Utils {
     }
 
     public static boolean isSkipDropOff(NormalCallData callData) {
-        if (StringUtils.isNotBlank(callData.getEndAddress())){
+        if (StringUtils.isNotBlank(callData.getEndAddress())) {
             return false;
         }
         return true;
     }
-
-
 
 
     public static class AudioTime implements Serializable {
@@ -2049,19 +2044,86 @@ public class Utils {
         return size;
     }
 
-    public static String getChannelID() {
-        String chanelId = "FG_NOTI_BYKEA_P";
+    /**
+     * This method creates separate notification channel (On Android O and above) for Trip Cancel
+     * Notification which has different Sound URI.
+     *
+     * @return String of Channel ID
+     */
+    public static String getChannelIDForCancelNotifications() {
+        String chanelId = "bykea_channel_id_for_cancel";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
-            String channelId = "bykea_p_channel_id";
-            CharSequence channelName = "Bykea Partner Notification Channel";
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            CharSequence channelName = "Bykea Partner Notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+
+            Uri soundUri = Uri.parse("android.resource://"
+                    + DriverApp.getContext().getPackageName() + "/"
+                    + R.raw.one);
+
+            AudioAttributes att = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build();
+
+            notificationChannel.setSound(soundUri, att);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            chanelId = notificationChannel.getId();
+        }
+        return chanelId;
+    }
+
+    /**
+     * This method creates Notification Channel for OS version >= Android o
+     *
+     * @return notification chanel id
+     */
+    public static String getChannelID() {
+        String chanelId = "bykea_p_channel_id";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+//            String channelId = "bykea_p_channel_id";
+            CharSequence channelName = "Bykea Notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);
             notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            chanelId = notificationChannel.getId();
+        }
+        return chanelId;
+    }
+
+
+    /**
+     * This method creates Separate Notification Channel for Foreground Location Service on devices
+     * with OS version >= Android O
+     *
+     * @param context Calling context
+     * @return notification chanel id
+     */
+    public static String getChannelIDForOnGoingNotification(Context context) {
+        String chanelId = "bykea_p_channel_id_for_loc";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+//            String channelId = "bykea_p_channel_id";
+            CharSequence channelName = "Bykea Active/Inactive Status";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(notificationChannel);
             }
@@ -2180,5 +2242,22 @@ public class Utils {
         return Patterns.WEB_URL.matcher(url).matches();
     }
 
-
+    /**
+     * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
+     *
+     * @param context calling context
+     * @see Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     */
+    public static void disableBatteryOptimization(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = context.getPackageName();
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                context.startActivity(intent);
+            }
+        }
+    }
 }

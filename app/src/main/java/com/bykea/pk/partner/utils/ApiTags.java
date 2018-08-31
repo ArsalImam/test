@@ -37,7 +37,8 @@ public class ApiTags {
     //BuildConfig.DEBUG ? BASE_SERVER_URL_DEBUG : BASE_SERVER_URL_LIVE;
 
     //Bykea 2 (For Heat Map)
-    public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
+//    public static final String BASE_SERVER_URL_2 = "http://34.210.28.53:8081";
+    public static final String BASE_SERVER_URL_2 = "http://172.16.0.60:3000";
 
     //    public static final String BASE_SERVER_URL_SIGN_UP = "http://54.189.207.7:5050";
     public static final String BASE_SERVER_URL_SIGN_UP_X_API = "2151d3fd63118e4f7bcef56e8b488b079cbc8052afdb45252febdaa2b9868416";
