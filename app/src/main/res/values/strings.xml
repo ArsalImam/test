@@ -153,5 +153,6 @@
     <string name="rs">Rs\u0020</string>
     <string name="percentage_sign">%</string>
     <string name="minus_sign">-</string>
+    <string name="no_internet_msg_ur">انٹرنیٹ کنکشن میں کچھ مسئلہ ہے\n برائے مہربانی اپنا انٹرنیٹ کنکشن چیک کریں</string>
 
 </resources>
