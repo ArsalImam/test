@@ -232,9 +232,9 @@ public class HomeFragmentTesting extends Fragment {
         mCurrentActivity.hideToolbarLogo();
 
 
-        setKhudaHafizClick();
+        setInactiveStatusClick();
 
-        setBismillaClick();
+        setActiveStatusClick();
 
         mCurrentActivity.setDemandButtonForBismilla("ڈیمانڈ", new View.OnClickListener() {
             @Override
@@ -279,9 +279,9 @@ public class HomeFragmentTesting extends Fragment {
     }
 
     /**
-     * This method set Click Listener on Khuda Hafiz Logo
+     * This method sets Click Listener on Khuda Hafiz Logo/Inactive Button
      */
-    private void setKhudaHafizClick() {
+    private void setInactiveStatusClick() {
         mCurrentActivity.setToolbarLogoKhudaHafiz(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -327,9 +327,9 @@ public class HomeFragmentTesting extends Fragment {
     }
 
     /**
-     * This method set Click Listener on Bismillah Logo
+     * This method sets Click Listener on Bismillah Logo/Active Button
      */
-    private void setBismillaClick() {
+    private void setActiveStatusClick() {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
