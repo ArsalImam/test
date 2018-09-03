@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
     android:layout_marginLeft="@dimen/_48sdp"
     android:layout_marginRight="@dimen/_48sdp"
@@ -11,15 +12,16 @@
 
 
     <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tvMsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         app:fontName="jameel_noori_nastaleeq.ttf"
         android:padding="@dimen/_10sdp"
-        android:text="@string/logout_text"
+        tools:text="@string/offline_msg_ur"
         android:textColor="@color/black"
-        android:textSize="@dimen/_24sdp" />
+        android:textSize="@dimen/_23sdp" />
 
     <LinearLayout
         android:layout_width="match_parent"
