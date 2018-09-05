@@ -139,7 +139,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
 
                 case 7://this case is for logout footer part click.
-                    Dialogs.INSTANCE.showLogoutDialog(context, new View.OnClickListener() {
+                    Dialogs.INSTANCE.showNegativeAlertDialog(context, context.getString(R.string.logout_text), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (Connectivity.isConnectedFast(context)) {
