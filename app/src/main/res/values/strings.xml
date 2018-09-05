@@ -154,5 +154,6 @@
     <string name="percentage_sign">%</string>
     <string name="minus_sign">-</string>
     <string name="global_tag" translatable="false">Bykea XLog</string>
+    <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
 
 </resources>
