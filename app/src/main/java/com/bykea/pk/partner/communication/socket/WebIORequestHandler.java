@@ -1,7 +1,5 @@
 package com.bykea.pk.partner.communication.socket;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 import com.bykea.pk.partner.models.response.CommonResponse;
@@ -187,14 +185,14 @@ public class WebIORequestHandler {
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
                         }
-                        Utils.redLog("Request at " + socket + " (onConnect)", json.toString());
+                        Utils.redLogLocation("Request at " + socket + " (onConnect)", json.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
         } else {
-            Utils.redLog("Request at " + socket, json.toString());
+            Utils.redLogLocation("Request at " + socket, json.toString());
         }
     }
 
@@ -269,7 +267,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("Response at " + mSocketName, serverResponse);
+            Utils.redLogLocation("Response at " + mSocketName, serverResponse);
 
             Gson gson = new Gson();
             try {

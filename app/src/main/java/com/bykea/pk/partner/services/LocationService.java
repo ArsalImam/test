@@ -4,14 +4,19 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 
@@ -55,15 +60,13 @@ import java.util.List;
 
 
 public class LocationService extends Service {
-
     private String STATUS = StringUtils.EMPTY;
     private Context mContext;
     private UserRepository mUserRepository;
     private LocationRequest mLocationRequest;
-
     private boolean shouldCallLocApi = true;
-    private int counter = 0;
 
+    private int counter = 0;
     private EventBus mBus = EventBus.getDefault();
 
     private FusedLocationProviderClient mFusedLocationClient;
@@ -71,8 +74,12 @@ public class LocationService extends Service {
     private LocationCallback mLocationCallback;
 
     private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
+
     private final int NOTIF_ID = 877;
     private LatLng lastApiCallLatLng;
+
+    private final String TAG = "LocServ";
+    private BroadcastReceiver mDozeModeStatusReceiver;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -83,7 +90,31 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
         startForeground(NOTIF_ID, getForegroundNotification());
-        Utils.redLog("LocServ", "onCreate");
+        Utils.redLogLocation(TAG, "onCreate");
+        registerIdleModeChangedListener();
+    }
+
+    /**
+     * This method registers a broadcast receiver to listen for PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED action
+     */
+    private void registerIdleModeChangedListener() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mDozeModeStatusReceiver = new BroadcastReceiver() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                    if (pm != null) {
+                        if (pm.isDeviceIdleMode()) {
+                            Utils.redLogLocation(TAG, "the device is now in doze mode");
+                        } else {
+                            Utils.redLogLocation(TAG, "the device just woke up from doze mode");
+                        }
+                    }
+                }
+            };
+            registerReceiver(mDozeModeStatusReceiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
+        }
     }
 
 
@@ -123,7 +154,7 @@ public class LocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(NOTIF_ID, getForegroundNotification());
-        Utils.redLog("LocServ", "onStartCommand");
+        Utils.redLogLocation(TAG, "onStartCommand");
         mContext = getApplicationContext();
         if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
             if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
@@ -147,9 +178,12 @@ public class LocationService extends Service {
     public void onDestroy() {
         stopForeground(true);
         super.onDestroy();
-        Utils.redLog("LocServ", "onDestroy");
+        Utils.redLogLocation(TAG, "onDestroy");
         stopLocationUpdates();
         cancelTimer();
+        if (mDozeModeStatusReceiver != null) {
+            unregisterReceiver(mDozeModeStatusReceiver);
+        }
     }
 
     private void cancelTimer() {
@@ -180,7 +214,7 @@ public class LocationService extends Service {
 
     private void getLastLocation() {
         try {
-            Utils.redLog("Location", " getLastLocation() called");
+            Utils.redLogLocation(TAG, " getLastLocation() called");
             if (ActivityCompat.checkSelfPermission(this,
                     "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
                 mFusedLocationClient.getLastLocation()
@@ -189,15 +223,15 @@ public class LocationService extends Service {
                             public void onComplete(@NonNull Task<Location> task) {
                                 if (task.isSuccessful() && task.getResult() != null) {
                                     onNewLocation(task.getResult());
-                                    Utils.redLog("Location", " getLastLocation() Success");
+                                    Utils.redLogLocation(TAG, " getLastLocation() Success");
                                 } else {
-                                    Utils.redLog("Location", " getLastLocation() Error");
+                                    Utils.redLogLocation(TAG, " getLastLocation() Error");
                                 }
                             }
                         });
             }
         } catch (SecurityException unlikely) {
-            Utils.redLog("Location", "Lost location permission." + unlikely);
+            Utils.redLogLocation(TAG, "Lost location permission." + unlikely);
         }
     }
 
@@ -207,9 +241,9 @@ public class LocationService extends Service {
                 AppPreferences.saveLocation(new LatLng(location.getLatitude(),
                         location.getLongitude()), "" + location.getBearing(), location.getAccuracy(), false);
                 sendLocationBroadcast(location);
-                Utils.redLog("Location", location.getLatitude() + "," + location.getLongitude() + "  (" + Utils.getUTCDate(location.getTime()) + ")");
+                Utils.redLogLocation(TAG, location.getLatitude() + "," + location.getLongitude() + "  (" + Utils.getUTCDate(location.getTime()) + ")");
             } else {
-                Utils.redLog("Location", "Mock location Received...");
+                Utils.redLogLocation(TAG, "Mock location Received...");
 //                Intent intent = new Intent(Keys.MOCK_LOCATION);
 //                sendBroadcast(intent);
                 EventBus.getDefault().post(Keys.MOCK_LOCATION);
@@ -251,7 +285,7 @@ public class LocationService extends Service {
     }
 
     public void updateTripRouteList(double lat, double lon) {
-        Utils.redLog("TripStatus", AppPreferences.getTripStatus());
+        Utils.redLogLocation("TripStatus", AppPreferences.getTripStatus());
         if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()) ||
                 TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus())) {
             synchronized (this) {
@@ -261,7 +295,7 @@ public class LocationService extends Service {
                     float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
                     if (Utils.isValidLocation(/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), */distance)) {
                         addLatLng(lat, lon, distance > 0f);
-                        //Removing Google Directions API call to avoid duplicate GPS entries. Check https://bykeapk.atlassian.net/browse/BS-1042 for details 
+                        //Removing Google Directions API call to avoid duplicate GPS entries. Check https://bykeapk.atlassian.net/browse/BS-1042 for details
 //                        if ((distance > 1000) && !isDirectionApiRunning) {
 //                            getRouteLatLng(lat, lon, lastLat, lastLng);
 //                        }
@@ -289,7 +323,7 @@ public class LocationService extends Service {
         }
         counter++;
         if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground() && counter == DISTANCE_MATRIX_API_CALL_TIME) {
-            Utils.redLog("Direction -> Trip Status ", AppPreferences.getTripStatus());
+            Utils.redLogLocation("Direction -> Trip Status ", AppPreferences.getTripStatus());
             if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
                 NormalCallData callData = AppPreferences.getCallData();
                 if (callData != null && StringUtils.isNotBlank(callData.getEndLat()) &&
@@ -344,7 +378,7 @@ public class LocationService extends Service {
                         String distance = Utils.formatDecimalPlaces((response.getRows()[0].getElements()[0].getDistance().getValueInt() / 1000.0) + "", 1);
                         updateETA(time, distance);
 
-                        Utils.redLog("onDistanceMatrixResponse", "Time -> " + time + " Distance ->" + distance);
+                        Utils.redLogLocation("onDistanceMatrixResponse", "Time -> " + time + " Distance ->" + distance);
                     }
                 }
             });
@@ -388,7 +422,7 @@ public class LocationService extends Service {
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
                                 mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                             } else {
-                                Utils.redLog("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
+                                Utils.redLogLocation("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
                                         + " && GPS -> " + Utils.isGpsEnable(mContext));
                             }
                         } else {
@@ -511,7 +545,7 @@ public class LocationService extends Service {
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
-                            Utils.redLog("requestLocationUpdate", "onSocketConnected");
+                            Utils.redLogLocation(TAG, "onSocketConnected");
                             mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                         }
                     }
@@ -534,7 +568,7 @@ public class LocationService extends Service {
     }
     /*@Override
     public void onTaskRemoved(Intent rootIntent) {
-        Utils.redLog("LocServ", "onTaskRemoved");
+        Utils.redLogLocation(TAG, "onTaskRemoved");
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
 

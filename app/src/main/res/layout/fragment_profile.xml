@@ -168,123 +168,153 @@
             android:layout_height="@dimen/_4sdp"
             android:background="@color/colorPrimary" />
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/personalInfoTv"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
-            android:background="@drawable/clickable_bg"
-            android:drawableLeft="@drawable/ic_left_arrowhead_1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:paddingRight="@dimen/padding.small"
-            android:text="ذاتی معلومات"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+            android:layout_height="wrap_content">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/divider" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/pinCodeTv"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
-            android:background="@drawable/clickable_bg"
-            android:drawableLeft="@drawable/ic_left_arrowhead_1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:paddingRight="@dimen/padding.small"
-            android:text="خفیہ کوڈ بدلیں"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/personalInfoTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/clickable_bg"
+                    android:drawableLeft="@drawable/ic_left_arrowhead_1"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingRight="@dimen/padding.small"
+                    android:text="ذاتی معلومات"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/divider" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/divider" />
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/termsTv"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
-            android:background="@drawable/clickable_bg"
-            android:drawableLeft="@drawable/ic_left_arrowhead_1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:paddingRight="@dimen/padding.small"
-            android:text="خدمات کی شرائط"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/pinCodeTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/clickable_bg"
+                    android:drawableLeft="@drawable/ic_left_arrowhead_1"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingRight="@dimen/padding.small"
+                    android:text="خفیہ کوڈ بدلیں"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/divider" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/divider" />
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/licenseInfoTv"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
-            android:background="@drawable/clickable_bg"
-            android:drawableLeft="@drawable/ic_left_arrowhead_1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:paddingRight="@dimen/padding.small"
-            android:text="لائسنس کی معلومات"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/termsTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/clickable_bg"
+                    android:drawableLeft="@drawable/ic_left_arrowhead_1"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingRight="@dimen/padding.small"
+                    android:text="خدمات کی شرائط"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/divider" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/divider" />
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/motorbikeInfoTv"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
-            android:background="@drawable/clickable_bg"
-            android:drawableLeft="@drawable/ic_left_arrowhead_1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:paddingRight="@dimen/padding.small"
-            android:text="موٹربائیک کی معلومات"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/licenseInfoTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/clickable_bg"
+                    android:drawableLeft="@drawable/ic_left_arrowhead_1"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingRight="@dimen/padding.small"
+                    android:text="لائسنس کی معلومات"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/divider" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/divider" />
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/bankAccDetailsTv"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
-            android:background="@drawable/clickable_bg"
-            android:drawableLeft="@drawable/ic_left_arrowhead_1"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/padding.normal"
-            android:paddingRight="@dimen/padding.small"
-            android:text="بینک اکاؤنٹ کی معلومات"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/textsize.normal"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/motorbikeInfoTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/clickable_bg"
+                    android:drawableLeft="@drawable/ic_left_arrowhead_1"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingRight="@dimen/padding.small"
+                    android:text="موٹربائیک کی معلومات"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/tvVersion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/_4sdp"
-            android:gravity="end"
-            android:text=""
-            android:textColor="@color/colorAccent" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/divider" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/bankAccDetailsTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/clickable_bg"
+                    android:drawableLeft="@drawable/ic_left_arrowhead_1"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingRight="@dimen/padding.small"
+                    android:text="بینک اکاؤنٹ کی معلومات"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <!--to send log file for debug builds-->
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvEmailLogFiles"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/clickable_bg"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/padding.normal"
+                    android:paddingRight="@dimen/padding.small"
+                    android:text="Email Log Files to developer"
+                    android:textColor="@color/color_red"
+                    android:textSize="@dimen/textsize.normal"
+                    android:visibility="gone"
+                    app:fontName="open_sans_semi_bold.ttf"
+                    tools:visibility="visible" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/_4sdp"
+                    android:gravity="end"
+                    android:text=""
+                    android:textColor="@color/colorAccent" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
     </LinearLayout>
 
 

@@ -122,7 +122,6 @@ public class Constants {
     }
 
 
-
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
         public final static String CANCEL_TRIP = "Ride-Cancel";
@@ -137,8 +136,8 @@ public class Constants {
         public final static String ON_SIGN_UP_BTN_CLICK = "SignupButton";
         public final static String ON_SIGN_UP_MOBILE_ENTERED = "SignupMobile";
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
-        public final static String ON_LOGIN_SUCCESS= "LoginSuccessful";
-        public final static String ON_RIDE_COMPLETE= "RideComplete";
+        public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
+        public final static String ON_RIDE_COMPLETE = "RideComplete";
 
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
@@ -166,5 +165,15 @@ public class Constants {
         public final static String TIME_OUT_ERROR = "TimeOut ";
         public final static String CONVERSION_ERROR = "ConversionError ";
         public final static String OTHER_ERROR = "Other Error ";
+        // Log file Max file size before it creates a new file for logs
+        public static final long LOG_FILE_MAX_SIZE = 1024 * 1024;
+        //Developer email address which is used for sending logs.
+        public static final String LOG_SEND_DEVELOPER_EMAIL = "raheel@mobinspire.com";
+        public static final String LOG_SEND_SUBJECT = "Log Files";
+        public static final String LOG_SEND_MESSAGE_BODY = "Latest logs attached";
+        public static final String BYKEA_LOG_TAG = "BYKEA_LOG_TAG";
+
     }
+
+
 }

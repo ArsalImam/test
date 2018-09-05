@@ -153,5 +153,6 @@
     <string name="rs">Rs\u0020</string>
     <string name="percentage_sign">%</string>
     <string name="minus_sign">-</string>
+    <string name="global_tag" translatable="false">Bykea XLog</string>
 
 </resources>

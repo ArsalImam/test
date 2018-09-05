@@ -218,5 +218,6 @@ dependencies {
 
     implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    implementation 'com.elvishew:xlog:1.4.1'
 }
 apply plugin: 'com.google.gms.google-services'

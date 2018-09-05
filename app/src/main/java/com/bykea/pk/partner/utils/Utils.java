@@ -131,6 +131,19 @@ import javax.net.ssl.TrustManagerFactory;
 public class Utils {
 
 
+    /**
+     * This method handles error logs for Location Service and maintains files via XLog lib for debug builds
+     *
+     * @param tag     Error tag
+     * @param message Error Message
+     */
+    public static void redLogLocation(String tag, String message) {
+        if (BuildConfig.DEBUG) {
+            com.elvishew.xlog.XLog.Log.e(tag + " : ", message);
+//            XLog.e(tag, message);
+        }
+    }
+
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.e(tag + " : ", message);
@@ -2044,8 +2057,7 @@ public class Utils {
         return size;
     }
 
-
-     /**
+    /**
      * This method creates separate notification channel (On Android O and above) for Trip Cancel
      * Notification which has different Sound URI.
      *
@@ -2258,6 +2270,76 @@ public class Utils {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
                 context.startActivity(intent);
+            }
+        }
+    }
+
+    /**
+     * Create email intent
+     *
+     * @param toEmail Receiver email address
+     * @param subject Email subject
+     * @param message Email message body
+     * @param uri     attachment file URI
+     * @return {@link Intent} intent object which we will use to invoke action
+     */
+    public static Intent createEmailIntentWithAttachment(final String toEmail,
+                                                         final String subject,
+                                                         final String message,
+                                                         Uri uri) {
+
+        // Nothing resolves send to, so fallback to send...
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        //emailIntent.setType("plain/text");
+        emailIntent.setType("message/rfc822");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL,
+                new String[]{toEmail});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+        if (uri != null) {
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        }
+        emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        return Intent.createChooser(emailIntent, "Send mail");
+
+    }
+
+    /**
+     * Send email to developer using email client on device.
+     *
+     * @param currentActivity Calling activity
+     */
+    public static void sendEmailToDeveloper(AppCompatActivity currentActivity) {
+        File logFileDir = FileUtil.createRootDirectoryForLogs(currentActivity);
+        if (logFileDir != null) {
+
+            String fileName = String.format("%1$s-%2$s-%3$s-%4$s.zip",
+                    BuildConfig.APPLICATION_ID,
+                    BuildConfig.FLAVOR,
+                    BuildConfig.VERSION_CODE,
+                    BuildConfig.VERSION_NAME);
+            boolean zipResult = FileUtil.zipFileAtPath(logFileDir.getAbsolutePath(),
+                    currentActivity.getExternalCacheDir() + File.separator + fileName);
+            if (zipResult) {
+                Uri uri;
+                File file = new File(currentActivity.getExternalCacheDir() + File.separator + fileName);
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                    uri = Uri.fromFile(file);
+                } else {
+                    uri = FileProvider.getUriForFile(currentActivity,
+                            currentActivity.getApplicationContext().getPackageName() + ".fileprovider", file);
+                }
+                Intent emailIntent = Utils.createEmailIntentWithAttachment(
+                        Constants.LogTags.LOG_SEND_DEVELOPER_EMAIL,
+                        Constants.LogTags.LOG_SEND_SUBJECT,
+                        Constants.LogTags.LOG_SEND_MESSAGE_BODY,
+                        uri);
+                // Verify the intent will resolve to at least one activity
+                if (emailIntent.resolveActivity(currentActivity.getPackageManager()) != null) {
+                    Utils.redLogLocation(Constants.LogTags.BYKEA_LOG_TAG, "Email intent set");
+                    currentActivity.startActivity(emailIntent);
+                }
             }
         }
     }

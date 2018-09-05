@@ -76,6 +76,8 @@ public class ProfileFragment extends Fragment {
     LinearLayout llTop;
     @BindView(R.id.ivHomePin)
     ImageView ivHomePin;
+    @BindView(R.id.tvEmailLogFiles)
+    FontTextView tvEmailLogFiles;
 
     private UserRepository repository;
     private HomeActivity mCurrentActivity;
@@ -131,6 +133,9 @@ public class ProfileFragment extends Fragment {
             }
         }
         tvVersion.setText(appVersion);
+        if (BuildConfig.DEBUG) {
+            tvEmailLogFiles.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -147,7 +152,8 @@ public class ProfileFragment extends Fragment {
         repository.getProfileData(mCurrentActivity, callbackHandler);
     }
 
-    @OnClick({R.id.personalInfoTv, R.id.termsTv, R.id.pinCodeTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv, R.id.bankAccDetailsTv})
+    @OnClick({R.id.personalInfoTv, R.id.termsTv, R.id.pinCodeTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv,
+            R.id.bankAccDetailsTv, R.id.tvEmailLogFiles})
     public void onClick(View view) {
         if (mPersonalInfo != null) {
             switch (view.getId()) {
@@ -179,6 +185,9 @@ public class ProfileFragment extends Fragment {
                         Utils.startCustomWebViewActivity(mCurrentActivity,
                                 AppPreferences.getSettings().getSettings().getTerms(), "Terms of Services");
                     }
+                    break;
+                case R.id.tvEmailLogFiles:
+                    Utils.sendEmailToDeveloper(mCurrentActivity);
                     break;
             }
         }
