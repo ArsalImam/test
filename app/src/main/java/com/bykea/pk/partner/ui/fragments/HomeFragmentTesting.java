@@ -232,9 +232,9 @@ public class HomeFragmentTesting extends Fragment {
         mCurrentActivity.hideToolbarLogo();
 
 
-        mKhudaHafizClick();
+        setInactiveStatusClick();
 
-        mBismillaClick();
+        setActiveStatusClick();
 
         mCurrentActivity.setDemandButtonForBismilla("ڈیمانڈ", new View.OnClickListener() {
             @Override
@@ -278,14 +278,17 @@ public class HomeFragmentTesting extends Fragment {
 
     }
 
-    private void mKhudaHafizClick() {
+    /**
+     * This method sets Click Listener on Khuda Hafiz Logo/Inactive Button
+     */
+    private void setInactiveStatusClick() {
         mCurrentActivity.setToolbarLogoKhudaHafiz(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (AppPreferences.getAvailableStatus()) {
-                        Dialogs.INSTANCE.showInactiveConfirmationDialog(mCurrentActivity, new View.OnClickListener() {
+                        Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 WEEK_STATUS = 0;
@@ -323,14 +326,17 @@ public class HomeFragmentTesting extends Fragment {
         });
     }
 
-    private void mBismillaClick() {
+    /**
+     * This method sets Click Listener on Bismillah Logo/Active Button
+     */
+    private void setActiveStatusClick() {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (AppPreferences.getAvailableStatus()) {
-                        Dialogs.INSTANCE.showInactiveConfirmationDialog(mCurrentActivity, new View.OnClickListener() {
+                        Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Dialogs.INSTANCE.dismissDialog();

@@ -668,13 +668,23 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showLogoutDialog(Context context,
-                                 View.OnClickListener onClickListener) {
+    /**
+     * This method shows a pop up dialog with Urdu text and Tick/Cross as Positive/Negative Button
+     * Positive button will have Red background and negative will have green/colorAccent.
+     *
+     * @param context         Calling Context
+     * @param msg             Message to show in String
+     * @param onClickListener Callback to notify that OK/Positive button is clicked
+     */
+    public void showNegativeAlertDialog(Context context, String msg,
+                                        View.OnClickListener onClickListener) {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
-        mDialog.setContentView(R.layout.logout_dialog);
+        mDialog.setContentView(R.layout.dialog_neg_alert_ur_tick_cross);
         ImageView okIv = mDialog.findViewById(R.id.ivPositive);
         ImageView cancelIv = mDialog.findViewById(R.id.ivNegative);
+        FontTextView tvMsg = mDialog.findViewById(R.id.tvMsg);
+        tvMsg.setText(msg);
 
         cancelIv.setOnClickListener(new View.OnClickListener() {
             @Override
