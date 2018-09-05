@@ -153,42 +153,49 @@ public class ProfileFragment extends Fragment {
     @OnClick({R.id.personalInfoTv, R.id.termsTv, R.id.pinCodeTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv,
             R.id.bankAccDetailsTv, R.id.tvEmailLogFiles})
     public void onClick(View view) {
-        if (mPersonalInfo != null) {
-            switch (view.getId()) {
-                case R.id.personalInfoTv:
+        switch (view.getId()) {
+            case R.id.personalInfoTv:
+                if (mPersonalInfo != null) {
                     Intent intent = new Intent(mCurrentActivity, PersonalActivity.class);
                     intent.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent);
-                    break;
-                case R.id.pinCodeTv:
-                    startActivity(new Intent(getActivity(), ChangePinActivity.class));
-                    break;
-                case R.id.licenseInfoTv:
+                }
+                break;
+            case R.id.pinCodeTv:
+                startActivity(new Intent(getActivity(), ChangePinActivity.class));
+                break;
+            case R.id.licenseInfoTv:
+                if (mPersonalInfo != null) {
                     Intent intent2 = new Intent(mCurrentActivity, LicenseActivity.class);
                     intent2.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent2);
-                    break;
-                case R.id.motorbikeInfoTv:
+                }
+                break;
+            case R.id.motorbikeInfoTv:
+                if (mPersonalInfo != null) {
                     Intent intent3 = new Intent(mCurrentActivity, MotorbikeActivity.class);
                     intent3.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent3);
-                    break;
-                case R.id.bankAccDetailsTv:
+                }
+                break;
+            case R.id.bankAccDetailsTv:
+                if (mPersonalInfo != null) {
                     Intent intent4 = new Intent(mCurrentActivity, PostBankAccountActivity.class);
                     intent4.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent4);
-                    break;
-                case R.id.termsTv:
-                    if (AppPreferences.getSettings() != null) {
-                        Utils.startCustomWebViewActivity(mCurrentActivity,
-                                AppPreferences.getSettings().getSettings().getTerms(), "Terms of Services");
-                    }
-                    break;
-                case R.id.tvEmailLogFiles:
-                    Utils.sendEmailToDeveloper(mCurrentActivity);
-                    break;
-            }
+                }
+                break;
+            case R.id.termsTv:
+                if (AppPreferences.getSettings() != null) {
+                    Utils.startCustomWebViewActivity(mCurrentActivity,
+                            AppPreferences.getSettings().getSettings().getTerms(), "Terms of Services");
+                }
+                break;
+            case R.id.tvEmailLogFiles:
+                Utils.sendEmailToDeveloper(mCurrentActivity);
+                break;
         }
+
     }
 
 
