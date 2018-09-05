@@ -155,5 +155,12 @@
     <string name="minus_sign">-</string>
     <string name="global_tag" translatable="false">Bykea XLog</string>
     <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
+    <string name="zaari_malomaat">ذاتی معلومات</string>
+    <string name="khufia_code_badlain">خفیہ کوڈ بدلیں</string>
+    <string name="khidmaat_ki_shart">خدمات کی شرائط</string>
+    <string name="licence_ki_maloomaat">لائسنس کی معلومات</string>
+    <string name="motorcycle_ki_maloomat">موٹربائیک کی معلومات</string>
+    <string name="bank_account_ki_malomaat">بینک اکاؤنٹ کی معلومات</string>
+    <string name="email_log_files_to_developer">Email Log Files to developer</string>
 
 </resources>

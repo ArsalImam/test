@@ -186,7 +186,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.normal"
                     android:paddingRight="@dimen/padding.small"
-                    android:text="ذاتی معلومات"
+                    android:text="@string/zaari_malomaat"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -205,7 +205,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.normal"
                     android:paddingRight="@dimen/padding.small"
-                    android:text="خفیہ کوڈ بدلیں"
+                    android:text="@string/khufia_code_badlain"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -224,7 +224,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.normal"
                     android:paddingRight="@dimen/padding.small"
-                    android:text="خدمات کی شرائط"
+                    android:text="@string/khidmaat_ki_shart"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -243,7 +243,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.normal"
                     android:paddingRight="@dimen/padding.small"
-                    android:text="لائسنس کی معلومات"
+                    android:text="@string/licence_ki_maloomaat"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -262,7 +262,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.normal"
                     android:paddingRight="@dimen/padding.small"
-                    android:text="موٹربائیک کی معلومات"
+                    android:text="@string/motorcycle_ki_maloomat"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -281,7 +281,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/padding.normal"
                     android:paddingRight="@dimen/padding.small"
-                    android:text="بینک اکاؤنٹ کی معلومات"
+                    android:text="@string/bank_account_ki_malomaat"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -295,7 +295,7 @@
                     android:gravity="center"
                     android:paddingLeft="@dimen/padding.normal"
                     android:paddingRight="@dimen/padding.small"
-                    android:text="Email Log Files to developer"
+                    android:text="@string/email_log_files_to_developer"
                     android:textColor="@color/color_red"
                     android:textSize="@dimen/textsize.normal"
                     android:visibility="gone"

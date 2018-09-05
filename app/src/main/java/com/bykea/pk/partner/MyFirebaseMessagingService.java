@@ -150,7 +150,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private synchronized void onInactivePushReceived(RemoteMessage remoteMessage, Gson gson) {
+        Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Inactive Push Received");
         if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() || AppPreferences.isOutOfFence()) && Utils.isInactiveCheckRequired()) {
+            Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Driver is Logged In");
             AppPreferences.setInactiveCheckTime(System.currentTimeMillis());
             final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
             /*
@@ -160,10 +162,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
                     && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
                     && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude()) && !isCountDownTimerRunning) {
-
+                Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Data");
                 if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
                     //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
-
+                    Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Connection and GPS is active");
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
@@ -188,14 +190,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         }
                     });
                 } else {
+                    Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob | GPS = " + Utils.isGpsEnable(mContext) + " Internet = " + Connectivity.isConnectedFast(mContext));
                     onInactiveByCronJob(data.getMessage());
                 }
+            } else {
+                Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "FCM Ignored. Location Already Updated via update-lat-lng API or API is being called.");
             }
+        } else {
+            String logMsg = "FCM Ignored. login = " + AppPreferences.isLoggedIn() + "active = " + AppPreferences.getAvailableStatus() + " outOfFense = " + AppPreferences.isOutOfFence() + " InactiveCheckRequired = " + Utils.isInactiveCheckRequired();
+            Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, logMsg);
         }
     }
 
 
     private void onLocationUpdateError(int errorCode, String errorMessage, OfflineNotificationData data) {
+        Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onLocationUpdateError " + errorMessage);
         if (errorCode == HTTPStatus.UNAUTHORIZED) {
             Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
             sendBroadcast(locationIntent);
@@ -220,6 +229,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void onInactiveByCronJob(String data) {
+        Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob " + data);
         AppPreferences.setAdminMsg(null);
         AppPreferences.setAvailableStatus(false);
         mBus.post(Keys.INACTIVE_PUSH);

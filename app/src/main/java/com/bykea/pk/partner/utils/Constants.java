@@ -172,6 +172,7 @@ public class Constants {
         public static final String LOG_SEND_SUBJECT = "Log Files";
         public static final String LOG_SEND_MESSAGE_BODY = "Latest logs attached";
         public static final String BYKEA_LOG_TAG = "BYKEA_LOG_TAG";
+        public static final String BYKEA_INACTIVE_PUSH = "INACTIVE_PUSH";
 
     }
 

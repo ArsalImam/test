@@ -126,6 +126,7 @@ public class ProfileFragment extends Fragment {
         }
         String appVersion = "v " + Utils.getVersion(mCurrentActivity);
         if (BuildConfig.DEBUG) {
+            tvEmailLogFiles.setVisibility(View.VISIBLE);
             if (ApiTags.BASE_SERVER_URL.contains("staging")) {
                 appVersion = appVersion + " - Staging URLs " + ApiTags.BASE_SERVER_URL;
             } else {
@@ -133,9 +134,6 @@ public class ProfileFragment extends Fragment {
             }
         }
         tvVersion.setText(appVersion);
-        if (BuildConfig.DEBUG) {
-            tvEmailLogFiles.setVisibility(View.VISIBLE);
-        }
     }
 
 
