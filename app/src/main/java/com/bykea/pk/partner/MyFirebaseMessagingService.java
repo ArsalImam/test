@@ -247,7 +247,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String refreshedToken) {
         super.onNewToken(refreshedToken);
-        Utils.redLog(TAG, "REFRESHED TOKEN GENERATED : xxxxxxxxxxxxxxxxxxxxxxx" + refreshedToken);
+        Utils.redLog(TAG, "REFRESHED TOKEN GENERATED : " + refreshedToken);
         sendRegistrationToServer(refreshedToken);
     }
 

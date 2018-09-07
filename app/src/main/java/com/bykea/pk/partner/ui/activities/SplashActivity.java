@@ -57,12 +57,12 @@ public class SplashActivity extends BaseActivity {
      * This method check if Splash Activity is launched from Inactive Push Notification
      */
     private void checkInactivePush() {
-        Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Notification Clicked");
         //get notification data info
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && bundle.get("event") != null) {
             String event = (String) bundle.get("event");
             if (Constants.FcmEvents.INACTIVE_PUSH.equalsIgnoreCase(event)) {
+                Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Notification Clicked");
                 String dataJsonString = (String) bundle.get("data");
                 ActivityStackManager.getInstance().startHandleInactivePushService(mCurrentActivity,
                         new Gson().fromJson(dataJsonString, OfflineNotificationData.class));
