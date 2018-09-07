@@ -10,9 +10,11 @@ import android.os.Looper;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
+import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.services.HandleInactivePushService;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
@@ -302,6 +304,21 @@ public class ActivityStackManager {
         Intent intent = new Intent(context, RegistrationActivity.class);
 //        Intent intent = new Intent(context, JsBankFingerSelectionActivity.class);
         context.startActivity(intent);
+    }
+
+
+    /**
+     * This method starts a service to handle Inactive Push Notification
+     *
+     * @param data    Notifiation data
+     * @param context Calling context
+     */
+    public void startHandleInactivePushService(Context context, OfflineNotificationData data) {
+        if (!Utils.isServiceRunning(context, HandleInactivePushService.class)) {
+            Intent intent = new Intent(context, HandleInactivePushService.class);
+            intent.putExtra(Constants.Extras.INACTIVE_PUSH_DATA, data);
+            context.startService(intent);
+        }
     }
 
 }

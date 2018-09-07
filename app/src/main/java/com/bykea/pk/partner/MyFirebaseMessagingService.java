@@ -124,7 +124,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     WebIORequestHandler.getInstance().registerChatListener();
                 }
             } else if (remoteMessage.getData().get("event").equalsIgnoreCase("7")) {//when server inactive any driver via Cron job
-                onInactivePushReceived(remoteMessage, gson);
+                OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
+                ActivityStackManager.getInstance().startHandleInactivePushService(mContext, data);
             } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("3"))) {
                 if (AppPreferences.isLoggedIn()) {
                     NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
@@ -234,5 +235,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         AppPreferences.setAvailableStatus(false);
         mBus.post(Keys.INACTIVE_PUSH);
         Notifications.generateAdminNotification(mContext, data);
+    }
+
+    /**
+     * This method handles fcm token when refreshed
+     * Updated previous code that was being handled in FirebaseInstanceIdService as
+     * FirebaseInstanceIdService is depricated in latest sdk versions
+     *
+     * @param refreshedToken String fcm token
+     */
+    @Override
+    public void onNewToken(String refreshedToken) {
+        super.onNewToken(refreshedToken);
+        Utils.redLog(TAG, "REFRESHED TOKEN GENERATED : xxxxxxxxxxxxxxxxxxxxxxx" + refreshedToken);
+        sendRegistrationToServer(refreshedToken);
+    }
+
+    /**
+     * Persist token to Bykea servers.
+     * This method associates the user's FCM InstanceID token with bykea server-side account
+     *
+     * @param token String The new token.
+     */
+    private void sendRegistrationToServer(String token) {
+        AppPreferences.setRegId(token);
+        if (Utils.isFcmIdUpdateRequired(AppPreferences.isLoggedIn())) {
+            new UserRepository().updateRegid(this, new UserDataHandler());
+        }
     }
 }

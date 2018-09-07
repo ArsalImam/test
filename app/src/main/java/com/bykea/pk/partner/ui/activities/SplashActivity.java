@@ -7,6 +7,7 @@ import android.view.View;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.ApiTags;
@@ -25,6 +26,7 @@ import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,6 +49,25 @@ public class SplashActivity extends BaseActivity {
             AppPreferences.setGeoCoderApiKeyRequired(false);
         }
         Utils.setOneSignalPlayerId();
+        checkInactivePush();
+
+    }
+
+    /**
+     * This method check if Splash Activity is launched from Inactive Push Notification
+     */
+    private void checkInactivePush() {
+        Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Notification Clicked");
+        //get notification data info
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.get("event") != null) {
+            String event = (String) bundle.get("event");
+            if (Constants.FcmEvents.INACTIVE_PUSH.equalsIgnoreCase(event)) {
+                String dataJsonString = (String) bundle.get("data");
+                ActivityStackManager.getInstance().startHandleInactivePushService(mCurrentActivity,
+                        new Gson().fromJson(dataJsonString, OfflineNotificationData.class));
+            }
+        }
     }
 
 

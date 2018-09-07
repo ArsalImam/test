@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -80,6 +81,8 @@ public class LocationService extends Service {
 
     private final String TAG = "LocServ";
     private BroadcastReceiver mDozeModeStatusReceiver;
+    private WifiManager.WifiLock mWifiLock = null;
+    private PowerManager.WakeLock mWakeLock = null;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -156,6 +159,7 @@ public class LocationService extends Service {
         startForeground(NOTIF_ID, getForegroundNotification());
         Utils.redLogLocation(TAG, "onStartCommand");
         mContext = getApplicationContext();
+//        holdWakeLocks();
         if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
             if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
                 STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
@@ -177,13 +181,14 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         stopForeground(true);
-        super.onDestroy();
         Utils.redLogLocation(TAG, "onDestroy");
         stopLocationUpdates();
         cancelTimer();
         if (mDozeModeStatusReceiver != null) {
             unregisterReceiver(mDozeModeStatusReceiver);
         }
+//        releaseWifiLock();
+        super.onDestroy();
     }
 
     private void cancelTimer() {
@@ -566,19 +571,48 @@ public class LocationService extends Service {
             mNotificationManager.notify(NOTIF_ID, notification);
         }
     }
-    /*@Override
-    public void onTaskRemoved(Intent rootIntent) {
-        Utils.redLogLocation(TAG, "onTaskRemoved");
-        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
-        restartServiceIntent.setPackage(getPackageName());
 
-        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmService.set(
-                AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 1000,
-                restartServicePendingIntent);
+    /***
+     * Calling this method will acquire the lock on wifi and power. This is to avoid wifi
+     * from going to sleep as long as <code>releaseWifiLock</code> method is called.
+     **/
+    private void holdWakeLocks() {
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        if (powerManager != null) {
+            if (mWakeLock == null) {
+                mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+            }
+            mWakeLock.setReferenceCounted(false);
+            if (!mWakeLock.isHeld()) {
+                mWakeLock.acquire();
+            }
+        }
+        WifiManager wifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager != null) {
+            if (mWifiLock == null) {
+                mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, TAG);
+            }
+            mWifiLock.setReferenceCounted(false);
 
-        super.onTaskRemoved(rootIntent);
-    }*/
+            if (!mWifiLock.isHeld()) {
+                mWifiLock.acquire();
+            }
+        }
+
+    }
+
+    /***
+     * Calling this method will release if the lock is already held. After this method is called,
+     * the Wifi on the device can goto sleep.
+     **/
+    private void releaseWifiLock() {
+        if (mWifiLock != null && mWifiLock.isHeld()) {
+            mWifiLock.release();
+        }
+
+        if (mWakeLock != null && mWakeLock.isHeld()) {
+            mWakeLock.release();
+        }
+
+    }
 }

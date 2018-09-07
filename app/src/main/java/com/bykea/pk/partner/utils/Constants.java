@@ -105,6 +105,7 @@ public class Constants {
         public static final String POSITION_DELIVERY_SCHEDULE = "POSITION_DELIVERY_SCHEDULE";
         public static final String IS_CANCELED_TRIP = "isCancelledTrip";
         public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
+        public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
     }
 
     public static class Broadcast {
@@ -174,6 +175,13 @@ public class Constants {
         public static final String BYKEA_LOG_TAG = "BYKEA_LOG_TAG";
         public static final String BYKEA_INACTIVE_PUSH = "INACTIVE_PUSH";
 
+    }
+
+    /**
+     * This inner class will contain Constants for Fcm Push Notification's Events
+     */
+    public static class FcmEvents {
+        public static final String INACTIVE_PUSH = "7";
     }
 
 
