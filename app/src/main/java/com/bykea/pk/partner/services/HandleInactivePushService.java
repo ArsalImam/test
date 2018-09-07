@@ -41,7 +41,7 @@ public class HandleInactivePushService extends Service {
     private EventBus mBus = EventBus.getDefault();
 
     private boolean isCountDownTimerRunning;
-    final CountDownTimer countDownTimer = new CountDownTimer(15000, 15000) {
+    final CountDownTimer countDownTimer = new CountDownTimer(Constants.LOCATION_API_WAIT_ON_INACTIVE_PUSH, Constants.LOCATION_API_WAIT_ON_INACTIVE_PUSH) {
         @Override
         public void onTick(long l) {
         }
