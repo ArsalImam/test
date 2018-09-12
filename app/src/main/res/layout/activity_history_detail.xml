@@ -112,7 +112,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="کسٹمر کا نام"
+                    android:text="@string/customer_name_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -146,7 +146,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="بکنگ ٹائیم"
+                    android:text="@string/booking_time_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -178,7 +178,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="سروس"
+                    android:text="@string/service_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -217,7 +217,6 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="کلومیٹر"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -251,7 +250,6 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="منٹ"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -284,7 +282,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="ویٹینگ چارجز"
+                    android:text="@string/waiting_charges_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -318,7 +316,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="بنیادی کرایہ"
+                    android:text="@string/buniyadi_karaya"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -354,7 +352,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="مکمل کرایہ"
+                    android:text="@string/mokamal_karaya"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -388,7 +386,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="ڈراپ آف ڈسکاونٹ"
+                    android:text="@string/drop_off_discount_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -423,7 +421,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="پرومو"
+                    android:text="@string/promo_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -459,7 +457,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="والیٹ"
+                    android:text="@string/wallet_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -501,7 +499,7 @@
                     android:paddingRight="@dimen/_4sdp"
                     android:paddingBottom="@dimen/_7sdp"
                     android:paddingTop="@dimen/_7sdp"
-                    android:text="ٹوٹل"
+                    android:text="@string/total_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.large"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -557,7 +555,7 @@
                     android:layout_weight="1"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="پارٹنر کی طرف سے ریٹنگ"
+                    android:text="@string/partner_ki_taraf_se_rating"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -601,7 +599,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="کسٹمر کی طرف سے ریٹنگ"
+                    android:text="@string/customer_ki_taraf_se_rating"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -788,7 +786,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:background="@drawable/button_gray_round"
                 android:gravity="center"
-                android:text="مسئلہ درج کریں"
+                android:text="@string/masla_darj_karain"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_20sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />

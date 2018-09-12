@@ -753,12 +753,19 @@ public enum Dialogs {
         showDialog();
     }
 
-
-    public void showSignUpSuccessDialog(Context context, View.OnClickListener onClick) {
+    /**
+     * This methods shows a pop up dialog when partner has successfully signed up
+     *
+     * @param context Calling context
+     * @param phoneNo Registered Phone No.
+     * @param onClick callback to handle positive button's click
+     */
+    public void showSignUpSuccessDialog(Context context, String phoneNo, View.OnClickListener onClick) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
         mDialog.setContentView(R.layout.signup_success_dialog);
+        ((FontTextView)mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
         mDialog.setCancelable(false);
         mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
         showDialog();
@@ -861,7 +868,7 @@ public enum Dialogs {
         messageTv.setText(message);
         showDialog();
     }
-  
+
     /**
      * This method creates a dialog to show cancel notification
      *
@@ -884,5 +891,5 @@ public enum Dialogs {
         });
         ((FontTextView) dialog.findViewById(R.id.messageTv)).setText(message);
         dialog.show();
-   }
+    }
 }

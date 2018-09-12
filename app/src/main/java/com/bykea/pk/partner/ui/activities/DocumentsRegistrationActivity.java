@@ -79,7 +79,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
     private boolean isImgCompressing;
     //    private String imagPath;
-    private String DRIVER_ID, CNIC, BASE_IMG_URL;
+    private String DRIVER_ID, CNIC, BASE_IMG_URL, REGISTERED_PHONE_NUMBER;
     private boolean isBiometricVerRequired;
     private DocumentsRegistrationActivity mCurrentActivity;
     private SignUpCity mSelectedCity;
@@ -123,6 +123,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             DRIVER_ID = getIntent().getExtras().getString(Constants.Extras.DRIVER_ID);
             BASE_IMG_URL = getIntent().getExtras().getString(Constants.Extras.SIGN_UP_IMG_BASE);
             CNIC = getIntent().getExtras().getString(Constants.Extras.CNIC);
+            REGISTERED_PHONE_NUMBER = getIntent().getExtras().getString(Constants.Extras.PHONE_NUMBER);
             isBiometricVerRequired = getIntent().getExtras().getBoolean(Constants.Extras.IS_BIOMETRIC_VERIFIED);
             if (signUpData != null) {
                 if (StringUtils.isNotBlank(signUpData.getRef_number())) {
@@ -337,7 +338,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     }
 
     private void showSuccessDialog() {
-        Dialogs.INSTANCE.showSignUpSuccessDialog(mCurrentActivity, new View.OnClickListener() {
+        Dialogs.INSTANCE.showSignUpSuccessDialog(mCurrentActivity, REGISTERED_PHONE_NUMBER, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                Dialogs.INSTANCE.dismissDialog();
