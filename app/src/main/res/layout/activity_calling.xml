@@ -232,7 +232,8 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="Sadar Town"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:textColor="@color/color_5a5a5a"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -240,7 +241,8 @@
                     app:layout_constraintHorizontal_bias="0.035"
                     app:layout_constraintLeft_toRightOf="@id/circle_distance_layout"
                     app:layout_constraintRight_toLeftOf="@+id/circle_manzil_layout"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="19 Khayaban-e-Shujaat, Phase V Phase 5 Defense Housing Authority, Karachi, Karachi City, Sindh 75500" />
 
 
             </android.support.constraint.ConstraintLayout>
@@ -334,9 +336,9 @@
 
             <RelativeLayout
                 android:id="@+id/cashKiWasooliLayout"
-                android:layout_gravity="center"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
+                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/bg_border_call">
 
@@ -366,9 +368,9 @@
 
             <RelativeLayout
                 android:id="@+id/kharidariPriceLayout"
-                android:layout_gravity="center"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
+                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/bg_border_call"
                 android:visibility="gone">
