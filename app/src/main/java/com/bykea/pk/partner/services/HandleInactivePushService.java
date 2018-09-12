@@ -50,7 +50,6 @@ public class HandleInactivePushService extends Service {
         public void onFinish() {
             isCountDownTimerRunning = false;
             onInactiveByCronJob("App Offline Hochuke Hain!");//TODO update msg
-            stopSelf();
         }
     };
 
@@ -76,6 +75,7 @@ public class HandleInactivePushService extends Service {
         AppPreferences.setAvailableStatus(false);
         mBus.post(Keys.INACTIVE_PUSH);
         Notifications.generateAdminNotification(mContext, data);
+        stopSelf();
     }
 
 
@@ -113,12 +113,14 @@ public class HandleInactivePushService extends Service {
                                     countDownTimer.cancel();
                                     isCountDownTimerRunning = false;
                                     ActivityStackManager.getInstance().restartLocationService(mContext);
+                                    stopSelf();
                                 }
 
                                 @Override
                                 public void onError(int errorCode, String errorMessage) {
 //                                            countDownTimer.cancel();
                                     onLocationUpdateError(errorCode, errorMessage, data);
+                                    stopSelf();
                                 }
                             }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
                         }
@@ -129,10 +131,12 @@ public class HandleInactivePushService extends Service {
                 }
             } else {
                 Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "FCM Ignored. Location Already Updated via update-lat-lng API or API is being called.");
+                stopSelf();
             }
         } else {
             String logMsg = "FCM Ignored. login = " + AppPreferences.isLoggedIn() + "active = " + AppPreferences.getAvailableStatus() + " outOfFense = " + AppPreferences.isOutOfFence() + " InactiveCheckRequired = " + Utils.isInactiveCheckRequired();
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, logMsg);
+            stopSelf();
         }
     }
 
