@@ -241,8 +241,7 @@
                     app:layout_constraintHorizontal_bias="0.035"
                     app:layout_constraintLeft_toRightOf="@id/circle_distance_layout"
                     app:layout_constraintRight_toLeftOf="@+id/circle_manzil_layout"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="19 Khayaban-e-Shujaat, Phase V Phase 5 Defense Housing Authority, Karachi, Karachi City, Sindh 75500" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
             </android.support.constraint.ConstraintLayout>
