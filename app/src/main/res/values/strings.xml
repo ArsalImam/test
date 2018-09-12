@@ -171,5 +171,8 @@
     <string name="register_tarining_link_msg">ہم نے آپ کو بزریعہ SMS %1$s پر ٹریننگ ویڈیو کا لنک بھیج دیا ہے۔ اس کو دیکھیں اور کام کا طریقہ سمجھیں۔</string>
     <string name="register_account_active_msg">آپ کا اکاونٹ کاغذات کی تصدیق کے بعد 48 گھنٹے کے اندر ایکٹیو کردیا جائیگا۔</string>
     <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
+    <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
+    <string name="invalid_phone">Invalid phone</string>
+    <string name="current_week">Current Week</string>
 
 </resources>
