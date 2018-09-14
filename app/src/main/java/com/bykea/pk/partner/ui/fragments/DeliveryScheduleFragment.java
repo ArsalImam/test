@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.ui.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,11 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.DileveryScheduleModel;
-import com.bykea.pk.partner.models.data.RankingResponse;
-import com.bykea.pk.partner.models.response.LoadBoardBody;
+import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -25,14 +26,16 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.DeliveryScheduleAdapter;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,7 +49,7 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
     @BindView(R.id.deliverySchedulerv)
     RecyclerView mRecyclerVeiw;
     private UserRepository mRepository;
-    private ArrayList<DileveryScheduleModel> list;
+    private ArrayList<DeliveryScheduleModel> list;
     private DeliveryScheduleAdapter adapter;
 
     @Override
@@ -54,7 +57,6 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dilevery_schedule, container, false);
         unbinder = ButterKnife.bind(this, view);
-
 
 
         return view;
@@ -71,10 +73,8 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         mCurrentActivity.hideStatusCompletely();
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
 
-        //mCurrentActivity.hideToolbarTitle();
         mCurrentActivity.hideToolbarLogo();
-        mCurrentActivity.setToolbarTitle("Karachi", "");
-        mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mCurrentActivity.setToolbarTitle(AppPreferences.getPilotData().getCity().getName(), StringUtils.EMPTY);
 
         mRecyclerVeiw.setHasFixedSize(true);
 
@@ -89,7 +89,6 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         mRecyclerVeiw.setLayoutManager(mLayoutManager);
 
 
-
         setupRecyclerview();
 
         getLoadBoardData();
@@ -98,12 +97,12 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
     }
 
     private void getLoadBoardData() {
-        try{
-                Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                mRepository.requestLoadBoard(mCurrentActivity, mCallBack, String.valueOf(AppPreferences.getLatitude()),
-                        String.valueOf(AppPreferences.getLongitude()));
+        try {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            mRepository.requestLoadBoard(mCurrentActivity, mCallBack, String.valueOf(AppPreferences.getLatitude()),
+                    String.valueOf(AppPreferences.getLongitude()));
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -111,9 +110,9 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
     private void setupRecyclerview() {
         list = new ArrayList<>();
 
-        /*list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
-        list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
-        list.add(new DileveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));*/
+        /*list.add(new DeliveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
+        list.add(new DeliveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
+        list.add(new DeliveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));*/
 
         adapter = new DeliveryScheduleAdapter(list);
         adapter.setOnClickListener(this);
@@ -129,18 +128,18 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
     }
 
     @Override
-    public void directionClick(int pos) {
-        ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity, pos);
+    public void directionClick(DeliveryScheduleModel item) {
+        Utils.startGoogleDirectionsApp(mCurrentActivity, item.getLatlng().get(0) + "," + item.getLatlng().get(1));
     }
 
     @Override
-    public void callClick(int pos) {
-        ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity, pos);
+    public void callClick(DeliveryScheduleModel item) {
+        Utils.callingIntent(mCurrentActivity, item.getCustomer().getMobileNumber());
     }
 
     @Override
-    public void assignClick(int pos) {
-        ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity, pos);
+    public void assignClick(DeliveryScheduleModel item) {
+        ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity, item);
     }
 
     private UserDataHandler mCallBack = new UserDataHandler() {
@@ -158,35 +157,35 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         }
     };
 
+    /**
+     * This method handles Response of Load Board API and will notify recycler view's adapter for data change
+     */
     private void onApiResponse(LoadBoardResponse response) {
 
-        try{
-            AppPreferences.setObjectToSharedPref(response);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
-            for (LoadBoardBody loadBoardBody: response.getLoadBoardBody()){
-                Date date = (Date)simpleDateFormat.parse(loadBoardBody.getDateTime());
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.TimeFormat.ISO_FORMAT);
+            for (DeliveryScheduleModel loadBoardBody : response.getLoadBoardBody()) {
+                Date date = (Date) simpleDateFormat.parse(loadBoardBody.getDateTime());
 
 
                 String timeDuration = DateUtils.getRelativeTimeSpanString(
                         date.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
 
-                double distance = Double.valueOf(Double.valueOf(loadBoardBody.getDistance())/1000);
+                double distance = Double.valueOf(loadBoardBody.getDistance()) / 1000; //meter to km
 
                 String address = Utils.getLocationAddress(loadBoardBody.getLatlng().get(0),
                         loadBoardBody.getLatlng().get(1), mCurrentActivity);
 
-
-                list.add(new DileveryScheduleModel(Utils.formatAddress(address), timeDuration, String.format("%.1f",distance) + " km"));
+                loadBoardBody.setAddress(Utils.formatAddress(address));
+                loadBoardBody.setDuration(timeDuration);
+                loadBoardBody.setDistance("" + (Math.round(distance * 10.0) / 10.0) + " km");
             }
-
-            adapter.notifyDataSetChanged();
-
-
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+        list.addAll(response.getLoadBoardBody());
+        adapter.notifyDataSetChanged();
 
         Dialogs.INSTANCE.dismissDialog();
 

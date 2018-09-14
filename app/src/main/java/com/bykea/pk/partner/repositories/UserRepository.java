@@ -610,6 +610,22 @@ public class UserRepository {
     }
 
 
+    public void requestAcceptScheduledCall(Context context, String bookingId, IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        mContext = context;
+        try {
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("bId", bookingId);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        mWebIORequestHandler.acceptScheduledCall(jsonObject, mDataCallback);
+
+    }
+
+
     public void requestReverseGeocoding(Context context, IUserDataHandler handler,
                                         String latLng, String key) {
         mUserCallback = handler;

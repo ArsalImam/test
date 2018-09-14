@@ -1079,14 +1079,6 @@ public class Utils {
         return isMock;
     }
 
-
-    public static void phoneCall(Activity activity, String phone) {
-
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-        activity.startActivity(intent);
-
-    }
-
     public static boolean areThereMockPermissionApps(Context context) {
         int count = 0;
 
@@ -2260,4 +2252,24 @@ public class Utils {
             }
         }
     }
+
+    /**
+     * This method starts Google Map API to show navigation
+     *
+     * @param context  Calling context
+     * @param endPoint String end point lat lng coordinates
+     */
+    public static void startGoogleDirectionsApp(Context context, String endPoint) {
+
+        try {
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + endPoint + "&mode=d");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            context.startActivity(mapIntent);
+        } catch (Exception ex) {
+            Utils.appToast(context, context.getString(R.string.google_maps_missing_error));
+        }
+
+    }
+
 }

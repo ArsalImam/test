@@ -122,7 +122,6 @@ public class Constants {
     }
 
 
-
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
         public final static String CANCEL_TRIP = "Ride-Cancel";
@@ -137,8 +136,8 @@ public class Constants {
         public final static String ON_SIGN_UP_BTN_CLICK = "SignupButton";
         public final static String ON_SIGN_UP_MOBILE_ENTERED = "SignupMobile";
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
-        public final static String ON_LOGIN_SUCCESS= "LoginSuccessful";
-        public final static String ON_RIDE_COMPLETE= "RideComplete";
+        public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
+        public final static String ON_RIDE_COMPLETE = "RideComplete";
 
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
@@ -166,5 +165,12 @@ public class Constants {
         public final static String TIME_OUT_ERROR = "TimeOut ";
         public final static String CONVERSION_ERROR = "ConversionError ";
         public final static String OTHER_ERROR = "Other Error ";
+    }
+
+    /**
+     * This inner class will contain Constants for Time Formats
+     */
+    public static class TimeFormat {
+        public final static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     }
 }

@@ -1,7 +1,5 @@
 package com.bykea.pk.partner.communication.socket;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 import com.bykea.pk.partner.models.response.CommonResponse;
@@ -92,6 +90,11 @@ public class WebIORequestHandler {
 
     public void acceptNormalCall(JSONObject acceptCallData, IResponseCallback responseCallBack) {
         emitWithJObject(ApiTags.SOCKET_ACCEPT_CALL, new MyGenericListener(ApiTags.SOCKET_ACCEPT_CALL, AcceptCallResponse.class,
+                responseCallBack), acceptCallData);
+    }
+
+    public void acceptScheduledCall(JSONObject acceptCallData, IResponseCallback responseCallBack) {
+        emitWithJObject(ApiTags.SOCKET_ACCEPT_SCHEDULED_TRIP, new MyGenericListener(ApiTags.SOCKET_ACCEPT_SCHEDULED_TRIP, AcceptCallResponse.class,
                 responseCallBack), acceptCallData);
     }
 
