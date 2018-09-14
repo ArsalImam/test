@@ -96,7 +96,7 @@ public class ForgotPasswordActivity extends BaseActivity {
             if (mCurrentActivity != null) {
                 Dialogs.INSTANCE.dismissDialog();
                 if (commonResponse.isSuccess()) {
-                    Dialogs.INSTANCE.showSuccessDialogForgotPassword(mCurrentActivity, new View.OnClickListener() {
+                    Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, getString(R.string.forgot_password_success_msg), null, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Dialogs.INSTANCE.dismissDialog();
