@@ -766,7 +766,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             progressDialogJobActivity.setMessage(getString(R.string.internet_error));
         }
         AppPreferences.setIsOnTrip(true);
-        ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+        ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
         mLocBearing = AppPreferences.getBearing() + "";
         mCurrentLocation = new Location("");
         mCurrentLocation.setLongitude(AppPreferences.getLongitude());

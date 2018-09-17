@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
@@ -27,7 +25,6 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
-import com.bykea.pk.partner.ui.activities.JsBankFingerSelectionActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
@@ -159,13 +156,17 @@ public class ActivityStackManager {
      * @param context Calling Context
      */
     public void restartLocationService(final Context context) {
-        stopLocationService(context);
+        /*stopLocationService(context);
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 startLocationService(context);
             }
-        }, Constants.RESTART_LOCATION_SERVICE_DELAY);
+        }, Constants.RESTART_LOCATION_SERVICE_DELAY);*/
+        Intent intent = new Intent(context, LocationService.class);
+        intent.setAction(Utils.isServiceRunning(context, LocationService.class) ?
+                Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
+        startService(context, intent);
     }
 
     public void restartLocationService(Context mContext, String STATUS) {

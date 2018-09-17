@@ -16,6 +16,7 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -156,8 +157,12 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startForeground(NOTIF_ID, getForegroundNotification());
-        Utils.redLogLocation(TAG, "onStartCommand");
+        if (!hasForeGroundNotification()) {
+            Utils.redLogLocation(TAG, "onStartCommand (!hasForeGroundNotification)");
+            startForeground(NOTIF_ID, getForegroundNotification());
+        } else {
+            Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
+        }
         mContext = getApplicationContext();
 //        holdWakeLocks();
         if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
@@ -167,6 +172,8 @@ public class LocationService extends Service {
             init();
         } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
             stopForegroundService();
+        } else if (Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION.equals(intent.getAction())) {
+            updateNotification();
         }
         return START_STICKY;
     }
@@ -613,6 +620,30 @@ public class LocationService extends Service {
         if (mWakeLock != null && mWakeLock.isHeld()) {
             mWakeLock.release();
         }
+
+    }
+
+    /**
+     * This method checks if our fore ground notification is being displayed in notification bar or not
+     */
+
+    private boolean hasForeGroundNotification() {
+        boolean hasForeGroundNotification = true;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            hasForeGroundNotification = false;
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (mNotificationManager != null) {
+                StatusBarNotification[] notifications = mNotificationManager.getActiveNotifications();
+                for (StatusBarNotification notification : notifications) {
+                    if (notification.getId() == NOTIF_ID) {
+                        hasForeGroundNotification = true;
+                        break;
+                    }
+                }
+            }
+
+        }
+        return hasForeGroundNotification;
 
     }
 }

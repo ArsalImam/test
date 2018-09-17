@@ -3,6 +3,7 @@ package com.bykea.pk.partner.utils;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
@@ -2141,8 +2142,9 @@ public class Utils {
 
 //            String channelId = "bykea_p_channel_id";
             CharSequence channelName = "Bykea Active/Inactive Status";
-            int importance = NotificationManager.IMPORTANCE_LOW;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(notificationChannel);
             }

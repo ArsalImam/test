@@ -116,6 +116,7 @@ public class Constants {
         public final static String STARTFOREGROUND_ACTION = "STARTFOREGROUND_ACTION";
         public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";
         public final static String ON_NOTIFICATION_CLICK = "ON_NOTIFICATION_CLICK";
+        public final static String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
     }
 
     public static class RequestCode {

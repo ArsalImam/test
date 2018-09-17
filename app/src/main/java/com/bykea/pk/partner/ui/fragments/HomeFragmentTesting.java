@@ -822,7 +822,7 @@ public class HomeFragmentTesting extends Fragment {
                                 if (AppPreferences.isOutOfFence()) {
                                     AppPreferences.setOutOfFence(false);
                                 }
-                                ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
