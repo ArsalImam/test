@@ -743,16 +743,6 @@ public enum Dialogs {
     }
 
 
-    public void showSuccessDialogForgotPassword(Context context, View.OnClickListener onClick) {
-        dismissDialog();
-        mDialog = new Dialog(context, R.style.actionSheetTheme);
-        mDialog.setContentView(R.layout.forgot_password_success_dialog);
-        FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
-        okIv.setOnClickListener(onClick);
-        mDialog.setCancelable(false);
-        showDialog();
-    }
-
     /**
      * This methods shows a pop up dialog when partner has successfully signed up
      *
