@@ -161,11 +161,10 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
      * This method handles Response of Load Board API and will notify recycler view's adapter for data change
      */
     private void onApiResponse(LoadBoardResponse response) {
-
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.TimeFormat.ISO_FORMAT);
             for (DeliveryScheduleModel loadBoardBody : response.getLoadBoardBody()) {
-                Date date = (Date) simpleDateFormat.parse(loadBoardBody.getDateTime());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.TimeFormat.ISO_FORMAT);
+                Date date = simpleDateFormat.parse(loadBoardBody.getDateTime());
 
 
                 String timeDuration = DateUtils.getRelativeTimeSpanString(
@@ -173,17 +172,12 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
 
                 double distance = Double.valueOf(loadBoardBody.getDistance()) / 1000; //meter to km
 
-                String address = Utils.getLocationAddress(loadBoardBody.getLatlng().get(0),
-                        loadBoardBody.getLatlng().get(1), mCurrentActivity);
-
-                loadBoardBody.setAddress(Utils.formatAddress(address));
                 loadBoardBody.setDuration(timeDuration);
                 loadBoardBody.setDistance("" + (Math.round(distance * 10.0) / 10.0) + " km");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         list.addAll(response.getLoadBoardBody());
         adapter.notifyDataSetChanged();
 

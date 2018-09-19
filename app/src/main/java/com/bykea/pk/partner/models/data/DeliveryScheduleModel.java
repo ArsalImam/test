@@ -24,6 +24,7 @@ public class DeliveryScheduleModel implements Parcelable {
     @SerializedName("loc")
     private ArrayList<String> latlng;
 
+    @SerializedName("pickup_address")
     private String address;
     private String duration;
 
