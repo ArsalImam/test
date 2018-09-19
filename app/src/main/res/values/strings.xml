@@ -143,10 +143,25 @@
     <string name="raqam_text">رقم</string>
     <string name="transfer_text">ٹرانسفر</string>
     <string name="balance_text">بیلینس</string>
+    <!-- %1$s is argument of type string and \u0020 is blank space, normal space doesn't work when
+    string extracted from string.xml (added space with urdu text because Jameel nastaliqi font cuts some text)-->
+    <string name="problem_item">\u0020%1$s\u0020</string>
+    <string name="customer_name_urdu">\u0020کسٹمر کا نام\u0020</string>
+    <string name="booking_time_urdu">\u0020بکنگ ٹائیم\u0020</string>
+    <string name="service_urdu">\u0020سروس\u0020</string>
+    <string name="cancel_karne_wala">\u0020کینسل کرنے والا‎\u0020</string>
+    <string name="cancel_fee_urdu">\u0020کینسل فیس\u0020</string>
+    <string name="total_urdu">\u0020ٹوٹل\u0020</string>
+    <string name="masla_darj_karain">\u0020مسئلہ درج کریں\u0020</string>
+    <string name="waiting_charges_urdu">\u0020ویٹینگ چارجز\u0020</string>
+    <string name="buniyadi_karaya">\u0020بنیادی کرایہ\u0020</string>
+    <string name="mokamal_karaya">\u0020مکمل کرایہ\u0020</string>
+    <string name="drop_off_discount_urdu">\u0020ڈراپ آف ڈسکاونٹ\u0020</string>
+    <string name="promo_urdu">\u0020پرومو\u0020</string>
+    <string name="wallet_urdu">\u0020والیٹ\u0020</string>
+    <string name="partner_ki_taraf_se_rating">\u0020پارٹنر کی طرف سے ریٹنگ\u0020</string>
+    <string name="customer_ki_taraf_se_rating">\u0020کسٹمر کی طرف سے ریٹنگ\u0020</string>
     <string name="logout_text">\u0020لاگ آوٹ؟\u0020</string>
-    <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
-    <string name="invalid_phone">Invalid phone</string>
-    <string name="current_week">Current Week</string>
     <string name="cancel_notification">\u0020کسٹمر نے بکنگ کینسل کردی\u0020</string>
     <string name="cancel_notification_by_admin">\u0020ایڈمن نے بکنگ کینسل کردی\u0020</string>
     <string name="score_urdu">\u0020سکور</string>
@@ -154,6 +169,12 @@
     <string name="percentage_sign">%</string>
     <string name="minus_sign">-</string>
     <string name="no_internet_msg_ur">انٹرنیٹ کنکشن میں کچھ مسئلہ ہے\n برائے مہربانی اپنا انٹرنیٹ کنکشن چیک کریں</string>
+    <string name="register_tarining_link_msg">ہم نے آپ کو بزریعہ SMS %1$s پر ٹریننگ ویڈیو کا لنک بھیج دیا ہے۔ اس کو دیکھیں اور کام کا طریقہ سمجھیں۔</string>
+    <string name="register_account_active_msg">آپ کا اکاونٹ کاغذات کی تصدیق کے بعد 48 گھنٹے کے اندر ایکٹیو کردیا جائیگا۔</string>
     <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
+    <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
+    <string name="invalid_phone">Invalid phone</string>
+    <string name="current_week">Current Week</string>
+    <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
 
 </resources>

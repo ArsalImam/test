@@ -153,7 +153,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="کسٹمر کا نام"
+                    android:text="@string/customer_name_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -187,7 +187,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="بکنگ ٹائیم"
+                    android:text="@string/booking_time_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -219,7 +219,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="سروس"
+                    android:text="@string/service_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -259,7 +259,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="کینسل کرنے والا‎"
+                    android:text="@string/cancel_karne_wala"
                     android:textColor="@color/finestBlack"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -296,7 +296,7 @@
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
                     android:paddingRight="@dimen/_4sdp"
-                    android:text="کینسل فیس"
+                    android:text="@string/cancel_fee_urdu"
                     android:textColor="@color/finestBlack"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -340,7 +340,7 @@
                     android:paddingBottom="@dimen/_7sdp"
                     android:paddingRight="@dimen/_4sdp"
                     android:paddingTop="@dimen/_7sdp"
-                    android:text="ٹوٹل"
+                    android:text="@string/total_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.large"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -356,7 +356,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:background="@drawable/button_gray_round"
                 android:gravity="center"
-                android:text="مسئلہ درج کریں"
+                android:text="@string/masla_darj_karain"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_20sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />

@@ -24,15 +24,16 @@
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvTrainingLinkMsg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:padding="@dimen/_8sdp"
-            android:text="ہم نے آپ کو بزریعہ SMS ٹریننگ ویڈیو کا لنک بھیج دیا ہے۔ اس کو دیکھیں اور کام کا طریقہ سمجھیں۔"
+            android:text="@string/register_tarining_link_msg"
             android:textColor="#585858"
-            android:textSize="@dimen/_28sdp"
+            android:textSize="@dimen/_26sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
@@ -42,9 +43,9 @@
             android:layout_marginTop="@dimen/_6sdp"
             android:gravity="center"
             android:padding="@dimen/_8sdp"
-            android:text="آپ کا اکاونٹ کاغذات کی تصدیق کے بعد 48 گھنٹے کے اندر ایکٹیو کردیا جائیگا۔"
+            android:text="@string/register_account_active_msg"
             android:textColor="#585858"
-            android:textSize="@dimen/_28sdp"
+            android:textSize="@dimen/_26sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
