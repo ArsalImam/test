@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -96,13 +94,17 @@ public class ForgotPasswordActivity extends BaseActivity {
             if (mCurrentActivity != null) {
                 Dialogs.INSTANCE.dismissDialog();
                 if (commonResponse.isSuccess()) {
-                    Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, getString(R.string.forgot_password_success_msg), null, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            mCurrentActivity.finish();
-                        }
-                    });
+                    Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                            getString(R.string.forgot_password_success_msg),
+                            0f,
+                            null,
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                    mCurrentActivity.finish();
+                                }
+                            });
                 } else {
                     Utils.appToast(mCurrentActivity, commonResponse.getMessage());
                 }
