@@ -72,6 +72,25 @@ public class Constants {
     public static final int PICK_IMAGE_REQUEST = 1001;
 
 
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 60000; //10000; 60 seconds
+
+    /**
+     * The fastest rate for active location updates. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2; //30 seconds
+
+
+    public static class Notification {
+        public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
+        public static final String NOTIFICATION_CHANNEL_NAME = "Bykea Active/Inactive Status";
+        public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
+    }
+
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
         public static final String CONTACT_TYPE = "cType";
@@ -122,7 +141,6 @@ public class Constants {
     public static class RequestCode {
         public final static int SCAN_FINGER_PRINTS = 123;
     }
-
 
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";

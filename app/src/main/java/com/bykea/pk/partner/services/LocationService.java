@@ -4,28 +4,31 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.net.wifi.WifiManager;
-import android.os.Build;
+import android.os.Binder;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.tracking.AbstractRouting;
@@ -34,22 +37,19 @@ import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.activities.SplashActivity;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.HTTPStatus;
+import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.bykea.pk.partner.DriverApp;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.HTTPStatus;
-import com.bykea.pk.partner.utils.Keys;
-import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -80,47 +80,135 @@ public class LocationService extends Service {
     private final int NOTIF_ID = 877;
     private LatLng lastApiCallLatLng;
 
-    private final String TAG = "LocServ";
-    private BroadcastReceiver mDozeModeStatusReceiver;
-    private WifiManager.WifiLock mWifiLock = null;
-    private PowerManager.WakeLock mWakeLock = null;
+    private final String TAG = LocationService.class.getSimpleName();
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    private final IBinder mBinder = new LocalBinder();
+
+    /*private BroadcastReceiver mDozeModeStatusReceiver;
+    private WifiManager.WifiLock mWifiLock = null;
+    private PowerManager.WakeLock mWakeLock = null;*/
+
+
+    /**
+     * Used to check whether the bound activity has really gone away and not unbound as part of an
+     * orientation change. We create a foreground service notification only if the former takes
+     * place.
+     */
+    private boolean mChangingConfiguration = false;
+
+    private Handler mServiceHandler;
+
+    /**
+     * The current location.
+     */
+    private Location mLocation;
+
+    public LocationService() {
     }
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(NOTIF_ID, getForegroundNotification());
         Utils.redLogLocation(TAG, "onCreate");
-        registerIdleModeChangedListener();
+        configureInitialServiceProcess();
     }
 
-    /**
-     * This method registers a broadcast receiver to listen for PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED action
-     */
-    private void registerIdleModeChangedListener() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mDozeModeStatusReceiver = new BroadcastReceiver() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                    if (pm != null) {
-                        if (pm.isDeviceIdleMode()) {
-                            Utils.redLogLocation(TAG, "the device is now in doze mode");
-                        } else {
-                            Utils.redLogLocation(TAG, "the device just woke up from doze mode");
-                        }
-                    }
-                }
-            };
-            registerReceiver(mDozeModeStatusReceiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mContext = getApplicationContext();
+        if (!hasForeGroundNotification()) {
+            Utils.redLogLocation(TAG, "onStartCommand (!hasForeGroundNotification)");
+            startForeground(NOTIF_ID, getForegroundNotification());
+        } else {
+            Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
         }
+        if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
+            if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
+                STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
+            }
+            //init();
+        } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
+            stopForegroundService();
+        } else if (Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION.equals(intent.getAction())) {
+            updateNotification();
+        }
+        return START_STICKY;
     }
 
+
+    //region General Helper methods for Service Setup
+
+    /***
+     * Setup service initial configuration process with following steps.
+     * 1) Fused Location provider client setup.
+     * 2) Register Location callback for fetch location.
+     * 3) Setup HandlerTread and Service Handler.
+     * 4) Register Event bus.
+     * 5) Create API Repository object.
+     */
+    private void configureInitialServiceProcess() {
+        mBus.register(this);
+        mUserRepository = new UserRepository();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                onNewLocation(locationResult.getLastLocation());
+            }
+        };
+        createLocationRequest();
+        getLastLocation();
+        HandlerThread handlerThread = new HandlerThread(TAG);
+        handlerThread.start();
+        mServiceHandler = new Handler(handlerThread.getLooper());
+    }
+    //endregion
+
+    //region Life Cycle events and binder override methods
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mChangingConfiguration = true;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        Utils.redLogLocation(TAG, "in onBind()");
+        //stopForeground(true);
+        mChangingConfiguration = false;
+        return mBinder;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Utils.redLogLocation(TAG, "in onRebind()");
+        //stopForeground(true);
+        mChangingConfiguration = false;
+        super.onRebind(intent);
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Utils.redLogLocation(TAG, "Last client unbound from service");
+        return true; // Ensures onRebind() is called when a client re-binds.
+    }
+
+    @Override
+    public void onDestroy() {
+        Utils.redLogLocation(TAG, "onDestroy");
+        mServiceHandler.removeCallbacksAndMessages(null);
+        stopForeground(true);
+        stopLocationUpdates();
+
+    }
+
+    //endregion
+
+    //region Helper methods for notification messages and display logic
+
+    //endregion
 
     private String getNotificationMsg() {
         String msg = "Your Status: ACTIVE";
@@ -140,43 +228,24 @@ public class LocationService extends Service {
      */
     private Notification getForegroundNotification() {
         Intent notificationIntent = new Intent(this, SplashActivity.class);
-//        notificationIntent.setAction(Constants.Actions.ON_NOTIFICATION_CLICK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
         String msg = getNotificationMsg();
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Utils.getChannelIDForOnGoingNotification(this))
-                .setContentTitle("Bykea Partner")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
+                Utils.getChannelIDForOnGoingNotification(this))
+                .setContentTitle(Constants.Notification.NOTIFICATION_CONTENT_TITLE)
                 .setContentText(msg)
+                .setOngoing(true)
+                .setPriority(Notification.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentIntent(pendingIntent)
-                .setOngoing(true).setStyle(new NotificationCompat.BigTextStyle()
+                .setWhen(System.currentTimeMillis())
+                .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(msg));
         return builder.build();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!hasForeGroundNotification()) {
-            Utils.redLogLocation(TAG, "onStartCommand (!hasForeGroundNotification)");
-            startForeground(NOTIF_ID, getForegroundNotification());
-        } else {
-            Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
-        }
-        mContext = getApplicationContext();
-//        holdWakeLocks();
-        if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
-            if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
-                STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
-            }
-            init();
-        } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
-            stopForegroundService();
-        } else if (Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION.equals(intent.getAction())) {
-            updateNotification();
-        }
-        return START_STICKY;
-    }
 
     private void stopForegroundService() {
         stopLocationUpdates();
@@ -185,18 +254,6 @@ public class LocationService extends Service {
         stopSelf();
     }
 
-    @Override
-    public void onDestroy() {
-        stopForeground(true);
-        Utils.redLogLocation(TAG, "onDestroy");
-        stopLocationUpdates();
-        cancelTimer();
-        if (mDozeModeStatusReceiver != null) {
-            unregisterReceiver(mDozeModeStatusReceiver);
-        }
-//        releaseWifiLock();
-        super.onDestroy();
-    }
 
     private void cancelTimer() {
         if (mCountDownTimer != null) {
@@ -266,14 +323,14 @@ public class LocationService extends Service {
 
     protected void createLocationRequest() {
         mLocationRequest = LocationRequest.create();
-        int UPDATE_INTERVAL = 10000;
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        int FASTEST_INTERVAL = 5000;
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        //int UPDATE_INTERVAL = 10000;
+        mLocationRequest.setInterval(Constants.UPDATE_INTERVAL_IN_MILLISECONDS);
+        //int FASTEST_INTERVAL = 5000;
+        mLocationRequest.setFastestInterval(Constants.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         if (AppPreferences.isOnTrip()) {
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         } else {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             if (Utils.hasLocationCoordinates()) {
                 int DISPLACEMENT = 10;
                 mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
@@ -324,11 +381,11 @@ public class LocationService extends Service {
     }
 
     /*
-    * when Booking Screen is in background & driver is in any trip then, we need to call distance
-    * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
-    * is already being handled via Direction API when we are showing Route to driver.
-    * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
-    * */
+     * when Booking Screen is in background & driver is in any trip then, we need to call distance
+     * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
+     * is already being handled via Direction API when we are showing Route to driver.
+     * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
+     * */
     private void updateETAIfRequired() {
         if (counter == DISTANCE_MATRIX_API_CALL_TIME) {
             counter = 0;
@@ -361,8 +418,8 @@ public class LocationService extends Service {
     }
 
     /*
-    * check if last start latlng and current start latlng has at least 15 m difference
-    * */
+     * check if last start latlng and current start latlng has at least 15 m difference
+     * */
 
     private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
         if (lastApiCallLatLng != null &&
@@ -545,8 +602,8 @@ public class LocationService extends Service {
 
 
     /*
-    * update location when socket is reconnected, this will sync/update socket id on server
-    * */
+     * update location when socket is reconnected, this will sync/update socket id on server
+     * */
     @Subscribe
     public void onEvent(String event) {
         if (Constants.ON_SOCKET_CONNECTED.equalsIgnoreCase(event)) {
@@ -586,24 +643,24 @@ public class LocationService extends Service {
     private void holdWakeLocks() {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         if (powerManager != null) {
-            if (mWakeLock == null) {
+            /*if (mWakeLock == null) {
                 mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
             }
             mWakeLock.setReferenceCounted(false);
             if (!mWakeLock.isHeld()) {
                 mWakeLock.acquire();
-            }
+            }*/
         }
         WifiManager wifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiManager != null) {
-            if (mWifiLock == null) {
+           /* if (mWifiLock == null) {
                 mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, TAG);
             }
             mWifiLock.setReferenceCounted(false);
 
             if (!mWifiLock.isHeld()) {
                 mWifiLock.acquire();
-            }
+            }*/
         }
 
     }
@@ -613,13 +670,13 @@ public class LocationService extends Service {
      * the Wifi on the device can goto sleep.
      **/
     private void releaseWifiLock() {
-        if (mWifiLock != null && mWifiLock.isHeld()) {
+       /* if (mWifiLock != null && mWifiLock.isHeld()) {
             mWifiLock.release();
         }
 
         if (mWakeLock != null && mWakeLock.isHeld()) {
             mWakeLock.release();
-        }
+        }*/
 
     }
 
@@ -646,4 +703,16 @@ public class LocationService extends Service {
         return hasForeGroundNotification;
 
     }
+
+
+    /**
+     * Class used for the client Binder.  Since this service runs in the same process as its
+     * clients, we don't need to deal with IPC.
+     */
+    public class LocalBinder extends Binder {
+        LocationService getService() {
+            return LocationService.this;
+        }
+    }
+
 }

@@ -26,7 +26,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -788,9 +787,9 @@ public class Utils {
     }
 
     /*
-    * This will sync Device Time and Server Time. We know that Device time can be changed easily so
-    * we will calculate time difference between server and device
-    * */
+     * This will sync Device Time and Server Time. We know that Device time can be changed easily so
+     * we will calculate time difference between server and device
+     * */
     public static void saveServerTimeDifference(long serverTime) {
         long currentTime = System.currentTimeMillis();
         AppPreferences.setServerTimeDifference(
@@ -976,19 +975,19 @@ public class Utils {
     }
 
     /*
-    * Returns API key for Google GeoCoder API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google GeoCoder API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
     /*
-    * Returns API key for Google Directions API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google Directions API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForDirections(Context context) {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
@@ -1003,8 +1002,8 @@ public class Utils {
     }
 
     /*
-    * Returns true if Last API call was more than 1 min ago
-    * */
+     * Returns true if Last API call was more than 1 min ago
+     * */
     public static boolean isDirectionApiCallRequired() {
         return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
     }
@@ -1140,12 +1139,12 @@ public class Utils {
 
 
     /*
-    * - if same location coordinates then don't consider these lat lng
-    * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
-    * - Check if its time difference w.r.t last coordinate is
-    * greater than minimum time a bike should take to cover that distance if that bike is traveling
-    * at max 80KM/H to avoid bad/fake coordinates
-    * */
+     * - if same location coordinates then don't consider these lat lng
+     * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
+     * - Check if its time difference w.r.t last coordinate is
+     * greater than minimum time a bike should take to cover that distance if that bike is traveling
+     * at max 80KM/H to avoid bad/fake coordinates
+     * */
     public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
@@ -1453,8 +1452,8 @@ public class Utils {
 
 
     /*
-    *  Flush Mixpanel Event in onDestroy()
-    * */
+     *  Flush Mixpanel Event in onDestroy()
+     * */
     public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
         MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
         mixpanelAPI.identify(userID);
@@ -2136,21 +2135,19 @@ public class Utils {
      * @return notification chanel id
      */
     public static String getChannelIDForOnGoingNotification(Context context) {
-        String chanelId = "bykea_p_channel_id_for_loc";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-//            String channelId = "bykea_p_channel_id";
-            CharSequence channelName = "Bykea Active/Inactive Status";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
+            NotificationChannel notificationChannel = new NotificationChannel(
+                    Constants.Notification.NOTIFICATION_CHANNEL_ID,
+                    Constants.Notification.NOTIFICATION_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(notificationChannel);
             }
-            chanelId = notificationChannel.getId();
+            return notificationChannel.getId();
         }
-        return chanelId;
+        return Constants.Notification.NOTIFICATION_CHANNEL_ID;
     }
 
     public static void printHashKey(Context pContext) {
