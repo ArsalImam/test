@@ -208,7 +208,7 @@ public class LoginActivity extends BaseActivity {
                             } else {
                                 String msg = StringUtils.containsIgnoreCase(loginResponse.getMessage(), getString(R.string.invalid_phone))
                                         ? getString(R.string.invalid_phone_urdu) : loginResponse.getMessage();
-                                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, msg,
+                                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, msg, 0f,
                                         null, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {

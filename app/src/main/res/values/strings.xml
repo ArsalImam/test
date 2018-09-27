@@ -168,6 +168,7 @@
     <string name="rs">Rs\u0020</string>
     <string name="percentage_sign">%</string>
     <string name="minus_sign">-</string>
+    <string name="no_internet_msg_ur">انٹرنیٹ کنکشن میں کچھ مسئلہ ہے\n برائے مہربانی اپنا انٹرنیٹ کنکشن چیک کریں</string>
     <string name="global_tag" translatable="false">Bykea XLog</string>
     <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
     <string name="zaari_malomaat">ذاتی معلومات</string>
@@ -182,5 +183,6 @@
     <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
     <string name="invalid_phone">Invalid phone</string>
     <string name="current_week">Current Week</string>
+    <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
 
 </resources>

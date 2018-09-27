@@ -155,13 +155,15 @@ public class SplashActivity extends BaseActivity {
                             }
                         } else {
                             if (!Dialogs.INSTANCE.isShowing()) {
-                                Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Dialogs.INSTANCE.dismissDialog();
-                                        finish();
-                                    }
-                                }, null, "Internet Connection", getString(R.string.dialog_internet_error));
+                                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                                        getString(R.string.no_internet_msg_ur), getResources().getDimension(R.dimen._5sdp),
+                                        null, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Dialogs.INSTANCE.dismissDialog();
+                                                finish();
+                                            }
+                                        });
                             }
                         }
                     }
