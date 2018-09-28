@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.services;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,14 +10,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
-import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.PowerManager;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -84,6 +83,8 @@ public class LocationService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
 
+    private boolean isDirectionApiRunning;
+
     /*private BroadcastReceiver mDozeModeStatusReceiver;
     private WifiManager.WifiLock mWifiLock = null;
     private PowerManager.WakeLock mWakeLock = null;*/
@@ -119,25 +120,27 @@ public class LocationService extends Service {
         mContext = getApplicationContext();
         if (!hasForeGroundNotification()) {
             Utils.redLogLocation(TAG, "onStartCommand (!hasForeGroundNotification)");
-            startForeground(NOTIF_ID, getForegroundNotification());
+            startForeground(NOTIF_ID, createForegroundNotification());
         } else {
             Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
         }
+        requestLocationUpdates();
+        cancelTimer();
+        mCountDownTimer.start();
         if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
             if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
                 STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
             }
-            //init();
         } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
             stopForegroundService();
         } else if (Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION.equals(intent.getAction())) {
-            updateNotification();
+            updateForegroundNotification();
         }
         return START_STICKY;
     }
 
 
-    //region General Helper methods for Service Setup
+    //region General Helper methods for Service Setup and other methods
 
     /***
      * Setup service initial configuration process with following steps.
@@ -164,6 +167,48 @@ public class LocationService extends Service {
         handlerThread.start();
         mServiceHandler = new Handler(handlerThread.getLooper());
     }
+
+    /**
+     * Send location broadcast.
+     *
+     * @param location Latest location fetched.
+     */
+    private void sendLocationBroadcast(Location location) {
+        Intent locationIntent = new Intent(Keys.LOCATION_UPDATE_BROADCAST);
+        locationIntent.putExtra("lng", location.getLongitude());
+        locationIntent.putExtra("lat", location.getLatitude());
+        locationIntent.putExtra("location", location);
+        locationIntent.putExtra("bearing", location.bearingTo(location) + "");
+        sendBroadcast(locationIntent);
+    }
+
+    /**
+     * Makes a request for location updates.
+     * {@link SecurityException}.
+     */
+    public void requestLocationUpdates() {
+        Utils.redLogLocation(TAG, "Requesting location updates");
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                        mLocationCallback, Looper.myLooper());
+            } catch (SecurityException unlikely) {
+                Utils.redLogLocation(TAG, "Lost location permission. Could not request updates. " + unlikely);
+            }
+        }
+    }
+
+    /***
+     * Stop foreground service
+     */
+    private void stopForegroundService() {
+        stopLocationUpdates();
+        cancelTimer();
+        stopForeground(true);
+        stopSelf();
+    }
+
     //endregion
 
     //region Life Cycle events and binder override methods
@@ -201,91 +246,118 @@ public class LocationService extends Service {
         mServiceHandler.removeCallbacksAndMessages(null);
         stopForeground(true);
         stopLocationUpdates();
-
+        cancelTimer();
     }
 
     //endregion
 
     //region Helper methods for notification messages and display logic
 
-    //endregion
-
-    private String getNotificationMsg() {
-        String msg = "Your Status: ACTIVE";
-        if (AppPreferences.isOnTrip()) {
-            NormalCallData callData = AppPreferences.getCallData();
-            msg = "TRIP# " + callData.getTripNo() + " is in " + StringUtils.capitalize(callData.getStatus()) + " state";
-        } else if (!AppPreferences.getAvailableStatus()) {
-            msg = "Your Status: INACTIVE";
-        }
-        return msg;
-    }
-
     /**
      * This method generates Foreground Notification when Location Service is Running.
      *
      * @return Notification
      */
-    private Notification getForegroundNotification() {
+    private Notification createForegroundNotification() {
         Intent notificationIntent = new Intent(this, SplashActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
-        String msg = getNotificationMsg();
+        String contentBodyMessage = getNotificationMsg();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
                 Utils.getChannelIDForOnGoingNotification(this))
                 .setContentTitle(Constants.Notification.NOTIFICATION_CONTENT_TITLE)
-                .setContentText(msg)
+                .setContentText(contentBodyMessage)
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentIntent(pendingIntent)
                 .setWhen(System.currentTimeMillis())
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(msg));
+                        .bigText(contentBodyMessage));
         return builder.build();
     }
 
 
-    private void stopForegroundService() {
-        stopLocationUpdates();
-        cancelTimer();
-        stopForeground(true);
-        stopSelf();
+    /***
+     * Create Notification message for driver foreground service.
+     * Message contains driver status i.e. (Active/In-Active/Fetching Location) and Trip status if its during trip.
+     * @return generated notification message which would be displayed to user.
+     */
+    private String getNotificationMsg() {
+
+        boolean isDriverLogin = AppPreferences.isLoggedIn();
+        boolean driverStatusAvailable = AppPreferences.getAvailableStatus();
+        boolean driverOnTrip = AppPreferences.isOnTrip();
+        String notificationBodyMessage = "";
+
+        if (!isDriverLogin && !driverStatusAvailable) {
+            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_logout_location);
+        } else if (isDriverLogin && driverOnTrip) {
+            NormalCallData callData = AppPreferences.getCallData();
+            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_trip,
+                    callData.getTripNo(),
+                    StringUtils.capitalize(callData.getStatus()));
+        } else if (isDriverLogin && driverStatusAvailable) {
+            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_status,
+                    Constants.Driver.STATUS_ACTIVE);
+        } else if (!driverStatusAvailable) {
+            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_login_location);
+        }
+        return notificationBodyMessage;
     }
 
 
-    private void cancelTimer() {
-        if (mCountDownTimer != null) {
-            mCountDownTimer.cancel();
+    /**
+     * This method checks if our fore ground notification is being displayed in notification bar or not
+     */
+
+    private boolean hasForeGroundNotification() {
+        boolean hasForeGroundNotification = true;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            hasForeGroundNotification = false;
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (mNotificationManager != null) {
+                StatusBarNotification[] notifications = mNotificationManager.getActiveNotifications();
+                for (StatusBarNotification notification : notifications) {
+                    if (notification.getId() == NOTIF_ID) {
+                        hasForeGroundNotification = true;
+                        break;
+                    }
+                }
+            }
+
+        }
+        return hasForeGroundNotification;
+
+    }
+
+
+    /**
+     * updates notification during trip according to its current status
+     */
+    private void updateForegroundNotification() {
+        Notification notification = createForegroundNotification();
+        NotificationManager mNotificationManager = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
+        if (mNotificationManager != null) {
+            mNotificationManager.notify(NOTIF_ID, notification);
         }
     }
 
 
-    private void init() {
-        mBus.register(this);
-        mUserRepository = new UserRepository();
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                onNewLocation(locationResult.getLastLocation());
-            }
-        };
-        createLocationRequest();
-        getLastLocation();
-        startLocationUpdates();
-        cancelTimer();
-        mCountDownTimer.start();
-    }
+    //endregion
 
+    //#region Helper methods for Location Permission and Request creation
 
+    /***
+     * Get Last known location if its available in Fused Location client.
+     */
     private void getLastLocation() {
         try {
             Utils.redLogLocation(TAG, " getLastLocation() called");
             if (ActivityCompat.checkSelfPermission(this,
-                    "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mFusedLocationClient.getLastLocation()
                         .addOnCompleteListener(new OnCompleteListener<Location>() {
                             @Override
@@ -304,47 +376,49 @@ public class LocationService extends Service {
         }
     }
 
+    /**
+     * Handles fetched location and save's it inside shared preference and send local broadcast.
+     * We filter out mock location.
+     *
+     * @param location Location object which contains latest fetched location.
+     */
     private void onNewLocation(Location location) {
         if (location != null) {
             if (!Utils.isMockLocation(location, mContext)) {
                 AppPreferences.saveLocation(new LatLng(location.getLatitude(),
-                        location.getLongitude()), "" + location.getBearing(), location.getAccuracy(), false);
+                                location.getLongitude()), "" + location.getBearing(),
+                        location.getAccuracy(), false);
                 sendLocationBroadcast(location);
-                Utils.redLogLocation(TAG, location.getLatitude() + "," + location.getLongitude() + "  (" + Utils.getUTCDate(location.getTime()) + ")");
+                Utils.redLogLocation(TAG, location.getLatitude() + "," +
+                        location.getLongitude() + "  (" + Utils.getUTCDate(location.getTime()) + ")");
             } else {
                 Utils.redLogLocation(TAG, "Mock location Received...");
-//                Intent intent = new Intent(Keys.MOCK_LOCATION);
-//                sendBroadcast(intent);
                 EventBus.getDefault().post(Keys.MOCK_LOCATION);
             }
         }
     }
 
-
+    /**
+     * Create location request with update interval and fastest update interval values.
+     * We always request location Priority as High Accuracy and has smallest displacement value as well for locations.
+     */
     protected void createLocationRequest() {
-        mLocationRequest = LocationRequest.create();
         //int UPDATE_INTERVAL = 10000;
-        mLocationRequest.setInterval(Constants.UPDATE_INTERVAL_IN_MILLISECONDS);
         //int FASTEST_INTERVAL = 5000;
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(Constants.UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(Constants.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         if (AppPreferences.isOnTrip()) {
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         } else {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            if (Utils.hasLocationCoordinates()) {
-                int DISPLACEMENT = 10;
-                mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
-            }
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         }
+
+        /*if (Utils.hasLocationCoordinates()) {
+            mLocationRequest.setSmallestDisplacement(Constants.LOCATION_SMALLEST_DISPLACEMENT);
+        }*/
     }
 
-    protected void startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this,
-                "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback, Looper.myLooper());
-        }
-    }
 
     protected void stopLocationUpdates() {
         try {
@@ -353,6 +427,36 @@ public class LocationService extends Service {
         }
     }
 
+    //#endregion
+
+    //region Helper methods for updating values in shared preference
+
+    /**
+     * Update ETA time and distance in shared preference.
+     *
+     * @param time     updated time which needs to be saved.
+     * @param distance updated distance which needs to be saved.
+     */
+    private void updateETA(String time, String distance) {
+        AppPreferences.setEta(time);
+        AppPreferences.setEstimatedDistance(distance);
+        mBus.post(Keys.ETA_IN_BG_UPDATED);
+    }
+
+    /***
+     *  Update latitude and longitude and distance preview time in shared preference.
+     * @param lat current latitude fetched.
+     * @param lon current longitude fetched.
+     * @param updatePrevTime should updated previous time.
+     */
+    private void addLatLng(double lat, double lon, boolean updatePrevTime) {
+        AppPreferences.addLocCoordinateInTrip(lat, lon, STATUS);
+        AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
+        STATUS = StringUtils.EMPTY;
+    }
+    //endregion
+
+    // region Helper methods for Trip/ETA/Distance API
     public void updateTripRouteList(double lat, double lon) {
         Utils.redLogLocation("TripStatus", AppPreferences.getTripStatus());
         if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()) ||
@@ -380,12 +484,12 @@ public class LocationService extends Service {
 
     }
 
-    /*
+    /**
      * when Booking Screen is in background & driver is in any trip then, we need to call distance
      * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
      * is already being handled via Direction API when we are showing Route to driver.
      * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
-     * */
+     */
     private void updateETAIfRequired() {
         if (counter == DISTANCE_MATRIX_API_CALL_TIME) {
             counter = 0;
@@ -417,101 +521,56 @@ public class LocationService extends Service {
         }
     }
 
-    /*
+    /***
      * check if last start latlng and current start latlng has at least 15 m difference
-     * */
-
+     * @param currentApiCallLatLng current Latitude and Longitude returned from API
+     * @return True is current lat/lng and start lat/lng have 15m difference else return false
+     */
     private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
         if (lastApiCallLatLng != null &&
-                Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude, lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < 15) {
+                Utils.calculateDistance(currentApiCallLatLng.latitude,
+                        currentApiCallLatLng.longitude,
+                        lastApiCallLatLng.latitude,
+                        lastApiCallLatLng.longitude
+                ) < 15) {
             return false;
         } else {
             return true;
         }
     }
 
+    /***
+     * Send request to DistanceMatrix API.
+     * @param destination destination request address
+     */
     private void callDistanceMatrixApi(String destination) {
         LatLng newLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
         if (isDirectionApiCallRequired(newLatLng) && Connectivity.isConnected(mContext)) {
             lastApiCallLatLng = newLatLng;
             String origin = newLatLng.latitude + "," + newLatLng.longitude;
-            new PlacesRepository().getDistanceMatrix(origin, destination, mContext, new PlacesDataHandler() {
-                @Override
-                public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
-                    if (response != null && response.getRows() != null
-                            && response.getRows().length > 0 && response.getRows()[0].getElements() != null
-                            && response.getRows()[0].getElements().length > 0
-                            && response.getRows()[0].getElements()[0].getDuration() != null
-                            && response.getRows()[0].getElements()[0].getDistance() != null) {
-                        String time = (response.getRows()[0].getElements()[0].getDuration().getValueInt() / 60) + "";
-                        String distance = Utils.formatDecimalPlaces((response.getRows()[0].getElements()[0].getDistance().getValueInt() / 1000.0) + "", 1);
-                        updateETA(time, distance);
-
-                        Utils.redLogLocation("onDistanceMatrixResponse", "Time -> " + time + " Distance ->" + distance);
-                    }
-                }
-            });
-        }
-    }
-
-    private void updateETA(String time, String distance) {
-        AppPreferences.setEta(time);
-        AppPreferences.setEstimatedDistance(distance);
-        mBus.post(Keys.ETA_IN_BG_UPDATED);
-    }
-
-    private void addLatLng(double lat, double lon, boolean updatePrevTime) {
-        AppPreferences.addLocCoordinateInTrip(lat, lon, STATUS);
-        AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
-        STATUS = StringUtils.EMPTY;
-    }
-
-    private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-            if (Connectivity.isConnectedFast(mContext)) {
-                DriverApp.getApplication().connect();
-            }
-        }
-
-
-        @Override
-        public void onFinish() {
-            if (Utils.canSendLocation()) {
-                synchronized (this) {
-                    double lat = AppPreferences.getLatitude();
-                    double lon = AppPreferences.getLongitude();
-                    boolean isMock = AppPreferences.isFromMockLocation();
-                    if (lat != 0.0 && lon != 0.0 && !isMock) {
-                        updateTripRouteList(lat, lon);
-                        updateETAIfRequired();
-                        //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
-                        if (shouldCallLocApi) {
-                            shouldCallLocApi = false;
-                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
-                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
-                            } else {
-                                Utils.redLogLocation("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
-                                        + " && GPS -> " + Utils.isGpsEnable(mContext));
+            new PlacesRepository().getDistanceMatrix(origin, destination, mContext,
+                    new PlacesDataHandler() {
+                        @Override
+                        public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
+                            if (response != null && response.getRows() != null
+                                    && response.getRows().length > 0
+                                    && response.getRows()[0].getElements() != null
+                                    && response.getRows()[0].getElements().length > 0
+                                    && response.getRows()[0].getElements()[0].getDuration() != null
+                                    && response.getRows()[0].getElements()[0].getDistance() != null) {
+                                String time = (response.getRows()[0]
+                                        .getElements()[0].getDuration().getValueInt() / 60) + "";
+                                String distance = Utils.formatDecimalPlaces(
+                                        (response.getRows()[0].getElements()[0]
+                                                .getDistance().getValueInt() / 1000.0) + "", 1);
+                                updateETA(time, distance);
+                                Utils.redLogLocation("onDistanceMatrixResponse",
+                                        "Time -> " + time + " Distance ->" + distance);
                             }
-                        } else {
-                            shouldCallLocApi = true;
                         }
-                    }
-                    // restart the timer
-                    mCountDownTimer.start();
-                }
-            } else if (Utils.hasLocationCoordinates()) {
-                stopForegroundService();
-            } else {
-                // restart the timer
-                mCountDownTimer.start();
-            }
-
+                    });
         }
-    };
-
-    private boolean isDirectionApiRunning;
+    }
 
     private synchronized void getRouteLatLng(double lat, double lon, String lastLat, String lastLng) {
         isDirectionApiRunning = true;
@@ -561,6 +620,66 @@ public class LocationService extends Service {
         routing.execute();
     }
 
+    //endregion
+
+    //region  Countdown timer for sending location to server.
+    private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            if (Connectivity.isConnectedFast(mContext)) {
+                DriverApp.getApplication().connect();
+            }
+        }
+
+
+        @Override
+        public void onFinish() {
+            if (Utils.canSendLocation()) {
+                synchronized (this) {
+                    double lat = AppPreferences.getLatitude();
+                    double lon = AppPreferences.getLongitude();
+                    boolean isMock = AppPreferences.isFromMockLocation();
+                    if (lat != 0.0 && lon != 0.0 && !isMock) {
+                        updateTripRouteList(lat, lon);
+                        updateETAIfRequired();
+                        //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
+                        if (shouldCallLocApi) {
+                            shouldCallLocApi = false;
+                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                            } else {
+                                Utils.redLogLocation("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
+                                        + " && GPS -> " + Utils.isGpsEnable(mContext));
+                            }
+                        } else {
+                            shouldCallLocApi = true;
+                        }
+                    }
+                    // restart the timer
+                    mCountDownTimer.start();
+                }
+            } else if (Utils.hasLocationCoordinates()) {
+                stopForegroundService();
+            } else {
+                // restart the timer
+                mCountDownTimer.start();
+            }
+
+        }
+    };
+
+    /***
+     * Cancel count down timer
+     */
+    private void cancelTimer() {
+        if (mCountDownTimer != null) {
+            mCountDownTimer.cancel();
+        }
+    }
+
+    //endregion
+
+    //region Socket Events response Handler
     private UserDataHandler handler = new UserDataHandler() {
         @Override
         public void onError(int errorCode, String errorMessage) {
@@ -589,21 +708,13 @@ public class LocationService extends Service {
             }
         }
     };
+    //endregion
 
+    //region Event bus socket
 
-    private void sendLocationBroadcast(Location location) {
-        Intent locationIntent = new Intent(Keys.LOCATION_UPDATE_BROADCAST);
-        locationIntent.putExtra("lng", location.getLongitude());
-        locationIntent.putExtra("lat", location.getLatitude());
-        locationIntent.putExtra("location", location);
-        locationIntent.putExtra("bearing", location.bearingTo(location) + "");
-        sendBroadcast(locationIntent);
-    }
-
-
-    /*
+    /**
      * update location when socket is reconnected, this will sync/update socket id on server
-     * */
+     */
     @Subscribe
     public void onEvent(String event) {
         if (Constants.ON_SOCKET_CONNECTED.equalsIgnoreCase(event)) {
@@ -621,96 +732,18 @@ public class LocationService extends Service {
                 }
             }
         } else if (Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION.equalsIgnoreCase(event)) {
-            updateNotification();
+            updateForegroundNotification();
         }
     }
 
-    /**
-     * updates notification during trip according to its current status
-     */
-    private void updateNotification() {
-        Notification notification = getForegroundNotification();
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (mNotificationManager != null) {
-            mNotificationManager.notify(NOTIF_ID, notification);
-        }
-    }
-
-    /***
-     * Calling this method will acquire the lock on wifi and power. This is to avoid wifi
-     * from going to sleep as long as <code>releaseWifiLock</code> method is called.
-     **/
-    private void holdWakeLocks() {
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        if (powerManager != null) {
-            /*if (mWakeLock == null) {
-                mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-            }
-            mWakeLock.setReferenceCounted(false);
-            if (!mWakeLock.isHeld()) {
-                mWakeLock.acquire();
-            }*/
-        }
-        WifiManager wifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (wifiManager != null) {
-           /* if (mWifiLock == null) {
-                mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, TAG);
-            }
-            mWifiLock.setReferenceCounted(false);
-
-            if (!mWifiLock.isHeld()) {
-                mWifiLock.acquire();
-            }*/
-        }
-
-    }
-
-    /***
-     * Calling this method will release if the lock is already held. After this method is called,
-     * the Wifi on the device can goto sleep.
-     **/
-    private void releaseWifiLock() {
-       /* if (mWifiLock != null && mWifiLock.isHeld()) {
-            mWifiLock.release();
-        }
-
-        if (mWakeLock != null && mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }*/
-
-    }
-
-    /**
-     * This method checks if our fore ground notification is being displayed in notification bar or not
-     */
-
-    private boolean hasForeGroundNotification() {
-        boolean hasForeGroundNotification = true;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            hasForeGroundNotification = false;
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (mNotificationManager != null) {
-                StatusBarNotification[] notifications = mNotificationManager.getActiveNotifications();
-                for (StatusBarNotification notification : notifications) {
-                    if (notification.getId() == NOTIF_ID) {
-                        hasForeGroundNotification = true;
-                        break;
-                    }
-                }
-            }
-
-        }
-        return hasForeGroundNotification;
-
-    }
-
+    //endregion
 
     /**
      * Class used for the client Binder.  Since this service runs in the same process as its
      * clients, we don't need to deal with IPC.
      */
     public class LocalBinder extends Binder {
-        LocationService getService() {
+        public LocationService getService() {
             return LocationService.this;
         }
     }

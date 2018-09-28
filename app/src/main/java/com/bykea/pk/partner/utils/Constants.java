@@ -75,7 +75,7 @@ public class Constants {
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 60000; //10000; 60 seconds
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000; //10000; 60 seconds
 
     /**
      * The fastest rate for active location updates. Updates will never be more frequent
@@ -84,6 +84,7 @@ public class Constants {
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2; //30 seconds
 
+    public static final float LOCATION_SMALLEST_DISPLACEMENT = 10f;
 
     public static class Notification {
         public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
@@ -204,5 +205,9 @@ public class Constants {
         public static final String INACTIVE_PUSH = "7";
     }
 
+    public static class Driver {
+        public static String STATUS_ACTIVE = "ACTIVE";
+        public static String STATUS_INACTIVE = "INACTIVE";
+    }
 
 }

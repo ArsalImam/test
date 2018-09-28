@@ -516,6 +516,29 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Check is service running in foreground service.
+     *
+     * @param context      The {@link Context}.
+     * @param serviceClass Service class which needs to be checked for foreground service.
+     */
+    public static boolean serviceIsRunningInForeground(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(
+                Context.ACTIVITY_SERVICE);
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
+                    Integer.MAX_VALUE)) {
+                if (serviceClass.getClass().getName().equals(service.service.getClassName())) {
+                    if (service.foreground) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
     public static void callingIntent(Context context, String number) {
 
         try {
@@ -2264,7 +2287,7 @@ public class Utils {
      * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
      *
      * @param context calling context
-     * @see Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
      */
     public static void disableBatteryOptimization(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

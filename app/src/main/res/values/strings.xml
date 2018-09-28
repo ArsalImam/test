@@ -184,5 +184,8 @@
     <string name="invalid_phone">Invalid phone</string>
     <string name="current_week">Current Week</string>
     <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
-
+    <string name="notification_title_driver_login_location">Logged in fetching location</string>
+    <string name="notification_title_driver_logout_location">Fetching location</string>
+    <string name="notification_title_driver_status">Your Status: %1$s</string>
+    <string name="notification_title_driver_trip">TRIP# %1$s is in %2$s state</string>
 </resources>

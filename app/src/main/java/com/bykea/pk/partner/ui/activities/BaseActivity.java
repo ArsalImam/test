@@ -3,9 +3,11 @@ package com.bykea.pk.partner.ui.activities;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,29 +15,25 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NotificationData;
+import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -74,6 +72,12 @@ public class BaseActivity extends AppCompatActivity {
 
     private RelativeLayout statusLayout;
 
+    // A reference to the service used to get location updates.
+    private LocationService mService = null;
+
+    // Tracks the bound state of the service.
+    private boolean mBound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +96,15 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+       /* bindService(new Intent(this, LocationService.class), mServiceConnection,
+                Context.BIND_AUTO_CREATE);*/
     }
 
     @Override
@@ -131,7 +144,7 @@ public class BaseActivity extends AppCompatActivity {
                 requestPermissions(new String[]{PHONE_STATE}, 1010);
             } else if (location != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION}, 1010);
-            }else if (call != PackageManager.PERMISSION_GRANTED) {
+            } else if (call != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{CALL_STATE}, 1010);
             } else {
                 hasPermission = true;
@@ -392,12 +405,12 @@ public class BaseActivity extends AppCompatActivity {
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
 
-    public void showBismillah(){
+    public void showBismillah() {
         frameLayout_khudaHafiz.setVisibility(View.GONE);
         frameLayout_bismilla.setVisibility(View.VISIBLE);
     }
 
-    public void showKhudaHafiz(){
+    public void showKhudaHafiz() {
         frameLayout_khudaHafiz.setVisibility(View.VISIBLE);
         frameLayout_bismilla.setVisibility(View.GONE);
     }
@@ -556,7 +569,7 @@ public class BaseActivity extends AppCompatActivity {
         boolean isUrduNotification = StringUtils.isNotBlank(notificationData.getType()) &&
                 notificationData.getType().equalsIgnoreCase("urdu");
         if (isUrduNotification) {
-            msg.setTypeface(FontUtils.getFonts( "jameel_noori_nastaleeq.ttf"));
+            msg.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
             title.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
             okIv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         }
@@ -703,6 +716,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
+
     private long mLastClickTime;
 
     public boolean checkClickTime() {
@@ -713,5 +727,23 @@ public class BaseActivity extends AppCompatActivity {
         mLastClickTime = currentTime;
         return false;
     }
+
+
+    // Monitors the state of the connection to the service.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            mBound = false;
+        }
+    };
 
 }
