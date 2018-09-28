@@ -151,6 +151,19 @@ public class Utils {
         }
     }
 
+    /**
+     * This method handles error logs for Location Service and maintains files via XLog lib for debug builds
+     *
+     * @param tag     Error tag
+     * @param message Error Message
+     * @param ex      Exception object
+     */
+    public static void redLog(String tag, String message, Exception ex) {
+        if (BuildConfig.DEBUG) {
+            com.elvishew.xlog.XLog.Log.e(tag + " : ", message, ex);
+        }
+    }
+
     public static void appToastDebug(Context context, String message) {
         if (BuildConfig.DEBUG) {
             try {

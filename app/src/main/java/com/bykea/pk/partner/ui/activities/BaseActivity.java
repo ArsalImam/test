@@ -103,7 +103,8 @@ public class BaseActivity extends AppCompatActivity {
         super.onStart();
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.
-       /* bindService(new Intent(this, LocationService.class), mServiceConnection,
+        //TODO check bindservice
+        /*bindService(new Intent(this, LocationService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);*/
     }
 
