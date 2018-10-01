@@ -7,9 +7,9 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
@@ -22,6 +22,7 @@ import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
@@ -106,6 +107,7 @@ public interface IUserDataHandler {
     void getWalletData(WalletHistoryResponse walletHistoryResponse);
 
     void getAccountNumbers(BankAccountListResponse walletHistoryResponse);
+
     void onBankDetailsResponse(BankDetailsResponse response);
 
     void getContactNumbers(ContactNumbersResponse walletHistoryResponse);
@@ -174,19 +176,30 @@ public interface IUserDataHandler {
     void onZoneAreasResponse(ZoneAreaResponse response);
 
     void onShahkarResponse(ShahkarResponse response);
+
     void onBonusChartResponse(RankingResponse response);
+
     void onDriverPerformanceResponse(DriverPerformanceResponse response);
 
     void onLoadBoardResponse(LoadBoardResponse response);
 
     void onTopUpPassWallet(TopUpPassWalletResponse response);
+
     void onLocationUpdate(LocationResponse response);
+
     void onSignUpSettingsResponse(SignUpSettingsResponse response);
+
     void onSignUpAddNumberResponse(SignUpAddNumberResponse response);
+
     void onSignUpImageResponse(SignupUplodaImgResponse response);
+
     void onSignUpOptionalResponse(SignUpOptionalDataResponse response);
+
     void onSignupCompleteResponse(SignUpCompleteResponse response);
+
     void onBiometricApiResponse(BiometricApiResponse response);
+
+    void onDriverLocationResponse(DriverLocationResponse response);
 
     void onError(int errorCode, String errorMessage);
 }

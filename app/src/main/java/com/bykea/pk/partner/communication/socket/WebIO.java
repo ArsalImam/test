@@ -2,11 +2,10 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.annotation.SuppressLint;
 
-
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
@@ -198,17 +197,55 @@ public class WebIO {
             on(Socket.EVENT_CONNECT_TIMEOUT, onTimeOutError); //timeout
             on(Socket.EVENT_ERROR, onError);
             on(Socket.EVENT_CONNECT_ERROR, onError);
-            on(Socket.EVENT_DISCONNECT, args -> Utils.redLogLocation(TAG, "Socket disconnected: " + Socket.EVENT_DISCONNECT));
-            on(Socket.EVENT_PING, args -> {
-                WebIO.getInstance().getSocket().emit(Socket.EVENT_PONG);
-                Utils.redLogLocation(TAG, "Socket Ping: " + Socket.EVENT_PING);
+            on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Utils.redLogLocation(TAG, "Socket disconnected: " + Socket.EVENT_DISCONNECT);
+                }
             });
-            on(Socket.EVENT_PONG, args -> Utils.redLogLocation(TAG, "Socket Pong: " + Socket.EVENT_PONG));
-            on(Socket.EVENT_CONNECTING, args -> Utils.redLogLocation(TAG, "Socket connecting: " + Socket.EVENT_CONNECTING));
-            on(Socket.EVENT_RECONNECT, args -> Utils.redLogLocation(TAG, "Socket reconnect: " + Socket.EVENT_RECONNECT));
-            on(Socket.EVENT_RECONNECT_ATTEMPT, args -> Utils.redLogLocation(TAG, "Socket reconnect attempt: " + Socket.EVENT_RECONNECT_ATTEMPT));
-            on(Socket.EVENT_RECONNECT_ERROR, args -> Utils.redLogLocation(TAG, "Socket reconnect error: " + Socket.EVENT_RECONNECT_ERROR));
-            on(Socket.EVENT_RECONNECT_FAILED, args -> Utils.redLogLocation(TAG, "Socket reconnect failed: " + Socket.EVENT_RECONNECT_FAILED));
+            on(Socket.EVENT_PING, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    WebIO.getInstance().getSocket().emit(Socket.EVENT_PONG);
+                    Utils.redLogLocation(TAG, "Socket Ping: " + Socket.EVENT_PING);
+                }
+            });
+            on(Socket.EVENT_PONG, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Utils.redLogLocation(TAG, "Socket Pong: " + Socket.EVENT_PONG);
+                }
+            });
+            on(Socket.EVENT_CONNECTING, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Utils.redLogLocation(TAG, "Socket connecting: " + Socket.EVENT_CONNECTING);
+                }
+            });
+            on(Socket.EVENT_RECONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Utils.redLogLocation(TAG, "Socket reconnect: " + Socket.EVENT_RECONNECT);
+                }
+            });
+            on(Socket.EVENT_RECONNECT_ATTEMPT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Utils.redLogLocation(TAG, "Socket reconnect attempt: " + Socket.EVENT_RECONNECT_ATTEMPT);
+                }
+            });
+            on(Socket.EVENT_RECONNECT_ERROR, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Utils.redLogLocation(TAG, "Socket reconnect error: " + Socket.EVENT_RECONNECT_ERROR);
+                }
+            });
+            on(Socket.EVENT_RECONNECT_FAILED, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Utils.redLogLocation(TAG, "Socket reconnect failed: " + Socket.EVENT_RECONNECT_FAILED);
+                }
+            });
             WebIO.getInstance().getSocket().connect();
         } catch (Exception e) {
             e.printStackTrace();

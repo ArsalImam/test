@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
@@ -14,54 +15,55 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.ChangePinResponse;
+import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
+import com.bykea.pk.partner.models.response.CommonResponse;
+import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
+import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
+import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LoginResponse;
+import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
-import com.bykea.pk.partner.models.response.ShahkarResponse;
-import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
-import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
-import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
-import com.bykea.pk.partner.models.response.UploadImageFile;
-import com.bykea.pk.partner.models.response.ZoneAreaResponse;
-import com.bykea.pk.partner.utils.ApiTags;
-import com.google.gson.Gson;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
-import com.bykea.pk.partner.models.response.ChangePinResponse;
-import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
-import com.bykea.pk.partner.models.response.CommonResponse;
-import com.bykea.pk.partner.models.response.ContactNumbersResponse;
-import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
-import com.bykea.pk.partner.models.response.GeocoderApi;
-import com.bykea.pk.partner.models.response.GetProfileResponse;
-import com.bykea.pk.partner.models.response.LoginResponse;
-import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
+import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
+import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
+import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.gson.Gson;
 import com.squareup.okhttp.ResponseBody;
 
 import org.apache.commons.lang3.StringUtils;
@@ -85,6 +87,8 @@ public class RestRequestHandler {
     private Context mContext;
     private IRestClient mRestClient;
     private IResponseCallback mResponseCallBack;
+
+    private static String TAG = RestRequestHandler.class.getSimpleName();
 
 
     public void sendUserLogin(Context context, final IResponseCallback onResponseCallBack, String email, String password,
@@ -1300,6 +1304,47 @@ public class RestRequestHandler {
         });
 
     }
+
+
+    /***
+     * Update Driver Location on server for background tracking.
+     * @param context calling context
+     * @param onResponseCallBack on Response callback handler for API
+     * @param lat current driver latitude
+     * @param lng current driver longitude
+     */
+    public void updateDriverLocation(Context context, IResponseCallback onResponseCallBack,
+                                     double lat, double lng) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        String driverId = AppPreferences.getDriverId();
+        if (StringUtils.isBlank(driverId)) {
+            return;
+        }
+        DriverLocationRequest locationRequest = new DriverLocationRequest();
+        locationRequest.setToken(AppPreferences.getAccessToken());
+        locationRequest.setDriverID(driverId);
+        locationRequest.setLatitude(lat);
+        locationRequest.setLongitude(lng);
+        if (AppPreferences.isOnTrip()) {
+            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
+            locationRequest.setInCall(true);
+            String tripStatus = AppPreferences.getCallData() != null
+                    && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
+                    ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
+            locationRequest.setStatus(tripStatus);
+        } else {
+            locationRequest.setInCall(false);
+            locationRequest.setTripID("58d007668422d14b14683871");
+            locationRequest.setStatus(AppPreferences.getTripStatus());
+        }
+
+        Utils.redLog(TAG, "Request For Driver Location: " + new Gson().toJson(locationRequest));
+        Call<DriverLocationResponse> restCall = mRestClient.updateDriverLocation(locationRequest);
+
+        restCall.enqueue(new GenericRetrofitCallBack<DriverLocationResponse>(onResponseCallBack));
+    }
+
 
     /**
      * This method clears Singleton instance of Bykea's retrofit client when URL is changed for Local builds

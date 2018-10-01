@@ -5,7 +5,6 @@ import android.content.Context;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
-
 import com.bykea.pk.partner.utils.Utils;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
@@ -41,7 +40,6 @@ class RestClient {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
                     HttpLoggingInterceptor.Level.NONE);
-
 
             okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);

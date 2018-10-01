@@ -45,7 +45,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
@@ -80,6 +79,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
+import com.elvishew.xlog.XLog;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -147,7 +147,7 @@ public class Utils {
 
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            Log.e(tag + " : ", message);
+            XLog.Log.e(tag + " : ", message);
         }
     }
 

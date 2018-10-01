@@ -27,8 +27,8 @@ public class ApiTags {
     //private static final String BASE_SERVER_URL_LIVE = "https://secure.bykea.net:3000";
 
     /*
-    * change url only for debug builds, never update BASE_SERVER_URL_LIVE
-    * */
+     * change url only for debug builds, never update BASE_SERVER_URL_LIVE
+     * */
     public static String LOCAL_BASE_URL = AppPreferences.getLocalBaseUrl(Keys.BASE_URL_LOCAL);
     public static String BASE_SERVER_URL = BuildConfig.FLAVOR.equalsIgnoreCase("local") ? LOCAL_BASE_URL : BuildConfig.FLAVOR_URL;
 
@@ -76,6 +76,7 @@ public class ApiTags {
     public static final String CHANGE_PIN = "/api/v1/common/changePin";
     public static final String GET_CITIES = "/api/v1/admin/cities";
     public static final String SET_DRIVER_DROP_OFF = "/api/v1/driver/setDropoff";
+    public static final String SET_DRIVER_LOCATION = "/api/v1/driver/location";
 
 
     public static final String LOGOUT_API = "/api/v1/driver/logout";

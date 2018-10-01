@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
@@ -18,10 +17,10 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
@@ -34,6 +33,7 @@ import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
+import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
@@ -105,6 +105,20 @@ public class UserRepository {
         mUserCallback = handler;
         mRestRequestHandler.sendUserLogin(context, mDataCallback, email, password,
                 Constants.DEVICE_TYPE, "2", AppPreferences.getRegId());
+
+    }
+
+    /***
+     * Update driver location with latest latitude and longitude
+     * @param context calling context
+     * @param handler Response handler
+     * @param lat current latitude
+     * @param lng current longitude
+     */
+    public void updateDriverLocation(Context context, IUserDataHandler handler, double lat, double lng) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.updateDriverLocation(context, mDataCallback, lat, lng);
 
     }
 
@@ -1131,6 +1145,9 @@ public class UserRepository {
                         break;
                     case "DeleteSavedPlaceResponse":
                         mUserCallback.onDeleteSavedPlaceResponse();
+                        break;
+                    case "DriverLocationResponse":
+                        mUserCallback.onDriverLocationResponse((DriverLocationResponse) object);
                         break;
                     case "GetSavedPlacesResponse":
                         GetSavedPlacesResponse getSavedPlacesResponse = (GetSavedPlacesResponse) object;

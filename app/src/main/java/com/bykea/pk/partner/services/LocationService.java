@@ -24,6 +24,7 @@ import android.support.v4.app.NotificationCompat;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -51,6 +52,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -646,6 +648,7 @@ public class LocationService extends Service {
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                                //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
                                 mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                             } else {
                                 Utils.redLogLocation("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
@@ -680,7 +683,14 @@ public class LocationService extends Service {
     //endregion
 
     //region Socket Events response Handler
+
+
     private UserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onDriverLocationResponse(DriverLocationResponse response) {
+            Utils.redLogLocation(TAG, "Driver location Response: " + new Gson().toJson(response));
+        }
+
         @Override
         public void onError(int errorCode, String errorMessage) {
             switch (errorCode) {
