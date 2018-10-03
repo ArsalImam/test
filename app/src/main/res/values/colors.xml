@@ -93,4 +93,7 @@
 
     <color name="color_128c7e">#128c7e</color>
     <color name="color_red">#de0200</color>
+
+    <!--Multi Delivery Colors-->
+    <color name="color_05a92c">#05a92c</color>
 </resources>

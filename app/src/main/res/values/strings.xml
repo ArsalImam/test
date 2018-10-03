@@ -174,5 +174,6 @@
     <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
     <string name="invalid_phone">Invalid phone</string>
     <string name="current_week">Current Week</string>
+    <string name="pick_multi_delivery_label">پک</string>
 
 </resources>

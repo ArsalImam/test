@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginLeft="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_delivery" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cardView"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginLeft="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginRight="@dimen/_16sdp"
+        android:background="@drawable/round_pickup_border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/fontTextView"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
+            android:background="@drawable/round_pickup_colored_bg"
+            android:gravity="center"
+            android:text="@string/pick_multi_delivery_label"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/_20sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginLeft="@dimen/_12sdp"
+            android:gravity="center_vertical"
+            tools:text="Gulshan-e-iqbal"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="@color/color_5a5a5a"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/fontTextView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>
