@@ -26,6 +26,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -649,7 +650,9 @@ public class LocationService extends Service {
                             shouldCallLocApi = false;
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
                                 //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
+                                validateDriverOfflineStatus();
                                 mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+
                             } else {
                                 Utils.redLogLocation("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
                                         + " && GPS -> " + Utils.isGpsEnable(mContext));
@@ -661,15 +664,43 @@ public class LocationService extends Service {
                     // restart the timer
                     mCountDownTimer.start();
                 }
-            } else if (Utils.hasLocationCoordinates()) {
+            } else if (Utils.hasLocationCoordinates())
+
+            {
                 stopForegroundService();
-            } else {
+            } else
+
+            {
                 // restart the timer
                 mCountDownTimer.start();
             }
 
         }
     };
+
+    /***
+     * Validate driver offline status against location socket event.
+     * If socket event is not received for more then allowed retry counter
+     * we forcefully turn off driver and update UI.
+     */
+    public void validateDriverOfflineStatus() {
+        int socketResponseNotReceivedCount = AppPreferences.getSocketResponseNotReceivedCount();
+        if (socketResponseNotReceivedCount >= Constants.LOCATION_RESPONSE_NOT_RECEIEVED_ALLOWED_COUNTER) {
+            // check is app logged in and driver is not on currently running trip.
+            if (AppPreferences.isLoggedIn() && !AppPreferences.isOnTrip()) {
+                // Offline driver forcefully.
+                AppPreferences.setDriverOfflineForcefully(true);
+            }
+            // Check is driver logged in and is out of fence
+            else if (AppPreferences.isLoggedIn() && AppPreferences.isOutOfFence()) {
+                // Offline driver forcefully.
+                AppPreferences.setDriverOfflineForcefully(true);
+            }
+        } else {
+            AppPreferences.setLocationSocketNotReceivedCount(socketResponseNotReceivedCount++);
+        }
+
+    }
 
     /***
      * Cancel count down timer
@@ -680,7 +711,7 @@ public class LocationService extends Service {
         }
     }
 
-    //endregion
+//endregion
 
     //region Socket Events response Handler
 
@@ -689,6 +720,16 @@ public class LocationService extends Service {
         @Override
         public void onDriverLocationResponse(DriverLocationResponse response) {
             Utils.redLogLocation(TAG, "Driver location Response: " + new Gson().toJson(response));
+
+        }
+
+        @Override
+        public void onLocationUpdate(LocationResponse response) {
+            super.onLocationUpdate(response);
+            Utils.redLogLocation(TAG, "location Socket Response: " + new Gson().toJson(response));
+            AppPreferences.setDriverOfflineForcefully(false);
+            AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
+
         }
 
         @Override

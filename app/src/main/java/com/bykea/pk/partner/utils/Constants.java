@@ -86,6 +86,9 @@ public class Constants {
 
     public static final float LOCATION_SMALLEST_DISPLACEMENT = 10f;
 
+    public static final int LOCATION_RESPONSE_COUNTER_RESET = 0;
+    public static final int LOCATION_RESPONSE_NOT_RECEIEVED_ALLOWED_COUNTER = 3;
+
     public static class Notification {
         public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
         public static final String NOTIFICATION_CHANNEL_NAME = "Bykea Active/Inactive Status";

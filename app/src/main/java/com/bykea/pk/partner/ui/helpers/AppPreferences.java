@@ -537,8 +537,8 @@ public class AppPreferences {
 
 
     /*
-    * Sync Server Time with Device Time.
-    * */
+     * Sync Server Time with Device Time.
+     * */
     public static void setServerTimeDifference(long value) {
         Utils.redLog("Time Difference", "" + value);
         mSharedPreferences
@@ -904,6 +904,56 @@ public class AppPreferences {
                 .putInt(Keys.CASH_IN_HANDS, value)
                 .apply();
     }
+
+
+    /**
+     * Sets updated value for location response received count.
+     * when we don't receive location response from socket event we update response counter.
+     * upon certain counts we make driver offline forcefully.
+     * If socket received counter is reset to zero.
+     *
+     * @param responseCounter updated value for response counter.
+     */
+    public static void setLocationSocketNotReceivedCount(int responseCounter) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.LOCATION_RESPONSE_NOT_RECEIVED_COUNT, responseCounter)
+                .apply();
+    }
+
+    /***
+     * Get updated value store against socket response not received.
+     *
+     * @return return int of currently stored socket response not received.
+     */
+    public static int getSocketResponseNotReceivedCount() {
+        return mSharedPreferences
+                .getInt(Keys.LOCATION_RESPONSE_NOT_RECEIVED_COUNT, 0);
+    }
+
+
+    /***
+     * Update value for driver offline forcefully when location response is not received.
+     *
+     * @param driverOffline latest value for driver status offline
+     */
+    public static void setDriverOfflineForcefully(boolean driverOffline) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.DRIVER_OFFLINE_FORCEFULLY, driverOffline)
+                .apply();
+    }
+
+    /***
+     * Validate driver offline forcefully when location socket
+     * event is not returned with response after allowed retry window.
+     *
+     * @return True if response not received after retry windows count, else False;
+     */
+    public static boolean makeDriverOfflineForcefully() {
+        return mSharedPreferences.getBoolean(Keys.DRIVER_OFFLINE_FORCEFULLY, false);
+    }
+
 
     public static int getCashInHands() {
         return mSharedPreferences.getInt(Keys.CASH_IN_HANDS, 0);

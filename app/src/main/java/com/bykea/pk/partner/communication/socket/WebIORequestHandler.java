@@ -2,12 +2,6 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
 
-import com.bykea.pk.partner.models.response.CommonResponse;
-import com.bykea.pk.partner.models.response.DriverStatsResponse;
-import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
-import com.bykea.pk.partner.utils.HTTPStatus;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.communication.IResponseCallback;
@@ -17,7 +11,9 @@ import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
+import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
+import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
@@ -28,13 +24,17 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
+import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -360,10 +360,10 @@ public class WebIORequestHandler {
                     if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
 
                         /*
-                        * when Gps is off, we don't show Calling Screen so we don't need to show
-                        * Cancel notification either if passenger cancels it before booking.
-                        * If passenger has cancelled it after booking we will entertain this Cancel notification
-                        * */
+                         * when Gps is off, we don't show Calling Screen so we don't need to show
+                         * Cancel notification either if passenger cancels it before booking.
+                         * If passenger has cancelled it after booking we will entertain this Cancel notification
+                         * */
 
                         if (Utils.isGpsEnable(DriverApp.getContext()) || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
