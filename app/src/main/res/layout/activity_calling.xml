@@ -145,7 +145,8 @@
 
     </LinearLayout>
 
-    <include android:id="@+id/headerLayout1"
+    <include
+        android:id="@+id/headerLayout1"
         layout="@layout/multi_delivery_header"/>
 
     <ScrollView
@@ -311,7 +312,7 @@
                 android:layout_gravity="center"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_24sdp"
                 android:background="@drawable/bg_border_call">
 
                 <com.bykea.pk.partner.widgets.FontTextView
