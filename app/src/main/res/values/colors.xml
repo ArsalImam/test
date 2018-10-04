@@ -95,5 +95,11 @@
     <color name="color_red">#de0200</color>
 
     <!--Multi Delivery Colors-->
+    <color name="color_fdfdfd">#fdfdfd</color>
     <color name="color_05a92c">#05a92c</color>
+    <color name="color_bf7704">#bf7704</color>
+    <color name="color_ee0101">#ee0101</color>
+    <color name="color_73ccff">#73ccff</color>
+    <color name="color_f9f9f9">#f9f9f9</color>
+
 </resources>

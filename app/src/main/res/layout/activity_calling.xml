@@ -8,6 +8,7 @@
     android:background="@color/white">
 
     <LinearLayout
+        android:visibility="gone"
         android:gravity="center"
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
@@ -144,11 +145,15 @@
 
     </LinearLayout>
 
+    <include android:id="@+id/headerLayout1"
+        layout="@layout/multi_delivery_header"/>
+
     <ScrollView
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_below="@+id/headerLayout1"
+        android:layout_above="@+id/acceptCallBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/acceptCallBtn"
-        android:layout_below="@+id/headerLayout"
         android:paddingBottom="@dimen/_8sdp">
 
         <LinearLayout
@@ -159,6 +164,7 @@
             android:orientation="vertical">
 
             <android.support.constraint.ConstraintLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_round_calling_layout">

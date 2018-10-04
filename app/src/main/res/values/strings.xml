@@ -175,5 +175,10 @@
     <string name="invalid_phone">Invalid phone</string>
     <string name="current_week">Current Week</string>
     <string name="pick_multi_delivery_label">پک</string>
+    <string name="delivery_multi_delivery_label">ڈیلیوریاں</string>
+    <string name="drop_multi_delivery_label">ڈراپ</string>
+    <string name="distanceUnit">KM</string>
+    <string name="time_multi_delivery_label">وقت</string>
+    <string name="TimeUnit">MINS</string>
 
 </resources>

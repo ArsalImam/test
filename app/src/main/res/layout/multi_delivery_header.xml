@@ -3,7 +3,7 @@
     android:background="@android:color/white"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.AppCompatImageView
@@ -43,12 +43,14 @@
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/pickLocationTv"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginLeft="@dimen/_12sdp"
             android:gravity="center_vertical"
             tools:text="Gulshan-e-iqbal"
+            android:text="Gulshan-e-iqbal"
             android:maxLines="2"
             android:ellipsize="end"
             android:textColor="@color/color_5a5a5a"
@@ -58,6 +60,266 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/fontTextView"
             app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@drawable/multidelivery_sub_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_e8e8e8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!--Pickup Circle-->
+
+        <View
+            android:id="@+id/pickView"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:layout_marginLeft="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:background="@drawable/circle_multi_delivery_orange"
+            app:layout_constraintEnd_toStartOf="@+id/DeliveryView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/pickLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:text="@string/pick_multi_delivery_label"
+            android:textColor="@color/color_5a5a5a"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/pickView"
+            app:layout_constraintStart_toStartOf="@+id/pickView"
+            app:layout_constraintTop_toBottomOf="@+id/pickView" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/pickDistanceTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintEnd_toStartOf="@+id/pickView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/pickView"
+            app:layout_constraintTop_toTopOf="@+id/pickView"
+            tools:text="0.2"
+            android:text="0.2"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/pickUpDistanceUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_6sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintBottom_toBottomOf="@+id/pickView"
+            app:layout_constraintEnd_toEndOf="@+id/pickDistanceTv"
+            app:layout_constraintStart_toStartOf="@+id/pickDistanceTv"
+            app:layout_constraintTop_toBottomOf="@+id/pickDistanceTv"
+            tools:text="KM"
+            android:text="KM"/>
+
+        <!--Delivery Circle-->
+
+        <View
+            android:id="@+id/DeliveryView"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:background="@drawable/circle_multi_delivery_green"
+            app:layout_constraintEnd_toStartOf="@+id/DropView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/pickView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/deliveryCountTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintEnd_toStartOf="@+id/DeliveryView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/DeliveryView"
+            app:layout_constraintTop_toTopOf="@+id/DeliveryView"
+            tools:text="4"
+            android:text="4"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/placesLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_6sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintBottom_toBottomOf="@+id/DeliveryView"
+            app:layout_constraintEnd_toEndOf="@+id/deliveryCountTv"
+            app:layout_constraintStart_toStartOf="@+id/deliveryCountTv"
+            app:layout_constraintTop_toBottomOf="@+id/deliveryCountTv"
+            tools:text="PLACES"
+            android:text="PLACES"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/deliveryLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:text="@string/delivery_multi_delivery_label"
+            android:textColor="@color/color_5a5a5a"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/DeliveryView"
+            app:layout_constraintStart_toStartOf="@+id/DeliveryView"
+            app:layout_constraintTop_toBottomOf="@+id/DeliveryView" />
+
+        <!--Drop Off Circle-->
+
+        <View
+            android:id="@+id/DropView"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:background="@drawable/circle_multi_delivery_red"
+            app:layout_constraintEnd_toStartOf="@+id/TimeView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/DeliveryView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/dropDistanceTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintEnd_toStartOf="@+id/DropView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/DropView"
+            app:layout_constraintTop_toTopOf="@+id/DropView"
+            tools:text="14"
+            android:text="14"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/dropUnitLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/distanceUnit"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_6sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintBottom_toBottomOf="@+id/DropView"
+            app:layout_constraintEnd_toEndOf="@+id/dropDistanceTv"
+            app:layout_constraintStart_toStartOf="@+id/dropDistanceTv"
+            app:layout_constraintTop_toBottomOf="@+id/dropDistanceTv" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/dropLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:text="@string/drop_multi_delivery_label"
+            android:textColor="@color/color_5a5a5a"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/DropView"
+            app:layout_constraintStart_toStartOf="@+id/DropView"
+            app:layout_constraintTop_toBottomOf="@+id/DropView" />
+
+        <!--Drop Off Circle-->
+
+        <View
+            android:id="@+id/TimeView"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:background="@drawable/circle_multi_delivery_blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/DropView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/TimeDistanceTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintEnd_toStartOf="@+id/TimeView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/TimeView"
+            app:layout_constraintTop_toTopOf="@+id/TimeView"
+            tools:text="65"
+            android:text="65"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/TimeUnitLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TimeUnit"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_6sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintBottom_toBottomOf="@+id/TimeView"
+            app:layout_constraintEnd_toEndOf="@+id/TimeDistanceTv"
+            app:layout_constraintStart_toStartOf="@+id/TimeDistanceTv"
+            app:layout_constraintTop_toBottomOf="@+id/TimeDistanceTv" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/TimeLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:text="@string/time_multi_delivery_label"
+            android:textColor="@color/color_5a5a5a"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/TimeView"
+            app:layout_constraintStart_toStartOf="@+id/TimeView"
+            app:layout_constraintTop_toBottomOf="@+id/TimeView" />
+
+
+        <View
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="@color/color_e8e8e8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 
