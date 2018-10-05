@@ -522,7 +522,6 @@ public class CallingActivity extends BaseActivity {
 
             if (Utils.isDeliveryService(callData.getCallType())){
                 kharidariPriceLayout.setVisibility(View.GONE);
-
             }
         }catch (Exception e){
             e.printStackTrace();

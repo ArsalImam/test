@@ -159,7 +159,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/DeliveryView"
             app:layout_constraintTop_toTopOf="@+id/DeliveryView"
-            tools:text="4" />
+            android:text="4" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/placesLabelTv"
@@ -245,8 +245,8 @@
             android:layout_width="@dimen/_45sdp"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
+            android:layout_marginEnd="@dimen/_24sdp"
+            android:layout_marginRight="@dimen/_24sdp"
             android:background="@drawable/circle_multi_delivery_blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
