@@ -85,7 +85,7 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.ivCallType)
     ImageView ivCallType;
     @BindView(R.id.activity_calling)
-    RelativeLayout activity_calling;
+    LinearLayout activity_calling;
 
     @BindView(R.id.kharidariPriceLayout)
     RelativeLayout kharidariPriceLayout;
