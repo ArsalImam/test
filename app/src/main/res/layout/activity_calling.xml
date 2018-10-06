@@ -157,98 +157,8 @@
             android:layout_height="wrap_content">
 
             <include
-                android:id="@+id/headerLayout1"
+                android:id="@+id/headerStatsLayout"
                 layout="@layout/multi_delivery_header"/>
-
-
-
-                <android.support.constraint.ConstraintLayout
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_round_calling_layout">
-
-                    <LinearLayout
-                        android:id="@+id/circle_distance_layout"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_45sdp"
-                        android:background="@drawable/distance_green_circle_call"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <com.bykea.pk.partner.widgets.FontTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="9"
-                            android:id="@+id/estimatedDistanceTv"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/_15sdp"
-                            app:fontName="open_sans_regular.ttf" />
-
-                        <com.bykea.pk.partner.widgets.FontTextView
-                            android:id="@+id/estimatedDistanceUnitTv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="km"
-                            android:textColor="@color/color_191919"
-                            android:textSize="@dimen/_6sdp"
-                            app:fontName="open_sans_regular.ttf" />
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:id="@+id/circle_manzil_layout"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_45sdp"
-                        android:background="@drawable/circle_manzil_call"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <com.bykea.pk.partner.widgets.FontTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="منزل "
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_15sdp"
-                            app:fontName="jameel_noori_nastaleeq.ttf" />
-
-
-                    </LinearLayout>
-
-
-                    <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/destinationTv"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginTop="8dp"
-                        android:text="Sadar Town"
-                        android:textColor="@color/color_5a5a5a"
-                        android:textSize="@dimen/_12sdp"
-                        app:fontName="open_sans_regular.ttf"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintHorizontal_bias="0.035"
-                        app:layout_constraintLeft_toRightOf="@id/circle_distance_layout"
-                        app:layout_constraintRight_toLeftOf="@+id/circle_manzil_layout"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-
-                </android.support.constraint.ConstraintLayout>
 
                 <LinearLayout
                     android:layout_centerHorizontal="true"
@@ -327,7 +237,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="@dimen/_8sdp"
-                            android:text=" Rs. 120"
+                            tools:text=" Rs. 120"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:fontName="open_sans_semi_bold.ttf" />
@@ -338,7 +248,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="@dimen/_8sdp"
-                            android:text=" کرائے کی کمائی"
+                            android:text="@string/krai_ki_kami_label"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -359,7 +269,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="@dimen/_8sdp"
-                            android:text=" Rs. 56"
+                            tools:text=" Rs. 56"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:fontName="open_sans_regular.ttf" />
@@ -370,7 +280,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="@dimen/_8sdp"
-                            android:text=" کیش کی وصولی "
+                            android:text="@string/cash_ki_wasooli_label"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -392,7 +302,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="@dimen/_8sdp"
-                            android:text=" Rs. 1,000"
+                            tools:text=" Rs. 1,000"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:fontName="open_sans_regular.ttf" />
@@ -403,7 +313,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="@dimen/_8sdp"
-                            android:text=" خریداری کی رقم "
+                            android:text="@string/kharidari_ki_raqam_label"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:fontName="jameel_noori_nastaleeq.ttf" />
