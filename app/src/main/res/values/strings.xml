@@ -21,6 +21,7 @@
     <!--Drop off for driver -->
 
     <string name="set_pickup_location">YOUR LOCATION</string>
+    <string name="location_text">location</string>
 
 
     <!--                TEXTVIEWS STRINGS HERE                 -->

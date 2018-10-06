@@ -456,7 +456,7 @@ public class Utils {
      * @return The BitmapDescriptor.
      */
     public static BitmapDescriptor getBitmapDiscriptor(Context context, boolean isPickUp) {
-        int drawableId = isPickUp ? R.drawable.ic_pickupmarker : R.drawable.ic_dropoffmarker;
+        int drawableId = isPickUp ? R.drawable.ic_pickupmarker : R.drawable.ic_pickupmarker;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             VectorDrawable vectorDrawable = (VectorDrawable) context.getDrawable(drawableId);
 
