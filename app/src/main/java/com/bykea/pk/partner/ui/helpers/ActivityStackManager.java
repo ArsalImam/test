@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.JsBankFingerSelectionActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
+import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
@@ -100,6 +101,15 @@ public class ActivityStackManager {
 
     public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    /***
+     * Start MultiDelivery Booking activity using activity context
+     * @param mContext hold the reference of an activity.
+     */
+    public void startMultiDeliveryBookingActivity(Context mContext) {
+        Intent intent = new Intent(mContext, MultipleDeliveryBookingActivity.class);
         mContext.startActivity(intent);
     }
 

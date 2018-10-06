@@ -279,7 +279,9 @@ public class CallingActivity extends BaseActivity {
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
                             AppPreferences.setIsOnTrip(true);
-                            ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
+                            //ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
+                            ActivityStackManager.getInstance().
+                                    startMultiDeliveryBookingActivity(mCurrentActivity);
                             stopSound();
                             finishActivity();
                         } else {
