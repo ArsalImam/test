@@ -128,7 +128,12 @@ public class Constants {
         public final static int SCAN_FINGER_PRINTS = 123;
     }
 
-
+    public static class GoogleMap {
+        public final static String GOOGLE_NAVIGATE_ENDPOINT = "http://maps.google.com/maps?saddr=";
+        public final static String GOOGLE_DESTINATION_ENDPOINT = "&daddr=";
+        public final static String GOOGLE_MAP_PACKAGE = "com.google.android.apps.maps";
+        public final static String GOOGLE_MAP_ACTIVITY = "com.google.android.maps.MapsActivity";
+    }
 
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";

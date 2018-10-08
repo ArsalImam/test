@@ -13,7 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
+import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
@@ -31,10 +34,12 @@ import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
 import com.bykea.pk.partner.ui.helpers.Spherical;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,6 +62,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /***
  * MultiDelivery Booking Activity.
@@ -81,13 +87,16 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private LatLng lastApiCallLatLng;
     private List<LatLng> mRouteLatLng;
     private static final double EARTHRADIUS = 6366198;
+    private Polyline mapPolylines;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
 
     @BindView(R.id.distanceTv)
     TextView distanceTv;
-    private Polyline mapPolylines;
+
+    @BindView(R.id.jobBtn)
+    FontTextView jobBtn;
 
 
     @Override
@@ -474,7 +483,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      *                           smallest device i.e ice cream sandwitch
      */
     private synchronized void animateMarker(final LatLng destination,
-                                            final LatLngInterpolator latLngInterpolator){
+                                            final LatLngInterpolator latLngInterpolator) {
         final LatLng startPosition = driverMarker.getPosition();
 
         ValueAnimator valueAnimator = new ValueAnimator();
@@ -522,7 +531,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                                 mCurrentLocation.getLatitude(),
                                 mCurrentLocation.getLongitude()) >= 10) {
                             LatLng latLng = new LatLng(mCurrentLocation.getLatitude(),
-                             mCurrentLocation.getLongitude());
+                                    mCurrentLocation.getLongitude());
                             LatLngInterpolator interpolator = new Spherical();
                             animateMarker(latLng, interpolator);
                         }
@@ -601,6 +610,81 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
+     * OnClick listener for an activity.
+     *
+     * @param view a view where user have clicked.
+     */
+    @OnClick({R.id.currentLocationIv, R.id.jobBtn})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.currentLocationIv: {
+                Utils.navigateToGoogleMap(mCurrentActivity, mCallData);
+                break;
+            }
+
+            case R.id.jobBtn: {
+                checkTripButtonClick();
+                break;
+            }
+        }
+    }
+
+    /***
+     * Check the trip button click if the button text is equal to specific trip status i.e "پہنچ گئے",
+     * etc. To perform the specific operation like driver arrival dialog,
+     * start trip dialog & finish trip dialog
+     */
+    private void checkTripButtonClick() {
+        if (Connectivity.isConnectedFast(mCurrentActivity)) {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            if (jobBtn.getText().toString().equalsIgnoreCase(getString(
+                    R.string.button_text_arrived))) {
+                showDriverArrivedDialog();
+            }
+        }
+    }
+
+    /***
+     * Show the driver arrived dialog based on the distance from the pickup location.
+     * Find the distance between driver location & pickup location if the driver is away
+     * show the message that "آپ ابھی بھی کچھ دورہیں" otherwise ask the user to confirm
+     * that you have arrived.
+     *
+     * Todo 1: add request Arrived socket event
+     */
+    private void showDriverArrivedDialog(){
+        int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(),
+                AppPreferences.getLongitude(),
+                Double.parseDouble(mCallData.getStartLat()),
+                Double.parseDouble(mCallData.getStartLng()));
+        if (distance > 200) {
+            boolean showTickBtn = distance < AppPreferences.getSettings().
+                    getSettings().getArrived_min_dist();
+            Dialogs.INSTANCE.showConfirmArrivalDialog(mCurrentActivity,
+                    showTickBtn, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    //requestArrived();
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    //requestArrived();
+                }
+            }, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                }
+            }, " پہنچ گئے؟");
+        }
+    }
+
+    /***
      * Network Change Broadcast Reciever to listen GPS change & internet conectivity change
      */
     private NetworkChangeListener networkChangeListener = new NetworkChangeListener() {
@@ -671,7 +755,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     Utils.formatDecimalPlaces(String.valueOf(
                             (route.get(0).getDistanceValue() / 1000.0)), 1));
             updatePolyLine(route);
-        }else {
+        } else {
             lastApiCallLatLng = null;
         }
     }

@@ -69,7 +69,7 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.pickLocationTv)
     TextView pickLocationTv;
 
-    @BindView(R.id.DistanceTv)
+    @BindView(R.id.pickDistanceTv)
     TextView pickDistanceTv;
 
     @BindView(R.id.deliveryCountTv)

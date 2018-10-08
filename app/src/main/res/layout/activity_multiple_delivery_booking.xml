@@ -56,12 +56,12 @@
             app:cardCornerRadius="@dimen/_2sdp"
             app:cardElevation="@dimen/_4sdp">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/currentLocationIv"
                 android:layout_width="@dimen/_52sdp"
                 android:layout_height="@dimen/_52sdp"
                 android:padding="@dimen/_4sdp"
-                android:src="@drawable/direction_icon" />
+                app:srcCompat="@drawable/direction_icon" />
         </android.support.v7.widget.CardView>
 
         <LinearLayout

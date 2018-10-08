@@ -349,6 +349,28 @@ public class Utils {
         }
     }
 
+    public static void navigateToGoogleMap(Context context,
+                                           NormalCallData mCallData) {
+        try {
+            String startAddr = StringUtils.EMPTY;
+            String endAddr = StringUtils.EMPTY;
+            if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                startAddr = Utils.getCurrentLocation();
+                endAddr = mCallData.getStartLat() + "," + mCallData.getStartLng();
+            }
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String formatETA(String value) {
         if (StringUtils.isBlank(value) || value.equalsIgnoreCase("0") || value.equalsIgnoreCase("0.0")
                 || value.equalsIgnoreCase("0.00"))
