@@ -101,12 +101,6 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.kraiKiKamaiTv)
     FontTextView kraiKiKamaiTv;
 
-    @BindView(R.id.destinationTv)
-    FontTextView destinationTv;
-
-    @BindView(R.id.estimatedDistanceTv)
-    FontTextView estimatedDistanceTv;
-
     @BindView(R.id.kharidariKiRaqamTv)
     FontTextView kharidariKiRaqamTv;
 
@@ -115,12 +109,6 @@ public class CallingActivity extends BaseActivity {
 
     @BindView(R.id.customerRatingTv)
     FontTextView customerRatingTv;
-
-    @BindView(R.id.estimatedDistanceUnitTv)
-    FontTextView estimatedDistaneUnitTv;
-
-    @BindView(R.id.circle_distance_layout)
-    LinearLayout circle_distance_layout;
 
 
 
@@ -492,23 +480,13 @@ public class CallingActivity extends BaseActivity {
             cashKiWasooliTv.setText(cashKiWasoliValue);
             customerRatingTv.setText(callData.getRating());
             if (Utils.isSkipDropOff(callData)){
-                estimatedDistanceTv.setText("?");
-                destinationTv.setText("منتخب نہیں کی گئی");
                 cashKiWasooliLayout.setVisibility(View.GONE);
                 kraiKiKamaiLayout.setVisibility(View.GONE);
                 kharidariPriceLayout.setVisibility(View.GONE);
-                destinationTv.setAttr(mCurrentActivity, "jameel_noori_nastaleeq.ttf");
-                destinationTv.setGravity(Gravity.CENTER);
-                circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.rating_circle_call));
-                estimatedDistaneUnitTv.setVisibility(View.GONE);
 
             }else {
                 cashKiWasooliLayout.setVisibility(View.VISIBLE);
                 kraiKiKamaiLayout.setVisibility(View.VISIBLE);
-                circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.distance_green_circle_call));
-                estimatedDistaneUnitTv.setVisibility(View.VISIBLE);
-                estimatedDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
-                destinationTv.setText(callData.getEndAddress());
                 distanceAwayTv.setText(callData.getDistance());
             }
 

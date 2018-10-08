@@ -48,6 +48,8 @@
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginLeft="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginRight="@dimen/_12sdp"
             android:gravity="center_vertical"
             tools:text="Gulshan-e-iqbal"
             android:maxLines="2"
@@ -72,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView">
 
         <View
-            android:id="@+id/view2"
+            android:id="@+id/lineSeprator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/color_e8e8e8"
@@ -109,10 +111,10 @@
             app:layout_constraintTop_toBottomOf="@+id/pickView" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/DistanceTv"
+            android:id="@+id/pickDistanceTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_16sdp"
             app:fontName="open_sans_regular.ttf"
@@ -125,14 +127,13 @@
             android:id="@+id/pickUpDistanceUnit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="KM"
+            android:text="@string/distanceUnit"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_6sdp"
             app:fontName="open_sans_regular.ttf"
-            app:layout_constraintEnd_toEndOf="@+id/DistanceTv"
-            app:layout_constraintStart_toStartOf="@+id/DistanceTv"
-            app:layout_constraintTop_toBottomOf="@+id/DistanceTv"
-            tools:text="KM" />
+            app:layout_constraintEnd_toEndOf="@+id/pickDistanceTv"
+            app:layout_constraintStart_toStartOf="@+id/pickDistanceTv"
+            app:layout_constraintTop_toBottomOf="@+id/pickDistanceTv" />
 
         <!--Delivery Circle-->
 
@@ -151,7 +152,7 @@
             android:id="@+id/deliveryCountTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_16sdp"
             app:fontName="open_sans_regular.ttf"
@@ -165,14 +166,13 @@
             android:id="@+id/placesLabelTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PLACES"
+            android:text="@string/places_label"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_6sdp"
             app:fontName="open_sans_regular.ttf"
             app:layout_constraintEnd_toEndOf="@+id/deliveryCountTv"
             app:layout_constraintStart_toStartOf="@+id/deliveryCountTv"
-            app:layout_constraintTop_toBottomOf="@+id/deliveryCountTv"
-            tools:text="PLACES" />
+            app:layout_constraintTop_toBottomOf="@+id/deliveryCountTv" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/deliveryLabelTv"
@@ -203,8 +203,7 @@
             android:id="@+id/dropDistanceTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="14"
+            android:layout_marginTop="@dimen/_8sdp"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_16sdp"
             app:fontName="open_sans_regular.ttf"
@@ -257,7 +256,7 @@
             android:id="@+id/timeTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_16sdp"
             app:fontName="open_sans_regular.ttf"
