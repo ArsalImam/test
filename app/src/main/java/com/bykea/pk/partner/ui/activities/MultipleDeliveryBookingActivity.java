@@ -1,18 +1,23 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Interpolator;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.Place;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.tracking.AbstractRouting;
@@ -22,11 +27,15 @@ import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
+import com.bykea.pk.partner.ui.helpers.Spherical;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -35,16 +44,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.PolyUtil;
-import com.instabug.library.util.StringUtility;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,16 +76,18 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private boolean isResume = false;
     private boolean isLastAnimationComplete = true;
     private ProgressDialog progressDialogJobActivity;
-    private boolean isFirstTime = false;
+    private boolean isFirstTime = true;
     private Marker driverMarker;
     private LatLng lastApiCallLatLng;
     private List<LatLng> mRouteLatLng;
+    private static final double EARTHRADIUS = 6366198;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
 
     @BindView(R.id.distanceTv)
     TextView distanceTv;
+    private Polyline mapPolylines;
 
 
     @Override
@@ -121,7 +132,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Draw the route on location update.
+     * Draw the route on location update. Remove the polyline from the map
      *
      * @param startLatLng an starting address lat lng
      * @param endLatlng an ending address lat lng.
@@ -130,9 +141,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (null != startLatLng && null != endLatlng) {
             drawRoute(startLatLng, endLatlng, Routing.onChangeRoute);
         } else {
-            /*if (mapPolylines != null) {
+            if (mapPolylines != null) {
                 mapPolylines.remove();
-            }*/
+            }
         }
     }
 
@@ -166,7 +177,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Set the time, distance, draw route to pickup in accepted state
      */
     private void setAcceptedState() {
-        setTimeDistance(mCallData.getArivalTime(), mCallData.getDistance());
+        setTimeDistance(Utils.formatETA(mCallData.getArivalTime()),
+                mCallData.getDistance());
         drawRouteToPickup();
     }
 
@@ -222,7 +234,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
         if (lastApiCallLatLng != null && (lastApiCallLatLng.equals(currentApiCallLatLng)
-                || Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude, lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < 15)) {
+                || Utils.calculateDistance(currentApiCallLatLng.latitude,
+                currentApiCallLatLng.longitude, lastApiCallLatLng.latitude,
+                lastApiCallLatLng.longitude) < 15)) {
             return false;
         }
         return true;
@@ -309,6 +323,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     getDriverRoadPosition(driverLatLng);
                     addPickupMarker();
                     addDropOffMarkers();
+                    setPickupBounds();
                 }
             });
         }
@@ -371,16 +386,120 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         }
     }
 
+    /***
+     * Set Pickup Bounds to move google map camera
+     */
+    private void setPickupBounds() {
+        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._30sdp);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), padding);
+        padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
+        mGoogleMap.setPadding(0, padding, 0, padding);
+        mGoogleMap.moveCamera(cu);
+    }
+
+    /***
+     * get the current lat lng bounds when the driver and passenger is very close google map zoom
+     * and it overlap passenger and driver marker to resolve this problem we have added the fake
+     * bounds.
+     *
+     * Add 2 points 1000m northEast and southWest of the center. They increase the bounds only,
+     * if they are not already larger than this. 1000m on the diagonal translates into about
+     * 709m to each direction.
+     *
+     * @return
+     */
+    private LatLngBounds getCurrentLatLngBounds() {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        if (pickupMarker != null) {
+            builder.include(pickupMarker.getPosition());
+        }
+        builder.include(driverMarker.getPosition());
+
+
+        LatLngBounds tmpBounds = builder.build();
+        LatLng center = tmpBounds.getCenter();
+        LatLng northEast = move(center, 709, 709);
+        LatLng southWest = move(center, -709, -709);
+
+        builder.include(southWest);
+        builder.include(northEast);
+        return builder.build();
+    }
+
+    /***
+     *
+     *
+     * @param startLL fake latlng bounds center latitude longitude.
+     * @param toNorth
+     * @param toEast
+     * @return
+     */
+    //Todo 1: Aftab add the documentation for this method.
+    private static LatLng move(LatLng startLL, double toNorth, double toEast) {
+        double lonDiff = meterToLongitude(toEast, startLL.latitude);
+        double latDiff = meterToLatitude(toNorth);
+        return new LatLng(startLL.latitude + latDiff, startLL.longitude
+                + lonDiff);
+    }
+
+    /***
+     *
+     * @param meterToEast
+     * @param latitude
+     * @return
+     */
+    private static double meterToLongitude(double meterToEast, double latitude) {
+        double latArc = Math.toRadians(latitude);
+        double radius = Math.cos(latArc) * EARTHRADIUS;
+        double rad = meterToEast / radius;
+        return Math.toDegrees(rad);
+    }
+
+    /***
+     *
+     * @param meterToNorth
+     * @return
+     */
+    //Todo 2: Aftab Add the documentation for this method.
+    private static double meterToLatitude(double meterToNorth) {
+        double rad = meterToNorth / EARTHRADIUS;
+        return Math.toDegrees(rad);
+    }
+
+    /***
+     * Animate marker when gps points change location.
+     *
+     * @param destination new latlng comming from GPS.
+     * @param latLngInterpolator is an interface which is used for smooth animation on
+     *                           smallest device i.e ice cream sandwitch
+     */
+    private synchronized void animateMarker(final LatLng destination,
+                                            final LatLngInterpolator latLngInterpolator){
+        final LatLng startPosition = driverMarker.getPosition();
+
+        ValueAnimator valueAnimator = new ValueAnimator();
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float v = animation.getAnimatedFraction();
+                LatLng newPosition = latLngInterpolator.interpolate(v, startPosition, destination);
+                driverMarker.setPosition(newPosition);
+            }
+        });
+        valueAnimator.setFloatValues(0, 1); // Ignored.
+        valueAnimator.setDuration(3000);
+        valueAnimator.start();
+    }
+
     private void updateDriverMarker(String snappedLatitude, String snappedLongitude) {
         if (null != mGoogleMap) {
             //if driver marker is null add driver marker on google map
             if (null == driverMarker) {
+                //Todo 3: Chnage Image in future
                 driverMarker = mGoogleMap.addMarker(new MarkerOptions().
                         icon(
                                 BitmapDescriptorFactory.fromResource(
-                                        Utils.getMapIcon(
-                                                mCallData.getCallType()
-                                        )
+                                        R.drawable.bike_delivery
                                 )
                         )
                         .position(
@@ -388,8 +507,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                                         Double.parseDouble(snappedLatitude),
                                         Double.parseDouble(snappedLongitude)
                                 )
-                        )
-                        .rotation(mLocBearing));
+                        ));
             }
 
             //When activity created and load map first time do not start animation.
@@ -397,12 +515,16 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 // Update camera rotation according to marker direction
                 if (null != mCurrentLocation) {
                     updateCamera(mLocBearing);
-                    // ANIMATE DRIVER MARKER TO THE TARGET LOCATION.
+                    // Animate driver marker to the target location.
                     if (isLastAnimationComplete) {
                         if (Utils.calculateDistance(driverMarker.getPosition().latitude,
-                                driverMarker.getPosition().longitude, mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()) >= 10) {
-                            //LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                            //animateMarker(latLng);
+                                driverMarker.getPosition().longitude,
+                                mCurrentLocation.getLatitude(),
+                                mCurrentLocation.getLongitude()) >= 10) {
+                            LatLng latLng = new LatLng(mCurrentLocation.getLatitude(),
+                             mCurrentLocation.getLongitude());
+                            LatLngInterpolator interpolator = new Spherical();
+                            animateMarker(latLng, interpolator);
                         }
                     }
                 }
@@ -420,12 +542,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             if (pickupMarker != null) {
                 pickupMarker.remove();
             }
-            double lat = Double.parseDouble(mCallData.getStartLat());
-            double lng = Double.parseDouble(mCallData.getStartLng());
-            LatLng startLatLng = new LatLng(lat, lng);
-            pickupMarker = mGoogleMap.addMarker(new MarkerOptions().
-                    icon(Utils.getBitmapDiscriptor(mCurrentActivity, true))
-                    .position(startLatLng));
+            if (mCallData.getStartLat() != null && mCallData.getStartLng() != null) {
+                double lat = Double.parseDouble(mCallData.getStartLat());
+                double lng = Double.parseDouble(mCallData.getStartLng());
+                LatLng startLatLng = new LatLng(lat, lng);
+                pickupMarker = mGoogleMap.addMarker(new MarkerOptions().
+                        icon(Utils.getBitmapDiscriptor(mCurrentActivity, true))
+                        .position(startLatLng));
+            }
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -477,13 +601,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Network Change Broadcast Reciever
+     * Network Change Broadcast Reciever to listen GPS change & internet conectivity change
      */
     private NetworkChangeListener networkChangeListener = new NetworkChangeListener() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if ("android.location.GPS_ENABLED_CHANGE".equalsIgnoreCase(intent.getAction()) ||
-                    "android.location.PROVIDERS_CHANGED".equalsIgnoreCase(intent.getAction())) {
+            if (Constants.Actions.ON_GPS_ENABLED_CHANGE.equalsIgnoreCase(intent.getAction()) ||
+                    Constants.Actions.ON_LOCATION_CHANGED.
+                            equalsIgnoreCase(intent.getAction())) {
                 checkGps();
             } else {
                 if (Connectivity.isConnectedFast(context)) {
@@ -522,7 +647,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     @Override
     public void onRoutingFailure(int routeType, RouteException e) {
-
+        lastApiCallLatLng = null;
+        AppPreferences.setDirectionsApiKeyRequired(true);
+        getDriverRoadPosition(
+                new com.google.maps.model.LatLng(
+                        AppPreferences.getLatitude(),
+                        AppPreferences.getLongitude()
+                )
+        );
     }
 
     @Override
@@ -532,11 +664,32 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     @Override
     public void onRoutingSuccess(int routeType, List<Route> route, int shortestRouteIndex) {
-        mRouteLatLng = route.get(0).getPoints();
-        updateEtaAndCallData(
-                String.valueOf((route.get(0).getDurationValue() / 60)),
-                Utils.formatDecimalPlaces(String.valueOf(
-                        (route.get(0).getDistanceValue() / 1000.0)), 1));
+        if (mCurrentActivity != null && mGoogleMap != null) {
+            mRouteLatLng = route.get(0).getPoints();
+            updateEtaAndCallData(
+                    String.valueOf((route.get(0).getDurationValue() / 60)),
+                    Utils.formatDecimalPlaces(String.valueOf(
+                            (route.get(0).getDistanceValue() / 1000.0)), 1));
+            updatePolyLine(route);
+        }else {
+            lastApiCallLatLng = null;
+        }
+    }
+
+    /***
+     * Update the polyline on the map.
+     *
+     * @param route list of route to draw the polyline on the specific route.
+     */
+    public void updatePolyLine(List<Route> route) {
+        if (mapPolylines != null) {
+            mapPolylines.remove();
+        }
+        PolylineOptions polyOptions = new PolylineOptions();
+        polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
+        polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
+        polyOptions.addAll(route.get(0).getPoints());
+        mapPolylines = mGoogleMap.addPolyline(polyOptions);
     }
 
     @Override
@@ -547,7 +700,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     @Override
     protected void onStart() {
         super.onStart();
+        //register the location reciever to recieve location from LocationService.
         registerReceiver(locationReceiver, new IntentFilter(Keys.LOCATION_UPDATE_BROADCAST));
+        //register the network reciever to recieve gps/location changes & network connection changes
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.Actions.ON_CONECTIVITY_CHANGED);
+        intentFilter.addAction(Constants.Actions.ON_LOCATION_CHANGED);
+        intentFilter.addCategory(Constants.Category.ON_CATEGORY_DEFAULT);
+        registerReceiver(networkChangeListener, intentFilter);
     }
 
     @Override
@@ -565,7 +725,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     @Override
     protected void onDestroy() {
+        //unregister the location reciever to stop recieving location when activity has destroyed.
         unregisterReceiver(locationReceiver);
+        //unregister the network change reciever to stop recieving when activity has destroyed.
+        unregisterReceiver(networkChangeListener);
         mapView.onDestroy();
         super.onDestroy();
 
