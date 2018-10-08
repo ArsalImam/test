@@ -48,6 +48,8 @@
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginLeft="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginRight="@dimen/_12sdp"
             android:gravity="center_vertical"
             tools:text="Gulshan-e-iqbal"
             android:maxLines="2"
