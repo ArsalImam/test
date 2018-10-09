@@ -1,28 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/windowBackground"
-    android:fitsSystemWindows="true"
-    android:orientation="horizontal"
-    android:theme="@style/toolbarIconColor"
-    app:elevation="@dimen/elevation.toolbar"
-    app:titleTextColor="@color/color_636363">
+    android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_arrow_back_48px"/>
+        android:background="@color/windowBackground"
+        android:fitsSystemWindows="true"
+        android:orientation="horizontal"
+        android:theme="@style/toolbarIconColor"
+        app:elevation="@dimen/elevation.toolbar"
+        app:titleTextColor="@color/color_636363">
 
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="@dimen/_18sdp"
-        tools:text="کال"/>
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_arrow_back_48px" />
 
-</android.support.v7.widget.Toolbar>
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="@dimen/_18sdp"
+            android:text="کال" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@drawable/toolbar_map_dropshadow"/>
+
+</LinearLayout>

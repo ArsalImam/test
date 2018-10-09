@@ -6,17 +6,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Interpolator;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
@@ -88,6 +84,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private List<LatLng> mRouteLatLng;
     private static final double EARTHRADIUS = 6366198;
     private Polyline mapPolylines;
+    private String type = "call";
 
     @BindView(R.id.timeTv)
     TextView timeTv;
@@ -504,11 +501,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (null != mGoogleMap) {
             //if driver marker is null add driver marker on google map
             if (null == driverMarker) {
-                //Todo 3: Chnage Image in future
+                Bitmap driverIcon = Utils.getBitmap(mCurrentActivity, R.drawable.ic_delivery_bike);
                 driverMarker = mGoogleMap.addMarker(new MarkerOptions().
                         icon(
-                                BitmapDescriptorFactory.fromResource(
-                                        R.drawable.bike_delivery
+                                BitmapDescriptorFactory.fromBitmap(
+                                        driverIcon
                                 )
                         )
                         .position(
@@ -580,7 +577,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
             for (int i = 0; i < latLngList.size(); i++) {
                 dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
-                        icon(Utils.getBitmapDiscriptor(mCurrentActivity, false))
+                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
+                                String.valueOf(i + 1)))
                         .position(latLngList.get(i)));
             }
 
@@ -614,7 +612,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      *
      * @param view a view where user have clicked.
      */
-    @OnClick({R.id.currentLocationIv, R.id.jobBtn})
+    @OnClick({R.id.currentLocationIv, R.id.jobBtn, R.id.callBtn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.currentLocationIv: {
@@ -624,6 +622,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
             case R.id.jobBtn: {
                 checkTripButtonClick();
+                break;
+            }
+
+            case R.id.callBtn: {
+                ActivityStackManager.getInstance().startMapDetailsActivity(mCurrentActivity, type);
                 break;
             }
         }
@@ -652,7 +655,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      *
      * Todo 1: add request Arrived socket event
      */
-    private void showDriverArrivedDialog(){
+    private void showDriverArrivedDialog() {
         int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(),
                 AppPreferences.getLongitude(),
                 Double.parseDouble(mCallData.getStartLat()),
@@ -662,17 +665,20 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     getSettings().getArrived_min_dist();
             Dialogs.INSTANCE.showConfirmArrivalDialog(mCurrentActivity,
                     showTickBtn, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    //requestArrived();
-                }
-            });
+                        @Override
+                        public void onClick(View v) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            //requestArrived();
+                            //Todo 1: Temorary text update we will integrate socket shortly
+                            jobBtn.setText(getString(R.string.button_text_start));
+                        }
+                    });
         } else {
             Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Dialogs.INSTANCE.dismissDialog();
+                    jobBtn.setText(getString(R.string.button_text_start));
                     //requestArrived();
                 }
             }, new View.OnClickListener() {

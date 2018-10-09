@@ -1,87 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/bhejneyWalaTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:text="@string/bhejneyWalaTv"
-        android:textSize="@dimen/_18sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:fontName="jameel_noori_nastaleeq.ttf"/>
+    <include layout="@layout/map_toolbar"/>
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/pickupMarker"
-        android:layout_width="@dimen/_35sdp"
-        android:layout_height="@dimen/_35sdp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bhejneyWalaTv"
-        app:srcCompat="@drawable/ic_pickupmarker" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/call_recycler_view"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/areaTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginLeft="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:maxLines="2"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_16sdp"
-        app:fontName="open_sans_regular.ttf"
-        app:layout_constraintStart_toEndOf="@+id/pickupMarker"
-        app:layout_constraintTop_toBottomOf="@+id/bhejneyWalaTv"
-        tools:text="University Road" />
-
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/feaderTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginLeft="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_10sdp"
-        app:fontName="open_sans_regular.ttf"
-        app:layout_constraintStart_toEndOf="@+id/pickupMarker"
-        app:layout_constraintTop_toBottomOf="@+id/areaTv"
-        tools:text="Akhtar Feeder" />
-
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/streetAddress"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginLeft="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginEnd="@dimen/_24sdp"
-        android:layout_marginRight="@dimen/_24sdp"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_10sdp"
-        app:fontName="open_sans_regular.ttf"
-        app:layout_constraintEnd_toStartOf="@+id/callTv"
-        app:layout_constraintStart_toEndOf="@+id/pickupMarker"
-        app:layout_constraintTop_toBottomOf="@+id/feaderTv"
-        tools:text="House # 1, Street 35, Block B3  House # 1,Street  35, Block B3  " />
-
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/callTv"
-        android:layout_width="@dimen/_35sdp"
-        android:layout_height="@dimen/_35sdp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/contact_call_icon"
-        tools:layout_editor_absoluteY="84dp" />
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

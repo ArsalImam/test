@@ -135,6 +135,10 @@ public class Constants {
         public final static String GOOGLE_MAP_ACTIVITY = "com.google.android.maps.MapsActivity";
     }
 
+    public static class MapDetailsFragmentTypes {
+        public static final String TYPE_CALL = "call";
+    }
+
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
         public final static String CANCEL_TRIP = "Ride-Cancel";

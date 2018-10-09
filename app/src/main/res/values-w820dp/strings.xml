@@ -2,4 +2,5 @@
 <resources>
     <string name="pick_multi_delivery_label">پک</string>
     <string name="bhejneyWalaTv">بھیجنے والا</string>
+    <string name="wasoolKrneyWalaTv">وصول کرنے والا</string>
 </resources>

@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.JsBankFingerSelectionActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
+import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
 import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
@@ -101,6 +102,18 @@ public class ActivityStackManager {
 
     public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    /***
+     * Start Map Details Activity.
+     *
+     * @param mContext an activity context holding the reference of an activity.
+     * @param type a type of a fragment you want to open in an activity.
+     */
+    public void startMapDetailsActivity(Context mContext, String type) {
+        Intent intent = new Intent(mContext, MapDetailsActivity.class);
+        intent.putExtra(Keys.FRAGMENT_TYPE_NAME, type);
         mContext.startActivity(intent);
     }
 

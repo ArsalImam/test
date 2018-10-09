@@ -110,8 +110,6 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.customerRatingTv)
     FontTextView customerRatingTv;
 
-
-
     private UserRepository repository;
     private MediaPlayer _mpSound;
     private CallingActivity mCurrentActivity;
