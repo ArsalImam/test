@@ -58,12 +58,13 @@ public class PersonalActivity extends BaseActivity {
         setToolbar();
         hideToolbarLogo();
         setToolbarTitle("Personal Details", "زاتی معلومات");
+        hideStatusLayout();
         setBackNavigation();
         setData();
     }
 
-    private void setData(){
-        if(getIntent() != null){
+    private void setData() {
+        if (getIntent() != null) {
             PersonalInfoData data = (PersonalInfoData) getIntent().getSerializableExtra(Constants.SETTINGS_DATA_EXTRAS);
             pilotName.setText(data.getFull_name());
             pilotAddress.setText(data.getAddress());
@@ -77,9 +78,9 @@ public class PersonalActivity extends BaseActivity {
                 Utils.loadImgPicasso(mCurrentActivity, pilotImage, R.drawable.profile_pic,
                         Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
             }
-            if(StringUtils.isNotBlank(data.getEmail())){
+            if (StringUtils.isNotBlank(data.getEmail())) {
                 pilotEmail.setText(data.getEmail());
-            }else {
+            } else {
                 pilotEmail.setText("No Email Found (Optional)");
             }
             if (StringUtils.isNotBlank(data.getRegistration_date())) {
