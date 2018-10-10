@@ -191,5 +191,7 @@
     <string name="wasoolKrneyWalaTv">وصول کرنے والا</string>
     <string name="cash_value_zero">0</string>
     <string name="ask_arrived_text"> پہنچ گئے؟ </string>
+    <string name="code_value">COD Rs. %d</string>
+    <string name="tafseel_text">تفصیل</string>
 
 </resources>

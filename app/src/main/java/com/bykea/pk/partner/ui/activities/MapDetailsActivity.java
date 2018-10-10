@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
 import com.bykea.pk.partner.ui.fragments.MultiDeliveryCallFragment;
+import com.bykea.pk.partner.ui.fragments.MultiDeliveryDirectionFragment;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.FragmentUtils;
 import com.bykea.pk.partner.utils.Keys;
@@ -29,6 +31,13 @@ public class MapDetailsActivity extends AppCompatActivity {
             case Constants.MapDetailsFragmentTypes.TYPE_CALL: {
                 FragmentUtils.pushFragment(this, R.id.container,
                         MultiDeliveryCallFragment.newInstance(), null, null,
+                        false, false);
+                break;
+            }
+
+            case Constants.MapDetailsFragmentTypes.TYPE_TAFSEEL: {
+                FragmentUtils.pushFragment(this, R.id.container,
+                        MultiDeliveryDirectionFragment.newInstance(), null, null,
                         false, false);
                 break;
             }

@@ -3,36 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingBottom="@dimen/_14sdp"
+    android:paddingTop="@dimen/_12sdp"
+    android:paddingBottom="@dimen/_16sdp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/dropOffMarker"
+        android:id="@+id/pickupMarker"
         android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_35sdp"
-        android:layout_marginStart="@dimen/_12sdp"
-        android:layout_marginLeft="@dimen/_12sdp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginLeft="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_12sdp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_dropoff_icon" />
-
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/numberTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        tools:text="1"
-        android:textSize="@dimen/_14sdp"
-        app:fontName="open_sans_regular.ttf"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/dropOffMarker"
-        app:layout_constraintEnd_toEndOf="@+id/dropOffMarker"
-        app:layout_constraintStart_toStartOf="@+id/dropOffMarker"
-        app:layout_constraintTop_toTopOf="@+id/dropOffMarker" />
+        app:layout_constraintTop_toBottomOf="@+id/bhejneyWalaTv"
+        app:srcCompat="@drawable/ic_pickupmarker" />
 
     <com.bykea.pk.partner.widgets.FontTextView
         android:id="@+id/areaTv"
@@ -40,16 +25,28 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginLeft="@dimen/_8sdp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="@dimen/_8sdp"
         android:maxLines="2"
         android:textColor="@color/black"
         android:textSize="@dimen/_15sdp"
         app:fontName="open_sans_regular.ttf"
-        app:layout_constraintBottom_toTopOf="@+id/streetAddress"
-        app:layout_constraintStart_toEndOf="@+id/dropOffMarker"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pickupMarker"
+        app:layout_constraintTop_toBottomOf="@+id/bhejneyWalaTv"
         tools:text="University Road" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/feaderTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginLeft="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintStart_toEndOf="@+id/pickupMarker"
+        app:layout_constraintTop_toBottomOf="@+id/areaTv"
+        tools:text="Akhtar Feeder" />
 
     <com.bykea.pk.partner.widgets.FontTextView
         android:id="@+id/streetAddress"
@@ -63,13 +60,13 @@
         android:textColor="@color/black"
         android:textSize="@dimen/_12sdp"
         app:fontName="open_sans_regular.ttf"
-        app:layout_constraintEnd_toStartOf="@+id/callBtn"
-        app:layout_constraintStart_toEndOf="@+id/dropOffMarker"
-        app:layout_constraintTop_toBottomOf="@+id/areaTv"
+        app:layout_constraintEnd_toStartOf="@+id/directionBtn"
+        app:layout_constraintStart_toEndOf="@+id/pickupMarker"
+        app:layout_constraintTop_toBottomOf="@+id/feaderTv"
         tools:text="House # 1, Street 35, Block B3  House # 1,Street  35, Block B3  " />
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/callBtn"
+        android:id="@+id/directionBtn"
         android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_35sdp"
         android:layout_marginEnd="8dp"
@@ -77,8 +74,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/streetAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/streetAddress"
-        app:srcCompat="@drawable/ic_call" />
-
+        app:srcCompat="@drawable/ic_direction" />
 
 
 </android.support.constraint.ConstraintLayout>

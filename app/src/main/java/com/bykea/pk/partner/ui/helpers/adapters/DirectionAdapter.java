@@ -9,24 +9,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.MultiDeliveryCallData;
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
+import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
 import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
+import com.bykea.pk.partner.utils.Constants;
 
-/***
- * Call Adapter an adaptet class is used to collect child view to represent a parent view.
- */
-public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
+public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.ViewHolder> {
 
-    MultiDeliveryCallData data;
+    private MultiDeliveryDirectionDetails data;
+
     private int TYPE_HEADER = 0;
     private int TYPE_ITEM = 1;
 
     /***
      * Constructor.
+     * Generate or construct DirectionAdapter.
      *
-     * @param data MultiDeliveryCallData object.
+     * @param data MultiDeliveryDirectionDetails response to map on the UI.
      */
-    public CallAdapter(MultiDeliveryCallData data) {
+    public DirectionAdapter(MultiDeliveryDirectionDetails data) {
         this.data = data;
     }
 
@@ -38,8 +39,8 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
         //Inflate the header view if the viewType is TYPE_HEADER
         // otherwise inflate itemview
 
-        int layout = viewType == TYPE_HEADER ? R.layout.call_pickup_header :
-                R.layout.call_dropoff_item_row;
+        int layout = viewType == TYPE_HEADER ? R.layout.direction_details_fragment_header :
+                R.layout.direction_details_item_row;
 
         View view = inflater.inflate(layout, parent, false);
         return new ViewHolder(view);
@@ -56,10 +57,15 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
                 // avoid this scenerio we have decrease position by one to get all the item
                 // otherwise it will skip one item.
 
-                MultiDeliveryDropOff dropOff = data.getDropOffList().get(position - 1);
+                DirectionDropOffData dropOff = data.getDropOffList().get(position - 1);
                 holder.numberTv.setText(dropOff.getDropOffNumberText());
                 holder.areaTv.setText(dropOff.getmArea());
                 holder.streetAddressTv.setText(dropOff.getStreetAddress());
+                holder.tripNumberTv.setText(dropOff.getTripNumber());
+                holder.driverNameTv.setText(dropOff.getDriverName());
+                holder.codValueTv.setText(holder.codValueTv.getContext().
+                        getString(R.string.code_value,
+                                dropOff.getCodValue()));
             } else {
 
                 //Set header data i.e pickup data
@@ -75,9 +81,10 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
         }
     }
 
-
     @Override
     public int getItemCount() {
+        //In position zero we are inflating header so
+        // avoid skipping first item return list size + 1
         return data.getDropOffList().size() + 1;
     }
 
@@ -95,7 +102,10 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
         TextView areaTv;
         TextView streetAddressTv;
         TextView numberTv;
-        AppCompatImageView callIv;
+        TextView tripNumberTv;
+        TextView driverNameTv;
+        TextView codValueTv;
+        AppCompatImageView directionBtn;
 
         //pickup header layout fields
         TextView feederTv;
@@ -111,7 +121,10 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
             feederTv = itemView.findViewById(R.id.feaderTv);
             streetAddressTv = itemView.findViewById(R.id.streetAddress);
             numberTv = itemView.findViewById(R.id.numberTv);
-            callIv = itemView.findViewById(R.id.callBtn);
+            directionBtn = itemView.findViewById(R.id.directionBtn);
+            tripNumberTv = itemView.findViewById(R.id.tripNoTv);
+            driverNameTv = itemView.findViewById(R.id.driverNameTv);
+            codValueTv = itemView.findViewById(R.id.codTv);
         }
     }
 }

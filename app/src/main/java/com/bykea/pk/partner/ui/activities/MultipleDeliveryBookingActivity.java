@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
@@ -83,7 +84,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private List<LatLng> mRouteLatLng;
     private static final double EARTHRADIUS = 6366198;
     private Polyline mapPolylines;
-    private String type = "call";
     private static final int ARRIVAL_MAX_DISTANCE_VALUE = 200;
     private static final int SECONDS_IN_MINUTES = 60;
     private static final double METERS_IN_KILOMETER = 1000.0;
@@ -96,6 +96,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     @BindView(R.id.jobBtn)
     FontTextView jobBtn;
+
+    @BindView(R.id.tafseelLayout)
+    FrameLayout tafseelLayout;
 
 
     @Override
@@ -614,7 +617,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      *
      * @param view a view where user have clicked.
      */
-    @OnClick({R.id.currentLocationIv, R.id.jobBtn, R.id.callBtn})
+    @OnClick({R.id.currentLocationIv, R.id.jobBtn, R.id.callBtn, R.id.tafseelLayout})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.currentLocationIv: {
@@ -627,8 +630,20 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 break;
             }
 
+
             case R.id.callBtn: {
-                ActivityStackManager.getInstance().startMapDetailsActivity(mCurrentActivity, type);
+                ActivityStackManager.getInstance().startMapDetailsActivity(
+                        mCurrentActivity,
+                        Constants.MapDetailsFragmentTypes.TYPE_CALL
+                );
+                break;
+            }
+
+            case R.id.tafseelLayout: {
+                ActivityStackManager.getInstance().startMapDetailsActivity(
+                        mCurrentActivity,
+                        Constants.MapDetailsFragmentTypes.TYPE_TAFSEEL
+                );
                 break;
             }
         }
@@ -641,9 +656,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void checkTripButtonClick() {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
             if (jobBtn.getText().toString().equalsIgnoreCase(getString(
                     R.string.button_text_arrived))) {
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 showDriverArrivedDialog();
             }
         }
@@ -671,8 +686,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                         public void onClick(View v) {
                             Dialogs.INSTANCE.dismissDialog();
                             //requestArrived();
-                            //Todo 1: Temorary text update we will integrate socket shortly
-                            jobBtn.setText(getString(R.string.button_text_start));
+                            setArrivedState();
                         }
                     });
         } else {
@@ -680,7 +694,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 @Override
                 public void onClick(View v) {
                     Dialogs.INSTANCE.dismissDialog();
-                    jobBtn.setText(getString(R.string.button_text_start));
+                    setArrivedState();
                     //requestArrived();
                 }
             }, new View.OnClickListener() {
@@ -690,6 +704,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 }
             }, getString(R.string.ask_arrived_text));
         }
+    }
+
+    private void setArrivedState() {
+        jobBtn.setText(getString(R.string.button_text_start));
+        tafseelLayout.setVisibility(View.VISIBLE);
     }
 
     /***

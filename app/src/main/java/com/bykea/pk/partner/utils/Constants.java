@@ -137,6 +137,7 @@ public class Constants {
 
     public static class MapDetailsFragmentTypes {
         public static final String TYPE_CALL = "call";
+        public static final String TYPE_TAFSEEL = "tafseel";
     }
 
     public static class AnalyticsEvents {
