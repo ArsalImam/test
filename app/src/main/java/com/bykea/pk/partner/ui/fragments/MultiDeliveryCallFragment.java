@@ -62,12 +62,9 @@ public class MultiDeliveryCallFragment extends Fragment {
         List<MultiDeliveryDropOff> list = new ArrayList<>();
         for (int i = 1; i < 6; i++) {
             MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff("University Road",
-                    "House # 1, Street 35, Block B3  House # 1, Street  35, Block B3");
-            Bitmap icon = Utils.drawTextToBitmap(
-                    getActivity(),
-                    R.drawable.ic_dropoff_icon,
+                    "House # 1, Street 35, Block B3  House # 1, Street  35, Block B3",
                     String.valueOf(i));
-            dropOff.setDropOffImage(icon);
+
             list.add(dropOff);
         }
 

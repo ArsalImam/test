@@ -19,6 +19,22 @@
         app:srcCompat="@drawable/ic_dropoff_icon" />
 
     <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/numberTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        tools:text="1"
+        android:textSize="@dimen/_14sdp"
+        app:fontName="open_sans_regular.ttf"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/dropOffMarker"
+        app:layout_constraintEnd_toEndOf="@+id/dropOffMarker"
+        app:layout_constraintStart_toStartOf="@+id/dropOffMarker"
+        app:layout_constraintTop_toTopOf="@+id/dropOffMarker" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
         android:id="@+id/areaTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -62,5 +78,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/streetAddress"
         app:srcCompat="@drawable/ic_call" />
+
+
 
 </android.support.constraint.ConstraintLayout>

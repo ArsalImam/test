@@ -57,12 +57,15 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
                 // otherwise it will skip one item.
 
                 MultiDeliveryDropOff dropOff = data.getDropOffList().get(position - 1);
-                holder.dropOffMarker.setImageBitmap(dropOff.getDropOffImage());
+                holder.numberTv.setText(dropOff.getDropOffNumberText());
                 holder.areaTv.setText(dropOff.getmArea());
-                holder.streetAddress.setText(dropOff.getStreetAddress());
+                holder.streetAddressTv.setText(dropOff.getStreetAddress());
             } else {
+
+                //Set header data i.e pickup data
+
                 holder.areaTv.setText(data.getPickupData().getArea());
-                holder.streetAddress.setText(data.getPickupData().getStreetAddress());
+                holder.streetAddressTv.setText(data.getPickupData().getStreetAddress());
                 holder.feederTv.setText(data.getPickupData().getFeederName());
             }
         } catch (IndexOutOfBoundsException e) {
@@ -70,9 +73,8 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
+
 
     @Override
     public int getItemCount() {
@@ -90,9 +92,9 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        AppCompatImageView dropOffMarker;
         TextView areaTv;
-        TextView streetAddress;
+        TextView streetAddressTv;
+        TextView numberTv;
         AppCompatImageView callIv;
 
         //pickup header layout fields
@@ -105,10 +107,10 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
          */
         public ViewHolder(View itemView) {
             super(itemView);
-            dropOffMarker = itemView.findViewById(R.id.dropOffMarker);
             areaTv = itemView.findViewById(R.id.areaTv);
             feederTv = itemView.findViewById(R.id.feaderTv);
-            streetAddress = itemView.findViewById(R.id.streetAddress);
+            streetAddressTv = itemView.findViewById(R.id.streetAddress);
+            numberTv = itemView.findViewById(R.id.numberTv);
             callIv = itemView.findViewById(R.id.callIv);
         }
     }
