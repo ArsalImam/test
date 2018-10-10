@@ -121,6 +121,9 @@ public class Constants {
         public final static int SCAN_FINGER_PRINTS = 123;
     }
 
+    public static class TimeFormats {
+        public final static String LICNENSE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    }
 
 
     public static class AnalyticsEvents {
@@ -137,8 +140,8 @@ public class Constants {
         public final static String ON_SIGN_UP_BTN_CLICK = "SignupButton";
         public final static String ON_SIGN_UP_MOBILE_ENTERED = "SignupMobile";
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
-        public final static String ON_LOGIN_SUCCESS= "LoginSuccessful";
-        public final static String ON_RIDE_COMPLETE= "RideComplete";
+        public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
+        public final static String ON_RIDE_COMPLETE = "RideComplete";
 
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger

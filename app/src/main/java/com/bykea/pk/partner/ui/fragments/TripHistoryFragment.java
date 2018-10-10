@@ -70,7 +70,8 @@ public class TripHistoryFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
-        mCurrentActivity.setToolbarTitle("Bookings", "تفصیلات");
+        mCurrentActivity.setToolbarTitle(getString(R.string.trip_history_title),
+                getString(R.string.trip_history_title_ur));
         mCurrentActivity.hideToolbarLogo();
         mCurrentActivity.hideStatusCompletely();
         mCurrentActivity.showStatusLayout();

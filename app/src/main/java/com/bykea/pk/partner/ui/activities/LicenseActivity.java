@@ -38,7 +38,7 @@ public class LicenseActivity extends BaseActivity {
 
         setToolbar();
         hideToolbarLogo();
-        setToolbarTitle("License","لائسنس" );
+        setToolbarTitle(getString(R.string.license_title), getString(R.string.license_title_ur));
         setBackNavigation();
 
         setData();
@@ -46,19 +46,15 @@ public class LicenseActivity extends BaseActivity {
 
     private void setData() {
         if (getIntent() != null) {
-            PersonalInfoData data = (PersonalInfoData) getIntent().getSerializableExtra(Constants.SETTINGS_DATA_EXTRAS);
+            PersonalInfoData data = getIntent().getParcelableExtra(Constants.SETTINGS_DATA_EXTRAS);
             vehiclePlateNo.setText(data.getPlateNo());
             licenseNo.setText(data.getDriverLicenseNumber());
-            if(StringUtils.isNotBlank(data.getLicenseCity())) {
+            if (StringUtils.isNotBlank(data.getLicenseCity())) {
                 licenseCity.setText(data.getLicenseCity());
             }
-            if(StringUtils.isNotBlank(data.getLicenseExpire())){
-                /*licenseExpDate.setText(Utils.getFormattedDate(data.getLicenseExpire().replace("T", " ").replace("Z",""), CURRENT_DATE_FORMAT_1,
-                        REQUIRED_DATE_FORMAT));*/
-                //TODO Update date format
-//                licenseExpDate.setText(data.getLicenseExpire());
-                licenseExpDate.setText(Utils.getFormattedDate(data.getLicenseExpire(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-                        REQUIRED_DATE_FORMAT));
+            if (StringUtils.isNotBlank(data.getLicenseExpire())) {
+                licenseExpDate.setText(Utils.getFormattedDate(data.getLicenseExpire(),
+                        Constants.TimeFormats.LICNENSE_TIME_FORMAT, REQUIRED_DATE_FORMAT));
 
             }
         }

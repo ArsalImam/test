@@ -37,14 +37,15 @@ public class MotorbikeActivity extends BaseActivity {
         mCurrentActivity = this;
         setToolbar();
         hideToolbarLogo();
-        setToolbarTitle("Motorbike", "موٹر سائیکل");
+        setToolbarTitle(getString(R.string.motor_bike_title),
+                getString(R.string.motor_bike_title_ur));
         setBackNavigation();
         setData();
     }
 
     private void setData() {
         if (getIntent() != null) {
-            PersonalInfoData data = (PersonalInfoData) getIntent().getSerializableExtra(Constants.SETTINGS_DATA_EXTRAS);
+            PersonalInfoData data = getIntent().getParcelableExtra(Constants.SETTINGS_DATA_EXTRAS);
             vehicleBrand.setText(data.getBrand());
             horsePower.setText(data.getHorsePower());
             chasisNumber.setText(data.getChassisNumber());
