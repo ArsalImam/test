@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -44,8 +43,8 @@ public class PostBankAccountActivity extends BaseActivity {
     private void setData() {
         if (getIntent() != null) {
             PersonalInfoData data = (PersonalInfoData) getIntent().getSerializableExtra(Constants.SETTINGS_DATA_EXTRAS);
-            bankName.setText(data.getAccount_title());
-            bankAccountNumber.setText(data.getAccount_number());
+            bankName.setText(data.getAccountTitle());
+            bankAccountNumber.setText(data.getAccountNumber());
             financeNumber = data.getFinance();
         }
     }

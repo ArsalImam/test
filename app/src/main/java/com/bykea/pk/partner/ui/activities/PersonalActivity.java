@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import android.widget.ImageView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.PersonalInfoData;
@@ -63,16 +62,20 @@ public class PersonalActivity extends BaseActivity {
         setData();
     }
 
+    /***
+     * Populate data in UI
+     */
     private void setData() {
         if (getIntent() != null) {
-            PersonalInfoData data = (PersonalInfoData) getIntent().getSerializableExtra(Constants.SETTINGS_DATA_EXTRAS);
-            pilotName.setText(data.getFull_name());
+            PersonalInfoData data = getIntent()
+                    .getParcelableExtra(Constants.SETTINGS_DATA_EXTRAS);
+            pilotName.setText(data.getFullName());
             pilotAddress.setText(data.getAddress());
             pilotCity.setText(data.getCity());
             pilotCnic.setText(data.getCnic());
             pilotMobile.setText(Utils.phoneNumberToShow(data.getPhone()));
-            pilotMobile2.setText(Utils.phoneNumberToShow(data.getMobile_1()));
-            pilotMobile3.setText(Utils.phoneNumberToShow(data.getMobile_2()));
+            pilotMobile2.setText(Utils.phoneNumberToShow(data.getPrimaryMobileNumber()));
+            pilotMobile3.setText(Utils.phoneNumberToShow(data.getSecondaryMobileNumber()));
 
             if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
                 Utils.loadImgPicasso(mCurrentActivity, pilotImage, R.drawable.profile_pic,
@@ -83,13 +86,13 @@ public class PersonalActivity extends BaseActivity {
             } else {
                 pilotEmail.setText("No Email Found (Optional)");
             }
-            if (StringUtils.isNotBlank(data.getRegistration_date())) {
-                pilotRegisteredDate.setText(Utils.getFormattedDate(data.getRegistration_date().replace("T", " ").replace("Z", ""), CURRENT_DATE_FORMAT,
+            if (StringUtils.isNotBlank(data.getRegistrationDate())) {
+                pilotRegisteredDate.setText(Utils.getFormattedDate(data.getRegistrationDate().replace("T", " ").replace("Z", ""), CURRENT_DATE_FORMAT,
                         REQUIRED_DATE_FORMAT));
             }
 
-            if (StringUtils.isNotBlank(data.getRegistration_date())) {
-                pilotVerifiedDate.setText(Utils.getFormattedDate(data.getRegistration_date().replace("T", " ").replace("Z", ""), CURRENT_DATE_FORMAT,
+            if (StringUtils.isNotBlank(data.getRegistrationDate())) {
+                pilotVerifiedDate.setText(Utils.getFormattedDate(data.getRegistrationDate().replace("T", " ").replace("Z", ""), CURRENT_DATE_FORMAT,
                         REQUIRED_DATE_FORMAT));
             }
 

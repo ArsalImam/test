@@ -47,17 +47,17 @@ public class LicenseActivity extends BaseActivity {
     private void setData() {
         if (getIntent() != null) {
             PersonalInfoData data = (PersonalInfoData) getIntent().getSerializableExtra(Constants.SETTINGS_DATA_EXTRAS);
-            vehiclePlateNo.setText(data.getPlate_no());
-            licenseNo.setText(data.getDriver_license_number());
-            if(StringUtils.isNotBlank(data.getLicense_city())) {
-                licenseCity.setText(data.getLicense_city());
+            vehiclePlateNo.setText(data.getPlateNo());
+            licenseNo.setText(data.getDriverLicenseNumber());
+            if(StringUtils.isNotBlank(data.getLicenseCity())) {
+                licenseCity.setText(data.getLicenseCity());
             }
-            if(StringUtils.isNotBlank(data.getLicense_expire())){
-                /*licenseExpDate.setText(Utils.getFormattedDate(data.getLicense_expire().replace("T", " ").replace("Z",""), CURRENT_DATE_FORMAT_1,
+            if(StringUtils.isNotBlank(data.getLicenseExpire())){
+                /*licenseExpDate.setText(Utils.getFormattedDate(data.getLicenseExpire().replace("T", " ").replace("Z",""), CURRENT_DATE_FORMAT_1,
                         REQUIRED_DATE_FORMAT));*/
                 //TODO Update date format
-//                licenseExpDate.setText(data.getLicense_expire());
-                licenseExpDate.setText(Utils.getFormattedDate(data.getLicense_expire(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+//                licenseExpDate.setText(data.getLicenseExpire());
+                licenseExpDate.setText(Utils.getFormattedDate(data.getLicenseExpire(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
                         REQUIRED_DATE_FORMAT));
 
             }

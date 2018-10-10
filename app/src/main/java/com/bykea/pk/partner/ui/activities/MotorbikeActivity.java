@@ -46,11 +46,11 @@ public class MotorbikeActivity extends BaseActivity {
         if (getIntent() != null) {
             PersonalInfoData data = (PersonalInfoData) getIntent().getSerializableExtra(Constants.SETTINGS_DATA_EXTRAS);
             vehicleBrand.setText(data.getBrand());
-            horsePower.setText(data.getHorse_power());
-            chasisNumber.setText(data.getChassis_number());
-            modelYear.setText(data.getModel_number());
-            engineNumber.setText(data.getEngine_number());
-            if (StringUtils.isNotBlank(data.getExcise_verified()) && data.getExcise_verified().equalsIgnoreCase("true")) {
+            horsePower.setText(data.getHorsePower());
+            chasisNumber.setText(data.getChassisNumber());
+            modelYear.setText(data.getModelNumber());
+            engineNumber.setText(data.getEngineNumber());
+            if (StringUtils.isNotBlank(data.getExciseVerified()) && data.getExciseVerified().equalsIgnoreCase("true")) {
                 exciseVerified.setText("Yes");
             }
         }
