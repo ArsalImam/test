@@ -120,6 +120,14 @@ public class FragmentUtils {
         return inStack;
     }
 
+    /***
+     * Find the fragment from the tag.
+     *
+     * @param activity an AppCompatActivity.
+     * @param tag a unique key for storing fragment in the fragment manager.
+     *
+     * @return The fragment.
+     */
     public static Fragment getFragmentByTag(AppCompatActivity activity, String tag) {
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         if (fragmentManager != null) {
@@ -131,6 +139,12 @@ public class FragmentUtils {
     }
 
 
+    /***
+     * Remove the fragment
+     *
+     * @param activity an AppCompatActivity.
+     * @param tag a unique key for storing fragment in the fragment manager.
+     */
     public static void removeFragmentByTag(AppCompatActivity activity, String tag) {
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         if (fragmentManager != null) {

@@ -189,5 +189,7 @@
     <string name="places_label">PLACES</string>
     <string name="bhejneyWalaTv">بھیجنے والا</string>
     <string name="wasoolKrneyWalaTv">وصول کرنے والا</string>
+    <string name="cash_value_zero">0</string>
+    <string name="ask_arrived_text"> پہنچ گئے؟ </string>
 
 </resources>

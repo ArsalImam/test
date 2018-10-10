@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -85,6 +84,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private static final double EARTHRADIUS = 6366198;
     private Polyline mapPolylines;
     private String type = "call";
+    private static final int ARRIVAL_MAX_DISTANCE_VALUE = 200;
+    private static final int SECONDS_IN_MINUTES = 60;
+    private static final double METERS_IN_KILOMETER = 1000.0;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
@@ -660,7 +662,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 AppPreferences.getLongitude(),
                 Double.parseDouble(mCallData.getStartLat()),
                 Double.parseDouble(mCallData.getStartLng()));
-        if (distance > 200) {
+        if (distance > ARRIVAL_MAX_DISTANCE_VALUE) {
             boolean showTickBtn = distance < AppPreferences.getSettings().
                     getSettings().getArrived_min_dist();
             Dialogs.INSTANCE.showConfirmArrivalDialog(mCurrentActivity,
@@ -686,7 +688,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 public void onClick(View v) {
                     Dialogs.INSTANCE.dismissDialog();
                 }
-            }, " پہنچ گئے؟");
+            }, getString(R.string.ask_arrived_text));
         }
     }
 
@@ -757,9 +759,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (mCurrentActivity != null && mGoogleMap != null) {
             mRouteLatLng = route.get(0).getPoints();
             updateEtaAndCallData(
-                    String.valueOf((route.get(0).getDurationValue() / 60)),
+                    String.valueOf((route.get(0).getDurationValue() / SECONDS_IN_MINUTES)),
                     Utils.formatDecimalPlaces(String.valueOf(
-                            (route.get(0).getDistanceValue() / 1000.0)), 1));
+                            (route.get(0).getDistanceValue() / METERS_IN_KILOMETER)),
+                            1));
             updatePolyLine(route);
         } else {
             lastApiCallLatLng = null;
