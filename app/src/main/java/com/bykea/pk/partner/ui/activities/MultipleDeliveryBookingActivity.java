@@ -414,7 +414,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * if they are not already larger than this. 1000m on the diagonal translates into about
      * 709m to each direction.
      *
-     * @return
+     * @return corrected latitude and longitude bounds object.
      */
     private LatLngBounds getCurrentLatLngBounds() {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -435,14 +435,15 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
+     * Adjust provided latitude and longitude according to south and north
+     * direction according to fixed meter difference.
      *
+     * @param startLL Starting position Latitude and Longitude.
+     * @param toNorth NorthEast meters which needs to be added.
+     * @param toEast SouthWest meters which needs to be added.
      *
-     * @param startLL fake latlng bounds center latitude longitude.
-     * @param toNorth
-     * @param toEast
-     * @return
+     * @return LatLng object having coordinates which are corrected according to NorthEast and SouthWest
      */
-    //Todo 1: Aftab add the documentation for this method.
     private static LatLng move(LatLng startLL, double toNorth, double toEast) {
         double lonDiff = meterToLongitude(toEast, startLL.latitude);
         double latDiff = meterToLatitude(toNorth);
@@ -451,10 +452,12 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
+     * Converts meters to longitude.
      *
-     * @param meterToEast
-     * @param latitude
-     * @return
+     * @param meterToEast number of meters which needs to be included in longitude
+     * @param latitude current latitude value.
+     *
+     * @return Longitude value which includes meter difference as well.
      */
     private static double meterToLongitude(double meterToEast, double latitude) {
         double latArc = Math.toRadians(latitude);
@@ -464,11 +467,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
+     * Converts meter to latitude
      *
-     * @param meterToNorth
-     * @return
+     * @param meterToNorth number of meters which needs to be included in latitude
+     * @return Latitude value which includes meter difference as well.
      */
-    //Todo 2: Aftab Add the documentation for this method.
     private static double meterToLatitude(double meterToNorth) {
         double rad = meterToNorth / EARTHRADIUS;
         return Math.toDegrees(rad);
