@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallData;
+import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
 
 /***
  * Call Adapter an adaptet class is used to collect child view to represent a parent view.
@@ -49,10 +50,16 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
         if (data == null) return;
         try {
             if (getItemViewType(position) == TYPE_ITEM) {
-                holder.dropOffMarker.setImageBitmap(data.getDropOffList().
-                        get(position - 1).getDropOffImage());
-                holder.areaTv.setText(data.getDropOffList().get(position - 1).getmArea());
-                holder.streetAddress.setText(data.getDropOffList().get(position - 1).getStreetAddress());
+
+                //Position - 1 is used because we use position = 0 for inflating header view
+                // i.e pickup view when counter come in this condition position increased by one so
+                // avoid this scenerio we have decrease position by one to get all the item
+                // otherwise it will skip one item.
+
+                MultiDeliveryDropOff dropOff = data.getDropOffList().get(position - 1);
+                holder.dropOffMarker.setImageBitmap(dropOff.getDropOffImage());
+                holder.areaTv.setText(dropOff.getmArea());
+                holder.streetAddress.setText(dropOff.getStreetAddress());
             } else {
                 holder.areaTv.setText(data.getPickupData().getArea());
                 holder.streetAddress.setText(data.getPickupData().getStreetAddress());
