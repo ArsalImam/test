@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
@@ -31,21 +32,42 @@ public class MapDetailsActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         if (getIntent().getStringExtra(Keys.FRAGMENT_TYPE_NAME) != null) {
-            updateFragment(getIntent().getStringExtra(Keys.FRAGMENT_TYPE_NAME));
+            String type = getIntent().getStringExtra(Keys.FRAGMENT_TYPE_NAME);
+            updateFragment(type);
+            setToolbarTitle(type);
+            toolbarBackClick();
         }
+    }
 
+    /***
+     * Set the toolbar title according to the type.
+     *
+     * @param type a type of fragment fetched from intent.
+     */
+    private void setToolbarTitle(String type) {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mToolbar.setTitle("");
         mToolbar.setSubtitle("");
+        ((TextView)mToolbar.findViewById(R.id.title)).setText(type);
+    }
+
+    /***
+     * Toolbar back button click listener.
+     */
+    private void toolbarBackClick() {
         mToolbar.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-
     }
 
+    /***
+     * Update the fragment according to the type.
+     *
+     * @param type a type of fragment fetched from intent.
+     */
     public void updateFragment(String type) {
         switch (type) {
             case Constants.MapDetailsFragmentTypes.TYPE_CALL: {

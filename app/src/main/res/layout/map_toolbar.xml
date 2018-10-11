@@ -9,7 +9,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/windowBackground"
         android:fitsSystemWindows="true"
         android:orientation="horizontal"
@@ -19,11 +19,13 @@
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/back"
+            android:paddingRight="@dimen/_8sdp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             app:srcCompat="@drawable/ic_arrow_back_48px" />
 
         <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

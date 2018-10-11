@@ -62,6 +62,8 @@ import butterknife.OnClick;
 
 /***
  * MultiDelivery Booking Activity.
+ *
+ * Check todo of this class.
  */
 public class MultipleDeliveryBookingActivity extends BaseActivity implements RoutingListener {
 
@@ -194,7 +196,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     *
+     * Draw the route from driver current position toward pickupLocation
      */
     private void drawRouteToPickup() {
         if (StringUtils.isNotBlank(mCallData.getStartLat())
@@ -624,7 +626,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.currentLocationIv: {
-                Utils.navigateToGoogleMap(mCurrentActivity, mCallData);
+                directionClick();
                 break;
             }
 
@@ -652,6 +654,17 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         }
     }
 
+    private void directionClick() {
+        if (mCallData != null && mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            ActivityStackManager.getInstance().startMapDetailsActivity(
+                    mCurrentActivity,
+                    Constants.MapDetailsFragmentTypes.TYPE_TAFSEEL
+            );
+        } else {
+            Utils.navigateToGoogleMap(mCurrentActivity, mCallData);
+        }
+    }
+
     /***
      * Check the trip button click if the button text is equal to specific trip status i.e "پہنچ گئے",
      * etc. To perform the specific operation like driver arrival dialog,
@@ -659,11 +672,42 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void checkTripButtonClick() {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
             if (jobBtn.getText().toString().equalsIgnoreCase(getString(
                     R.string.button_text_arrived))) {
-                Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 showDriverArrivedDialog();
+            } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(
+                    R.string.button_text_start))) {
+                showDriverStartedDialog();
+
+            } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(
+                    R.string.button_text_finish))) {
+
             }
+        }
+    }
+
+
+
+    /***
+     * show trip started confirmation dialog.
+     *
+     * Todo 2: add request started socket event
+     */
+    private void showDriverStartedDialog() {
+        if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start))) {
+            Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    setStartedState();
+                }
+            }, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                }
+            }, getString(R.string.ask_started_text));
         }
     }
 
@@ -709,9 +753,24 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         }
     }
 
+    /***
+     * Set the trip arrived state.
+     *
+     * Todo 3: set the arrived data when socket implemented
+     */
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
         tafseelLayout.setVisibility(View.VISIBLE);
+    }
+
+    /***
+     * Set the trip started state.
+     *
+     * Todo 4: set the trip started data
+     */
+    private void setStartedState() {
+        jobBtn.setText(getString(R.string.button_text_finish));
+
     }
 
     /***
