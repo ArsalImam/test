@@ -598,12 +598,12 @@ public class Utils {
      */
     public static Bitmap getBitmap(Context context, int resourceID) {
         try {
-            int height = 90;
-            int width = 90;
+            float height = context.getResources().getDimension(R.dimen.driver_marker_height);
+            float width = context.getResources().getDimension(R.dimen.driver_marker_width);
             BitmapDrawable bitmapdraw = (BitmapDrawable) context.getResources().
                     getDrawable(resourceID);
             Bitmap b = bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, (int)width, (int)height, false);
             return smallMarker;
         } catch (Exception e) {
             e.printStackTrace();
