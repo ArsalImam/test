@@ -12,6 +12,8 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
 import com.bykea.pk.partner.ui.fragments.MultiDeliveryCallFragment;
 import com.bykea.pk.partner.ui.fragments.MultiDeliveryDirectionFragment;
+import com.bykea.pk.partner.ui.fragments.MultiDeliveryRideCompleteFragment;
+import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCompleteRideAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.FragmentUtils;
 import com.bykea.pk.partner.utils.Keys;
@@ -80,6 +82,13 @@ public class MapDetailsActivity extends AppCompatActivity {
             case Constants.MapDetailsFragmentTypes.TYPE_TAFSEEL: {
                 FragmentUtils.pushFragment(this, R.id.container,
                         MultiDeliveryDirectionFragment.newInstance(), null, null,
+                        false, false);
+                break;
+            }
+
+            case Constants.MapDetailsFragmentTypes.TYPE_MUKAMAL: {
+                FragmentUtils.pushFragment(this, R.id.container,
+                        MultiDeliveryRideCompleteFragment.newInstance(), null, null,
                         false, false);
                 break;
             }

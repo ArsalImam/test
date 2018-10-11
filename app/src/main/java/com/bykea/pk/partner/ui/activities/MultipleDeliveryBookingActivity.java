@@ -682,7 +682,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
             } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(
                     R.string.button_text_finish))) {
-
+                Dialogs.INSTANCE.dismissDialog();
+                ActivityStackManager.getInstance().startMapDetailsActivity(
+                        mCurrentActivity,
+                        Constants.MapDetailsFragmentTypes.TYPE_MUKAMAL
+                );
             }
         }
     }
@@ -770,6 +774,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void setStartedState() {
         jobBtn.setText(getString(R.string.button_text_finish));
+        if (mapPolylines != null){
+            mapPolylines.remove();
+        }
 
     }
 

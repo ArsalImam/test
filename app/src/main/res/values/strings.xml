@@ -196,5 +196,6 @@
     <string name="code_value">COD Rs. %d</string>
     <string name="tafseel_text">تفصیل</string>
     <string name="call_text">کال</string>
+    <string name="booking_multidelivery_complete_title"> کون سی بکنگ مکمل کرنا چاہتے ہیں؟ </string>
 
 </resources>
