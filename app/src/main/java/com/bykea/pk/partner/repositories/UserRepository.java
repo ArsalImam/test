@@ -222,8 +222,8 @@ public class UserRepository {
                     jsonObject.put("service_type", AppPreferences.getPilotData().getService_type());
                 }
                 if (AppPreferences.getPilotData().getCity() != null &&
-                        StringUtils.isNotBlank(AppPreferences.getPilotData().getCity().get_id()))
-                    jsonObject.put("city", AppPreferences.getPilotData().getCity().get_id());
+                        StringUtils.isNotBlank(AppPreferences.getPilotData().getCity().getId()))
+                    jsonObject.put("city", AppPreferences.getPilotData().getCity().getId());
             }
         } catch (Exception ex) {
             ex.printStackTrace();

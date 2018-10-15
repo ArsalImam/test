@@ -1,7 +1,5 @@
 package com.bykea.pk.partner.ui.fragments;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,8 +12,6 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
@@ -28,7 +24,6 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.DeliveryScheduleAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,19 +41,19 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
 
     private HomeActivity mCurrentActivity;
     private Unbinder unbinder;
-
-    @BindView(R.id.deliverySchedulerv)
-    RecyclerView mRecyclerVeiw;
     private UserRepository mRepository;
     private ArrayList<DeliveryScheduleModel> list;
     private DeliveryScheduleAdapter adapter;
+
+    @BindView(R.id.deliverySchedulerv)
+    RecyclerView mRecyclerView;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dilevery_schedule, container, false);
         unbinder = ButterKnife.bind(this, view);
-
 
         return view;
     }
@@ -67,65 +63,113 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         super.onViewCreated(view, savedInstanceState);
 
         mCurrentActivity = ((HomeActivity) getActivity());
-
         mRepository = new UserRepository();
 
+        setupToolbarHeader();
+        setupRecyclerView();
+        setupAdapter();
+        requestLoadBoardData();
+
+
+    }
+
+    //region General Helper methods
+
+    /***
+     * Setup toolbar header
+     */
+    private void setupToolbarHeader() {
         mCurrentActivity.hideStatusCompletely();
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
 
         mCurrentActivity.hideToolbarLogo();
-        mCurrentActivity.setToolbarTitle(AppPreferences.getPilotData().getCity().getName(), StringUtils.EMPTY);
-
-        mRecyclerVeiw.setHasFixedSize(true);
-
-        DividerItemDecoration horizontalDecoration = new DividerItemDecoration(mRecyclerVeiw.getContext(),
-                DividerItemDecoration.VERTICAL);
-
-        horizontalDecoration.setDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.divider_rv));
-
-        mRecyclerVeiw.addItemDecoration(horizontalDecoration);
-
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mCurrentActivity);
-        mRecyclerVeiw.setLayoutManager(mLayoutManager);
-
-
-        setupRecyclerview();
-
-        getLoadBoardData();
-
-
+        mCurrentActivity.setToolbarTitle(AppPreferences.getPilotData().getCity().getName(),
+                StringUtils.EMPTY);
     }
 
-    private void getLoadBoardData() {
-        try {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            mRepository.requestLoadBoard(mCurrentActivity, mCallBack, String.valueOf(AppPreferences.getLatitude()),
-                    String.valueOf(AppPreferences.getLongitude()));
+    //endregion
 
+    //region Helper method for Delivery Schedule Adapter
+
+    /**
+     * Setup configuration for schedule adapter for recycle view
+     */
+    private void setupAdapter() {
+        list = new ArrayList<>();
+        adapter = new DeliveryScheduleAdapter(list);
+        adapter.setOnClickListener(this);
+        mRecyclerView.setAdapter(adapter);
+    }
+
+
+    /***
+     * Setup configuration for Recycle view
+     */
+    private void setupRecyclerView() {
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mCurrentActivity);
+        DividerItemDecoration horizontalDecoration = new
+                DividerItemDecoration(mRecyclerView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        horizontalDecoration.setDrawable(ContextCompat.getDrawable(getContext(),
+                R.drawable.divider_rv));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(horizontalDecoration);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+    }
+
+    /***
+     * This method handles Response of Load Board API and will notify recycler view's
+     * adapter for data change
+     *
+     * @param response response which is return from API
+     *
+     * @see LoadBoardResponse
+     */
+    private void setupLoadBoardDataModel(LoadBoardResponse response) {
+        try {
+            SimpleDateFormat simpleDateFormat =
+                    new SimpleDateFormat(Constants.TimeFormat.ISO_FORMAT, Locale.getDefault());
+            String timeDuration;
+            double distance;
+            for (DeliveryScheduleModel loadBoardBody : response.getLoadBoardBody()) {
+
+                Date date = simpleDateFormat.parse(loadBoardBody.getDateTime());
+
+                timeDuration = DateUtils.getRelativeTimeSpanString(
+                        date.getTime(), System.currentTimeMillis(),
+                        DateUtils.DAY_IN_MILLIS).toString();
+
+                //Converts meter to KM
+                distance = Double.valueOf(loadBoardBody.getDistance()) / 1000;
+
+                loadBoardBody.setDuration(timeDuration);
+                loadBoardBody.setDistance(String.format(getResources()
+                                .getString(R.string.lord_board_order_distance),
+                        Math.round(distance * 10.0) / 10.0));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+        list.addAll(response.getLoadBoardBody());
+        adapter.notifyDataSetChanged();
 
-    private void setupRecyclerview() {
-        list = new ArrayList<>();
-
-        /*list.add(new DeliveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
-        list.add(new DeliveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));
-        list.add(new DeliveryScheduleModel("21 Street, Block 5", "2 hrs 45 mins", "2.5 km"));*/
-
-        adapter = new DeliveryScheduleAdapter(list);
-        adapter.setOnClickListener(this);
-        mRecyclerVeiw.setAdapter(adapter);
+        Dialogs.INSTANCE.dismissDialog();
 
     }
 
+    //endregion
+
+    //region Life Cycle methods
     @Override
     public void onDestroyView() {
         mCurrentActivity.hideUrduTitle();
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    //endregion
+
+    //region Adapter Click listeners
 
     @Override
     public void directionClick(DeliveryScheduleModel item) {
@@ -142,11 +186,31 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         ActivityStackManager.getInstance().startDeliveryScheduleDetailActivity(mCurrentActivity, item);
     }
 
+    //endregion
+
+    //region API helper methods
+
+    /***
+     * Request latest Load board data from API Server.
+     *
+     */
+    private void requestLoadBoardData() {
+        try {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            mRepository.requestLoadBoard(mCurrentActivity, mCallBack,
+                    String.valueOf(AppPreferences.getLatitude()),
+                    String.valueOf(AppPreferences.getLongitude()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private UserDataHandler mCallBack = new UserDataHandler() {
 
         @Override
         public void onLoadBoardResponse(LoadBoardResponse response) {
-            onApiResponse(response);
+            setupLoadBoardDataModel(response);
         }
 
         @Override
@@ -157,33 +221,7 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
         }
     };
 
-    /**
-     * This method handles Response of Load Board API and will notify recycler view's adapter for data change
-     */
-    private void onApiResponse(LoadBoardResponse response) {
-        try {
-            for (DeliveryScheduleModel loadBoardBody : response.getLoadBoardBody()) {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.TimeFormat.ISO_FORMAT);
-                Date date = simpleDateFormat.parse(loadBoardBody.getDateTime());
-
-
-                String timeDuration = DateUtils.getRelativeTimeSpanString(
-                        date.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
-
-                double distance = Double.valueOf(loadBoardBody.getDistance()) / 1000; //meter to km
-
-                loadBoardBody.setDuration(timeDuration);
-                loadBoardBody.setDistance("" + (Math.round(distance * 10.0) / 10.0) + " km");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        list.addAll(response.getLoadBoardBody());
-        adapter.notifyDataSetChanged();
-
-        Dialogs.INSTANCE.dismissDialog();
-
-    }
+    //endregion
 
 
 }

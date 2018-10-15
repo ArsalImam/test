@@ -110,7 +110,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
      */
     private void callLoadBoardAssignApi() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        mRepository.requestAcceptScheduledCall(mCurrentActivity, data.get_id(), mCallBack);
+        mRepository.requestAcceptScheduledCall(mCurrentActivity, data.getId(), mCallBack);
     }
 
     /**

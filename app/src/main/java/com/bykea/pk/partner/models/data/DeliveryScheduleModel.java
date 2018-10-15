@@ -14,36 +14,74 @@ import java.util.ArrayList;
 
 public class DeliveryScheduleModel implements Parcelable {
 
-    private String _id;
-    private String ref_id;
+    @SerializedName("_id")
+    private String id;
+
+    @SerializedName("refId")
+    private String refId;
+
     @SerializedName("dt")
     private String dateTime;
-    private String booking_no;
+
+    @SerializedName("booking_no")
+    private String bookingNo;
+
+    @SerializedName("distance")
     private String distance;
+
+    @SerializedName("customer")
     private Customer customer;
+
     @SerializedName("loc")
     private ArrayList<String> latlng;
 
     @SerializedName("pickup_address")
     private String address;
+
     private String duration;
 
+
+    public DeliveryScheduleModel() {
+    }
+
+
+    //region Parcelable Helper methods
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.refId);
+        dest.writeString(this.dateTime);
+        dest.writeString(this.bookingNo);
+        dest.writeString(this.distance);
+        dest.writeParcelable(this.customer, flags);
+        dest.writeStringList(this.latlng);
+        dest.writeString(this.address);
+        dest.writeString(this.duration);
+    }
+
     protected DeliveryScheduleModel(Parcel in) {
-        _id = in.readString();
-        ref_id = in.readString();
-        dateTime = in.readString();
-        booking_no = in.readString();
-        distance = in.readString();
-        customer = in.readParcelable(Customer.class.getClassLoader());
-        latlng = in.createStringArrayList();
-        address = in.readString();
-        duration = in.readString();
+        this.id = in.readString();
+        this.refId = in.readString();
+        this.dateTime = in.readString();
+        this.bookingNo = in.readString();
+        this.distance = in.readString();
+        this.customer = in.readParcelable(Customer.class.getClassLoader());
+        this.latlng = in.createStringArrayList();
+        this.address = in.readString();
+        this.duration = in.readString();
     }
 
     public static final Creator<DeliveryScheduleModel> CREATOR = new Creator<DeliveryScheduleModel>() {
         @Override
-        public DeliveryScheduleModel createFromParcel(Parcel in) {
-            return new DeliveryScheduleModel(in);
+        public DeliveryScheduleModel createFromParcel(Parcel source) {
+            return new DeliveryScheduleModel(source);
         }
 
         @Override
@@ -52,20 +90,24 @@ public class DeliveryScheduleModel implements Parcelable {
         }
     };
 
-    public String get_id() {
-        return _id;
+    //endregion
+
+    //region Getter Setter
+
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getRef_id() {
-        return ref_id;
+    public String getRefId() {
+        return refId;
     }
 
-    public void setRef_id(String ref_id) {
-        this.ref_id = ref_id;
+    public void setRefId(String refId) {
+        this.refId = refId;
     }
 
     public String getDateTime() {
@@ -76,12 +118,12 @@ public class DeliveryScheduleModel implements Parcelable {
         this.dateTime = dateTime;
     }
 
-    public String getBooking_no() {
-        return booking_no;
+    public String getBookingNo() {
+        return bookingNo;
     }
 
-    public void setBooking_no(String booking_no) {
-        this.booking_no = booking_no;
+    public void setBookingNo(String bookingNo) {
+        this.bookingNo = bookingNo;
     }
 
     public String getDistance() {
@@ -124,21 +166,8 @@ public class DeliveryScheduleModel implements Parcelable {
         this.duration = duration;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(_id);
-        parcel.writeString(ref_id);
-        parcel.writeString(dateTime);
-        parcel.writeString(booking_no);
-        parcel.writeString(distance);
-        parcel.writeParcelable(customer, i);
-        parcel.writeStringList(latlng);
-        parcel.writeString(address);
-        parcel.writeString(duration);
-    }
+    //endregion
+
+
 }

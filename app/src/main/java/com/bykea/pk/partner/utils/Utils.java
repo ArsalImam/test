@@ -1410,7 +1410,7 @@ public class Utils {
             MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
             if (StringUtils.isBlank(mixpanel.getDistinctId())
                     || !mixpanel.getDistinctId().equalsIgnoreCase(AppPreferences.getPilotData().getId())) {
-//                mixpanel.alias(AppPreferences.getUser().get_id(), null);
+//                mixpanel.alias(AppPreferences.getUser().getId(), null);
                 mixpanel.identify(AppPreferences.getPilotData().getId());
                 mixpanel.getPeople().identify(AppPreferences.getPilotData().getId());
                 mixpanel.getPeople().initPushHandling(Constants.GCM_PROJECT_NO);

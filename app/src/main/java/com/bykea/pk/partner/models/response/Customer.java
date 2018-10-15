@@ -9,7 +9,9 @@ import com.google.gson.annotations.SerializedName;
  * Customer Data Model class for Scheduled Delivery Service
  */
 public class Customer implements Parcelable {
-    private String _id;
+
+    @SerializedName("_id")
+    private String id;
 
     @SerializedName("full_name")
     private String fullName;
@@ -17,16 +19,33 @@ public class Customer implements Parcelable {
     @SerializedName("phone")
     private String mobileNumber;
 
+    //region Parcelable Helper methods
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.fullName);
+        dest.writeString(this.mobileNumber);
+    }
+
+    public Customer() {
+    }
+
     protected Customer(Parcel in) {
-        _id = in.readString();
-        fullName = in.readString();
-        mobileNumber = in.readString();
+        this.id = in.readString();
+        this.fullName = in.readString();
+        this.mobileNumber = in.readString();
     }
 
     public static final Creator<Customer> CREATOR = new Creator<Customer>() {
         @Override
-        public Customer createFromParcel(Parcel in) {
-            return new Customer(in);
+        public Customer createFromParcel(Parcel source) {
+            return new Customer(source);
         }
 
         @Override
@@ -35,12 +54,16 @@ public class Customer implements Parcelable {
         }
     };
 
-    public String get_id() {
-        return _id;
+    //endregion
+
+    //region Getter Setters
+
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFullName() {
@@ -59,15 +82,6 @@ public class Customer implements Parcelable {
         this.mobileNumber = mobileNumber;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(_id);
-        parcel.writeString(fullName);
-        parcel.writeString(mobileNumber);
-    }
+    //endregion
 }

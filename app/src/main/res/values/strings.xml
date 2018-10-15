@@ -175,5 +175,6 @@
     <string name="invalid_phone">Invalid phone</string>
     <string name="current_week">Current Week</string>
     <string name="google_maps_missing_error">Please install Google Maps</string>
+    <string name="lord_board_order_distance">%f km</string>
 
 </resources>
