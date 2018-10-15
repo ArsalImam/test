@@ -186,5 +186,6 @@
     <string name="bank_account_title_ur">بینک اکاؤنٹ</string>
     <string name="motor_bike_title">Motorbike</string>
     <string name="motor_bike_title_ur">موٹر سائیکل</string>
+    <string name="splash_welcome_message">حرکت میں برکت</string>
 
 </resources>
