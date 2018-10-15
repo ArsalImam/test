@@ -15,7 +15,7 @@
         android:layout_marginRight="@dimen/_30sdp"
         android:gravity="center"
         android:text="@string/splash_welcome_message"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/kelly_green"
         android:textSize="@dimen/_38sdp"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
