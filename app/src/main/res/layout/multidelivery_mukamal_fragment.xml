@@ -8,9 +8,10 @@
 
     <com.bykea.pk.partner.widgets.FontTextView
         android:id="@+id/wasoolKrneyWalaTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
         android:layout_gravity="center"
+        android:gravity="center"
         android:layout_marginTop="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_4sdp"
         android:text="@string/booking_multidelivery_complete_title"

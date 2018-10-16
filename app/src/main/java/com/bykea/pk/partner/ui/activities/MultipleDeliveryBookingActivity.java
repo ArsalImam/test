@@ -28,6 +28,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
 import com.bykea.pk.partner.ui.helpers.Spherical;
+import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -93,11 +94,26 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     @BindView(R.id.timeTv)
     TextView timeTv;
 
+    @BindView(R.id.TimeUnitLabelTv)
+    TextView timeUnitLabelTv;
+
+    @BindView(R.id.TimeView)
+    View timeView;
+
     @BindView(R.id.distanceTv)
     TextView distanceTv;
 
+    @BindView(R.id.pickView)
+    View pickView;
+
+    @BindView(R.id.pickUpDistanceUnit)
+    TextView pickUpDistanceUnit;
+
     @BindView(R.id.jobBtn)
     FontTextView jobBtn;
+
+    @BindView(R.id.cancelBtn)
+    FontTextView cancelBtn;
 
     @BindView(R.id.tafseelLayout)
     FrameLayout tafseelLayout;
@@ -763,6 +779,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Todo 3: set the arrived data when socket implemented
      */
     private void setArrivedState() {
+        timeTv.setVisibility(View.GONE);
+        timeUnitLabelTv.setVisibility(View.GONE);
+        timeView.setVisibility(View.GONE);
+
+        pickView.setVisibility(View.GONE);
+        distanceTv.setVisibility(View.GONE);
+        pickUpDistanceUnit.setVisibility(View.GONE);
+
         jobBtn.setText(getString(R.string.button_text_start));
         tafseelLayout.setVisibility(View.VISIBLE);
     }
@@ -773,6 +797,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Todo 4: set the trip started data
      */
     private void setStartedState() {
+        cancelBtn.setVisibility(View.GONE);
         jobBtn.setText(getString(R.string.button_text_finish));
         if (mapPolylines != null){
             mapPolylines.remove();

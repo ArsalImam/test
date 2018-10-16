@@ -13,7 +13,7 @@
 
     <FrameLayout
         android:id="@+id/tafseelLayout"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@color/color_0eaa4b"
         android:padding="@dimen/_4sdp"
         android:layout_width="match_parent"
