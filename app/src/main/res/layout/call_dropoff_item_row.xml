@@ -72,13 +72,11 @@
         android:id="@+id/callBtn"
         android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_35sdp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
         app:layout_constraintBottom_toBottomOf="@+id/streetAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/streetAddress"
         app:srcCompat="@drawable/ic_call" />
-
-
 
 </android.support.constraint.ConstraintLayout>

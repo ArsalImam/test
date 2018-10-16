@@ -30,7 +30,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="@dimen/_18sdp"
-            android:text="کال" />
+            android:text="کال"
+            app:fontName="jameel_noori_nastaleeq.ttf"/>
 
     </android.support.v7.widget.Toolbar>
 
