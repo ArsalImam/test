@@ -721,7 +721,7 @@ public enum Dialogs {
             cancelIv.setVisibility(View.GONE);
         }
 
-        
+
         okIv.setBackground(ContextCompat.getDrawable(context, R.drawable.button_green_square));
         okIv.setOnClickListener(onClickListener);
 
