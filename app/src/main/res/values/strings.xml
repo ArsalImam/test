@@ -168,6 +168,7 @@
     <string name="rs">Rs\u0020</string>
     <string name="percentage_sign">%</string>
     <string name="minus_sign">-</string>
+    <string name="no_internet_msg_ur">انٹرنیٹ کنکشن میں کچھ مسئلہ ہے\n برائے مہربانی اپنا انٹرنیٹ کنکشن چیک کریں</string>
     <string name="register_tarining_link_msg">ہم نے آپ کو بزریعہ SMS %1$s پر ٹریننگ ویڈیو کا لنک بھیج دیا ہے۔ اس کو دیکھیں اور کام کا طریقہ سمجھیں۔</string>
     <string name="register_account_active_msg">آپ کا اکاونٹ کاغذات کی تصدیق کے بعد 48 گھنٹے کے اندر ایکٹیو کردیا جائیگا۔</string>
     <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
@@ -176,5 +177,16 @@
     <string name="current_week">Current Week</string>
     <string name="google_maps_missing_error">Please install Google Maps</string>
     <string name="lord_board_order_distance">%f km</string>
+    <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
+    <string name="license_title">License</string>
+    <string name="license_title_ur">لائسنس</string>
+    <string name="personal_detail_title">Personal Details</string>
+    <string name="personal_detail_title_ur">زاتی معلومات</string>
+    <string name="trip_history_title">Bookings</string>
+    <string name="trip_history_title_ur">تفصیلات</string>
+    <string name="bank_account_title">Bank Account</string>
+    <string name="bank_account_title_ur">بینک اکاؤنٹ</string>
+    <string name="motor_bike_title">Motorbike</string>
+    <string name="motor_bike_title_ur">موٹر سائیکل</string>
 
 </resources>

@@ -743,16 +743,6 @@ public enum Dialogs {
     }
 
 
-    public void showSuccessDialogForgotPassword(Context context, View.OnClickListener onClick) {
-        dismissDialog();
-        mDialog = new Dialog(context, R.style.actionSheetTheme);
-        mDialog.setContentView(R.layout.forgot_password_success_dialog);
-        FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
-        okIv.setOnClickListener(onClick);
-        mDialog.setCancelable(false);
-        showDialog();
-    }
-
     /**
      * This methods shows a pop up dialog when partner has successfully signed up
      *
@@ -846,10 +836,11 @@ public enum Dialogs {
      *
      * @param context  Calling Context
      * @param message  Message to display
+     * @param textSize Size of message textview (to use defualt text size i.e 22sdp pass 0)
      * @param negative OnClickListener for callback when Negative button is pressed
      * @param positive OnClickListener for callback when Positive button is pressed
      */
-    public void showAlertDialogUrduWithTickCross(Context context, String message,
+    public void showAlertDialogUrduWithTickCross(Context context, String message, float textSize,
                                                  View.OnClickListener negative, View.OnClickListener positive) {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
@@ -866,6 +857,9 @@ public enum Dialogs {
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
         FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
         messageTv.setText(message);
+        if (textSize > 0f) {
+            messageTv.setTextSize(textSize);
+        }
         showDialog();
     }
 
