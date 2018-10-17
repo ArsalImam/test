@@ -16,22 +16,16 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -443,6 +437,16 @@ public class BaseActivity extends AppCompatActivity {
         demandBtn.setVisibility(View.GONE);
     }
 
+    /***
+     * Make Demand button invisible on UI just to take space on our Toolbar to make Title Align
+     */
+    public void makeDemandSpaceAvailableOnUI() {
+        demandBtn = mToolbar.findViewById(R.id.demandBtn);
+        if (demandBtn != null) {
+            demandBtn.setVisibility(View.INVISIBLE);
+        }
+    }
+
     public void hideToolbarBackNav() {
         getToolbar().setNavigationIcon(null);
         getToolbar().setNavigationOnClickListener(null);
@@ -700,8 +704,8 @@ public class BaseActivity extends AppCompatActivity {
 
 
     public void setTitleCustomToolbarWithUrdu(String title, String name_urdu) {
-        final FontTextView ivTitle = (FontTextView) findViewById(R.id.tvTitle);
-        final FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
+        final FontTextView ivTitle = findViewById(R.id.tvTitle);
+        final FontTextView tvTitleUrdu = findViewById(R.id.tvTitleUrdu);
         tvTitleUrdu.setVisibility(View.VISIBLE);
         ivTitle.setText(title);
         tvTitleUrdu.setVisibility(View.GONE);

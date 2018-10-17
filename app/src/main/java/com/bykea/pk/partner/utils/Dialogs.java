@@ -699,6 +699,35 @@ public enum Dialogs {
 
     }
 
+    /**
+     * This method shows a pop up dialog with Urdu text and Tick as Positive Button
+     * Positive button will have Red background. This is show for demand screen
+     *
+     * @param context         Calling Context
+     * @param msg             Message to show in String
+     * @param onClickListener Callback to notify that OK/Positive button is clicked
+     */
+    public void showNegativeAlertDialogForDemand(Context context,
+                                                 String msg,
+                                                 final View.OnClickListener onClickListener) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+        mDialog.setContentView(R.layout.dialog_neg_alert_ur_tick_cross);
+        ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+        ImageView cancelIv = mDialog.findViewById(R.id.ivNegative);
+        FontTextView tvMsg = mDialog.findViewById(R.id.tvMsg);
+        tvMsg.setText(msg);
+        if (cancelIv != null) {
+            cancelIv.setVisibility(View.GONE);
+        }
+
+        
+        okIv.setBackground(ContextCompat.getDrawable(context, R.drawable.button_green_square));
+        okIv.setOnClickListener(onClickListener);
+
+        showDialog();
+    }
+
     public void showUpdateAppDialog(final Context context, String title, String message, final String link) {
         if (null == context) return;
         dismissDialog();
@@ -755,7 +784,7 @@ public enum Dialogs {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
         mDialog.setContentView(R.layout.signup_success_dialog);
-        ((FontTextView)mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
+        ((FontTextView) mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
         mDialog.setCancelable(false);
         mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
         showDialog();

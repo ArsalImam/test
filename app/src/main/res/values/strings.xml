@@ -188,5 +188,6 @@
     <string name="bank_account_title_ur">بینک اکاؤنٹ</string>
     <string name="motor_bike_title">Motorbike</string>
     <string name="motor_bike_title_ur">موٹر سائیکل</string>
+    <string name="driver_demand_offline_error_ur">آپ آف لائن ہیں ایکٹو ہوکے بکنگ حاصل کریں۔</string>
 
 </resources>
