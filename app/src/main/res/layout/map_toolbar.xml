@@ -26,8 +26,9 @@
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:layout_gravity="center"
             android:textSize="@dimen/_18sdp"
             android:text="کال"

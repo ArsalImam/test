@@ -107,7 +107,7 @@
         app:layout_constraintEnd_toStartOf="@+id/directionBtn"
         app:layout_constraintStart_toEndOf="@+id/dropOffMarker"
         app:layout_constraintTop_toBottomOf="@+id/driverNameTv"
-        tools:text="House # 1, Street 35, Block B3  House # 1,Street  35, Block B3  " />
+        tools:text="House # 1, Street 35, Block B3 House # 1,Street 35, Block B3" />
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/directionBtn"

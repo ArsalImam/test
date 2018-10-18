@@ -15,17 +15,17 @@
         android:id="@+id/tafseelLayout"
         android:visibility="gone"
         android:background="@color/color_0eaa4b"
-        android:padding="@dimen/_4sdp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/_40sdp">
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:text="@string/tafseel_text"
             android:layout_gravity="center"
             android:textSize="@dimen/_18sdp"
             android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="match_parent"
             app:fontName="jameel_noori_nastaleeq.ttf"/>
 
     </FrameLayout>
