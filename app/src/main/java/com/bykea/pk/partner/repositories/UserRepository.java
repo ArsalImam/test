@@ -18,10 +18,10 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
@@ -610,7 +610,17 @@ public class UserRepository {
     }
 
 
-    public void requestAcceptScheduledCall(Context context, String bookingId, IUserDataHandler handler) {
+    /***
+     * Send request to API server using socket connection which Assigns scheduled request
+     * send by passenger
+     *
+     * @param context Calling context
+     * @param bookingId Booking ID of the request
+     * @param handler Response handler callback
+     */
+    public void requestAcceptScheduledCall(Context context,
+                                           String bookingId,
+                                           IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         mContext = context;

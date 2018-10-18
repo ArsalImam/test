@@ -133,7 +133,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
                             NormalCallData callData = acceptCallResponse.getData();
                             callData.setStatus(TripStatus.ON_ACCEPT_CALL);
                             AppPreferences.setCallData(callData);
-                            logMixpanelEvent(callData);
+                            logMixPanelEvent(callData);
 
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
@@ -167,10 +167,12 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
         mCurrentActivity.finish();
     }
 
-    /**
-     * This method logs Mix Panel Events for Accepted Call.
+    /***
+     * Send logs to Mix Panel Events for Accepted Call.
+     *
+     * @param callData Call response data which was received from API server.
      */
-    private void logMixpanelEvent(NormalCallData callData) {
+    private void logMixPanelEvent(NormalCallData callData) {
         try {
 
             JSONObject data = new JSONObject();
@@ -191,7 +193,8 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
             data.put("type", callData.getCallType());
             data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
 
-            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
+            Utils.logEvent(mCurrentActivity, callData.getPassId(),
+                    Constants.AnalyticsEvents.ON_ACCEPT.replace(
                     Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
         } catch (JSONException e) {
             e.printStackTrace();
