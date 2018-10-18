@@ -2,31 +2,35 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 
 import com.bykea.pk.partner.BuildConfig;
-import com.bykea.pk.partner.communication.rest.RestRequestHandler;
-import com.bykea.pk.partner.communication.socket.WebIO;
-import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.utils.ApiTags;
-import com.bykea.pk.partner.utils.Constants;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.rest.RestRequestHandler;
+import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.StringUtils;
+
+import butterknife.BindView;
 
 
 public class SplashActivity extends BaseActivity {
@@ -35,6 +39,15 @@ public class SplashActivity extends BaseActivity {
     private SplashActivity mCurrentActivity;
     private UserRepository repository;
 
+    @BindView(R.id.txt_welcome_message)
+    FontTextView txtWelcomeMessage;
+
+    @BindView(R.id.iv_splash)
+    AppCompatImageView imgSplash;
+
+    @BindView(R.id.txt_login)
+    FontTextView txtLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mCurrentActivity = this;
@@ -42,6 +55,7 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         Utils.setFullScreen(mCurrentActivity);
+        displayWelcomeLayout(true);
         // Resets API Key requirement to "false" after 24 hours if there was any error while getting address via Reverse Geo Coding method without using API key.
         if (AppPreferences.isGeoCoderApiKeyRequired() && Utils.isGeoCoderApiKeyCheckRequired()) {
             AppPreferences.setGeoCoderApiKeyRequired(false);
@@ -129,8 +143,8 @@ public class SplashActivity extends BaseActivity {
                                     startHomeActivity();
                                 }
                             } else {
-                                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                                finish();
+                                displayWelcomeLayout(false);
+                                displayLoginView(true);
                             }
                         } else {
                             if (!Dialogs.INSTANCE.isShowing()) {
@@ -244,4 +258,38 @@ public class SplashActivity extends BaseActivity {
             timer.cancel();
         }
     }
+
+
+    //region General helper method
+
+    /**
+     * Display Splash welcome layout
+     *
+     * @param shouldShow should show welcome message
+     */
+    private void displayWelcomeLayout(boolean shouldShow) {
+        txtWelcomeMessage.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
+
+    }
+
+    /***
+     * Display Login view if user is not login.
+     *
+     * @param shouldShow should we show login view to user
+     */
+    private void displayLoginView(boolean shouldShow) {
+        imgSplash.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
+    }
+    //endregion
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.txt_login: {
+                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                finish();
+            }
+        }
+    }
+
+
 }

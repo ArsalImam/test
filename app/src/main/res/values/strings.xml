@@ -187,5 +187,6 @@
     <string name="motor_bike_title">Motorbike</string>
     <string name="motor_bike_title_ur">موٹر سائیکل</string>
     <string name="splash_welcome_message">حرکت میں برکت</string>
+    <string name="register_with_mobile">موبائل نمبر درج کریں</string>
 
 </resources>
