@@ -43,13 +43,13 @@ public class SplashActivity extends BaseActivity {
     private UserRepository repository;
     private CountDownTimer splashTimer;
 
-    @BindView(R.id.txt_welcome_message)
+    @BindView(R.id.tv_welcome_message)
     FontTextView txtWelcomeMessage;
 
     @BindView(R.id.iv_splash)
     AppCompatImageView imgSplash;
 
-    @BindView(R.id.txt_login)
+    @BindView(R.id.tv_login)
     FontTextView txtLogin;
 
 
@@ -383,10 +383,10 @@ public class SplashActivity extends BaseActivity {
     //endregion
 
     //region View Click methods
-    @OnClick(R.id.txt_login)
+    @OnClick(R.id.tv_login)
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.txt_login: {
+            case R.id.tv_login: {
                 ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
                 finish();
             }

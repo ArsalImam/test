@@ -8,7 +8,7 @@
 
 
     <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/txt_welcome_message"
+        android:id="@+id/tv_welcome_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -30,7 +30,7 @@
         android:visibility="gone" />
 
     <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/txt_login"
+        android:id="@+id/tv_login"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_60sdp"
         android:layout_gravity="bottom"
