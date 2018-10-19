@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
@@ -53,23 +53,39 @@ public class LoginActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(this);
-        callSettingsApiIfRequired();
-        ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+        initialSetupProcess();
+    }
+
+
+    //region General Helper methods
+
+    /***
+     * Setup initial configuration for login screen.
+     */
+    private void initialSetupProcess() {
         repository = new UserRepository();
-        phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+        ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+        callSettingsApiIfRequired();
+        Utils.setOneSignalPlayerId();
+        enableLoginButton(false);
+
         if (StringUtils.isBlank(AppPreferences.getRegId())) {
             AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
         }
-        Utils.setOneSignalPlayerId();
+
         if (Utils.isGetCitiesApiCallRequired()) {
             repository.getCities(mCurrentActivity, handler);
         }
 
-        disableBookingBtn();
+        phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         phoneNumberEt.addTextChangedListener(mTextWatcher);
-        pinCodeTv.addTextChangedListener(mTextWatcher);
+
     }
 
+
+    /**
+     * Validate should we call Setting API
+     */
     private void callSettingsApiIfRequired() {
         if (AppPreferences.getSettings() == null
                 || AppPreferences.getSettings().getSettings() == null
@@ -79,6 +95,65 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    /***
+     * Validate is our entered phone is valid it enables login button. Otherwise, it disables it.
+     */
+    private void validateFields() {
+        if (Utils.isValidNumber(phoneNumberEt)) {
+            enableLoginButton(true);
+        } else {
+            enableLoginButton(false);
+        }
+    }
+
+    /***
+     * Update Login button appearance for enable and disable clickable events.
+     *
+     * @param enable should enable button
+     */
+    private void enableLoginButton(boolean enable) {
+        if (enable) {
+            loginBtn.setEnabled(true);
+            loginBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_green));
+        } else {
+            loginBtn.setEnabled(false);
+            loginBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_gray_round));
+        }
+    }
+
+    /**
+     * Send logs to Analytics
+     *
+     * @param event Event name which needs to be send
+     */
+    private void logAnalyticsEvent(String event) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("timestamp", System.currentTimeMillis());
+            Utils.logFacebookEvent(mCurrentActivity, event, data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //endregion
+
+    //region Helper methods for API request
+
+    /***
+     * Send request to API server for Login request.
+     *
+     * @param phoneNumber Driver phone number
+     */
+    private void sendLoginRequest(String phoneNumber) {
+        repository.requestUserLogin(mCurrentActivity, handler,
+                Utils.phoneNumberForServer(phoneNumber),
+                pinCodeTv.getText().toString());
+    }
+    //endregion
+
+
     private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -87,7 +162,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            validateFileds();
+            validateFields();
         }
 
         @Override
@@ -96,62 +171,25 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
-    private void validateFileds() {
-        if (StringUtils.isNotBlank(pinCodeTv.getText().toString())
-                && pinCodeTv.getText().length() == 4
-                && Utils.isValidNumber(phoneNumberEt)) {
-            enableBookingBtn();
-        } else {
-            disableBookingBtn();
-        }
-    }
 
-    @OnClick({R.id.loginBtn, R.id.forgotPassTv, R.id.registerBtn, R.id.tvTerms})
+    @OnClick({R.id.loginBtn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.loginBtn:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                    if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt) && validate()) {
+                    if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt)) {
                         if (StringUtils.isBlank(AppPreferences.getRegId())) {
                             AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
                         }
                         AppPreferences.setStatsApiCallRequired(true);
                         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                        repository.requestUserLogin(mCurrentActivity, handler,
-                                Utils.phoneNumberForServer(phoneNumberEt.getText().toString()),
-                                pinCodeTv.getText().toString());
+                        sendLoginRequest(phoneNumberEt.getText().toString());
                     }
                 } else {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, "Please check your internet connection.");
-                }
-                break;
-            case R.id.forgotPassTv:
-                ActivityStackManager.getInstance().startForgotPasswordActivity(mCurrentActivity);
-                break;
-            case R.id.registerBtn:
-                logAnalyticsEvent(Constants.AnalyticsEvents.ON_SIGN_UP_BTN_CLICK);
-                ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
-                break;
-            case R.id.tvTerms:
-                if (AppPreferences.getSettings() != null) {
-                    Utils.startCustomWebViewActivity(mCurrentActivity,
-                            AppPreferences.getSettings().getSettings().getTerms(), "Terms of Services");
-                } else {
-                    Utils.startCustomWebViewActivity(mCurrentActivity,
-                            "https://www.bykea.com/partner-terms", "Terms of Services");
+                    Dialogs.INSTANCE.showToast(mCurrentActivity, getString(R.string.error_internet_connectivity));
                 }
                 break;
         }
-    }
-
-
-    private boolean validate() {
-        if (StringUtils.isBlank(pinCodeTv.getText().toString())) {
-            pinCodeTv.setError(getString(R.string.error_field_empty));
-            pinCodeTv.requestFocus();
-            return false;
-        }
-        return true;
     }
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -238,26 +276,5 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
-    private void disableBookingBtn() {
-        loginBtn.setEnabled(false);
-        loginBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_gray_round));
-    }
-
-    private void enableBookingBtn() {
-        loginBtn.setEnabled(true);
-        loginBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_green));
-    }
-
-
-    private void logAnalyticsEvent(String event) {
-        try {
-            JSONObject data = new JSONObject();
-            data.put("timestamp", System.currentTimeMillis());
-            Utils.logFacebookEvent(mCurrentActivity, event, data);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
 }
