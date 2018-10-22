@@ -45,6 +45,7 @@ public class LoginActivity extends BaseActivity {
     ImageView loginBtn;
 
     private UserRepository repository;
+    private TextWatcher textWatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +79,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
-        phoneNumberEt.addTextChangedListener(mTextWatcher);
-
+        setupTextWatcherForPhoneNumber();
     }
 
 
@@ -151,26 +151,41 @@ public class LoginActivity extends BaseActivity {
                 Utils.phoneNumberForServer(phoneNumber),
                 pinCodeTv.getText().toString());
     }
+
+    private void handleLoginResponse() {
+
+    }
     //endregion
 
+    //region Helper method for Text watcher
 
-    private TextWatcher mTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    /**
+     * Setup phone number watcher for validation
+     */
+    private void setupTextWatcherForPhoneNumber() {
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-        }
+            }
 
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            validateFields();
-        }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                validateFields();
+            }
 
-        @Override
-        public void afterTextChanged(Editable editable) {
+            @Override
+            public void afterTextChanged(Editable editable) {
 
-        }
-    };
+            }
+        };
 
+        if (phoneNumberEt != null)
+            phoneNumberEt.addTextChangedListener(textWatcher);
+    }
+    //endregion
+
+    //region View Click listener Method
 
     @OnClick({R.id.loginBtn})
     public void onClick(View view) {
@@ -191,7 +206,9 @@ public class LoginActivity extends BaseActivity {
                 break;
         }
     }
+    //endregion
 
+    //region API response handler
     private UserDataHandler handler = new UserDataHandler() {
         @Override
         public void onUserLogin(final LoginResponse loginResponse) {
@@ -276,5 +293,6 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
+    //endregion
 
 }

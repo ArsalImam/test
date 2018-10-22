@@ -18,10 +18,10 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
@@ -98,6 +98,32 @@ public class UserRepository {
     public UserRepository() {
         mWebIORequestHandler = WebIORequestHandler.getInstance();
         mRestRequestHandler = new RestRequestHandler();
+    }
+
+    /***
+     * Send Request to API server for Driver login, which send sms
+     *
+     * @param context Calling context.
+     * @param handler API response callback.
+     * @param phoneNumber Driver phone number,
+     * @param deviceType Device type i.e. (Android/iOS)
+     * @param latitude Driver current latitude.
+     * @param longitude Driver current longitude.
+     * @param appVersion Current app version.
+     * @param OtpType Method type for OTP i.e. (SMS/Phone)
+     */
+    public void requestDriverLogin(Context context,
+                                   IUserDataHandler handler,
+                                   String phoneNumber,
+                                   String deviceType,
+                                   double latitude,
+                                   double longitude,
+                                   String appVersion,
+                                   String OtpType) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.sendDriverLogin(context, mDataCallback, phoneNumber,
+                deviceType, latitude, longitude, appVersion, OtpType);
     }
 
     public void requestUserLogin(Context context, IUserDataHandler handler, String email, String password) {
