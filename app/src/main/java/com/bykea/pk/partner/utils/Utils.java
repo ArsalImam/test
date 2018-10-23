@@ -25,7 +25,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -525,7 +524,7 @@ public class Utils {
         i.putExtra(Intent.EXTRA_TEXT, "");
         try {
             context.startActivity(Intent.createChooser(i, "Send mail..."));
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -539,7 +538,7 @@ public class Utils {
         manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
-    public static void hideSoftKeyboard(android.support.v4.app.Fragment fragment) {
+    public static void hideSoftKeyboard(Fragment fragment) {
         try {
             final InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null && fragment.getView() != null) {
@@ -601,7 +600,7 @@ public class Utils {
         sendIntent.setPackage("com.whatsapp");
         try {
             context.startActivity(sendIntent);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -622,7 +621,7 @@ public class Utils {
         sendIntent.setPackage("com.whatsapp");
         try {
             context.startActivity(sendIntent);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -639,7 +638,7 @@ public class Utils {
 
     public static String getTotalRAM(Context context) {
 
-        int version = android.os.Build.VERSION.SDK_INT;
+        int version = Build.VERSION.SDK_INT;
         if (version >= 16) {
             ActivityManager actManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
@@ -656,7 +655,7 @@ public class Utils {
 
     public static String getAndroidVersion() {
 
-        return "" + android.os.Build.VERSION.SDK_INT;
+        return "" + Build.VERSION.SDK_INT;
 
     }
 
@@ -773,9 +772,9 @@ public class Utils {
     }
 
     /*
-    * This will sync Device Time and Server Time. We know that Device time can be changed easily so
-    * we will calculate time difference between server and device
-    * */
+     * This will sync Device Time and Server Time. We know that Device time can be changed easily so
+     * we will calculate time difference between server and device
+     * */
     public static void saveServerTimeDifference(long serverTime) {
         long currentTime = System.currentTimeMillis();
         AppPreferences.setServerTimeDifference(
@@ -961,19 +960,19 @@ public class Utils {
     }
 
     /*
-    * Returns API key for Google GeoCoder API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google GeoCoder API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
     /*
-    * Returns API key for Google Directions API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google Directions API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForDirections(Context context) {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
@@ -988,8 +987,8 @@ public class Utils {
     }
 
     /*
-    * Returns true if Last API call was more than 1 min ago
-    * */
+     * Returns true if Last API call was more than 1 min ago
+     * */
     public static boolean isDirectionApiCallRequired() {
         return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
     }
@@ -1067,7 +1066,7 @@ public class Utils {
 
     public static boolean isMockLocation(Location location, Context context) {
         boolean isMock;
-        if (android.os.Build.VERSION.SDK_INT >= 18) {
+        if (Build.VERSION.SDK_INT >= 18) {
             isMock = location.isFromMockProvider();
         } else {
             isMock = !Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0")
@@ -1125,12 +1124,12 @@ public class Utils {
 
 
     /*
-    * - if same location coordinates then don't consider these lat lng
-    * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
-    * - Check if its time difference w.r.t last coordinate is
-    * greater than minimum time a bike should take to cover that distance if that bike is traveling
-    * at max 80KM/H to avoid bad/fake coordinates
-    * */
+     * - if same location coordinates then don't consider these lat lng
+     * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
+     * - Check if its time difference w.r.t last coordinate is
+     * greater than minimum time a bike should take to cover that distance if that bike is traveling
+     * at max 80KM/H to avoid bad/fake coordinates
+     * */
     public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
@@ -1438,8 +1437,8 @@ public class Utils {
 
 
     /*
-    *  Flush Mixpanel Event in onDestroy()
-    * */
+     *  Flush Mixpanel Event in onDestroy()
+     * */
     public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
         MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
         mixpanelAPI.identify(userID);
@@ -2260,4 +2259,31 @@ public class Utils {
             }
         }
     }
+
+    /***
+     *  Check is provided activity in running task.
+     *
+     * @param context Calling context.
+     * @param activityClass Class name which we need to find in running task.
+     * @return True if class found otherwise return false.
+     */
+    public static boolean isActivityRunning(Context context, Class<?> activityClass) {
+        try {
+            ActivityManager activityManager = (ActivityManager)
+                    context.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks = null;
+            if (activityManager != null) {
+                tasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
+                for (ActivityManager.RunningTaskInfo task : tasks) {
+                    if (activityClass.getName().equalsIgnoreCase(task.baseActivity.getClassName()))
+                        return true;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+
+        return false;
+    }
+
 }

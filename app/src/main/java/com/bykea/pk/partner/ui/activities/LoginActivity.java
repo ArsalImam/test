@@ -7,14 +7,12 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.LoginResponse;
+import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -22,11 +20,12 @@ import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.instabug.library.Instabug;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,7 +56,7 @@ public class LoginActivity extends BaseActivity {
         initialSetupProcess();
     }
 
- 
+
     //region General Helper methods
 
     /***
@@ -121,10 +120,10 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Send logs to Analytics
+    /***
+     * Log analytics events on Facebook Analytics
      *
-     * @param event Event name which needs to be send
+     * @param event Event name which needs to be send.
      */
     private void logAnalyticsEvent(String event) {
         try {
@@ -147,13 +146,11 @@ public class LoginActivity extends BaseActivity {
      * @param phoneNumber Driver phone number
      */
     private void sendLoginRequest(String phoneNumber) {
-        repository.requestUserLogin(mCurrentActivity, handler,
+        repository.requestDriverLogin(mCurrentActivity, handler,
                 Utils.phoneNumberForServer(phoneNumber),
-                pinCodeTv.getText().toString());
-    }
-
-    private void handleLoginResponse() {
-
+                AppPreferences.getLatitude(),
+                AppPreferences.getLongitude(),
+                Constants.OTP_SMS);
     }
     //endregion
 
@@ -210,68 +207,18 @@ public class LoginActivity extends BaseActivity {
 
     //region API response handler
     private UserDataHandler handler = new UserDataHandler() {
+
         @Override
-        public void onUserLogin(final LoginResponse loginResponse) {
+        public void onNumberVerification(final VerifyNumberResponse response) {
             if (mCurrentActivity != null) {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
-                        if (loginResponse.isSuccess()) {
-                            Utils.redLog("token_id at Login", loginResponse.getUser().getAccessToken());
-                            ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
-                            AppPreferences.setPilotData(loginResponse.getUser());
-                            AppPreferences.setAvailableStatus(loginResponse.getUser().isAvailable());
-                            AppPreferences.setCashInHands(loginResponse.getUser().getCashInHand());
-//                            AppPreferences.setCashInHandsRange(mCurrentActivity, loginResponse.getUser().getCashInHandRange());
-//                            AppPreferences.setVerifiedStatus(mCurrentActivity, loginResponse.getUser().isVerified());
-                            AppPreferences.saveLoginStatus(true);
-                            Instabug.setUserData(loginResponse.getUser().getFullName() + " " + loginResponse.getUser().getPhoneNo());
-                            Instabug.setUserEmail(loginResponse.getUser().getPhoneNo());
-                            Instabug.setUsername(loginResponse.getUser().getFullName());
-                            Utils.setOneSignalTag("city", loginResponse.getUser().getCity().getName().toLowerCase());
-                            Utils.setOneSignalTag("type", loginResponse.getUser().is_vendor() ? "vendor" : "normal");
-                            Utils.setOneSignalTag("tag", "driver");
-                            Utils.setOneSignalTag("driver_id", loginResponse.getUser().getId());
-                            ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                            // Connect socket
-                            DriverApp.getApplication().connect();
-//                            Utils.setMixPanelUserId(mCurrentActivity);
-
-                            logAnalyticsEvent(Constants.AnalyticsEvents.ON_LOGIN_SUCCESS);
-
-                            mCurrentActivity.finish();
-                        } else {
-                            if (loginResponse.getCode() == 600) {
-                                if (StringUtils.isBlank(loginResponse.getLink())) {
-                                    loginResponse.setLink("https://play.google.com/store/apps/details?id=com.bykea.pk.partner");
-                                }
-                                Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity, "اعلان !", loginResponse.getMessage(), loginResponse.getLink());
-                            } else if (loginResponse.getCode() == 900) {
-
-                                if (loginResponse.getMessage().toLowerCase().contains("your license has expired")) {
-                                    Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity, loginResponse.getSupport(), loginResponse.getMessage());
-                                } else {
-                                    Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-                                        @Override
-                                        public void onCallBack(String msg) {
-
-                                        }
-                                    }, null, "", loginResponse.getMessage());
-//                                Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity, loginResponse.getSupport(), loginResponse.getMessage());
-                                }
-                            } else {
-                                String msg = StringUtils.containsIgnoreCase(loginResponse.getMessage(), getString(R.string.invalid_phone))
-                                        ? getString(R.string.invalid_phone_urdu) : loginResponse.getMessage();
-                                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, msg, 0f,
-                                        null, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                Dialogs.INSTANCE.dismissDialog();
-                                            }
-                                        });
-                            }
-                        }
+                        Utils.appToast(mCurrentActivity, response.getMessage());
+                        ActivityStackManager.getInstance()
+                                .startPhoneNumberVerificationActivity(mCurrentActivity);
+                        mCurrentActivity.finish();
                     }
                 });
             }
@@ -285,7 +232,21 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, "Error", errorMessage);
+                        switch (errorCode) {
+                            // this is only for check user api when Driver not registered.
+                            case HttpURLConnection.HTTP_NOT_FOUND: {
+                                logAnalyticsEvent(Constants.AnalyticsEvents.ON_SIGN_UP_BTN_CLICK);
+                                ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
+                                break;
+                            }
+                            default: {
+                                Dialogs.INSTANCE.showAlertDialog(mCurrentActivity,
+                                        getString(R.string.error_heading),
+                                        errorMessage);
+                            }
+                        }
+
+
                     }
                 });
             }

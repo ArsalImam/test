@@ -106,31 +106,38 @@ public class UserRepository {
      * @param context Calling context.
      * @param handler API response callback.
      * @param phoneNumber Driver phone number,
-     * @param deviceType Device type i.e. (Android/iOS)
      * @param latitude Driver current latitude.
      * @param longitude Driver current longitude.
-     * @param appVersion Current app version.
-     * @param OtpType Method type for OTP i.e. (SMS/Phone)
+     * @param otpReceiveType How OTP would be received by user. i.e. (Call/SMS)
      */
     public void requestDriverLogin(Context context,
                                    IUserDataHandler handler,
                                    String phoneNumber,
-                                   String deviceType,
                                    double latitude,
                                    double longitude,
-                                   String appVersion,
-                                   String OtpType) {
+                                   String otpReceiveType) {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.sendDriverLogin(context, mDataCallback, phoneNumber,
-                deviceType, latitude, longitude, appVersion, OtpType);
+                Constants.DEVICE_TYPE, latitude, longitude,
+                Utils.getVersion(mContext), otpReceiveType);
     }
 
-    public void requestUserLogin(Context context, IUserDataHandler handler, String email, String password) {
+    /***
+     * Sending Login request to API Server
+     * @param context Calling context.
+     * @param handler API response Handler
+     * @param phoneNumber Driver phone number
+     * @param otpCode Entered OTP COde
+     */
+    public void requestUserLogin(Context context,
+                                 IUserDataHandler handler,
+                                 String phoneNumber,
+                                 String otpCode) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.sendUserLogin(context, mDataCallback, email, password,
-                Constants.DEVICE_TYPE, "2", AppPreferences.getRegId());
+        mRestRequestHandler.sendUserLogin(context, mDataCallback, phoneNumber, otpCode,
+                Constants.DEVICE_TYPE, Constants.DRIVER_STATUS_CODE, AppPreferences.getRegId());
 
     }
 

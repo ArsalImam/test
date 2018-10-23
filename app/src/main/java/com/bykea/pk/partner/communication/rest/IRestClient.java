@@ -74,13 +74,10 @@ import retrofit.http.Url;
 interface IRestClient {
 
 
-
-
-
     @FormUrlEncoded
     @POST(ApiTags.USER_LOGIN_API)
     Call<LoginResponse> login(@Field(Fields.Login.PHONE_NUMBER) String number,
-                              @Field(Fields.Login.PIN_CODE) String pincode,
+                              @Field(Fields.Login.OTP_CODE) String otpCode,
                               @Field(Fields.Login.DEVICE_TYPE) String deviceType,
                               @Field(Fields.Login.USER_STATUS) String userStatus,
                               @Field(Fields.Login.REG_ID) String gcmId,
@@ -386,7 +383,7 @@ interface IRestClient {
 
     @GET(ApiTags.GET_LOAD_BOARD)
     Call<LoadBoardResponse> requestLoadBoard(@Query("_id") String id, @Query("token_id") String accessToken,
-                                                       @Query("lat") String lat,@Query("lng") String lng);
+                                             @Query("lat") String lat, @Query("lng") String lng);
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(
 //            @QueryMap Map<String, String> params);

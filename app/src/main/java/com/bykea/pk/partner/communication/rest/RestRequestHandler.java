@@ -113,15 +113,41 @@ public class RestRequestHandler {
 
     }
 
-    public void sendUserLogin(Context context, final IResponseCallback onResponseCallBack, String email, String password,
-                              String deviceType, String userStatus, String regID) {
+    /***
+     * Send User login request to API server.
+     * @param context Calling Context.
+     * @param onResponseCallBack Response Handler Callback
+     * @param driverNumber Driver number
+     * @param otpCode OTP code which he received.
+     * @param deviceType Device Type i.e. (Android/iOS)
+     * @param userStatus Driver user status.
+     * @param regID FCM user ID
+     */
+    public void sendUserLogin(Context context,
+                              final IResponseCallback onResponseCallBack,
+                              String driverNumber,
+                              String otpCode,
+                              String deviceType,
+                              String userStatus,
+                              String regID) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
         Utils.redLog("IMEI NUMBER", Utils.getDeviceId(context));
-        Call<LoginResponse> restCall = mRestClient.login(email, password,
-                deviceType, userStatus, regID, "" + AppPreferences.getLatitude(), "" + AppPreferences.getLongitude(), Utils.getVersion(context),
-                AppPreferences.getOneSignalPlayerId(), AppPreferences.getADID(), Utils.getDeviceId(context));
+        Call<LoginResponse> restCall = mRestClient.login(
+                driverNumber,
+                otpCode,
+                deviceType,
+                userStatus,
+                regID,
+                "" + AppPreferences.getLatitude(),
+                "" + AppPreferences.getLongitude(),
+                Utils.getVersion(context),
+                AppPreferences.getOneSignalPlayerId(),
+                AppPreferences.getADID(),
+                Utils.getDeviceId(context)
+        );
+
         restCall.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {

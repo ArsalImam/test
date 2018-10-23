@@ -116,6 +116,22 @@ public enum Dialogs {
         return ((null != mDialog) && mDialog.isShowing());
     }
 
+    public void showInvalidCodeDialog(Context context) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.invalid_code_dialog);
+        FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+            }
+        });
+        mDialog.setCancelable(false);
+        showDialog();
+    }
+
+
     public void showLoader(Context context) {
         if (null != mDialog && mDialog.isShowing()) return;
         mDialog = new Dialog(context, R.style.actionSheetTheme);
@@ -568,7 +584,7 @@ public enum Dialogs {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(
-                                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         ((AppCompatActivity) context).startActivityForResult(intent, requestCode);
                     }
                 });

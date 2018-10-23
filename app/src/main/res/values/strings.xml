@@ -187,5 +187,17 @@
     <string name="motor_bike_title">Motorbike</string>
     <string name="motor_bike_title_ur">موٹر سائیکل</string>
     <string name="splash_welcome_message">حرکت میں برکت</string>
+    <string name="title_activity_number_verification">NumberVerificationActivity</string>
+    <string name="wait_while_we_verify">Wait While We Verify</string>
+    <string name="otp_submit">submit</string>
+    <string name="wait_for_verification_msg_ur">تصدیق كے لیے انتظار فرمائیں</string>
+    <string name="verification_call_me_msg_ur">مجھے کال کر کے کوڈ دیں</string>
+    <string name="enter_verification_code_ur">کوڈ درج کریں</string>
+    <string name="digit_zero">0</string>
+    <string name="enter_verification_code">Enter verification code</string>
+    <string name="force_app_update_link">https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="force_app_update_title">اعلان !</string>
+    <string name="driver_licence_expire_error">your license has expired</string>
+    <string name="error_heading">Error</string>
 
 </resources>

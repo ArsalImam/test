@@ -71,6 +71,20 @@ public class Constants {
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
 
+    public static final String OTP_SMS = "SMS";
+    public static final String OTP_CALL = "call";
+
+    public static final long VERIFICATION_WAIT_MAX_TIME = 25000;
+    public static final long VERIFICATION_WAIT_COUNT_DOWN = 100;
+
+    public static final String DRIVER_STATUS_CODE = "2";
+    public static final int APP_FORCE_UPDATE = 600;
+    public static final int DRIVER_LICENSE_EXPIRED = 900;
+
+
+    public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
+    public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";
+
 
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";

@@ -57,7 +57,7 @@ public class ApiTags {
     public static final String HEAT_MAP_2 = "/getdata/HOUR/CITY_NAME";
     public static final String HEAT_MAP_2_X_API = "6E46E61CB1458A9F32C02CE5F056A557CC801DC31A43ABF39F7BCA9ED6FFAFD2";
 
-    public static final String USER_LOGIN_API = "/api/v1/driver/login";
+    public static final String USER_LOGIN_API = "/api/v1/driver/verifyUser";//old end point login
     public static final String PHONE_NUMBER_VERIFICATION_API = "/api/v1/users/sendPhonecode";
     public static final String CODE_VERIFICATION_API = "/api/v1/users/verfiyPincode";
     public static final String FORGOT_PASSWORD_API = "/api/v1/driver/forgotPassword";
