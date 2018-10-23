@@ -57,7 +57,7 @@ public class LoginActivity extends BaseActivity {
         initialSetupProcess();
     }
 
-
+ 
     //region General Helper methods
 
     /***
