@@ -21,28 +21,4 @@
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/iv_splash"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/splash"
-        android:visibility="gone" />
-
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/tv_login"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_60sdp"
-        android:layout_gravity="bottom"
-        android:background="@color/colorAccent"
-        android:gravity="center"
-        android:padding="@dimen/_1sdp"
-        android:text="@string/register_with_mobile"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_24sdp"
-        android:visibility="gone"
-        app:fontName="jameel_noori_nastaleeq.ttf" />
-
-
 </FrameLayout>

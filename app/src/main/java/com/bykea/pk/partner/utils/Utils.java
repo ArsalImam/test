@@ -25,7 +25,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -280,7 +279,8 @@ public class Utils {
     public static void logout(Context context) {
         clearData(context);
         HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.getInstance().startLoginActivity(context);
+        //ActivityStackManager.getInstance().startLoginActivity(context);
+        ActivityStackManager.getInstance().startLandingActivity(context);
         ((Activity) context).finish();
     }
 
@@ -466,6 +466,10 @@ public class Utils {
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
             decorView.setSystemUiVisibility(uiOptions);
         }
+    }
+
+    public static void exitFullScreen(){
+
     }
 
     public static void unlockScreen(Context context) {
@@ -745,7 +749,8 @@ public class Utils {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                         @Override
                         public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                            //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                            ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
                             mCurrentActivity.finish();
                         }
                     }, null, "UnAuthorized", "Session Expired. Please Log in again.");
@@ -763,7 +768,8 @@ public class Utils {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                         @Override
                         public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                            //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                            ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
                             mCurrentActivity.finish();
                         }
                     }, null, "UnAuthorized", "We strictly discourage usage of Fake GPS, please disable this and login again. Thank you! ");

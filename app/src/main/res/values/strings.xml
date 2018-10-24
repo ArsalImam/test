@@ -190,5 +190,6 @@
     <string name="register_with_mobile">موبائل نمبر درج کریں</string>
     <string name="unauthorized_title">UnAuthorized</string>
     <string name="unauthorized_message">Your account is logged in to another device. You are not login here anymore</string>
+    <string name="title_activity_landing">LandingActivity</string>
 
 </resources>

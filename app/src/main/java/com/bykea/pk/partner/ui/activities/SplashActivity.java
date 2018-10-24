@@ -2,7 +2,6 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 
 import com.bykea.pk.partner.BuildConfig;
@@ -32,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 public class SplashActivity extends BaseActivity {
@@ -46,12 +44,6 @@ public class SplashActivity extends BaseActivity {
     @BindView(R.id.tv_welcome_message)
     FontTextView txtWelcomeMessage;
 
-    @BindView(R.id.iv_splash)
-    AppCompatImageView imgSplash;
-
-    @BindView(R.id.tv_login)
-    FontTextView txtLogin;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +53,6 @@ public class SplashActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         screenConfigurationSetup();
-        displayWelcomeLayout(true);
         resetGeoReverseCode();
         Utils.setOneSignalPlayerId();
     }
@@ -87,25 +78,6 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Display Splash welcome layout
-     *
-     * @param shouldShow should show welcome message
-     */
-    private void displayWelcomeLayout(boolean shouldShow) {
-        txtWelcomeMessage.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
-
-    }
-
-    /***
-     * Display Login view if user is not login.
-     *
-     * @param shouldShow should we show login view to user
-     */
-    private void displayLoginView(boolean shouldShow) {
-        imgSplash.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
-        txtLogin.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
-    }
 
     /**
      * Call all required apis once base url is set and then it will start a timer that
@@ -218,8 +190,7 @@ public class SplashActivity extends BaseActivity {
                 startHomeActivity();
             }
         } else {
-            displayWelcomeLayout(false);
-            displayLoginView(true);
+            ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
         }
     }
 
@@ -380,19 +351,6 @@ public class SplashActivity extends BaseActivity {
         }
         disconnectTimer();
     }
-    //endregion
-
-    //region View Click methods
-    @OnClick(R.id.tv_login)
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_login: {
-                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                finish();
-            }
-        }
-    }
-
     //endregion
 
 
