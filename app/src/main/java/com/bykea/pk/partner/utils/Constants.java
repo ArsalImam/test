@@ -161,6 +161,8 @@ public class Constants {
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
 
+    public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
+
     /**
      * This inner class will contain Constants for Log Tags and Error Log Messages
      */
