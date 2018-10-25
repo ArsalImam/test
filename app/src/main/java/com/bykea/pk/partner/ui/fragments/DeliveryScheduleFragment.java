@@ -83,13 +83,16 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
      * Setup toolbar header
      */
     private void setupToolbarHeader() {
-        mCurrentActivity.hideStatusCompletely();
-        mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
-        //==mCurrentActivity.hideStatusLayout();
-        mCurrentActivity.hideToolbarLogo();
-        mCurrentActivity.makeDemandSpaceAvailableOnUI();
-        mCurrentActivity.setToolbarTitle(AppPreferences.getPilotData().getCity().getName(),
-                StringUtils.EMPTY);
+        if (mCurrentActivity != null) {
+            mCurrentActivity.hideStatusCompletely();
+            mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+            //==mCurrentActivity.hideStatusLayout();
+            mCurrentActivity.hideToolbarLogo();
+            mCurrentActivity.makeDemandSpaceAvailableOnUI();
+            mCurrentActivity.setToolbarTitle(AppPreferences.getPilotData().getCity().getName(),
+                    StringUtils.EMPTY);
+        }
+
     }
 
 
@@ -204,7 +207,7 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
     public void directionClick(DeliveryScheduleModel item) {
         if (AppPreferences.getAvailableStatus()) {
             Utils.startGoogleDirectionsApp(mCurrentActivity, item.getLatlng().get(0) + "," + item.getLatlng().get(1));
-        }else{
+        } else {
             Dialogs.INSTANCE.showNegativeAlertDialogForDemand(mCurrentActivity,
                     getString(R.string.driver_demand_offline_error_ur),
                     new View.OnClickListener() {
@@ -220,7 +223,7 @@ public class DeliveryScheduleFragment extends Fragment implements DeliverySchedu
     public void callClick(DeliveryScheduleModel item) {
         if (AppPreferences.getAvailableStatus()) {
             Utils.callingIntent(mCurrentActivity, item.getCustomer().getMobileNumber());
-        }else{
+        } else {
             Dialogs.INSTANCE.showNegativeAlertDialogForDemand(mCurrentActivity,
                     getString(R.string.driver_demand_offline_error_ur),
                     new View.OnClickListener() {
