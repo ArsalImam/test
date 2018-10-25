@@ -690,11 +690,14 @@ public class LocationService extends Service {
             if (AppPreferences.isLoggedIn() && !AppPreferences.isOnTrip()) {
                 // Offline driver forcefully.
                 AppPreferences.setDriverOfflineForcefully(true);
+                updateServiceForDriverOfflineStatus();
             }
             // Check is driver logged in and is out of fence
             else if (AppPreferences.isLoggedIn() && AppPreferences.isOutOfFence()) {
                 // Offline driver forcefully.
                 AppPreferences.setDriverOfflineForcefully(true);
+                updateServiceForDriverOfflineStatus();
+
             }
         } else {
             AppPreferences.setLocationSocketNotReceivedCount(socketResponseNotReceivedCount++);
@@ -711,6 +714,16 @@ public class LocationService extends Service {
         }
     }
 
+
+    /***
+     * Stops location updates and cancels countdown timer which is used to sending Lat/Lng value to API server via socket.
+     * And updates foreground notification to reflect driver offline status.
+     */
+    private void updateServiceForDriverOfflineStatus() {
+        stopLocationUpdates();
+        cancelTimer();
+        updateForegroundNotification();
+    }
 //endregion
 
     //region Socket Events response Handler
