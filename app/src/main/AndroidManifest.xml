@@ -209,15 +209,7 @@
             android:exported="true" />
         <activity android:name=".ui.activities.ShahkarActivity" />
         <activity android:name=".ui.activities.RankingActivity" />
-        <activity
-            android:name=".ui.activities.LandingActivity"
-            android:label="@string/title_activity_landing"
-            android:parentActivityName=".ui.activities.BaseActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bykea.pk.partner.ui.activities.BaseActivity" />
-        </activity>
+        <activity android:name=".ui.activities.LandingActivity" />
     </application>
 
 </manifest>

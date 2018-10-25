@@ -190,6 +190,9 @@
     <string name="register_with_mobile">موبائل نمبر درج کریں</string>
     <string name="unauthorized_title">UnAuthorized</string>
     <string name="unauthorized_message">Your account is logged in to another device. You are not login here anymore</string>
-    <string name="title_activity_landing">LandingActivity</string>
+    <string name="unauthorized_message_fake_gps">We strictly discourage usage of Fake GPS, please disable this and login again. Thank you! </string>
+    <string name="unauthorized_message_session_expired">Session Expired. Please Log in again.</string>
+    <string name="licence_expire_title">Licence Expired</string>
+    <string name="licence_expire_message">Your driving licence is expired. Please renew your driving licence and then contact support.</string>
 
 </resources>

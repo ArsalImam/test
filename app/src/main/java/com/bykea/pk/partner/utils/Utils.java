@@ -753,7 +753,8 @@ public class Utils {
                             ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
                             mCurrentActivity.finish();
                         }
-                    }, null, "UnAuthorized", "Session Expired. Please Log in again.");
+                    }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                            mCurrentActivity.getString(R.string.unauthorized_message_session_expired));
                 }
             });
         }
@@ -772,7 +773,8 @@ public class Utils {
                             ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
                             mCurrentActivity.finish();
                         }
-                    }, null, "UnAuthorized", "We strictly discourage usage of Fake GPS, please disable this and login again. Thank you! ");
+                    }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                            mCurrentActivity.getString(R.string.unauthorized_message_fake_gps));
                 }
             });
         }

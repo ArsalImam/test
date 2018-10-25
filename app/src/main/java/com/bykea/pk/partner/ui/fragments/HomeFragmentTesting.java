@@ -480,14 +480,15 @@ public class HomeFragmentTesting extends Fragment {
         AppPreferences.setPilotData(null);
         HomeActivity.visibleFragmentNumber = 0;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-            @Override
-            public void onCallBack(String msg) {
-                //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
+                    @Override
+                    public void onCallBack(String msg) {
+                        //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                        ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
 
-                mCurrentActivity.finish();
-            }
-        }, null, "Licence Expired", "Your driving licence is expired. Please renew your driving licence and then contact support.");
+                        mCurrentActivity.finish();
+                    }
+                }, null, getString(R.string.licence_expire_title),
+                getString(R.string.licence_expire_message));
     }
 
     private void initViews() {
