@@ -33,15 +33,25 @@ public class Customer implements Parcelable {
         dest.writeString(this.mobileNumber);
     }
 
+    /***
+     * Default constructor
+     */
     public Customer() {
     }
 
+    /***
+     * Constructor which takes Parcel object when reading data.
+     * @param in Parcel object
+     */
     protected Customer(Parcel in) {
         this.id = in.readString();
         this.fullName = in.readString();
         this.mobileNumber = in.readString();
     }
 
+    /***
+     * Creator object for Parcelable which tells android how to parcel this class.
+     */
     public static final Creator<Customer> CREATOR = new Creator<Customer>() {
         @Override
         public Customer createFromParcel(Parcel source) {
