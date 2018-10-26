@@ -184,6 +184,18 @@
     <string name="invalid_phone">Invalid phone</string>
     <string name="current_week">Current Week</string>
     <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
+    <string name="license_title">License</string>
+    <string name="license_title_ur">لائسنس</string>
+    <string name="personal_detail_title">Personal Details</string>
+    <string name="personal_detail_title_ur">زاتی معلومات</string>
+    <string name="trip_history_title">Bookings</string>
+    <string name="trip_history_title_ur">تفصیلات</string>
+    <string name="bank_account_title">Bank Account</string>
+    <string name="bank_account_title_ur">بینک اکاؤنٹ</string>
+    <string name="motor_bike_title">Motorbike</string>
+    <string name="motor_bike_title_ur">موٹر سائیکل</string>
+    <string name="splash_welcome_message">حرکت میں برکت</string>
+
     <string name="notification_title_driver_login_location">Logged in fetching location</string>
     <string name="notification_title_driver_logout_location">Fetching location</string>
     <string name="notification_title_driver_status">Your Status: %1$s</string>

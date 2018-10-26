@@ -214,13 +214,13 @@ public class ProfileFragment extends Fragment {
                             enableViews(true);
                             mPersonalInfo = response.getData();
                             PilotData data = AppPreferences.getPilotData();
-                            data.setFullName(mPersonalInfo.getFull_name());
-                            data.setPilotImage(mPersonalInfo.getImg_id());
-                            data.setLicenseExpiry(mPersonalInfo.getLicense_expire());
+                            data.setFullName(mPersonalInfo.getFullName());
+                            data.setPilotImage(mPersonalInfo.getImgId());
+                            data.setLicenseExpiry(mPersonalInfo.getLicenseExpire());
                             mCurrentActivity.setPilotData(data);
                             AppPreferences.setPilotData(data);
                             AppPreferences.setProfileUpdated(true);
-                            driverNameTv.setText(mPersonalInfo.getFull_name());
+                            driverNameTv.setText(mPersonalInfo.getFullName());
                             driverAddressTv.setText(mPersonalInfo.getAddress());
                             driverCityTv.setText(mPersonalInfo.getCity());
                             if (StringUtils.isNotBlank(mPersonalInfo.getHomeLat())

@@ -146,6 +146,11 @@ public class Constants {
         public final static int SCAN_FINGER_PRINTS = 123;
     }
 
+    public static class TimeFormats {
+        public final static String LICNENSE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    }
+
+
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
         public final static String CANCEL_TRIP = "Ride-Cancel";

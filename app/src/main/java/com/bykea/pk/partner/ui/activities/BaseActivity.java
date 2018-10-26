@@ -406,11 +406,17 @@ public class BaseActivity extends AppCompatActivity {
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
 
+    /***
+     * Display Driver Active button layout
+     */
     public void showBismillah() {
         frameLayout_khudaHafiz.setVisibility(View.GONE);
         frameLayout_bismilla.setVisibility(View.VISIBLE);
     }
 
+    /***
+     * Display Driver In-Active button layout.
+     */
     public void showKhudaHafiz() {
         frameLayout_khudaHafiz.setVisibility(View.VISIBLE);
         frameLayout_bismilla.setVisibility(View.GONE);
@@ -471,6 +477,29 @@ public class BaseActivity extends AppCompatActivity {
         urduTextView.setText(urduText);
     }
 
+    /***
+     * Hide status layout on toolbar
+     */
+    public void hideStatusLayout() {
+        RelativeLayout statusLayout = findViewById(R.id.statusLayout);
+        if (statusLayout != null) {
+            statusLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /***
+     * Show status layout on toolbar
+     */
+    public void showStatusLayout() {
+        RelativeLayout statusLayout = findViewById(R.id.statusLayout);
+        if (statusLayout != null) {
+            statusLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /***
+     * Hide Urdu title from toolbar
+     */
     public void hideUrduTitle() {
         findViewById(R.id.tvTitleUrdu).setVisibility(View.GONE);
     }
