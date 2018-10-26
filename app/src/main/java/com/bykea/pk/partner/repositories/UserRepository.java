@@ -16,6 +16,7 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
+import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
@@ -736,6 +737,22 @@ public class UserRepository {
         mWebIORequestHandler.getConversationChat(mDataCallback, jsonObject);
     }
 
+    public void requestDriverUpdateStatus(Context context,IUserDataHandler handler,boolean driverStatus){
+        mContext = context;
+        mUserCallback = handler;
+        DriverAvailabilityRequest statusRequest=new DriverAvailabilityRequest();
+        statusRequest.setAvailable(driverStatus);
+        statusRequest.setId(AppPreferences.getDriverId());
+        statusRequest.setTokenID(AppPreferences.getAccessToken());
+
+        statusRequest.setLatitude(AppPreferences.getLatitude());
+        statusRequest.setLongitude(AppPreferences.getLongitude());
+        statusRequest.setCih(AppPreferences.getCashInHands());
+        statusRequest.setImei(Utils.getDeviceId(mContext));
+
+        mRestRequestHandler.requestDriverStatusUpdate(mContext, statusRequest, mDataCallback);
+
+    }
 
     public void requestUpdateStatus(Context context, IUserDataHandler handler, boolean status) {
 

@@ -15,6 +15,7 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -41,6 +42,7 @@ import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -744,6 +746,22 @@ public class RestRequestHandler {
         Call<BankAccountListResponse> restCall = mRestClient.getBankAccounts(AppPreferences.getPilotData().getId(),
                 AppPreferences.getPilotData().getAccessToken(), "" + AppPreferences.getLatitude(), "" + AppPreferences.getLongitude());
         restCall.enqueue(new GenericRetrofitCallBack<BankAccountListResponse>(onResponseCallBack));
+    }
+
+    /***
+     * Request driver status update to API server
+     * @param context Calling context.
+     * @param statusRequestBody Driver status request body which needs to be send to API Server
+     * @param responseCallback Response callback handler.
+     */
+    public void requestDriverStatusUpdate(Context context,
+                                          DriverAvailabilityRequest statusRequestBody,
+                                          IResponseCallback responseCallback) {
+        mContext = context;
+        this.mResponseCallBack = responseCallback;
+        mRestClient = RestClient.getClient(context);
+        Call<PilotStatusResponse> restCall = mRestClient.updateDriverStatus(statusRequestBody);
+        restCall.enqueue(new GenericRetrofitCallBack<PilotStatusResponse>(responseCallback));
     }
 
     public void requestBankAccountsDetails(Context context, String bankId, final IResponseCallback onResponseCallBack) {

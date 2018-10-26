@@ -377,7 +377,8 @@ public class HomeFragmentTesting extends Fragment {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             AppPreferences.setAvailableAPICalling(true);
-            repository.requestUpdateStatus(mCurrentActivity, handler, status);
+            repository.requestDriverUpdateStatus(mCurrentActivity,handler,status);
+            //repository.requestUpdateStatus(mCurrentActivity, handler, status);
         }
     }
 

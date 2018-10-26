@@ -9,6 +9,7 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -32,6 +33,7 @@ import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -254,6 +256,9 @@ interface IRestClient {
                                                   @Query("token_id") String tokenId,
                                                   @Query("lat") String lat,
                                                   @Query("lng") String lng);
+
+    @POST(ApiTags.DRIVER_STATUS_ONLINE_OFFLINE)
+    Call<PilotStatusResponse> updateDriverStatus(@Body DriverAvailabilityRequest availabilityRequest);
 
     @GET(ApiTags.GET_BANK_ACCOUNT_DETAILS)
     Call<BankDetailsResponse> getBankAccountDetails(@Query("_id") String Id,
