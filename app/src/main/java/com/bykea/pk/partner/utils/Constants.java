@@ -71,6 +71,11 @@ public class Constants {
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
 
+    public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
+    public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
+
+    public static final String BUILD_VARIANT_LOCAL_FLAVOR = "local";
+
 
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
