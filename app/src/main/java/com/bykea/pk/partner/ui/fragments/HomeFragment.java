@@ -28,11 +28,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.bykea.pk.partner.Notifications;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
@@ -40,17 +41,26 @@ import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.SelectPlaceActivity;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.DrawPolygonAsync;
 import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
+import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
-import com.bykea.pk.partner.widgets.MyRangeBar;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.MyRangeBarRupay;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -61,19 +71,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.TileOverlay;
-import com.bykea.pk.partner.Notifications;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.PilotStatusResponse;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Keys;
-import com.bykea.pk.partner.utils.Permissions;
-import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -229,8 +226,8 @@ public class HomeFragment extends Fragment {
     }
 
     /*
-    * Update Connection Status according to Signal Strength
-    * */
+     * Update Connection Status according to Signal Strength
+     * */
     private void setConnectionStatus() {
         String connectionStatus = Connectivity.getConnectionStatus(mCurrentActivity);
         tvConnectionStatus.setText(connectionStatus);
@@ -625,7 +622,8 @@ public class HomeFragment extends Fragment {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             AppPreferences.setAvailableAPICalling(true);
-            repository.requestUpdateStatus(mCurrentActivity, handler, status);
+            repository.requestDriverUpdateStatus(mCurrentActivity, handler, status);
+            //repository.requestUpdateStatus(mCurrentActivity, handler, status);
         }
     }
 
@@ -830,7 +828,7 @@ public class HomeFragment extends Fragment {
         }
 
         /*
-        * Unused*/
+         * Unused*/
         @Override
         public void onDropOffUpdated(final DriverDestResponse commonResponse) {
             mCurrentActivity.runOnUiThread(new Runnable() {

@@ -105,7 +105,7 @@ public class ApiTags {
     public static final String GET_LOAD_BOARD = "/api/v1/driver/load-board?";
 
     //Driver Status
-    public static final String DRIVER_STATUS_ONLINE_OFFLINE = "/api/v1/driver/updatestatus";
+    public static final String DRIVER_STATUS_ONLINE_OFFLINE = "/api/v1/driver/status";
 
 
 

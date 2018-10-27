@@ -808,7 +808,7 @@ public class HomeFragmentTesting extends Fragment {
 
         @Override
         public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
-            if (mCurrentActivity != null && getView() != null) {
+             if (mCurrentActivity != null && getView() != null) {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

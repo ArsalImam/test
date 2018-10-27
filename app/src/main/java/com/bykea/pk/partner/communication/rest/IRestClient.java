@@ -257,7 +257,7 @@ interface IRestClient {
                                                   @Query("lat") String lat,
                                                   @Query("lng") String lng);
 
-    @POST(ApiTags.DRIVER_STATUS_ONLINE_OFFLINE)
+    @PUT(ApiTags.DRIVER_STATUS_ONLINE_OFFLINE)
     Call<PilotStatusResponse> updateDriverStatus(@Body DriverAvailabilityRequest availabilityRequest);
 
     @GET(ApiTags.GET_BANK_ACCOUNT_DETAILS)

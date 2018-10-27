@@ -1,26 +1,28 @@
 package com.bykea.pk.partner.models.request;
 
+import com.google.gson.annotations.SerializedName;
+
 public class DriverAvailabilityRequest {
 
-    @SuppressWarnings("is_available")
+    @SerializedName("is_available")
     private boolean isAvailable;
 
-    @SuppressWarnings("_id")
+    @SerializedName("_id")
     private String id;
 
-    @SuppressWarnings("token_id")
+    @SerializedName("token_id")
     private String tokenID;
 
-    @SuppressWarnings("lat")
+    @SerializedName("lat")
     private double latitude;
 
-    @SuppressWarnings("lng")
+    @SerializedName("lng")
     private double longitude;
 
-    @SuppressWarnings("cih")
+    @SerializedName("cih")
     private int cih;
 
-    @SuppressWarnings("imei")
+    @SerializedName("imei")
     private String imei;
 
 
