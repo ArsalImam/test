@@ -131,7 +131,7 @@ public class BaseActivity extends AppCompatActivity {
                 requestPermissions(new String[]{PHONE_STATE}, 1010);
             } else if (location != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION}, 1010);
-            }else if (call != PackageManager.PERMISSION_GRANTED) {
+            } else if (call != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{CALL_STATE}, 1010);
             } else {
                 hasPermission = true;
@@ -392,12 +392,18 @@ public class BaseActivity extends AppCompatActivity {
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
 
-    public void showBismillah(){
+    /***
+     * Display Driver Active button layout
+     */
+    public void showBismillah() {
         frameLayout_khudaHafiz.setVisibility(View.GONE);
         frameLayout_bismilla.setVisibility(View.VISIBLE);
     }
 
-    public void showKhudaHafiz(){
+    /***
+     * Display Driver In-Active button layout.
+     */
+    public void showKhudaHafiz() {
         frameLayout_khudaHafiz.setVisibility(View.VISIBLE);
         frameLayout_bismilla.setVisibility(View.GONE);
     }
@@ -457,6 +463,29 @@ public class BaseActivity extends AppCompatActivity {
         urduTextView.setText(urduText);
     }
 
+    /***
+     * Hide status layout on toolbar
+     */
+    public void hideStatusLayout() {
+        RelativeLayout statusLayout = findViewById(R.id.statusLayout);
+        if (statusLayout != null) {
+            statusLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /***
+     * Show status layout on toolbar
+     */
+    public void showStatusLayout() {
+        RelativeLayout statusLayout = findViewById(R.id.statusLayout);
+        if (statusLayout != null) {
+            statusLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /***
+     * Hide Urdu title from toolbar
+     */
     public void hideUrduTitle() {
         findViewById(R.id.tvTitleUrdu).setVisibility(View.GONE);
     }
@@ -556,7 +585,7 @@ public class BaseActivity extends AppCompatActivity {
         boolean isUrduNotification = StringUtils.isNotBlank(notificationData.getType()) &&
                 notificationData.getType().equalsIgnoreCase("urdu");
         if (isUrduNotification) {
-            msg.setTypeface(FontUtils.getFonts( "jameel_noori_nastaleeq.ttf"));
+            msg.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
             title.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
             okIv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         }
@@ -703,6 +732,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
+
     private long mLastClickTime;
 
     public boolean checkClickTime() {

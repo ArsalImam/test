@@ -7,6 +7,7 @@
 
 
     <!--<color name="textColorPrimary">#5D5757</color>-->
+    <color name="kelly_green">#03a033</color>
     <color name="textColorPrimary">#302d2d</color>
     <color name="textColorPrimary676767">#676767</color>
     <color name="textColorPrimary1">#4e4e4e</color>
