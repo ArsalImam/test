@@ -2270,36 +2270,23 @@ public class Utils {
      */
     public static boolean useServiceIconProvidedByAPI(String serviceType) {
         if (!TextUtils.isEmpty(serviceType)) {
-            if (serviceType.equalsIgnoreCase(Constants.ServiceType.RIDE_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.RIDE_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.SEND_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.SEND_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.BRING_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.BRING_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.TICKETS_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.TICKETS_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.JOBS_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.JOBS_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.CLASSIFIEDS_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.CLASSIFIEDS_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.CARRY_VAN_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.CARRY_VAN_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.ADS_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.ADS_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.UTILITY_BILL_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.UTILITY_BILL_TITLE)) {
-                return true;
-            } else if (serviceType.equalsIgnoreCase(Constants.ServiceType.FOOD_DELIVERY_NAME) ||
-                    serviceType.equalsIgnoreCase(Constants.ServiceType.FOOD_DELIVERY_TITLE)) {
-                return true;
+            switch (serviceType) {
+                case Constants.ServiceType.RIDE_NAME:
+                case Constants.ServiceType.SEND_NAME:
+                case Constants.ServiceType.SEND_TITLE:
+                case Constants.ServiceType.BRING_NAME:
+                case Constants.ServiceType.BRING_TITLE:
+                case Constants.ServiceType.TICKETS_NAME:
+                case Constants.ServiceType.TICKETS_TITLE:
+                case Constants.ServiceType.JOBS_NAME:
+                case Constants.ServiceType.CLASSIFIEDS_NAME:
+                case Constants.ServiceType.CARRY_VAN_NAME:
+                case Constants.ServiceType.CARRY_VAN_TITLE:
+                case Constants.ServiceType.ADS_NAME:
+                case Constants.ServiceType.UTILITY_BILL_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_TITLE:
+                    return true;
             }
         }
         return false;
