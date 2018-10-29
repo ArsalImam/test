@@ -122,7 +122,6 @@ public class Constants {
     }
 
 
-
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
         public final static String CANCEL_TRIP = "Ride-Cancel";
@@ -137,8 +136,8 @@ public class Constants {
         public final static String ON_SIGN_UP_BTN_CLICK = "SignupButton";
         public final static String ON_SIGN_UP_MOBILE_ENTERED = "SignupMobile";
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
-        public final static String ON_LOGIN_SUCCESS= "LoginSuccessful";
-        public final static String ON_RIDE_COMPLETE= "RideComplete";
+        public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
+        public final static String ON_RIDE_COMPLETE = "RideComplete";
 
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
@@ -166,5 +165,43 @@ public class Constants {
         public final static String TIME_OUT_ERROR = "TimeOut ";
         public final static String CONVERSION_ERROR = "ConversionError ";
         public final static String OTHER_ERROR = "Other Error ";
+    }
+
+    /**
+     * List of supported services name and title by our eco system.
+     */
+    public static class ServiceType {
+
+        public static final String RIDE_NAME = "Ride";
+        public static final String RIDE_TITLE = "Ride";
+
+        public static final String SEND_NAME = "Send";
+        public static final String SEND_TITLE = "Delivery";
+
+        public static final String BRING_NAME = "Bring";
+        public static final String BRING_TITLE = "Purchase";
+
+        public static final String TICKETS_NAME = "Bus Ticket";
+        public static final String TICKETS_TITLE = "Ticket";
+
+        public static final String JOBS_NAME = "Jobs";
+        public static final String JOBS_TITLE = "Jobs";
+
+        public static final String CLASSIFIEDS_NAME = "Classifieds";
+        public static final String CLASSIFIEDS_TITLE = "Classifieds";
+
+        public static final String CARRY_VAN_NAME = "Carry Van";
+        public static final String CARRY_VAN_TITLE = "Bachat Courier";
+
+        public static final String ADS_NAME = "Ads";
+        public static final String ADS_TITLE = "Food";
+
+        public static final String UTILITY_BILL_NAME = "Utility Bill";
+        public static final String UTILITY_BILL_TITLE = "Utility Bill";
+
+        public static final String FOOD_DELIVERY_NAME = "FoodDelivery";
+        public static final String FOOD_DELIVERY_TITLE = "Food Delivery";
+
+
     }
 }

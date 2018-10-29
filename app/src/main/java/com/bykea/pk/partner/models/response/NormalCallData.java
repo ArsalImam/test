@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 public class NormalCallData extends CommonResponse {
 
     private String status;
-    //    private String icon;
+    private String icon;
     private NormalCallData data;
     private String trip_charges;
 
@@ -403,13 +403,13 @@ public class NormalCallData extends CommonResponse {
         this.details = details;
     }
 
-//    public String getIcon() {
-//        return icon;
-//    }
-//
-//    public void setIcon(String icon) {
-//        this.icon = icon;
-//    }
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
 
     public String getRec_no() {
         return rec_no;
