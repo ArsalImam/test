@@ -43,6 +43,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -773,9 +774,9 @@ public class Utils {
     }
 
     /*
-    * This will sync Device Time and Server Time. We know that Device time can be changed easily so
-    * we will calculate time difference between server and device
-    * */
+     * This will sync Device Time and Server Time. We know that Device time can be changed easily so
+     * we will calculate time difference between server and device
+     * */
     public static void saveServerTimeDifference(long serverTime) {
         long currentTime = System.currentTimeMillis();
         AppPreferences.setServerTimeDifference(
@@ -961,19 +962,19 @@ public class Utils {
     }
 
     /*
-    * Returns API key for Google GeoCoder API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google GeoCoder API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
     /*
-    * Returns API key for Google Directions API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google Directions API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForDirections(Context context) {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
@@ -988,8 +989,8 @@ public class Utils {
     }
 
     /*
-    * Returns true if Last API call was more than 1 min ago
-    * */
+     * Returns true if Last API call was more than 1 min ago
+     * */
     public static boolean isDirectionApiCallRequired() {
         return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
     }
@@ -1125,12 +1126,12 @@ public class Utils {
 
 
     /*
-    * - if same location coordinates then don't consider these lat lng
-    * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
-    * - Check if its time difference w.r.t last coordinate is
-    * greater than minimum time a bike should take to cover that distance if that bike is traveling
-    * at max 80KM/H to avoid bad/fake coordinates
-    * */
+     * - if same location coordinates then don't consider these lat lng
+     * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
+     * - Check if its time difference w.r.t last coordinate is
+     * greater than minimum time a bike should take to cover that distance if that bike is traveling
+     * at max 80KM/H to avoid bad/fake coordinates
+     * */
     public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
@@ -1438,8 +1439,8 @@ public class Utils {
 
 
     /*
-    *  Flush Mixpanel Event in onDestroy()
-    * */
+     *  Flush Mixpanel Event in onDestroy()
+     * */
     public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
         MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
         mixpanelAPI.identify(userID);
@@ -2260,4 +2261,35 @@ public class Utils {
             }
         }
     }
+
+
+    /***
+     * Validate service name in our stored collection if service exist we can safely use provided icon by API.
+     * @param serviceType Service name provided by API server.
+     * @return Returns true if service name matches our collection otherwise return false.
+     */
+    public static boolean useServiceIconProvidedByAPI(String serviceType) {
+        if (!TextUtils.isEmpty(serviceType)) {
+            switch (serviceType) {
+                case Constants.ServiceType.RIDE_NAME:
+                case Constants.ServiceType.SEND_NAME:
+                case Constants.ServiceType.SEND_TITLE:
+                case Constants.ServiceType.BRING_NAME:
+                case Constants.ServiceType.BRING_TITLE:
+                case Constants.ServiceType.TICKETS_NAME:
+                case Constants.ServiceType.TICKETS_TITLE:
+                case Constants.ServiceType.JOBS_NAME:
+                case Constants.ServiceType.CLASSIFIEDS_NAME:
+                case Constants.ServiceType.CARRY_VAN_NAME:
+                case Constants.ServiceType.CARRY_VAN_TITLE:
+                case Constants.ServiceType.ADS_NAME:
+                case Constants.ServiceType.UTILITY_BILL_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_TITLE:
+                    return true;
+            }
+        }
+        return false;
+    }
 }
+

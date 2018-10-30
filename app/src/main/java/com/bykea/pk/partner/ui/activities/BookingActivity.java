@@ -795,7 +795,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     setStartedState();
                 }
             }
-            String icon = Utils.getServiceIcon(callData.getCallType());
+            //String icon = Utils.getServiceIcon(callData.getCallType());
+            String icon = StringUtils.EMPTY;
+            //String icon = Utils.getServiceIcon(callData.getCallType());
+            if (Utils.useServiceIconProvidedByAPI(callData.getCallType())) {
+                icon = callData.getIcon();
+            }
             if (StringUtils.isNotBlank(icon)) {
                 Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
                 Picasso.get().load(Utils.getCloudinaryLink(icon))
@@ -993,7 +998,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (null == driverMarker) {
                 driverMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
                         Utils.getMapIcon(callData.getCallType())))
-                    /*.anchor(0.5f, 0.5f)*/.position(new LatLng(Double.parseDouble(snappedLatitude),
+                        /*.anchor(0.5f, 0.5f)*/.position(new LatLng(Double.parseDouble(snappedLatitude),
                                 Double.parseDouble(snappedLongitude)))/*.flat(true).rotation(Float.parseFloat(mLocBearing))*/);
             }
 
@@ -1851,7 +1856,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         boolean isAdded = true;
         /*if (StringUtils.isBlank(callData.getRecName())) {
             isAdded = false;
-        } else */if (StringUtils.isBlank(callData.getRec_no())) {
+        } else */
+        if (StringUtils.isBlank(callData.getRec_no())) {
             isAdded = false;
         } else if (StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;
