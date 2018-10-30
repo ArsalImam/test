@@ -13,10 +13,10 @@ public class DriverAvailabilityRequest {
     @SerializedName("token_id")
     private String tokenID;
 
-    @SerializedName("lat")
+    @SerializedName("current_lat")
     private double latitude;
 
-    @SerializedName("lng")
+    @SerializedName("current_lng")
     private double longitude;
 
     @SerializedName("cih")
@@ -24,6 +24,15 @@ public class DriverAvailabilityRequest {
 
     @SerializedName("imei")
     private String imei;
+
+    @SerializedName("end_lat")
+    private double endingLatitude;
+
+    @SerializedName("end_lng")
+    private double endingLongitude;
+
+    @SerializedName("end_address")
+    private String endingAddress;
 
 
     //region Getter Setters
@@ -81,6 +90,30 @@ public class DriverAvailabilityRequest {
 
     public void setImei(String imei) {
         this.imei = imei;
+    }
+
+    public double getEndingLatitude() {
+        return endingLatitude;
+    }
+
+    public void setEndingLatitude(double endingLatitude) {
+        this.endingLatitude = endingLatitude;
+    }
+
+    public double getEndingLongitude() {
+        return endingLongitude;
+    }
+
+    public void setEndingLongitude(double endingLongitude) {
+        this.endingLongitude = endingLongitude;
+    }
+
+    public String getEndingAddress() {
+        return endingAddress;
+    }
+
+    public void setEndingAddress(String endingAddress) {
+        this.endingAddress = endingAddress;
     }
 
     //endregion

@@ -737,20 +737,63 @@ public class UserRepository {
         mWebIORequestHandler.getConversationChat(mDataCallback, jsonObject);
     }
 
-    public void requestDriverUpdateStatus(Context context,IUserDataHandler handler,boolean driverStatus){
+    /***
+     * Update driver availability status on API server.
+     * @param context Calling Context.
+     * @param handler Response callback
+     * @param driverStatus driver status
+     */
+    public void requestDriverUpdateStatus(Context context, IUserDataHandler handler, boolean driverStatus) {
         mContext = context;
         mUserCallback = handler;
-        DriverAvailabilityRequest statusRequest=new DriverAvailabilityRequest();
-        statusRequest.setAvailable(driverStatus);
-        statusRequest.setId(AppPreferences.getDriverId());
-        statusRequest.setTokenID(AppPreferences.getAccessToken());
+        PilotData pilotData = AppPreferences.getPilotData();
+        DriverAvailabilityRequest statusRequest = new DriverAvailabilityRequest();
+        try {
+            //region Setting MixPanel properties JSON
+            JSONObject properties = new JSONObject();
+            properties.put("DriverID", pilotData.getId());
+            properties.put("timestamp", Utils.getIsoDate());
+            properties.put("SignUpCity", pilotData.getCity() != null
+                    ? pilotData.getCity().getName() : "N/A");
+            properties.put("DriverName", pilotData.getFullName());
+            properties.put("CurrentLocation", Utils.getCurrentLocation());
+            properties.put("cih", AppPreferences.getCashInHands());
+            properties.put("status", driverStatus ? "Active" : "Inactive");
 
-        statusRequest.setLatitude(AppPreferences.getLatitude());
-        statusRequest.setLongitude(AppPreferences.getLongitude());
-        statusRequest.setCih(AppPreferences.getCashInHands());
-        statusRequest.setImei(Utils.getDeviceId(mContext));
+            //endregion
+
+            //region Driver status request Body
+            statusRequest.setAvailable(driverStatus);
+            statusRequest.setId(AppPreferences.getDriverId());
+            statusRequest.setTokenID(AppPreferences.getAccessToken());
+
+            statusRequest.setLatitude(AppPreferences.getLatitude());
+            statusRequest.setLongitude(AppPreferences.getLongitude());
+            statusRequest.setCih(AppPreferences.getCashInHands());
+            statusRequest.setImei(Utils.getDeviceId(mContext));
+
+            //endregion
+
+            if (driverStatus && AppPreferences.getDriverDestination() != null) {
+                statusRequest.setEndingLatitude(AppPreferences.getDriverDestination().latitude);
+                statusRequest.setEndingLongitude(AppPreferences.getDriverDestination().longitude);
+                statusRequest.setEndingAddress(AppPreferences.getDriverDestination().address);
+
+                properties.put("DD", true);
+                properties.put("DDLocation", AppPreferences.getDriverDestination().latitude
+                        + "," + AppPreferences.getDriverDestination().longitude);
+                properties.put("DDAddress", AppPreferences.getDriverDestination().address);
+            } else {
+                properties.put("DD", false);
+            }
+            Utils.logEvent(context, pilotData.getId(),
+                    Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         mRestRequestHandler.requestDriverStatusUpdate(mContext, statusRequest, mDataCallback);
+
 
     }
 

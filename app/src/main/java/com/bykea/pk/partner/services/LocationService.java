@@ -28,6 +28,7 @@ import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
@@ -38,9 +39,11 @@ import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.activities.SplashActivity;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -690,12 +693,17 @@ public class LocationService extends Service {
             if (AppPreferences.isLoggedIn() && !AppPreferences.isOnTrip()) {
                 // Offline driver forcefully.
                 AppPreferences.setDriverOfflineForcefully(true);
-                updateServiceForDriverOfflineStatus();
+
+                //Todo test should we call this right after sending offline request to API or we should lose server on API success.
+                sendDriverOfflineStatusRequest();
             }
             // Check is driver logged in and is out of fence
             else if (AppPreferences.isLoggedIn() && AppPreferences.isOutOfFence()) {
                 // Offline driver forcefully.
                 AppPreferences.setDriverOfflineForcefully(true);
+                sendDriverOfflineStatusRequest();
+
+                //Todo test should we call this right after sending offline request to API or we should lose server on API success.
                 updateServiceForDriverOfflineStatus();
 
             }
@@ -703,6 +711,18 @@ public class LocationService extends Service {
             AppPreferences.setLocationSocketNotReceivedCount(socketResponseNotReceivedCount++);
         }
 
+    }
+
+
+    /***
+     * Sending driver offline status request to API server.
+     * When we don't receive any response from socket event for driver update
+     * latitude and longitude event after grace retry period
+     * we forcefully send driver offline request.
+     */
+    private void sendDriverOfflineStatusRequest() {
+        AppPreferences.setAvailableAPICalling(true);
+        mUserRepository.requestDriverUpdateStatus(this, handler, false);
     }
 
     /***
@@ -724,7 +744,7 @@ public class LocationService extends Service {
         cancelTimer();
         updateForegroundNotification();
     }
-//endregion
+    //endregion
 
     //region Socket Events response Handler
 
@@ -742,8 +762,23 @@ public class LocationService extends Service {
             Utils.redLogLocation(TAG, "location Socket Response: " + new Gson().toJson(response));
             AppPreferences.setDriverOfflineForcefully(false);
             AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
-
         }
+
+        @Override
+        public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
+            if (pilotStatusResponse.isSuccess()) {
+                AppPreferences.setAvailableStatus(false);
+                AppPreferences.setAvailableAPICalling(false);
+                AppPreferences.setDriverDestination(null);
+
+            } else {
+                AppPreferences.setAvailableStatus(false);
+                AppPreferences.setDriverDestination(null);
+            }
+            //make service offline as driver is offline now
+            updateServiceForDriverOfflineStatus();
+        }
+
 
         @Override
         public void onError(int errorCode, String errorMessage) {
