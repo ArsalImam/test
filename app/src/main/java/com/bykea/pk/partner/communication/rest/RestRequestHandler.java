@@ -888,8 +888,30 @@ public class RestRequestHandler {
         @Override
         public void onResponse(Response<T> response, Retrofit retrofit) {
             if (response == null || response.body() == null) {
-                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + mContext.getString(R.string.error_try_again) + " ");
-                return;
+                if (response != null && response.errorBody() != null) {
+                    //this is because of Driver status availability use case.
+                    CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, retrofit);
+                    if (commonResponse != null) {
+                        if (commonResponse.getMessage().contains(Constants.MOBILE_IMEI_ERROR)) {
+                            // Sending Pilot Status response as we got IMEI Error
+                            PilotStatusResponse statusResponse = new PilotStatusResponse();
+                            statusResponse.setCode(commonResponse.getCode());
+                            statusResponse.setSuccess(commonResponse.isSuccess());
+                            statusResponse.setMessage(commonResponse.getMessage());
+                            mCallBack.onResponse(statusResponse);
+                        }
+                        return;
+                    } else {
+                        mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                        return;
+                    }
+                } else {
+                    mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                            mContext.getString(R.string.error_try_again) + " ");
+                    return;
+                }
+
             }
             if (response.body().isSuccess()) {
                 mCallBack.onResponse(response.body());

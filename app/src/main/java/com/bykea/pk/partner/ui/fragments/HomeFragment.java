@@ -871,9 +871,7 @@ public class HomeFragment extends Fragment {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
                                 Utils.appToast(mCurrentActivity, pilotStatusResponse.getMessage());
-                                AppPreferences.setAvailableStatus(false);
-                                AppPreferences.setDriverDestination(null);
-                                setStatusBtn();
+
                             }
                         }
                     }

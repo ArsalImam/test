@@ -71,6 +71,8 @@ public class Constants {
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
 
+    public static final String MOBILE_IMEI_ERROR = "IMEI";
+
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
