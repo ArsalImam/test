@@ -761,7 +761,43 @@ public class RestRequestHandler {
         this.mResponseCallBack = responseCallback;
         mRestClient = RestClient.getClient(context);
         Call<PilotStatusResponse> restCall = mRestClient.updateDriverStatus(statusRequestBody);
-        restCall.enqueue(new GenericRetrofitCallBack<PilotStatusResponse>(responseCallback));
+        restCall.enqueue(new Callback<PilotStatusResponse>() {
+            @Override
+            public void onResponse(Response<PilotStatusResponse> response, Retrofit retrofit) {
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        CommonResponse commonResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit);
+                        if (commonResponse != null) {
+                            PilotStatusResponse pilotStatusResponse = new PilotStatusResponse();
+                            pilotStatusResponse.setMessage(commonResponse.getMessage());
+                            pilotStatusResponse.setCode(commonResponse.getCode());
+                            pilotStatusResponse.setSuccess(commonResponse.isSuccess());
+                            mResponseCallBack.onResponse(pilotStatusResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
+                } else {
+                    if (response.isSuccess()) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(),
+                                response.body().getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
     }
 
     public void requestBankAccountsDetails(Context context, String bankId, final IResponseCallback onResponseCallBack) {
@@ -888,30 +924,9 @@ public class RestRequestHandler {
         @Override
         public void onResponse(Response<T> response, Retrofit retrofit) {
             if (response == null || response.body() == null) {
-                if (response != null && response.errorBody() != null) {
-                    //this is because of Driver status availability use case.
-                    CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, retrofit);
-                    if (commonResponse != null) {
-                        if (commonResponse.getMessage().contains(Constants.MOBILE_IMEI_ERROR)) {
-                            // Sending Pilot Status response as we got IMEI Error
-                            PilotStatusResponse statusResponse = new PilotStatusResponse();
-                            statusResponse.setCode(commonResponse.getCode());
-                            statusResponse.setSuccess(commonResponse.isSuccess());
-                            statusResponse.setMessage(commonResponse.getMessage());
-                            mCallBack.onResponse(statusResponse);
-                        }
-                        return;
-                    } else {
-                        mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
-                                mContext.getString(R.string.error_try_again) + " ");
-                        return;
-                    }
-                } else {
-                    mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
-                            mContext.getString(R.string.error_try_again) + " ");
-                    return;
-                }
-
+                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                        mContext.getString(R.string.error_try_again) + " ");
+                return;
             }
             if (response.body().isSuccess()) {
                 mCallBack.onResponse(response.body());
