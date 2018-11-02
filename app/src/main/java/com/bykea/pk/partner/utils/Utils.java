@@ -42,6 +42,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -2258,6 +2259,36 @@ public class Utils {
                 context.startActivity(intent);
             }
         }
+    }
+
+
+    /***
+     * Validate service name in our stored collection if service exist we can safely use provided icon by API.
+     * @param serviceType Service name provided by API server.
+     * @return Returns true if service name matches our collection otherwise return false.
+     */
+    public static boolean useServiceIconProvidedByAPI(String serviceType) {
+        if (!TextUtils.isEmpty(serviceType)) {
+            switch (serviceType) {
+                case Constants.ServiceType.RIDE_NAME:
+                case Constants.ServiceType.SEND_NAME:
+                case Constants.ServiceType.SEND_TITLE:
+                case Constants.ServiceType.BRING_NAME:
+                case Constants.ServiceType.BRING_TITLE:
+                case Constants.ServiceType.TICKETS_NAME:
+                case Constants.ServiceType.TICKETS_TITLE:
+                case Constants.ServiceType.JOBS_NAME:
+                case Constants.ServiceType.CLASSIFIEDS_NAME:
+                case Constants.ServiceType.CARRY_VAN_NAME:
+                case Constants.ServiceType.CARRY_VAN_TITLE:
+                case Constants.ServiceType.ADS_NAME:
+                case Constants.ServiceType.UTILITY_BILL_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_TITLE:
+                    return true;
+            }
+        }
+        return false;
     }
 
     /***
