@@ -9,7 +9,6 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
-import com.bykea.pk.partner.models.request.SignupAddRequest;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
@@ -44,7 +43,6 @@ import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
-import com.bykea.pk.partner.models.response.UploadDocumentFile;
 import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
@@ -79,7 +77,6 @@ interface IRestClient {
     Call<LoginResponse> login(@Field(Fields.Login.PHONE_NUMBER) String number,
                               @Field(Fields.Login.OTP_CODE) String otpCode,
                               @Field(Fields.Login.DEVICE_TYPE) String deviceType,
-                              @Field(Fields.Login.USER_STATUS) String userStatus,
                               @Field(Fields.Login.REG_ID) String gcmId,
                               @Field(Fields.Login.LAT) String lat,
                               @Field(Fields.Login.LNG) String lng,
@@ -87,6 +84,16 @@ interface IRestClient {
                               @Field(Fields.Login.ONE_SIGNAL_PLAYER_ID) String one_signal_p_id,
                               @Field(Fields.Login.ADID) String advertising_id,
                               @Field(Fields.Login.IMEI_NUMBER) String imei);
+
+
+    @FormUrlEncoded
+    @POST(ApiTags.DRIVER_OTP_SEND)
+    Call<VerifyNumberResponse> sendDriverOTP(@Field(Fields.Login.PHONE_NUMBER) String phone,
+                                             @Field("type") String type,
+                                             @Field(Fields.Login.DEVICE_TYPE) String device,
+                                             @Field(Fields.Login.LAT) double lat,
+                                             @Field(Fields.Login.LNG) double lng,
+                                             @Field(Fields.Login.APP_VERSION) String version);
 
     @FormUrlEncoded
     @POST(ApiTags.LOGOUT_API)

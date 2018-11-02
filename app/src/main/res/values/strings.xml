@@ -199,5 +199,6 @@
     <string name="force_app_update_title">اعلان !</string>
     <string name="driver_licence_expire_error">your license has expired</string>
     <string name="error_heading">Error</string>
+    <string name="invalid_code_error">Invalid Verification Code</string>
 
 </resources>

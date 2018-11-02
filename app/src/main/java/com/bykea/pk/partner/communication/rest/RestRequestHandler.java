@@ -95,7 +95,6 @@ public class RestRequestHandler {
      * @param deviceType Device type i.e. (Android/iOS)
      * @param latitude Current Driver latitude.
      * @param longitude Current driver longitude.
-     * @param appVersion Current App version.
      * @param OtpType Method type for OTP call i.e (SMS/PHONE)
      */
     public void sendDriverLogin(Context context, final IResponseCallback callback,
@@ -103,12 +102,33 @@ public class RestRequestHandler {
                                 String deviceType,
                                 double latitude,
                                 double longitude,
-                                String appVersion,
                                 String OtpType) {
 
         mContext = context;
         this.mResponseCallBack = callback;
-        //Call<LoginResponse> loginResponseCall=mRestClient.requed
+        mRestClient = RestClient.getClient(mContext);
+        Call<VerifyNumberResponse> numberResponseCall = mRestClient.sendDriverOTP(
+                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion(context));
+
+        numberResponseCall.enqueue(new Callback<VerifyNumberResponse>() {
+            @Override
+            public void onResponse(Response<VerifyNumberResponse> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    if (null != mResponseCallBack) {
+                        mResponseCallBack.onResponse(response.body());
+                    }
+                } else {
+                    //TODO need to implement Retrofit Error body parsing 
+                    mResponseCallBack.onError(response.code(),
+                            mContext.getString(R.string.error_try_again));
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(0, getErrorMessage(t));
+            }
+        });
 
 
     }
@@ -120,7 +140,6 @@ public class RestRequestHandler {
      * @param driverNumber Driver number
      * @param otpCode OTP code which he received.
      * @param deviceType Device Type i.e. (Android/iOS)
-     * @param userStatus Driver user status.
      * @param regID FCM user ID
      */
     public void sendUserLogin(Context context,
@@ -128,7 +147,6 @@ public class RestRequestHandler {
                               String driverNumber,
                               String otpCode,
                               String deviceType,
-                              String userStatus,
                               String regID) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
@@ -138,7 +156,6 @@ public class RestRequestHandler {
                 driverNumber,
                 otpCode,
                 deviceType,
-                userStatus,
                 regID,
                 "" + AppPreferences.getLatitude(),
                 "" + AppPreferences.getLongitude(),

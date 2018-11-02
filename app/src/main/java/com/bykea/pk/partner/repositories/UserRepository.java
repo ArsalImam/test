@@ -118,9 +118,8 @@ public class UserRepository {
                                    String otpReceiveType) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.sendDriverLogin(context, mDataCallback, phoneNumber,
-                Constants.DEVICE_TYPE, latitude, longitude,
-                Utils.getVersion(mContext), otpReceiveType);
+        mRestRequestHandler.sendDriverLogin(context, mDataCallback,
+                phoneNumber, Constants.DEVICE_TYPE, latitude, longitude, otpReceiveType);
     }
 
     /***
@@ -137,7 +136,7 @@ public class UserRepository {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.sendUserLogin(context, mDataCallback, phoneNumber, otpCode,
-                Constants.DEVICE_TYPE, Constants.DRIVER_STATUS_CODE, AppPreferences.getRegId());
+                Constants.DEVICE_TYPE, AppPreferences.getRegId());
 
     }
 

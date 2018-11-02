@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.provider.Telephony;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.telephony.SmsMessage;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -68,6 +69,8 @@ public class CodeVerificationFragment extends Fragment {
     @BindView(R.id.titleMsg)
     FontTextView titleMsg;
 
+    @BindView(R.id.resendTv)
+    FontTextView resendTv;
 
     private NumberVerificationActivity mCurrentActivity;
     private UserRepository mUserRepository;
@@ -392,6 +395,7 @@ public class CodeVerificationFragment extends Fragment {
      * @param loginResponse Login response received from API Server.
      */
     private void saveDriverDataInStorage(LoginResponse loginResponse) {
+        AppPreferences.setStatsApiCallRequired(true);
         ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
         AppPreferences.setPilotData(loginResponse.getUser());
         AppPreferences.setAvailableStatus(loginResponse.getUser().isAvailable());
@@ -554,6 +558,7 @@ public class CodeVerificationFragment extends Fragment {
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
                         Utils.appToast(mCurrentActivity, response.getMessage());
+
                     }
                 });
             }

@@ -35,8 +35,7 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivity {
     private LoginActivity mCurrentActivity;
 
-    @BindView(R.id.pinCodeTv)
-    FontEditText pinCodeTv;
+
     @BindView(R.id.phoneNumberEt)
     FontEditText phoneNumberEt;
 
@@ -193,8 +192,9 @@ public class LoginActivity extends BaseActivity {
                         if (StringUtils.isBlank(AppPreferences.getRegId())) {
                             AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
                         }
-                        AppPreferences.setStatsApiCallRequired(true);
+                        Utils.hideSoftKeyboard(mCurrentActivity, phoneNumberEt);
                         Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                        AppPreferences.setPhoneNumber(Utils.phoneNumberForServer(phoneNumberEt.getText().toString()));
                         sendLoginRequest(phoneNumberEt.getText().toString());
                     }
                 } else {

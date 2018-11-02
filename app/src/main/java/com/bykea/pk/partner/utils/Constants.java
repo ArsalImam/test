@@ -71,7 +71,7 @@ public class Constants {
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
 
-    public static final String OTP_SMS = "SMS";
+    public static final String OTP_SMS = "sms";
     public static final String OTP_CALL = "call";
 
     public static final long VERIFICATION_WAIT_MAX_TIME = 25000;
