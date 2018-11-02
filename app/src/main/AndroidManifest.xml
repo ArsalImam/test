@@ -209,10 +209,8 @@
             android:exported="true" />
         <activity android:name=".ui.activities.ShahkarActivity" />
         <activity android:name=".ui.activities.RankingActivity" />
-        <activity
-            android:name=".ui.activities.NumberVerificationActivity"
-            android:label="@string/title_activity_number_verification"
-            android:theme="@style/AppTheme"></activity>
+        <activity android:name=".ui.activities.NumberVerificationActivity" />
+        <activity android:name=".ui.activities.LandingActivity" />
     </application>
 
 </manifest>

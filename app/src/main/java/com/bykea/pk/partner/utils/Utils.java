@@ -280,7 +280,8 @@ public class Utils {
     public static void logout(Context context) {
         clearData(context);
         HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.getInstance().startLoginActivity(context);
+        //ActivityStackManager.getInstance().startLoginActivity(context);
+        ActivityStackManager.getInstance().startLandingActivity(context);
         ((Activity) context).finish();
     }
 
@@ -466,6 +467,10 @@ public class Utils {
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
             decorView.setSystemUiVisibility(uiOptions);
         }
+    }
+
+    public static void exitFullScreen(){
+
     }
 
     public static void unlockScreen(Context context) {
@@ -745,10 +750,12 @@ public class Utils {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                         @Override
                         public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                            //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                            ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
                             mCurrentActivity.finish();
                         }
-                    }, null, "UnAuthorized", "Session Expired. Please Log in again.");
+                    }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                            mCurrentActivity.getString(R.string.unauthorized_message_session_expired));
                 }
             });
         }
@@ -763,10 +770,12 @@ public class Utils {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                         @Override
                         public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                            //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                            ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
                             mCurrentActivity.finish();
                         }
-                    }, null, "UnAuthorized", "We strictly discourage usage of Fake GPS, please disable this and login again. Thank you! ");
+                    }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                            mCurrentActivity.getString(R.string.unauthorized_message_fake_gps));
                 }
             });
         }
