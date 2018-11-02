@@ -3,6 +3,10 @@ package com.bykea.pk.partner.models.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/***
+ * Offline Notification Data model class which would be store in
+ * Shared preference when notification is received from FCM
+ */
 public class OfflineNotificationData implements Parcelable {
     private String message;
     private String lat;
@@ -10,6 +14,11 @@ public class OfflineNotificationData implements Parcelable {
     private String event;
     private String _id;
 
+
+    /***
+     * Constructor which is used for Parcelable object
+     * @param in Parcel object reader
+     */
     protected OfflineNotificationData(Parcel in) {
         message = in.readString();
         lat = in.readString();
@@ -18,18 +27,7 @@ public class OfflineNotificationData implements Parcelable {
         _id = in.readString();
     }
 
-    public static final Creator<OfflineNotificationData> CREATOR = new Creator<OfflineNotificationData>() {
-        @Override
-        public OfflineNotificationData createFromParcel(Parcel in) {
-            return new OfflineNotificationData(in);
-        }
-
-        @Override
-        public OfflineNotificationData[] newArray(int size) {
-            return new OfflineNotificationData[size];
-        }
-    };
-
+    //region Getter Setter
     public String getMessage() {
         return message;
     }
@@ -70,10 +68,14 @@ public class OfflineNotificationData implements Parcelable {
         this._id = _id;
     }
 
+    //endregion
+
+    //region Parcelable Helper methods
     @Override
     public int describeContents() {
         return 0;
     }
+
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
@@ -83,4 +85,21 @@ public class OfflineNotificationData implements Parcelable {
         parcel.writeString(event);
         parcel.writeString(_id);
     }
+
+    /**
+     * Parcelable creator class which would be used to tell parcelable object how to create it's Parcel object
+     */
+    public static final Creator<OfflineNotificationData> CREATOR = new Creator<OfflineNotificationData>() {
+        @Override
+        public OfflineNotificationData createFromParcel(Parcel in) {
+            return new OfflineNotificationData(in);
+        }
+
+        @Override
+        public OfflineNotificationData[] newArray(int size) {
+            return new OfflineNotificationData[size];
+        }
+    };
+
+    //endregion
 }

@@ -66,6 +66,10 @@ import java.util.ArrayList;
 
 public interface IUserDataHandler {
 
+    /***
+     * Update Drop off location response received from API Server.
+     * @param commonResponse Pojo class which hold latest driver destination response.
+     */
     void onDropOffUpdated(DriverDestResponse commonResponse);
 
     void onForgotPassword(ForgotPasswordResponse commonResponse);

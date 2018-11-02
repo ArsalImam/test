@@ -2,6 +2,9 @@ package com.bykea.pk.partner.models.request;
 
 import com.google.gson.annotations.SerializedName;
 
+/***
+ *  Driver Location Request Body model which would be used to send Request Parameters to API Server
+ */
 public class DriverLocationRequest {
 
     @SerializedName("driver_id")
@@ -25,6 +28,7 @@ public class DriverLocationRequest {
     @SerializedName("lng")
     private double longitude;
 
+    //region Getter Setter
 
     public String getDriverID() {
         return driverID;
@@ -81,4 +85,6 @@ public class DriverLocationRequest {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+    //endregion
 }

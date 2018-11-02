@@ -2,6 +2,9 @@ package com.bykea.pk.partner.models.request;
 
 import com.google.gson.annotations.SerializedName;
 
+/***
+ * Driver Availability Request Model class which would be used to parse API Response
+ */
 public class DriverAvailabilityRequest {
 
     @SerializedName("is_available")

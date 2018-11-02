@@ -1390,7 +1390,6 @@ public class RestRequestHandler {
             locationRequest.setStatus(tripStatus);
         } else {
             locationRequest.setInCall(false);
-            locationRequest.setTripID("58d007668422d14b14683871");
             locationRequest.setStatus(AppPreferences.getTripStatus());
         }
 

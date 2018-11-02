@@ -157,21 +157,26 @@ public class Connectivity {
         }
     }
 
+    /***
+     * Get Device Connection Status
+     * @param context Calling Context.
+     * @return Connectivity signal status value which is based on Network Info
+     */
     public static String getConnectionStatus(Context context) {
         NetworkInfo info = Connectivity.getNetworkInfo(context);
         if (info == null || !info.isConnected()) {
-            return "No Connection";
+            return Constants.ConnectionSignalStatus.NO_CONNECTIVITY;
         } else if (Connectivity.getInternetStatus(info.getType(), info.getSubtype(), context) == 3
                 && Utils.getBatteryPercentageDouble(context) > 20) {
-            return "Good Connection";
+            return Constants.ConnectionSignalStatus.GOOD_STRENGTH;
         } else if (Connectivity.getInternetStatus(info.getType(), info.getSubtype(), context) >= 2
                 && Utils.getBatteryPercentageDouble(context) > 20) {
-            return "Fair Connection";
+            return Constants.ConnectionSignalStatus.FAIR_STRENGTH;
         } else if (Connectivity.getInternetStatus(info.getType(), info.getSubtype(), context) >= 2
                 && Utils.getBatteryPercentageDouble(context) <= 20) {
-            return "Battery Low";
+            return Constants.ConnectionSignalStatus.BATTERY_LOW;
         } else {
-            return "Poor Connection";
+            return Constants.ConnectionSignalStatus.POOR_STRENGTH;
         }
     }
 
