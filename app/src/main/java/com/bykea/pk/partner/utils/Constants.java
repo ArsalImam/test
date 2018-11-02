@@ -226,6 +226,15 @@ public class Constants {
         public static final String FOOD_DELIVERY_NAME = "FoodDelivery";
         public static final String FOOD_DELIVERY_TITLE = "Food Delivery";
 
-
     }
+
+    /**
+     * Inner class for Font Names
+     */
+    public static class FontNames {
+        public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
+        public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
+        public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
+    }
+
 }

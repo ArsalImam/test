@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 
 import com.bykea.pk.partner.R;
@@ -26,11 +27,12 @@ public class NumberVerificationActivity extends BaseActivity {
 
     }
 
+
     /***
      * Update Toolbar Title and Back button
-     * @param title Title for toolbar
+     * @param title SpannableStringBuilder
      */
-    public void setTitleCustomToolbar(String title) {
+    public void setTitleCustomToolbar(SpannableStringBuilder title) {
         ((FontTextView) findViewById(R.id.tvTitle)).setText(title);
         findViewById(R.id.ivBackBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,6 +41,15 @@ public class NumberVerificationActivity extends BaseActivity {
             }
         });
 
+    }
+
+    /**
+     * This method Updates Title for Custom Tool bar when title has multiple fonts
+     *
+     * @param title SpannableStringBuilder
+     */
+    public void updateTitleCustomToolbar(SpannableStringBuilder title) {
+        ((FontTextView) findViewById(R.id.tvTitle)).setText(title);
     }
 
     /***

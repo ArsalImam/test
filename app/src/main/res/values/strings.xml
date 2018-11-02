@@ -207,5 +207,10 @@
     <string name="driver_licence_expire_error">your license has expired</string>
     <string name="error_heading">Error</string>
     <string name="invalid_code_error">Invalid Verification Code</string>
+    <string name="send_code_via_call_ur">\u0020کال کے زریعے تصدیقی کوڈ حاصل کریں\u0020</string>
+    <string name="verify_on_call_ur">\u0020کال پر تصدیق\u0020</string>
+    <string name="sms">\u0020SMS\u0020</string>
+    <string name="enter_code_ur">\u0020کوڈ درج کریں\u0020</string>
+    <string name="received_code_ur">\u0020اس نمبر پر موصول کردہ\u0020</string>
 
 </resources>

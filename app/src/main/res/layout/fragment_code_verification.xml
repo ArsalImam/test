@@ -16,17 +16,19 @@
             android:id="@+id/titleMsg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
             android:gravity="center"
-            android:text="@string/wait_for_verification_msg_ur"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/_16sdp"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+            app:fontName="open_sans_regular.ttf" />
 
 
         <FrameLayout
-            android:layout_width="@dimen/_100sdp"
-            android:layout_height="@dimen/_100sdp"
-            android:layout_gravity="center">
+            android:id="@+id/flProgress"
+            android:layout_width="@dimen/_94sdp"
+            android:layout_height="@dimen/_94sdp"
+            android:layout_gravity="center"
+            tools:visibility="visible">
 
 
             <com.bykea.pk.partner.widgets.DonutProgress
@@ -48,6 +50,19 @@
                 android:textSize="@dimen/_44sdp" />
 
         </FrameLayout>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tvSendCodeViaCall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_17sdp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="@string/send_code_via_call_ur"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/_16sdp"
+            android:visibility="gone"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
 
         <com.bykea.pk.partner.widgets.PinEntryEditText
             android:id="@+id/verificationCodeEt_1"

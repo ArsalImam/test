@@ -45,8 +45,7 @@
         tools:node="merge">
         <activity
             android:name=".ui.activities.LoginActivity"
-            android:theme="@style/NewTheme"
-            android:windowSoftInputMode="adjustNothing" />
+            android:theme="@style/NewTheme" />
         <activity
             android:name=".ui.activities.HomeActivity"
             android:exported="true"

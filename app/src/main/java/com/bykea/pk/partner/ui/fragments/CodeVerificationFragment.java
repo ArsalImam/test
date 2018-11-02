@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.telephony.SmsMessage;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.FontUtils;
 import com.instabug.library.Instabug;
 
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +70,8 @@ public class CodeVerificationFragment extends Fragment {
     LinearLayout llBottom;
     @BindView(R.id.titleMsg)
     FontTextView titleMsg;
+    @BindView(R.id.tvSendCodeViaCall)
+    FontTextView tvSendCodeViaCall;
 
     @BindView(R.id.resendTv)
     FontTextView resendTv;
@@ -115,9 +119,25 @@ public class CodeVerificationFragment extends Fragment {
         initVerificationEditText();
         initDonutProgress();
         animateDonutProgress();
+        titleMsg.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber()));
     }
 
     //region General Helper methods
+
+    /**
+     * This method sets initial title text
+     */
+    private void setTitleAtStart() {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(FontUtils.getStyledTitle(mCurrentActivity, R.string.received_code_ur,
+                Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(mCurrentActivity, R.string.sms,
+                Constants.FontNames.OPEN_SANS_REQULAR));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(mCurrentActivity, R.string.enter_code_ur,
+                Constants.FontNames.JAMEEL_NASTALEEQI));
+        mCurrentActivity.setTitleCustomToolbar(spannableStringBuilder);
+    }
+
 
     /**
      * This method sets required listeners with verificationCodeEt
@@ -190,11 +210,15 @@ public class CodeVerificationFragment extends Fragment {
             @Override
             public void onFinish() {
                 totalTime = 0;
-                llBottom.setVisibility(View.VISIBLE);
-                titleMsg.setText(R.string.enter_verification_code_ur);
-                mCurrentActivity.updateTitleCustomToolbar(getString(R.string.enter_verification_code));
                 counterTv.setText(R.string.digit_zero);
                 donutProgress.setProgress((int) (Constants.VERIFICATION_WAIT_MAX_TIME / 100));
+                llBottom.setVisibility(View.VISIBLE);
+                //tvSendCodeViaCall.setVisibility(View.VISIBLE);
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                spannableStringBuilder.append(FontUtils.getStyledTitle(mCurrentActivity,
+                        R.string.verify_on_call_ur,
+                        Constants.FontNames.JAMEEL_NASTALEEQI));
+                mCurrentActivity.updateTitleCustomToolbar(spannableStringBuilder);
             }
         };
 
@@ -341,8 +365,7 @@ public class CodeVerificationFragment extends Fragment {
      */
     private void animateDonutProgress() {
         llBottom.setVisibility(View.INVISIBLE);
-        titleMsg.setText(getString(R.string.wait_for_verification_msg_ur));
-        mCurrentActivity.updateTitleCustomToolbar(getString(R.string.wait_while_we_verify));
+        setTitleAtStart();
         clearEditText();
         clearTimer();
 
