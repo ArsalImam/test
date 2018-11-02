@@ -116,11 +116,16 @@ public enum Dialogs {
         return ((null != mDialog) && mDialog.isShowing());
     }
 
+    /***
+     * Show Dialog to user for Invalid OTP code entry.
+     *
+     * @param context Calling context
+     */
     public void showInvalidCodeDialog(Context context) {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.invalid_code_dialog);
-        FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
+        FontButton okIv = mDialog.findViewById(R.id.ivPositive);
         okIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
