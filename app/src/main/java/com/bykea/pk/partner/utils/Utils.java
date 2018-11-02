@@ -72,6 +72,7 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -94,6 +95,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.ResponseBody;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -106,6 +108,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -126,6 +129,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+
+import retrofit.Converter;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 
 public class Utils {
@@ -2325,5 +2332,25 @@ public class Utils {
 
         return false;
     }
+
+    //region API error response Body parsing
+    /***
+     * Parse Error body response when we receive error body from retrofit
+     * @param response response we received from API server.
+     * @param retrofit Retrofit Object
+     * @return {@link CommonResponse } model parsed when we receive error body
+     */
+    public static CommonResponse parseAPIErrorResponse(Response<?> response, Retrofit retrofit) {
+        Converter<ResponseBody, CommonResponse> errorConverter =
+                retrofit.responseConverter(CommonResponse.class, new Annotation[0]);
+        CommonResponse error = null;
+        try {
+            error = errorConverter.convert(response.errorBody());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return error;
+    }
+    //endregion
 
 }

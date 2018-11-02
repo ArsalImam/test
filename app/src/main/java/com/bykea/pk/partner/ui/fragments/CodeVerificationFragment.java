@@ -441,49 +441,22 @@ public class CodeVerificationFragment extends Fragment {
         logAnalyticsEvent(Constants.AnalyticsEvents.ON_LOGIN_SUCCESS);
     }
 
+    /***
+     * Handle Verify driver API error case.
+     * @param loginResponse Latest response received from API
+     */
     private void handleDriverErrorCase(LoginResponse loginResponse) {
         if (loginResponse != null) {
-            switch (loginResponse.getCode()) {
-                case Constants.APP_FORCE_UPDATE: {
-                    loginResponse.setLink(String.format(getString(R.string.force_app_update_link),
-                            DriverApp.getApplication().getPackageName()));
-
-                    Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
-                            getString(R.string.force_app_update_title),
-                            loginResponse.getMessage(),
-                            loginResponse.getLink());
-                    break;
-                }
-                case Constants.DRIVER_LICENSE_EXPIRED: {
-                    if (loginResponse.getMessage().toLowerCase().contains(
-                            getString(R.string.driver_licence_expire_error))) {
-                        Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity,
-                                loginResponse.getSupport(), loginResponse.getMessage());
-                    } else {
-                        Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
-                                new StringCallBack() {
-                                    @Override
-                                    public void onCallBack(String msg) {
-
-                                    }
-                                }, null, "", loginResponse.getMessage());
-                        //Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity, loginResponse.getSupport(), loginResponse.getMessage());
-                    }
-                    break;
-                }
-                default: {
-                    String msg = StringUtils.containsIgnoreCase(loginResponse.getMessage(),
-                            getString(R.string.invalid_phone))
-                            ? getString(R.string.invalid_phone_urdu) : loginResponse.getMessage();
-                    Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, msg, 0f,
-                            null, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Dialogs.INSTANCE.dismissDialog();
-                                }
-                            });
-                }
-            }
+            String msg = StringUtils.containsIgnoreCase(loginResponse.getMessage(),
+                    getString(R.string.invalid_phone))
+                    ? getString(R.string.invalid_phone_urdu) : loginResponse.getMessage();
+            Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, msg, 0f,
+                    null, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Dialogs.INSTANCE.dismissDialog();
+                        }
+                    });
         }
 
     }

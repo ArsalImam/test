@@ -7,12 +7,15 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -195,6 +198,7 @@ public class LoginActivity extends BaseActivity {
                         Utils.hideSoftKeyboard(mCurrentActivity, phoneNumberEt);
                         Dialogs.INSTANCE.showLoader(mCurrentActivity);
                         AppPreferences.setPhoneNumber(Utils.phoneNumberForServer(phoneNumberEt.getText().toString()));
+                        logAnalyticsEvent(Constants.AnalyticsEvents.ON_SIGN_UP_BTN_CLICK);
                         sendLoginRequest(phoneNumberEt.getText().toString());
                     }
                 } else {
@@ -215,10 +219,17 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
-                        Utils.appToast(mCurrentActivity, response.getMessage());
-                        ActivityStackManager.getInstance()
-                                .startPhoneNumberVerificationActivity(mCurrentActivity);
-                        mCurrentActivity.finish();
+                        if (response != null) {
+                            if (response.isSuccess()) {
+                                Utils.appToast(mCurrentActivity, response.getMessage());
+                                ActivityStackManager.getInstance()
+                                        .startPhoneNumberVerificationActivity(mCurrentActivity);
+                                mCurrentActivity.finish();
+                            } else {
+                                handleDriverErrorCase(response);
+                            }
+                        }
+
                     }
                 });
             }
@@ -232,27 +243,72 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
-                        switch (errorCode) {
-                            // this is only for check user api when Driver not registered.
-                            case HttpURLConnection.HTTP_NOT_FOUND: {
-                                logAnalyticsEvent(Constants.AnalyticsEvents.ON_SIGN_UP_BTN_CLICK);
-                                ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
-                                break;
-                            }
-                            default: {
-                                Dialogs.INSTANCE.showAlertDialog(mCurrentActivity,
-                                        getString(R.string.error_heading),
-                                        errorMessage);
-                            }
-                        }
-
-
+                        Dialogs.INSTANCE.showAlertDialog(mCurrentActivity,
+                                getString(R.string.error_heading),
+                                errorMessage);
                     }
                 });
             }
 
         }
     };
+
+    /***
+     * Handle Various driver Failure use cases.
+     * 1) App Force Update Error
+     * 2) Driver License Expire
+     * 3) Driver not registered.
+     * 4) Driver not allowed to login in this region
+     * 5) All other error cases.
+     *
+     * @param verifyNumberResponse Latest response received from API Server
+     */
+    private void handleDriverErrorCase(VerifyNumberResponse verifyNumberResponse) {
+        if (verifyNumberResponse != null) {
+            switch (verifyNumberResponse.getCode()) {
+                case Constants.APP_FORCE_UPDATE: {
+                    verifyNumberResponse.setLink(String.format(getString(R.string.force_app_update_link),
+                            DriverApp.getApplication().getPackageName()));
+
+                    Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
+                            getString(R.string.force_app_update_title),
+                            verifyNumberResponse.getMessage(),
+                            verifyNumberResponse.getLink());
+                    break;
+                }
+                case Constants.DRIVER_LICENSE_EXPIRED: {
+                    if (verifyNumberResponse.getMessage().toLowerCase().contains(
+                            getString(R.string.driver_licence_expire_error))) {
+                        Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity,
+                                verifyNumberResponse.getSupportNumber(),
+                                verifyNumberResponse.getMessage());
+                    } else {
+                        Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
+                                new StringCallBack() {
+                                    @Override
+                                    public void onCallBack(String msg) {
+
+                                    }
+                                }, null, "", verifyNumberResponse.getMessage());
+                        //Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity, loginResponse.getSupport(), loginResponse.getMessage());
+                    }
+                    break;
+                }
+                case Constants.DRIVER_NOT_REGISTER: {
+                    ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
+                    break;
+                }
+                case Constants.DRIVER_REGION_NOT_ALLOWED:
+                default: {
+                    Dialogs.INSTANCE.showAlertDialog(mCurrentActivity,
+                            getString(R.string.error_heading),
+                            verifyNumberResponse.getMessage());
+                }
+            }
+        }
+
+    }
+
 
     //endregion
 
