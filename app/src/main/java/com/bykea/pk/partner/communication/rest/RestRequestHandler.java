@@ -118,7 +118,7 @@ public class RestRequestHandler {
                         mResponseCallBack.onResponse(response.body());
                     }
                 } else {
-                    //TODO need to implement Retrofit Error body parsing 
+                    //TODO need to implement Retrofit Error body parsing
                     mResponseCallBack.onError(response.code(),
                             mContext.getString(R.string.error_try_again));
                 }
