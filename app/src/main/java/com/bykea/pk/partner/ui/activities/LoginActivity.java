@@ -280,8 +280,7 @@ public class LoginActivity extends BaseActivity {
                     if (verifyNumberResponse.getMessage().toLowerCase().contains(
                             getString(R.string.driver_licence_expire_error))) {
                         Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity,
-                                verifyNumberResponse.getSupportNumber(),
-                                verifyNumberResponse.getMessage());
+                                verifyNumberResponse.getSupportNumber());
                     } else {
                         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
                                 new StringCallBack() {
@@ -299,10 +298,21 @@ public class LoginActivity extends BaseActivity {
                     break;
                 }
                 case Constants.DRIVER_REGION_NOT_ALLOWED:
+                    Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                            getString(R.string.region_out_support_helpline),
+                            getString(R.string.region_out_message_ur));
+                    break;
                 default: {
-                    Dialogs.INSTANCE.showAlertDialog(mCurrentActivity,
-                            getString(R.string.error_heading),
-                            verifyNumberResponse.getMessage());
+                    String msg = StringUtils.containsIgnoreCase(verifyNumberResponse.getMessage(),
+                            getString(R.string.invalid_phone)) ?
+                            getString(R.string.invalid_phone_urdu) : verifyNumberResponse.getMessage();
+                    Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, msg, 0f,
+                            null, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                }
+                            });
                 }
             }
         }

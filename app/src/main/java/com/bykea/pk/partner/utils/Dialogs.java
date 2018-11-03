@@ -500,13 +500,40 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showInactiveAccountDialog(final Context context, final String number, final String msg) {
+    /***
+     * Show Driver license expire Account deactivate message
+     * @param context Calling context
+     * @param number Support Helpline number
+     */
+    public void showInactiveAccountDialog(final Context context, final String number) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_inactive_account);
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+                Utils.callingIntent(context, number);
+            }
+        });
+        showDialog();
+    }
+
+    /***
+     * Show Region Out error message with support number
+     * @param context Calling Context
+     * @param number Support number
+     * @param msg Message which needs to be displayed.
+     */
+    public void showRegionOutErrorDialog(final Context context,
+                                         final String number,
+                                         final String msg) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_region_out);
         if (StringUtils.isNotBlank(msg)) {
-            ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(msg);
+            ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
         }
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -517,6 +544,7 @@ public enum Dialogs {
         });
         showDialog();
     }
+
 
     public void showTopUpDialog(final Context context, final boolean isCourierType, final StringCallBack callBack) {
         if (null == context) return;
@@ -776,7 +804,7 @@ public enum Dialogs {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
         mDialog.setContentView(R.layout.signup_success_dialog);
-        ((FontTextView)mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
+        ((FontTextView) mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
         mDialog.setCancelable(false);
         mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
         showDialog();

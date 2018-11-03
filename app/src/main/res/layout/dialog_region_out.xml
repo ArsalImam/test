@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/_250sdp"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginBottom="15dp"
     android:background="@drawable/country_dialog_bg"
     android:orientation="vertical">
@@ -16,22 +16,18 @@
         android:orientation="vertical">
 
 
-        <android.support.v7.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_apka_account_band_hai" />
-
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/titleTv"
-            android:layout_width="match_parent"
+            android:id="@+id/messageTv"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/_45sdp"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
-            android:text="@string/driver_licence_expire_error_ur"
+            tools:text="@string/region_out_message_ur"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/_22sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
     </LinearLayout>
 
