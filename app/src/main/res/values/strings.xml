@@ -174,6 +174,7 @@
     <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
     <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
     <string name="invalid_phone">Invalid phone</string>
+    <string name="invalid_code_error_message">Invalid Code</string>
     <string name="current_week">Current Week</string>
     <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
     <string name="license_title">License</string>
@@ -205,7 +206,7 @@
     <string name="force_app_update_link">https://play.google.com/store/apps/details?id=%1$s</string>
     <string name="force_app_update_title">اعلان !</string>
     <string name="driver_licence_expire_error">your license has expired</string>
-    <string name="driver_licence_expire_error_ur">آپکا لائسنس ایکسپائر ہے ، كال Bykea</string>
+    <string name="driver_licence_expire_error_ur">آپکا لائسنس ایکسپائر ہے ، كال بائیکیا</string>
     <string name="error_heading">Error</string>
     <string name="invalid_code_error">Invalid Verification Code</string>
     <string name="send_code_via_call_ur">\u0020کال کے زریعے تصدیقی کوڈ حاصل کریں\u0020</string>

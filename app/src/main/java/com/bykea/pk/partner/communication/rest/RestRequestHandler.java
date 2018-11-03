@@ -188,15 +188,34 @@ public class RestRequestHandler {
         restCall.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {
-                // Got success from server
-                if (response.isSuccess()) {
-                    if (null != mResponseCallBack) {
-                        mResponseCallBack.onResponse(response.body());
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        CommonResponse commonResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit);
+                        if (commonResponse != null) {
+                            LoginResponse loginResponse = new LoginResponse();
+                            loginResponse.setMessage(commonResponse.getMessage());
+                            loginResponse.setCode(commonResponse.getCode());
+                            loginResponse.setSuccess(commonResponse.isSuccess());
+                            mResponseCallBack.onResponse(loginResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
                     }
                 } else {
-                    mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
+                    if (response.isSuccess()) {
+                        if (null != mResponseCallBack) {
+                            mResponseCallBack.onResponse(response.body());
+                        }
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(),
+                                response.body().getMessage());
+                    }
                 }
-
             }
 
             @Override

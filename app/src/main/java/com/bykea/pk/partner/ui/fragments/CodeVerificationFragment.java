@@ -447,10 +447,15 @@ public class CodeVerificationFragment extends Fragment {
      */
     private void handleDriverErrorCase(LoginResponse loginResponse) {
         if (loginResponse != null) {
-            String msg = StringUtils.containsIgnoreCase(loginResponse.getMessage(),
-                    getString(R.string.invalid_phone))
-                    ? getString(R.string.invalid_phone_urdu) : loginResponse.getMessage();
-            Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, msg, 0f,
+            String errorMessage;
+            if (StringUtils.containsIgnoreCase(loginResponse.getMessage(),
+                    getString(R.string.invalid_code_error_message))) {
+                errorMessage = getString(R.string.invalid_phone_urdu);
+            } else {
+                errorMessage = loginResponse.getMessage();
+            }
+
+            Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity, errorMessage, 0f,
                     null, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
