@@ -551,9 +551,14 @@ public class Utils {
         manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
+    /***
+     * Hide keyboard from screen
+     * @param fragment calling fragment where keyboard should be hidden.
+     */
     public static void hideSoftKeyboard(Fragment fragment) {
         try {
-            final InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            final InputMethodManager imm = (InputMethodManager) fragment.getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null && fragment.getView() != null) {
                 imm.hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
             }
@@ -788,10 +793,12 @@ public class Utils {
         }
     }
 
-    /*
-     * This will sync Device Time and Server Time. We know that Device time can be changed easily so
-     * we will calculate time difference between server and device
-     * */
+    /***
+     *  This will sync Device Time and Server Time.
+     *  We know that Device time can be changed easily so
+     *  we will calculate time difference between server and device
+     * @param serverTime Latest server time in milliseconds.
+     */
     public static void saveServerTimeDifference(long serverTime) {
         long currentTime = System.currentTimeMillis();
         AppPreferences.setServerTimeDifference(
@@ -985,11 +992,13 @@ public class Utils {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
-    /*
-     * Returns API key for Google Directions API if required.
-     * Will return Empty String if there's no error in Last
-     * Request while using API without any Key.
-     * */
+    /***
+     *  Returns API key for Google Directions API if required.
+     *  Will return Empty String if there's no error in Last
+     *  Request while using API without any Key.
+     * @param context Calling Context.
+     * @return Google place server API key
+     */
     public static String getApiKeyForDirections(Context context) {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
@@ -1003,9 +1012,10 @@ public class Utils {
         }
     }
 
-    /*
-     * Returns true if Last API call was more than 1 min ago
-     * */
+    /***
+     * Validate where we should call Direction API on screen.
+     * @return Returns true if Last API call was more than 1 min ago
+     */
     public static boolean isDirectionApiCallRequired() {
         return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
     }
@@ -1140,13 +1150,23 @@ public class Utils {
     }
 
 
-    /*
-     * - if same location coordinates then don't consider these lat lng
-     * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
-     * - Check if its time difference w.r.t last coordinate is
-     * greater than minimum time a bike should take to cover that distance if that bike is traveling
-     * at max 80KM/H to avoid bad/fake coordinates
-     * */
+    /***
+     *  Validate Location latest latitude and longitude with following set of rules.
+     *  <ul>
+     *      <li> if same location coordinates then don't consider these lat lng </li>
+     *      <li> if distance is less than 6 meter then don't consider these
+     *      lat lng to avoid coordinate fluctuation </li>
+     *      <li> Check if its time difference w.r.t last coordinate is greater than minimum
+     *      time a bike should take to cover that distance if that bike is traveling
+     *      at max 80KM/H to avoid bad/fake coordinates </li>
+     *  </ul>
+     * @param newLat Latest latitude fetched.
+     * @param newLon Latest longitude fetched.
+     * @param prevLat Previously stored latitude.
+     * @param prevLon Previously stored longitude.
+     *
+     * @return True if latest fetched latitude and longitude are valid, otherwise return false.
+     */
     public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
@@ -1453,9 +1473,13 @@ public class Utils {
     }
 
 
-    /*
-     *  Flush Mixpanel Event in onDestroy()
-     * */
+    /***
+     * Flush Mixpanel Event in onDestroy()
+     * @param context Calling context.
+     * @param userID User id which is currently logged in.
+     * @param EVENT Event name which needs to be flush.
+     * @param data Json data which needs to be emitted.
+     */
     public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
         MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
         mixpanelAPI.identify(userID);

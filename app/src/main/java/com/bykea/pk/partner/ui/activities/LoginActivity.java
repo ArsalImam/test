@@ -255,11 +255,13 @@ public class LoginActivity extends BaseActivity {
 
     /***
      * Handle Various driver Failure use cases.
-     * 1) App Force Update Error
-     * 2) Driver License Expire
-     * 3) Driver not registered.
-     * 4) Driver not allowed to login in this region
-     * 5) All other error cases.
+     * <ul>
+     *     <li> App Force Update Error. </li>
+     *     <li> Driver License Expire. </li>
+     *     <li> Driver not registered. </li>
+     *     <li> Driver not allowed to login in this region. </li>
+     *     <li> All other error cases. </li>
+     * </ul>
      *
      * @param verifyNumberResponse Latest response received from API Server
      */

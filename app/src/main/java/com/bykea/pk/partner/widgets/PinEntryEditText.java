@@ -16,7 +16,9 @@ import android.view.View;
 
 import com.bykea.pk.partner.R;
 
-
+/***
+ * Pin Entry Custom view which handles OTP values entry.
+ */
 public class PinEntryEditText extends FontEditText {
 
     public static final String XML_NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
@@ -66,6 +68,12 @@ public class PinEntryEditText extends FontEditText {
 //        init(context, attrs);
 //    }
 
+    /***
+     * Initialize view with configuration received from attribute set.
+     * @param context Calling context.
+     * @param attrs Key value pair object which stores object values.
+     * @see AttributeSet
+     */
     private void init(Context context, AttributeSet attrs) {
         float multi = context.getResources().getDisplayMetrics().density;
         mLineStroke = multi * mLineStroke;
