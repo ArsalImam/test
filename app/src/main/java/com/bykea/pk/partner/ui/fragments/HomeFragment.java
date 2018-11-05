@@ -225,27 +225,27 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    /*
+    /**
      * Update Connection Status according to Signal Strength
-     * */
+     */
     private void setConnectionStatus() {
         String connectionStatus = Connectivity.getConnectionStatus(mCurrentActivity);
         tvConnectionStatus.setText(connectionStatus);
         tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable._good_sattelite, 0, 0, 0);
         switch (connectionStatus) {
-            case "Unknown Status":
+            case Constants.ConnectionSignalStatus.UNKNOWN_STATUS:
                 tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
                 break;
-            case "Battery Low":
+            case Constants.ConnectionSignalStatus.BATTERY_LOW:
                 tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
                 tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.low_battery_icon, 0, 0, 0);
                 break;
-            case "Poor Connection":
-            case "Fair Connection":
-            case "No Connection":
+            case Constants.ConnectionSignalStatus.POOR_STRENGTH:
+            case Constants.ConnectionSignalStatus.FAIR_STRENGTH:
+            case Constants.ConnectionSignalStatus.NO_CONNECTIVITY:
                 tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
                 break;
-            case "Good Connection":
+            case Constants.ConnectionSignalStatus.GOOD_STRENGTH:
                 tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
                 break;
         }
@@ -827,8 +827,7 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        /*
-         * Unused*/
+
         @Override
         public void onDropOffUpdated(final DriverDestResponse commonResponse) {
             mCurrentActivity.runOnUiThread(new Runnable() {

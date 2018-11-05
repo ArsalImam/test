@@ -95,6 +95,9 @@ public class Constants {
         public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
         public static final String NOTIFICATION_CHANNEL_NAME = "Bykea Active/Inactive Status";
         public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
+
+        public static final String EVENT_TYPE = "event";
+        public static final String DATA_TYPE = "data";
     }
 
     public static class Extras {
@@ -257,6 +260,20 @@ public class Constants {
         public static final String FOOD_DELIVERY_NAME = "FoodDelivery";
         public static final String FOOD_DELIVERY_TITLE = "Food Delivery";
 
+    }
+
+    /***
+     * list of Connectivity signal status constant which would be used for future reference
+     */
+    public static class ConnectionSignalStatus {
+
+        public static final String UNKNOWN_STATUS = "Unknown Status";
+        public static final String BATTERY_LOW = "Battery Low";
+        public static final String POOR_STRENGTH = "Poor Connection";
+        public static final String FAIR_STRENGTH = "Fair Connection";
+        public static final String GOOD_STRENGTH = "Good Connection";
+        public static final String NO_CONNECTIVITY = "No Connection";
 
     }
+
 }

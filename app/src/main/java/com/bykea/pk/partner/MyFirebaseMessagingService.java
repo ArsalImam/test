@@ -66,10 +66,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         // Check if message contains a notification payload.
-        if (remoteMessage.getData() != null && remoteMessage.getData().get("event") != null) {
+        if (remoteMessage.getData() != null && remoteMessage.getData()
+                .get(Constants.Notification.EVENT_TYPE) != null) {
             Utils.redLog(TAG, "NOTIFICATION DATA (FCM) : " + remoteMessage.getData().toString());
-            if (remoteMessage.getData().get("event").equalsIgnoreCase("1")) {
-                NormalCallData callData = gson.fromJson(remoteMessage.getData().get("data"), NormalCallData.class);
+            if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase("1")) {
+                NormalCallData callData = gson.fromJson(remoteMessage.getData()
+                        .get(Constants.Notification.DATA_TYPE), NormalCallData.class);
                 if (StringUtils.isNotBlank(callData.getStatus())) {
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                         if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip()) {
@@ -113,7 +115,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         Utils.updateTripData(callData);
                     }
                 }
-            } else if (remoteMessage.getData().get("event").equalsIgnoreCase("2")) {
+            } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("2")) {
                 if (AppPreferences.isOnTrip()) {
                     Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivityNew.class);
                     chatIntent.putExtra("chat", true);
@@ -123,23 +126,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     startActivity(chatIntent);
                     WebIORequestHandler.getInstance().registerChatListener();
                 }
-            } else if (remoteMessage.getData().get("event").equalsIgnoreCase("7")) {//when server inactive any driver via Cron job
-                OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
+            } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("7")) {//when server inactive any driver via Cron job
+                OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), OfflineNotificationData.class);
                 ActivityStackManager.getInstance().startHandleInactivePushService(mContext, data);
-            } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("3"))) {
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("3"))) {
                 if (AppPreferences.isLoggedIn()) {
-                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
+                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), NotificationData.class);
                     AppPreferences.setAdminMsg(adminNotification);
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
-            } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("4"))) {
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("4"))) {
                 if (AppPreferences.isLoggedIn()) {
-                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
+                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData()
+                            .get(Constants.Notification.DATA_TYPE), NotificationData.class);
                     AppPreferences.setAdminMsg(adminNotification);
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
                     if (AppPreferences.getAvailableStatus() != adminNotification.isActive()
-                            && !AppPreferences.isOutOfFence() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
+                            && !AppPreferences.isOutOfFence() && AppPreferences.getTripStatus()
+                            .equalsIgnoreCase(TripStatus.ON_FREE)) {
                         AppPreferences.setAvailableStatus(adminNotification.isActive());
                         AppPreferences.setWalletAmountIncreased(!adminNotification.isActive());
                         mBus.post("INACTIVE-PUSH");
@@ -155,7 +163,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() || AppPreferences.isOutOfFence()) && Utils.isInactiveCheckRequired()) {
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Driver is Logged In");
             AppPreferences.setInactiveCheckTime(System.currentTimeMillis());
-            final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
+            final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), OfflineNotificationData.class);
             /*
             * Check Coordinates when there's any delay in FCM Push Notification and ignore
             * this notification when there are different coordinates.
