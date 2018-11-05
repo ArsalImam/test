@@ -113,8 +113,8 @@ public class CodeVerificationFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mUserRepository = new UserRepository();
-        mCurrentActivity.setTitleCustomToolbarWithUrdu(
-                getString(R.string.wait_while_we_verify), "");
+        /*mCurrentActivity.setTitleCustomToolbarWithUrdu(
+                getString(R.string.wait_while_we_verify), "");*/
         clearEditText();
         initVerificationEditText();
         initDonutProgress();
