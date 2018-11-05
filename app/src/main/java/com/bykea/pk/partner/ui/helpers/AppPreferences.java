@@ -144,6 +144,7 @@ public class AppPreferences {
         return mSharedPreferences.getString(Keys.PHONE_NUMBER, StringUtils.EMPTY);
     }
 
+
     public static String getDriverEmail() {
         return mSharedPreferences.getString(Keys.EMAIL, StringUtils.EMPTY);
     }

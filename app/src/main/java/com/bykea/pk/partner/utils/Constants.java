@@ -76,6 +76,23 @@ public class Constants {
 
     public static final String BUILD_VARIANT_LOCAL_FLAVOR = "local";
 
+    public static final String OTP_SMS = "sms";
+    public static final String OTP_CALL = "call";
+
+    public static final long VERIFICATION_WAIT_MAX_TIME = 25000;
+    public static final long VERIFICATION_WAIT_COUNT_DOWN = 100;
+
+    public static final String DRIVER_STATUS_CODE = "2";
+    public static final int APP_FORCE_UPDATE = 600;
+    public static final int DRIVER_LICENSE_EXPIRED = 900;
+    public static final int DRIVER_NOT_REGISTER = 404;
+    public static final int DRIVER_REGION_NOT_ALLOWED = 601;
+    public static final int DRIVER_ACCOUNT_BLOCKED = 602;
+
+
+    public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
+    public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";
+
 
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
@@ -130,7 +147,6 @@ public class Constants {
         public final static String LICNENSE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     }
 
-
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
         public final static String CANCEL_TRIP = "Ride-Cancel";
@@ -166,6 +182,8 @@ public class Constants {
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
 
+    public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
+
     /**
      * This inner class will contain Constants for Log Tags and Error Log Messages
      */
@@ -175,4 +193,51 @@ public class Constants {
         public final static String CONVERSION_ERROR = "ConversionError ";
         public final static String OTHER_ERROR = "Other Error ";
     }
+
+    /**
+     * List of supported services name and title by our eco system.
+     */
+    public static class ServiceType {
+
+        public static final String RIDE_NAME = "Ride";
+        public static final String RIDE_TITLE = "Ride";
+
+        public static final String SEND_NAME = "Send";
+        public static final String SEND_TITLE = "Delivery";
+
+        public static final String BRING_NAME = "Bring";
+        public static final String BRING_TITLE = "Purchase";
+
+        public static final String TICKETS_NAME = "Bus Ticket";
+        public static final String TICKETS_TITLE = "Ticket";
+
+        public static final String JOBS_NAME = "Jobs";
+        public static final String JOBS_TITLE = "Jobs";
+
+        public static final String CLASSIFIEDS_NAME = "Classifieds";
+        public static final String CLASSIFIEDS_TITLE = "Classifieds";
+
+        public static final String CARRY_VAN_NAME = "Carry Van";
+        public static final String CARRY_VAN_TITLE = "Bachat Courier";
+
+        public static final String ADS_NAME = "Ads";
+        public static final String ADS_TITLE = "Food";
+
+        public static final String UTILITY_BILL_NAME = "Utility Bill";
+        public static final String UTILITY_BILL_TITLE = "Utility Bill";
+
+        public static final String FOOD_DELIVERY_NAME = "FoodDelivery";
+        public static final String FOOD_DELIVERY_TITLE = "Food Delivery";
+
+    }
+
+    /**
+     * Inner class for Font Names
+     */
+    public static class FontNames {
+        public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
+        public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
+        public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
+    }
+
 }

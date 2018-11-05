@@ -27,8 +27,8 @@ public class ApiTags {
     //private static final String BASE_SERVER_URL_LIVE = "https://secure.bykea.net:3000";
 
     /*
-    * change url only for debug builds, never update BASE_SERVER_URL_LIVE
-    * */
+     * change url only for debug builds, never update BASE_SERVER_URL_LIVE
+     * */
     public static String LOCAL_BASE_URL = AppPreferences.getLocalBaseUrl(Keys.BASE_URL_LOCAL);
     public static String BASE_SERVER_URL = BuildConfig.FLAVOR.equalsIgnoreCase(Constants.BUILD_VARIANT_LOCAL_FLAVOR) ? LOCAL_BASE_URL : BuildConfig.FLAVOR_URL;
 
@@ -57,7 +57,8 @@ public class ApiTags {
     public static final String HEAT_MAP_2 = "/getdata/HOUR/CITY_NAME";
     public static final String HEAT_MAP_2_X_API = "6E46E61CB1458A9F32C02CE5F056A557CC801DC31A43ABF39F7BCA9ED6FFAFD2";
 
-    public static final String USER_LOGIN_API = "/api/v1/driver/login";
+    public static final String USER_LOGIN_API = "/api/v1/driver/otp/verify";//old end point login
+    public static final String DRIVER_OTP_SEND = "/api/v1/driver/otp/generate";
     public static final String PHONE_NUMBER_VERIFICATION_API = "/api/v1/users/sendPhonecode";
     public static final String CODE_VERIFICATION_API = "/api/v1/users/verfiyPincode";
     public static final String FORGOT_PASSWORD_API = "/api/v1/driver/forgotPassword";

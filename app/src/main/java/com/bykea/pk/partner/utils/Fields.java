@@ -7,7 +7,7 @@ public class Fields {
     public static final String tokenId = "token_id";
     public static final String USER_TYPE = "user_type";
 
-    public static class AcceptCall{
+    public static class AcceptCall {
         public static final String PHONE_NUMBER = "phone";
 
     }
@@ -20,7 +20,8 @@ public class Fields {
 
     public static class Login {
         public static final String PHONE_NUMBER = "phone";
-        public static final String PIN_CODE = "pincode";
+        //public static final String PIN_CODE = "pincode";
+        public static final String OTP_CODE = "code";
         public static final String DEVICE_TYPE = "devicetype";
         public static final String USER_STATUS = "user_status";
         public static final String REG_ID = "regid";
@@ -80,6 +81,7 @@ public class Fields {
         public static final String tokenId = "token_id";
         public static final String isAvailable = "is_available";
     }
+
     public static final class PushNotificationFCM {
         public static final String ID = "id";
         public static final String _ID = "_id";

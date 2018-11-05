@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
+import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
@@ -56,6 +57,27 @@ public class ActivityStackManager {
         return mActivityStack;
     }
 
+
+    /***
+     * Open Number verification screen i.e. OTP
+     *
+     * @param context Calling context
+     */
+    public void startPhoneNumberVerificationActivity(Context context) {
+        Intent intent = new Intent(context, NumberVerificationActivity.class);
+        context.startActivity(intent);
+    }
+
+    /***
+     *  Open Login screen and clear all other activities
+     *
+     * @param context Calling context
+     */
+    public void startLoginActivityNoFlag(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+    }
 
     /***
      * Open splash screen and clear all activities from task.

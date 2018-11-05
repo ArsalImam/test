@@ -116,6 +116,27 @@ public enum Dialogs {
         return ((null != mDialog) && mDialog.isShowing());
     }
 
+    /***
+     * Show Dialog to user for Invalid OTP code entry.
+     *
+     * @param context Calling context
+     */
+    public void showInvalidCodeDialog(Context context) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.invalid_code_dialog);
+        FontButton okIv = mDialog.findViewById(R.id.ivPositive);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+            }
+        });
+        mDialog.setCancelable(false);
+        showDialog();
+    }
+
+
     public void showLoader(Context context) {
         if (null != mDialog && mDialog.isShowing()) return;
         mDialog = new Dialog(context, R.style.actionSheetTheme);
@@ -479,13 +500,40 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showInactiveAccountDialog(final Context context, final String number, final String msg) {
+    /***
+     * Show Driver license expire Account deactivate message
+     * @param context Calling context
+     * @param number Support Helpline number
+     */
+    public void showInactiveAccountDialog(final Context context, final String number) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_inactive_account);
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+                Utils.callingIntent(context, number);
+            }
+        });
+        showDialog();
+    }
+
+    /***
+     * Show Region Out error message with support number
+     * @param context Calling Context
+     * @param number Support number
+     * @param msg Message which needs to be displayed.
+     */
+    public void showRegionOutErrorDialog(final Context context,
+                                         final String number,
+                                         final String msg) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_region_out);
         if (StringUtils.isNotBlank(msg)) {
-            ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(msg);
+            ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
         }
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -496,6 +544,7 @@ public enum Dialogs {
         });
         showDialog();
     }
+
 
     public void showTopUpDialog(final Context context, final boolean isCourierType, final StringCallBack callBack) {
         if (null == context) return;
@@ -568,7 +617,7 @@ public enum Dialogs {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(
-                                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         ((AppCompatActivity) context).startActivityForResult(intent, requestCode);
                     }
                 });
@@ -755,7 +804,7 @@ public enum Dialogs {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
         mDialog.setContentView(R.layout.signup_success_dialog);
-        ((FontTextView)mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
+        ((FontTextView) mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
         mDialog.setCancelable(false);
         mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
         showDialog();
