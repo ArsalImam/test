@@ -15,6 +15,7 @@ import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
@@ -24,9 +25,9 @@ import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
-import com.bykea.pk.partner.ui.activities.BookingActivity;
-import com.bykea.pk.partner.ui.activities.JsBankFingerSelectionActivity;
+import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
+import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
@@ -36,6 +37,7 @@ import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
+import com.bykea.pk.partner.ui.activities.SplashActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -55,10 +57,62 @@ public class ActivityStackManager {
         return mActivityStack;
     }
 
-    public void startLoginActivity(Context mContext) {
-        Intent intent = new Intent(mContext, LoginActivity.class);
+
+    /***
+     * Open Number verification screen i.e. OTP
+     *
+     * @param context Calling context
+     */
+    public void startPhoneNumberVerificationActivity(Context context) {
+        Intent intent = new Intent(context, NumberVerificationActivity.class);
+        context.startActivity(intent);
+    }
+
+    /***
+     *  Open Login screen and clear all other activities
+     *
+     * @param context Calling context
+     */
+    public void startLoginActivityNoFlag(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+    }
+
+    /***
+     * Open splash screen and clear all activities from task.
+     * @param context Calling context.
+     */
+    public void startLandingActivity(Context context) {
+        Intent intent = new Intent(context, LandingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Start Login Activity and clear whole stack.
+     *
+     * @param context Calling context.
+     */
+    public void startLoginActivity(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+    }
+
+    /***
+     * Start login Activity
+     * @param mContext Calling context.
+     * @param clearWholeTask should whole stack need to be cleared before opening login screen.
+     */
+    public void startLoginActivity(Context mContext, boolean clearWholeTask) {
+        Intent intent = new Intent(mContext, LoginActivity.class);
+        if (clearWholeTask) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        }
         mContext.startActivity(intent);
     }
 
@@ -123,9 +177,9 @@ public class ActivityStackManager {
     }
 
     /*
-    * This method check for Android version of device and starts location service as foreground
-    * service when OS is greater or equal to Android O
-    */
+     * This method check for Android version of device and starts location service as foreground
+     * service when OS is greater or equal to Android O
+     */
     private void startService(Context mContext, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mContext.startForegroundService(intent);

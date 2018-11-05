@@ -120,7 +120,7 @@
         android:layout_marginRight="@dimen/margin.normal"
         android:layout_marginTop="@dimen/margin.normal"
         android:background="@drawable/button_green"
-        android:text="@string/button.text.save"
+        android:text="@string/button_text_save"
         android:textColor="@color/white" />
 
 </LinearLayout>

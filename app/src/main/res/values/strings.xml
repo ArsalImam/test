@@ -9,14 +9,14 @@
     <!--<string name="google.api.client.key">AIzaSyDRo33cwg4KXS6KK2ibsZ4_40_3fsWGCeE</string>-->
 
     <!--                BUTTON STRINGS HERE                 -->
-    <string name="button.text.arrived">پہنچ گئے</string>
-    <string name="button.text.start">اسٹارٹ</string>
-    <string name="button.text.finish">مکمل</string>
-    <string name="button.text.save">UPDATE</string>
-    <string name="button.text.ok">OK</string>
-    <string name="button.text.yes">Yes</string>
-    <string name="button.text.cancel">Cancel</string>
-    <string name="button.text.cancel.urdu">کینسل</string>
+    <string name="button_text_arrived">پہنچ گئے</string>
+    <string name="button_text_start">اسٹارٹ</string>
+    <string name="button_text_finish">مکمل</string>
+    <string name="button_text_save">UPDATE</string>
+    <string name="button_text_ok">OK</string>
+    <string name="button_text_yes">Yes</string>
+    <string name="button_text_cancel">Cancel</string>
+    <string name="button_text_cancel_urdu">کینسل</string>
 
     <!--Drop off for driver -->
 
@@ -30,18 +30,18 @@
 
 
     <!--                ERROR STRINGS HERE                  -->
-    <string name="error.internet.connectivity">Please check your internet connection.</string>
-    <string name="error.phone.number.1">Please enter correct mobile number</string>
-    <string name="error.field.empty">required</string>
-    <string name="error.picture.not_selected">Picture not selected.</string>
+    <string name="error_internet_connectivity">Please check your internet connection.</string>
+    <string name="error_phone_number_1">Please enter correct mobile number</string>
+    <string name="error_field_empty">required</string>
+    <string name="error_picture_not_selected">Picture not selected.</string>
     <string name="error_try_again">Something went wrong. Please try again later.</string>
 
-    <string name="dialog.internet.error">Problem in internet connectivity. Check your internet connection.</string>
-    <string name="dialog.inactive.message">This option will not get calls from users.
+    <string name="dialog_internet_error">Problem in internet connectivity. Check your internet connection.</string>
+    <string name="dialog_inactive_message">This option will not get calls from users.
         do you want to make it inactive?</string>
 
-    <string name="permissions.required">Permission Required</string>
-    <string name="permissions.location">For the best experience, Bykea needs to use your current location
+    <string name="permissions_required">Permission Required</string>
+    <string name="permissions_location">For the best experience, Bykea needs to use your current location
     to find Jobs for you. Do you want to share your location?</string>
 
 
@@ -102,12 +102,12 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_change_pin">ChangePinActivity</string>
 
-    <string name="hint.phone.number"></string>
-    <string name="hint.phone.number.nofont">11 Digit Mobile No</string>
-    <string name="button.text.help">HELP?</string>
-    <string name="button.text.submit.a.request">Submit a Request</string>
-    <string name="label.text.logout.confirmation.message">Are you sure you want to logout?</string>
-    <string name="error.field.pin">Pin Code must be 4 digits</string>
+    <string name="hint_phone_number"></string>
+    <string name="hint_phone_number_nofont">11 Digit Mobile No</string>
+    <string name="button_text_help">HELP?</string>
+    <string name="button_text_submit_a_request">Submit a Request</string>
+    <string name="label_text_logout_confirmation_message">Are you sure you want to logout?</string>
+    <string name="error_field_pin">Pin Code must be 4 digits</string>
     <string name="destination_not_selected_msg">Enter Drop Off</string>
     <string name="internet_error">Problem in internet connectivity. Check your internet connection.</string>
     <string name="inactive_msg">آن لائن ہو کر درخواست لیں</string>
@@ -119,12 +119,12 @@
     <string name="bookingProblem">بکنگ سے متعلق مسئلہ کے لئے بکنگ کی تفصیل\n میں جاکر پرابلم کے بٹن پے کلک کریں</string>
     <string name="loading">Loading…</string>
     <string name="verification_code_sent">We have sent an SMS with your new pin code</string>
-    <string name="profile_action_sheet_new.tv.camera">Camera</string>
-    <string name="profile_action_sheet_new.tv.gallery">Gallery</string>
-    <string name="btn.cancel">Cancel</string>
+    <string name="profile_action_sheet_new_tv_camera">Camera</string>
+    <string name="profile_action_sheet_new_tv_gallery">Gallery</string>
+    <string name="btn_cancel">Cancel</string>
     <string name="camera_permission">Please allow Camera Permissions</string>
-    <string name="permissions.docs">Camera Permission required to take Picture for your Profile &amp; Documents</string>
-    <string name="java.camera_permission.msg"><![CDATA[For the best Bykea experience, please enable Permission-> Camera in the application settings.]]></string>
+    <string name="permissions_docs">Camera Permission required to take Picture for your Profile &amp; Documents</string>
+    <string name="java_camera_permission_msg"><![CDATA[For the best Bykea experience, please enable Permission-> Camera in the application settings.]]></string>
     <string name="ranking_footer_text">1) بونس کی کمائی کرائے کی کمائی کے علاوہ</string>
 
     <string name="ranking_footer_text2">2) بونس حاصل کرنے کے لئے ریٹنگ، فلفلمنٹ، قبولیت کی شرائط مکمل کرنا ضروری ہے</string>
@@ -161,7 +161,7 @@
     <string name="wallet_urdu">\u0020والیٹ\u0020</string>
     <string name="partner_ki_taraf_se_rating">\u0020پارٹنر کی طرف سے ریٹنگ\u0020</string>
     <string name="customer_ki_taraf_se_rating">\u0020کسٹمر کی طرف سے ریٹنگ\u0020</string>
-    <string name="logout_text">\u0020لاگ آوٹ؟\u0020</string>
+    <string name="logout_text_ur">\u0020لاگ آوٹ؟\u0020</string>
     <string name="cancel_notification">\u0020کسٹمر نے بکنگ کینسل کردی\u0020</string>
     <string name="cancel_notification_by_admin">\u0020ایڈمن نے بکنگ کینسل کردی\u0020</string>
     <string name="score_urdu">\u0020سکور</string>
@@ -174,6 +174,7 @@
     <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
     <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
     <string name="invalid_phone">Invalid phone</string>
+    <string name="invalid_code_error_message">Invalid Code</string>
     <string name="current_week">Current Week</string>
     <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
     <string name="license_title">License</string>
@@ -187,5 +188,34 @@
     <string name="motor_bike_title">Motorbike</string>
     <string name="motor_bike_title_ur">موٹر سائیکل</string>
     <string name="splash_welcome_message">حرکت میں برکت</string>
+    <string name="register_with_mobile">موبائل نمبر درج کریں</string>
+    <string name="unauthorized_title">UnAuthorized</string>
+    <string name="unauthorized_message">Your account is logged in to another device. You are not login here anymore</string>
+    <string name="unauthorized_message_fake_gps">We strictly discourage usage of Fake GPS, please disable this and login again. Thank you! </string>
+    <string name="unauthorized_message_session_expired">Session Expired. Please Log in again.</string>
+    <string name="licence_expire_title">Licence Expired</string>
+    <string name="licence_expire_message">Your driving licence is expired. Please renew your driving licence and then contact support.</string>
+    <string name="title_activity_number_verification">NumberVerificationActivity</string>
+    <string name="wait_while_we_verify">Wait While We Verify</string>
+    <string name="otp_submit">submit</string>
+    <string name="wait_for_verification_msg_ur">تصدیق كے لیے انتظار فرمائیں</string>
+    <string name="verification_call_me_msg_ur">مجھے کال کر کے کوڈ دیں</string>
+    <string name="enter_verification_code_ur">کوڈ درج کریں</string>
+    <string name="digit_zero">0</string>
+    <string name="enter_verification_code">Enter verification code</string>
+    <string name="force_app_update_link">https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="force_app_update_title">اعلان !</string>
+    <string name="driver_licence_expire_error">your license has expired</string>
+    <string name="driver_licence_expire_error_ur">آپکا لائسنس ایکسپائر ہے ، كال بائیکیا</string>
+    <string name="error_heading">Error</string>
+    <string name="invalid_code_error">Invalid Verification Code</string>
+    <string name="send_code_via_call_ur">\u0020کال کے زریعے تصدیقی کوڈ حاصل کریں\u0020</string>
+    <string name="verify_on_call_ur">\u0020کال پر تصدیق\u0020</string>
+    <string name="sms">\u0020SMS\u0020</string>
+    <string name="enter_code_ur">\u0020کوڈ درج کریں\u0020</string>
+    <string name="received_code_ur">\u0020اس نمبر پر موصول کردہ\u0020</string>
+    <string name="region_out_message_ur">  آپکا اکاؤنٹ  اس شہر میں بلاک ہے </string>
+    <string name="account_blocked_message_ur">آپکا ا کاؤنٹ بند ہے، كال بائیکیا</string>
+    <string name="region_out_support_helpline">+923111111700</string>
 
 </resources>

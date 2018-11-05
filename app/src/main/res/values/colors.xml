@@ -21,6 +21,7 @@
     <color name="secondaryColorLightf2f2f2">#f2f2f2</color>
     <color name="secondaryColorLightest1">#eaeaea</color>
     <color name="secondaryColorDark">#303030</color>
+    <color name="grey_light">#bcbdbc</color>
 
     <color name="colorAccent">#04aa32</color>
     <color name="windowBackground">#FFFFFF</color>
