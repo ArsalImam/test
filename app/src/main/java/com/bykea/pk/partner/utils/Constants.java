@@ -86,7 +86,8 @@ public class Constants {
     public static final int APP_FORCE_UPDATE = 600;
     public static final int DRIVER_LICENSE_EXPIRED = 900;
     public static final int DRIVER_NOT_REGISTER = 404;
-    public static final int DRIVER_REGION_NOT_ALLOWED=400;
+    public static final int DRIVER_REGION_NOT_ALLOWED = 601;
+    public static final int DRIVER_ACCOUNT_BLOCKED = 602;
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";

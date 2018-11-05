@@ -304,6 +304,11 @@ public class LoginActivity extends BaseActivity {
                             getString(R.string.region_out_support_helpline),
                             getString(R.string.region_out_message_ur));
                     break;
+                case Constants.DRIVER_ACCOUNT_BLOCKED:
+                    Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                            getString(R.string.region_out_support_helpline),
+                            getString(R.string.account_blocked_message_ur));
+                    break;
                 default: {
                     String msg = StringUtils.containsIgnoreCase(verifyNumberResponse.getMessage(),
                             getString(R.string.invalid_phone)) ?
