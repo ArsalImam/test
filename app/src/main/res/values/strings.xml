@@ -214,7 +214,7 @@
     <string name="sms">\u0020SMS\u0020</string>
     <string name="enter_code_ur">\u0020کوڈ درج کریں\u0020</string>
     <string name="received_code_ur">\u0020اس نمبر پر موصول کردہ\u0020</string>
-    <string name="region_out_message_ur">آپکا اکاؤنٹ  اس شہر میں بلاک ہے</string>
+    <string name="region_out_message_ur">  آپکا اکاؤنٹ  اس شہر میں بلاک ہے </string>
     <string name="region_out_support_helpline">+923111111700</string>
 
 </resources>
