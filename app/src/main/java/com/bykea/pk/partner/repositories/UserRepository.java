@@ -775,8 +775,8 @@ public class UserRepository {
             //endregion
 
             if (driverStatus && AppPreferences.getDriverDestination() != null) {
-                statusRequest.setEndingLatitude(AppPreferences.getDriverDestination().latitude);
-                statusRequest.setEndingLongitude(AppPreferences.getDriverDestination().longitude);
+                statusRequest.setEndingLatitude(String.valueOf(AppPreferences.getDriverDestination().latitude));
+                statusRequest.setEndingLongitude(String.valueOf(AppPreferences.getDriverDestination().longitude));
                 statusRequest.setEndingAddress(AppPreferences.getDriverDestination().address);
 
                 properties.put("DD", true);

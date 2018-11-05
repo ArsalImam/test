@@ -26,10 +26,10 @@ public class DriverAvailabilityRequest {
     private String imei;
 
     @SerializedName("end_lat")
-    private double endingLatitude;
+    private String endingLatitude;
 
     @SerializedName("end_lng")
-    private double endingLongitude;
+    private String endingLongitude;
 
     @SerializedName("end_address")
     private String endingAddress;
@@ -92,19 +92,19 @@ public class DriverAvailabilityRequest {
         this.imei = imei;
     }
 
-    public double getEndingLatitude() {
+    public String getEndingLatitude() {
         return endingLatitude;
     }
 
-    public void setEndingLatitude(double endingLatitude) {
+    public void setEndingLatitude(String endingLatitude) {
         this.endingLatitude = endingLatitude;
     }
 
-    public double getEndingLongitude() {
+    public String getEndingLongitude() {
         return endingLongitude;
     }
 
-    public void setEndingLongitude(double endingLongitude) {
+    public void setEndingLongitude(String endingLongitude) {
         this.endingLongitude = endingLongitude;
     }
 
