@@ -38,6 +38,7 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
+import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontEditText;
@@ -119,6 +120,7 @@ public class CodeVerificationFragment extends Fragment {
         initVerificationEditText();
         initDonutProgress();
         animateDonutProgress();
+        checkPermissions();
         titleMsg.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber()));
     }
 
@@ -579,6 +581,15 @@ public class CodeVerificationFragment extends Fragment {
             }
         }
     };
+
+    /***
+     * Check Sms Permission from device.
+     */
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Permissions.hasSMSPermissions(mCurrentActivity)) {
+            Permissions.getSMSPermissions(mCurrentActivity);
+        }
+    }
 
     //endregion
 
