@@ -9,10 +9,13 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.NotificationData;
+import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SavedPlaces;
+import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -20,14 +23,9 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
-import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.data.SettingsData;
-import com.bykea.pk.partner.models.response.NormalCallData;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -145,6 +143,7 @@ public class AppPreferences {
     public static String getPhoneNumber() {
         return mSharedPreferences.getString(Keys.PHONE_NUMBER, StringUtils.EMPTY);
     }
+
 
     public static String getDriverEmail() {
         return mSharedPreferences.getString(Keys.EMAIL, StringUtils.EMPTY);

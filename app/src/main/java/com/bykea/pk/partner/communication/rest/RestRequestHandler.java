@@ -93,27 +93,135 @@ public class RestRequestHandler {
     private static String TAG = RestRequestHandler.class.getSimpleName();
 
 
-    public void sendUserLogin(Context context, final IResponseCallback onResponseCallBack, String email, String password,
-                              String deviceType, String userStatus, String regID) {
+    /***
+     * Send Driver login request to API Server
+     * @param context Calling context.
+     * @param callback API response callback.
+     * @param phoneNumber Driver phone number
+     * @param deviceType Device type i.e. (Android/iOS)
+     * @param latitude Current Driver latitude.
+     * @param longitude Current driver longitude.
+     * @param OtpType Method type for OTP call i.e (SMS/PHONE)
+     */
+    public void sendDriverLogin(Context context, final IResponseCallback callback,
+                                String phoneNumber,
+                                String deviceType,
+                                double latitude,
+                                double longitude,
+                                String OtpType) {
+
+        mContext = context;
+        this.mResponseCallBack = callback;
+        mRestClient = RestClient.getClient(mContext);
+        Call<VerifyNumberResponse> numberResponseCall = mRestClient.sendDriverOTP(
+                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion(context));
+
+        numberResponseCall.enqueue(new Callback<VerifyNumberResponse>() {
+            @Override
+            public void onResponse(Response<VerifyNumberResponse> response, Retrofit retrofit) {
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        CommonResponse commonResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit);
+                        if (commonResponse != null) {
+                            VerifyNumberResponse verifyNumberResponse = new VerifyNumberResponse();
+                            verifyNumberResponse.setMessage(commonResponse.getMessage());
+                            verifyNumberResponse.setCode(commonResponse.getCode());
+                            verifyNumberResponse.setSuccess(commonResponse.isSuccess());
+                            mResponseCallBack.onResponse(verifyNumberResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
+                } else {
+                    if (response.isSuccess()) {
+                        if (null != mResponseCallBack) {
+                            mResponseCallBack.onResponse(response.body());
+                        }
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(),
+                                response.body().getMessage());
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(0, getErrorMessage(t));
+            }
+        });
+
+
+    }
+
+    /***
+     * Send User login request to API server.
+     * @param context Calling Context.
+     * @param onResponseCallBack Response Handler Callback
+     * @param driverNumber Driver number
+     * @param otpCode OTP code which he received.
+     * @param deviceType Device Type i.e. (Android/iOS)
+     * @param regID FCM user ID
+     */
+    public void sendUserLogin(Context context,
+                              final IResponseCallback onResponseCallBack,
+                              String driverNumber,
+                              String otpCode,
+                              String deviceType,
+                              String regID) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
         Utils.redLog("IMEI NUMBER", Utils.getDeviceId(context));
-        Call<LoginResponse> restCall = mRestClient.login(email, password,
-                deviceType, userStatus, regID, "" + AppPreferences.getLatitude(), "" + AppPreferences.getLongitude(), Utils.getVersion(context),
-                AppPreferences.getOneSignalPlayerId(), AppPreferences.getADID(), Utils.getDeviceId(context));
+        Call<LoginResponse> restCall = mRestClient.login(
+                driverNumber,
+                otpCode,
+                deviceType,
+                regID,
+                "" + AppPreferences.getLatitude(),
+                "" + AppPreferences.getLongitude(),
+                Utils.getVersion(context),
+                AppPreferences.getOneSignalPlayerId(),
+                AppPreferences.getADID(),
+                Utils.getDeviceId(context)
+        );
+
         restCall.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {
-                // Got success from server
-                if (response.isSuccess()) {
-                    if (null != mResponseCallBack) {
-                        mResponseCallBack.onResponse(response.body());
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        CommonResponse commonResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit);
+                        if (commonResponse != null) {
+                            LoginResponse loginResponse = new LoginResponse();
+                            loginResponse.setMessage(commonResponse.getMessage());
+                            loginResponse.setCode(commonResponse.getCode());
+                            loginResponse.setSuccess(commonResponse.isSuccess());
+                            mResponseCallBack.onResponse(loginResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
                     }
                 } else {
-                    mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
+                    if (response.isSuccess()) {
+                        if (null != mResponseCallBack) {
+                            mResponseCallBack.onResponse(response.body());
+                        }
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(),
+                                response.body().getMessage());
+                    }
                 }
-
             }
 
             @Override

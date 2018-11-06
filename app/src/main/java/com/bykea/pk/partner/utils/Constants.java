@@ -102,6 +102,28 @@ public class Constants {
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
     }
+    public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
+    public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
+
+    public static final String BUILD_VARIANT_LOCAL_FLAVOR = "local";
+
+    public static final String OTP_SMS = "sms";
+    public static final String OTP_CALL = "call";
+
+    public static final long VERIFICATION_WAIT_MAX_TIME = 25000;
+    public static final long VERIFICATION_WAIT_COUNT_DOWN = 100;
+
+    public static final String DRIVER_STATUS_CODE = "2";
+    public static final int APP_FORCE_UPDATE = 600;
+    public static final int DRIVER_LICENSE_EXPIRED = 900;
+    public static final int DRIVER_NOT_REGISTER = 404;
+    public static final int DRIVER_REGION_NOT_ALLOWED = 601;
+    public static final int DRIVER_ACCOUNT_BLOCKED = 602;
+
+
+    public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
+    public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";
+
 
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
@@ -277,6 +299,15 @@ public class Constants {
         public static final String GOOD_STRENGTH = "Good Connection";
         public static final String NO_CONNECTIVITY = "No Connection";
 
+    }
+
+    /**
+     * Inner class for Font Names
+     */
+    public static class FontNames {
+        public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
+        public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
+        public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
     }
 
 }

@@ -45,8 +45,7 @@
         tools:node="merge">
         <activity
             android:name=".ui.activities.LoginActivity"
-            android:theme="@style/NewTheme"
-            android:windowSoftInputMode="adjustNothing" />
+            android:theme="@style/NewTheme" />
         <activity
             android:name=".ui.activities.HomeActivity"
             android:exported="true"
@@ -205,6 +204,8 @@
             android:exported="true" />
         <activity android:name=".ui.activities.ShahkarActivity" />
         <activity android:name=".ui.activities.RankingActivity" />
+        <activity android:name=".ui.activities.NumberVerificationActivity" />
+        <activity android:name=".ui.activities.LandingActivity" />
     </application>
 
 </manifest>
