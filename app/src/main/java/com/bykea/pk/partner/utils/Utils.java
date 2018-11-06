@@ -2308,10 +2308,12 @@ public class Utils {
     /**
      * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
      *
-     * @param context calling context
+     * @param context  calling context
+     * @param activity calling activity
+     * @return True if we are going to ask Battery optimization, else false.
      * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
      */
-    public static void disableBatteryOptimization(Context context) {
+    public static boolean disableBatteryOptimization(Context context, AppCompatActivity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = context.getPackageName();
@@ -2319,9 +2321,35 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                context.startActivity(intent);
+                activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
+     *
+     * @param context  calling context
+     * @param fragment Calling fragment
+     * @return True if we are going to ask Battery optimization, else false.
+     * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     */
+    public static boolean disableBatteryOptimization(Context context,
+                                                     android.support.v4.app.Fragment fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = context.getPackageName();
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                fragment.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

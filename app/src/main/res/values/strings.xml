@@ -200,4 +200,6 @@
     <string name="notification_title_driver_logout_location">Fetching location</string>
     <string name="notification_title_driver_status">Your Status: %1$s</string>
     <string name="notification_title_driver_trip">TRIP# %1$s is in %2$s state</string>
+    <string name="battery_optimize_error_title">Battery Optimize Error</string>
+    <string name="battery_optimize_error_message">Provide Battery Optimize permission for making you online</string>
 </resources>

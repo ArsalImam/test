@@ -222,6 +222,32 @@ public enum Dialogs {
         showDialog();
     }
 
+    /***
+     * Shows battery dialog
+     * @param context Calling context
+     * @param title  Title which needs to be displayed.
+     * @param message Message which needs to be displayed.
+     * @param onClick Click listener
+     */
+    public void showAlertDialogForBattery(Context context,
+                                          String title,
+                                          String message,
+                                          View.OnClickListener onClick){
+
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_alert);
+        mDialog.setCancelable(false);
+        mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(onClick);
+        ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(message);
+        ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
+
+        showDialog();
+
+    }
 
     public void showAlertDialog(Context context, String title, String message, View.OnClickListener onClick) {
         dismissDialog();
@@ -741,7 +767,6 @@ public enum Dialogs {
 
         showDialog();
     }
-
 
     /**
      * This methods shows a pop up dialog when partner has successfully signed up

@@ -9,9 +9,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -88,6 +90,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class HomeFragmentTesting extends Fragment {
@@ -220,12 +223,14 @@ public class HomeFragmentTesting extends Fragment {
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
     private boolean isCalled;
-
+    private boolean handleUIChangeForInActive = true;
+    private boolean isDialogDisplayingForBattery = false;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home_testing, container, false);
+        view = inflater.inflate(R.layout.fragment_home_testing, container, false);
         unbinder = ButterKnife.bind(this, view);
 
         mCurrentActivity = ((HomeActivity) getActivity());
@@ -306,15 +311,18 @@ public class HomeFragmentTesting extends Fragment {
                             }
                         });
                     } else {
-                        callAvailableStatusAPI(true);
-                        mCurrentActivity.showBismillah();
-                        mapView.setVisibility(View.GONE);
-                        mapPinIv.setVisibility(View.GONE);
-                        headerTopActiveLayout.setVisibility(View.GONE);
-                        headerTopUnActiveLayout.setVisibility(View.VISIBLE);
-                        layoutUpper.setVisibility(View.VISIBLE);
-                        layoutDuration.setVisibility(View.VISIBLE);
-                        driverStatsLayout.setVisibility(View.VISIBLE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            // TODO call battery optimization
+                            boolean calledOptimize = Utils.disableBatteryOptimization(mCurrentActivity,
+                                    HomeFragmentTesting.this);
+                            if (!calledOptimize) {
+                                handleActivationStatusForBattery(true);
+                            }
+                        } else {
+                            handleUIChangeForInActive = true;
+                            handleActivationStatusForBattery(true);
+                        }
+
                     }
 
 
@@ -353,15 +361,17 @@ public class HomeFragmentTesting extends Fragment {
                             }
                         });
                     } else {
-                        callAvailableStatusAPI(true);
-                        mCurrentActivity.showKhudaHafiz();
-                        mapView.setVisibility(View.VISIBLE);
-                        headerTopActiveLayout.setVisibility(View.VISIBLE);
-                        mapPinIv.setVisibility(View.VISIBLE);
-                        headerTopUnActiveLayout.setVisibility(View.GONE);
-                        layoutUpper.setVisibility(View.GONE);
-                        layoutDuration.setVisibility(View.GONE);
-                        driverStatsLayout.setVisibility(View.GONE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            // TODO call battery optimization
+                            boolean calledOptimize = Utils.disableBatteryOptimization(
+                                    mCurrentActivity, HomeFragmentTesting.this);
+                            if (!calledOptimize) {
+                                handleActivationStatusForBattery(false);
+                            }
+                        } else {
+                            handleUIChangeForInActive = false;
+                            handleActivationStatusForBattery(false);
+                        }
                     }
 
 
@@ -377,10 +387,43 @@ public class HomeFragmentTesting extends Fragment {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             AppPreferences.setAvailableAPICalling(true);
-            repository.requestDriverUpdateStatus(mCurrentActivity,handler,status);
+            repository.requestDriverUpdateStatus(mCurrentActivity, handler, status);
             //repository.requestUpdateStatus(mCurrentActivity, handler, status);
         }
     }
+
+    /***
+     * Handle UI logic and API status call for driver availability according to
+     * ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS check if user allowed it.
+     * Only then we would call status API and update respective UI
+     *
+     * @param handleForInactive should update UI for Inactive/Active
+     * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     */
+    private void handleActivationStatusForBattery(boolean handleForInactive) {
+        if (handleForInactive) {
+            callAvailableStatusAPI(true);
+            mCurrentActivity.showBismillah();
+            mapView.setVisibility(View.GONE);
+            mapPinIv.setVisibility(View.GONE);
+            headerTopActiveLayout.setVisibility(View.GONE);
+            headerTopUnActiveLayout.setVisibility(View.VISIBLE);
+            layoutUpper.setVisibility(View.VISIBLE);
+            layoutDuration.setVisibility(View.VISIBLE);
+            driverStatsLayout.setVisibility(View.VISIBLE);
+        } else {
+            callAvailableStatusAPI(true);
+            mCurrentActivity.showKhudaHafiz();
+            mapView.setVisibility(View.VISIBLE);
+            headerTopActiveLayout.setVisibility(View.VISIBLE);
+            mapPinIv.setVisibility(View.VISIBLE);
+            headerTopUnActiveLayout.setVisibility(View.GONE);
+            layoutUpper.setVisibility(View.GONE);
+            layoutDuration.setVisibility(View.GONE);
+            driverStatsLayout.setVisibility(View.GONE);
+        }
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -464,7 +507,8 @@ public class HomeFragmentTesting extends Fragment {
 
             }
 
-            Dialogs.INSTANCE.dismissDialog();
+            if (!isDialogDisplayingForBattery)
+                Dialogs.INSTANCE.dismissDialog();
         }
     }
 
@@ -808,11 +852,12 @@ public class HomeFragmentTesting extends Fragment {
 
         @Override
         public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
-             if (mCurrentActivity != null && getView() != null) {
+            if (mCurrentActivity != null && getView() != null) {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
+                        if (!isDialogDisplayingForBattery)
+                            Dialogs.INSTANCE.dismissDialog();
                         if (pilotStatusResponse.isSuccess()) {
                             AppPreferences.setAvailableStatus(!AppPreferences.getAvailableStatus());
                             AppPreferences.setAvailableAPICalling(false);
@@ -864,7 +909,8 @@ public class HomeFragmentTesting extends Fragment {
                     @Override
                     public void run() {
 //                        destinationSet(false);
-                        Dialogs.INSTANCE.dismissDialog();
+                        if (!isDialogDisplayingForBattery)
+                            Dialogs.INSTANCE.dismissDialog();
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
                             Utils.onUnauthorized(mCurrentActivity);
                         } else {
@@ -1172,6 +1218,22 @@ public class HomeFragmentTesting extends Fragment {
                 if (resultCode == RESULT_OK) {
                     PlacesResult mDropOff = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT);
                     AppPreferences.setDriverDestination(mDropOff);
+                }
+            } else if (requestCode == Constants.BATTERY_OPTIMIZATION_RESULT) {
+                if (resultCode == RESULT_OK) {
+                    handleActivationStatusForBattery(handleUIChangeForInActive);
+                } else if (resultCode == RESULT_CANCELED) {
+                    isDialogDisplayingForBattery = true;
+                    Dialogs.INSTANCE.showAlertDialogForBattery(mCurrentActivity,
+                            getString(R.string.battery_optimize_error_title),
+                            getString(R.string.battery_optimize_error_message),
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    isDialogDisplayingForBattery = false;
+                                    Dialogs.INSTANCE.dismissDialog();
+                                }
+                            });
                 }
             }
         }
