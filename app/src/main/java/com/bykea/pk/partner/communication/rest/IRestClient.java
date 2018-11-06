@@ -405,22 +405,13 @@ interface IRestClient {
     @PUT(ApiTags.SET_DRIVER_LOCATION)
     Call<DriverLocationResponse> updateDriverLocation(@Body DriverLocationRequest driverLocation);
 
-                                             @Query("lat") String lat, @Query("lng") String lng);
+
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(
 //            @QueryMap Map<String, String> params);
 
 
   /*  @FormUrlEncoded
-
-
-
-
-
-
-
-
-
     @Multipart
     @POST(Tags.UPLOAD_DRIVER_DOCUMENTS_API)
     Call<UploadDocumentFile> uploadDocumentFile(@Part("file\"; filename=\"file.jpg\" ")
