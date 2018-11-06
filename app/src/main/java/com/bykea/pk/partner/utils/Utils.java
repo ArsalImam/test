@@ -156,7 +156,7 @@ public class Utils {
 
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            XLog.Log.e(tag + " : ", message);
+            com.elvishew.xlog.XLog.Log.e(tag + " : ", message);
         }
     }
 
