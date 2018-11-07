@@ -329,4 +329,10 @@ public class LoginActivity extends BaseActivity {
 
     //endregion
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ActivityStackManager.getInstance().startLandingActivity(this);
+    }
 }

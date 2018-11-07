@@ -341,43 +341,46 @@ public class HomeFragmentTesting extends Fragment {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Utils.isGpsEnable()) {
+                    if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                        if (AppPreferences.getAvailableStatus()) {
+                            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                    callAvailableStatusAPI(false);
+                                    mCurrentActivity.showKhudaHafiz();
+                                    mapView.setVisibility(View.VISIBLE);
+                                    headerTopActiveLayout.setVisibility(View.VISIBLE);
+                                    mapPinIv.setVisibility(View.VISIBLE);
+                                    headerTopUnActiveLayout.setVisibility(View.GONE);
+                                    layoutUpper.setVisibility(View.GONE);
+                                    layoutDuration.setVisibility(View.GONE);
+                                    driverStatsLayout.setVisibility(View.GONE);
 
-                if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                    if (AppPreferences.getAvailableStatus()) {
-                        Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Dialogs.INSTANCE.dismissDialog();
-                                callAvailableStatusAPI(false);
-                                mCurrentActivity.showKhudaHafiz();
-                                mapView.setVisibility(View.VISIBLE);
-                                headerTopActiveLayout.setVisibility(View.VISIBLE);
-                                mapPinIv.setVisibility(View.VISIBLE);
-                                headerTopUnActiveLayout.setVisibility(View.GONE);
-                                layoutUpper.setVisibility(View.GONE);
-                                layoutDuration.setVisibility(View.GONE);
-                                driverStatsLayout.setVisibility(View.GONE);
-
-                            }
-                        });
-                    } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            // TODO call battery optimization
-                            boolean calledOptimize = Utils.disableBatteryOptimization(
-                                    mCurrentActivity, HomeFragmentTesting.this);
-                            if (!calledOptimize) {
+                                }
+                            });
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                // TODO call battery optimization
+                                boolean calledOptimize = Utils.disableBatteryOptimization(
+                                        mCurrentActivity, HomeFragmentTesting.this);
+                                if (!calledOptimize) {
+                                    handleActivationStatusForBattery(false);
+                                }
+                            } else {
+                                handleUIChangeForInActive = false;
                                 handleActivationStatusForBattery(false);
                             }
-                        } else {
-                            handleUIChangeForInActive = false;
-                            handleActivationStatusForBattery(false);
                         }
+
+                    } else {
+                        Dialogs.INSTANCE.showError(mCurrentActivity
+                                , mapPinIv, getString(R.string.error_internet_connectivity));
                     }
-
-
                 } else {
-                    Dialogs.INSTANCE.showError(mCurrentActivity
-                            , mapPinIv, getString(R.string.error_internet_connectivity));
+                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity,
+                            Permissions.LOCATION_PERMISSION);
                 }
             }
         });
@@ -423,7 +426,6 @@ public class HomeFragmentTesting extends Fragment {
             driverStatsLayout.setVisibility(View.GONE);
         }
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -752,7 +754,8 @@ public class HomeFragmentTesting extends Fragment {
         }
 
         if (getActivity().getIntent().getStringExtra("isLogin") != null) {
-            currentIndex = 1;
+            currentIndex = Constants.RESET_CASH_TO_DEFAULT_POSITION;
+            AppPreferences.setCashInHands(cashInHand[Constants.RESET_CASH_TO_DEFAULT_POSITION]);
         }
 
         myRangeBar.refreshDrawableState();
@@ -765,6 +768,20 @@ public class HomeFragmentTesting extends Fragment {
                 AppPreferences.setCashInHands(cashInHand[index]);
             }
         });
+    }
+
+    /***
+     * Reset slider value for cash in hand if current set amount is less then 1000.
+     */
+    private void resetCashSliderToDefault() {
+        cashInHand = AppPreferences.getCashInHandsRange();
+        int currentCashValue = AppPreferences.getCashInHands();
+        if (currentCashValue < Constants.RESET_CASH_TO_DEFAULT_AMOUNT) {
+            AppPreferences.setCashInHands(cashInHand[Constants.RESET_CASH_TO_DEFAULT_POSITION]);
+            myRangeBar.setCurrentIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
+            myRangeBar.setInitialIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
+        }
+
     }
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -875,6 +892,8 @@ public class HomeFragmentTesting extends Fragment {
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
+                                //todo reset slider to 1000 amount when CIH amount is less then 1000
+                                resetCashSliderToDefault();
                             }
                             setStatusBtn();
                         } else {

@@ -58,6 +58,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class BaseActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 203;
     private static final int PERMISSION_REQUEST_CODE = 1010;
+    public static final String GPS_ENABLE_EVENT = "GPS_ENABLE_EVENT";
     private Toolbar mToolbar;
     private FontTextView mTitleTv, status, demandBtn;
     private ImageView mLogo, rightIv;
@@ -264,6 +265,8 @@ public class BaseActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1010) {
             checkPermissions(false);
+        } else if (requestCode == Permissions.LOCATION_PERMISSION) {
+            EventBus.getDefault().post(GPS_ENABLE_EVENT);
         }
     }
 
@@ -307,7 +310,7 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isLocSettingsDialogCalled;
 
     public void checkGps() {
-        if (!Utils.isGpsEnable(mCurrentActivity)) {
+        if (!Utils.isGpsEnable()) {
             isLocSettingsDialogCalled = true;
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         } else if (isLocSettingsDialogCalled) {

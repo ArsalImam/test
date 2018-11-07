@@ -120,6 +120,9 @@ public class Constants {
     public static final int DRIVER_REGION_NOT_ALLOWED = 601;
     public static final int DRIVER_ACCOUNT_BLOCKED = 602;
 
+    public static final int RESET_CASH_TO_DEFAULT_POSITION=1;
+    public static final int RESET_CASH_TO_DEFAULT_AMOUNT=1000;
+
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
     public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";

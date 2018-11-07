@@ -64,6 +64,7 @@ public class LandingActivity extends AppCompatActivity {
             case R.id.tv_login: {
                 ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity,
                         false);
+                finish();
             }
         }
     }

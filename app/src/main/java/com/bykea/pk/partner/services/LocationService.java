@@ -578,6 +578,65 @@ public class LocationService extends Service {
         }
     }
 
+    private void updateETA(String time, String distance) {
+        AppPreferences.setEta(time);
+        AppPreferences.setEstimatedDistance(distance);
+        mBus.post(Keys.ETA_IN_BG_UPDATED);
+    }
+
+    private void addLatLng(double lat, double lon, boolean updatePrevTime) {
+        AppPreferences.addLocCoordinateInTrip(lat, lon, STATUS);
+        AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
+        STATUS = StringUtils.EMPTY;
+    }
+
+    private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            if (Connectivity.isConnectedFast(mContext)) {
+                DriverApp.getApplication().connect();
+            }
+        }
+
+
+        @Override
+        public void onFinish() {
+            if (Utils.canSendLocation()) {
+                synchronized (this) {
+                    double lat = AppPreferences.getLatitude();
+                    double lon = AppPreferences.getLongitude();
+                    boolean isMock = AppPreferences.isFromMockLocation();
+                    if (lat != 0.0 && lon != 0.0 && !isMock) {
+                        updateTripRouteList(lat, lon);
+                        updateETAIfRequired();
+                        //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
+                        if (shouldCallLocApi) {
+                            shouldCallLocApi = false;
+                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
+                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                            } else {
+                                Utils.redLog("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
+                                        + " && GPS -> " + Utils.isGpsEnable());
+                            }
+                        } else {
+                            shouldCallLocApi = true;
+                        }
+                    }
+                    // restart the timer
+                    mCountDownTimer.start();
+                }
+            } else if (Utils.hasLocationCoordinates()) {
+                stopForegroundService();
+            } else {
+                // restart the timer
+                mCountDownTimer.start();
+            }
+
+        }
+    };
+
+    private boolean isDirectionApiRunning;
+
     private synchronized void getRouteLatLng(double lat, double lon, String lastLat, String lastLng) {
         isDirectionApiRunning = true;
         int index = AppPreferences.getLocCoordinatesInTrip().size();

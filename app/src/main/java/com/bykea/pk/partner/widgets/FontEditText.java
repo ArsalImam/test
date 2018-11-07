@@ -41,4 +41,8 @@ public class FontEditText extends AppCompatEditText {
         }
     }
 
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
 }
