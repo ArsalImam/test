@@ -164,6 +164,8 @@ public class FeedbackActivity extends BaseActivity {
                 return false;
             }
         });
+
+        etReceiverName.requestFocus();
     }
 
     /**
@@ -174,6 +176,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onGlobalLayout() {
                 scrollView.fullScroll(View.FOCUS_DOWN);
+                scrollView.clearFocus();
                 scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
