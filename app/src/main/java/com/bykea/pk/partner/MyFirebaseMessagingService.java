@@ -172,7 +172,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
                     && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude()) && !isCountDownTimerRunning) {
                 Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Data");
-                if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                     //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
                     Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Connection and GPS is active");
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -199,7 +199,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         }
                     });
                 } else {
-                    Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob | GPS = " + Utils.isGpsEnable(mContext) + " Internet = " + Connectivity.isConnectedFast(mContext));
+                    Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob | GPS = " + Utils.isGpsEnable() + " Internet = " + Connectivity.isConnectedFast(mContext));
                     onInactiveByCronJob(data.getMessage());
                 }
             } else {
