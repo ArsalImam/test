@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -28,6 +29,8 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,6 +46,8 @@ public class SplashActivity extends BaseActivity {
 
     @BindView(R.id.tv_welcome_message)
     FontTextView txtWelcomeMessage;
+
+    private EventBus mBus = EventBus.getDefault();
 
 
     @Override
@@ -148,7 +153,9 @@ public class SplashActivity extends BaseActivity {
                         public void run() {
                             if (Connectivity.isConnectedFast(mCurrentActivity)) {
                                 fetchUserLocationAndFireBaseDeviceID();
-                                validateLoginFlow();
+                                if (Utils.isGpsEnable()) {
+                                    validateLoginFlow();
+                                }
                             } else {
                                 displayNoInternetDialog();
                             }
@@ -260,6 +267,8 @@ public class SplashActivity extends BaseActivity {
             } else {
                 configureScreenForApiRequest();
             }
+        } else if (action.equalsIgnoreCase(GPS_ENABLE_EVENT)) {
+            validateLoginFlow();
         }
     }
 

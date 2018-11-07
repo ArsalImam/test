@@ -154,6 +154,8 @@ public class Utils {
         }
     }
 
+
+
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
@@ -1051,9 +1053,19 @@ public class Utils {
         return date != null ? date.getTime() : 0;
     }
 
-    public static boolean isGpsEnable(Context context) {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    /***
+     * Check that the GPS is enable or not.
+     *
+     * @return true if gps/location is enable otherwise returns false
+     */
+    public static boolean isGpsEnable() {
+        LocationManager locationManager = (LocationManager) DriverApp.getContext().
+                getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+
+        return false;
     }
 
     public static void loadImgPicasso(Context context, ImageView imageView, int placeHolder, String link) {
