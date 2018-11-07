@@ -465,6 +465,7 @@
                         android:maxLength="20"
                         android:maxWidth="@dimen/_220sdp"
                         android:padding="@dimen/_7sdp"
+                        android:nextFocusDown="@+id/etReceiverMobileNo"
                         android:textColor="@color/textColorPrimary"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/_14sdp"
@@ -534,7 +535,6 @@
                     android:paddingBottom="@dimen/_2sdp"
                     android:paddingLeft="@dimen/_2sdp"
                     android:paddingRight="@dimen/_2sdp"
-                    android:text=""
                     android:textColor="@color/textColorPrimary"
                     android:textColorHint="@color/secondaryColorLight"
                     android:textSize="@dimen/_22sdp" />

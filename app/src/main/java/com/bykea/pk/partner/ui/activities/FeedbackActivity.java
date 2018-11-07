@@ -159,7 +159,7 @@ public class FeedbackActivity extends BaseActivity {
         receivedAmountEt.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                moveScrollViewToBottom();
+                //moveScrollViewToBottom();
                 return false;
             }
         });
