@@ -333,41 +333,45 @@ public class HomeFragmentTesting extends Fragment {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Utils.isGpsEnable()) {
+                    if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                        if (AppPreferences.getAvailableStatus()) {
+                            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                    callAvailableStatusAPI(false);
+                                    mCurrentActivity.showKhudaHafiz();
+                                    mapView.setVisibility(View.VISIBLE);
+                                    headerTopActiveLayout.setVisibility(View.VISIBLE);
+                                    mapPinIv.setVisibility(View.VISIBLE);
+                                    headerTopUnActiveLayout.setVisibility(View.GONE);
+                                    layoutUpper.setVisibility(View.GONE);
+                                    layoutDuration.setVisibility(View.GONE);
+                                    driverStatsLayout.setVisibility(View.GONE);
 
-                if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                    if (AppPreferences.getAvailableStatus()) {
-                        Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Dialogs.INSTANCE.dismissDialog();
-                                callAvailableStatusAPI(false);
-                                mCurrentActivity.showKhudaHafiz();
-                                mapView.setVisibility(View.VISIBLE);
-                                headerTopActiveLayout.setVisibility(View.VISIBLE);
-                                mapPinIv.setVisibility(View.VISIBLE);
-                                headerTopUnActiveLayout.setVisibility(View.GONE);
-                                layoutUpper.setVisibility(View.GONE);
-                                layoutDuration.setVisibility(View.GONE);
-                                driverStatsLayout.setVisibility(View.GONE);
+                                }
+                            });
+                        } else {
+                            callAvailableStatusAPI(true);
+                            mCurrentActivity.showKhudaHafiz();
+                            mapView.setVisibility(View.VISIBLE);
+                            headerTopActiveLayout.setVisibility(View.VISIBLE);
+                            mapPinIv.setVisibility(View.VISIBLE);
+                            headerTopUnActiveLayout.setVisibility(View.GONE);
+                            layoutUpper.setVisibility(View.GONE);
+                            layoutDuration.setVisibility(View.GONE);
+                            driverStatsLayout.setVisibility(View.GONE);
+                        }
 
-                            }
-                        });
+
                     } else {
-                        callAvailableStatusAPI(true);
-                        mCurrentActivity.showKhudaHafiz();
-                        mapView.setVisibility(View.VISIBLE);
-                        headerTopActiveLayout.setVisibility(View.VISIBLE);
-                        mapPinIv.setVisibility(View.VISIBLE);
-                        headerTopUnActiveLayout.setVisibility(View.GONE);
-                        layoutUpper.setVisibility(View.GONE);
-                        layoutDuration.setVisibility(View.GONE);
-                        driverStatsLayout.setVisibility(View.GONE);
+                        Dialogs.INSTANCE.showError(mCurrentActivity
+                                , mapPinIv, getString(R.string.error_internet_connectivity));
                     }
-
-
                 } else {
-                    Dialogs.INSTANCE.showError(mCurrentActivity
-                            , mapPinIv, getString(R.string.error_internet_connectivity));
+                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity,
+                            Permissions.LOCATION_PERMISSION);
                 }
             }
         });

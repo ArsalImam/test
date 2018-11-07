@@ -233,7 +233,7 @@ public class ActivityStackManager {
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
         if (AppPreferences.getAvailableStatus()
                 && !AppPreferences.isAvailableStatusAPICalling()
-                && Utils.isGpsEnable(mContext)
+                && Utils.isGpsEnable()
                 && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
                 && Utils.isNotDelayed(callData.getData().getSentTime())) {
 

@@ -385,11 +385,11 @@ public class LocationService extends Service {
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;
-                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                                 mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                             } else {
                                 Utils.redLog("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
-                                        + " && GPS -> " + Utils.isGpsEnable(mContext));
+                                        + " && GPS -> " + Utils.isGpsEnable());
                             }
                         } else {
                             shouldCallLocApi = true;
@@ -510,7 +510,7 @@ public class LocationService extends Service {
                     double lon = AppPreferences.getLongitude();
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
-                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                             Utils.redLog("requestLocationUpdate", "onSocketConnected");
                             mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                         }

@@ -687,7 +687,7 @@ public class AppPreferences {
         currentLatLng.setDate("" + Utils.getIsoDate());
         currentLatLng.setLat("" + lat);
         currentLatLng.setLng("" + lng);
-        if (!Utils.isGpsEnable(DriverApp.getContext())) {
+        if (!Utils.isGpsEnable()) {
             currentLatLng.setGps("0");
         }
         if (StringUtils.isNotBlank(STATUS)) {
@@ -706,7 +706,7 @@ public class AppPreferences {
         currentLatLng.setDate("" + Utils.getIsoDate());
         currentLatLng.setLat("" + lat);
         currentLatLng.setLng("" + lng);
-        if (!Utils.isGpsEnable(DriverApp.getContext())) {
+        if (!Utils.isGpsEnable()) {
             currentLatLng.setGps("0");
         }
         ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip();
