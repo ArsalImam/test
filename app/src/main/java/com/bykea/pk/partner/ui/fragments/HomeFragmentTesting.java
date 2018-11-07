@@ -711,7 +711,8 @@ public class HomeFragmentTesting extends Fragment {
         }
 
         if (getActivity().getIntent().getStringExtra("isLogin") != null) {
-            currentIndex = 1;
+            currentIndex = Constants.RESET_CASH_TO_DEFAULT_POSITION;
+            AppPreferences.setCashInHands(cashInHand[Constants.RESET_CASH_TO_DEFAULT_POSITION]);
         }
 
         myRangeBar.refreshDrawableState();
@@ -724,6 +725,20 @@ public class HomeFragmentTesting extends Fragment {
                 AppPreferences.setCashInHands(cashInHand[index]);
             }
         });
+    }
+
+    /***
+     * Reset slider value for cash in hand if current set amount is less then 1000.
+     */
+    private void resetCashSliderToDefault() {
+        cashInHand = AppPreferences.getCashInHandsRange();
+        int currentCashValue = AppPreferences.getCashInHands();
+        if (currentCashValue < Constants.RESET_CASH_TO_DEFAULT_AMOUNT) {
+            AppPreferences.setCashInHands(cashInHand[Constants.RESET_CASH_TO_DEFAULT_POSITION]);
+            myRangeBar.setCurrentIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
+            myRangeBar.setInitialIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
+        }
+
     }
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -833,6 +848,8 @@ public class HomeFragmentTesting extends Fragment {
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
+                                //todo reset slider to 1000 amount when CIH amount is less then 1000
+                                resetCashSliderToDefault();
                             }
                             setStatusBtn();
                         } else {
