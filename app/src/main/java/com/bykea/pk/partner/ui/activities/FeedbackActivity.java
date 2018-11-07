@@ -149,6 +149,7 @@ public class FeedbackActivity extends BaseActivity {
         mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
         updateScroll();
+
     }
 
     /**
@@ -159,10 +160,12 @@ public class FeedbackActivity extends BaseActivity {
         receivedAmountEt.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                moveScrollViewToBottom();
+                //moveScrollViewToBottom();
                 return false;
             }
         });
+
+        etReceiverName.requestFocus();
     }
 
     /**
@@ -173,6 +176,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onGlobalLayout() {
                 scrollView.fullScroll(View.FOCUS_DOWN);
+                scrollView.clearFocus();
                 scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -236,7 +240,7 @@ public class FeedbackActivity extends BaseActivity {
             tvDropOffDiscount.setText(callData.getDropoff_discount());
         }
         if (isDeliveryType) {
-            receivedAmountEt.requestFocus();
+
             updateUIICODelivery();
         } else if (isPurchaseType) {
             updateUIforPurcahseService();
@@ -308,6 +312,9 @@ public class FeedbackActivity extends BaseActivity {
         } else {
             rlCOD.setVisibility(View.GONE);
         }
+
+        receivedAmountEt.clearFocus();
+        etReceiverName.requestFocus();
     }
 
     private int selectedMsgPosition = 0;
