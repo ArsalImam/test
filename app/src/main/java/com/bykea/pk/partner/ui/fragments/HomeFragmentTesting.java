@@ -708,6 +708,7 @@ public class HomeFragmentTesting extends Fragment {
 
         if (getActivity().getIntent().getStringExtra("isLogin") != null) {
             currentIndex = Constants.RESET_CASH_TO_DEFAULT_POSITION;
+            AppPreferences.setCashInHands(cashInHand[Constants.RESET_CASH_TO_DEFAULT_POSITION]);
         }
 
         myRangeBar.refreshDrawableState();
