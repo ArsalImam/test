@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -52,6 +53,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class BaseActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 203;
+    private static final int PERMISSION_REQUEST_CODE = 1010;
+    public static final String GPS_ENABLE_EVENT = "GPS_ENABLE_EVENT";
     private Toolbar mToolbar;
     private FontTextView mTitleTv, status, demandBtn;
     private ImageView mLogo, rightIv;
@@ -62,10 +65,10 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isScreenInFront;
     private ProgressDialog progressDialog;
     private Dialog notificationDialog;
-    private final String ACCESS_FINE_LOCATION = "android.permission.ACCESS_FINE_LOCATION";
-    private final String PHONE_STATE = "android.permission.READ_PHONE_STATE";
-    private final String CALL_STATE = "android.permission.CALL_PHONE";
-
+    private final String ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private final String PHONE_STATE = Manifest.permission.READ_PHONE_STATE;
+    private final String CALL_STATE = Manifest.permission.CALL_PHONE;
+    private final String SMS_READ = Manifest.permission.READ_SMS;
     private RelativeLayout statusLayout;
 
     @Override
@@ -119,14 +122,35 @@ public class BaseActivity extends AppCompatActivity {
             int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
             int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), PHONE_STATE);
             int call = ContextCompat.checkSelfPermission(getApplicationContext(), CALL_STATE);
+            boolean smsPermissionRequired = Permissions.hasSMSPermissions(mCurrentActivity);
             if (location != PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE}, 1010);
+                if (smsPermissionRequired) {
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE, SMS_READ},
+                            PERMISSION_REQUEST_CODE);
+                } else {
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE},
+                            PERMISSION_REQUEST_CODE);
+                }
             } else if (location == PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{PHONE_STATE}, 1010);
+                if (smsPermissionRequired) {
+                    requestPermissions(new String[]{PHONE_STATE, SMS_READ}, PERMISSION_REQUEST_CODE);
+                } else {
+                    requestPermissions(new String[]{PHONE_STATE}, PERMISSION_REQUEST_CODE);
+                }
             } else if (location != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{ACCESS_FINE_LOCATION}, 1010);
+                if (smsPermissionRequired) {
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, SMS_READ},
+                            PERMISSION_REQUEST_CODE);
+                } else {
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION},
+                            PERMISSION_REQUEST_CODE);
+                }
             } else if (call != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{CALL_STATE}, 1010);
+                if (smsPermissionRequired) {
+                    requestPermissions(new String[]{CALL_STATE, SMS_READ}, PERMISSION_REQUEST_CODE);
+                } else {
+                    requestPermissions(new String[]{CALL_STATE}, PERMISSION_REQUEST_CODE);
+                }
             } else {
                 hasPermission = true;
             }
@@ -220,6 +244,8 @@ public class BaseActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1010) {
             checkPermissions(false);
+        } else if (requestCode == Permissions.LOCATION_PERMISSION) {
+            EventBus.getDefault().post(GPS_ENABLE_EVENT);
         }
     }
 
@@ -263,7 +289,7 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isLocSettingsDialogCalled;
 
     public void checkGps() {
-        if (!Utils.isGpsEnable(mCurrentActivity)) {
+        if (!Utils.isGpsEnable()) {
             isLocSettingsDialogCalled = true;
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         } else if (isLocSettingsDialogCalled) {

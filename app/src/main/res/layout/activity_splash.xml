@@ -8,6 +8,7 @@
 
 
     <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tv_welcome_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -18,5 +19,6 @@
         android:textColor="@color/kelly_green"
         android:textSize="@dimen/_38sdp"
         app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
 </FrameLayout>

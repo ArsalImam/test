@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.utils;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -30,6 +31,19 @@ public class Permissions {
         String[] permissions = {"android.permission.CAMERA"};
         ((Activity) context).requestPermissions(permissions, CAMERA_PERMISSION);
     }
+
+    /***
+     * Checks do we have SMS permission.
+     *
+     * @param context Calling context.
+     * @return True if we have permission otherwise return false.
+     */
+    public static boolean hasSMSPermissions(Context context) {
+        String permission = Manifest.permission.READ_SMS;
+        int res = context.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
 
     public static boolean hasLocationPermissions(Context context) {
         if (Build.VERSION.SDK_INT >= 23) {

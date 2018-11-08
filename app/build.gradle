@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url 'https://plugins.gradle.org/m2/'}
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.11.0, 0.99.99]'
@@ -220,3 +220,16 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 }
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'de.felixschulze.gradle.hockeyapp'
+def branch = getGitRevParseInfo("--abbrev-ref");
+hockeyapp {
+    apiToken = "4faee174e5fb499bb2e40c358e5193a7"
+    notes = branch
+    tags = "bykeadevteam,mobinspire"
+}
+
+def getGitRevParseInfo(what) {
+    def cmd = "git rev-parse " + what + " HEAD"
+    def proc = cmd.execute()
+    proc.text.trim()
+}
