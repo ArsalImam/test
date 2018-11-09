@@ -81,6 +81,7 @@ public class BaseActivity extends AppCompatActivity {
     private final String PHONE_STATE = Manifest.permission.READ_PHONE_STATE;
     private final String CALL_STATE = Manifest.permission.CALL_PHONE;
     private final String SMS_READ = Manifest.permission.READ_SMS;
+    private final String SMS_RECIEVE = Manifest.permission.RECEIVE_SMS;
     private RelativeLayout statusLayout;
 
     @Override
@@ -137,7 +138,7 @@ public class BaseActivity extends AppCompatActivity {
             boolean smsPermissionRequired = Permissions.hasSMSPermissions(mCurrentActivity);
             if (location != PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
                 if (smsPermissionRequired) {
-                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE, SMS_READ},
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE, SMS_READ,SMS_RECIEVE},
                             PERMISSION_REQUEST_CODE);
                 } else {
                     requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE},
@@ -145,13 +146,13 @@ public class BaseActivity extends AppCompatActivity {
                 }
             } else if (location == PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
                 if (smsPermissionRequired) {
-                    requestPermissions(new String[]{PHONE_STATE, SMS_READ}, PERMISSION_REQUEST_CODE);
+                    requestPermissions(new String[]{PHONE_STATE, SMS_READ,SMS_RECIEVE}, PERMISSION_REQUEST_CODE);
                 } else {
                     requestPermissions(new String[]{PHONE_STATE}, PERMISSION_REQUEST_CODE);
                 }
             } else if (location != PackageManager.PERMISSION_GRANTED) {
                 if (smsPermissionRequired) {
-                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, SMS_READ},
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, SMS_READ,SMS_RECIEVE},
                             PERMISSION_REQUEST_CODE);
                 } else {
                     requestPermissions(new String[]{ACCESS_FINE_LOCATION},
@@ -159,7 +160,7 @@ public class BaseActivity extends AppCompatActivity {
                 }
             } else if (call != PackageManager.PERMISSION_GRANTED) {
                 if (smsPermissionRequired) {
-                    requestPermissions(new String[]{CALL_STATE, SMS_READ}, PERMISSION_REQUEST_CODE);
+                    requestPermissions(new String[]{CALL_STATE, SMS_READ,SMS_RECIEVE}, PERMISSION_REQUEST_CODE);
                 } else {
                     requestPermissions(new String[]{CALL_STATE}, PERMISSION_REQUEST_CODE);
                 }
