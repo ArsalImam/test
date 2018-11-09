@@ -625,39 +625,6 @@ public enum Dialogs {
             }
         });
         showDialog();
-
-
-
-       /* dismissDialog();
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-
-        // Setting DialogHelp Title
-        alertDialog.setTitle("GPS Settings");
-
-        // Setting DialogHelp Message
-        alertDialog
-                .setMessage("Turn on your location from settings.");
-        alertDialog.setCancelable(false);
-
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Settings",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-        // on pressing cancel button
-        *//*alertDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });*//*
-
-        // Showing Alert Message
-        mDialog = alertDialog.create();
-        showDialog();*/
     }
 
     public void showPermissionSettings(final Context context, final int requestCode, String title, String message) {
