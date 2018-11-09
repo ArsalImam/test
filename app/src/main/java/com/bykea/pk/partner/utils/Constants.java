@@ -91,6 +91,7 @@ public class Constants {
 
     public static final int RESET_CASH_TO_DEFAULT_POSITION=1;
     public static final int RESET_CASH_TO_DEFAULT_AMOUNT=1000;
+    public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
