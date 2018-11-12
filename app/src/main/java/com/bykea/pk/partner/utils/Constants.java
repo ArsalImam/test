@@ -244,6 +244,9 @@ public class Constants {
         public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
     }
 
+    /***
+     * Inner class for API error which holds all error use case constants
+     */
     public static class ApiError {
         public static final int BUSINESS_LOGIC_ERROR = 422;
         public static final int DRIVER_NOT_REGISTER = 404;
