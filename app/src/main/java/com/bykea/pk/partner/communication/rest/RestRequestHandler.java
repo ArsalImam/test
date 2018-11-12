@@ -122,6 +122,7 @@ public class RestRequestHandler {
                             verifyNumberResponse.setMessage(commonResponse.getMessage());
                             verifyNumberResponse.setCode(commonResponse.getCode());
                             verifyNumberResponse.setSuccess(commonResponse.isSuccess());
+                            verifyNumberResponse.setSubCode(commonResponse.getSubCode());
                             mResponseCallBack.onResponse(verifyNumberResponse);
                         } else {
                             mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
