@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -8,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -46,6 +48,15 @@ import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -56,6 +67,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 
 public class BaseActivity extends AppCompatActivity {
+    private static final int LOCATION_DIALOG = 221;
     private static final int REQUEST_CODE = 203;
     private static final int PERMISSION_REQUEST_CODE = 1010;
     public static final String GPS_ENABLE_EVENT = "GPS_ENABLE_EVENT";
@@ -265,8 +277,18 @@ public class BaseActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1010) {
             checkPermissions(false);
-        } else if (requestCode == Permissions.LOCATION_PERMISSION) {
-            EventBus.getDefault().post(GPS_ENABLE_EVENT);
+        } else if (requestCode == Permissions.LOCATION_PERMISSION || requestCode == LOCATION_DIALOG) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    EventBus.getDefault().post(GPS_ENABLE_EVENT);
+                    ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+                    Utils.redLog("BaseActivity", "Location Enabled");
+                    break;
+                case Activity.RESULT_CANCELED:
+                    Utils.redLog("BaseActivity", "Location Not Enabled");
+                    break;
+            }
+
         }
     }
 
@@ -317,6 +339,48 @@ public class BaseActivity extends AppCompatActivity {
             Dialogs.INSTANCE.dismissDialog();
             isLocSettingsDialogCalled = false;
         }
+    }
+
+    /***
+     * Location Dialog for Enabling location via Google Setting Permission.
+     */
+    public void showLocationDialog() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(10000 / 2);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(locationRequest);
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+        builder.setAlwaysShow(true);
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                Utils.redLog("RideCatActivity", "All location settings are satisfied. The client can initialize");
+                // All location settings are satisfied. The client can initialize
+                // location requests here.
+            }
+        });
+
+        task.addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (e instanceof ResolvableApiException) {
+                    // Location settings are not satisfied, but this can be fixed
+                    // by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        resolvable.startResolutionForResult(mCurrentActivity, LOCATION_DIALOG);
+                    } catch (IntentSender.SendIntentException sendEx) {
+                        // Ignore the error.
+                    }
+                }
+            }
+        });
     }
 
 

@@ -40,6 +40,7 @@ public class Permissions {
      * @return True if we have permission otherwise return false.
      */
     public static boolean hasSMSPermissions(Context context) {
+        //String permission = Manifest.permission.READ_SMS;
         String permission = Manifest.permission.RECEIVE_SMS;
         int res = context.checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
@@ -138,7 +139,6 @@ public class Permissions {
     public static boolean hasPermission(Context context, String permission) {
         return PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(context, permission);
     }
-
     /***
      * Get Sms Permission from device
      * @param context Calling Context.

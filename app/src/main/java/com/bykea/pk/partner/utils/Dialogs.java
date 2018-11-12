@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -627,37 +628,28 @@ public enum Dialogs {
     }
 
     public void showLocationSettings(final Context context, final int requestCode) {
+        if (null == context) return;
         dismissDialog();
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.enable_gps_dialog);
 
-        // Setting DialogHelp Title
-        alertDialog.setTitle("GPS Settings");
+        ImageView okIv = mDialog.findViewById(R.id.ivPositive);
 
-        // Setting DialogHelp Message
-        alertDialog
-                .setMessage("Turn on your location from settings.");
-        alertDialog.setCancelable(false);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (context instanceof BaseActivity) {
+                    dismissDialog();
+                    ((BaseActivity) context).showLocationDialog();
+                } else {
+                    dismissDialog();
+                    Intent intent = new Intent(
+                            Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ((Activity) context).startActivityForResult(intent, Constants.REQUEST_CODE_GPS_AND_LOCATION);
+                }
 
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Settings",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(
-                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        ((AppCompatActivity) context).startActivityForResult(intent, requestCode);
-                    }
-                });
-
-        // on pressing cancel button
-        /*alertDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });*/
-
-        // Showing Alert Message
-        mDialog = alertDialog.create();
+            }
+        });
         showDialog();
     }
 

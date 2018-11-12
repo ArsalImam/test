@@ -582,6 +582,7 @@ public class CodeVerificationFragment extends Fragment {
         }
     };
 
+
     /***
      * Check Sms Permission from device.
      */
@@ -590,6 +591,7 @@ public class CodeVerificationFragment extends Fragment {
             Permissions.getSMSPermissions(mCurrentActivity);
         }
     }
+
 
     //endregion
 
