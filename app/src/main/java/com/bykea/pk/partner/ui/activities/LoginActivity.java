@@ -28,8 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -339,9 +337,14 @@ public class LoginActivity extends BaseActivity {
                         getString(R.string.account_blocked_message_ur));
                 break;
             case ApiError.DRIVER_LAT_LNG_ZERO: {
-                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                        getString(R.string.region_out_support_helpline),
-                        getString(R.string.account_blocked_message_ur));
+                String msg = getString(R.string.gps_high_accuracy_error_ur);
+                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                        msg, 0f, null, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        });
                 break;
             }
             default:
