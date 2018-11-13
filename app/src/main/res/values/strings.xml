@@ -220,5 +220,6 @@
     <string name="gps_enable_initial_message"> برائے مہربانی اپنا</string>
     <string name="GPS_middle_message">GPS</string>
     <string name="gps_enable_ending_message"> آن کریں </string>
+    <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
 
 </resources>
