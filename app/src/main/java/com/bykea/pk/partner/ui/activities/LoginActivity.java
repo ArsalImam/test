@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -18,6 +17,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Constants.ApiError;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Utils;
@@ -27,8 +27,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.net.HttpURLConnection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -253,62 +251,22 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
+
     /***
-     * Handle Various driver Failure use cases.
-     * <ul>
-     *     <li> App Force Update Error. </li>
-     *     <li> Driver License Expire. </li>
-     *     <li> Driver not registered. </li>
-     *     <li> Driver not allowed to login in this region. </li>
-     *     <li> All other error cases. </li>
-     * </ul>
-     *
-     * @param verifyNumberResponse Latest response received from API Server
+     * Handle Driver Error case for API failures.
+     * @param verifyNumberResponse latest response from server.
      */
     private void handleDriverErrorCase(VerifyNumberResponse verifyNumberResponse) {
         if (verifyNumberResponse != null) {
             switch (verifyNumberResponse.getCode()) {
-                case Constants.APP_FORCE_UPDATE: {
-                    verifyNumberResponse.setLink(String.format(getString(R.string.force_app_update_link),
-                            DriverApp.getApplication().getPackageName()));
-
-                    Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
-                            getString(R.string.force_app_update_title),
-                            verifyNumberResponse.getMessage(),
-                            verifyNumberResponse.getLink());
+                case ApiError.BUSINESS_LOGIC_ERROR: {
+                    handleBossinessLogicErrors(verifyNumberResponse);
                     break;
                 }
-                case Constants.DRIVER_LICENSE_EXPIRED: {
-                    if (verifyNumberResponse.getMessage().toLowerCase().contains(
-                            getString(R.string.driver_licence_expire_error))) {
-                        Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity,
-                                verifyNumberResponse.getSupportNumber());
-                    } else {
-                        Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
-                                new StringCallBack() {
-                                    @Override
-                                    public void onCallBack(String msg) {
-
-                                    }
-                                }, null, "", verifyNumberResponse.getMessage());
-                        //Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity, loginResponse.getSupport(), loginResponse.getMessage());
-                    }
-                    break;
-                }
-                case Constants.DRIVER_NOT_REGISTER: {
+                case ApiError.DRIVER_NOT_REGISTER: {
                     ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
                     break;
                 }
-                case Constants.DRIVER_REGION_NOT_ALLOWED:
-                    Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                            getString(R.string.region_out_support_helpline),
-                            getString(R.string.region_out_message_ur));
-                    break;
-                case Constants.DRIVER_ACCOUNT_BLOCKED:
-                    Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                            getString(R.string.region_out_support_helpline),
-                            getString(R.string.account_blocked_message_ur));
-                    break;
                 default: {
                     String msg = StringUtils.containsIgnoreCase(verifyNumberResponse.getMessage(),
                             getString(R.string.invalid_phone)) ?
@@ -324,6 +282,85 @@ public class LoginActivity extends BaseActivity {
             }
         }
 
+    }
+
+    /***
+     * Handle business logic driver Failure use cases.
+     * <ul>
+     *     <li> App Force Update Error. </li>
+     *     <li> Driver License Expire. </li>
+     *     <li> Driver not registered. </li>
+     *     <li> Driver not allowed to login in this region. </li>
+     *     <li> All other error cases. </li>
+     * </ul>
+     *
+     * @param verifyNumberResponse Latest response received from API Server
+     */
+    private void handleBossinessLogicErrors(VerifyNumberResponse verifyNumberResponse) {
+        switch (verifyNumberResponse.getSubCode()) {
+            case ApiError.APP_FORCE_UPDATE:
+                verifyNumberResponse.setLink(String.format(getString(R.string.
+                                force_app_update_link),
+                        DriverApp.getApplication().getPackageName()));
+
+                Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
+                        getString(R.string.force_app_update_title),
+                        verifyNumberResponse.getMessage(),
+                        verifyNumberResponse.getLink());
+                break;
+            case ApiError.DRIVER_LICENSE_EXPIRED:
+                if (verifyNumberResponse.getMessage().toLowerCase().contains(
+                        getString(R.string.driver_licence_expire_error))) {
+                    Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity,
+                            verifyNumberResponse.getSupportNumber());
+                } else {
+                    Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
+                            new StringCallBack() {
+                                @Override
+                                public void onCallBack(String msg) {
+
+                                }
+                            }, null, "",
+                            verifyNumberResponse.getMessage());
+                    //Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity,
+                    // loginResponse.getSupport(), loginResponse.getMessage());
+                }
+                break;
+            case ApiError.DRIVER_REGION_NOT_ALLOWED:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        getString(R.string.region_out_support_helpline),
+                        getString(R.string.region_out_message_ur));
+                break;
+            case ApiError.DRIVER_ACCOUNT_BLOCKED:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        getString(R.string.region_out_support_helpline),
+                        getString(R.string.account_blocked_message_ur));
+                break;
+            case ApiError.DRIVER_LAT_LNG_ZERO: {
+                String msg = getString(R.string.gps_high_accuracy_error_ur);
+                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                        msg, 0f, null, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        });
+                break;
+            }
+            default:
+                String msg = StringUtils.containsIgnoreCase(verifyNumberResponse.getMessage(),
+                        getString(R.string.invalid_phone)) ?
+                        getString(R.string.invalid_phone_urdu)
+                        : verifyNumberResponse.getMessage();
+                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                        msg, 0f, null, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        });
+
+        }
     }
 
 
