@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.bykea.pk.partner.R;
@@ -122,6 +124,9 @@ public class FeedbackActivity extends BaseActivity {
     @BindView(R.id.tvDropOffDiscount)
     FontTextView tvDropOffDiscount;
 
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
+
 
     private FeedbackActivity mCurrentActivity;
     private String totalCharges = StringUtils.EMPTY, lastKhareedariAmount = StringUtils.EMPTY;
@@ -143,6 +148,38 @@ public class FeedbackActivity extends BaseActivity {
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+        updateScroll();
+
+    }
+
+    /**
+     * This method listens for touch on receivedAmountEt and moves scrollview to bottom
+     */
+    private void updateScroll() {
+        moveScrollViewToBottom();
+        receivedAmountEt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                //moveScrollViewToBottom();
+                return false;
+            }
+        });
+
+        etReceiverName.requestFocus();
+    }
+
+    /**
+     * This method scrolls down scroll view when it's ready
+     */
+    private void moveScrollViewToBottom() {
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                scrollView.fullScroll(View.FOCUS_DOWN);
+                scrollView.clearFocus();
+                scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 
     @OnTextChanged(value = R.id.receivedAmountEt,
@@ -203,7 +240,7 @@ public class FeedbackActivity extends BaseActivity {
             tvDropOffDiscount.setText(callData.getDropoff_discount());
         }
         if (isDeliveryType) {
-            receivedAmountEt.requestFocus();
+
             updateUIICODelivery();
         } else if (isPurchaseType) {
             updateUIforPurcahseService();
@@ -275,6 +312,9 @@ public class FeedbackActivity extends BaseActivity {
         } else {
             rlCOD.setVisibility(View.GONE);
         }
+
+        receivedAmountEt.clearFocus();
+        etReceiverName.requestFocus();
     }
 
     private int selectedMsgPosition = 0;

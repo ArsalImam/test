@@ -11,7 +11,6 @@ import android.location.Location;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
@@ -27,6 +26,7 @@ import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.activities.SplashActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -64,7 +64,6 @@ public class LocationService extends Service {
     private boolean shouldCallLocApi = true;
     private int counter = 0;
 
-    private PowerManager.WakeLock wakeLock;
     private EventBus mBus = EventBus.getDefault();
 
     private FusedLocationProviderClient mFusedLocationClient;
@@ -83,7 +82,7 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-//        startForeground(NOTIF_ID, getForgroundNotification());
+        startForeground(NOTIF_ID, getForegroundNotification());
         Utils.redLog("LocServ", "onCreate");
     }
 
@@ -99,14 +98,19 @@ public class LocationService extends Service {
         return msg;
     }
 
-    private Notification getForgroundNotification() {
-        Intent notificationIntent = new Intent(this, LocationService.class);
-        notificationIntent.setAction(Constants.Actions.ON_NOTIFICATION_CLICK);
+    /**
+     * This method generates Foreground Notification when Location Service is Running.
+     *
+     * @return Notification
+     */
+    private Notification getForegroundNotification() {
+        Intent notificationIntent = new Intent(this, SplashActivity.class);
+//        notificationIntent.setAction(Constants.Actions.ON_NOTIFICATION_CLICK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
         String msg = getNotificationMsg();
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Utils.getChannelID())
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Utils.getChannelIDForOnGoingNotification(this))
                 .setContentTitle("Bykea Partner")
                 .setContentText(msg)
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
@@ -118,37 +122,24 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(NOTIF_ID, getForegroundNotification());
         Utils.redLog("LocServ", "onStartCommand");
         mContext = getApplicationContext();
-        /*if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
+        if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
             if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
                 STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
             }
             init();
         } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
             stopForegroundService();
-        } else if (Constants.Actions.ON_NOTIFICATION_CLICK.equals(intent.getAction())) {
-            //TODO
-        }*/
-
-        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
-            STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
         }
-        mContext = getApplicationContext();
-//        acquire wake lock services to make service run
-        PowerManager mgr = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-        if (mgr != null) {
-            wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
-        }
-        if (wakeLock != null) {
-            wakeLock.acquire();
-        }
-        init();
         return START_STICKY;
     }
 
     private void stopForegroundService() {
-//        stopForeground(true);
+        stopLocationUpdates();
+        cancelTimer();
+        stopForeground(true);
         stopSelf();
     }
 
@@ -158,9 +149,6 @@ public class LocationService extends Service {
         super.onDestroy();
         Utils.redLog("LocServ", "onDestroy");
         stopLocationUpdates();
-        if (wakeLock != null) {
-            wakeLock.release();
-        }
         cancelTimer();
     }
 
@@ -273,9 +261,10 @@ public class LocationService extends Service {
                     float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
                     if (Utils.isValidLocation(/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), */distance)) {
                         addLatLng(lat, lon, distance > 0f);
-                        if ((distance > 1000) && !isDirectionApiRunning) {
-                            getRouteLatLng(lat, lon, lastLat, lastLng);
-                        }
+                        //Removing Google Directions API call to avoid duplicate GPS entries. Check https://bykeapk.atlassian.net/browse/BS-1042 for details 
+//                        if ((distance > 1000) && !isDirectionApiRunning) {
+//                            getRouteLatLng(lat, lon, lastLat, lastLng);
+//                        }
                     } else {
                         addLatLng(Double.parseDouble(lastLat), Double.parseDouble(lastLng), false);
                     }
@@ -396,22 +385,26 @@ public class LocationService extends Service {
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;
-                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                                 mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                             } else {
                                 Utils.redLog("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
-                                        + " && GPS -> " + Utils.isGpsEnable(mContext));
+                                        + " && GPS -> " + Utils.isGpsEnable());
                             }
                         } else {
                             shouldCallLocApi = true;
                         }
                     }
+                    // restart the timer
+                    mCountDownTimer.start();
                 }
             } else if (Utils.hasLocationCoordinates()) {
                 stopForegroundService();
+            } else {
+                // restart the timer
+                mCountDownTimer.start();
             }
-            // restart the timer
-            mCountDownTimer.start();
+
         }
     };
 
@@ -517,20 +510,23 @@ public class LocationService extends Service {
                     double lon = AppPreferences.getLongitude();
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
-                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                             Utils.redLog("requestLocationUpdate", "onSocketConnected");
                             mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                         }
                     }
                 }
             }
-        } /*else if (Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION.equalsIgnoreCase(event)) {
+        } else if (Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION.equalsIgnoreCase(event)) {
             updateNotification();
-        }*/
+        }
     }
 
+    /**
+     * updates notification during trip according to its current status
+     */
     private void updateNotification() {
-        Notification notification = getForgroundNotification();
+        Notification notification = getForegroundNotification();
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotificationManager != null) {
             mNotificationManager.notify(NOTIF_ID, notification);

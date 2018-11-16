@@ -7,39 +7,18 @@
     android:background="@color/white">
 
 
-    <ImageView
-        android:layout_width="@dimen/_196sdp"
-        android:layout_height="@dimen/_74sdp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/_82sdp"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/ic_home_top_logo" />
-
-
     <com.bykea.pk.partner.widgets.FontTextView
-        android:layout_width="@dimen/_146sdp"
+        android:id="@+id/tv_welcome_message"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/_32sdp"
-        android:background="@color/colorAccent"
+        android:layout_marginLeft="@dimen/_30sdp"
+        android:layout_marginRight="@dimen/_30sdp"
         android:gravity="center"
-        android:padding="@dimen/_1sdp"
-        android:text="PARTNER"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_22sdp"
-        app:fontName="roboto_bold.ttf" />
-
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:layout_width="@dimen/_146sdp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/_37sdp"
-        android:gravity="center"
-        android:text="حرکت میں برکت"
-        android:textAllCaps="true"
-        android:textColor="@color/colorAccent"
-        android:textSize="@dimen/_22sdp"
+        android:text="@string/splash_welcome_message"
+        android:textColor="@color/kelly_green"
+        android:textSize="@dimen/_38sdp"
         app:fontName="jameel_noori_nastaleeq.ttf" />
+
 
 </FrameLayout>

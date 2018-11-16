@@ -33,7 +33,7 @@ public class FontTextView extends TextView {
         String fontName = Fonts.values()[a.getInt(R.styleable.FontTextView_fontName, 0)].getName();
         a.recycle();
         if (!isInEditMode() && !TextUtils.isEmpty(fontName)) {
-            setTypeface(FontUtils.getFonts(getContext(), fontName));
+            setTypeface(FontUtils.getFonts(fontName));
         }
     }
 
@@ -43,7 +43,7 @@ public class FontTextView extends TextView {
         String fontName = fontNames;
         a.recycle();
         if (!isInEditMode() && !TextUtils.isEmpty(fontName)) {
-            setTypeface(FontUtils.getFonts(getContext(), fontName));
+            setTypeface(FontUtils.getFonts(fontName));
         }
     }
 }

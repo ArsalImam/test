@@ -139,15 +139,16 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
 
                 case 7://this case is for logout footer part click.
-                    Dialogs.INSTANCE.showLogoutDialog(context, new View.OnClickListener() {
+                    Dialogs.INSTANCE.showNegativeAlertDialog(context, context.getString(R.string.logout_text_ur), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (Connectivity.isConnectedFast(context)) {
                                 AppPreferences.setAvailableStatus(false);
                                 Dialogs.INSTANCE.dismissDialog();
-                                Dialogs.INSTANCE.showLoader(context);
+//                                Dialogs.INSTANCE.showLoader(context);
                                 UserRepository repository = new UserRepository();
-                                repository.requestPilotLogout(context, handler);
+                                repository.requestPilotLogout(context, new UserDataHandler());
+                                Utils.logout(context);
                             }
                         }
                     });
@@ -261,24 +262,5 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             return 1;
         }
     }
-
-    private UserDataHandler handler = new UserDataHandler() {
-
-        @Override
-        public void onPilotLogout(LogoutResponse logoutResponse) {
-            Dialogs.INSTANCE.dismissDialog();
-            Utils.logout(context);
-        }
-
-        @Override
-        public void onError(int errorCode, String error) {
-            Dialogs.INSTANCE.dismissDialog();
-            if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                Utils.logout(context);
-            } else {
-                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 
 }

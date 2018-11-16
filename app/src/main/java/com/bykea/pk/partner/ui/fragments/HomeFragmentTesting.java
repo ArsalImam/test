@@ -8,7 +8,9 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -230,9 +232,9 @@ public class HomeFragmentTesting extends Fragment {
         mCurrentActivity.hideToolbarLogo();
 
 
-        mKhudaHafizClick();
+        setInactiveStatusClick();
 
-        mBismillaClick();
+        setActiveStatusClick();
 
         mCurrentActivity.setDemandButtonForBismilla("ڈیمانڈ", new View.OnClickListener() {
             @Override
@@ -248,7 +250,7 @@ public class HomeFragmentTesting extends Fragment {
 
     private void demandClick() {
 
-        try{
+        try {
             if (AppPreferences.getPilotData() != null && StringUtils.isNotBlank(AppPreferences.getPilotData().getService_type())
                     && AppPreferences.getPilotData().getService_type().equalsIgnoreCase("van")) {
 
@@ -269,23 +271,24 @@ public class HomeFragmentTesting extends Fragment {
                 String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
                 Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-
-
     }
 
-    private void mKhudaHafizClick() {
+    /**
+     * This method sets Click Listener on Khuda Hafiz Logo/Inactive Button
+     */
+    private void setInactiveStatusClick() {
         mCurrentActivity.setToolbarLogoKhudaHafiz(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (AppPreferences.getAvailableStatus()) {
-                        Dialogs.INSTANCE.showInactiveConfirmationDialog(mCurrentActivity, new View.OnClickListener() {
+                        Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 WEEK_STATUS = 0;
@@ -323,45 +326,52 @@ public class HomeFragmentTesting extends Fragment {
         });
     }
 
-    private void mBismillaClick() {
+    /**
+     * This method sets Click Listener on Bismillah Logo/Active Button
+     */
+    private void setActiveStatusClick() {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Utils.isGpsEnable()) {
+                    if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                        if (AppPreferences.getAvailableStatus()) {
+                            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                    callAvailableStatusAPI(false);
+                                    mCurrentActivity.showKhudaHafiz();
+                                    mapView.setVisibility(View.VISIBLE);
+                                    headerTopActiveLayout.setVisibility(View.VISIBLE);
+                                    mapPinIv.setVisibility(View.VISIBLE);
+                                    headerTopUnActiveLayout.setVisibility(View.GONE);
+                                    layoutUpper.setVisibility(View.GONE);
+                                    layoutDuration.setVisibility(View.GONE);
+                                    driverStatsLayout.setVisibility(View.GONE);
 
-                if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                    if (AppPreferences.getAvailableStatus()) {
-                        Dialogs.INSTANCE.showInactiveConfirmationDialog(mCurrentActivity, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Dialogs.INSTANCE.dismissDialog();
-                                callAvailableStatusAPI(false);
-                                mCurrentActivity.showKhudaHafiz();
-                                mapView.setVisibility(View.VISIBLE);
-                                headerTopActiveLayout.setVisibility(View.VISIBLE);
-                                mapPinIv.setVisibility(View.VISIBLE);
-                                headerTopUnActiveLayout.setVisibility(View.GONE);
-                                layoutUpper.setVisibility(View.GONE);
-                                layoutDuration.setVisibility(View.GONE);
-                                driverStatsLayout.setVisibility(View.GONE);
+                                }
+                            });
+                        } else {
+                            callAvailableStatusAPI(true);
+                            mCurrentActivity.showKhudaHafiz();
+                            mapView.setVisibility(View.VISIBLE);
+                            headerTopActiveLayout.setVisibility(View.VISIBLE);
+                            mapPinIv.setVisibility(View.VISIBLE);
+                            headerTopUnActiveLayout.setVisibility(View.GONE);
+                            layoutUpper.setVisibility(View.GONE);
+                            layoutDuration.setVisibility(View.GONE);
+                            driverStatsLayout.setVisibility(View.GONE);
+                        }
 
-                            }
-                        });
+
                     } else {
-                        callAvailableStatusAPI(true);
-                        mCurrentActivity.showKhudaHafiz();
-                        mapView.setVisibility(View.VISIBLE);
-                        headerTopActiveLayout.setVisibility(View.VISIBLE);
-                        mapPinIv.setVisibility(View.VISIBLE);
-                        headerTopUnActiveLayout.setVisibility(View.GONE);
-                        layoutUpper.setVisibility(View.GONE);
-                        layoutDuration.setVisibility(View.GONE);
-                        driverStatsLayout.setVisibility(View.GONE);
+                        Dialogs.INSTANCE.showError(mCurrentActivity
+                                , mapPinIv, getString(R.string.error_internet_connectivity));
                     }
-
-
                 } else {
-                    Dialogs.INSTANCE.showError(mCurrentActivity
-                            , mapPinIv, getString(R.string.error_internet_connectivity));
+                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity,
+                            Permissions.LOCATION_PERMISSION);
                 }
             }
         });
@@ -383,7 +393,7 @@ public class HomeFragmentTesting extends Fragment {
 //        mapView.onResume();
         try {
 
-                mapView.onCreate(savedInstanceState);
+            mapView.onCreate(savedInstanceState);
 
             MapsInitializer.initialize(mCurrentActivity.getApplicationContext());
         } catch (Exception e) {
@@ -407,14 +417,14 @@ public class HomeFragmentTesting extends Fragment {
     }
 
     private void getDriverPerformanceData() {
-        try{
-            if (!isCalled){
+        try {
+            if (!isCalled) {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 isCalled = true;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -431,7 +441,7 @@ public class HomeFragmentTesting extends Fragment {
                 weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
-                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0":
+                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
                             response.getData().getWeeklyBalance();
                     weeklyKamaiTv.setText(weeklyBalance);
                 } catch (NumberFormatException e) {
@@ -440,17 +450,17 @@ public class HomeFragmentTesting extends Fragment {
 
                 weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-                weeklyCancelTv.setText(response.getData().getCancelPercentage() + "%");
-                weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + "%");
-                weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + "%");
+                weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
+                weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
+                weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
                 weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                totalBalanceTv.setText("Rs " +response.getData().getTotalBalance());
-                if (response.getData().getScore() != null){
-                    if (response.getData().getScore().contains("-")){
+                totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
+                if (response.getData().getScore() != null) {
+                    if (response.getData().getScore().contains(getString(R.string.minus_sign))) {
                         totalScoreTv.setText(response.getData().getScore());
-                    }else {
-                        totalScoreTv.setText("سکور " + response.getData().getScore());
+                    } else {
+                        totalScoreTv.setText(getString(R.string.score_urdu) + response.getData().getScore());
                     }
                 }
 
@@ -463,8 +473,6 @@ public class HomeFragmentTesting extends Fragment {
 
     private void checkGooglePlayService() {
         Utils.checkGooglePlayServicesVersion(mCurrentActivity);
-        initRangeBar();
-        AppPreferences.setAvailableAPICalling(false);
     }
 
     private void onUnauthorizedLicenceExpire() {
@@ -476,12 +484,15 @@ public class HomeFragmentTesting extends Fragment {
         AppPreferences.setPilotData(null);
         HomeActivity.visibleFragmentNumber = 0;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-            @Override
-            public void onCallBack(String msg) {
-                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                mCurrentActivity.finish();
-            }
-        }, null, "Licence Expired", "Your driving licence is expired. Please renew your driving licence and then contact support.");
+                    @Override
+                    public void onCallBack(String msg) {
+                        //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                        ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
+
+                        mCurrentActivity.finish();
+                    }
+                }, null, getString(R.string.licence_expire_title),
+                getString(R.string.licence_expire_message));
     }
 
     private void initViews() {
@@ -577,11 +588,11 @@ public class HomeFragmentTesting extends Fragment {
             if (AppPreferences.getDriverDestination() == null) {
                 muntakhibTv.setText(getResources().getString(R.string.muntakhib_text_urdu));
                 muntakhibTv1.setText("");
-                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf" );
+                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             } else {
 
                 muntakhibTv.setText(AppPreferences.getDriverDestination().address);
-                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf" );
+                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf");
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
 
             }
@@ -600,11 +611,11 @@ public class HomeFragmentTesting extends Fragment {
             if (null != AppPreferences.getDriverDestination()) {
 
                 muntakhibTv.setText(AppPreferences.getDriverDestination().address);
-                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf" );
+                muntakhibTv.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf");
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "open_sans_regular.ttf");
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
                 muntakhibTvUrdu.setText(getResources().getString(R.string.muntakhib_manzil_urdu));
-            }else {
+            } else {
                 muntakhibTvUrdu.setText(getResources().getString(R.string.muntakhib_manzil_krey_urdu));
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
@@ -629,9 +640,9 @@ public class HomeFragmentTesting extends Fragment {
 
     @Override
     public void onResume() {
-        try{
+        try {
             mapView.onResume();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -699,8 +710,9 @@ public class HomeFragmentTesting extends Fragment {
             }
         }
 
-        if (getActivity().getIntent().getStringExtra("isLogin") != null){
-            currentIndex = 1;
+        if (getActivity().getIntent().getStringExtra("isLogin") != null) {
+            currentIndex = Constants.RESET_CASH_TO_DEFAULT_POSITION;
+            AppPreferences.setCashInHands(cashInHand[Constants.RESET_CASH_TO_DEFAULT_POSITION]);
         }
 
         myRangeBar.refreshDrawableState();
@@ -713,6 +725,20 @@ public class HomeFragmentTesting extends Fragment {
                 AppPreferences.setCashInHands(cashInHand[index]);
             }
         });
+    }
+
+    /***
+     * Reset slider value for cash in hand if current set amount is less then 1000.
+     */
+    private void resetCashSliderToDefault() {
+        cashInHand = AppPreferences.getCashInHandsRange();
+        int currentCashValue = AppPreferences.getCashInHands();
+        if (currentCashValue < Constants.RESET_CASH_TO_DEFAULT_AMOUNT) {
+            AppPreferences.setCashInHands(cashInHand[Constants.RESET_CASH_TO_DEFAULT_POSITION]);
+            myRangeBar.setCurrentIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
+            myRangeBar.setInitialIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
+        }
+
     }
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -822,6 +848,8 @@ public class HomeFragmentTesting extends Fragment {
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
+                                //todo reset slider to 1000 amount when CIH amount is less then 1000
+                                resetCashSliderToDefault();
                             }
                             setStatusBtn();
                         } else {
@@ -946,31 +974,7 @@ public class HomeFragmentTesting extends Fragment {
                                 , AppPreferences.getLongitude())
                         , 12.0f));
 
-            if (mCurrentActivity != null &&
-                    null != mCurrentActivity.getIntent() &&
-                    null != mCurrentActivity.getIntent().getExtras() &&
-                    mCurrentActivity.getIntent().getBooleanExtra("isCancelledTrip", false) &&
-                    !Dialogs.INSTANCE.isShowing()) {
-                if (!mCurrentActivity.isDialogShown() && getView() != null) {
-                    mCurrentActivity.setDialogShown(true);
-                    if (mCurrentActivity.getIntent().getBooleanExtra("isCanceledByAdmin", false)) {
-                        String message = mCurrentActivity.getIntent().getStringExtra("cancelMsg");
-                        Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
-                                new StringCallBack() {
-                                    @Override
-                                    public void onCallBack(String msg) {
-                                    }
-                                }, null, "Booking Cancelled", StringUtils.isNotBlank(message) ? message : "");
-                    } else {
-                        Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
-                                new StringCallBack() {
-                                    @Override
-                                    public void onCallBack(String msg) {
-                                    }
-                                }, null, "Booking Cancelled", "Passenger has cancelled the Trip");
-                    }
-                }
-            }
+            showCancelDialogIfRequired();
 
 //            ArrayList<HeatMapUpdatedResponse> data = new Gson().fromJson(getString(R.string.heat_map_data), new TypeToken<ArrayList<HeatMapUpdatedResponse>>() {
 //            }.getType());
@@ -984,6 +988,56 @@ public class HomeFragmentTesting extends Fragment {
             //addHeatMapPolyline();
         }
     };
+
+    /**
+     * This method checks if cancel dialog need to be shown or not by checking Intent Extras
+     */
+    private void showCancelDialogIfRequired() {
+        if (mCurrentActivity != null &&
+                null != mCurrentActivity.getIntent() &&
+                null != mCurrentActivity.getIntent().getExtras() &&
+                mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP, false) &&
+                !Dialogs.INSTANCE.isShowing()) {
+            if (!mCurrentActivity.isDialogShown() && getView() != null) {
+                mCurrentActivity.setDialogShown(true);
+
+                final Runnable runnable = playCancelNotificationSound();
+                String cancelMsg = mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP_BY_ADMIN, false)
+                        ? mCurrentActivity.getString(R.string.cancel_notification_by_admin) : mCurrentActivity.getString(R.string.cancel_notification);
+                Dialogs.INSTANCE.showCancelNotification(mCurrentActivity, cancelMsg, new StringCallBack() {
+                    @Override
+                    public void onCallBack(String msg) {
+                        if (runnable != null) {
+                            runnable.run();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * This method plays an audio sound for 8 secs when cancel notification is displayed
+     *
+     * @return Runnable runnable handler to stop media player
+     */
+    private Runnable playCancelNotificationSound() {
+        final MediaPlayer mediaPlayer = android.media.MediaPlayer
+                .create(mCurrentActivity, R.raw.one);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.stop();
+                handler.removeCallbacks(this);
+            }
+        };
+        handler.postDelayed(runnable, 8000);//millisec.
+
+        return runnable;
+    }
 
     private void addHeatMapPolyline() {
         Polyline polyline = mGoogleMap.addPolyline(new PolylineOptions()
@@ -1002,7 +1056,7 @@ public class HomeFragmentTesting extends Fragment {
         polyline.setJointType(JointType.ROUND);
 
         List<PatternItem> pattern = Arrays.<PatternItem>asList(
-                 new Dash(20), new Gap(10));
+                new Dash(20), new Gap(10));
 
         polyline.setPattern(pattern);
     }
@@ -1015,7 +1069,7 @@ public class HomeFragmentTesting extends Fragment {
         };
 
         float[] startpoints = {
-            0.2f, 1f
+                0.2f, 1f
         };
 
         Gradient gradient = new Gradient(colors, startpoints);
@@ -1024,11 +1078,11 @@ public class HomeFragmentTesting extends Fragment {
 
         // Get the data: latitude/longitude positions of police stations.
 
-            list = new ArrayList<>();
+        list = new ArrayList<>();
 
 
-                list.add(new LatLng(24.819258, 67.077928));
-                list.add(new LatLng(24.819258, 67.077928));
+        list.add(new LatLng(24.819258, 67.077928));
+        list.add(new LatLng(24.819258, 67.077928));
 
         // Create a heat map tile provider, passing it the latlngs of the police stations.
         mProvider = new HeatmapTileProvider.Builder()
@@ -1059,12 +1113,11 @@ public class HomeFragmentTesting extends Fragment {
     }
 
 
+    @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn, R.id.mapPinIv})
+    public void onClick(View view) {
+        switch (view.getId()) {
 
-    @OnClick ( { R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn, R.id.mapPinIv } )
-    public void onClick(View view){
-        switch (view.getId()){
-
-            case R.id.previusDurationBtn:{
+            case R.id.previusDurationBtn: {
                 Dialogs.INSTANCE.setlastWeek(durationTv);
                 durationBtn.setVisibility(View.VISIBLE);
                 previusDurationBtn.setVisibility(View.GONE);
@@ -1074,12 +1127,12 @@ public class HomeFragmentTesting extends Fragment {
                 break;
             }
 
-            case R.id.mapPinIv:{
+            case R.id.mapPinIv: {
                 setDriverLocation();
                 break;
             }
 
-            case R.id.durationBtn:{
+            case R.id.durationBtn: {
                 Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
                 durationBtn.setVisibility(View.GONE);
                 previusDurationBtn.setVisibility(View.VISIBLE);
@@ -1089,19 +1142,19 @@ public class HomeFragmentTesting extends Fragment {
                 break;
             }
 
-            case R.id.shahkarBtn:{
+            case R.id.shahkarBtn: {
                 //view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 ActivityStackManager.getInstance().startShahkarActivity(mCurrentActivity);
                 break;
             }
 
-            case R.id.statsBtn:{
+            case R.id.statsBtn: {
                 //view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 ActivityStackManager.getInstance().startStatsActivity(mCurrentActivity);
                 break;
             }
 
-            case R.id.editBtn:{
+            case R.id.editBtn: {
                 //view.startAnimation(AnimationUtils.loadAnimation(mCurrentActivity, R.anim.fade_in));
                 if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
                     return;
@@ -1122,7 +1175,6 @@ public class HomeFragmentTesting extends Fragment {
                     , 12.0f));
         }
     }
-
 
 
     private void setHomeLocation() {
@@ -1211,9 +1263,6 @@ public class HomeFragmentTesting extends Fragment {
         }
         return false;
     }
-
-
-
 
 
 }

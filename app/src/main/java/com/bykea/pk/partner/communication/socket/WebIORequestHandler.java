@@ -367,7 +367,7 @@ public class WebIORequestHandler {
                         * If passenger has cancelled it after booking we will entertain this Cancel notification
                         * */
 
-                        if (Utils.isGpsEnable(DriverApp.getContext()) || AppPreferences.isOnTrip()) {
+                        if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
                             intent.putExtra("msg", normalCallData.getMessage());

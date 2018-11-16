@@ -72,7 +72,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NormalCallData callData = gson.fromJson(remoteMessage.getData().get("data"), NormalCallData.class);
                 if (StringUtils.isNotBlank(callData.getStatus())) {
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                        if (Utils.isGpsEnable(mContext) || AppPreferences.isOnTrip()) {
+                        if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                             Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
                             intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
@@ -95,7 +95,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         * If passenger has cancelled it after booking we will entertain this Cancel notification
                         * */
 
-                        if (Utils.isGpsEnable(DriverApp.getContext()) || AppPreferences.isOnTrip()) {
+                        if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
                             intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
                             intent.putExtra("msg", callData.getMessage());
@@ -161,7 +161,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
                     && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude()) && !isCountDownTimerRunning) {
 
-                if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable(mContext)) {
+                if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                     //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
 
                     new Handler(Looper.getMainLooper()).post(new Runnable() {

@@ -3,6 +3,10 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
+import java.net.HttpURLConnection;
+
+import javax.net.ssl.HttpsURLConnection;
+
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
@@ -71,6 +75,28 @@ public class Constants {
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
 
+    public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
+    public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
+
+    public static final String BUILD_VARIANT_LOCAL_FLAVOR = "local";
+
+    public static final String OTP_SMS = "sms";
+    public static final String OTP_CALL = "call";
+
+    public static final long VERIFICATION_WAIT_MAX_TIME = 25000;
+    public static final long VERIFICATION_WAIT_COUNT_DOWN = 100;
+
+    public static final String DRIVER_STATUS_CODE = "2";
+
+
+    public static final int RESET_CASH_TO_DEFAULT_POSITION = 1;
+    public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
+    public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
+
+
+    public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
+    public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";
+
 
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
@@ -92,6 +118,7 @@ public class Constants {
         public static final String LIST_ITEMS = "LIST_ITEMS";
         public static final String CALL_PENDING_API = "CALL_PENDING_API";
         public static final String NAVIGATE_TO_BOOKING_SCREEN = "NAVIGATE_TO_BOOKING_SCREEN";
+        public static final String NAVIGATE_TO_HOME_SCREEN = "NAVIGATE_TO_HOME_SCREEN";
         public static final String CHAT_MSG = "CHAT_MSG";
         public static final String HIDE_SEARCH = "HIDE_SEARCH";
         public static final String IS_FROM_VIEW_PAGER = "IS_FROM_VIEW_PAGER";
@@ -102,6 +129,8 @@ public class Constants {
         public static final String IS_BIOMETRIC_VERIFIED = "IS_FINGER_PRINTS_SUCCESS";
 
         public static final String POSITION_DELIVERY_SCHEDULE = "POSITION_DELIVERY_SCHEDULE";
+        public static final String IS_CANCELED_TRIP = "isCancelledTrip";
+        public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
     }
 
     public static class Broadcast {
@@ -118,7 +147,9 @@ public class Constants {
         public final static int SCAN_FINGER_PRINTS = 123;
     }
 
-
+    public static class TimeFormats {
+        public final static String LICNENSE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    }
 
     public static class AnalyticsEvents {
         public final static String REPLACE = "_R_";
@@ -134,8 +165,8 @@ public class Constants {
         public final static String ON_SIGN_UP_BTN_CLICK = "SignupButton";
         public final static String ON_SIGN_UP_MOBILE_ENTERED = "SignupMobile";
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
-        public final static String ON_LOGIN_SUCCESS= "LoginSuccessful";
-        public final static String ON_RIDE_COMPLETE= "RideComplete";
+        public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
+        public final static String ON_RIDE_COMPLETE = "RideComplete";
 
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
@@ -153,4 +184,77 @@ public class Constants {
     public final static int REQUEST_CAMERA = 23;
     public final static int REQUEST_GALLERY = 22;
     public final static String UPLOAD_IMG_EXT = ".jpg";
+    public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
+
+    public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
+
+    /**
+     * This inner class will contain Constants for Log Tags and Error Log Messages
+     */
+    public static class LogTags {
+        public final static String RETROFIT_ERROR = "Retrofit Error";
+        public final static String TIME_OUT_ERROR = "TimeOut ";
+        public final static String CONVERSION_ERROR = "ConversionError ";
+        public final static String OTHER_ERROR = "Other Error ";
+    }
+
+    /**
+     * List of supported services name and title by our eco system.
+     */
+    public static class ServiceType {
+
+        public static final String RIDE_NAME = "Ride";
+        public static final String RIDE_TITLE = "Ride";
+
+        public static final String SEND_NAME = "Send";
+        public static final String SEND_TITLE = "Delivery";
+
+        public static final String BRING_NAME = "Bring";
+        public static final String BRING_TITLE = "Purchase";
+
+        public static final String TICKETS_NAME = "Bus Ticket";
+        public static final String TICKETS_TITLE = "Ticket";
+
+        public static final String JOBS_NAME = "Jobs";
+        public static final String JOBS_TITLE = "Jobs";
+
+        public static final String CLASSIFIEDS_NAME = "Classifieds";
+        public static final String CLASSIFIEDS_TITLE = "Classifieds";
+
+        public static final String CARRY_VAN_NAME = "Carry Van";
+        public static final String CARRY_VAN_TITLE = "Bachat Courier";
+
+        public static final String ADS_NAME = "Ads";
+        public static final String ADS_TITLE = "Food";
+
+        public static final String UTILITY_BILL_NAME = "Utility Bill";
+        public static final String UTILITY_BILL_TITLE = "Utility Bill";
+
+        public static final String FOOD_DELIVERY_NAME = "FoodDelivery";
+        public static final String FOOD_DELIVERY_TITLE = "Food Delivery";
+
+    }
+
+    /**
+     * Inner class for Font Names
+     */
+    public static class FontNames {
+        public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
+        public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
+        public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
+    }
+
+    /***
+     * Inner class for API error which holds all error use case constants
+     */
+    public static class ApiError {
+        public static final int BUSINESS_LOGIC_ERROR = 422;
+        public static final int DRIVER_NOT_REGISTER = 404;
+        public static final int APP_FORCE_UPDATE = 1001;
+        public static final int DRIVER_LAT_LNG_ZERO = 1002;
+        public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
+        public static final int DRIVER_LICENSE_EXPIRED = 1004;
+        public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
+    }
+
 }

@@ -159,4 +159,12 @@ class RestClient {
         return bykeaSignUpretrofitCalls;
     }
 
+    /**
+     * This method sets null value to retrofitCalls so that it creates new instance of retrofitCalls
+     * to avoid session logout issue when dynamic url is set for Local builds
+     */
+    static void clearBykeaRetrofitClient() {
+        retrofitCalls = null;
+    }
+
 }
