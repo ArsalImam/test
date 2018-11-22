@@ -476,10 +476,6 @@ public class Utils {
         }
     }
 
-    public static void exitFullScreen() {
-
-    }
-
     public static void unlockScreen(Context context) {
         Window window = ((AppCompatActivity) context).getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
