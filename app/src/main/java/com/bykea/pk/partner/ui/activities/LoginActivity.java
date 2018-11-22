@@ -327,13 +327,14 @@ public class LoginActivity extends BaseActivity {
                 }
                 break;
             case ApiError.DRIVER_REGION_NOT_ALLOWED:
+                //getString(R.string.region_out_support_helpline),
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                        getString(R.string.region_out_support_helpline),
+                        verifyNumberResponse.getSupportNumber(),
                         getString(R.string.region_out_message_ur));
                 break;
             case ApiError.DRIVER_ACCOUNT_BLOCKED:
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                        getString(R.string.region_out_support_helpline),
+                        verifyNumberResponse.getSupportNumber(),
                         getString(R.string.account_blocked_message_ur));
                 break;
             case ApiError.DRIVER_LAT_LNG_ZERO: {

@@ -115,14 +115,10 @@ public class RestRequestHandler {
             public void onResponse(Response<VerifyNumberResponse> response, Retrofit retrofit) {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
-                        CommonResponse commonResponse =
-                                Utils.parseAPIErrorResponse(response, retrofit);
-                        if (commonResponse != null) {
-                            VerifyNumberResponse verifyNumberResponse = new VerifyNumberResponse();
-                            verifyNumberResponse.setMessage(commonResponse.getMessage());
-                            verifyNumberResponse.setCode(commonResponse.getCode());
-                            verifyNumberResponse.setSuccess(commonResponse.isSuccess());
-                            verifyNumberResponse.setSubCode(commonResponse.getSubCode());
+                        VerifyNumberResponse verifyNumberResponse =
+                                Utils.parseAPIErrorResponse(response,
+                                        retrofit, VerifyNumberResponse.class);
+                        if (verifyNumberResponse != null) {
                             mResponseCallBack.onResponse(verifyNumberResponse);
                         } else {
                             mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
@@ -191,13 +187,9 @@ public class RestRequestHandler {
             public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
-                        CommonResponse commonResponse =
-                                Utils.parseAPIErrorResponse(response, retrofit);
-                        if (commonResponse != null) {
-                            LoginResponse loginResponse = new LoginResponse();
-                            loginResponse.setMessage(commonResponse.getMessage());
-                            loginResponse.setCode(commonResponse.getCode());
-                            loginResponse.setSuccess(commonResponse.isSuccess());
+                        LoginResponse loginResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit, LoginResponse.class);
+                        if (loginResponse != null) {
                             mResponseCallBack.onResponse(loginResponse);
                         } else {
                             mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
