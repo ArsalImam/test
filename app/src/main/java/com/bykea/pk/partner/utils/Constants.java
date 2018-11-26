@@ -3,6 +3,10 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
+import java.net.HttpURLConnection;
+
+import javax.net.ssl.HttpsURLConnection;
+
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
@@ -83,14 +87,11 @@ public class Constants {
     public static final long VERIFICATION_WAIT_COUNT_DOWN = 100;
 
     public static final String DRIVER_STATUS_CODE = "2";
-    public static final int APP_FORCE_UPDATE = 600;
-    public static final int DRIVER_LICENSE_EXPIRED = 900;
-    public static final int DRIVER_NOT_REGISTER = 404;
-    public static final int DRIVER_REGION_NOT_ALLOWED = 601;
-    public static final int DRIVER_ACCOUNT_BLOCKED = 602;
 
-    public static final int RESET_CASH_TO_DEFAULT_POSITION=1;
-    public static final int RESET_CASH_TO_DEFAULT_AMOUNT=1000;
+
+    public static final int RESET_CASH_TO_DEFAULT_POSITION = 1;
+    public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
+    public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
@@ -248,6 +249,19 @@ public class Constants {
         public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
         public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
         public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
+    }
+
+    /***
+     * Inner class for API error which holds all error use case constants
+     */
+    public static class ApiError {
+        public static final int BUSINESS_LOGIC_ERROR = 422;
+        public static final int DRIVER_NOT_REGISTER = 404;
+        public static final int APP_FORCE_UPDATE = 1001;
+        public static final int DRIVER_LAT_LNG_ZERO = 1002;
+        public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
+        public static final int DRIVER_LICENSE_EXPIRED = 1004;
+        public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
     }
 
 }

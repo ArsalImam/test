@@ -220,5 +220,9 @@
     <string name="region_out_message_ur">  آپکا اکاؤنٹ  اس شہر میں بلاک ہے </string>
     <string name="account_blocked_message_ur">آپکا ا کاؤنٹ بند ہے، كال بائیکیا</string>
     <string name="region_out_support_helpline">+923111111700</string>
+    <string name="gps_enable_initial_message"> برائے مہربانی اپنا</string>
+    <string name="GPS_middle_message">GPS</string>
+    <string name="gps_enable_ending_message"> آن کریں </string>
+    <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
 
 </resources>
