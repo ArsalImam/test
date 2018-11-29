@@ -17,6 +17,7 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
+import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
@@ -288,6 +289,18 @@ public class UserRepository {
 
         mContext = context;
         mUserCallback = handler;
+       /* String driverId = AppPreferences.getDriverId();
+        if (StringUtils.isBlank(driverId)) {
+            return;
+        }
+
+        DriverLocationRequest locationRequest = new DriverLocationRequest();
+        locationRequest.setTokenID(AppPreferences.getAccessToken());
+        locationRequest.setDriverID(driverId);
+        locationRequest.setLatitude(lat+"");
+        locationRequest.setLongitude(lon+"");
+        String tripStatus = StringUtils.EMPTY;*/
+
         JSONObject jsonObject = new JSONObject();
         try {
             Utils.redLog("token_id at Location", AppPreferences.getAccessToken());

@@ -1486,7 +1486,7 @@ public class RestRequestHandler {
             return;
         }
         DriverLocationRequest locationRequest = new DriverLocationRequest();
-        locationRequest.setToken(AppPreferences.getAccessToken());
+        /*locationRequest.setToken(AppPreferences.getAccessToken());
         locationRequest.setDriverID(driverId);
         locationRequest.setLatitude(lat);
         locationRequest.setLongitude(lng);
@@ -1500,7 +1500,7 @@ public class RestRequestHandler {
         } else {
             locationRequest.setInCall(false);
             locationRequest.setStatus(AppPreferences.getTripStatus());
-        }
+        }*/
 
         Utils.redLog(TAG, "Request For Driver Location: " + new Gson().toJson(locationRequest));
         Call<DriverLocationResponse> restCall = mRestClient.updateDriverLocation(locationRequest);
