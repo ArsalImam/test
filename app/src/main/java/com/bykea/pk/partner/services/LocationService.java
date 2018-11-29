@@ -24,7 +24,6 @@ import android.support.v4.app.NotificationCompat;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
-import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -39,11 +38,9 @@ import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.activities.SplashActivity;
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -753,15 +750,9 @@ public class LocationService extends Service {
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
-        public void onDriverLocationResponse(DriverLocationResponse response) {
-            Utils.redLogLocation(TAG, "Driver location Response: " + new Gson().toJson(response));
-
-        }
-
-        @Override
         public void onLocationUpdate(LocationResponse response) {
             super.onLocationUpdate(response);
-            Utils.redLogLocation(TAG, "location Socket Response: " + new Gson().toJson(response));
+            Utils.redLogLocation(TAG, "location API Response: " + new Gson().toJson(response));
             AppPreferences.setDriverOfflineForcefully(false);
             AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
         }

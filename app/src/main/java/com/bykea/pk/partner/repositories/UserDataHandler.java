@@ -22,7 +22,6 @@ import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.ConversationResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
-import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
@@ -382,11 +381,6 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onBiometricApiResponse(BiometricApiResponse response) {
-
-    }
-
-    @Override
-    public void onDriverLocationResponse(DriverLocationResponse response) {
 
     }
 

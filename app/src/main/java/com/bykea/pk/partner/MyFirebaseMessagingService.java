@@ -6,30 +6,28 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
-import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.HTTPStatus;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
-import com.google.gson.Gson;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
-
-import okhttp3.internal.Util;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -92,10 +90,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) && AppPreferences.getAvailableStatus()) {
 
                         /*
-                        * when Gps is off, we don't show Calling Screen so we don't need to show
-                        * Cancel notification either if passenger cancels it before booking.
-                        * If passenger has cancelled it after booking we will entertain this Cancel notification
-                        * */
+                         * when Gps is off, we don't show Calling Screen so we don't need to show
+                         * Cancel notification either if passenger cancels it before booking.
+                         * If passenger has cancelled it after booking we will entertain this Cancel notification
+                         * */
 
                         if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
@@ -165,9 +163,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             AppPreferences.setInactiveCheckTime(System.currentTimeMillis());
             final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), OfflineNotificationData.class);
             /*
-            * Check Coordinates when there's any delay in FCM Push Notification and ignore
-            * this notification when there are different coordinates.
-            * */
+             * Check Coordinates when there's any delay in FCM Push Notification and ignore
+             * this notification when there are different coordinates.
+             * */
             if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
                     && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
                     && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude()) && !isCountDownTimerRunning) {
@@ -183,6 +181,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             countDownTimer.start();
                             WebIO.getInstance().clearConnectionData();
                             new UserRepository().requestLocationUpdate(mContext, new UserDataHandler() {
+
                                 @Override
                                 public void onLocationUpdate(LocationResponse response) {
                                     countDownTimer.cancel();
