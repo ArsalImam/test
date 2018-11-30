@@ -1325,5 +1325,24 @@ public class HomeFragmentTesting extends Fragment {
         return false;
     }
 
+    public void onEvent(final String action) {
+        if (mCurrentActivity != null && getView() != null) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (action.equalsIgnoreCase(Keys.CONNECTION_BROADCAST)) {
+                        setConnectionStatus();
+                    } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) || action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
+                        AppPreferences.setDriverDestination(null);
+                        setStatusBtn();
+                        ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
+                    } else if (action.equalsIgnoreCase(Keys.ACTIVE_FENCE)) {
+                        setStatusBtn();
+                    }
+                }
+            });
+
+        }
+    }
 
 }

@@ -884,13 +884,9 @@ public class RestRequestHandler {
             public void onResponse(Response<PilotStatusResponse> response, Retrofit retrofit) {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
-                        CommonResponse commonResponse =
-                                Utils.parseAPIErrorResponse(response, retrofit);
-                        if (commonResponse != null) {
-                            PilotStatusResponse pilotStatusResponse = new PilotStatusResponse();
-                            pilotStatusResponse.setMessage(commonResponse.getMessage());
-                            pilotStatusResponse.setCode(commonResponse.getCode());
-                            pilotStatusResponse.setSuccess(commonResponse.isSuccess());
+                        PilotStatusResponse pilotStatusResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit, PilotStatusResponse.class);
+                        if (pilotStatusResponse != null) {
                             mResponseCallBack.onResponse(pilotStatusResponse);
                         } else {
                             mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
@@ -1073,35 +1069,67 @@ public class RestRequestHandler {
         @Override
         public void onResponse(Response<LocationResponse> response, Retrofit retrofit) {
             if (response == null || response.body() == null) {
-                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
-                        mContext.getString(R.string.error_try_again) + " ");
-                return;
-            }
-            if (AppPreferences.isLoggedIn() && response.body().getLocation() != null) {
-                if (StringUtils.isNotBlank(response.body().getLocation().getLat())
-                        && StringUtils.isNotBlank(response.body().getLocation().getLng())) {
-                    AppPreferences.saveLastUpdatedLocation(
-                            new LatLng(Double.parseDouble(response.body().getLocation().getLat()),
-                                    Double.parseDouble(response.body().getLocation().getLng())));
-                }
-                Utils.saveServerTimeDifference(response.body().getTimeStampServer());
-            }
+                if (response != null && response.errorBody() != null) {
+                    LocationResponse LocationResponse =
+                            Utils.parseAPIErrorResponse(response, retrofit, LocationResponse.class);
+                    if (LocationResponse != null) {
+                        mResponseCallBack.onError(LocationResponse.getCode(),
+                                LocationResponse.getMessage());
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
 
-            if (response.isSuccess()) {
-                if (AppPreferences.isWalletAmountIncreased()) {
-                    AppPreferences.setWalletAmountIncreased(false);
-                    AppPreferences.setAvailableStatus(true);
-                }
-                if (AppPreferences.isOutOfFence()) {
-                    AppPreferences.setOutOfFence(false);
-                    AppPreferences.setAvailableStatus(true);
-                    mCallBack.onError(HTTPStatus.FENCE_SUCCESS, response.body().getMessage());
                 } else {
-                    mCallBack.onResponse(response);
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                            mContext.getString(R.string.error_try_again) + " ");
                 }
             } else {
-                mCallBack.onError(response.body().getCode(), response.body().getMessage());
+                if (AppPreferences.isLoggedIn() && response.body().getLocation() != null) {
+                    if (StringUtils.isNotBlank(response.body().getLocation().getLat())
+                            && StringUtils.isNotBlank(response.body().getLocation().getLng())) {
+                        AppPreferences.saveLastUpdatedLocation(
+                                new LatLng(Double.parseDouble(response.body().getLocation().getLat()),
+                                        Double.parseDouble(response.body().getLocation().getLng())));
+                    }
+                    Utils.saveServerTimeDifference(response.body().getTimeStampServer());
+                }
+                if (response.isSuccess()) {
+                    //todo This would be removed when backend handle custom business logic.
+                    switch (response.body().getCode()) {
+                        case HTTPStatus.UNAUTHORIZED:
+                        case HTTPStatus.FENCE_ERROR:
+                        case HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT:
+                            mResponseCallBack.onError(response.body().getCode(),
+                                    response.body().getMessage());
+                            return;
+                        case HTTPStatus.BAD_REQUEST:
+                            String errorMessage = response.body().getMessage();
+
+                            if (errorMessage.contains(Constants.FRIVOLOUS_CANCELLATIONS_ER)
+                                    || errorMessage.contains(Constants.FRIVILOUS_CANCELLATIONS_UR))
+                                mResponseCallBack.onError(HTTPStatus.CANCELLATION_RIDE_BLOCK,
+                                        response.body().getMessage());
+                            break;
+                    }
+
+                    if (AppPreferences.isWalletAmountIncreased()) {
+                        AppPreferences.setWalletAmountIncreased(false);
+                        AppPreferences.setAvailableStatus(true);
+                    }
+                    if (AppPreferences.isOutOfFence()) {
+                        AppPreferences.setOutOfFence(false);
+                        AppPreferences.setAvailableStatus(true);
+                        mCallBack.onError(HTTPStatus.FENCE_SUCCESS, response.body().getMessage());
+                    } else {
+                        mCallBack.onResponse(response);
+                    }
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(),
+                            response.body().getMessage());
+                }
             }
+
 
         }
 
@@ -1159,10 +1187,6 @@ public class RestRequestHandler {
         Call<DriverPerformanceResponse> restCall = mRestClient.requestDriverPerformance(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
                 weekStatus);
         restCall.enqueue(new GenericRetrofitCallBack<DriverPerformanceResponse>(onResponseCallBack));
-    }
-
-    public void requestLocationUpdate(Context context, IResponseCallback onResponseCallBack, String lat, String lng) {
-
     }
 
     public void requestLoadBoard(Context context, IResponseCallback onResponseCallBack, String lat, String lng) {

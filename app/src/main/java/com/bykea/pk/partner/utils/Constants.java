@@ -3,10 +3,6 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
-import java.net.HttpURLConnection;
-
-import javax.net.ssl.HttpsURLConnection;
-
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
@@ -77,6 +73,9 @@ public class Constants {
 
     public static final String MOBILE_IMEI_ERROR = "IMEI";
 
+    public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
+    public static final String FRIVILOUS_CANCELLATIONS_UR="مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
+
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -95,7 +94,7 @@ public class Constants {
     public static final int LOCATION_RESPONSE_COUNTER_RESET = 0;
     public static final int LOCATION_RESPONSE_NOT_RECEIEVED_ALLOWED_COUNTER = 3;
 
-    public static final int BATTERY_OPTIMIZATION_RESULT=2000;
+    public static final int BATTERY_OPTIMIZATION_RESULT = 2000;
 
 
     public static class Notification {
@@ -106,6 +105,7 @@ public class Constants {
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
     }
+
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
     public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
 
