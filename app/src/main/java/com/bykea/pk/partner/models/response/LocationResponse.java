@@ -3,6 +3,9 @@ package com.bykea.pk.partner.models.response;
 import com.bykea.pk.partner.models.data.UpdatedLocation;
 import com.google.gson.annotations.SerializedName;
 
+/***
+ * Location response model which is return by API server.
+ */
 public class LocationResponse extends CommonResponse {
 
     @SerializedName("timestampserver")

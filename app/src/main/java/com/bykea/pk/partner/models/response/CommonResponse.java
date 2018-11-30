@@ -2,6 +2,9 @@ package com.bykea.pk.partner.models.response;
 
 import com.google.gson.annotations.SerializedName;
 
+/***
+ * Generic response pojo class.
+ */
 public class CommonResponse {
 
     private boolean success;
