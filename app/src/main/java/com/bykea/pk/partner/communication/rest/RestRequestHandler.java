@@ -867,19 +867,15 @@ public class RestRequestHandler {
             public void onResponse(Response<PilotStatusResponse> response, Retrofit retrofit) {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
-                        CommonResponse commonResponse =
-                                Utils.parseAPIErrorResponse(response, retrofit);
-                        if (commonResponse != null) {
-                            PilotStatusResponse pilotStatusResponse = new PilotStatusResponse();
-                            pilotStatusResponse.setMessage(commonResponse.getMessage());
-                            pilotStatusResponse.setCode(commonResponse.getCode());
-                            pilotStatusResponse.setSuccess(commonResponse.isSuccess());
+                        PilotStatusResponse pilotStatusResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit,
+                                        PilotStatusResponse.class);
+                        if (pilotStatusResponse != null) {
                             mResponseCallBack.onResponse(pilotStatusResponse);
                         } else {
                             mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
                                     mContext.getString(R.string.error_try_again) + " ");
                         }
-
                     } else {
                         mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
                                 mContext.getString(R.string.error_try_again) + " ");

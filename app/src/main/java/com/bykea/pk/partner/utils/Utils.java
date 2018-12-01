@@ -43,6 +43,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -80,7 +81,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
-import com.elvishew.xlog.XLog;
+import com.bykea.pk.partner.widgets.FontUtils;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -116,7 +117,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
-
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -2491,6 +2491,28 @@ public class Utils {
         return false;
     }
 
+    /****
+     * Generate IMEI not registered error message for user.
+     * @param context Calling context.
+     * @return Spannable String format object
+     */
+    public static SpannableStringBuilder generateImeiRegistrationErrorMessage(Context context) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_one_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_three_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_four_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_five_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        return spannableStringBuilder;
+    }
+
     /***
      *  Check is provided activity in running task.
      *
@@ -2515,6 +2537,27 @@ public class Utils {
 
 
         return false;
+    }
+
+
+    /**
+     * Get Application Current version from device Package manager.
+     *
+     * @return Application installed version number.
+     */
+    public static String getAppCurrentVersion() {
+        Context context = DriverApp.getApplication();
+        if (context != null) {
+            PackageManager pm = context.getPackageManager();
+            PackageInfo pInfo;
+            try {
+                pInfo = pm.getPackageInfo(context.getPackageName(), 0);
+                return pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return null;
     }
 
     //region API error response Body parsing

@@ -185,10 +185,10 @@ public class HomeActivity extends BaseActivity {
                     Dialogs.INSTANCE.dismissDialog();
                 }
                 Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
-                if (currentFragment instanceof HomeFragment) {
-                    ((HomeFragment) currentFragment).getCurrentVersion();
+                if (currentFragment instanceof HomeFragmentTesting) {
+                    ((HomeFragmentTesting) currentFragment).getCurrentVersion();
                     if (isUpdated) {
-                        ((HomeFragment) currentFragment).initRangeBar();
+                        ((HomeFragmentTesting) currentFragment).initRangeBar();
                     }
                 }
             }
@@ -259,8 +259,8 @@ public class HomeActivity extends BaseActivity {
     public void onEvent(String action) {
         super.onEvent(action);
         Fragment currentFragment = mCurrentActivity.getSupportFragmentManager().findFragmentById(R.id.containerView);
-        if (currentFragment instanceof HomeFragment) {
-            ((HomeFragment) currentFragment).onEvent(action);
+        if (currentFragment instanceof HomeFragmentTesting) {
+            ((HomeFragmentTesting) currentFragment).onEvent(action);
         }
     }
 
