@@ -772,7 +772,7 @@ public enum Dialogs {
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_alert_update_app);
         mDialog.setCancelable(false);
-        mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+        //mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
 
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
