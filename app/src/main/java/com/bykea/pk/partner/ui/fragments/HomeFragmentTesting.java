@@ -1433,7 +1433,7 @@ public class HomeFragmentTesting extends Fragment {
 
     /***
      * Event subscribe for driver active inactive use case.
-     * @param action Event action 
+     * @param action Event action
      */
     public void onEvent(final String action) {
         if (mCurrentActivity != null && getView() != null) {
