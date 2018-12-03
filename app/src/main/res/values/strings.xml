@@ -244,5 +244,6 @@
     <string name="imei_report_submit_ur">مسئلہ درج کریں</string>
     <string name="frequent_booking_cancel_error_ur">مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے</string>
     <string name="wallet_amount_exceed_error_ur">مزید بوکنگز لینے کے لیے پیسے جمع کروائے۔</string>
+    <string name="account_inactive_message_error_ur">آپکا اکاؤنٹ بند ہے ، کال بائيکیا</string>
     
 </resources>

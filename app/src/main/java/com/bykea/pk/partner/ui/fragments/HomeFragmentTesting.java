@@ -951,6 +951,7 @@ public class HomeFragmentTesting extends Fragment {
                     handleDriverStatusBusinessLogicErrors(driverStatusResponse);
                     break;
                 }
+                //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
                 case HTTPStatus.UNAUTHORIZED: {
                     Utils.onUnauthorized(mCurrentActivity);
                     break;
@@ -1016,6 +1017,9 @@ public class HomeFragmentTesting extends Fragment {
                         getString(R.string.region_out_message_ur));
                 break;
             case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        getString(R.string.region_out_support_helpline),
+                        getString(R.string.account_inactive_message_error_ur));
             default:
                 Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
         }
@@ -1435,7 +1439,7 @@ public class HomeFragmentTesting extends Fragment {
      * Event subscribe for driver active inactive use case.
      * @param action Event action
      */
-    public void onEvent(final String action) {
+   /* public void onEvent(final String action) {
         if (mCurrentActivity != null && getView() != null) {
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -1454,7 +1458,7 @@ public class HomeFragmentTesting extends Fragment {
 
         }
 
-    }
+    }*/
 
 
 }

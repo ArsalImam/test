@@ -82,6 +82,7 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontUtils;
+import com.elvishew.xlog.XLog;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -148,14 +149,14 @@ public class Utils {
      */
     public static void redLogLocation(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            com.elvishew.xlog.XLog.Log.e(tag + " : ", message);
+            XLog.Log.e(tag + " : ", message);
 //            XLog.e(tag, message);
         }
     }
 
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            com.elvishew.xlog.XLog.Log.e(tag + " : ", message);
+            XLog.Log.e(tag + " : ", message);
         }
     }
 
@@ -168,7 +169,7 @@ public class Utils {
      */
     public static void redLog(String tag, String message, Exception ex) {
         if (BuildConfig.DEBUG) {
-            com.elvishew.xlog.XLog.Log.e(tag + " : ", message, ex);
+            XLog.Log.e(tag + " : ", message, ex);
         }
     }
 
