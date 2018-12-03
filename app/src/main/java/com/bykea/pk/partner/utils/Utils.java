@@ -72,7 +72,6 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
-import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -182,7 +181,6 @@ public class Utils {
             }
         }
     }
-
 
 
     public void getImageFromGallery(Activity activity) {
@@ -507,10 +505,6 @@ public class Utils {
         }
     }
 
-    public static void exitFullScreen(){
-
-    }
-
     public static void unlockScreen(Context context) {
         Window window = ((AppCompatActivity) context).getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
@@ -814,13 +808,13 @@ public class Utils {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-                        @Override
-                        public void onCallBack(String msg) {
-                            //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                            ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
-                            mCurrentActivity.finish();
-                        }
-                    }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                                @Override
+                                public void onCallBack(String msg) {
+                                    //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                                    ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
+                                    mCurrentActivity.finish();
+                                }
+                            }, null, mCurrentActivity.getString(R.string.unauthorized_title),
                             mCurrentActivity.getString(R.string.unauthorized_message_session_expired));
                 }
             });
@@ -834,13 +828,13 @@ public class Utils {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-                        @Override
-                        public void onCallBack(String msg) {
-                            //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                            ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
-                            mCurrentActivity.finish();
-                        }
-                    }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                                @Override
+                                public void onCallBack(String msg) {
+                                    //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                                    ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
+                                    mCurrentActivity.finish();
+                                }
+                            }, null, mCurrentActivity.getString(R.string.unauthorized_title),
                             mCurrentActivity.getString(R.string.unauthorized_message_fake_gps));
                 }
             });
@@ -2526,21 +2520,24 @@ public class Utils {
     //region API error response Body parsing
 
     /***
-     * Parse Error body response when we receive error body from retrofit
+     * HTTP response body converted to specified {@code type}.
+     * {@code null} if there is no response
      * @param response response we received from API server.
      * @param retrofit Retrofit Object
-     * @return {@link CommonResponse } model parsed when we receive error body
+     * @param type Concrete type class which is use to parse error response.
+     * @return {@link Object } Object class which would be casted to respective class
+     * parsed when we receive error body
      */
-    public static CommonResponse parseAPIErrorResponse(Response<?> response, Retrofit retrofit) {
-        Converter<ResponseBody, CommonResponse> errorConverter =
-                retrofit.responseConverter(CommonResponse.class, new Annotation[0]);
-        CommonResponse error = null;
+    public static <T> T parseAPIErrorResponse(Response<?> response, Retrofit retrofit,
+                                              Class<T> type) {
         try {
-            error = errorConverter.convert(response.errorBody());
+            Converter<ResponseBody, T> converter = retrofit.responseConverter(type,
+                    new Annotation[0]);
+            return converter.convert(response.errorBody());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return error;
+        return null;
     }
     //endregion
 
