@@ -1016,11 +1016,13 @@ public class HomeFragmentTesting extends Fragment {
                         getString(R.string.region_out_support_helpline),
                         getString(R.string.region_out_message_ur));
                 break;
-            case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
+
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
                         getString(R.string.region_out_support_helpline),
-                        getString(R.string.account_inactive_message_error_ur));
+                        getString(R.string.account_blocked_message_ur));
                 break;
+            case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
             default:
                 Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
         }
