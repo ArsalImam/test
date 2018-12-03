@@ -8,68 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:764640458585:android:775ace9e5931a6fc",
-        "android_client_info": {
-          "package_name": "com.mobinspire.bykea.passenger"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "764640458585-tr932c5m7uugl8jd8q1dl87tcbh46r65.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBXUA0QAZ23NGMff6ER-MT2j4TXqcgry5Y"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:764640458585:android:6a8933e9bdeea963",
-        "android_client_info": {
-          "package_name": "com.mobinspire.bykeadriver"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "764640458585-tr932c5m7uugl8jd8q1dl87tcbh46r65.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBXUA0QAZ23NGMff6ER-MT2j4TXqcgry5Y"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:764640458585:android:c4ebd6948f570b1c",
         "android_client_info": {
           "package_name": "com.bykea.pk"
@@ -77,8 +15,20 @@
       },
       "oauth_client": [
         {
-          "client_id": "764640458585-tr932c5m7uugl8jd8q1dl87tcbh46r65.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "764640458585-9b03e6mob27fpipo1tothes5u4g2e7d8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bykea.pk",
+            "certificate_hash": "198011d5572521607dc2669d0f55d2a8b6af79a0"
+          }
+        },
+        {
+          "client_id": "764640458585-j9rp9bic3podnhtnhhjc76vsp2154fg2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bykea.pk",
+            "certificate_hash": "d4a45a145c7a2ac947b749b3fd1c1035d6d78cf6"
+          }
         }
       ],
       "api_key": [
@@ -91,8 +41,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "764640458585-tr932c5m7uugl8jd8q1dl87tcbh46r65.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "764640458585-g1idkh3cbqi32ubgotl4aael9qdbevme.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bykea.pk"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2
@@ -108,8 +70,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "764640458585-tr932c5m7uugl8jd8q1dl87tcbh46r65.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "764640458585-124fn817blnaqa8651otubcg5hlf50e4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bykea.pk.partner",
+            "certificate_hash": "51cec863acb663851b0aabe0d6d2e7b848222c05"
+          }
         }
       ],
       "api_key": [
@@ -122,8 +88,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "764640458585-tr932c5m7uugl8jd8q1dl87tcbh46r65.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "764640458585-g1idkh3cbqi32ubgotl4aael9qdbevme.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bykea.pk"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2
