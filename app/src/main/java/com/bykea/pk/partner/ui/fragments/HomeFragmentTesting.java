@@ -1020,6 +1020,7 @@ public class HomeFragmentTesting extends Fragment {
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
                         getString(R.string.region_out_support_helpline),
                         getString(R.string.account_inactive_message_error_ur));
+                break;
             default:
                 Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
         }
@@ -1439,7 +1440,7 @@ public class HomeFragmentTesting extends Fragment {
      * Event subscribe for driver active inactive use case.
      * @param action Event action
      */
-   /* public void onEvent(final String action) {
+    public void onEvent(final String action) {
         if (mCurrentActivity != null && getView() != null) {
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -1458,7 +1459,7 @@ public class HomeFragmentTesting extends Fragment {
 
         }
 
-    }*/
+    }
 
 
 }
