@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -567,6 +568,31 @@ public enum Dialogs {
             public void onClick(View v) {
                 dismissDialog();
                 Utils.callingIntent(context, number);
+            }
+        });
+        showDialog();
+    }
+
+    /***
+     * Show IMEI not registered error message which takes user to report submit screen.
+     * @param context Calling Context
+     * @param msg Message which needs to be displayed.
+     * @param positive report submit click listener.
+     */
+    public void showImeiRegistrationErrorDialog(final Context context,
+                                                final SpannableStringBuilder msg,
+                                                final View.OnClickListener positive) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_imei_not_registerd);
+        if (StringUtils.isNotBlank(msg)) {
+            ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
+        }
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+                positive.onClick(v);
             }
         });
         showDialog();

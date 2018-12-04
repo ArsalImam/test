@@ -226,6 +226,7 @@ public class HomeFragmentTesting extends Fragment {
     private boolean handleUIChangeForInActive = true;
     private boolean isDialogDisplayingForBattery = false;
     private View view;
+    private String currentVersion, latestVersion;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -897,14 +898,7 @@ public class HomeFragmentTesting extends Fragment {
                             }
                             setStatusBtn();
                         } else {
-                            if (pilotStatusResponse.getCode() == HTTPStatus.UNAUTHORIZED) {
-                                Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                Utils.appToast(mCurrentActivity, pilotStatusResponse.getMessage());
-                                AppPreferences.setAvailableStatus(false);
-                                AppPreferences.setDriverDestination(null);
-                                setStatusBtn();
-                            }
+                            handleDriverStatusErrorCase(pilotStatusResponse);
                         }
                     }
                 });
@@ -943,6 +937,101 @@ public class HomeFragmentTesting extends Fragment {
             }
         }
     };
+
+    //region Handle Error cases for Driver Status API
+
+    /***
+     * Handle Driver status API Error case for API failures.
+     * @param driverStatusResponse latest response from server.
+     */
+    private void handleDriverStatusErrorCase(PilotStatusResponse driverStatusResponse) {
+        if (driverStatusResponse != null) {
+            switch (driverStatusResponse.getCode()) {
+                case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
+                    handleDriverStatusBusinessLogicErrors(driverStatusResponse);
+                    break;
+                }
+                //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
+                case HTTPStatus.UNAUTHORIZED: {
+                    Utils.onUnauthorized(mCurrentActivity);
+                    break;
+                }
+                default:
+                    Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
+                    AppPreferences.setAvailableStatus(false);
+                    AppPreferences.setDriverDestination(null);
+                    setStatusBtn();
+            }
+        }
+    }
+
+    /***
+     * Handle business logic driver Failure use cases for driver status .
+     * <ul>
+     *     <li> IMEI not registered. </li>
+     *     <li> Multiple cancellation block. </li>
+     *     <li> Wallet amount exceeds threshold. </li>
+     *     <li> Out of service region area block. </li>
+     *     <li> Status change during rides. </li>
+     * </ul>
+     *
+     * @param driverStatusResponse Latest response received from API Server
+     */
+    private void handleDriverStatusBusinessLogicErrors(PilotStatusResponse driverStatusResponse) {
+        String displayErrorMessage;
+        switch (driverStatusResponse.getSubCode()) {
+            case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
+                displayErrorMessage = getString(R.string.frequent_booking_cancel_error_ur);
+                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                        displayErrorMessage, 0f, null, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        });
+                break;
+            case Constants.ApiError.IMEI_NOT_REGISTERED:
+                Dialogs.INSTANCE.showImeiRegistrationErrorDialog(mCurrentActivity,
+                        Utils.generateImeiRegistrationErrorMessage(mCurrentActivity),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityStackManager.getInstance().startReportActivity(
+                                        view.getContext(), "s");
+                            }
+                        });
+                break;
+            case Constants.ApiError.WALLET_EXCEED_THRESHOLD:
+                displayErrorMessage = getString(R.string.wallet_amount_exceed_error_ur);
+                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                        displayErrorMessage, 0f, null, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        });
+                break;
+            case Constants.ApiError.OUT_OF_SERVICE_REGION:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        getString(R.string.region_out_support_helpline),
+                        getString(R.string.region_out_message_ur));
+                break;
+
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        getString(R.string.region_out_support_helpline),
+                        getString(R.string.account_blocked_message_ur));
+                break;
+            case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
+            default:
+                Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
+        }
+        AppPreferences.setAvailableStatus(false);
+        AppPreferences.setDriverDestination(null);
+        setStatusBtn();
+    }
+    //endregion
+
 
     private ArrayList<Polygon> mPolygonList = new ArrayList<>();
 
@@ -1325,6 +1414,34 @@ public class HomeFragmentTesting extends Fragment {
         return false;
     }
 
+    /***
+     * Get Current App version and compare it with latest version returned by Setting API.
+     * Show force app update dialog.
+     */
+    public void getCurrentVersion() {
+        if (mCurrentActivity != null && getView() != null) {
+            currentVersion = Utils.getAppCurrentVersion();
+            if (AppPreferences.getSettings() != null
+                    && AppPreferences.getSettings().getSettings() != null) {
+                latestVersion = AppPreferences.getSettings().getSettings().getApp_version();
+            }
+            if (StringUtils.isNotBlank(latestVersion) && StringUtils.isNotBlank(currentVersion)) {
+                Utils.redLog("VERSION", "Current: " + currentVersion + " Play Store: " + latestVersion);
+                if (Double.parseDouble(currentVersion) < Double.parseDouble(latestVersion)) {
+                    Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
+                            getString(R.string.force_app_update_title),
+                            getString(R.string.force_app_update_message_local_ur),
+                            getString(R.string.force_app_update_link));
+                }
+            }
+        }
+
+    }
+
+    /***
+     * Event subscribe for driver active inactive use case.
+     * @param action Event action
+     */
     public void onEvent(final String action) {
         if (mCurrentActivity != null && getView() != null) {
             mCurrentActivity.runOnUiThread(new Runnable() {
@@ -1332,10 +1449,10 @@ public class HomeFragmentTesting extends Fragment {
                 public void run() {
                     if (action.equalsIgnoreCase(Keys.CONNECTION_BROADCAST)) {
                         setConnectionStatus();
-                    } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) || action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
+                    } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) ||
+                            action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
                         AppPreferences.setDriverDestination(null);
                         setStatusBtn();
-                        ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
                     } else if (action.equalsIgnoreCase(Keys.ACTIVE_FENCE)) {
                         setStatusBtn();
                     }
@@ -1343,6 +1460,8 @@ public class HomeFragmentTesting extends Fragment {
             });
 
         }
+
     }
+
 
 }

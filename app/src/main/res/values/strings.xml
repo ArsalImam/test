@@ -213,6 +213,7 @@
     <string name="enter_verification_code">Enter verification code</string>
     <string name="force_app_update_link">https://play.google.com/store/apps/details?id=%1$s</string>
     <string name="force_app_update_title">اعلان !</string>
+    <string name="force_app_update_message_local_ur">بائيکیا پارٹنر ایپ کو برائے مہربانی فوراً اپڈیٹ کریں۔</string>
     <string name="driver_licence_expire_error">your license has expired</string>
     <string name="driver_licence_expire_error_ur">آپکا لائسنس ایکسپائر ہے ، كال بائیکیا</string>
     <string name="error_heading">Error</string>
@@ -229,11 +230,20 @@
     <string name="GPS_middle_message">GPS</string>
     <string name="gps_enable_ending_message"> آن کریں </string>
     <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
-
     <string name="notification_title_driver_login_location">Logged in fetching location</string>
     <string name="notification_title_driver_logout_location">Fetching location</string>
     <string name="notification_title_driver_status">Your Status: %1$s</string>
     <string name="notification_title_driver_trip">TRIP# %1$s is in %2$s state</string>
     <string name="battery_optimize_error_title">Battery Optimize Error</string>
     <string name="battery_optimize_error_message">Provide Battery Optimize permission for making you online</string>
+    <string name="imei_report_part_one_ur">اس موبائل کا </string>
+    <string name="imei_report_part_two"> IMEI</string>
+    <string name="imei_report_part_three_ur">نمبر ہمارے ریکارڈ میں موجود نہیں ہے۔</string>
+    <string name="imei_report_part_four_ur">\n نئے </string>
+    <string name="imei_report_part_five_ur">کے اندراج کے لئے نیچے دیئے گئے بٹن پر کلک کریں۔</string>
+    <string name="imei_report_submit_ur">مسئلہ درج کریں</string>
+    <string name="frequent_booking_cancel_error_ur">مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے</string>
+    <string name="wallet_amount_exceed_error_ur">مزید بوکنگز لینے کے لیے پیسے جمع کروائے۔</string>
+    <string name="account_inactive_message_error_ur">آپکا اکاؤنٹ بند ہے ، کال بائيکیا</string>
+    
 </resources>

@@ -260,7 +260,7 @@ public class LoginActivity extends BaseActivity {
         if (verifyNumberResponse != null) {
             switch (verifyNumberResponse.getCode()) {
                 case ApiError.BUSINESS_LOGIC_ERROR: {
-                    handleBossinessLogicErrors(verifyNumberResponse);
+                    handleBusinessLogicErrors(verifyNumberResponse);
                     break;
                 }
                 case ApiError.DRIVER_NOT_REGISTER: {
@@ -296,7 +296,7 @@ public class LoginActivity extends BaseActivity {
      *
      * @param verifyNumberResponse Latest response received from API Server
      */
-    private void handleBossinessLogicErrors(VerifyNumberResponse verifyNumberResponse) {
+    private void handleBusinessLogicErrors(VerifyNumberResponse verifyNumberResponse) {
         switch (verifyNumberResponse.getSubCode()) {
             case ApiError.APP_FORCE_UPDATE:
                 verifyNumberResponse.setLink(String.format(getString(R.string.

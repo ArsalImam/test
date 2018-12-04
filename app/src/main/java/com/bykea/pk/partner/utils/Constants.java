@@ -311,7 +311,7 @@ public class Constants {
     public static class FontNames {
         public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
         public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
-        public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
+        public static final String OPEN_SANS_BOLD = "open_sans_semi_bold.ttf";
     }
 
     /***
@@ -325,6 +325,12 @@ public class Constants {
         public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
         public static final int DRIVER_LICENSE_EXPIRED = 1004;
         public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
+        public static final int MULTIPLE_CANCELLATION_BLOCK = 1007;
+        public static final int IMEI_NOT_REGISTERED = 1008;
+        public static final int WALLET_EXCEED_THRESHOLD = 1009;
+        public static final int OUT_OF_SERVICE_REGION = 1010;
+        public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+
     }
 
 }
