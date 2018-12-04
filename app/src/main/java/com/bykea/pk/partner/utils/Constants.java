@@ -3,10 +3,6 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
-import java.net.HttpURLConnection;
-
-import javax.net.ssl.HttpsURLConnection;
-
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
@@ -95,7 +91,7 @@ public class Constants {
     public static final int LOCATION_RESPONSE_COUNTER_RESET = 0;
     public static final int LOCATION_RESPONSE_NOT_RECEIEVED_ALLOWED_COUNTER = 3;
 
-    public static final int BATTERY_OPTIMIZATION_RESULT=2000;
+    public static final int BATTERY_OPTIMIZATION_RESULT = 2000;
 
 
     public static class Notification {
@@ -106,6 +102,7 @@ public class Constants {
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
     }
+
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
     public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
 
@@ -311,7 +308,7 @@ public class Constants {
     public static class FontNames {
         public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
         public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
-        public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
+        public static final String OPEN_SANS_BOLD = "open_sans_semi_bold.ttf";
     }
 
     /***
@@ -325,6 +322,12 @@ public class Constants {
         public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
         public static final int DRIVER_LICENSE_EXPIRED = 1004;
         public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
+        public static final int MULTIPLE_CANCELLATION_BLOCK = 1007;
+        public static final int IMEI_NOT_REGISTERED = 1008;
+        public static final int WALLET_EXCEED_THRESHOLD = 1009;
+        public static final int OUT_OF_SERVICE_REGION = 1010;
+        public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+
     }
 
 }
