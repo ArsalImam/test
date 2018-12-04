@@ -96,6 +96,9 @@ public class Constants {
 
     public static final int BATTERY_OPTIMIZATION_RESULT = 2000;
 
+    public static final String RETROFIT_METHOD_POST="post";
+    public static final String RETROFIT_METHOD_GET="get";
+
 
     public static class Notification {
         public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
