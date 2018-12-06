@@ -1199,4 +1199,15 @@ public class AppPreferences {
                 .apply();
     }
 
+    /***
+     * Clear preference when driver is unauthoried.
+     */
+    public static void clearForUnauthorized() {
+        saveLoginStatus(false);
+        setIncomingCall(false);
+        setCallData(null);
+        setTripStatus("");
+        setPilotData(null);
+    }
+
 }

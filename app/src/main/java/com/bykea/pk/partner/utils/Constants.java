@@ -225,6 +225,8 @@ public class Constants {
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
 
+    public final static String DRIVER_SOCKET_CLIENT_TYPE="PARTNER_ANDROID";
+
     /**
      * This inner class will contain Constants for Log Tags and Error Log Messages
      */

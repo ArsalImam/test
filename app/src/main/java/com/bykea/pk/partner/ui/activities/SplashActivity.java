@@ -388,6 +388,7 @@ public class SplashActivity extends BaseActivity {
             Utils.unbindDrawables(findViewById(R.id.activity_splash));
         }
         disconnectTimer();
+        Dialogs.INSTANCE.dismissDialog();
     }
     //endregion
 

@@ -4,11 +4,15 @@ import android.annotation.SuppressLint;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.response.CommonResponse;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.gson.Gson;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -17,6 +21,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -39,12 +44,25 @@ public class WebIO {
 
     private static final String TAG = WebIO.class.getSimpleName();
 
+    /***
+     * Generate connection string for socket authentication.
+     * @return Generate connection string.
+     */
+    private String getConnectionString() {
+        return String.format("appName=Terminal&AppId=7002738&AppSecret=cI790Mf&" +
+                        "client_type=%s&client_id=%s&client_token=%s&uuid=%s",
+                Constants.DRIVER_SOCKET_CLIENT_TYPE,
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                UUID.randomUUID().toString());// UUID should always be 36 character long.
+    }
+
 
     private WebIO() {
         try {
 
             IO.Options options = new IO.Options();
-            options.query = "appName=Terminal&AppId=7002738&AppSecret=cI790Mf&user_type=p";
+            options.query = getConnectionString();
             options.timeout = 15 * 1000;
             options.secure = true;
             options.forceNew = true;
@@ -180,6 +198,8 @@ public class WebIO {
         @Override
         public void call(Object... args) {
             if (args != null && args.length > 0) {
+                String serverResponse = args[0].toString();
+                Utils.redLogLocation(TAG, "Server response onError: " + serverResponse);
                 Exception err = (Exception) args[0];
                 //Utils.redLogLocation("onError", err.getMessage());
                 Utils.redLog(TAG, "Socket onError: " + err.toString(), err);
@@ -200,12 +220,20 @@ public class WebIO {
             on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response from disconnect : " + serverResponse);
+                    }
                     Utils.redLogLocation(TAG, "Socket disconnected: " + Socket.EVENT_DISCONNECT);
                 }
             });
             on(Socket.EVENT_PING, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response from Ping : " + serverResponse);
+                    }
                     WebIO.getInstance().getSocket().emit(Socket.EVENT_PONG);
                     Utils.redLogLocation(TAG, "Socket Ping: " + Socket.EVENT_PING);
                 }
@@ -213,36 +241,85 @@ public class WebIO {
             on(Socket.EVENT_PONG, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response from Pong : " + serverResponse);
+                    }
                     Utils.redLogLocation(TAG, "Socket Pong: " + Socket.EVENT_PONG);
+                }
+            });
+            on(ApiTags.SOCKEY_AUTH_FAILED, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Gson gson = new Gson();
+                        CommonResponse commonResponse = gson.fromJson(serverResponse, CommonResponse.class);
+                        if (commonResponse != null) {
+                            clearConnectionData();
+                            Utils.clearData(DriverApp.getContext());
+                            ActivityStackManager.getInstance().startLandingActivity(DriverApp.getContext());
+                        }
+                        Utils.redLogLocation(TAG, "Server response from AUTH_FAILED : " + serverResponse);
+                    }
+                }
+            });
+            on(ApiTags.SOCKEY_AUTH_SUCCESS, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response from AUTH_SUCCESS : " + serverResponse);
+                    }
                 }
             });
             on(Socket.EVENT_CONNECTING, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response from Connecting : " + serverResponse);
+                    }
                     Utils.redLogLocation(TAG, "Socket connecting: " + Socket.EVENT_CONNECTING);
                 }
             });
             on(Socket.EVENT_RECONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response Reconnect: " + serverResponse);
+                    }
                     Utils.redLogLocation(TAG, "Socket reconnect: " + Socket.EVENT_RECONNECT);
                 }
             });
             on(Socket.EVENT_RECONNECT_ATTEMPT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response from reconnecting Attempt : " + serverResponse);
+                    }
                     Utils.redLogLocation(TAG, "Socket reconnect attempt: " + Socket.EVENT_RECONNECT_ATTEMPT);
                 }
             });
             on(Socket.EVENT_RECONNECT_ERROR, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response from reconnect error : " + serverResponse);
+                    }
                     Utils.redLogLocation(TAG, "Socket reconnect error: " + Socket.EVENT_RECONNECT_ERROR);
                 }
             });
             on(Socket.EVENT_RECONNECT_FAILED, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args != null && args.length > 0) {
+                        String serverResponse = args[0].toString();
+                        Utils.redLogLocation(TAG, "Server response from reconnect failed : " + serverResponse);
+                    }
                     Utils.redLogLocation(TAG, "Socket reconnect failed: " + Socket.EVENT_RECONNECT_FAILED);
                 }
             });

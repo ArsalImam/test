@@ -631,7 +631,9 @@ public class LocationService extends Service {
         @Override
         public void onTick(long millisUntilFinished) {
             if (Connectivity.isConnectedFast(mContext)) {
-                DriverApp.getApplication().connect();
+                if (AppPreferences.isLoggedIn()) {
+                    DriverApp.getApplication().connect();
+                }
             }
         }
 

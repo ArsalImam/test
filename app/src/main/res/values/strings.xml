@@ -163,7 +163,7 @@
     <string name="customer_ki_taraf_se_rating">\u0020کسٹمر کی طرف سے ریٹنگ\u0020</string>
     <string name="logout_text_ur">\u0020لاگ آوٹ؟\u0020</string>
     <string name="cancel_notification">\u0020کسٹمر نے بکنگ کینسل کردی\u0020</string>
-    <string name="cancel_notification_by_admin">\u0020ایڈمن نے بکنگ کینسل کردی\u0020</string>
+    <string name="cancel_notification_by_admin">\u0020آپکی بکنگ کینسل ہوگئی ہے۔\u0020</string>
     <string name="score_urdu">\u0020سکور</string>
     <string name="rs">Rs\u0020</string>
     <string name="percentage_sign">%</string>

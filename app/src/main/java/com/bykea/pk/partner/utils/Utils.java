@@ -322,7 +322,11 @@ public class Utils {
         ((Activity) context).finish();
     }
 
-    private static void clearData(Context context) {
+    /***
+     * Clear Data when user is unauthorized.
+     * @param context Calling context.
+     */
+    public static void clearData(Context context) {
 //        Utils.resetMixPanel(context, false);
         FirebaseAnalytics.getInstance(context).resetAnalyticsData();
         String regId = AppPreferences.getRegId();
