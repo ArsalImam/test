@@ -1,15 +1,19 @@
 package com.bykea.pk.partner.models.data;
 
 import android.graphics.Bitmap;
+import android.widget.TextView;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class MultiDeliveryDropOff {
     String mArea;
     String streetAddress;
-    Bitmap dropOffImage;
+    String dropOffNumberText;
 
-    public MultiDeliveryDropOff(String mArea, String streetAddress) {
+    public MultiDeliveryDropOff(String mArea, String streetAddress, String dropOffNumberText) {
         this.mArea = mArea;
         this.streetAddress = streetAddress;
+        this.dropOffNumberText = dropOffNumberText;
     }
 
     public String getmArea() {
@@ -28,11 +32,11 @@ public class MultiDeliveryDropOff {
         this.streetAddress = streetAddress;
     }
 
-    public Bitmap getDropOffImage() {
-        return dropOffImage;
+    public String getDropOffNumberText() {
+        return dropOffNumberText;
     }
 
-    public void setDropOffImage(Bitmap dropOffImage) {
-        this.dropOffImage = dropOffImage;
+    public void setDropOffNumberText(String dropOffNumberText) {
+        this.dropOffNumberText = dropOffNumberText;
     }
 }

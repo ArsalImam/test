@@ -1,23 +1,21 @@
 package com.bykea.pk.partner.ui.fragments;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.MultiDeliveryCallData;
-import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
+import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
 import com.bykea.pk.partner.models.data.MultiDeliveryPickup;
-import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
-import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.ui.helpers.adapters.DirectionAdapter;
+import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCompleteRideAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class MultiDeliveryCallFragment extends Fragment {
-
-    @BindView(R.id.call_recycler_view)
+public class MultiDeliveryRideCompleteFragment extends Fragment {
+    @BindView(R.id.ride_recycler_view)
     RecyclerView mRecyclerView;
 
     private Unbinder unbinder;
@@ -37,7 +34,7 @@ public class MultiDeliveryCallFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.multi_delivery_call_fragment,
+        View view = inflater.inflate(R.layout.multidelivery_mukamal_fragment,
                 container,
                 false);
         unbinder = ButterKnife.bind(this, view);
@@ -56,29 +53,21 @@ public class MultiDeliveryCallFragment extends Fragment {
 
         //Todo 1: Mock Data for testing need to be change when backend team provide an API
 
-        MultiDeliveryPickup pickup = new MultiDeliveryPickup("University Road",
-                "Akhtar Feeder",
-                "House # 1, Street 35, Block B3  House # 1, Street  35, Block B3");
-
-        List<MultiDeliveryDropOff> list = new ArrayList<>();
+        List<DirectionDropOffData> list = new ArrayList<>();
         for (int i = 1; i < 6; i++) {
-            MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff("University Road",
-                    "House # 1, Street 35, Block B3  House # 1, Street  35, Block B3",
-                    String.valueOf(i));
-
+            DirectionDropOffData dropOff = new DirectionDropOffData.Builder()
+                    .setmArea("University Road")
+                    .setDriverName("Shafiq Khalid")
+                    .setDropOffNumberText(String.valueOf(i))
+                    .build();
             list.add(dropOff);
         }
-
-        MultiDeliveryCallData data = new MultiDeliveryCallData(pickup, list);
-
-        CallAdapter adapter = new CallAdapter(data);
+        MultiDeliveryCompleteRideAdapter adapter = new MultiDeliveryCompleteRideAdapter(list);
         mRecyclerView.setAdapter(adapter);
-
-
     }
 
-    public static MultiDeliveryCallFragment newInstance() {
-        return new MultiDeliveryCallFragment();
+    public static MultiDeliveryRideCompleteFragment newInstance() {
+        return new MultiDeliveryRideCompleteFragment();
     }
 
     @Override

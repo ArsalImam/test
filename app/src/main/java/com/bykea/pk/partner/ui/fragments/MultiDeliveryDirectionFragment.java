@@ -1,23 +1,23 @@
 package com.bykea.pk.partner.ui.fragments;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallData;
+import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
 import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
 import com.bykea.pk.partner.models.data.MultiDeliveryPickup;
 import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
-import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.ui.helpers.adapters.DirectionAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +26,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class MultiDeliveryCallFragment extends Fragment {
+public class MultiDeliveryDirectionFragment extends Fragment {
 
-    @BindView(R.id.call_recycler_view)
+    @BindView(R.id.direction_recycler_view)
     RecyclerView mRecyclerView;
 
     private Unbinder unbinder;
@@ -37,7 +37,7 @@ public class MultiDeliveryCallFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.multi_delivery_call_fragment,
+        View view = inflater.inflate(R.layout.multideliver_direction_fragment,
                 container,
                 false);
         unbinder = ButterKnife.bind(this, view);
@@ -60,25 +60,29 @@ public class MultiDeliveryCallFragment extends Fragment {
                 "Akhtar Feeder",
                 "House # 1, Street 35, Block B3  House # 1, Street  35, Block B3");
 
-        List<MultiDeliveryDropOff> list = new ArrayList<>();
+        List<DirectionDropOffData> list = new ArrayList<>();
         for (int i = 1; i < 6; i++) {
-            MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff("University Road",
+            DirectionDropOffData dropOff = new DirectionDropOffData(
+                    "University Road",
+                    "KHI125LI",
+                    "Shafiq Khalid",
+                    500,
                     "House # 1, Street 35, Block B3  House # 1, Street  35, Block B3",
                     String.valueOf(i));
 
             list.add(dropOff);
         }
 
-        MultiDeliveryCallData data = new MultiDeliveryCallData(pickup, list);
+        MultiDeliveryDirectionDetails data = new MultiDeliveryDirectionDetails(pickup, list);
 
-        CallAdapter adapter = new CallAdapter(data);
+        DirectionAdapter adapter = new DirectionAdapter(data);
         mRecyclerView.setAdapter(adapter);
 
 
     }
 
-    public static MultiDeliveryCallFragment newInstance() {
-        return new MultiDeliveryCallFragment();
+    public static MultiDeliveryDirectionFragment newInstance() {
+        return new MultiDeliveryDirectionFragment();
     }
 
     @Override

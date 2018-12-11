@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingBottom="@dimen/_14sdp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:paddingTop="@dimen/_12sdp"
+    android:paddingBottom="@dimen/_12sdp">
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/dropOffMarker"
@@ -13,7 +14,7 @@
         android:layout_height="@dimen/_35sdp"
         android:layout_marginStart="@dimen/_12sdp"
         android:layout_marginLeft="@dimen/_12sdp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/_12sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_dropoff_icon" />
@@ -25,14 +26,14 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        tools:text="1"
+        android:textColor="@color/white"
         android:textSize="@dimen/_14sdp"
         app:fontName="open_sans_regular.ttf"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/dropOffMarker"
         app:layout_constraintEnd_toEndOf="@+id/dropOffMarker"
         app:layout_constraintStart_toStartOf="@+id/dropOffMarker"
-        app:layout_constraintTop_toTopOf="@+id/dropOffMarker" />
+        app:layout_constraintTop_toTopOf="@+id/dropOffMarker"
+        tools:text="1" />
 
     <com.bykea.pk.partner.widgets.FontTextView
         android:id="@+id/areaTv"
@@ -40,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginLeft="@dimen/_8sdp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_12sdp"
         android:layout_marginBottom="16dp"
         android:maxLines="2"
         android:textColor="@color/black"
@@ -52,7 +53,7 @@
         tools:text="University Road" />
 
     <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/streetAddress"
+        android:id="@+id/driverNameTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"
@@ -66,17 +67,20 @@
         app:layout_constraintEnd_toStartOf="@+id/callBtn"
         app:layout_constraintStart_toEndOf="@+id/dropOffMarker"
         app:layout_constraintTop_toBottomOf="@+id/areaTv"
-        tools:text="House # 1, Street 35, Block B3  House # 1,Street  35, Block B3  " />
+        tools:text="Shafiq Khalid" />
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/callBtn"
+        android:id="@+id/completeBtn"
         android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_35sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/streetAddress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/streetAddress"
-        app:srcCompat="@drawable/ic_call" />
+        app:layout_constraintTop_toTopOf="@+id/areaTv"
+        app:srcCompat="@drawable/ic_tick_circle" />
+
 
 </android.support.constraint.ConstraintLayout>

@@ -138,6 +138,8 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import static com.thefinestartist.utils.content.ContextUtil.startActivity;
+
 
 public class Utils {
 
@@ -353,21 +355,39 @@ public class Utils {
         }
     }
 
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param mCallData NormalCallData object to fetch the lat lng.
+     */
     public static void navigateToGoogleMap(Context context,
                                            NormalCallData mCallData) {
         try {
-            String startAddr = StringUtils.EMPTY;
-            String endAddr = StringUtils.EMPTY;
-            if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-                startAddr = Utils.getCurrentLocation();
-                endAddr = mCallData.getStartLat() + "," + mCallData.getStartLng();
+            if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)){
+                String startAddr = StringUtils.EMPTY;
+                String endAddr = StringUtils.EMPTY;
+                if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                    startAddr = getCurrentLocation();
+                    endAddr = mCallData.getStartLat() + "," + mCallData.getStartLng();
+                }
+                String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                        Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                        Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(intent);
+                }
+            }else{
+                Uri gmmIntentUri = Uri.parse("geo:" + getCurrentLocation());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage(Constants.GoogleMap.GOOGLE_MAP_PACKAGE);
+                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(mapIntent);
+                }
             }
-            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
-                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
-                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
-            context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -578,12 +598,12 @@ public class Utils {
      */
     public static Bitmap getBitmap(Context context, int resourceID) {
         try {
-            int height = 90;
-            int width = 90;
+            float height = context.getResources().getDimension(R.dimen.driver_marker_height);
+            float width = context.getResources().getDimension(R.dimen.driver_marker_width);
             BitmapDrawable bitmapdraw = (BitmapDrawable) context.getResources().
                     getDrawable(resourceID);
             Bitmap b = bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, (int)width, (int)height, false);
             return smallMarker;
         } catch (Exception e) {
             e.printStackTrace();

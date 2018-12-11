@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
@@ -27,6 +28,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
 import com.bykea.pk.partner.ui.helpers.Spherical;
+import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -61,6 +63,8 @@ import butterknife.OnClick;
 
 /***
  * MultiDelivery Booking Activity.
+ *
+ * Check todo of this class.
  */
 public class MultipleDeliveryBookingActivity extends BaseActivity implements RoutingListener {
 
@@ -83,7 +87,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private List<LatLng> mRouteLatLng;
     private static final double EARTHRADIUS = 6366198;
     private Polyline mapPolylines;
-    private String type = "call";
     private static final int ARRIVAL_MAX_DISTANCE_VALUE = 200;
     private static final int SECONDS_IN_MINUTES = 60;
     private static final double METERS_IN_KILOMETER = 1000.0;
@@ -91,11 +94,29 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     @BindView(R.id.timeTv)
     TextView timeTv;
 
+    @BindView(R.id.TimeUnitLabelTv)
+    TextView timeUnitLabelTv;
+
+    @BindView(R.id.TimeView)
+    View timeView;
+
     @BindView(R.id.distanceTv)
     TextView distanceTv;
 
+    @BindView(R.id.pickView)
+    View pickView;
+
+    @BindView(R.id.pickUpDistanceUnit)
+    TextView pickUpDistanceUnit;
+
     @BindView(R.id.jobBtn)
     FontTextView jobBtn;
+
+    @BindView(R.id.cancelBtn)
+    FontTextView cancelBtn;
+
+    @BindView(R.id.tafseelLayout)
+    FrameLayout tafseelLayout;
 
 
     @Override
@@ -191,7 +212,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     *
+     * Draw the route from driver current position toward pickupLocation
      */
     private void drawRouteToPickup() {
         if (StringUtils.isNotBlank(mCallData.getStartLat())
@@ -617,11 +638,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      *
      * @param view a view where user have clicked.
      */
-    @OnClick({R.id.currentLocationIv, R.id.jobBtn, R.id.callBtn})
+    @OnClick({R.id.currentLocationIv, R.id.jobBtn, R.id.callBtn, R.id.tafseelLayout})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.currentLocationIv: {
-                Utils.navigateToGoogleMap(mCurrentActivity, mCallData);
+                directionClick();
                 break;
             }
 
@@ -630,10 +651,33 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 break;
             }
 
+
             case R.id.callBtn: {
-                ActivityStackManager.getInstance().startMapDetailsActivity(mCurrentActivity, type);
+                ActivityStackManager.getInstance().startMapDetailsActivity(
+                        mCurrentActivity,
+                        Constants.MapDetailsFragmentTypes.TYPE_CALL
+                );
                 break;
             }
+
+            case R.id.tafseelLayout: {
+                ActivityStackManager.getInstance().startMapDetailsActivity(
+                        mCurrentActivity,
+                        Constants.MapDetailsFragmentTypes.TYPE_TAFSEEL
+                );
+                break;
+            }
+        }
+    }
+
+    private void directionClick() {
+        if (mCallData != null && mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            ActivityStackManager.getInstance().startMapDetailsActivity(
+                    mCurrentActivity,
+                    Constants.MapDetailsFragmentTypes.TYPE_TAFSEEL
+            );
+        } else {
+            Utils.navigateToGoogleMap(mCurrentActivity, mCallData);
         }
     }
 
@@ -648,7 +692,42 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             if (jobBtn.getText().toString().equalsIgnoreCase(getString(
                     R.string.button_text_arrived))) {
                 showDriverArrivedDialog();
+            } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(
+                    R.string.button_text_start))) {
+                showDriverStartedDialog();
+
+            } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(
+                    R.string.button_text_finish))) {
+                Dialogs.INSTANCE.dismissDialog();
+                ActivityStackManager.getInstance().startMapDetailsActivity(
+                        mCurrentActivity,
+                        Constants.MapDetailsFragmentTypes.TYPE_MUKAMAL
+                );
             }
+        }
+    }
+
+
+
+    /***
+     * show trip started confirmation dialog.
+     *
+     * Todo 2: add request started socket event
+     */
+    private void showDriverStartedDialog() {
+        if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start))) {
+            Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    setStartedState();
+                }
+            }, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                }
+            }, getString(R.string.ask_started_text));
         }
     }
 
@@ -674,8 +753,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                         public void onClick(View v) {
                             Dialogs.INSTANCE.dismissDialog();
                             //requestArrived();
-                            //Todo 1: Temorary text update we will integrate socket shortly
-                            jobBtn.setText(getString(R.string.button_text_start));
+                            setArrivedState();
                         }
                     });
         } else {
@@ -683,7 +761,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 @Override
                 public void onClick(View v) {
                     Dialogs.INSTANCE.dismissDialog();
-                    jobBtn.setText(getString(R.string.button_text_start));
+                    setArrivedState();
                     //requestArrived();
                 }
             }, new View.OnClickListener() {
@@ -693,6 +771,38 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 }
             }, getString(R.string.ask_arrived_text));
         }
+    }
+
+    /***
+     * Set the trip arrived state.
+     *
+     * Todo 3: set the arrived data when socket implemented
+     */
+    private void setArrivedState() {
+        timeTv.setVisibility(View.GONE);
+        timeUnitLabelTv.setVisibility(View.GONE);
+        timeView.setVisibility(View.GONE);
+
+        pickView.setVisibility(View.GONE);
+        distanceTv.setVisibility(View.GONE);
+        pickUpDistanceUnit.setVisibility(View.GONE);
+
+        jobBtn.setText(getString(R.string.button_text_start));
+        tafseelLayout.setVisibility(View.VISIBLE);
+    }
+
+    /***
+     * Set the trip started state.
+     *
+     * Todo 4: set the trip started data
+     */
+    private void setStartedState() {
+        cancelBtn.setVisibility(View.GONE);
+        jobBtn.setText(getString(R.string.button_text_finish));
+        if (mapPolylines != null){
+            mapPolylines.remove();
+        }
+
     }
 
     /***

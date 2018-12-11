@@ -11,7 +11,24 @@
         android:id="@+id/header"
         layout="@layout/multi_delivery_booking_header" />
 
-    
+    <FrameLayout
+        android:id="@+id/tafseelLayout"
+        android:visibility="gone"
+        android:background="@color/color_0eaa4b"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:text="@string/tafseel_text"
+            android:layout_gravity="center"
+            android:textSize="@dimen/_18sdp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="match_parent"
+            app:fontName="jameel_noori_nastaleeq.ttf"/>
+
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
