@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -61,10 +64,28 @@ public class CallingActivity extends BaseActivity {
 //    FontTextView distanceTv;
 //    @BindView(R.id.timeTv)
 //    FontTextView timeTv;
+    @BindView(R.id.serviceImageView)
+    AppCompatImageView serviceImageView;
+
+    @BindView(R.id.pickLocationTv)
+    TextView pickLocationTv;
+
+    @BindView(R.id.pickDistanceTv)
+    TextView pickDistanceTv;
+
+    @BindView(R.id.deliveryCountTv)
+    TextView deliveryCountTv;
+
+    @BindView(R.id.dropDistanceTv)
+    TextView dropDistanceTv;
+
+    @BindView(R.id.timeTv)
+    TextView timeTv;
+
     @BindView(R.id.ivCallType)
     ImageView ivCallType;
     @BindView(R.id.activity_calling)
-    RelativeLayout activity_calling;
+    LinearLayout activity_calling;
 
     @BindView(R.id.kharidariPriceLayout)
     RelativeLayout kharidariPriceLayout;
@@ -81,12 +102,6 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.kraiKiKamaiTv)
     FontTextView kraiKiKamaiTv;
 
-    @BindView(R.id.destinationTv)
-    FontTextView destinationTv;
-
-    @BindView(R.id.estimatedDistanceTv)
-    FontTextView estimatedDistanceTv;
-
     @BindView(R.id.kharidariKiRaqamTv)
     FontTextView kharidariKiRaqamTv;
 
@@ -95,12 +110,6 @@ public class CallingActivity extends BaseActivity {
 
     @BindView(R.id.customerRatingTv)
     FontTextView customerRatingTv;
-
-    @BindView(R.id.estimatedDistanceUnitTv)
-    FontTextView estimatedDistaneUnitTv;
-
-    @BindView(R.id.circle_distance_layout)
-    LinearLayout circle_distance_layout;
 
 
 
@@ -173,8 +182,6 @@ public class CallingActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
 //        stopSound();
-
-
     }
 
     @Override
@@ -450,49 +457,98 @@ public class CallingActivity extends BaseActivity {
             ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
         }
 
-       try{
-           kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
-           String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
-                   String.valueOf(callData.getCashKiWasooli());
-           cashKiWasooliTv.setText(cashKiWasoliValue);
-           customerRatingTv.setText(callData.getRating());
-           if (Utils.isSkipDropOff(callData)){
-               estimatedDistanceTv.setText("?");
-               destinationTv.setText("منتخب نہیں کی گئی");
-               cashKiWasooliLayout.setVisibility(View.GONE);
-               kraiKiKamaiLayout.setVisibility(View.GONE);
-               kharidariPriceLayout.setVisibility(View.GONE);
-               destinationTv.setAttr(mCurrentActivity, "jameel_noori_nastaleeq.ttf");
-               destinationTv.setGravity(Gravity.CENTER);
-               circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.rating_circle_call));
-               estimatedDistaneUnitTv.setVisibility(View.GONE);
+       mapCallDataToUI(callData);
+    }
 
-           }else {
-               cashKiWasooliLayout.setVisibility(View.VISIBLE);
-               kraiKiKamaiLayout.setVisibility(View.VISIBLE);
-               circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.distance_green_circle_call));
-               estimatedDistaneUnitTv.setVisibility(View.VISIBLE);
-               estimatedDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
-               destinationTv.setText(callData.getEndAddress());
-               distanceAwayTv.setText(callData.getDistance());
-           }
+    /***
+     * Map the calling data to UI which is comming from socket.
+     * @param callData is a socket response which is listen by Call Listener
+     */
+    private void mapCallDataToUI(NormalCallData callData) {
+        try{
 
-           if (Utils.isPurchaseService(callData.getCallType())) {
-               kharidariPriceLayout.setVisibility(View.VISIBLE);
-               kharidariKiRaqamTv.setText(callData.getCodAmount());
-           }
+            serviceImageView.setImageResource(getIcon(callData.getCallType()));
+            pickLocationTv.setText(callData.getStartAddress());
+            pickDistanceTv.setText(callData.getDistance());
+            dropDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
+            timeTv.setText(callData.getArivalTime());
 
-           if (Utils.isRideService(callData.getCallType())){
-               kharidariPriceLayout.setVisibility(View.GONE);
-           }
+            kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
+            String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
+                    String.valueOf(callData.getCashKiWasooli());
+            cashKiWasooliTv.setText(cashKiWasoliValue);
+            customerRatingTv.setText(callData.getRating());
+            if (Utils.isSkipDropOff(callData)){
+                cashKiWasooliLayout.setVisibility(View.GONE);
+                kraiKiKamaiLayout.setVisibility(View.GONE);
+                kharidariPriceLayout.setVisibility(View.GONE);
 
-           if (Utils.isDeliveryService(callData.getCallType())){
-               kharidariPriceLayout.setVisibility(View.GONE);
+            }else {
+                cashKiWasooliLayout.setVisibility(View.VISIBLE);
+                kraiKiKamaiLayout.setVisibility(View.VISIBLE);
+                distanceAwayTv.setText(callData.getDistance());
+            }
 
-           }
-       }catch (Exception e){
+            if (Utils.isPurchaseService(callData.getCallType())) {
+                kharidariPriceLayout.setVisibility(View.VISIBLE);
+                kharidariKiRaqamTv.setText(callData.getCodAmount());
+            }
+
+            if (Utils.isRideService(callData.getCallType())){
+                kharidariPriceLayout.setVisibility(View.GONE);
+            }
+
+            if (Utils.isDeliveryService(callData.getCallType())){
+                kharidariPriceLayout.setVisibility(View.GONE);
+            }
+        }catch (Exception e){
             e.printStackTrace();
-       }
+        }
+    }
+
+    /***
+     * Fetch the icon from asset based on the type of service
+     *
+     * @param type The type of service.
+     * @return The drawable from drawable folder.
+     */
+    public static int getIcon(String type) {
+        switch (type) {
+            case Constants.TripTypes.RIDE_TYPE: {
+                return R.drawable.ic_ride;
+            }
+
+            case Constants.TripTypes.PURCHASE_TYPE:
+            case Constants.TripTypes.PURCHASE_NAME: {
+                return R.drawable.ic_purchase;
+            }
+
+            case Constants.TripTypes.DELIVERY_TYPE: {
+                return R.drawable.ic_delivery;
+            }
+
+            case Constants.TripTypes.CLASSIFIED_TYPE: {
+                return R.drawable.ic_ride;
+            }
+
+            case Constants.TripTypes.VAN_TYPE:
+            case Constants.TripTypes.COURIER_TYPE: {
+                return R.drawable.ic_courier;
+            }
+
+
+
+            case Constants.TripTypes.JOBS_TYPE: {
+                return R.drawable.ic_ride;
+            }
+
+            case Constants.TripTypes.BILL_TYPE:
+            case Constants.TripTypes.TOPUP_TYPE: {
+                return R.drawable.ic_bill_top;
+            }
+        }
+
+        return 0;
     }
 
 

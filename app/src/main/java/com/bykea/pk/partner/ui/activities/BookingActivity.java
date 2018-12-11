@@ -121,7 +121,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     CircularImageView callerIv;*/
     @BindView(R.id.callerNameTv)
     FontTextView callerNameTv;
-    @BindView(R.id.TimeTv)
+    @BindView(R.id.timeTv)
     FontTextView timeTv;
     @BindView(R.id.distanceTv)
     FontTextView distanceTv;

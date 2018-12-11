@@ -93,4 +93,44 @@
 
     <color name="color_128c7e">#128c7e</color>
     <color name="color_red">#de0200</color>
+
+    <!--Multi Delivery Colors-->
+    <color name="color_fdfdfd">#fdfdfd</color>
+    <color name="color_05a92c">#05a92c</color>
+    <color name="color_bf7704">#bf7704</color>
+    <color name="color_ee0101">#ee0101</color>
+    <color name="color_73ccff">#73ccff</color>
+    <color name="color_f9f9f9">#f9f9f9</color>
+
+
+    <!--ic_delivery vector colors-->
+    <color name="color_FDFDFB">#FDFDFB</color>
+    <color name="color_CB8517">#CB8517</color>
+    <color name="color_CB8617">#CB8617</color>
+    <color name="color_CB8618">#CB8618</color>
+
+    <!--ic_bill_top vector colors-->
+    <color name="color_535353">#535353</color>
+    <color name="color_8C8C8C">#8C8C8C</color>
+    <color name="color_686868">#686868</color>
+    <color name="color_BBF0F0">#BBF0F0</color>
+    <color name="color_FAFAFA">#FAFAFA</color>
+    <color name="color_F4F4F4">#F4F4F4</color>
+    <color name="color_505757">#505757</color>
+    <color name="color_FCFEFE">#FCFEFE</color>
+    <color name="color_0BCBC9">#0BCBC9</color>
+
+    <!--ic_ride vector colors-->
+    <color name="color_06A833">#06A833</color>
+    <color name="color_00000000">#00000000</color>
+
+    <!--ic_courier vector colors-->
+    <color name="color_0ACCCB">#0ACCCB</color>
+
+    <!--ic_purchase vector colors-->
+    <color name="color_3B98D3">#3B98D3</color>
+    <color name="color_FDFEFF">#FDFEFF</color>
+    <color name="color_374752">#374752</color>
+    <color name="color_3F9FDD">#3F9FDD</color>
+
 </resources>
