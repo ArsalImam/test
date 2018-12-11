@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.utils;
 
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -17,9 +18,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -84,6 +89,8 @@ import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -440,6 +447,35 @@ public class Utils {
         }
     }
 
+
+    /***
+     * Convert the drawable id into BitmapDescriptor.
+     *
+     * @param context holds the reference of an activity.
+     * @param isPickUp is a boolean indicating that pickup / dropoff
+     * @return The BitmapDescriptor.
+     */
+    public static BitmapDescriptor getBitmapDiscriptor(Context context, boolean isPickUp) {
+        int drawableId = isPickUp ? R.drawable.ic_pickupmarker : R.drawable.ic_pickupmarker;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            VectorDrawable vectorDrawable = (VectorDrawable) context.getDrawable(drawableId);
+
+            int h = vectorDrawable.getIntrinsicHeight();
+            int w = vectorDrawable.getIntrinsicWidth();
+
+            vectorDrawable.setBounds(0, 0, w, h);
+
+            Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bm);
+            vectorDrawable.draw(canvas);
+
+            return BitmapDescriptorFactory.fromBitmap(bm);
+
+        } else {
+            return BitmapDescriptorFactory.fromResource(drawableId);
+        }
+    }
+
     public static boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
@@ -773,9 +809,9 @@ public class Utils {
     }
 
     /*
-    * This will sync Device Time and Server Time. We know that Device time can be changed easily so
-    * we will calculate time difference between server and device
-    * */
+     * This will sync Device Time and Server Time. We know that Device time can be changed easily so
+     * we will calculate time difference between server and device
+     * */
     public static void saveServerTimeDifference(long serverTime) {
         long currentTime = System.currentTimeMillis();
         AppPreferences.setServerTimeDifference(
@@ -961,19 +997,19 @@ public class Utils {
     }
 
     /*
-    * Returns API key for Google GeoCoder API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google GeoCoder API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
     /*
-    * Returns API key for Google Directions API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google Directions API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForDirections(Context context) {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
@@ -988,8 +1024,8 @@ public class Utils {
     }
 
     /*
-    * Returns true if Last API call was more than 1 min ago
-    * */
+     * Returns true if Last API call was more than 1 min ago
+     * */
     public static boolean isDirectionApiCallRequired() {
         return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
     }
@@ -1125,12 +1161,12 @@ public class Utils {
 
 
     /*
-    * - if same location coordinates then don't consider these lat lng
-    * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
-    * - Check if its time difference w.r.t last coordinate is
-    * greater than minimum time a bike should take to cover that distance if that bike is traveling
-    * at max 80KM/H to avoid bad/fake coordinates
-    * */
+     * - if same location coordinates then don't consider these lat lng
+     * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
+     * - Check if its time difference w.r.t last coordinate is
+     * greater than minimum time a bike should take to cover that distance if that bike is traveling
+     * at max 80KM/H to avoid bad/fake coordinates
+     * */
     public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
@@ -1438,8 +1474,8 @@ public class Utils {
 
 
     /*
-    *  Flush Mixpanel Event in onDestroy()
-    * */
+     *  Flush Mixpanel Event in onDestroy()
+     * */
     public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
         MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
         mixpanelAPI.identify(userID);

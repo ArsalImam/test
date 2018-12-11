@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/serviceImageView"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginLeft="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+        app:srcCompat="@drawable/ic_delivery" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/multidelivery_sub_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/serviceImageView"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <!--Pickup Circle-->
+
+        <View
+            android:id="@+id/pickView"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:background="@drawable/circle_multi_delivery_orange"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/TimeView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/distanceTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintEnd_toEndOf="@+id/pickView"
+            app:layout_constraintStart_toStartOf="@+id/pickView"
+            app:layout_constraintTop_toTopOf="@+id/pickView"
+            tools:text="0.2"
+            android:text="0.2"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/pickUpDistanceUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="KM"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_6sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintEnd_toEndOf="@+id/distanceTv"
+            app:layout_constraintStart_toStartOf="@+id/distanceTv"
+            app:layout_constraintTop_toBottomOf="@+id/distanceTv"
+            tools:text="KM" />
+
+
+        <!--Time Circle-->
+
+        <View
+            android:id="@+id/TimeView"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:background="@drawable/circle_multi_delivery_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/appCompatImageView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/pickView"
+            app:layout_constraintTop_toTopOf="@+id/pickView" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/timeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintEnd_toStartOf="@+id/TimeView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/TimeView"
+            app:layout_constraintTop_toTopOf="@+id/TimeView"
+            tools:text="65"
+            android:text="65"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/TimeUnitLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TimeUnit"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_6sdp"
+            app:fontName="open_sans_regular.ttf"
+            app:layout_constraintEnd_toEndOf="@+id/timeTv"
+            app:layout_constraintStart_toStartOf="@+id/timeTv"
+            app:layout_constraintTop_toBottomOf="@+id/timeTv" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginRight="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/contact_call_icon" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/Color_Red"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+</android.support.constraint.ConstraintLayout>

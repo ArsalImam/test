@@ -115,6 +115,13 @@ public class Constants {
         public final static String STARTFOREGROUND_ACTION = "STARTFOREGROUND_ACTION";
         public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";
         public final static String ON_NOTIFICATION_CLICK = "ON_NOTIFICATION_CLICK";
+        public final static String ON_GPS_ENABLED_CHANGE = "android.location.GPS_ENABLED_CHANGE";
+        public final static String ON_LOCATION_CHANGED = "android.location.PROVIDERS_CHANGED";
+        public final static String ON_CONECTIVITY_CHANGED = "android.net.conn.CONNECTIVITY_CHANGE";
+    }
+
+    public static class Category {
+        public final static String ON_CATEGORY_DEFAULT = "android.intent.category.DEFAULT";
     }
 
     public static class RequestCode {

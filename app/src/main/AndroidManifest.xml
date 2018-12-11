@@ -209,7 +209,7 @@
             android:exported="true" />
         <activity android:name=".ui.activities.ShahkarActivity" />
         <activity android:name=".ui.activities.RankingActivity" />
-        <activity android:name=".MultipleDeliveryBookingActivity"></activity>
+        <activity android:name=".ui.activities.MultipleDeliveryBookingActivity"></activity>
     </application>
 
 </manifest>

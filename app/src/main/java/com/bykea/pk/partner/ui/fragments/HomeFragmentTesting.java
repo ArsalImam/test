@@ -768,6 +768,9 @@ public class HomeFragmentTesting extends Fragment {
                                     WebIORequestHandler.getInstance().registerChatListener();
                                     ActivityStackManager.getInstance()
                                             .startJobActivity(mCurrentActivity);
+                                    //ActivityStackManager.
+                                      //      getInstance().
+                                        //    startMultiDeliveryBookingActivity(mCurrentActivity);
                                 } else {
                                     ActivityStackManager.getInstance()
                                             .startFeedbackFromResume(mCurrentActivity);

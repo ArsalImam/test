@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.Gravity;
@@ -267,7 +266,9 @@ public class CallingActivity extends BaseActivity {
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
                             AppPreferences.setIsOnTrip(true);
-                            ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
+                            //ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
+                            ActivityStackManager.getInstance().
+                                    startMultiDeliveryBookingActivity(mCurrentActivity);
                             stopSound();
                             finishActivity();
                         } else {
