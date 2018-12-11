@@ -19,9 +19,12 @@ import android.content.pm.Signature;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -122,6 +125,7 @@ import java.security.cert.CertificateFactory;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -349,6 +353,28 @@ public class Utils {
         }
     }
 
+    public static void navigateToGoogleMap(Context context,
+                                           NormalCallData mCallData) {
+        try {
+            String startAddr = StringUtils.EMPTY;
+            String endAddr = StringUtils.EMPTY;
+            if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                startAddr = Utils.getCurrentLocation();
+                endAddr = mCallData.getStartLat() + "," + mCallData.getStartLng();
+            }
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String formatETA(String value) {
         if (StringUtils.isBlank(value) || value.equalsIgnoreCase("0") || value.equalsIgnoreCase("0.0")
                 || value.equalsIgnoreCase("0.00"))
@@ -456,7 +482,7 @@ public class Utils {
      * @return The BitmapDescriptor.
      */
     public static BitmapDescriptor getBitmapDiscriptor(Context context, boolean isPickUp) {
-        int drawableId = isPickUp ? R.drawable.ic_pickupmarker : R.drawable.ic_pickupmarker;
+        int drawableId = isPickUp ? R.drawable.ic_pickupmarker : R.drawable.ic_dropoff_icon;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             VectorDrawable vectorDrawable = (VectorDrawable) context.getDrawable(drawableId);
 
@@ -474,6 +500,96 @@ public class Utils {
         } else {
             return BitmapDescriptorFactory.fromResource(drawableId);
         }
+    }
+
+    public static BitmapDescriptor getDropOffBitmapDiscriptor(Context context, String number) {
+        Bitmap bmp = drawTextToBitmap(context, R.drawable.ic_dropoff_icon, number);
+        return BitmapDescriptorFactory.fromBitmap(bmp);
+    }
+
+    /***
+     * Create a bitmap from drawable resource & draw a text on the generated bitmap.
+     *
+     * @param mContext holding a reference of an activity.
+     * @param resourceId a drawable resource ID.
+     * @param mText a text to be drawn on the bitmap.
+     *
+     * @return The final text drawn bitmap.
+     */
+    public synchronized static Bitmap drawTextToBitmap(Context mContext, int resourceId, String mText) {
+        try {
+            Resources resources = mContext.getResources();
+            float scale = resources.getDisplayMetrics().density;
+            Drawable drawable = resources.getDrawable(resourceId);
+
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas1 = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas1.getWidth(), canvas1.getHeight());
+            drawable.draw(canvas1);
+
+            android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
+            // set default bitmap config if none
+            if (bitmapConfig == null) {
+                bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+            }
+            // resource bitmaps are imutable,
+            // so we need to convert it to mutable one
+            bitmap = bitmap.copy(bitmapConfig, true);
+
+            Canvas canvas = new Canvas(bitmap);
+            // new antialised Paint
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            // text color - #3D3D3D
+            paint.setColor(Color.WHITE);
+            // text size in pixels
+            paint.setTextSize((int) (18 * scale));
+            Typeface plain = Typeface.createFromAsset(mContext.getAssets(),
+                    "fonts/open_sans_regular.ttf");
+            Typeface bold = Typeface.create(plain, Typeface.BOLD);
+            paint.setTypeface(bold);
+            // text shadow
+            //paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
+
+            // draw text to the Canvas center
+            Rect bounds = new Rect();
+            paint.getTextBounds(mText, 0, mText.length(), bounds);
+            int x = (bitmap.getWidth() - bounds.width()) / 5;
+            int y = (bitmap.getHeight() + bounds.height()) / 4;
+
+            canvas.drawText(mText, x * scale, y * scale, paint);
+
+            return bitmap;
+        } catch (Exception e) {
+            // TODO: handle exception
+
+            return null;
+        }
+
+    }
+
+    /***
+     * Fetch the bitmap from drawable resource id.
+     *
+     * @param context is holding a reference of an activity.
+     * @param resourceID is a drawable id.
+     *
+     * @return the Bitmap generated from drawable id.
+     */
+    public static Bitmap getBitmap(Context context, int resourceID) {
+        try {
+            int height = 90;
+            int width = 90;
+            BitmapDrawable bitmapdraw = (BitmapDrawable) context.getResources().
+                    getDrawable(resourceID);
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+            return smallMarker;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static boolean isValidEmail(String email) {

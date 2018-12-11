@@ -6,14 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Interpolator;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.View;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
@@ -31,10 +29,12 @@ import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
 import com.bykea.pk.partner.ui.helpers.Spherical;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,6 +57,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /***
  * MultiDelivery Booking Activity.
@@ -81,13 +82,20 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private LatLng lastApiCallLatLng;
     private List<LatLng> mRouteLatLng;
     private static final double EARTHRADIUS = 6366198;
+    private Polyline mapPolylines;
+    private String type = "call";
+    private static final int ARRIVAL_MAX_DISTANCE_VALUE = 200;
+    private static final int SECONDS_IN_MINUTES = 60;
+    private static final double METERS_IN_KILOMETER = 1000.0;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
 
     @BindView(R.id.distanceTv)
     TextView distanceTv;
-    private Polyline mapPolylines;
+
+    @BindView(R.id.jobBtn)
+    FontTextView jobBtn;
 
 
     @Override
@@ -498,11 +506,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (null != mGoogleMap) {
             //if driver marker is null add driver marker on google map
             if (null == driverMarker) {
-                //Todo 3: Chnage Image in future
+                Bitmap driverIcon = Utils.getBitmap(mCurrentActivity, R.drawable.ic_delivery_bike);
                 driverMarker = mGoogleMap.addMarker(new MarkerOptions().
                         icon(
-                                BitmapDescriptorFactory.fromResource(
-                                        R.drawable.bike_delivery
+                                BitmapDescriptorFactory.fromBitmap(
+                                        driverIcon
                                 )
                         )
                         .position(
@@ -574,7 +582,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
             for (int i = 0; i < latLngList.size(); i++) {
                 dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
-                        icon(Utils.getBitmapDiscriptor(mCurrentActivity, false))
+                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
+                                String.valueOf(i + 1)))
                         .position(latLngList.get(i)));
             }
 
@@ -600,6 +609,89 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     .bearing(bearing)
                     .build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
+        }
+    }
+
+    /***
+     * OnClick listener for an activity.
+     *
+     * @param view a view where user have clicked.
+     */
+    @OnClick({R.id.currentLocationIv, R.id.jobBtn, R.id.callBtn})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.currentLocationIv: {
+                Utils.navigateToGoogleMap(mCurrentActivity, mCallData);
+                break;
+            }
+
+            case R.id.jobBtn: {
+                checkTripButtonClick();
+                break;
+            }
+
+            case R.id.callBtn: {
+                ActivityStackManager.getInstance().startMapDetailsActivity(mCurrentActivity, type);
+                break;
+            }
+        }
+    }
+
+    /***
+     * Check the trip button click if the button text is equal to specific trip status i.e "پہنچ گئے",
+     * etc. To perform the specific operation like driver arrival dialog,
+     * start trip dialog & finish trip dialog
+     */
+    private void checkTripButtonClick() {
+        if (Connectivity.isConnectedFast(mCurrentActivity)) {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            if (jobBtn.getText().toString().equalsIgnoreCase(getString(
+                    R.string.button_text_arrived))) {
+                showDriverArrivedDialog();
+            }
+        }
+    }
+
+    /***
+     * Show the driver arrived dialog based on the distance from the pickup location.
+     * Find the distance between driver location & pickup location if the driver is away
+     * show the message that "آپ ابھی بھی کچھ دورہیں" otherwise ask the user to confirm
+     * that you have arrived.
+     *
+     * Todo 1: add request Arrived socket event
+     */
+    private void showDriverArrivedDialog() {
+        int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(),
+                AppPreferences.getLongitude(),
+                Double.parseDouble(mCallData.getStartLat()),
+                Double.parseDouble(mCallData.getStartLng()));
+        if (distance > ARRIVAL_MAX_DISTANCE_VALUE) {
+            boolean showTickBtn = distance < AppPreferences.getSettings().
+                    getSettings().getArrived_min_dist();
+            Dialogs.INSTANCE.showConfirmArrivalDialog(mCurrentActivity,
+                    showTickBtn, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            //requestArrived();
+                            //Todo 1: Temorary text update we will integrate socket shortly
+                            jobBtn.setText(getString(R.string.button_text_start));
+                        }
+                    });
+        } else {
+            Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    jobBtn.setText(getString(R.string.button_text_start));
+                    //requestArrived();
+                }
+            }, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialogs.INSTANCE.dismissDialog();
+                }
+            }, getString(R.string.ask_arrived_text));
         }
     }
 
@@ -670,9 +762,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (mCurrentActivity != null && mGoogleMap != null) {
             mRouteLatLng = route.get(0).getPoints();
             updateEtaAndCallData(
-                    String.valueOf((route.get(0).getDurationValue() / 60)),
+                    String.valueOf((route.get(0).getDurationValue() / SECONDS_IN_MINUTES)),
                     Utils.formatDecimalPlaces(String.valueOf(
-                            (route.get(0).getDistanceValue() / 1000.0)), 1));
+                            (route.get(0).getDistanceValue() / METERS_IN_KILOMETER)),
+                            1));
             updatePolyLine(route);
         } else {
             lastApiCallLatLng = null;

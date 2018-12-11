@@ -79,7 +79,7 @@
             android:layout_height="@dimen/_45sdp"
             android:background="@drawable/circle_multi_delivery_blue"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/appCompatImageView"
+            app:layout_constraintEnd_toStartOf="@+id/callBtn"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/pickView"
             app:layout_constraintTop_toTopOf="@+id/pickView" />
@@ -112,7 +112,7 @@
             app:layout_constraintTop_toBottomOf="@+id/timeTv" />
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/appCompatImageView"
+            android:id="@+id/callBtn"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="@dimen/_35sdp"
             android:layout_marginRight="@dimen/_16sdp"

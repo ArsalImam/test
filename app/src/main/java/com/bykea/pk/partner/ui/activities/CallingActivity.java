@@ -110,8 +110,6 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.customerRatingTv)
     FontTextView customerRatingTv;
 
-
-
     private UserRepository repository;
     private MediaPlayer _mpSound;
     private CallingActivity mCurrentActivity;
@@ -475,7 +473,8 @@ public class CallingActivity extends BaseActivity {
             timeTv.setText(callData.getArivalTime());
 
             kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
-            String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
+            String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ?
+                    getString(R.string.cash_value_zero) :
                     String.valueOf(callData.getCashKiWasooli());
             cashKiWasooliTv.setText(cashKiWasoliValue);
             customerRatingTv.setText(callData.getRating());
