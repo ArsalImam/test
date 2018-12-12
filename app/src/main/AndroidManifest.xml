@@ -131,6 +131,10 @@
         </service>
 
         <service
+            android:name=".services.DriverETAService"
+            android:exported="false"/>
+
+        <service
             android:name=".services.OneSignalNotificationExtenderService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE">

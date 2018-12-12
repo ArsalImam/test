@@ -1075,11 +1075,13 @@ public class RestRequestHandler {
                         mResponseCallBack.onError(LocationResponse.getCode(),
                                 LocationResponse.getMessage());
                     } else {
+                        Utils.redLog(TAG, "Location on Failure: " + response.code() + " Internal Server Error");
                         mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
                                 mContext.getString(R.string.error_try_again) + " ");
                     }
 
                 } else {
+                    Utils.redLog(TAG, "Location on Failure: " + response.code() + " Internal Server Error");
                     mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
                             mContext.getString(R.string.error_try_again) + " ");
                 }
@@ -1134,6 +1136,7 @@ public class RestRequestHandler {
 
         @Override
         public void onFailure(Throwable t) {
+            Utils.redLog(TAG, "Location on Failure: " + t.getMessage());
             mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
         }
     }

@@ -37,6 +37,9 @@ public class DriverLocationRequest {
     @SerializedName("track")
     private ArrayList<TrackingData> trackingData;
 
+    @SerializedName("uuid")
+    private String uuid;
+
     //region Getter Setter
 
     public String getTokenID() {
@@ -109,6 +112,14 @@ public class DriverLocationRequest {
 
     public void setTrackingData(ArrayList<TrackingData> trackingData) {
         this.trackingData = trackingData;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
 

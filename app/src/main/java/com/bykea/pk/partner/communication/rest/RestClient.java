@@ -44,6 +44,7 @@ class RestClient {
 
             okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+            //okHttpClient.setRetryOnConnectionFailure(false);
             if(BuildConfig.DEBUG)
             okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
@@ -86,6 +87,7 @@ class RestClient {
 
             okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.setRetryOnConnectionFailure(false);
             if(BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
@@ -115,6 +117,7 @@ class RestClient {
 
             okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.setRetryOnConnectionFailure(false);
             if(BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
@@ -144,6 +147,7 @@ class RestClient {
 
             okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.setRetryOnConnectionFailure(false);
             if(BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
