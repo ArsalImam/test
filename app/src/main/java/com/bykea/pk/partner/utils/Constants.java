@@ -74,7 +74,7 @@ public class Constants {
     public static final String MOBILE_IMEI_ERROR = "IMEI";
 
     public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
-    public static final String FRIVILOUS_CANCELLATIONS_UR="مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
+    public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
 
 
     /**
@@ -96,8 +96,8 @@ public class Constants {
 
     public static final int BATTERY_OPTIMIZATION_RESULT = 2000;
 
-    public static final String RETROFIT_METHOD_POST="post";
-    public static final String RETROFIT_METHOD_GET="get";
+    public static final String RETROFIT_METHOD_POST = "post";
+    public static final String RETROFIT_METHOD_GET = "get";
 
 
     public static class Notification {
@@ -126,6 +126,8 @@ public class Constants {
     public static final int RESET_CASH_TO_DEFAULT_POSITION = 1;
     public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
+
+    public static final int IN_ACTIVE_MUSIC_SOUND = 3000;
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
@@ -225,7 +227,7 @@ public class Constants {
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
 
-    public final static String DRIVER_SOCKET_CLIENT_TYPE="PARTNER_ANDROID";
+    public final static String DRIVER_SOCKET_CLIENT_TYPE = "PARTNER_ANDROID";
 
     /**
      * This inner class will contain Constants for Log Tags and Error Log Messages

@@ -3,6 +3,7 @@ package com.bykea.pk.partner.services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
@@ -10,6 +11,7 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 
 import com.bykea.pk.partner.Notifications;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -30,6 +32,14 @@ import org.greenrobot.eventbus.EventBus;
  * Service to handle inactive push notifications
  */
 public class HandleInactivePushService extends Service {
+    private MediaPlayer player;
+    private Handler mpHanlder = new Handler();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        player = MediaPlayer.create(this, R.raw.ringtone); //select music file
+    }
 
     @Nullable
     @Override
@@ -48,11 +58,18 @@ public class HandleInactivePushService extends Service {
 
         @Override
         public void onFinish() {
+            player.start();
             isCountDownTimerRunning = false;
-            onInactiveByCronJob("App Offline Hochuke Hain!");//TODO update msg
+            mpHanlder.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //TODO update msg
+                    onInactiveByCronJob(getString(R.string.driver_offline_crone_job_ur));
+                }
+            }, Constants.IN_ACTIVE_MUSIC_SOUND);
+
         }
     };
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -70,12 +87,15 @@ public class HandleInactivePushService extends Service {
      * @param data String notification message
      */
     private void onInactiveByCronJob(String data) {
+        player.setLooping(true); //set looping
         Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob " + data);
         AppPreferences.setAdminMsg(null);
         AppPreferences.setAvailableStatus(false);
         mBus.post(Keys.INACTIVE_PUSH);
         Notifications.generateAdminNotification(mContext, data);
+        stopMusicPlayer();
         stopSelf();
+
     }
 
 
@@ -90,9 +110,9 @@ public class HandleInactivePushService extends Service {
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Driver is Logged In");
             AppPreferences.setInactiveCheckTime(System.currentTimeMillis());
             /*
-            * Check Coordinates when there's any delay in FCM Push Notification and ignore
-            * this notification when there are different coordinates.
-            * */
+             * Check Coordinates when there's any delay in FCM Push Notification and ignore
+             * this notification when there are different coordinates.
+             * */
             if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
                     && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
                     && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude()) && !isCountDownTimerRunning) {
@@ -173,4 +193,21 @@ public class HandleInactivePushService extends Service {
         }*/
     }
 
+    @Override
+    public void onDestroy() {
+        stopSelf();
+        stopMusicPlayer();
+        super.onDestroy();
+    }
+
+    /***
+     * Stop music player tone.
+     */
+    private void stopMusicPlayer() {
+        if (player != null) {
+            player.stop();
+            player.release();
+        }
+
+    }
 }
