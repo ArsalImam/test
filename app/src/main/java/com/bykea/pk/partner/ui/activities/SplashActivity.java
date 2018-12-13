@@ -171,9 +171,9 @@ public class SplashActivity extends BaseActivity {
                                     WebIORequestHandler.getInstance().registerChatListener();
                                     //ActivityStackManager.getInstance()
                                       //      .startJobActivity(mCurrentActivity);
-                                    ActivityStackManager.
-                                            getInstance().
-                                            startMultiDeliveryBookingActivity(mCurrentActivity);
+                                    //ActivityStackManager.
+                                            //getInstance().
+                                            //startMultiDeliveryBookingActivity(mCurrentActivity);
                                 } else {
                                     ActivityStackManager.getInstance()
                                             .startFeedbackFromResume(mCurrentActivity);

@@ -61,7 +61,7 @@
         </activity>
         <activity android:name=".ui.activities.BaseActivity" />
         <activity
-            android:name=".ui.activities.CallingActivity"
+            android:name=".ui.activities.MultiDeliveryCallingActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.Base" />
@@ -211,6 +211,11 @@
         <activity android:name=".ui.activities.RankingActivity" />
         <activity android:name=".ui.activities.MultipleDeliveryBookingActivity" />
         <activity android:name=".ui.activities.MapDetailsActivity"></activity>
+
+        <activity android:name=".ui.activities.CallingActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.Base"/>
     </application>
 
 </manifest>

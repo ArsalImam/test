@@ -6,17 +6,19 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -44,7 +46,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class CallingActivity extends BaseActivity {
+public class MultiDeliveryCallingActivity extends BaseActivity {
     @BindView(R.id.counterTv)
     FontTextView counterTv;
     //    @BindView(R.id.callerNameTv)
@@ -61,10 +63,28 @@ public class CallingActivity extends BaseActivity {
 //    FontTextView distanceTv;
 //    @BindView(R.id.timeTv)
 //    FontTextView timeTv;
+    @BindView(R.id.serviceImageView)
+    AppCompatImageView serviceImageView;
+
+    @BindView(R.id.pickLocationTv)
+    TextView pickLocationTv;
+
+    @BindView(R.id.pickDistanceTv)
+    TextView pickDistanceTv;
+
+    @BindView(R.id.deliveryCountTv)
+    TextView deliveryCountTv;
+
+    @BindView(R.id.dropDistanceTv)
+    TextView dropDistanceTv;
+
+    @BindView(R.id.timeTv)
+    TextView timeTv;
+
     @BindView(R.id.ivCallType)
     ImageView ivCallType;
     @BindView(R.id.activity_calling)
-    RelativeLayout activity_calling;
+    LinearLayout activity_calling;
 
     @BindView(R.id.kharidariPriceLayout)
     RelativeLayout kharidariPriceLayout;
@@ -81,12 +101,6 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.kraiKiKamaiTv)
     FontTextView kraiKiKamaiTv;
 
-    @BindView(R.id.destinationTv)
-    FontTextView destinationTv;
-
-    @BindView(R.id.estimatedDistanceTv)
-    FontTextView estimatedDistanceTv;
-
     @BindView(R.id.kharidariKiRaqamTv)
     FontTextView kharidariKiRaqamTv;
 
@@ -96,27 +110,21 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.customerRatingTv)
     FontTextView customerRatingTv;
 
-    @BindView(R.id.estimatedDistanceUnitTv)
-    FontTextView estimatedDistaneUnitTv;
-
-    @BindView(R.id.circle_distance_layout)
-    LinearLayout circle_distance_layout;
-
-
     private UserRepository repository;
     private MediaPlayer _mpSound;
-    private CallingActivity mCurrentActivity;
+    private MultiDeliveryCallingActivity mCurrentActivity;
     private float progress = 0;
 
     private int counter = 0;
     private int total = 1;
 
     private boolean isFreeDriverApiCalled = false;
+    private MultiDeliveryCallDriverResponse response;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calling);
+        setContentView(R.layout.activity_multi_delivery_calling);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(this);
@@ -126,17 +134,15 @@ public class CallingActivity extends BaseActivity {
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
         repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
-
-        donutProgress.setProgress(20);
+        response = AppPreferences.getMultiDeliveryCallDriverData();
+        donutProgress.setProgress(response.getTimer());
         startAnimation();
 
         if (null != getIntent() && getIntent().getBooleanExtra("isGcm", false)) {
-            Utils.redLog("FCM", "Calling Activity");
             DriverApp.getApplication().connect();
-//            WebIORequestHandler.getInstance().setContext(mCurrentActivity);
             DriverApp.startLocationService(mCurrentActivity);
         }
-        ackCall();
+
         setInitialData();
 
 
@@ -147,7 +153,7 @@ public class CallingActivity extends BaseActivity {
         super.onResume();
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
-//        LocationService.setContext(CallingActivity.this);
+//        LocationService.setContext(MultiDeliveryCallingActivity.this);
         AppPreferences.setCallingActivityOnForeground(true);
     }
 
@@ -172,8 +178,6 @@ public class CallingActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
 //        stopSound();
-
-
     }
 
     @Override
@@ -215,16 +219,6 @@ public class CallingActivity extends BaseActivity {
     private UserDataHandler handler = new UserDataHandler() {
 
         @Override
-        public void onAck(final String msg) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.appToastDebug(mCurrentActivity, msg);
-                }
-            });
-        }
-
-        @Override
         public void onFreeDriver(FreeDriverResponse freeDriverResponse) {
             if (mCurrentActivity != null) {
                 mCurrentActivity.runOnUiThread(new Runnable() {
@@ -260,6 +254,8 @@ public class CallingActivity extends BaseActivity {
 
                             AppPreferences.setIsOnTrip(true);
                             ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
+                            //ActivityStackManager.getInstance().
+                            //startMultiDeliveryBookingActivity(mCurrentActivity);
                             stopSound();
                             finishActivity();
                         } else {
@@ -353,7 +349,6 @@ public class CallingActivity extends BaseActivity {
         @Override
         public void onTick(long millisUntilFinished) {
             progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
-            Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished + ":" + progress + ":" + counterTv.getText().toString());
             if (progress >= 20) {
                 timer.onFinish();
             } else {
@@ -418,80 +413,122 @@ public class CallingActivity extends BaseActivity {
     }
 
     private void setInitialData() {
-        NormalCallData callData = AppPreferences.getCallData();
-        Log.d("callData", new Gson().toJson(callData));
-        logMixpanelEvent(callData, false);
+
+        //Todo 1: Change the object and log the event on mixpanel
+        //logMixpanelEvent(callData, false);
+
 //        callerNameTv.setText(callData.getPassName());
 //        startAddressTv.setText(callData.getStartAddress());
 //        timeTv.setText(callData.getArivalTime() + " min");
 //        distanceTv.setText(callData.getDistance() + " km");
-        counterTv.setText("20");
+        counterTv.setText(String.valueOf(response.getTimer()));
 
-        String icon = Utils.getServiceIcon(callData.getCallType());
-        if (StringUtils.isNotBlank(icon)) {
-            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
-            Picasso.get().load(Utils.getCloudinaryLink(icon))
-                    .placeholder(Utils.getServiceIcon(callData))
-                    .into(ivCallType, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnSuccess");
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnError");
-                        }
-                    });
-        } else if (StringUtils.isNotBlank(callData.getCallType())) {
-            ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, Utils.getServiceIcon(callData)));
-        } else {
-            ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
+        String link = response.getImageURL();
+        if (StringUtils.isNotBlank(link)) {
+            Utils.loadMultipleDeliveryImageURL(ivCallType, link, R.drawable.bhejdo);
         }
 
-        try {
-            kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
-            String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
-                    String.valueOf(callData.getCashKiWasooli());
-            cashKiWasooliTv.setText(cashKiWasoliValue);
-            customerRatingTv.setText(callData.getRating());
-            if (Utils.isSkipDropOff(callData)) {
-                estimatedDistanceTv.setText("?");
-                destinationTv.setText("منتخب نہیں کی گئی");
-                cashKiWasooliLayout.setVisibility(View.GONE);
-                kraiKiKamaiLayout.setVisibility(View.GONE);
-                kharidariPriceLayout.setVisibility(View.GONE);
-                destinationTv.setAttr(mCurrentActivity, "jameel_noori_nastaleeq.ttf");
-                destinationTv.setGravity(Gravity.CENTER);
-                circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.rating_circle_call));
-                estimatedDistaneUnitTv.setVisibility(View.GONE);
+        mapCallDataToUI(response);
+    }
 
-            } else {
+    /***
+     * Map the calling data to UI which is comming from socket.
+     * @param response is a socket response which is listen by Call Listener
+     */
+    private void mapCallDataToUI(MultiDeliveryCallDriverResponse response) {
+        try {
+            int i = 0;
+            serviceImageView.setImageResource(getIcon(
+                    response
+                            .getBookings()
+                            .get(i)
+                            .getTrip()
+                            .getType())
+            );
+            pickLocationTv.setText(response.getStartAddress());
+            pickDistanceTv.setText(response.getDistance());
+            dropDistanceTv.setText(String.valueOf(
+                    Utils.getDistance(response.getEstTotalDistance())
+            ));
+            timeTv.setText(String.valueOf(
+                    Utils.getDuration(response.getEstTotalDuration())
+            ));
+
+            kraiKiKamaiTv.setText(String.valueOf(response.getEstFare()));
+            String cashKiWasoliValue = response.getEstCashCollection() < 0 ?
+                    getString(R.string.cash_value_zero) :
+                    String.valueOf(response.getEstCashCollection());
+            cashKiWasooliTv.setText(cashKiWasoliValue);
+            customerRatingTv.setText(String.valueOf(
+                    response
+                            .getBookings()
+                            .get(0)
+                            .getPassenger()
+                            .getRating()));
+
                 cashKiWasooliLayout.setVisibility(View.VISIBLE);
                 kraiKiKamaiLayout.setVisibility(View.VISIBLE);
-                circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.distance_green_circle_call));
-                estimatedDistaneUnitTv.setVisibility(View.VISIBLE);
-                estimatedDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
-                destinationTv.setText(callData.getEndAddress());
-                distanceAwayTv.setText(callData.getDistance());
-            }
+                distanceAwayTv.setText(response.getDistance());
 
-            if (Utils.isPurchaseService(callData.getCallType())) {
+            if (Utils.isPurchaseService(response.getCallType())) {
                 kharidariPriceLayout.setVisibility(View.VISIBLE);
-                kharidariKiRaqamTv.setText(callData.getCodAmount());
+                kharidariKiRaqamTv.setText(response.getCodAmount());
             }
 
-            if (Utils.isRideService(callData.getCallType())) {
+            if (Utils.isRideService(response.getCallType())) {
                 kharidariPriceLayout.setVisibility(View.GONE);
             }
 
-            if (Utils.isDeliveryService(callData.getCallType())) {
+            if (Utils.isDeliveryService(response.getCallType())) {
                 kharidariPriceLayout.setVisibility(View.GONE);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /***
+     * Fetch the icon from asset based on the type of service
+     *
+     * @param type The type of service.
+     * @return The drawable from drawable folder.
+     */
+    public static int getIcon(String type) {
+        switch (type) {
+            case Constants.TripTypes.RIDE_TYPE: {
+                return R.drawable.ic_ride;
+            }
+
+            case Constants.TripTypes.PURCHASE_TYPE:
+            case Constants.TripTypes.PURCHASE_NAME: {
+                return R.drawable.ic_purchase;
+            }
+
+            case Constants.TripTypes.DELIVERY_TYPE: {
+                return R.drawable.ic_delivery;
+            }
+
+            case Constants.TripTypes.CLASSIFIED_TYPE: {
+                return R.drawable.ic_ride;
+            }
+
+            case Constants.TripTypes.VAN_TYPE:
+            case Constants.TripTypes.COURIER_TYPE: {
+                return R.drawable.ic_courier;
+            }
+
+
+            case Constants.TripTypes.JOBS_TYPE: {
+                return R.drawable.ic_ride;
+            }
+
+            case Constants.TripTypes.BILL_TYPE:
+            case Constants.TripTypes.TOPUP_TYPE: {
+                return R.drawable.ic_bill_top;
+            }
+        }
+
+        return 0;
     }
 
 

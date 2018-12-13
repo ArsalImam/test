@@ -13,6 +13,7 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -1149,5 +1150,35 @@ public class AppPreferences {
                 .putString(Keys.BASE_URL_LOCAL, value)
                 .apply();
     }
+
+    //region MultiDelivery Shared Preference
+
+    /**
+     * Save Multi Delivery Call Driver Data in shared preference.
+     *
+     * @param response The {@link MultiDeliveryCallDriverResponse} object.
+     */
+    public static void setMultiDeliveryCallDriverData(MultiDeliveryCallDriverResponse response) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.MULTIDELIVERY_CALLDRIVER_OBJECT, new Gson().toJson(response))
+                .apply();
+    }
+
+    /**
+     * Fetch the Multi Delivery Call Driver Data from shared preference.
+     *
+     * @return The {@link MultiDeliveryCallDriverResponse} object.
+     */
+    public static MultiDeliveryCallDriverResponse getMultiDeliveryCallDriverData() {
+        Gson gson = new Gson();
+        return gson.fromJson(mSharedPreferences.getString(
+                        Keys.MULTIDELIVERY_CALLDRIVER_OBJECT,
+                        StringUtils.EMPTY
+                ),
+                MultiDeliveryCallDriverResponse.class);
+    }
+
+    //endregion
 
 }

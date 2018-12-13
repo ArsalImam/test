@@ -12,10 +12,12 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
+import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
@@ -25,7 +27,6 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
-import com.bykea.pk.partner.ui.activities.JsBankFingerSelectionActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
 import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
@@ -216,6 +217,39 @@ public class ActivityStackManager {
             }
             mContext.startActivity(callIntent);
         }
+    }
+
+    public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverResponse response,
+                                                  boolean isFromGcm,
+                                                  Context mContext) {
+        /*if (AppPreferences.getAvailableStatus()
+                && !AppPreferences.isAvailableStatusAPICalling()
+                && Utils.isGpsEnable(mContext)
+                && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
+                && Utils.isNotDelayed(callData.getData().getSentTime())) {
+
+            AppPreferences.setCallData(callData.getData());
+            Intent callIntent = new Intent(DriverApp.getContext(),
+                    MultiDeliveryCallingActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            if (isFromGcm) {
+                callIntent.putExtra("isGcm", true);
+            }
+            mContext.startActivity(callIntent);
+        }*/
+
+        AppPreferences.setMultiDeliveryCallDriverData(response);
+        Intent callIntent = new Intent(DriverApp.getContext(),
+                MultiDeliveryCallingActivity.class);
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        callIntent.setAction(Intent.ACTION_MAIN);
+        callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        if (isFromGcm) {
+            callIntent.putExtra("isGcm", true);
+        }
+        mContext.startActivity(callIntent);
     }
 
     public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {

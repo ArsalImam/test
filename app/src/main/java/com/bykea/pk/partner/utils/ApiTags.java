@@ -120,6 +120,10 @@ public class ApiTags {
     public static final String SOCKET_ARRIVED = "i-am-arrived";
     public static final String SOCKET_BEGIN_TRIP = "start-trip";
     public static final String SOCKET_END_TRIP = "finish-trip";
+
+    //MULTI DELIVERY SOCKET EVENTS
+    public static final String SOCKET_CALL_DRIVER = "CALL_DRIVER";
+
     /*CHAT APIS*/
     public static final String SOCKET_SEND_CHAT_MESSAGE = "send-message";
     public static final String SOCKET_GET_DRIVER_STATS = "driver:trip-status";

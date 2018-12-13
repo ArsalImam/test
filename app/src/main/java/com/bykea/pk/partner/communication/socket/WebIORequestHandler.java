@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.google.android.gms.maps.model.LatLng;
@@ -172,6 +173,8 @@ public class WebIORequestHandler {
         emitWithJObject(ApiTags.UPDATE_DROP_OFF, new MyGenericListener(ApiTags.UPDATE_DROP_OFF, UpdateDropOffResponse.class, mResponseCallBack),
                 jsonObject);
     }
+
+    //region Multi delivery
 
 
     private synchronized void emitWithJObject(final String socket, LocationUpdateListener locationUpdateListener, final JSONObject json) {
@@ -394,6 +397,35 @@ public class WebIORequestHandler {
             }
         }
 
+    }
+
+    /**
+     * Call Driver listener for listening multiple delivery request
+     */
+    public static class CallDriverListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Gson gson = new Gson();
+            try{
+                MultiDeliveryCallDriverResponse response = gson.fromJson(
+                        serverResponse,
+                        MultiDeliveryCallDriverResponse.class);
+                if (response != null) {
+                    ActivityStackManager
+                            .getInstance()
+                            .startMultiDeliveryCallingActivity(
+                                    response,
+                                    false,
+                                    DriverApp.getContext()
+                            );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
 
