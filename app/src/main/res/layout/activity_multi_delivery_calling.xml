@@ -70,6 +70,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:maxLength="2"
+                            tools:text="1"
                             android:textColor="@color/buttonTextColor"
                             android:textSize="@dimen/_40sdp"
                             app:fontName="roboto_regular.ttf" />

@@ -8,7 +8,8 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -436,11 +437,11 @@ public class WebIORequestHandler {
             String serverResponse = args[0].toString();
             Gson gson = new Gson();
             try {
-                MultiDeliveryCallDriverResponse response = gson.fromJson(
+                MultipleDeliveryCallDriverResponse response = gson.fromJson(
                         serverResponse,
-                        MultiDeliveryCallDriverResponse.class);
+                        MultipleDeliveryCallDriverResponse.class);
                 if (response != null) {
-                    AppPreferences.setMultiDeliveryCallDriverData(response);
+                    AppPreferences.setMultiDeliveryCallDriverData(response.getData());
                     new UserRepository().requestDriverAcknowledged(handler);
                 }
             } catch (Exception e) {

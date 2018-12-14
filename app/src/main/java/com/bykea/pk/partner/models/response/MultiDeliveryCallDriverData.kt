@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
 
 /**
- * Multi Delivery Call Driver Response Class
+ * Multi Delivery Call Driver Data Class
  */
-data class MultiDeliveryCallDriverResponse(
+data class MultiDeliveryCallDriverData(
         var pickup: MultipleDeliveryPickupResponse? = null,
         var bookings: List<MultipleDeliveryBookingResponse>? = mutableListOf(),
         @SerializedName("status")

@@ -22,7 +22,7 @@ public class Constants {
     public static final String TAG_GOOGLE_MAP = "GOOGLE MAP TRACKING";
 
     public static final int RIDE_ACCEPTANCE_TIMEOUT = 20800;
-    public static final int TIME_IN_MILLISECONDS_PERCENTAGE = 5;
+    public static final float TIME_IN_MILLISECONDS_PERCENTAGE = 5f;
 
     public static final String SETTINGS_DATA_EXTRAS = "SETTINGS_DATA_EXTRAS";
 

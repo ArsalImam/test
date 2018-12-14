@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,7 +17,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -35,6 +36,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.regex.Matcher;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -106,10 +109,11 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     private int total = 1;
 
     private boolean isFreeDriverApiCalled = false;
-    private MultiDeliveryCallDriverResponse response;
+    private MultiDeliveryCallDriverData response;
     private int timeInMilliSeconds;
     private int timePercentage;
     private int ACCEPTANCE_TIMEOUT;
+    private CountDownTimer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +130,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
         response = AppPreferences.getMultiDeliveryCallDriverData();
         donutProgress.setProgress(response.getTimer());
-        startAnimation();
+
 
         if (null != getIntent() && getIntent().getBooleanExtra("isGcm", false)) {
             DriverApp.getApplication().connect();
@@ -200,7 +204,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     acceptSeconds = counterTv.getText().toString();
                     repository.requestAcceptCall(mCurrentActivity, acceptSeconds, handler);
-                    timer.cancel();
                 }
                 break;
         }
@@ -334,19 +337,36 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         }
     }
 
-    private CountDownTimer timer = new CountDownTimer(ACCEPTANCE_TIMEOUT, 100) {
+    /**
+     * Count down timer class
+     */
+    private class CountDownTimerClass extends CountDownTimer {
+
+        int totalTime = timeInMilliSeconds /1000;
+
+        /**
+         * @param millisInFuture    The number of millis in the future from the call
+         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
+         *                          is called.
+         * @param countDownInterval The interval along the way to receive
+         *                          {@link #onTick(long)} callbacks.
+         */
+        public CountDownTimerClass(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
 
         @Override
         public void onTick(long millisUntilFinished) {
             progress = (ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
-            if (progress >= 20) {
+            Log.d("progress", progress+"");
+
+            if (progress >= response.getTimer()) {
                 timer.onFinish();
             } else {
                 if (!_mpSound.isPlaying()) _mpSound.start();
-                //progress = progress + 0.1f;
                 donutProgress.setProgress(progress);
                 try {
-                    counterTv.setText(String.valueOf((int) (millisUntilFinished / 1000)));
+                    counterTv.setText(String.valueOf((int) ((millisUntilFinished / 1000) + 1)));
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -355,26 +375,40 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
         @Override
         public void onFinish() {
-            donutProgress.setProgress(20);
+            totalTime = 0;
+            donutProgress.setProgress(response.getTimer());
             counterTv.setText("0");
 //            rejectCallBtn.setEnabled(false);
             acceptCallBtn.setEnabled(false);
             stopSound();
-            if (!isFreeDriverApiCalled) {
+            ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+            finishActivity();
+            /*if (!isFreeDriverApiCalled) {
                 Utils.setCallIncomingStateWithoutRestartingService();
-                repository.freeDriverStatus(mCurrentActivity, handler);
+                //repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
-                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                finishActivity();
-            }
+
+            }*/
         }
-    };
+    }
+
+    /*private CountDownTimer timer = new CountDownTimer(ACCEPTANCE_TIMEOUT, 100) {
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+        }
+
+        @Override
+        public void onFinish() {
+
+        }
+    };*/
 
     private void startAnimation() {
         _mpSound = MediaPlayer.create(mCurrentActivity, R.raw.ringtone);
         _mpSound.start();
         timer.start();
-
     }
 
     private void stopSound() {
@@ -409,8 +443,12 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         timeInMilliSeconds = Utils.getTimeInMilliseconds(response.getTimer());
         timePercentage = Utils.getTimeInPercentage(timeInMilliSeconds,
                 Constants.TIME_IN_MILLISECONDS_PERCENTAGE);
-        counterTv.setText(String.valueOf(response.getTimer()));
         ACCEPTANCE_TIMEOUT = timeInMilliSeconds - timePercentage;
+
+        counterTv.setText(String.valueOf(response.getTimer()));
+        timer = new CountDownTimerClass(ACCEPTANCE_TIMEOUT, 100);
+
+        startAnimation();
 
         mapCallDataToUI(response);
     }
@@ -419,7 +457,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
      * Map the calling data to UI which is comming from socket.
      * @param response is a socket response which is listen by Call Listener
      */
-    private void mapCallDataToUI(MultiDeliveryCallDriverResponse response) {
+    private void mapCallDataToUI(MultiDeliveryCallDriverData response) {
         try {
             int i = 0;
             String type = response.getBookings().get(i).getTrip().getType();

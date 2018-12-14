@@ -2503,8 +2503,8 @@ public class Utils {
         return timeInSeconds * 1000;
     }
 
-    public static int getTimeInPercentage(int timeInMilliSeconds, int percentage) {
-        return (percentage / 100) * timeInMilliSeconds;
+    public static int getTimeInPercentage(int timeInMilliSeconds, float percentage) {
+        return (int) ((percentage / 100f) * timeInMilliSeconds);
     }
 
     //endregion

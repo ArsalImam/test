@@ -12,7 +12,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
@@ -219,7 +219,7 @@ public class ActivityStackManager {
         }
     }
 
-    public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverResponse response,
+    public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverData response,
                                                   boolean isFromGcm,
                                                   Context mContext) {
         /*if (AppPreferences.getAvailableStatus()
