@@ -127,7 +127,7 @@ public class Constants {
     public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
 
-    public static final int IN_ACTIVE_MUSIC_SOUND = 3000;
+    public static final int IN_ACTIVE_MUSIC_SOUND = 6000;
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";

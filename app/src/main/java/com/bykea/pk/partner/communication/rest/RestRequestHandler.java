@@ -1121,9 +1121,9 @@ public class RestRequestHandler {
                     if (AppPreferences.isOutOfFence()) {
                         AppPreferences.setOutOfFence(false);
                         AppPreferences.setAvailableStatus(true);
-                        mCallBack.onError(HTTPStatus.FENCE_SUCCESS, response.body().getMessage());
+                        mResponseCallBack.onError(HTTPStatus.FENCE_SUCCESS, response.body().getMessage());
                     } else {
-                        mCallBack.onResponse(response);
+                        mResponseCallBack.onResponse(response.body());
                     }
                 } else {
                     mResponseCallBack.onError(response.body().getCode(),

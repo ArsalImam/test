@@ -632,6 +632,7 @@ public class LocationService extends Service {
     //endregion
 
     //region  Countdown timer for sending location to server.
+    //10000, 4990
     private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
@@ -654,7 +655,7 @@ public class LocationService extends Service {
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         updateTripRouteList(lat, lon);
-                        DriverETAService.startDriverETAUpdate(DriverApp.getContext());
+                        //DriverETAService.startDriverETAUpdate(DriverApp.getContext());
 
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
                         if (shouldCallLocApi) {

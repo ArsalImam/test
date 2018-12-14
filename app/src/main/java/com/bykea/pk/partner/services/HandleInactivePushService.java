@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.services;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
@@ -12,7 +11,6 @@ import android.support.annotation.Nullable;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -24,6 +22,7 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -35,12 +34,6 @@ public class HandleInactivePushService extends Service {
     private MediaPlayer player;
     private Handler mpHanlder = new Handler();
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        player = MediaPlayer.create(this, R.raw.ringtone); //select music file
-    }
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -49,6 +42,9 @@ public class HandleInactivePushService extends Service {
 
     private HandleInactivePushService mContext;
     private EventBus mBus = EventBus.getDefault();
+    private boolean playMusic = true;
+    private OfflineNotificationData offlineNotificationData;
+    private UserRepository mUserRepository;
 
     private boolean isCountDownTimerRunning;
     final CountDownTimer countDownTimer = new CountDownTimer(Constants.LOCATION_API_WAIT_ON_INACTIVE_PUSH, Constants.LOCATION_API_WAIT_ON_INACTIVE_PUSH) {
@@ -58,21 +54,27 @@ public class HandleInactivePushService extends Service {
 
         @Override
         public void onFinish() {
-            player.start();
+            Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Sound playing");
             isCountDownTimerRunning = false;
-            mpHanlder.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //TODO update msg
-                    onInactiveByCronJob(getString(R.string.driver_offline_crone_job_ur));
-                }
-            }, Constants.IN_ACTIVE_MUSIC_SOUND);
+            if (playMusic) {
+                player.start();
+                mpHanlder.postDelayed(soundRunable, Constants.IN_ACTIVE_MUSIC_SOUND);
+            }
+        }
+    };
 
+    private Runnable soundRunable = new Runnable() {
+        @Override
+        public void run() {
+            onInactiveByCronJob(getString(R.string.driver_offline_crone_job_ur));
         }
     };
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        mUserRepository = new UserRepository();
+        player = MediaPlayer.create(this, R.raw.ringtone); //select music file
+        player.setLooping(true);
         mContext = this;
         if (intent != null && intent.getExtras() != null
                 && intent.hasExtra(Constants.Extras.INACTIVE_PUSH_DATA)) {
@@ -87,13 +89,13 @@ public class HandleInactivePushService extends Service {
      * @param data String notification message
      */
     private void onInactiveByCronJob(String data) {
-        player.setLooping(true); //set looping
+        // //set looping
         Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob " + data);
+        stopMusicPlayer();
         AppPreferences.setAdminMsg(null);
         AppPreferences.setAvailableStatus(false);
         mBus.post(Keys.INACTIVE_PUSH);
         Notifications.generateAdminNotification(mContext, data);
-        stopMusicPlayer();
         stopSelf();
 
     }
@@ -105,6 +107,7 @@ public class HandleInactivePushService extends Service {
      * @param data Push Notification data
      */
     private synchronized void onInactivePushReceived(final OfflineNotificationData data) {
+        offlineNotificationData = data;
         Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Inactive Push Received");
         if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() || AppPreferences.isOutOfFence()) && Utils.isInactiveCheckRequired()) {
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Driver is Logged In");
@@ -114,40 +117,30 @@ public class HandleInactivePushService extends Service {
              * this notification when there are different coordinates.
              * */
             if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
-                    && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
-                    && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude()) && !isCountDownTimerRunning) {
+                 /*   && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
+                    && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude())*/ && !isCountDownTimerRunning) {
                 Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Data");
                 if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                     //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
                     Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Connection and GPS is active");
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    countDownTimer.cancel();
+                    countDownTimer.start();
+                    isCountDownTimerRunning = true;
+                    mUserRepository.requestLocationUpdate(mContext, responseHandler,
+                            AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                   /* new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            countDownTimer.cancel();
-                            isCountDownTimerRunning = true;
-                            countDownTimer.start();
-                            WebIO.getInstance().clearConnectionData();
-                            new UserRepository().requestLocationUpdate(mContext, new UserDataHandler() {
-                                @Override
-                                public void onLocationUpdate(LocationResponse response) {
-                                    countDownTimer.cancel();
-                                    isCountDownTimerRunning = false;
-                                    ActivityStackManager.getInstance().restartLocationService(mContext);
-                                    stopSelf();
-                                }
 
-                                @Override
-                                public void onError(int errorCode, String errorMessage) {
-//                                            countDownTimer.cancel();
-                                    onLocationUpdateError(errorCode, errorMessage, data);
-                                    stopSelf();
-                                }
-                            }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
                         }
-                    });
+                    });*/
                 } else {
                     Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob | GPS = " + Utils.isGpsEnable() + " Internet = " + Connectivity.isConnectedFast(mContext));
-                    onInactiveByCronJob(data.getMessage());
+                    if (playMusic) {
+                        player.start();
+                        mpHanlder.postDelayed(soundRunable, Constants.IN_ACTIVE_MUSIC_SOUND);
+                    }
+                    //onInactiveByCronJob(data.getMessage());
                 }
             } else {
                 Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "FCM Ignored. Location Already Updated via update-lat-lng API or API is being called.");
@@ -156,9 +149,39 @@ public class HandleInactivePushService extends Service {
         } else {
             String logMsg = "FCM Ignored. login = " + AppPreferences.isLoggedIn() + "active = " + AppPreferences.getAvailableStatus() + " outOfFense = " + AppPreferences.isOutOfFence() + " InactiveCheckRequired = " + Utils.isInactiveCheckRequired();
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, logMsg);
+            stopMusicPlayer();
             stopSelf();
         }
     }
+
+
+    //region Socket Events response Handler
+
+
+    private UserDataHandler responseHandler = new UserDataHandler() {
+        @Override
+        public void onLocationUpdate(LocationResponse response) {
+            super.onLocationUpdate(response);
+            playMusic = false;
+            countDownTimer.cancel();
+            isCountDownTimerRunning = false;
+            Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH,
+                    "location API Response: " + new Gson().toJson(response));
+            AppPreferences.setDriverOfflineForcefully(false);
+            AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
+            ActivityStackManager.getInstance().restartLocationService(mContext);
+            stopMusicPlayer();
+            stopSelf();
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            onLocationUpdateError(errorCode, errorMessage, offlineNotificationData);
+            stopMusicPlayer();
+            stopSelf();
+        }
+    };
+    //endregion
 
 
     /**
@@ -171,8 +194,7 @@ public class HandleInactivePushService extends Service {
     private void onLocationUpdateError(int errorCode, String errorMessage, OfflineNotificationData data) {
         Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onLocationUpdateError " + errorMessage);
         if (errorCode == HTTPStatus.UNAUTHORIZED) {
-            Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
-            sendBroadcast(locationIntent);
+            EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
         } else if (errorCode == HTTPStatus.FENCE_ERROR) {
             AppPreferences.setOutOfFence(true);
             AppPreferences.setAvailableStatus(false);
@@ -187,7 +209,7 @@ public class HandleInactivePushService extends Service {
         } else if (errorCode == HTTPStatus.FENCE_SUCCESS) {
             AppPreferences.setOutOfFence(false);
             AppPreferences.setAvailableStatus(true);
-            mBus.post(Keys.INACTIVE_FENCE);
+            mBus.post(Keys.ACTIVE_FENCE);
         } /*else {
             onInactiveByCronJob(data.getMessage());
         }*/
@@ -195,8 +217,8 @@ public class HandleInactivePushService extends Service {
 
     @Override
     public void onDestroy() {
+        //stopMusicPlayer();
         stopSelf();
-        stopMusicPlayer();
         super.onDestroy();
     }
 
@@ -205,9 +227,10 @@ public class HandleInactivePushService extends Service {
      */
     private void stopMusicPlayer() {
         if (player != null) {
-            player.stop();
+            if (player.isPlaying()) {
+                player.stop();
+            }
             player.release();
         }
-
     }
 }
