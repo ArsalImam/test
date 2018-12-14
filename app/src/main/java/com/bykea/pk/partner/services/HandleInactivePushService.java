@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 
 import com.bykea.pk.partner.Notifications;
@@ -226,11 +225,19 @@ public class HandleInactivePushService extends Service {
      * Stop music player tone.
      */
     private void stopMusicPlayer() {
-        if (player != null) {
-            if (player.isPlaying()) {
-                player.stop();
+        try {
+            if (player != null) {
+                player.reset();// It requires again setDataSource for player object.
+                player.stop();// Stop it
+                player.release();// Release it
+                player = null; // Initialize it to null so it can be used later
             }
-            player.release();
+        } catch (Exception e) {
+            Utils.redLog(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Music player ex", e);
+            player.reset();// It requires again setDataSource for player object.
+            player.release();// Release it
+            player = null; // Initialize it to null so it can be used later
         }
+
     }
 }
