@@ -51,6 +51,7 @@ import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -608,6 +609,49 @@ public class UserRepository {
         mWebIORequestHandler.feedback(jsonObject, mDataCallback);
 
     }
+
+    //region Multi Delivery emit data
+
+    /**
+     * Set Driver Acknowledge Data in Json Object.
+     *
+     * @param jsonObject The json object.
+     *
+     * @throws JSONException if something went wrong with json object it will throw an exception.
+     */
+    private void setDriverAcknowledgedData(JSONObject jsonObject) throws JSONException {
+        jsonObject.put("batch_id", AppPreferences
+                .getMultiDeliveryCallDriverData()
+                .getBatchID());
+        jsonObject.put("_id", AppPreferences.getDriverId());
+        jsonObject.put("token", AppPreferences.getAccessToken());
+        jsonObject.put("trip_type", "batch");
+        //jsonObject.put("lat", "SDFSDF");
+        jsonObject.put("lat", AppPreferences.getLatitude());
+        jsonObject.put("lng", AppPreferences.getLongitude());
+    }
+
+    /**
+     * Emit request Driver Acknowledge Response.
+     *
+     * @param handler The Callback that will be invoked when response received.
+     *
+     * @see IUserDataHandler
+     * @see UserRepository#setDriverAcknowledgedData(JSONObject)
+     */
+    public void requestDriverAcknowledged(IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setDriverAcknowledgedData(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.sendCallDriverAcknowledge(jsonObject, mDataCallback);
+
+    }
+
+    //endregion
 
 
     public void requestReverseGeocoding(Context context, IUserDataHandler handler,
@@ -1192,6 +1236,11 @@ public class UserRepository {
                         break;
                     case "LoadBoardResponse":
                         mUserCallback.onLoadBoardResponse((LoadBoardResponse) object);
+                        break;
+                    case "MultiDeliveryCallDriverAcknowledgeResponse":
+                        mUserCallback.onDriverAcknowledgeResponse(
+                                (MultiDeliveryCallDriverAcknowledgeResponse) object
+                        );
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

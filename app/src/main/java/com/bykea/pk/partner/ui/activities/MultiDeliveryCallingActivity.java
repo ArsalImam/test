@@ -5,9 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,9 +30,6 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.gson.Gson;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
@@ -81,10 +76,8 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     @BindView(R.id.timeTv)
     TextView timeTv;
 
-    @BindView(R.id.ivCallType)
-    ImageView ivCallType;
-    @BindView(R.id.activity_calling)
-    LinearLayout activity_calling;
+    @BindView(R.id.activity_multi_delivery_calling)
+    LinearLayout activity_multi_delivery_calling;
 
     @BindView(R.id.kharidariPriceLayout)
     RelativeLayout kharidariPriceLayout;
@@ -104,12 +97,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     @BindView(R.id.kharidariKiRaqamTv)
     FontTextView kharidariKiRaqamTv;
 
-    @BindView(R.id.distanceAwayTv)
-    FontTextView distanceAwayTv;
-
-    @BindView(R.id.customerRatingTv)
-    FontTextView customerRatingTv;
-
     private UserRepository repository;
     private MediaPlayer _mpSound;
     private MultiDeliveryCallingActivity mCurrentActivity;
@@ -120,6 +107,9 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
     private boolean isFreeDriverApiCalled = false;
     private MultiDeliveryCallDriverResponse response;
+    private int timeInMilliSeconds;
+    private int timePercentage;
+    private int ACCEPTANCE_TIMEOUT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +159,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
             AppPreferences.setIncomingCall(true);
         }
         AppPreferences.setCallingActivityOnForeground(false);
-        Utils.unbindDrawables(activity_calling);
+        Utils.unbindDrawables(activity_multi_delivery_calling);
         super.onDestroy();
     }
 
@@ -344,11 +334,11 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         }
     }
 
-    private CountDownTimer timer = new CountDownTimer(Constants.RIDE_ACCEPTANCE_TIMEOUT, 100) {
+    private CountDownTimer timer = new CountDownTimer(ACCEPTANCE_TIMEOUT, 100) {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
+            progress = (ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
             if (progress >= 20) {
                 timer.onFinish();
             } else {
@@ -416,17 +406,11 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
         //Todo 1: Change the object and log the event on mixpanel
         //logMixpanelEvent(callData, false);
-
-//        callerNameTv.setText(callData.getPassName());
-//        startAddressTv.setText(callData.getStartAddress());
-//        timeTv.setText(callData.getArivalTime() + " min");
-//        distanceTv.setText(callData.getDistance() + " km");
+        timeInMilliSeconds = Utils.getTimeInMilliseconds(response.getTimer());
+        timePercentage = Utils.getTimeInPercentage(timeInMilliSeconds,
+                Constants.TIME_IN_MILLISECONDS_PERCENTAGE);
         counterTv.setText(String.valueOf(response.getTimer()));
-
-        String link = response.getImageURL();
-        if (StringUtils.isNotBlank(link)) {
-            Utils.loadMultipleDeliveryImageURL(ivCallType, link, R.drawable.bhejdo);
-        }
+        ACCEPTANCE_TIMEOUT = timeInMilliSeconds - timePercentage;
 
         mapCallDataToUI(response);
     }
@@ -438,97 +422,39 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     private void mapCallDataToUI(MultiDeliveryCallDriverResponse response) {
         try {
             int i = 0;
-            serviceImageView.setImageResource(getIcon(
-                    response
-                            .getBookings()
-                            .get(i)
-                            .getTrip()
-                            .getType())
+            String type = response.getBookings().get(i).getTrip().getType();
+            deliveryCountTv.setText(String.valueOf(response.getBookings().size()));
+            Utils.loadMultipleDeliveryImageURL(
+                    serviceImageView,
+                    response.getImageURL(),
+                    R.drawable.bhejdo
             );
-            pickLocationTv.setText(response.getStartAddress());
-            pickDistanceTv.setText(response.getDistance());
-            dropDistanceTv.setText(String.valueOf(
-                    Utils.getDistance(response.getEstTotalDistance())
-            ));
+            pickLocationTv.setText(response.getPickup().getPickupAddress());
+            pickDistanceTv.setText(Utils.getDistance(response.getEstTotalDistance()));
+            dropDistanceTv.setText(Utils.getDistance(response.getEstTotalDistance()));
             timeTv.setText(String.valueOf(
                     Utils.getDuration(response.getEstTotalDuration())
             ));
-
             kraiKiKamaiTv.setText(String.valueOf(response.getEstFare()));
+
             String cashKiWasoliValue = response.getEstCashCollection() < 0 ?
                     getString(R.string.cash_value_zero) :
                     String.valueOf(response.getEstCashCollection());
             cashKiWasooliTv.setText(cashKiWasoliValue);
-            customerRatingTv.setText(String.valueOf(
-                    response
-                            .getBookings()
-                            .get(0)
-                            .getPassenger()
-                            .getRating()));
 
-                cashKiWasooliLayout.setVisibility(View.VISIBLE);
-                kraiKiKamaiLayout.setVisibility(View.VISIBLE);
-                distanceAwayTv.setText(response.getDistance());
+            cashKiWasooliLayout.setVisibility(View.VISIBLE);
+            kraiKiKamaiLayout.setVisibility(View.VISIBLE);
 
-            if (Utils.isPurchaseService(response.getCallType())) {
+            if (Utils.isPurchaseService(type)) {
                 kharidariPriceLayout.setVisibility(View.VISIBLE);
-                kharidariKiRaqamTv.setText(response.getCodAmount());
-            }
-
-            if (Utils.isRideService(response.getCallType())) {
-                kharidariPriceLayout.setVisibility(View.GONE);
-            }
-
-            if (Utils.isDeliveryService(response.getCallType())) {
+                //Todo 2: Add it later
+                //kharidariKiRaqamTv.setText(response.getCodAmount());
+            } else {
                 kharidariPriceLayout.setVisibility(View.GONE);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /***
-     * Fetch the icon from asset based on the type of service
-     *
-     * @param type The type of service.
-     * @return The drawable from drawable folder.
-     */
-    public static int getIcon(String type) {
-        switch (type) {
-            case Constants.TripTypes.RIDE_TYPE: {
-                return R.drawable.ic_ride;
-            }
-
-            case Constants.TripTypes.PURCHASE_TYPE:
-            case Constants.TripTypes.PURCHASE_NAME: {
-                return R.drawable.ic_purchase;
-            }
-
-            case Constants.TripTypes.DELIVERY_TYPE: {
-                return R.drawable.ic_delivery;
-            }
-
-            case Constants.TripTypes.CLASSIFIED_TYPE: {
-                return R.drawable.ic_ride;
-            }
-
-            case Constants.TripTypes.VAN_TYPE:
-            case Constants.TripTypes.COURIER_TYPE: {
-                return R.drawable.ic_courier;
-            }
-
-
-            case Constants.TripTypes.JOBS_TYPE: {
-                return R.drawable.ic_ride;
-            }
-
-            case Constants.TripTypes.BILL_TYPE:
-            case Constants.TripTypes.TOPUP_TYPE: {
-                return R.drawable.ic_bill_top;
-            }
-        }
-
-        return 0;
     }
 
 

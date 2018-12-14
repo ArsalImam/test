@@ -2462,12 +2462,12 @@ public class Utils {
      * @param distanceInMeter The distance in meter.
      * @return The distance in meter or kilometer
      */
-    public static float getDistance(float distanceInMeter) {
+    public static String getDistance(float distanceInMeter) {
         if (distanceInMeter >= 1000) {
-            return distanceInMeter / 1000;
+            return String.format("%.1f", distanceInMeter / 1000);
         }
 
-        return distanceInMeter;
+        return String.format("%.1f", distanceInMeter);
     }
 
     /**
@@ -2483,13 +2483,28 @@ public class Utils {
     public static int getDuration(int durationInSeconds) {
         int SECONDS_IN_MINUTES = 60;
         int SECONDS_IN_HOUR = 3600;
-        if (durationInSeconds >= SECONDS_IN_MINUTES) {
+        if (durationInSeconds >= SECONDS_IN_MINUTES && durationInSeconds < SECONDS_IN_HOUR) {
             return durationInSeconds / SECONDS_IN_MINUTES;
         } else if (durationInSeconds >= SECONDS_IN_HOUR) {
             return durationInSeconds / SECONDS_IN_HOUR;
         }
 
         return durationInSeconds;
+    }
+
+    /**
+     * Fetch Time in MilliSeconds
+     *
+     * @param timeInSeconds The time in seconds.
+     *
+     * @return The time in milliseconds
+     */
+    public static int getTimeInMilliseconds(int timeInSeconds) {
+        return timeInSeconds * 1000;
+    }
+
+    public static int getTimeInPercentage(int timeInMilliSeconds, int percentage) {
+        return (percentage / 100) * timeInMilliSeconds;
     }
 
     //endregion

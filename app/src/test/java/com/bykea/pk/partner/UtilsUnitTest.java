@@ -59,4 +59,33 @@ public class UtilsUnitTest {
         assertTrue(StringUtils.isNotBlank(distance));
     }
 
+    @Test
+    public void getDistance_Kilometer() {
+        float distanceInMeter = 1000;
+        assertEquals("Failed when distance is meter" ,Utils.getDistance(distanceInMeter), "1.0");
+    }
+
+    @Test
+    public void getDistance_meter() {
+        float distanceInMeter = 100;
+        assertEquals("Failed when distance is kilometer" ,Utils.getDistance(distanceInMeter),
+                String.valueOf(distanceInMeter));
+    }
+
+    @Test
+    public void getDuration_minutes() {
+        int durationInSeconds = 60;
+        assertEquals("Failed when duration in seconds is less than minute",
+                Utils.getDuration(durationInSeconds),
+                1);
+    }
+
+    @Test
+    public void getDuration_hours() {
+        int durationInSeconds = 3600;
+        assertEquals("Failed when duration in seconds is less than hours",
+                Utils.getDuration(durationInSeconds),
+                1);
+    }
+
 }

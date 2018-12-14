@@ -46,6 +46,7 @@ public class Keys {
 
     //region MULTI DELIVERY OBJECT STRING KEY
     public static final String MULTIDELIVERY_CALLDRIVER_OBJECT = "MULTIDELIVERY_CALLDRIVER_OBJECT";
+    public static final String MULTIDELIVERY_BATCH_ID = "MULTIDELIVERY_BATCH_ID";
 
     //endregion
 

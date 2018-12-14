@@ -123,6 +123,7 @@ public class ApiTags {
 
     //MULTI DELIVERY SOCKET EVENTS
     public static final String SOCKET_CALL_DRIVER = "CALL_DRIVER";
+    public static final String SOCKET_CALL_DRIVER_ACKNOWLEDGE = "CALL_DRIVER_ACKNOWLEDGE";
 
     /*CHAT APIS*/
     public static final String SOCKET_SEND_CHAT_MESSAGE = "send-message";
