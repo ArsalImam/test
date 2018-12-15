@@ -637,11 +637,11 @@ public class LocationService extends Service {
         @Override
         public void onTick(long millisUntilFinished) {
             Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
-             /*if (Connectivity.isConnectedFast(mContext)) {
+             if (Connectivity.isConnectedFast(mContext)) {
                 if (AppPreferences.isLoggedIn()) {
                     DriverApp.getApplication().connect();
                 }
-            }*/
+            }
         }
 
 

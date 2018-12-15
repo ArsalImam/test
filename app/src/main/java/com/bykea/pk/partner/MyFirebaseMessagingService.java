@@ -108,6 +108,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             }
                         }
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING)) {
+                        Utils.redLog(TAG,"On Call FCM");
                         ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
                     } else {
                         Utils.updateTripData(callData);
