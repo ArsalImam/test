@@ -55,10 +55,15 @@ public class HandleInactivePushService extends Service {
         public void onFinish() {
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Sound playing");
             isCountDownTimerRunning = false;
-            if (playMusic) {
-                player.start();
-                mpHanlder.postDelayed(soundRunable, Constants.IN_ACTIVE_MUSIC_SOUND);
+            if (player != null) {
+                if (playMusic) {
+                    player.start();
+                    mpHanlder.postDelayed(soundRunable, Constants.IN_ACTIVE_MUSIC_SOUND);
+                }
+            } else {
+                onInactiveByCronJob(getString(R.string.driver_offline_crone_job_ur));
             }
+
         }
     };
 
@@ -72,7 +77,7 @@ public class HandleInactivePushService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mUserRepository = new UserRepository();
-        player = MediaPlayer.create(this, R.raw.ringtone); //select music file
+        player = MediaPlayer.create(this, R.raw.alert_signal); //select music file
         player.setLooping(true);
         mContext = this;
         if (intent != null && intent.getExtras() != null
