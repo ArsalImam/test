@@ -350,7 +350,7 @@
                 android:layout_marginRight="@dimen/margin.normal"
                 android:layout_marginTop="@dimen/margin.normal"
                 android:background="@drawable/button_green"
-                android:text="@string/button.text.submit.a.request"
+                android:text="@string/button_text_submit_a_request"
                 android:textAllCaps="false"
                 android:textSize="@dimen/_20sdp"
                 android:textColor="@color/white" />
@@ -367,7 +367,7 @@
                 android:layout_marginBottom="@dimen/margin.normal"
                 android:background="@drawable/button_greyhot"
                 android:textSize="@dimen/_24sdp"
-                android:text="@string/button.text.help"
+                android:text="@string/button_text_help"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
         </LinearLayout>

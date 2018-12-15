@@ -33,7 +33,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -51,6 +50,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -104,6 +104,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.ResponseBody;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -116,6 +117,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -138,6 +140,10 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import retrofit.Converter;
+import retrofit.Response;
+import retrofit.Retrofit;
+
 import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 
@@ -159,6 +165,7 @@ public class Utils {
             }
         }
     }
+
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -293,7 +300,8 @@ public class Utils {
     public static void logout(Context context) {
         clearData(context);
         HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.getInstance().startLoginActivity(context);
+        //ActivityStackManager.getInstance().startLoginActivity(context);
+        ActivityStackManager.getInstance().startLandingActivity(context);
         ((Activity) context).finish();
     }
 
@@ -697,7 +705,7 @@ public class Utils {
         i.putExtra(Intent.EXTRA_TEXT, "");
         try {
             context.startActivity(Intent.createChooser(i, "Send mail..."));
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -711,9 +719,14 @@ public class Utils {
         manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
-    public static void hideSoftKeyboard(android.support.v4.app.Fragment fragment) {
+    /***
+     * Hide keyboard from screen
+     * @param fragment calling fragment where keyboard should be hidden.
+     */
+    public static void hideSoftKeyboard(Fragment fragment) {
         try {
-            final InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            final InputMethodManager imm = (InputMethodManager) fragment.getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null && fragment.getView() != null) {
                 imm.hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
             }
@@ -773,7 +786,7 @@ public class Utils {
         sendIntent.setPackage("com.whatsapp");
         try {
             context.startActivity(sendIntent);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -794,7 +807,7 @@ public class Utils {
         sendIntent.setPackage("com.whatsapp");
         try {
             context.startActivity(sendIntent);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -811,7 +824,7 @@ public class Utils {
 
     public static String getTotalRAM(Context context) {
 
-        int version = android.os.Build.VERSION.SDK_INT;
+        int version = Build.VERSION.SDK_INT;
         if (version >= 16) {
             ActivityManager actManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
@@ -828,7 +841,7 @@ public class Utils {
 
     public static String getAndroidVersion() {
 
-        return "" + android.os.Build.VERSION.SDK_INT;
+        return "" + Build.VERSION.SDK_INT;
 
     }
 
@@ -915,12 +928,14 @@ public class Utils {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-                        @Override
-                        public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                            mCurrentActivity.finish();
-                        }
-                    }, null, "UnAuthorized", "Session Expired. Please Log in again.");
+                                @Override
+                                public void onCallBack(String msg) {
+                                    //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                                    ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
+                                    mCurrentActivity.finish();
+                                }
+                            }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                            mCurrentActivity.getString(R.string.unauthorized_message_session_expired));
                 }
             });
         }
@@ -933,21 +948,25 @@ public class Utils {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-                        @Override
-                        public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                            mCurrentActivity.finish();
-                        }
-                    }, null, "UnAuthorized", "We strictly discourage usage of Fake GPS, please disable this and login again. Thank you! ");
+                                @Override
+                                public void onCallBack(String msg) {
+                                    //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                                    ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
+                                    mCurrentActivity.finish();
+                                }
+                            }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                            mCurrentActivity.getString(R.string.unauthorized_message_fake_gps));
                 }
             });
         }
     }
 
-    /*
-     * This will sync Device Time and Server Time. We know that Device time can be changed easily so
-     * we will calculate time difference between server and device
-     * */
+    /***
+     *  This will sync Device Time and Server Time.
+     *  We know that Device time can be changed easily so
+     *  we will calculate time difference between server and device
+     * @param serverTime Latest server time in milliseconds.
+     */
     public static void saveServerTimeDifference(long serverTime) {
         long currentTime = System.currentTimeMillis();
         AppPreferences.setServerTimeDifference(
@@ -1132,20 +1151,23 @@ public class Utils {
                 .replace(", Sindh", "").replace(", Islamabad Capital Territory", "").replace(", Islamic Republic of Pakistan", "") : StringUtils.EMPTY;
     }
 
-    /*
+    /**
      * Returns API key for Google GeoCoder API if required.
      * Will return Empty String if there's no error in Last
      * Request while using API without any Key.
+     *      * @return Google place server API key
      * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
-    /*
-     * Returns API key for Google Directions API if required.
-     * Will return Empty String if there's no error in Last
-     * Request while using API without any Key.
-     * */
+    /***
+     *  Returns API key for Google Directions API if required.
+     *  Will return Empty String if there's no error in Last
+     *  Request while using API without any Key.
+     * @param context Calling Context.
+     * @return Google place server API key
+     */
     public static String getApiKeyForDirections(Context context) {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
@@ -1159,9 +1181,10 @@ public class Utils {
         }
     }
 
-    /*
-     * Returns true if Last API call was more than 1 min ago
-     * */
+    /***
+     * Validate where we should call Direction API on screen.
+     * @return Returns true if Last API call was more than 1 min ago
+     */
     public static boolean isDirectionApiCallRequired() {
         return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
     }
@@ -1197,9 +1220,19 @@ public class Utils {
         return date != null ? date.getTime() : 0;
     }
 
-    public static boolean isGpsEnable(Context context) {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    /***
+     * Check that the GPS is enable or not.
+     *
+     * @return true if gps/location is enable otherwise returns false
+     */
+    public static boolean isGpsEnable() {
+        LocationManager locationManager = (LocationManager) DriverApp.getContext().
+                getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+
+        return false;
     }
 
     public static void loadImgPicasso(Context context, ImageView imageView, int placeHolder, String link) {
@@ -1239,7 +1272,7 @@ public class Utils {
 
     public static boolean isMockLocation(Location location, Context context) {
         boolean isMock;
-        if (android.os.Build.VERSION.SDK_INT >= 18) {
+        if (Build.VERSION.SDK_INT >= 18) {
             isMock = location.isFromMockProvider();
         } else {
             isMock = !Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0")
@@ -1296,13 +1329,23 @@ public class Utils {
     }
 
 
-    /*
-     * - if same location coordinates then don't consider these lat lng
-     * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
-     * - Check if its time difference w.r.t last coordinate is
-     * greater than minimum time a bike should take to cover that distance if that bike is traveling
-     * at max 80KM/H to avoid bad/fake coordinates
-     * */
+    /***
+     *  Validate Location latest latitude and longitude with following set of rules.
+     *  <ul>
+     *      <li> if same location coordinates then don't consider these lat lng </li>
+     *      <li> if distance is less than 6 meter then don't consider these
+     *      lat lng to avoid coordinate fluctuation </li>
+     *      <li> Check if its time difference w.r.t last coordinate is greater than minimum
+     *      time a bike should take to cover that distance if that bike is traveling
+     *      at max 80KM/H to avoid bad/fake coordinates </li>
+     *  </ul>
+     * @param newLat Latest latitude fetched.
+     * @param newLon Latest longitude fetched.
+     * @param prevLat Previously stored latitude.
+     * @param prevLon Previously stored longitude.
+     *
+     * @return True if latest fetched latitude and longitude are valid, otherwise return false.
+     */
     public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
@@ -1609,9 +1652,13 @@ public class Utils {
     }
 
 
-    /*
-     *  Flush Mixpanel Event in onDestroy()
-     * */
+    /***
+     * Flush Mixpanel Event in onDestroy()
+     * @param context Calling context.
+     * @param userID User id which is currently logged in.
+     * @param EVENT Event name which needs to be flush.
+     * @param data Json data which needs to be emitted.
+     */
     public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
         MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
         mixpanelAPI.identify(userID);
@@ -2432,4 +2479,85 @@ public class Utils {
             }
         }
     }
+
+
+    /***
+     * Validate service name in our stored collection if service exist we can safely use provided icon by API.
+     * @param serviceType Service name provided by API server.
+     * @return Returns true if service name matches our collection otherwise return false.
+     */
+    public static boolean useServiceIconProvidedByAPI(String serviceType) {
+        if (!TextUtils.isEmpty(serviceType)) {
+            switch (serviceType) {
+                case Constants.ServiceType.RIDE_NAME:
+                case Constants.ServiceType.SEND_NAME:
+                case Constants.ServiceType.SEND_TITLE:
+                case Constants.ServiceType.BRING_NAME:
+                case Constants.ServiceType.BRING_TITLE:
+                case Constants.ServiceType.TICKETS_NAME:
+                case Constants.ServiceType.TICKETS_TITLE:
+                case Constants.ServiceType.JOBS_NAME:
+                case Constants.ServiceType.CLASSIFIEDS_NAME:
+                case Constants.ServiceType.CARRY_VAN_NAME:
+                case Constants.ServiceType.CARRY_VAN_TITLE:
+                case Constants.ServiceType.ADS_NAME:
+                case Constants.ServiceType.UTILITY_BILL_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_TITLE:
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /***
+     *  Check is provided activity in running task.
+     *
+     * @param context Calling context.
+     * @param activityClass Class name which we need to find in running task.
+     * @return True if class found otherwise return false.
+     */
+    public static boolean isActivityRunning(Context context, Class<?> activityClass) {
+        try {
+            ActivityManager activityManager = (ActivityManager)
+                    context.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks = null;
+            if (activityManager != null) {
+                tasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
+                for (ActivityManager.RunningTaskInfo task : tasks) {
+                    if (activityClass.getName().equalsIgnoreCase(task.baseActivity.getClassName()))
+                        return true;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+
+        return false;
+    }
+
+    //region API error response Body parsing
+
+    /***
+     * HTTP response body converted to specified {@code type}.
+     * {@code null} if there is no response
+     * @param response response we received from API server.
+     * @param retrofit Retrofit Object
+     * @param type Concrete type class which is use to parse error response.
+     * @return {@link Object } Object class which would be casted to respective class
+     * parsed when we receive error body
+     */
+    public static <T> T parseAPIErrorResponse(Response<?> response, Retrofit retrofit,
+                                              Class<T> type) {
+        try {
+            Converter<ResponseBody, T> converter = retrofit.responseConverter(type,
+                    new Annotation[0]);
+            return converter.convert(response.errorBody());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    //endregion
+
 }

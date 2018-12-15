@@ -1,66 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llDialog"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_round_corners_edittext"
-    android:paddingBottom="15dp"
-    android:gravity="bottom"
-    android:id="@+id/llDialog"
-    android:orientation="vertical"
     android:layout_gravity="bottom"
+    android:background="@drawable/background_round_corners_edittext"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingBottom="15dp"
     android:visibility="visible">
 
     <com.bykea.pk.partner.widgets.FontTextView
-         android:textCursorDrawable="@null"
         android:id="@+id/profile_take_picture"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:background="@drawable/bg_textview_clickable"
-        android:text="@string/profile_action_sheet_new.tv.camera"
+        android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/colorAccentDark"/>
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bg_textview_clickable"
+        android:gravity="center"
+        android:text="@string/profile_action_sheet_new_tv_camera"
+        android:textColor="@color/colorAccentDark"
+        android:textCursorDrawable="@null" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1.2dp"
         android:background="@color/secondaryColor" />
+
     <com.bykea.pk.partner.widgets.FontTextView
-         android:textCursorDrawable="@null"
         android:id="@+id/profile_from_file"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_below="@+id/profile_take_picture"
         android:layout_alignLeft="@+id/profile_take_picture"
         android:layout_alignRight="@+id/profile_take_picture"
-        android:layout_below="@+id/profile_take_picture"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
         android:background="@drawable/bg_textview_clickable"
-        android:text="@string/profile_action_sheet_new.tv.gallery"
-        android:textColor="@color/colorAccentDark" />
+        android:gravity="center"
+        android:text="@string/profile_action_sheet_new_tv_gallery"
+        android:textColor="@color/colorAccentDark"
+        android:textCursorDrawable="@null" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1.2dp"
-        android:background="@color/secondaryColor"/>
+        android:background="@color/secondaryColor" />
+
     <com.bykea.pk.partner.widgets.FontTextView
-         android:textCursorDrawable="@null"
         android:id="@+id/profile_cancel"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_below="@+id/profile_from_file"
         android:layout_alignLeft="@+id/profile_from_file"
         android:layout_alignRight="@+id/profile_from_file"
-        android:layout_below="@+id/profile_from_file"
-        android:layout_marginTop="15dp"
-        android:text="@string/btn.cancel"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
+        android:layout_marginTop="15dp"
         android:background="@drawable/bg_textview_clickable"
-        android:textColor="@color/colorAccentDark" />
+        android:gravity="center"
+        android:text="@string/btn_cancel"
+        android:textColor="@color/colorAccentDark"
+        android:textCursorDrawable="@null" />
 
 </LinearLayout>

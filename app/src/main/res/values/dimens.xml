@@ -60,6 +60,7 @@
     <dimen name="feedback_padding">@dimen/_4sdp</dimen>
     <dimen name="feedback_padding_bottom">@dimen/_7sdp</dimen>
     <dimen name="feedback_height">@dimen/_35sdp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
     <!--Driver marker bitmap width & height-->
     <dimen name="driver_marker_width">@dimen/_45sdp</dimen>

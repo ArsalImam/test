@@ -110,6 +110,13 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.customerRatingTv)
     FontTextView customerRatingTv;
 
+/*    @BindView(R.id.estimatedDistanceUnitTv)
+    FontTextView estimatedDistaneUnitTv;
+
+    @BindView(R.id.circle_distance_layout)
+    LinearLayout circle_distance_layout;*/
+
+
     private UserRepository repository;
     private MediaPlayer _mpSound;
     private CallingActivity mCurrentActivity;
@@ -153,7 +160,7 @@ public class CallingActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
-         /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
+        /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(CallingActivity.this);
         AppPreferences.setCallingActivityOnForeground(true);
     }
@@ -359,8 +366,8 @@ public class CallingActivity extends BaseActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT-millisUntilFinished)/1000;
-            Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished+":"+progress+":"+counterTv.getText().toString());
+            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
+            Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished + ":" + progress + ":" + counterTv.getText().toString());
             if (progress >= 20) {
                 timer.onFinish();
             } else {
@@ -368,8 +375,8 @@ public class CallingActivity extends BaseActivity {
                 //progress = progress + 0.1f;
                 donutProgress.setProgress(progress);
                 try {
-                    counterTv.setText(String.valueOf((int)(millisUntilFinished/1000)));
-                }catch (NumberFormatException e){
+                    counterTv.setText(String.valueOf((int) (millisUntilFinished / 1000)));
+                } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
             }
@@ -434,7 +441,11 @@ public class CallingActivity extends BaseActivity {
 //        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
 
-        String icon = Utils.getServiceIcon(callData.getCallType());
+        String icon = StringUtils.EMPTY;
+        //String icon = Utils.getServiceIcon(callData.getCallType());
+        if (Utils.useServiceIconProvidedByAPI(callData.getCallType())) {
+            icon = callData.getIcon();
+        }
         if (StringUtils.isNotBlank(icon)) {
             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
             Picasso.get().load(Utils.getCloudinaryLink(icon))

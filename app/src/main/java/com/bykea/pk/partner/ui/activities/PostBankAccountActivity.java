@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -37,15 +36,16 @@ public class PostBankAccountActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         mCurrentActivity = this;
-        setTitleCustomToolbarWithUrdu("Bank Account", "بینک اکاؤنٹ");
+        setTitleCustomToolbarWithUrdu(getString(R.string.bank_account_title),
+                getString(R.string.bank_account_title_ur));
         setData();
     }
 
     private void setData() {
         if (getIntent() != null) {
-            PersonalInfoData data = (PersonalInfoData) getIntent().getSerializableExtra(Constants.SETTINGS_DATA_EXTRAS);
-            bankName.setText(data.getAccount_title());
-            bankAccountNumber.setText(data.getAccount_number());
+            PersonalInfoData data = getIntent().getParcelableExtra(Constants.SETTINGS_DATA_EXTRAS);
+            bankName.setText(data.getAccountTitle());
+            bankAccountNumber.setText(data.getAccountNumber());
             financeNumber = data.getFinance();
         }
     }
