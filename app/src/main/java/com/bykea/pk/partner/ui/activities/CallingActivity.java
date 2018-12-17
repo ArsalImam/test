@@ -173,8 +173,6 @@ public class CallingActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
 //        stopSound();
-
-
     }
 
     @Override

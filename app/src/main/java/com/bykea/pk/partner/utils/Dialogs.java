@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -115,6 +116,27 @@ public enum Dialogs {
     public boolean isShowing() {
         return ((null != mDialog) && mDialog.isShowing());
     }
+
+    /***
+     * Show Dialog to user for Invalid OTP code entry.
+     *
+     * @param context Calling context
+     */
+    public void showInvalidCodeDialog(Context context) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.invalid_code_dialog);
+        FontButton okIv = mDialog.findViewById(R.id.ivPositive);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+            }
+        });
+        mDialog.setCancelable(false);
+        showDialog();
+    }
+
 
     public void showLoader(Context context) {
         if (null != mDialog && mDialog.isShowing()) return;
@@ -479,13 +501,40 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showInactiveAccountDialog(final Context context, final String number, final String msg) {
+    /***
+     * Show Driver license expire Account deactivate message
+     * @param context Calling context
+     * @param number Support Helpline number
+     */
+    public void showInactiveAccountDialog(final Context context, final String number) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_inactive_account);
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+                Utils.callingIntent(context, number);
+            }
+        });
+        showDialog();
+    }
+
+    /***
+     * Show Region Out error message with support number
+     * @param context Calling Context
+     * @param number Support number
+     * @param msg Message which needs to be displayed.
+     */
+    public void showRegionOutErrorDialog(final Context context,
+                                         final String number,
+                                         final String msg) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_region_out);
         if (StringUtils.isNotBlank(msg)) {
-            ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(msg);
+            ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
         }
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -496,6 +545,7 @@ public enum Dialogs {
         });
         showDialog();
     }
+
 
     public void showTopUpDialog(final Context context, final boolean isCourierType, final StringCallBack callBack) {
         if (null == context) return;
@@ -552,37 +602,28 @@ public enum Dialogs {
     }
 
     public void showLocationSettings(final Context context, final int requestCode) {
+        if (null == context) return;
         dismissDialog();
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.enable_gps_dialog);
 
-        // Setting DialogHelp Title
-        alertDialog.setTitle("GPS Settings");
+        ImageView okIv = mDialog.findViewById(R.id.ivPositive);
 
-        // Setting DialogHelp Message
-        alertDialog
-                .setMessage("Turn on your location from settings.");
-        alertDialog.setCancelable(false);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (context instanceof BaseActivity) {
+                    dismissDialog();
+                    ((BaseActivity) context).showLocationDialog();
+                } else {
+                    dismissDialog();
+                    Intent intent = new Intent(
+                            Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ((Activity) context).startActivityForResult(intent, Constants.REQUEST_CODE_GPS_AND_LOCATION);
+                }
 
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Settings",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(
-                                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        ((AppCompatActivity) context).startActivityForResult(intent, requestCode);
-                    }
-                });
-
-        // on pressing cancel button
-        /*alertDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });*/
-
-        // Showing Alert Message
-        mDialog = alertDialog.create();
+            }
+        });
         showDialog();
     }
 
@@ -705,7 +746,7 @@ public enum Dialogs {
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_alert_update_app);
         mDialog.setCancelable(false);
-        mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+        //mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
 
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -755,7 +796,7 @@ public enum Dialogs {
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
         mDialog.setContentView(R.layout.signup_success_dialog);
-        ((FontTextView)mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
+        ((FontTextView) mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
         mDialog.setCancelable(false);
         mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
         showDialog();

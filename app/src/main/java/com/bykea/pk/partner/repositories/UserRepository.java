@@ -18,10 +18,10 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
@@ -101,11 +101,43 @@ public class UserRepository {
         mRestRequestHandler = new RestRequestHandler();
     }
 
-    public void requestUserLogin(Context context, IUserDataHandler handler, String email, String password) {
+    /***
+     * Send Request to API server for Driver login, which send sms
+     *
+     * @param context Calling context.
+     * @param handler API response callback.
+     * @param phoneNumber Driver phone number,
+     * @param latitude Driver current latitude.
+     * @param longitude Driver current longitude.
+     * @param otpReceiveType How OTP would be received by user. i.e. (Call/SMS)
+     */
+    public void requestDriverLogin(Context context,
+                                   IUserDataHandler handler,
+                                   String phoneNumber,
+                                   double latitude,
+                                   double longitude,
+                                   String otpReceiveType) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.sendUserLogin(context, mDataCallback, email, password,
-                Constants.DEVICE_TYPE, "2", AppPreferences.getRegId());
+        mRestRequestHandler.sendDriverLogin(context, mDataCallback,
+                phoneNumber, Constants.DEVICE_TYPE, latitude, longitude, otpReceiveType);
+    }
+
+    /***
+     * Sending Login request to API Server
+     * @param context Calling context.
+     * @param handler API response Handler
+     * @param phoneNumber Driver phone number
+     * @param otpCode Entered OTP COde
+     */
+    public void requestUserLogin(Context context,
+                                 IUserDataHandler handler,
+                                 String phoneNumber,
+                                 String otpCode) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.sendUserLogin(context, mDataCallback, phoneNumber, otpCode,
+                Constants.DEVICE_TYPE, AppPreferences.getRegId());
 
     }
 

@@ -22,8 +22,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 24
-        versionName "4.5"
+        versionCode 25
+        versionName "4.6"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -223,3 +223,16 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'de.felixschulze.gradle.hockeyapp'
+def branch = getGitRevParseInfo("--abbrev-ref");
+hockeyapp {
+    apiToken = "4faee174e5fb499bb2e40c358e5193a7"
+    notes = branch
+    tags = "bykeadevteam,mobinspire"
+}
+
+def getGitRevParseInfo(what) {
+    def cmd = "git rev-parse " + what + " HEAD"
+    def proc = cmd.execute()
+    proc.text.trim()
+}

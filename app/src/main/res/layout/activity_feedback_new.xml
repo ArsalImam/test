@@ -30,6 +30,9 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:fillViewport="true">
 
         <LinearLayout
@@ -425,7 +428,7 @@
                     android:background="@color/transparent"
                     android:gravity="center"
                     android:hint="Khareedari ki rakam"
-                    android:imeOptions="actionDone"
+                    android:imeOptions="actionNext"
                     android:inputType="numberPassword"
                     android:maxLength="5"
                     android:paddingBottom="@dimen/_2sdp"
@@ -465,6 +468,7 @@
                         android:maxLength="20"
                         android:maxWidth="@dimen/_220sdp"
                         android:padding="@dimen/_7sdp"
+                        android:nextFocusDown="@+id/etReceiverMobileNo"
                         android:textColor="@color/textColorPrimary"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/_14sdp"
@@ -534,10 +538,11 @@
                     android:paddingBottom="@dimen/_2sdp"
                     android:paddingLeft="@dimen/_2sdp"
                     android:paddingRight="@dimen/_2sdp"
-                    android:text=""
                     android:textColor="@color/textColorPrimary"
                     android:textColorHint="@color/secondaryColorLight"
-                    android:textSize="@dimen/_22sdp" />
+                    android:textSize="@dimen/_22sdp" >
+
+                </com.bykea.pk.partner.widgets.FontEditText>
 
 
             </LinearLayout>
