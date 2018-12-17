@@ -77,7 +77,6 @@ public class Constants {
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
     public static final String IS_FROM_GCM = "isGcm";
-    public static final String DECIMAL_FORMAT_ONE_DIGIT = "%.1f";
 
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
     public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
@@ -96,6 +95,8 @@ public class Constants {
     public static final int RESET_CASH_TO_DEFAULT_POSITION = 1;
     public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
+
+    public final static String ACTION = "action";
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
@@ -148,6 +149,7 @@ public class Constants {
         public final static String ON_GPS_ENABLED_CHANGE = "android.location.GPS_ENABLED_CHANGE";
         public final static String ON_LOCATION_CHANGED = "android.location.PROVIDERS_CHANGED";
         public final static String ON_CONECTIVITY_CHANGED = "android.net.conn.CONNECTIVITY_CHANGE";
+
     }
 
     public static class Category {

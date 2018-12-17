@@ -243,5 +243,6 @@
     <string name="gps_enable_ending_message"> آن کریں </string>
     <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
     <string name="muntakhib_nahi_ki_gayi_label">منتخب نہیں کی گئی</string>
+    <string name="decimal_format_one_digit">%.1f</string>
 
 </resources>

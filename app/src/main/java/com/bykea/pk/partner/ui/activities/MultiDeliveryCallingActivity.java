@@ -442,9 +442,9 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (null != intent && null != intent.getExtras()) {
-                        if (intent.getStringExtra("action").
+                        if (intent.getStringExtra(Constants.ACTION).
                                 equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
-                                || intent.getStringExtra("action").
+                                || intent.getStringExtra(Constants.ACTION).
                                 equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
                             Utils.setCallIncomingState();
                             AppPreferences.setTripStatus(TripStatus.ON_FREE);

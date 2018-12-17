@@ -2602,10 +2602,14 @@ public class Utils {
      */
     public static String getDistance(float distanceInMeter) {
         if (distanceInMeter >= 1000) {
-            return String.format(Constants.DECIMAL_FORMAT_ONE_DIGIT, distanceInMeter / 1000);
+            return String.format(DriverApp.
+                            getContext().
+                            getString(R.string.decimal_format_one_digit),
+                    distanceInMeter / 1000);
         }
 
-        return String.format(Constants.DECIMAL_FORMAT_ONE_DIGIT, distanceInMeter);
+        return String.format(DriverApp.getContext().getString(R.string.decimal_format_one_digit),
+                distanceInMeter);
     }
 
     /**
