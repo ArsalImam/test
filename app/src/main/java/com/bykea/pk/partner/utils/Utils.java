@@ -1990,6 +1990,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Load multiple delivery image URL using {@link Picasso}
+     *
+     * @param imageView The image container.
+     * @param link The image URL.
+     * @param placeHolder The place holder image.
+     */
     public static void loadMultipleDeliveryImageURL(ImageView imageView, String link,
                                                     int placeHolder) {
         Picasso.get().load(link)
@@ -2464,10 +2471,10 @@ public class Utils {
      */
     public static String getDistance(float distanceInMeter) {
         if (distanceInMeter >= 1000) {
-            return String.format("%.1f", distanceInMeter / 1000);
+            return String.format(Constants.DECIMAL_FORMAT_ONE_DIGIT, distanceInMeter / 1000);
         }
 
-        return String.format("%.1f", distanceInMeter);
+        return String.format(Constants.DECIMAL_FORMAT_ONE_DIGIT, distanceInMeter);
     }
 
     /**

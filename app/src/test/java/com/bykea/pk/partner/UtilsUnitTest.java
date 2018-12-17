@@ -59,6 +59,8 @@ public class UtilsUnitTest {
         assertTrue(StringUtils.isNotBlank(distance));
     }
 
+    //region Multi Delivery Helper Method Test Cases
+
     @Test
     public void getDistance_Kilometer() {
         float distanceInMeter = 1000;
@@ -87,5 +89,15 @@ public class UtilsUnitTest {
                 Utils.getDuration(durationInSeconds),
                 1);
     }
+
+    @Test
+    public void getTimeIn_percentage() {
+        int durationInMiliSeconds = 20000;
+        assertEquals("Failed when percentage calculation is wrong",
+                Utils.getTimeInPercentage(durationInMiliSeconds, 5),
+                1000);
+    }
+
+    //endregion
 
 }

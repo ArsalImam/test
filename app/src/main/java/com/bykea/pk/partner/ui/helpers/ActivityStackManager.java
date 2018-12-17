@@ -213,12 +213,19 @@ public class ActivityStackManager {
             callIntent.setAction(Intent.ACTION_MAIN);
             callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             if (isFromGcm) {
-                callIntent.putExtra("isGcm", true);
+                callIntent.putExtra(Constants.IS_FROM_GCM, true);
             }
             mContext.startActivity(callIntent);
         }
     }
 
+    /**
+     * Start multi delivery calling activity.
+     *
+     * @param response The {@link MultiDeliveryCallDriverData} object.
+     * @param isFromGcm boolean indicating that start activity from GCM or not.
+     * @param mContext Holding the reference of an activity.
+     */
     public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverData response,
                                                   boolean isFromGcm,
                                                   Context mContext) {
@@ -240,16 +247,18 @@ public class ActivityStackManager {
             mContext.startActivity(callIntent);
         }*/
 
-        AppPreferences.setMultiDeliveryCallDriverData(response);
-        Intent callIntent = new Intent(DriverApp.getContext(),
-                MultiDeliveryCallingActivity.class);
-        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        callIntent.setAction(Intent.ACTION_MAIN);
-        callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        if (isFromGcm) {
-            callIntent.putExtra("isGcm", true);
+        if (AppPreferences.getAvailableStatus() && Utils.isGpsEnable(mContext)) {
+            AppPreferences.setMultiDeliveryCallDriverData(response);
+            Intent callIntent = new Intent(DriverApp.getContext(),
+                    MultiDeliveryCallingActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            if (isFromGcm) {
+                callIntent.putExtra(Constants.IS_FROM_GCM, true);
+            }
+            mContext.startActivity(callIntent);
         }
-        mContext.startActivity(callIntent);
     }
 
     public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {

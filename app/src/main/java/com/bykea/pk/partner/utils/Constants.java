@@ -72,6 +72,8 @@ public class Constants {
 
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
+    public static final String IS_FROM_GCM = "isGcm";
+    public static final String DECIMAL_FORMAT_ONE_DIGIT = "%.1f";
 
 
     public static class Extras {
@@ -224,6 +226,8 @@ public class Constants {
         public static final String FOOD_BOOKING_TYPE = "MB";
 
         public static final String BILL_TYPE = "Utility Bill";
+
+        public static final String BATCH_TYPE = "batch";
 
     }
 }

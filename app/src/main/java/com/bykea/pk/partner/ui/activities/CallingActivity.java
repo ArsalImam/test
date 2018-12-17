@@ -130,7 +130,8 @@ public class CallingActivity extends BaseActivity {
         donutProgress.setProgress(20);
         startAnimation();
 
-        if (null != getIntent() && getIntent().getBooleanExtra("isGcm", false)) {
+        if (null != getIntent() && getIntent().getBooleanExtra(Constants.IS_FROM_GCM,
+                false)) {
             Utils.redLog("FCM", "Calling Activity");
             DriverApp.getApplication().connect();
 //            WebIORequestHandler.getInstance().setContext(mCurrentActivity);
@@ -457,7 +458,7 @@ public class CallingActivity extends BaseActivity {
             customerRatingTv.setText(callData.getRating());
             if (Utils.isSkipDropOff(callData)) {
                 estimatedDistanceTv.setText("?");
-                destinationTv.setText("منتخب نہیں کی گئی");
+                destinationTv.setText(getString(R.string.muntakhib_nahi_ki_gayi_label));
                 cashKiWasooliLayout.setVisibility(View.GONE);
                 kraiKiKamaiLayout.setVisibility(View.GONE);
                 kharidariPriceLayout.setVisibility(View.GONE);

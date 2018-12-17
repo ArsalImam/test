@@ -127,12 +127,17 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         AppPreferences.setStatsApiCallRequired(true);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        repository.requestLocationUpdate(
+                mCurrentActivity,
+                handler,
+                AppPreferences.getLatitude(),
+                AppPreferences.getLongitude());
         response = AppPreferences.getMultiDeliveryCallDriverData();
         donutProgress.setProgress(response.getTimer());
 
 
-        if (null != getIntent() && getIntent().getBooleanExtra("isGcm", false)) {
+        if (null != getIntent() && getIntent().getBooleanExtra(Constants.IS_FROM_GCM,
+                false)) {
             DriverApp.getApplication().connect();
             DriverApp.startLocationService(mCurrentActivity);
         }
@@ -185,14 +190,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     @OnClick({R.id.acceptCallBtn})
     public void onClick(View view) {
         switch (view.getId()) {
-//            case R.id.rejectCallBtn:
-////                Dialogs.INSTANCE.showToast(mCurrentActivity, "This feature will be in phase 2");
-//                stopSound();
-//                repository.requestRejectCall(mCurrentActivity, handler);
-//                if (timer != null) {
-//                    timer.cancel();
-//                }
-//                break;
             case R.id.acceptCallBtn:
                 if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
                     return;
@@ -212,78 +209,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     private UserDataHandler handler = new UserDataHandler() {
 
         @Override
-        public void onFreeDriver(FreeDriverResponse freeDriverResponse) {
-            if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                        stopSound();
-                        finishActivity();
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onAcceptCall(final AcceptCallResponse acceptCallResponse) {
-            if (mCurrentActivity != null) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showTempToast(mCurrentActivity,
-                                acceptCallResponse.getMessage());
-                        if (acceptCallResponse.isSuccess()) {
-                            AppPreferences.clearTripDistanceData();
-                            AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
-
-                            NormalCallData callData = AppPreferences.getCallData();
-                            callData.setStatus(TripStatus.ON_ACCEPT_CALL);
-                            AppPreferences.setCallData(callData);
-                            logMixpanelEvent(callData, true);
-
-                            AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
-
-                            AppPreferences.setIsOnTrip(true);
-                            ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
-                            //ActivityStackManager.getInstance().
-                            //startMultiDeliveryBookingActivity(mCurrentActivity);
-                            stopSound();
-                            finishActivity();
-                        } else {
-                            Utils.setCallIncomingState();
-                            Dialogs.INSTANCE.showToast(mCurrentActivity
-                                    , acceptCallResponse.getMessage());
-
-                        }
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onRejectCall(final RejectCallResponse rejectCallResponse) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity,
-                            rejectCallResponse.getMessage());
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (AppPreferences.isOnTrip()) {
-                        AppPreferences.setIncomingCall(false);
-                        AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                    } else {
-                        AppPreferences.setIncomingCall(true);
-                    }
-                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                    stopSound();
-                    finishActivity();
-                }
-            });
-        }
-
-        @Override
         public void onError(int errorCode, final String errorMessage) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -299,10 +224,18 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     };
 
     private void finishActivity() {
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        repository.requestLocationUpdate(mCurrentActivity, handler,
+                AppPreferences.getLatitude(),
+                AppPreferences.getLongitude());
         mCurrentActivity.finish();
     }
 
+    /**
+     * Log event on mixpanel
+     *
+     * @param callData The call data object
+     * @param isOnAccept Boolean indicating that call has been in an accepted state
+     */
     private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
         try {
 
@@ -311,10 +244,13 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
             data.put("DriverID", AppPreferences.getPilotData().getId());
             data.put("TripID", callData.getTripId());
             data.put("TripNo", callData.getTripNo());
-            data.put("PickUpLocation", callData.getStartLat() + "," + callData.getStartLng());
+            data.put("PickUpLocation", callData.getStartLat() + "," +
+                    callData.getStartLng());
             data.put("timestamp", Utils.getIsoDate());
-            if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
-                data.put("DropOffLocation", callData.getEndLat() + "," + callData.getEndLng());
+            if (StringUtils.isNotBlank(callData.getEndLat()) &&
+                    StringUtils.isNotBlank(callData.getEndLng())) {
+                data.put("DropOffLocation", callData.getEndLat() + "," +
+                        callData.getEndLng());
             }
             data.put("ETA", Utils.formatETA(callData.getArivalTime()));
             data.put("EstimatedDistance", AppPreferences.getEstimatedDistance());
@@ -326,10 +262,12 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
             if (isOnAccept) {
                 data.put("AcceptSeconds", acceptSeconds);
-                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
+                Utils.logEvent(mCurrentActivity, callData.getPassId(),
+                        Constants.AnalyticsEvents.ON_ACCEPT.replace(
                         Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             } else {
-                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
+                Utils.logEvent(mCurrentActivity, callData.getPassId(),
+                        Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
                         Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             }
         } catch (JSONException e) {
@@ -366,7 +304,9 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 if (!_mpSound.isPlaying()) _mpSound.start();
                 donutProgress.setProgress(progress);
                 try {
-                    counterTv.setText(String.valueOf((int) ((millisUntilFinished / 1000) + 1)));
+                    int elapsedTime = timeInMilliSeconds - ACCEPTANCE_TIMEOUT;
+                    counterTv.setText(String.valueOf((int) ((millisUntilFinished / 1000) +
+                            elapsedTime)));
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -377,7 +317,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         public void onFinish() {
             totalTime = 0;
             donutProgress.setProgress(response.getTimer());
-            counterTv.setText("0");
+            counterTv.setText(String.valueOf(totalTime));
 //            rejectCallBtn.setEnabled(false);
             acceptCallBtn.setEnabled(false);
             stopSound();
@@ -392,25 +332,18 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         }
     }
 
-    /*private CountDownTimer timer = new CountDownTimer(ACCEPTANCE_TIMEOUT, 100) {
-
-        @Override
-        public void onTick(long millisUntilFinished) {
-
-        }
-
-        @Override
-        public void onFinish() {
-
-        }
-    };*/
-
+    /**
+     * Start the timer animation with sound
+     */
     private void startAnimation() {
         _mpSound = MediaPlayer.create(mCurrentActivity, R.raw.ringtone);
         _mpSound.start();
         timer.start();
     }
 
+    /**
+     * Stop the sound and cancel the timer.
+     */
     private void stopSound() {
         if (null != _mpSound && _mpSound.isPlaying()) {
             _mpSound.stop();
@@ -432,10 +365,16 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 //        registerReceiver(cancelRideReceiver, intentFilter);
     }
 
-    private void ackCall() {
-        repository.ackCall(mCurrentActivity, handler);
-    }
-
+    /**
+     * Set the initial data.
+     *
+     * <p>
+     *     <ul>Calculate the timer percentage</ul>
+     *     <ul>Initiate the timer</ul>
+     *     <ul>Start the timer animation</ul>
+     *     <ul>Map the data to UI</ul>
+     * </p>
+     */
     private void setInitialData() {
 
         //Todo 1: Change the object and log the event on mixpanel
@@ -468,7 +407,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                     R.drawable.bhejdo
             );
             pickLocationTv.setText(response.getPickup().getPickupAddress());
-            pickDistanceTv.setText(Utils.getDistance(response.getEstTotalDistance()));
+            pickDistanceTv.setText(Utils.getDistance(response.getPickup().getDistance()));
             dropDistanceTv.setText(Utils.getDistance(response.getEstTotalDistance()));
             timeTv.setText(String.valueOf(
                     Utils.getDuration(response.getEstTotalDuration())
@@ -503,12 +442,16 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (null != intent && null != intent.getExtras()) {
-                        if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
-                                || intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
+                        if (intent.getStringExtra("action").
+                                equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
+                                || intent.getStringExtra("action").
+                                equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
                             Utils.setCallIncomingState();
                             AppPreferences.setTripStatus(TripStatus.ON_FREE);
                             stopSound();
-                            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
+                            ActivityStackManager.getInstance().
+                                    startHomeActivityFromCancelTrip(
+                                            false, mCurrentActivity);
                             finishActivity();
                         }
                     }
