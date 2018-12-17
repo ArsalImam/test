@@ -296,7 +296,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         @Override
         public void onTick(long millisUntilFinished) {
             progress = (ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
-            Log.d("progress", progress+"");
 
             if (progress >= response.getTimer()) {
                 timer.onFinish();
@@ -304,7 +303,8 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 if (!_mpSound.isPlaying()) _mpSound.start();
                 donutProgress.setProgress(progress);
                 try {
-                    int elapsedTime = timeInMilliSeconds - ACCEPTANCE_TIMEOUT;
+                    int elapsedTime = (timeInMilliSeconds - ACCEPTANCE_TIMEOUT) / 1000;
+                    Log.d("progress", progress+" elapsed" + elapsedTime);
                     counterTv.setText(String.valueOf((int) ((millisUntilFinished / 1000) +
                             elapsedTime)));
                 } catch (NumberFormatException e) {
