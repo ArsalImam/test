@@ -303,7 +303,7 @@ public class ActivityStackManager {
             mContext.startActivity(callIntent);
         }*/
 
-        if (AppPreferences.getAvailableStatus() && Utils.isGpsEnable(mContext)) {
+        if (AppPreferences.getAvailableStatus() && Utils.isGpsEnable()) {
             AppPreferences.setMultiDeliveryCallDriverData(response);
             Intent callIntent = new Intent(DriverApp.getContext(),
                     MultiDeliveryCallingActivity.class);
