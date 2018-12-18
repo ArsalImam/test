@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.tracking.AbstractRouting;
@@ -90,6 +91,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private static final int ARRIVAL_MAX_DISTANCE_VALUE = 200;
     private static final int SECONDS_IN_MINUTES = 60;
     private static final double METERS_IN_KILOMETER = 1000.0;
+    private MultiDeliveryCallDriverData callDriverData;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
@@ -140,6 +142,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         ButterKnife.bind(this);
         dataRepository = new UserRepository();
         mapView = (MapView) findViewById(R.id.mapFragment);
+        callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
     }
 
     /***
@@ -442,7 +445,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (pickupMarker != null) {
             builder.include(pickupMarker.getPosition());
         }
-        builder.include(driverMarker.getPosition());
+        if (driverMarker != null) {
+            builder.include(driverMarker.getPosition());
+        }
+
 
 
         LatLngBounds tmpBounds = builder.build();
@@ -570,14 +576,17 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void addPickupMarker() {
         try {
-            if (null == mGoogleMap) return;
+            if (null == mGoogleMap || callDriverData == null) return;
             if (pickupMarker != null) {
                 pickupMarker.remove();
             }
-            if (mCallData.getStartLat() != null && mCallData.getStartLng() != null) {
-                double lat = Double.parseDouble(mCallData.getStartLat());
-                double lng = Double.parseDouble(mCallData.getStartLng());
-                LatLng startLatLng = new LatLng(lat, lng);
+
+            if (callDriverData.getPickup().getLat() != null &&
+                    callDriverData.getPickup().getLng() != null) {
+                LatLng startLatLng = new LatLng(
+                        callDriverData.getPickup().getLat(),
+                        callDriverData.getPickup().getLng()
+                );
                 pickupMarker = mGoogleMap.addMarker(new MarkerOptions().
                         icon(Utils.getBitmapDiscriptor(mCurrentActivity, true))
                         .position(startLatLng));
@@ -597,10 +606,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             if (dropOffMarker != null) {
                 dropOffMarker.remove();
             }
-            List<LatLng> latLngList = new ArrayList<>();
-            latLngList.add(new LatLng(24.781380, 67.055888));
-            latLngList.add(new LatLng(24.781672, 67.054214));
-
+            List<LatLng> latLngList = Utils.getDropDownLatLngList(callDriverData);
             for (int i = 0; i < latLngList.size(); i++) {
                 dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
                         icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,

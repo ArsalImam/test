@@ -81,6 +81,8 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -2647,6 +2649,27 @@ public class Utils {
 
     public static int getTimeInPercentage(int timeInMilliSeconds, float percentage) {
         return (int) ((percentage / 100f) * timeInMilliSeconds);
+    }
+
+    /**
+     * Fetch drop down lat lng list.
+     *
+     * @param deliveryCallDriverData The {@link MultiDeliveryCallDriverData} object.
+     *
+     * @return The collection of drop down lat lng.
+     */
+    public static List<LatLng> getDropDownLatLngList(MultiDeliveryCallDriverData
+                                                              deliveryCallDriverData) {
+        List<LatLng> latLngList = new ArrayList<>();
+        for (MultipleDeliveryBookingResponse response : deliveryCallDriverData.getBookings()) {
+            latLngList.add(new LatLng(
+                    response.getDropOff().getLat(),
+                    response.getDropOff().getLng()
+            ));
+        }
+
+        return latLngList;
+
     }
 
     //endregion

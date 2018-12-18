@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.repositories;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
@@ -51,6 +52,7 @@ import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -683,6 +685,48 @@ public class UserRepository {
 
     }
 
+    /**
+     * Emit request MuliDelivery Accept Call event
+     *
+     * @param context Holding the reference of an activity.
+     * @param acceptedSecond The timer interval at which driver accept the call.
+     * @param handler The Callback that will be invoked when response received.
+     */
+    public void requestMultiDeliveryAcceptCall(Context context, String acceptedSecond,
+                                               IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        mContext = context;
+        try {
+
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("trip_type", Constants.TripTypes.BATCH_TYPE);
+            jsonObject.put("batch_id", AppPreferences
+                    .getMultiDeliveryCallDriverData()
+                    .getBatchID());
+            jsonObject.put("lat", AppPreferences.getLatitude());
+            jsonObject.put("lng", AppPreferences.getLongitude());
+            jsonObject.put("accept_timer_seconds", acceptedSecond);
+            jsonObject.put("os", Build.VERSION.SDK_INT);
+            jsonObject.put("os_name", Constants.OS_NAME);
+            jsonObject.put("imei", Utils.getDeviceId(context));
+            try {
+                int battery = Integer.parseInt(Utils.getBatteryPercentage(context)
+                        .split(" ")[0]);
+                int signalStrength = Integer.parseInt(Utils.getSignalStrength(context));
+                jsonObject.put("battery", battery);
+                jsonObject.put("connection_strength", signalStrength);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        mWebIORequestHandler.acceptMultiDeliveryRequest(jsonObject, mDataCallback);
+
+    }
+
     //endregion
 
 
@@ -1272,6 +1316,11 @@ public class UserRepository {
                     case "MultiDeliveryCallDriverAcknowledgeResponse":
                         mUserCallback.onDriverAcknowledgeResponse(
                                 (MultiDeliveryCallDriverAcknowledgeResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryAcceptCallResponse":
+                        mUserCallback.onMultiDeliveryAcceptCall(
+                                (MultiDeliveryAcceptCallResponse) object
                         );
                         break;
                     case "CommonResponse":

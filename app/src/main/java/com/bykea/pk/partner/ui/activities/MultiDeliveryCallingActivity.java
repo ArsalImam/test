@@ -17,6 +17,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
@@ -33,10 +34,12 @@ import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.util.regex.Matcher;
 
 import butterknife.BindView;
@@ -125,6 +128,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         repository = new UserRepository();
         Utils.unlockScreen(mCurrentActivity);
         AppPreferences.setStatsApiCallRequired(true);
+        AppPreferences.setCallData(null);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
         repository.requestLocationUpdate(
@@ -200,7 +204,11 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                     stopSound();
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     acceptSeconds = counterTv.getText().toString();
-                    repository.requestAcceptCall(mCurrentActivity, acceptSeconds, handler);
+                    repository.requestMultiDeliveryAcceptCall(
+                            mCurrentActivity,
+                            acceptSeconds,
+                            handler
+                    );
                 }
                 break;
         }
@@ -209,15 +217,42 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     private UserDataHandler handler = new UserDataHandler() {
 
         @Override
-        public void onError(int errorCode, final String errorMessage) {
+        public void onMultiDeliveryAcceptCall(MultiDeliveryAcceptCallResponse response) {
+            if (mCurrentActivity != null) {
+                AppPreferences.clearTripDistanceData();
+                AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
+
+                MultiDeliveryCallDriverData multiDeliveryAcceptCallResponse =
+                        AppPreferences.getMultiDeliveryCallDriverData();
+                if (multiDeliveryAcceptCallResponse != null) {
+                    multiDeliveryAcceptCallResponse.setBatchStatus(TripStatus.ON_ACCEPT_CALL);
+                    AppPreferences.setMultiDeliveryCallDriverData(multiDeliveryAcceptCallResponse);
+                }
+
+                Dialogs.INSTANCE.dismissDialog();
+                //Todo 1: add this when get running trip event handle regarding multiple delivery
+                //AppPreferences.setIsOnTrip(true);
+                ActivityStackManager
+                        .getInstance()
+                        .startMultiDeliveryBookingActivity(mCurrentActivity);
+            }
+        }
+
+        @Override
+        public void onError(final int errorCode, final String errorMessage) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
                     Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
-                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                    stopSound();
-                    finishActivity();
+                    if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                        EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    } else {
+                        ActivityStackManager.getInstance().startHomeActivity(true,
+                                mCurrentActivity);
+                        stopSound();
+                        finishActivity();
+                    }
                 }
             });
         }
@@ -228,51 +263,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 AppPreferences.getLatitude(),
                 AppPreferences.getLongitude());
         mCurrentActivity.finish();
-    }
-
-    /**
-     * Log event on mixpanel
-     *
-     * @param callData The call data object
-     * @param isOnAccept Boolean indicating that call has been in an accepted state
-     */
-    private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
-        try {
-
-            JSONObject data = new JSONObject();
-            data.put("PassengerID", callData.getPassId());
-            data.put("DriverID", AppPreferences.getPilotData().getId());
-            data.put("TripID", callData.getTripId());
-            data.put("TripNo", callData.getTripNo());
-            data.put("PickUpLocation", callData.getStartLat() + "," +
-                    callData.getStartLng());
-            data.put("timestamp", Utils.getIsoDate());
-            if (StringUtils.isNotBlank(callData.getEndLat()) &&
-                    StringUtils.isNotBlank(callData.getEndLng())) {
-                data.put("DropOffLocation", callData.getEndLat() + "," +
-                        callData.getEndLng());
-            }
-            data.put("ETA", Utils.formatETA(callData.getArivalTime()));
-            data.put("EstimatedDistance", AppPreferences.getEstimatedDistance());
-            data.put("CurrentLocation", Utils.getCurrentLocation());
-            data.put("PassengerName", callData.getPassName());
-            data.put("DriverName", AppPreferences.getPilotData().getFullName());
-            data.put("type", callData.getCallType());
-            data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
-
-            if (isOnAccept) {
-                data.put("AcceptSeconds", acceptSeconds);
-                Utils.logEvent(mCurrentActivity, callData.getPassId(),
-                        Constants.AnalyticsEvents.ON_ACCEPT.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
-            } else {
-                Utils.logEvent(mCurrentActivity, callData.getPassId(),
-                        Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

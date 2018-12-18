@@ -99,7 +99,7 @@ public class DriverApp extends MultiDexApplication {
     public void attachListenersOnSocketConnected() {
         EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
         WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
-        WebIO.getInstance().on(ApiTags.SOCKET_CALL_DRIVER, mCallDriverListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER, mCallDriverListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
         }

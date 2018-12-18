@@ -191,6 +191,7 @@ public class SplashActivity extends BaseActivity {
         if (AppPreferences.isLoggedIn()) {
             // Connect socket
             DriverApp.getApplication().connect();
+            AppPreferences.setIsOnTrip(false);
             if (AppPreferences.isOnTrip()) {
                 repository.requestRunningTrip(mCurrentActivity, handler);
             } else {
@@ -290,11 +291,14 @@ public class SplashActivity extends BaseActivity {
                                 AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                     WebIORequestHandler.getInstance().registerChatListener();
-                                    //ActivityStackManager.getInstance()
-                                      //      .startJobActivity(mCurrentActivity);
-                                    //ActivityStackManager.
-                                            //getInstance().
-                                            //startMultiDeliveryBookingActivity(mCurrentActivity);
+                                    if (AppPreferences.getCallData() != null) {
+                                        ActivityStackManager.getInstance()
+                                                .startJobActivity(mCurrentActivity);
+                                    } else {
+                                        ActivityStackManager.
+                                                getInstance().
+                                                startMultiDeliveryBookingActivity(mCurrentActivity);
+                                    }
                                 } else {
                                     ActivityStackManager.getInstance()
                                             .startFeedbackFromResume(mCurrentActivity);

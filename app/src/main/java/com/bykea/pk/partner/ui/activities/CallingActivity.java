@@ -122,6 +122,7 @@ public class CallingActivity extends BaseActivity {
         ButterKnife.bind(this);
         repository = new UserRepository();
         Utils.unlockScreen(mCurrentActivity);
+        AppPreferences.setMultiDeliveryCallDriverData(null);
         AppPreferences.setStatsApiCallRequired(true);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);

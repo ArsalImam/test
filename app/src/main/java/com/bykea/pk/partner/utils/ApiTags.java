@@ -123,8 +123,9 @@ public class ApiTags {
     public static final String SOCKET_END_TRIP = "finish-trip";
 
     //MULTI DELIVERY SOCKET EVENTS
-    public static final String SOCKET_CALL_DRIVER = "CALL_DRIVER";
-    public static final String SOCKET_CALL_DRIVER_ACKNOWLEDGE = "CALL_DRIVER_ACKNOWLEDGE";
+    public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER = "CALL_DRIVER";
+    public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE = "CALL_DRIVER_ACKNOWLEDGE";
+    public static final String MULTI_DELIVERY_SOCKET_ACCEPT_CALL = "DRIVER_ACCEPTED";
 
     /*CHAT APIS*/
     public static final String SOCKET_SEND_CHAT_MESSAGE = "send-message";

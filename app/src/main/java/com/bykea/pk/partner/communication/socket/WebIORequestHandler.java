@@ -1,20 +1,17 @@
 package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
-import android.view.View;
-import android.widget.Toast;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -147,16 +144,45 @@ public class WebIORequestHandler {
 
     //region Multi Delivery Sockets Emitter
 
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE} and attach the
+     * generic listener to listen the event.
+     *
+     * @param callDriverData The json object that will be emit on the event.
+     * @param responseCallBack The callback that will be invoked when event response received.
+     */
     public void sendCallDriverAcknowledge(JSONObject callDriverData,
                                           IResponseCallback responseCallBack) {
         emitWithJObject(
-                ApiTags.SOCKET_CALL_DRIVER_ACKNOWLEDGE,
+                ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE,
                 new MyGenericListener(
-                        ApiTags.SOCKET_CALL_DRIVER_ACKNOWLEDGE,
+                        ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE,
                         MultiDeliveryCallDriverAcknowledgeResponse.class,
                         responseCallBack
                 ),
                 callDriverData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_ACCEPT_CALL} and attach the
+     * generic listener to listen the event.
+     *
+     * @param acceptCallData The json object that will be emit on the accept event.
+     * @param responseCallBack The callback that will be invoked when event response received.
+     */
+    public void acceptMultiDeliveryRequest(JSONObject acceptCallData,
+                                           IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_ACCEPT_CALL,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_ACCEPT_CALL,
+                        MultiDeliveryAcceptCallResponse.class,
+                        responseCallBack
+                ),
+                acceptCallData
         );
     }
 
