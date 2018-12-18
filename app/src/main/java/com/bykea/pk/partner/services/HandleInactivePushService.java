@@ -31,7 +31,8 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class HandleInactivePushService extends Service {
     private MediaPlayer player;
-    private Handler mpHanlder = new Handler();
+    private Handler mpHandler = new Handler();
+    private boolean hasLocationResponseReceived = false;
 
     @Nullable
     @Override
@@ -56,10 +57,11 @@ public class HandleInactivePushService extends Service {
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Sound playing");
             isCountDownTimerRunning = false;
             if (player != null) {
-                if (playMusic) {
-                    player.start();
-                    mpHanlder.postDelayed(soundRunable, Constants.IN_ACTIVE_MUSIC_SOUND);
-                }
+                /*if (playMusic) {
+                    if (!player.isPlaying())
+                        player.start();*/
+                mpHandler.postDelayed(soundRunnable, Constants.IN_ACTIVE_MUSIC_SOUND);
+                //}
             } else {
                 onInactiveByCronJob(getString(R.string.driver_offline_crone_job_ur));
             }
@@ -67,10 +69,16 @@ public class HandleInactivePushService extends Service {
         }
     };
 
-    private Runnable soundRunable = new Runnable() {
+    private Runnable soundRunnable = new Runnable() {
         @Override
         public void run() {
-            onInactiveByCronJob(getString(R.string.driver_offline_crone_job_ur));
+            if (!hasLocationResponseReceived) {
+                onInactiveByCronJob(getString(R.string.driver_offline_crone_job_ur));
+            } else {
+                stopMusicPlayer();
+                stopSelf();
+            }
+
         }
     };
 
@@ -82,6 +90,13 @@ public class HandleInactivePushService extends Service {
         mContext = this;
         if (intent != null && intent.getExtras() != null
                 && intent.hasExtra(Constants.Extras.INACTIVE_PUSH_DATA)) {
+            countDownTimer.cancel();
+            countDownTimer.start();
+            if (Utils.canSendLocation()) {
+                if (player != null)
+                    player.start();
+                ActivityStackManager.getInstance().startHomeActvityForInActivePush(this);
+            }
             onInactivePushReceived((OfflineNotificationData) intent.getParcelableExtra(Constants.Extras.INACTIVE_PUSH_DATA));
         }
         return START_NOT_STICKY;
@@ -127,8 +142,8 @@ public class HandleInactivePushService extends Service {
                 if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                     //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
                     Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Connection and GPS is active");
-                    countDownTimer.cancel();
-                    countDownTimer.start();
+                    //countDownTimer.cancel();
+                    //countDownTimer.start();
                     isCountDownTimerRunning = true;
                     mUserRepository.requestLocationUpdate(mContext, responseHandler,
                             AppPreferences.getLatitude(), AppPreferences.getLongitude());
@@ -140,10 +155,11 @@ public class HandleInactivePushService extends Service {
                     });*/
                 } else {
                     Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob | GPS = " + Utils.isGpsEnable() + " Internet = " + Connectivity.isConnectedFast(mContext));
-                    if (playMusic) {
-                        player.start();
-                        mpHanlder.postDelayed(soundRunable, Constants.IN_ACTIVE_MUSIC_SOUND);
-                    }
+                    /*if (playMusic) {
+                        if (player != null && !player.isPlaying())
+                            player.start();*/
+                    mpHandler.postDelayed(soundRunnable, Constants.IN_ACTIVE_MUSIC_SOUND);
+                    //}
                     //onInactiveByCronJob(data.getMessage());
                 }
             } else {
@@ -166,16 +182,18 @@ public class HandleInactivePushService extends Service {
         @Override
         public void onLocationUpdate(LocationResponse response) {
             super.onLocationUpdate(response);
-            playMusic = false;
-            countDownTimer.cancel();
+            hasLocationResponseReceived = true;
             isCountDownTimerRunning = false;
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH,
                     "location API Response: " + new Gson().toJson(response));
             AppPreferences.setDriverOfflineForcefully(false);
             AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
             ActivityStackManager.getInstance().restartLocationService(mContext);
-            stopMusicPlayer();
-            stopSelf();
+
+            //playMusic = false;
+            //countDownTimer.cancel();
+            //stopMusicPlayer();
+            //stopSelf();
         }
 
         @Override
