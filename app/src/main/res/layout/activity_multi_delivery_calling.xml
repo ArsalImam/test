@@ -107,11 +107,11 @@
                             app:fontName="open_sans_semi_bold.ttf" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/_80sdp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/_8sdp"
                             android:text="@string/krai_ki_kami_label"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
@@ -139,11 +139,11 @@
                             app:fontName="open_sans_regular.ttf" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/_80sdp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/_8sdp"
                             android:text="@string/cash_ki_wasooli_label"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
@@ -158,7 +158,8 @@
                         android:layout_height="@dimen/_40sdp"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:background="@drawable/bg_border_call"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <com.bykea.pk.partner.widgets.FontTextView
                             android:id="@+id/kharidariKiRaqamTv"
@@ -172,11 +173,11 @@
                             app:fontName="open_sans_regular.ttf" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/_80sdp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/_8sdp"
                             android:text="@string/kharidari_ki_raqam_label"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
