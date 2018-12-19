@@ -44,6 +44,12 @@ public class Keys {
     public static final String CALLDATA_OBJECT = "CALLDATA_OBJECT";
     public static final String ADVANCE_CALL_DATA_OBJECT = "ADVANCE_CALL_DATA_OBJECT";
 
+    //region MULTI DELIVERY OBJECT STRING KEY
+    public static final String MULTIDELIVERY_CALLDRIVER_OBJECT = "MULTIDELIVERY_CALLDRIVER_OBJECT";
+    public static final String MULTIDELIVERY_BATCH_ID = "MULTIDELIVERY_BATCH_ID";
+
+    //endregion
+
     //Call Data
     public static final String TRIP_START_TIME = "trip_start_time";
     public static final String TRIP_TOTAL_DISTANCE = "trip_total_distance";

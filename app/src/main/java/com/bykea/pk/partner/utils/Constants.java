@@ -26,6 +26,8 @@ public class Constants {
     public static final String TAG_GOOGLE_MAP = "GOOGLE MAP TRACKING";
 
     public static final int RIDE_ACCEPTANCE_TIMEOUT = 20800;
+    public static final float TIME_IN_MILLISECONDS_PERCENTAGE = 5f;
+
     public static final String SETTINGS_DATA_EXTRAS = "SETTINGS_DATA_EXTRAS";
 
     public static final String CLOUDINARY_BASE_URL = "http://res.cloudinary.com/bykea/image/upload/";
@@ -74,6 +76,7 @@ public class Constants {
 
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
+    public static final String IS_FROM_GCM = "isGcm";
 
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
     public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
@@ -92,6 +95,8 @@ public class Constants {
     public static final int RESET_CASH_TO_DEFAULT_POSITION = 1;
     public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
+
+    public final static String ACTION = "action";
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
@@ -144,6 +149,7 @@ public class Constants {
         public final static String ON_GPS_ENABLED_CHANGE = "android.location.GPS_ENABLED_CHANGE";
         public final static String ON_LOCATION_CHANGED = "android.location.PROVIDERS_CHANGED";
         public final static String ON_CONECTIVITY_CHANGED = "android.net.conn.CONNECTIVITY_CHANGE";
+
     }
 
     public static class Category {
@@ -253,6 +259,8 @@ public class Constants {
         public static final String FOOD_BOOKING_TYPE = "MB";
 
         public static final String BILL_TYPE = "Utility Bill";
+
+        public static final String BATCH_TYPE = "batch";
 
     }
 

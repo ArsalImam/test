@@ -12,11 +12,13 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
+import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
@@ -26,6 +28,7 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
@@ -266,7 +269,49 @@ public class ActivityStackManager {
             callIntent.setAction(Intent.ACTION_MAIN);
             callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             if (isFromGcm) {
+                callIntent.putExtra(Constants.IS_FROM_GCM, true);
+            }
+            mContext.startActivity(callIntent);
+        }
+    }
+
+    /**
+     * Start multi delivery calling activity.
+     *
+     * @param response The {@link MultiDeliveryCallDriverData} object.
+     * @param isFromGcm boolean indicating that start activity from GCM or not.
+     * @param mContext Holding the reference of an activity.
+     */
+    public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverData response,
+                                                  boolean isFromGcm,
+                                                  Context mContext) {
+        /*if (AppPreferences.getAvailableStatus()
+                && !AppPreferences.isAvailableStatusAPICalling()
+                && Utils.isGpsEnable(mContext)
+                && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
+                && Utils.isNotDelayed(callData.getData().getSentTime())) {
+
+            AppPreferences.setCallData(callData.getData());
+            Intent callIntent = new Intent(DriverApp.getContext(),
+                    MultiDeliveryCallingActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            if (isFromGcm) {
                 callIntent.putExtra("isGcm", true);
+            }
+            mContext.startActivity(callIntent);
+        }*/
+
+        if (AppPreferences.getAvailableStatus() && Utils.isGpsEnable()) {
+            AppPreferences.setMultiDeliveryCallDriverData(response);
+            Intent callIntent = new Intent(DriverApp.getContext(),
+                    MultiDeliveryCallingActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            if (isFromGcm) {
+                callIntent.putExtra(Constants.IS_FROM_GCM, true);
             }
             mContext.startActivity(callIntent);
         }

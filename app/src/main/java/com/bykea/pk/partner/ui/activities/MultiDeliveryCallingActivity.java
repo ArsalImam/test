@@ -5,18 +5,19 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -30,21 +31,20 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.gson.Gson;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Matcher;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class CallingActivity extends BaseActivity {
+public class MultiDeliveryCallingActivity extends BaseActivity {
     @BindView(R.id.counterTv)
     FontTextView counterTv;
     //    @BindView(R.id.callerNameTv)
@@ -61,10 +61,26 @@ public class CallingActivity extends BaseActivity {
 //    FontTextView distanceTv;
 //    @BindView(R.id.timeTv)
 //    FontTextView timeTv;
-    @BindView(R.id.ivCallType)
-    ImageView ivCallType;
-    @BindView(R.id.activity_calling)
-    RelativeLayout activity_calling;
+    @BindView(R.id.serviceImageView)
+    AppCompatImageView serviceImageView;
+
+    @BindView(R.id.pickLocationTv)
+    TextView pickLocationTv;
+
+    @BindView(R.id.pickDistanceTv)
+    TextView pickDistanceTv;
+
+    @BindView(R.id.deliveryCountTv)
+    TextView deliveryCountTv;
+
+    @BindView(R.id.dropDistanceTv)
+    TextView dropDistanceTv;
+
+    @BindView(R.id.timeTv)
+    TextView timeTv;
+
+    @BindView(R.id.activity_multi_delivery_calling)
+    LinearLayout activity_multi_delivery_calling;
 
     @BindView(R.id.kharidariPriceLayout)
     RelativeLayout kharidariPriceLayout;
@@ -81,42 +97,28 @@ public class CallingActivity extends BaseActivity {
     @BindView(R.id.kraiKiKamaiTv)
     FontTextView kraiKiKamaiTv;
 
-    @BindView(R.id.destinationTv)
-    FontTextView destinationTv;
-
-    @BindView(R.id.estimatedDistanceTv)
-    FontTextView estimatedDistanceTv;
-
     @BindView(R.id.kharidariKiRaqamTv)
     FontTextView kharidariKiRaqamTv;
 
-    @BindView(R.id.distanceAwayTv)
-    FontTextView distanceAwayTv;
-
-    @BindView(R.id.customerRatingTv)
-    FontTextView customerRatingTv;
-
-    @BindView(R.id.estimatedDistanceUnitTv)
-    FontTextView estimatedDistaneUnitTv;
-
-    @BindView(R.id.circle_distance_layout)
-    LinearLayout circle_distance_layout;
-
-
     private UserRepository repository;
     private MediaPlayer _mpSound;
-    private CallingActivity mCurrentActivity;
+    private MultiDeliveryCallingActivity mCurrentActivity;
     private float progress = 0;
 
     private int counter = 0;
     private int total = 1;
 
     private boolean isFreeDriverApiCalled = false;
+    private MultiDeliveryCallDriverData response;
+    private int timeInMilliSeconds;
+    private int timePercentage;
+    private int ACCEPTANCE_TIMEOUT;
+    private CountDownTimer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calling);
+        setContentView(R.layout.activity_multi_delivery_calling);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(this);
@@ -125,19 +127,21 @@ public class CallingActivity extends BaseActivity {
         AppPreferences.setStatsApiCallRequired(true);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        repository.requestLocationUpdate(
+                mCurrentActivity,
+                handler,
+                AppPreferences.getLatitude(),
+                AppPreferences.getLongitude());
+        response = AppPreferences.getMultiDeliveryCallDriverData();
+        donutProgress.setProgress(response.getTimer());
 
-        donutProgress.setProgress(20);
-        startAnimation();
 
         if (null != getIntent() && getIntent().getBooleanExtra(Constants.IS_FROM_GCM,
                 false)) {
-            Utils.redLog("FCM", "Calling Activity");
             DriverApp.getApplication().connect();
-//            WebIORequestHandler.getInstance().setContext(mCurrentActivity);
             DriverApp.startLocationService(mCurrentActivity);
         }
-        ackCall();
+
         setInitialData();
 
 
@@ -148,7 +152,7 @@ public class CallingActivity extends BaseActivity {
         super.onResume();
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
-//        LocationService.setContext(CallingActivity.this);
+//        LocationService.setContext(MultiDeliveryCallingActivity.this);
         AppPreferences.setCallingActivityOnForeground(true);
     }
 
@@ -164,7 +168,7 @@ public class CallingActivity extends BaseActivity {
             AppPreferences.setIncomingCall(true);
         }
         AppPreferences.setCallingActivityOnForeground(false);
-        Utils.unbindDrawables(activity_calling);
+        Utils.unbindDrawables(activity_multi_delivery_calling);
         super.onDestroy();
     }
 
@@ -186,14 +190,6 @@ public class CallingActivity extends BaseActivity {
     @OnClick({R.id.acceptCallBtn})
     public void onClick(View view) {
         switch (view.getId()) {
-//            case R.id.rejectCallBtn:
-////                Dialogs.INSTANCE.showToast(mCurrentActivity, "This feature will be in phase 2");
-//                stopSound();
-//                repository.requestRejectCall(mCurrentActivity, handler);
-//                if (timer != null) {
-//                    timer.cancel();
-//                }
-//                break;
             case R.id.acceptCallBtn:
                 if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
                     return;
@@ -205,93 +201,12 @@ public class CallingActivity extends BaseActivity {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     acceptSeconds = counterTv.getText().toString();
                     repository.requestAcceptCall(mCurrentActivity, acceptSeconds, handler);
-                    timer.cancel();
                 }
                 break;
         }
     }
 
     private UserDataHandler handler = new UserDataHandler() {
-
-        @Override
-        public void onAck(final String msg) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.appToastDebug(mCurrentActivity, msg);
-                }
-            });
-        }
-
-        @Override
-        public void onFreeDriver(FreeDriverResponse freeDriverResponse) {
-            if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                        stopSound();
-                        finishActivity();
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onAcceptCall(final AcceptCallResponse acceptCallResponse) {
-            if (mCurrentActivity != null) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showTempToast(mCurrentActivity,
-                                acceptCallResponse.getMessage());
-                        if (acceptCallResponse.isSuccess()) {
-                            AppPreferences.clearTripDistanceData();
-                            AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
-
-                            NormalCallData callData = AppPreferences.getCallData();
-                            callData.setStatus(TripStatus.ON_ACCEPT_CALL);
-                            AppPreferences.setCallData(callData);
-                            logMixpanelEvent(callData, true);
-
-                            AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
-
-                            AppPreferences.setIsOnTrip(true);
-                            ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
-                            stopSound();
-                            finishActivity();
-                        } else {
-                            Utils.setCallIncomingState();
-                            Dialogs.INSTANCE.showToast(mCurrentActivity
-                                    , acceptCallResponse.getMessage());
-
-                        }
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onRejectCall(final RejectCallResponse rejectCallResponse) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity,
-                            rejectCallResponse.getMessage());
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (AppPreferences.isOnTrip()) {
-                        AppPreferences.setIncomingCall(false);
-                        AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                    } else {
-                        AppPreferences.setIncomingCall(true);
-                    }
-                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                    stopSound();
-                    finishActivity();
-                }
-            });
-        }
 
         @Override
         public void onError(int errorCode, final String errorMessage) {
@@ -309,10 +224,18 @@ public class CallingActivity extends BaseActivity {
     };
 
     private void finishActivity() {
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        repository.requestLocationUpdate(mCurrentActivity, handler,
+                AppPreferences.getLatitude(),
+                AppPreferences.getLongitude());
         mCurrentActivity.finish();
     }
 
+    /**
+     * Log event on mixpanel
+     *
+     * @param callData The call data object
+     * @param isOnAccept Boolean indicating that call has been in an accepted state
+     */
     private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
         try {
 
@@ -321,10 +244,13 @@ public class CallingActivity extends BaseActivity {
             data.put("DriverID", AppPreferences.getPilotData().getId());
             data.put("TripID", callData.getTripId());
             data.put("TripNo", callData.getTripNo());
-            data.put("PickUpLocation", callData.getStartLat() + "," + callData.getStartLng());
+            data.put("PickUpLocation", callData.getStartLat() + "," +
+                    callData.getStartLng());
             data.put("timestamp", Utils.getIsoDate());
-            if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
-                data.put("DropOffLocation", callData.getEndLat() + "," + callData.getEndLng());
+            if (StringUtils.isNotBlank(callData.getEndLat()) &&
+                    StringUtils.isNotBlank(callData.getEndLng())) {
+                data.put("DropOffLocation", callData.getEndLat() + "," +
+                        callData.getEndLng());
             }
             data.put("ETA", Utils.formatETA(callData.getArivalTime()));
             data.put("EstimatedDistance", AppPreferences.getEstimatedDistance());
@@ -336,10 +262,12 @@ public class CallingActivity extends BaseActivity {
 
             if (isOnAccept) {
                 data.put("AcceptSeconds", acceptSeconds);
-                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
+                Utils.logEvent(mCurrentActivity, callData.getPassId(),
+                        Constants.AnalyticsEvents.ON_ACCEPT.replace(
                         Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             } else {
-                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
+                Utils.logEvent(mCurrentActivity, callData.getPassId(),
+                        Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
                         Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             }
         } catch (JSONException e) {
@@ -347,20 +275,38 @@ public class CallingActivity extends BaseActivity {
         }
     }
 
-    private CountDownTimer timer = new CountDownTimer(Constants.RIDE_ACCEPTANCE_TIMEOUT, 100) {
+    /**
+     * Count down timer class
+     */
+    private class CountDownTimerClass extends CountDownTimer {
+
+        int totalTime = timeInMilliSeconds /1000;
+
+        /**
+         * @param millisInFuture    The number of millis in the future from the call
+         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
+         *                          is called.
+         * @param countDownInterval The interval along the way to receive
+         *                          {@link #onTick(long)} callbacks.
+         */
+        public CountDownTimerClass(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
 
         @Override
         public void onTick(long millisUntilFinished) {
-            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
-            Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished + ":" + progress + ":" + counterTv.getText().toString());
-            if (progress >= 20) {
+            progress = (ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
+
+            if (progress >= response.getTimer()) {
                 timer.onFinish();
             } else {
                 if (!_mpSound.isPlaying()) _mpSound.start();
-                //progress = progress + 0.1f;
                 donutProgress.setProgress(progress);
                 try {
-                    counterTv.setText(String.valueOf((int) (millisUntilFinished / 1000)));
+                    int elapsedTime = (timeInMilliSeconds - ACCEPTANCE_TIMEOUT) / 1000;
+                    Log.d("progress", progress+" elapsed" + elapsedTime);
+                    counterTv.setText(String.valueOf((int) ((millisUntilFinished / 1000) +
+                            elapsedTime)));
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -369,28 +315,35 @@ public class CallingActivity extends BaseActivity {
 
         @Override
         public void onFinish() {
-            donutProgress.setProgress(20);
-            counterTv.setText("0");
+            totalTime = 0;
+            donutProgress.setProgress(response.getTimer());
+            counterTv.setText(String.valueOf(totalTime));
 //            rejectCallBtn.setEnabled(false);
             acceptCallBtn.setEnabled(false);
             stopSound();
-            if (!isFreeDriverApiCalled) {
+            ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+            finishActivity();
+            /*if (!isFreeDriverApiCalled) {
                 Utils.setCallIncomingStateWithoutRestartingService();
-                repository.freeDriverStatus(mCurrentActivity, handler);
+                //repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
-                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                finishActivity();
-            }
-        }
-    };
 
+            }*/
+        }
+    }
+
+    /**
+     * Start the timer animation with sound
+     */
     private void startAnimation() {
         _mpSound = MediaPlayer.create(mCurrentActivity, R.raw.ringtone);
         _mpSound.start();
         timer.start();
-
     }
 
+    /**
+     * Stop the sound and cancel the timer.
+     */
     private void stopSound() {
         if (null != _mpSound && _mpSound.isPlaying()) {
             _mpSound.stop();
@@ -412,81 +365,69 @@ public class CallingActivity extends BaseActivity {
 //        registerReceiver(cancelRideReceiver, intentFilter);
     }
 
-    private void ackCall() {
-        repository.ackCall(mCurrentActivity, handler);
+    /**
+     * Set the initial data.
+     *
+     * <p>
+     *     <ul>Calculate the timer percentage</ul>
+     *     <ul>Initiate the timer</ul>
+     *     <ul>Start the timer animation</ul>
+     *     <ul>Map the data to UI</ul>
+     * </p>
+     */
+    private void setInitialData() {
+
+        //Todo 1: Change the object and log the event on mixpanel
+        //logMixpanelEvent(callData, false);
+        timeInMilliSeconds = Utils.getTimeInMilliseconds(response.getTimer());
+        timePercentage = Utils.getTimeInPercentage(timeInMilliSeconds,
+                Constants.TIME_IN_MILLISECONDS_PERCENTAGE);
+        ACCEPTANCE_TIMEOUT = timeInMilliSeconds - timePercentage;
+
+        counterTv.setText(String.valueOf(response.getTimer()));
+        timer = new CountDownTimerClass(ACCEPTANCE_TIMEOUT, 100);
+
+        startAnimation();
+
+        mapCallDataToUI(response);
     }
 
-    private void setInitialData() {
-        NormalCallData callData = AppPreferences.getCallData();
-        Log.d("callData", new Gson().toJson(callData));
-        logMixpanelEvent(callData, false);
-//        callerNameTv.setText(callData.getPassName());
-//        startAddressTv.setText(callData.getStartAddress());
-//        timeTv.setText(callData.getArivalTime() + " min");
-//        distanceTv.setText(callData.getDistance() + " km");
-        counterTv.setText("20");
-
-        String icon = Utils.getServiceIcon(callData.getCallType());
-        if (StringUtils.isNotBlank(icon)) {
-            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
-            Picasso.get().load(Utils.getCloudinaryLink(icon))
-                    .placeholder(Utils.getServiceIcon(callData))
-                    .into(ivCallType, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnSuccess");
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Utils.redLog(mCurrentActivity.getClass().getSimpleName(), "Icon OnError");
-                        }
-                    });
-        } else if (StringUtils.isNotBlank(callData.getCallType())) {
-            ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, Utils.getServiceIcon(callData)));
-        } else {
-            ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
-        }
-
+    /***
+     * Map the calling data to UI which is comming from socket.
+     * @param response is a socket response which is listen by Call Listener
+     */
+    private void mapCallDataToUI(MultiDeliveryCallDriverData response) {
         try {
-            kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
-            String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
-                    String.valueOf(callData.getCashKiWasooli());
+            int i = 0;
+            String type = response.getBookings().get(i).getTrip().getType();
+            deliveryCountTv.setText(String.valueOf(response.getBookings().size()));
+            Utils.loadMultipleDeliveryImageURL(
+                    serviceImageView,
+                    response.getImageURL(),
+                    R.drawable.bhejdo
+            );
+            pickLocationTv.setText(response.getPickup().getPickupAddress());
+            pickDistanceTv.setText(Utils.getDistance(response.getPickup().getDistance()));
+            dropDistanceTv.setText(Utils.getDistance(response.getEstTotalDistance()));
+            timeTv.setText(String.valueOf(
+                    Utils.getDuration(response.getEstTotalDuration())
+            ));
+            kraiKiKamaiTv.setText(String.valueOf(response.getEstFare()));
+
+            String cashKiWasoliValue = response.getEstCashCollection() < 0 ?
+                    getString(R.string.cash_value_zero) :
+                    String.valueOf(response.getEstCashCollection());
             cashKiWasooliTv.setText(cashKiWasoliValue);
-            customerRatingTv.setText(callData.getRating());
-            if (Utils.isSkipDropOff(callData)) {
-                estimatedDistanceTv.setText("?");
-                destinationTv.setText(getString(R.string.muntakhib_nahi_ki_gayi_label));
-                cashKiWasooliLayout.setVisibility(View.GONE);
-                kraiKiKamaiLayout.setVisibility(View.GONE);
-                kharidariPriceLayout.setVisibility(View.GONE);
-                destinationTv.setAttr(mCurrentActivity, "jameel_noori_nastaleeq.ttf");
-                destinationTv.setGravity(Gravity.CENTER);
-                circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.rating_circle_call));
-                estimatedDistaneUnitTv.setVisibility(View.GONE);
 
-            } else {
-                cashKiWasooliLayout.setVisibility(View.VISIBLE);
-                kraiKiKamaiLayout.setVisibility(View.VISIBLE);
-                circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.distance_green_circle_call));
-                estimatedDistaneUnitTv.setVisibility(View.VISIBLE);
-                estimatedDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
-                destinationTv.setText(callData.getEndAddress());
-                distanceAwayTv.setText(callData.getDistance());
-            }
+            cashKiWasooliLayout.setVisibility(View.VISIBLE);
+            kraiKiKamaiLayout.setVisibility(View.VISIBLE);
 
-            if (Utils.isPurchaseService(callData.getCallType())) {
+            if (Utils.isPurchaseService(type)) {
                 kharidariPriceLayout.setVisibility(View.VISIBLE);
-                kharidariKiRaqamTv.setText(callData.getCodAmount());
-            }
-
-            if (Utils.isRideService(callData.getCallType())) {
+                //Todo 2: Add it later
+                //kharidariKiRaqamTv.setText(response.getCodAmount());
+            } else {
                 kharidariPriceLayout.setVisibility(View.GONE);
-            }
-
-            if (Utils.isDeliveryService(callData.getCallType())) {
-                kharidariPriceLayout.setVisibility(View.GONE);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -501,12 +442,16 @@ public class CallingActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (null != intent && null != intent.getExtras()) {
-                        if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
-                                || intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
+                        if (intent.getStringExtra(Constants.ACTION).
+                                equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
+                                || intent.getStringExtra(Constants.ACTION).
+                                equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
                             Utils.setCallIncomingState();
                             AppPreferences.setTripStatus(TripStatus.ON_FREE);
                             stopSound();
-                            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
+                            ActivityStackManager.getInstance().
+                                    startHomeActivityFromCancelTrip(
+                                            false, mCurrentActivity);
                             finishActivity();
                         }
                     }

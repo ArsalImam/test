@@ -290,11 +290,11 @@ public class SplashActivity extends BaseActivity {
                                 AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                     WebIORequestHandler.getInstance().registerChatListener();
-                                    //ActivityStackManager.getInstance()
-                                      //      .startJobActivity(mCurrentActivity);
-                                    ActivityStackManager.
-                                            getInstance().
-                                            startMultiDeliveryBookingActivity(mCurrentActivity);
+                                    ActivityStackManager.getInstance()
+                                            .startJobActivity(mCurrentActivity);
+                                    //ActivityStackManager.
+                                      //      getInstance().
+                                        //    startMultiDeliveryBookingActivity(mCurrentActivity);
                                 } else {
                                     ActivityStackManager.getInstance()
                                             .startFeedbackFromResume(mCurrentActivity);

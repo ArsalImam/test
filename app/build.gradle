@@ -9,6 +9,7 @@ buildscript {
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -62,7 +63,7 @@ android {
                     'proguard-rules.pro'
 
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a"
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86"
             }
         }
         debug {
@@ -75,6 +76,7 @@ android {
 //            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'),
 //                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
+
 
         }
 
@@ -218,6 +220,7 @@ dependencies {
 
     implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'de.felixschulze.gradle.hockeyapp'

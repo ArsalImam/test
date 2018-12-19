@@ -39,6 +39,7 @@ import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
@@ -189,4 +190,15 @@ public interface IUserDataHandler {
     void onBiometricApiResponse(BiometricApiResponse response);
 
     void onError(int errorCode, String errorMessage);
+
+    //region MultiDelivery Sockets Response Listener
+
+    /**
+     * This method will be invoked when driver acknowledge response received.
+     *
+     * @param response The {@link MultiDeliveryCallDriverAcknowledgeResponse} object.
+     */
+    void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse response);
+
+    //end region
 }

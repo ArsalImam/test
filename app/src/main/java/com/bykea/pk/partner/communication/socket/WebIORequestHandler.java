@@ -1,12 +1,20 @@
 package com.bykea.pk.partner.communication.socket;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.view.View;
+import android.widget.Toast;
 
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
+import com.bykea.pk.partner.repositories.IUserDataHandler;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -42,6 +50,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -129,9 +139,28 @@ public class WebIORequestHandler {
 
     public void feedback(JSONObject feedbackData, IResponseCallback responseCallBack) {
 //        Utils.redLog(Constants.APP_NAME + " FinishRideEmit ", feedbackData.toString());
-        emitWithJObject(ApiTags.SOCKET_DRIVER_FEEDBACK, new MyGenericListener(ApiTags.SOCKET_DRIVER_FEEDBACK, FeedbackResponse.class, responseCallBack),
+        emitWithJObject(ApiTags.SOCKET_DRIVER_FEEDBACK,
+                new MyGenericListener(ApiTags.SOCKET_DRIVER_FEEDBACK,
+                        FeedbackResponse.class, responseCallBack),
                 feedbackData);
     }
+
+    //region Multi Delivery Sockets Emitter
+
+    public void sendCallDriverAcknowledge(JSONObject callDriverData,
+                                          IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.SOCKET_CALL_DRIVER_ACKNOWLEDGE,
+                new MyGenericListener(
+                        ApiTags.SOCKET_CALL_DRIVER_ACKNOWLEDGE,
+                        MultiDeliveryCallDriverAcknowledgeResponse.class,
+                        responseCallBack
+                ),
+                callDriverData
+        );
+    }
+
+    //endregion
 
 
     public void getConversationChat(final IResponseCallback mResponseCallBack,
@@ -243,10 +272,12 @@ public class WebIORequestHandler {
                 Object serverResponse = gson.fromJson(serverResponseJsonString, dataModelClass);
                 if (serverResponse instanceof CommonResponse) {
                     CommonResponse commonResponse = (CommonResponse) serverResponse;
-                    if (commonResponse.isSuccess() || serverResponse instanceof PilotStatusResponse) {
+                    if (commonResponse.getCode() == HttpURLConnection.HTTP_OK ||
+                            serverResponse instanceof PilotStatusResponse) {
                         mOnResponseCallBack.onResponse(serverResponse);
                     } else {
-                        mOnResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        mOnResponseCallBack.onError(commonResponse.getCode(),
+                                commonResponse.getMessage());
                     }
                     WebIO.getInstance().off(mSocketName, MyGenericListener.this);
                 }
@@ -362,10 +393,10 @@ public class WebIORequestHandler {
                     if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
 
                         /*
-                        * when Gps is off, we don't show Calling Screen so we don't need to show
-                        * Cancel notification either if passenger cancels it before booking.
-                        * If passenger has cancelled it after booking we will entertain this Cancel notification
-                        * */
+                         * when Gps is off, we don't show Calling Screen so we don't need to show
+                         * Cancel notification either if passenger cancels it before booking.
+                         * If passenger has cancelled it after booking we will entertain this Cancel notification
+                         * */
 
                         if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
@@ -395,6 +426,57 @@ public class WebIORequestHandler {
         }
 
     }
+
+    /**
+     * Call Driver listener for listening multiple delivery request
+     */
+    public static class CallDriverListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Gson gson = new Gson();
+            try {
+                MultipleDeliveryCallDriverResponse response = gson.fromJson(
+                        serverResponse,
+                        MultipleDeliveryCallDriverResponse.class);
+                if (response != null) {
+                    AppPreferences.setMultiDeliveryCallDriverData(response.getData());
+                    new UserRepository().requestDriverAcknowledged(handler);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private static IUserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse
+                                                        response) {
+            if (response != null) {
+                ActivityStackManager
+                        .getInstance()
+                        .startMultiDeliveryCallingActivity(
+                                AppPreferences.getMultiDeliveryCallDriverData(),
+                                false,
+                                DriverApp.getContext()
+                        );
+            }
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+            } else {
+                Utils.appToast(DriverApp.getContext(),
+                        DriverApp.getContext().getString(R.string.error_try_again));
+                Utils.redLog("Error:", errorMessage);
+            }
+        }
+    };
 
 
 }

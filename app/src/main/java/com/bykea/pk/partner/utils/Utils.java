@@ -42,6 +42,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -144,6 +145,10 @@ import retrofit.Converter;
 import retrofit.Response;
 import retrofit.Retrofit;
 
+import retrofit.Converter;
+import retrofit.Response;
+import retrofit.Retrofit;
+
 import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 
@@ -165,7 +170,6 @@ public class Utils {
             }
         }
     }
-
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -373,7 +377,7 @@ public class Utils {
     public static void navigateToGoogleMap(Context context,
                                            NormalCallData mCallData) {
         try {
-            if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)){
+            if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                 String startAddr = StringUtils.EMPTY;
                 String endAddr = StringUtils.EMPTY;
                 if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
@@ -388,7 +392,7 @@ public class Utils {
                 if (intent.resolveActivity(context.getPackageManager()) != null) {
                     context.startActivity(intent);
                 }
-            }else{
+            } else {
                 Uri gmmIntentUri = Uri.parse("geo:" + getCurrentLocation());
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage(Constants.GoogleMap.GOOGLE_MAP_PACKAGE);
@@ -611,7 +615,7 @@ public class Utils {
             BitmapDrawable bitmapdraw = (BitmapDrawable) context.getResources().
                     getDrawable(resourceID);
             Bitmap b = bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, (int)width, (int)height, false);
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, (int) width, (int) height, false);
             return smallMarker;
         } catch (Exception e) {
             e.printStackTrace();
@@ -2036,6 +2040,30 @@ public class Utils {
         }
     }
 
+    /**
+     * Load multiple delivery image URL using {@link Picasso}
+     *
+     * @param imageView The image container.
+     * @param link The image URL.
+     * @param placeHolder The place holder image.
+     */
+    public static void loadMultipleDeliveryImageURL(ImageView imageView, String link,
+                                                    int placeHolder) {
+        Picasso.get().load(link)
+                .placeholder(placeHolder)
+                .into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+    }
+
 
     public static void fadeOutAndHideImage(final ImageView img) {
         Animation fadeOut = new AlphaAnimation(1, 0);
@@ -2560,4 +2588,66 @@ public class Utils {
     }
     //endregion
 
+
+    //region MultiDelivery Helper Methods
+
+    /**
+     * Fetch the distance in meter or kilo meter.
+     *
+     * <p>If the distance in meter is greater than equals to 1000 return the
+     * distance in kilometer otherwise return the distance in meter</p>
+     *
+     * @param distanceInMeter The distance in meter.
+     * @return The distance in meter or kilometer
+     */
+    public static String getDistance(float distanceInMeter) {
+        if (distanceInMeter >= 1000) {
+            return String.format(DriverApp.
+                            getContext().
+                            getString(R.string.decimal_format_one_digit),
+                    distanceInMeter / 1000);
+        }
+
+        return String.format(DriverApp.getContext().getString(R.string.decimal_format_one_digit),
+                distanceInMeter);
+    }
+
+    /**
+     * Fetch the duration in seconds or minutes
+     *
+     * <p>If the duration in second is greater than or equal to 60 than convert
+     * it into minutes. If duration in seconds is greater than equal to 3600 convert
+     * duration to hour other wise keep it in seconds</p>
+     *
+     * @param durationInSeconds The duration in seconds
+     * @return The duration in Seconds or minutes & hours
+     */
+    public static int getDuration(int durationInSeconds) {
+        int SECONDS_IN_MINUTES = 60;
+        int SECONDS_IN_HOUR = 3600;
+        if (durationInSeconds >= SECONDS_IN_MINUTES && durationInSeconds < SECONDS_IN_HOUR) {
+            return durationInSeconds / SECONDS_IN_MINUTES;
+        } else if (durationInSeconds >= SECONDS_IN_HOUR) {
+            return durationInSeconds / SECONDS_IN_HOUR;
+        }
+
+        return durationInSeconds;
+    }
+
+    /**
+     * Fetch Time in MilliSeconds
+     *
+     * @param timeInSeconds The time in seconds.
+     *
+     * @return The time in milliseconds
+     */
+    public static int getTimeInMilliseconds(int timeInSeconds) {
+        return timeInSeconds * 1000;
+    }
+
+    public static int getTimeInPercentage(int timeInMilliSeconds, float percentage) {
+        return (int) ((percentage / 100f) * timeInMilliSeconds);
+    }
+
+    //endregion
 }
