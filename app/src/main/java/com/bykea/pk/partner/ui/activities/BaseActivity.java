@@ -30,6 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NotificationData;
@@ -645,6 +646,10 @@ public class BaseActivity extends AppCompatActivity {
             Utils.onUnauthorized(mCurrentActivity);
         } else if (Keys.MOCK_LOCATION.equalsIgnoreCase(action)) {
             Utils.onUnauthorizedMockLocation(mCurrentActivity);
+        } else if (Keys.MULTIDELIVERY_ERROR_BORADCAST.equalsIgnoreCase(action)) {
+            //MULTI DELIVERY EVENT ERROR HANDLING
+            Utils.appToast(mCurrentActivity,
+                    mCurrentActivity.getString(R.string.error_try_again));
         }
     }
 

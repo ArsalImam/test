@@ -39,6 +39,8 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -151,6 +153,7 @@ import retrofit.Converter;
 import retrofit.Response;
 import retrofit.Retrofit;
 
+import static com.thefinestartist.utils.content.ContextUtil.getMainLooper;
 import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 
@@ -184,10 +187,16 @@ public class Utils {
         return linearLayoutManager;
     }
 
-    public static void appToast(Context context, String message) {
+    public static void appToast(final Context context, final String message) {
         try {
             if (StringUtils.isNotBlank(message)) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         } catch (Exception e) {
             e.printStackTrace();

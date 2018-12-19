@@ -92,6 +92,7 @@ public class Keys {
     //BROADCAST RECEIVER ACTIONS
     public static final String LOCATION_UPDATE_BROADCAST = "location_tracking_broadcast";
     public static final String UNAUTHORIZED_BROADCAST = "UNAUTHORIZED_USER";
+    public static final String MULTIDELIVERY_ERROR_BORADCAST = "MULTIDELIVERY_ERROR_BORADCAST";
     public static final String CONNECTION_BROADCAST = "CONNECTION_BROADCAST";
     public static final String LOCATION_NOT_UPDATE_BROADCAST = "location_not_update_broadcast";
 

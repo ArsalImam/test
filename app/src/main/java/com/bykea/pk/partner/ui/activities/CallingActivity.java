@@ -122,11 +122,12 @@ public class CallingActivity extends BaseActivity {
         ButterKnife.bind(this);
         repository = new UserRepository();
         Utils.unlockScreen(mCurrentActivity);
-        AppPreferences.setMultiDeliveryCallDriverData(null);
         AppPreferences.setStatsApiCallRequired(true);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        repository.requestLocationUpdate(mCurrentActivity, handler,
+                AppPreferences.getLatitude(),
+                AppPreferences.getLongitude());
 
         donutProgress.setProgress(20);
         startAnimation();

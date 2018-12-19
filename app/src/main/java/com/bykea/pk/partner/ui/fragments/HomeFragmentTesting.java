@@ -789,14 +789,12 @@ public class HomeFragmentTesting extends Fragment {
                                 AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                     WebIORequestHandler.getInstance().registerChatListener();
-                                    if (AppPreferences.getCallData() != null) {
-                                        ActivityStackManager.getInstance()
+
+                                    ActivityStackManager.getInstance()
                                                 .startJobActivity(mCurrentActivity);
-                                    } else {
-                                        ActivityStackManager.
+                                        /*ActivityStackManager.
                                                 getInstance().
-                                                startMultiDeliveryBookingActivity(mCurrentActivity);
-                                    }
+                                                startMultiDeliveryBookingActivity(mCurrentActivity);*/
 
 
                                 } else {

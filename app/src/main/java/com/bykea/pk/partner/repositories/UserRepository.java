@@ -660,7 +660,6 @@ public class UserRepository {
         jsonObject.put("_id", AppPreferences.getDriverId());
         jsonObject.put("token", AppPreferences.getAccessToken());
         jsonObject.put("trip_type", Constants.TripTypes.BATCH_TYPE);
-        //jsonObject.put("lat", "SDFSDF");
         jsonObject.put("lat", AppPreferences.getLatitude());
         jsonObject.put("lng", AppPreferences.getLongitude());
     }

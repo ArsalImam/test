@@ -64,16 +64,14 @@ import butterknife.OnClick;
 
 /***
  * MultiDelivery Booking Activity.
- *
- * Check todo of this class.
  */
 public class MultipleDeliveryBookingActivity extends BaseActivity implements RoutingListener {
 
+    private static final float ZOOM_LEVEL = 14.0f;
     private MultipleDeliveryBookingActivity mCurrentActivity;
     private UserRepository dataRepository;
     private MapView mapView;
     private GoogleMap mGoogleMap;
-    private NormalCallData mCallData;
     private Marker pickupMarker;
     private Marker dropOffMarker;
     private Location mCurrentLocation;
@@ -142,7 +140,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         ButterKnife.bind(this);
         dataRepository = new UserRepository();
         mapView = (MapView) findViewById(R.id.mapFragment);
-        callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
     }
 
     /***
@@ -151,11 +148,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void setInitialData() {
         setProgressDialog();
         AppPreferences.setIsOnTrip(true);
+        callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
         ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
         mLocBearing = (float) AppPreferences.getBearing();
         mCurrentLocation = new Location(StringUtils.EMPTY);
         setCurrentLocation();
-        mCallData = AppPreferences.getCallData();
         isResume = true;
         setTripStates();
         checkGps();
@@ -195,13 +192,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Set the trip states according to the incomming states i.e accepted, arrived, started, etc.
      */
     private void setTripStates() {
-        if (mCallData != null) {
-            AppPreferences.setTripStatus(mCallData.getStatus());
-            if (StringUtils.isBlank(mCallData.getStatus())) {
-                setAcceptedState();
-            } else {
-                setAcceptedState();
-            }
+        if (callDriverData != null) {
+            AppPreferences.setTripStatus(callDriverData.getBatchStatus());
+            setAcceptedState();
         }
     }
 
@@ -209,8 +202,18 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Set the time, distance, draw route to pickup in accepted state
      */
     private void setAcceptedState() {
-        setTimeDistance(Utils.formatETA(mCallData.getArivalTime()),
-                mCallData.getDistance());
+        int duration = Integer.parseInt(
+                Utils.formatETA(
+                        String.valueOf(Utils.getDuration(
+                                callDriverData
+                                        .getPickup()
+                                        .getDuration()
+                                )
+                        )
+                )
+        );
+        setTimeDistance(duration,
+                callDriverData.getPickup().getDistance());
         drawRouteToPickup();
     }
 
@@ -218,15 +221,15 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Draw the route from driver current position toward pickupLocation
      */
     private void drawRouteToPickup() {
-        if (StringUtils.isNotBlank(mCallData.getStartLat())
-                && StringUtils.isNotBlank(mCallData.getStartLng())
+        if (StringUtils.isNotBlank(String.valueOf(callDriverData.getPickup().getLat()))
+                && StringUtils.isNotBlank(String.valueOf(callDriverData.getPickup().getLng()))
                 && StringUtils.isNotBlank(String.valueOf(AppPreferences.getLatitude()))
                 && StringUtils.isNotBlank(String.valueOf(AppPreferences.getLongitude()))) {
 
             drawRoute(new LatLng(AppPreferences.getLatitude(),
                             AppPreferences.getLongitude()),
-                    new LatLng(Double.parseDouble(mCallData.getStartLat()),
-                            Double.parseDouble(mCallData.getStartLng())), Routing.pickupRoute);
+                    new LatLng(callDriverData.getPickup().getLat(),
+                            callDriverData.getPickup().getLng()), Routing.pickupRoute);
 
         }
     }
@@ -264,6 +267,15 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         }
     }
 
+    /**
+     * Invoked this method when direction API call required.
+     *
+     * @param currentApiCallLatLng The Pickup lat lang from
+     *          {@link MultiDeliveryCallDriverData#getPickup()}
+     *
+     * @return true if last api lat lng is not equals and if the current lat lng
+     * and last api call lat lng difference is greater than 15 other wise return false
+     */
     private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
         if (lastApiCallLatLng != null && (lastApiCallLatLng.equals(currentApiCallLatLng)
                 || Utils.calculateDistance(currentApiCallLatLng.latitude,
@@ -281,11 +293,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * @param time an arrival time.
      * @param distance an away distance.
      */
-    private void setTimeDistance(String time, String distance) {
-        timeTv.setText(time);
-        distanceTv.setText(distance);
-        AppPreferences.setEta(time);
-        AppPreferences.setEstimatedDistance(distance);
+    private void setTimeDistance(int time, float distance) {
+        timeTv.setText(String.valueOf(time));
+        distanceTv.setText(Utils.getDistance(distance));
+        AppPreferences.setEta(String.valueOf(time));
+        AppPreferences.setEstimatedDistance(Utils.getDistance(distance));
     }
 
     /***
@@ -295,10 +307,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * @param distance an away distance.
      */
     private void updateEtaAndCallData(String time, String distance) {
-        mCallData.setArivalTime(time);
-        mCallData.setDistance(distance);
-        setTimeDistance(mCallData.getArivalTime(), mCallData.getDistance());
-        AppPreferences.setCallData(mCallData);
+        callDriverData.getPickup().setDuration(Integer.valueOf(time));
+        callDriverData.getPickup().setDistance(Integer.valueOf(distance));
+        setTimeDistance(
+                Utils.getDuration(
+                        callDriverData.getPickup().getDuration()
+                ),
+                callDriverData.getPickup().getDistance());
+        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
     }
 
     /***
@@ -383,33 +399,19 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * @param lng a longitude.
      */
     private void onGetLocation(double lat, double lng) {
-        if (mCurrentLocation != null && mCallData != null) {
+        if (mCurrentLocation != null && callDriverData != null) {
             mCurrentLocation.setLatitude(lat);
             mCurrentLocation.setLongitude(lng);
             updateDriverMarker(
                     String.valueOf(mCurrentLocation.getLatitude()),
                     String.valueOf(mCurrentLocation.getLongitude())
             );
-
-            if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                if (StringUtils.isNotBlank(mCallData.getEndLat()) &&
-                        StringUtils.isNotBlank(mCallData.getEndLng()))
-                    drawRouteOnChange(
-                            new LatLng(mCurrentLocation.getLatitude(),
-                                    mCurrentLocation.getLongitude()),
-                            new LatLng(Double.parseDouble(mCallData.getEndLat()),
-                                    Double.parseDouble(mCallData.getEndLng()))
-                    );
-            } else {
-                if (StringUtils.isNotBlank(mCallData.getStartLat()) &&
-                        StringUtils.isNotBlank(mCallData.getStartLng()))
-                    drawRouteOnChange(
-                            new LatLng(mCurrentLocation.getLatitude(),
-                                    mCurrentLocation.getLongitude()),
-                            new LatLng(Double.parseDouble(mCallData.getStartLat()),
-                                    Double.parseDouble(mCallData.getStartLng()))
-                    );
-            }
+            drawRouteOnChange(
+                    new LatLng(mCurrentLocation.getLatitude(),
+                            mCurrentLocation.getLongitude()),
+                    new LatLng(Double.valueOf(callDriverData.getPickup().getLat()),
+                            Double.valueOf(callDriverData.getPickup().getLng()))
+            );
 
         } else {
             mCurrentLocation = new Location(LocationManager.GPS_PROVIDER);
@@ -448,7 +450,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (driverMarker != null) {
             builder.include(driverMarker.getPosition());
         }
-
 
 
         LatLngBounds tmpBounds = builder.build();
@@ -529,6 +530,13 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         valueAnimator.start();
     }
 
+    /**
+     * This method will be invoked when location API has been called.
+     * Update the driver marker according to current lat lng
+     *
+     * @param snappedLatitude The current driver latitude.
+     * @param snappedLongitude  The current driver longitude.
+     */
     private void updateDriverMarker(String snappedLatitude, String snappedLongitude) {
         if (null != mGoogleMap) {
             //if driver marker is null add driver marker on google map
@@ -642,9 +650,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     /***
      * OnClick listener for an activity.
      *
-     * @param view a view where user have clicked.
+     * @param view The view that has been clicked.
      */
-    @OnClick({R.id.currentLocationIv, R.id.jobBtn, R.id.callBtn, R.id.tafseelLayout})
+    @OnClick({R.id.currentLocationIv, R.id.cvLocation, R.id.jobBtn, R.id.callBtn, R.id.tafseelLayout})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.currentLocationIv: {
@@ -657,6 +665,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 break;
             }
 
+            case R.id.cvLocation: {
+                setDriverLocation();
+                break;
+            }
 
             case R.id.callBtn: {
                 ActivityStackManager.getInstance().startMapDetailsActivity(
@@ -676,14 +688,28 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         }
     }
 
+    /**
+     * Invoked this method when current location cardinal button has been clicked
+     */
+    private void setDriverLocation() {
+        if (null != mGoogleMap) {
+            Utils.formatMap(mGoogleMap);
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(AppPreferences.getLatitude()
+                            , AppPreferences.getLongitude())
+                    , ZOOM_LEVEL));
+        }
+    }
+
+    /**
+     * Invoked this method when direction google button has been clicked.
+     */
     private void directionClick() {
-        if (mCallData != null && mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+        if (callDriverData != null) {
             ActivityStackManager.getInstance().startMapDetailsActivity(
                     mCurrentActivity,
                     Constants.MapDetailsFragmentTypes.TYPE_TAFSEEL
             );
-        } else {
-            Utils.navigateToGoogleMap(mCurrentActivity, mCallData);
         }
     }
 
@@ -712,7 +738,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             }
         }
     }
-
 
 
     /***
@@ -748,8 +773,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void showDriverArrivedDialog() {
         int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(),
                 AppPreferences.getLongitude(),
-                Double.parseDouble(mCallData.getStartLat()),
-                Double.parseDouble(mCallData.getStartLng()));
+                callDriverData.getPickup().getLat(),
+                callDriverData.getPickup().getLng());
         if (distance > ARRIVAL_MAX_DISTANCE_VALUE) {
             boolean showTickBtn = distance < AppPreferences.getSettings().
                     getSettings().getArrived_min_dist();
@@ -805,7 +830,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void setStartedState() {
         cancelBtn.setVisibility(View.GONE);
         jobBtn.setText(getString(R.string.button_text_finish));
-        if (mapPolylines != null){
+        if (mapPolylines != null) {
             mapPolylines.remove();
         }
 
@@ -878,10 +903,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (mCurrentActivity != null && mGoogleMap != null) {
             mRouteLatLng = route.get(0).getPoints();
             updateEtaAndCallData(
-                    String.valueOf((route.get(0).getDurationValue() / SECONDS_IN_MINUTES)),
-                    Utils.formatDecimalPlaces(String.valueOf(
-                            (route.get(0).getDistanceValue() / METERS_IN_KILOMETER)),
-                            1));
+                    String.valueOf((route.get(0).getDurationValue())),
+                    String.valueOf(
+                            (route.get(0).getDistanceValue())));
             updatePolyLine(route);
         } else {
             lastApiCallLatLng = null;
@@ -937,9 +961,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     @Override
     protected void onDestroy() {
-        //unregister the location reciever to stop recieving location when activity has destroyed.
+        //unregister the location receiver to stop receiving location when activity has destroyed.
         unregisterReceiver(locationReceiver);
-        //unregister the network change reciever to stop recieving when activity has destroyed.
+        //unregister the network change receiver to stop receiving when activity has destroyed.
         unregisterReceiver(networkChangeListener);
         mapView.onDestroy();
         super.onDestroy();

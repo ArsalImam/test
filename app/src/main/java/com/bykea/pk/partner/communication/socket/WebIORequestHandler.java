@@ -497,8 +497,7 @@ public class WebIORequestHandler {
             if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
             } else {
-                Utils.appToast(DriverApp.getContext(),
-                        DriverApp.getContext().getString(R.string.error_try_again));
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
                 Utils.redLog("Error:", errorMessage);
             }
         }

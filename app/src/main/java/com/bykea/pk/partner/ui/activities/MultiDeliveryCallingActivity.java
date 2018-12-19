@@ -128,7 +128,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         repository = new UserRepository();
         Utils.unlockScreen(mCurrentActivity);
         AppPreferences.setStatsApiCallRequired(true);
-        AppPreferences.setCallData(null);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
         repository.requestLocationUpdate(
@@ -235,6 +234,8 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 ActivityStackManager
                         .getInstance()
                         .startMultiDeliveryBookingActivity(mCurrentActivity);
+                stopSound();
+                finishActivity();
             }
         }
 
@@ -350,9 +351,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(Keys.BROADCAST_CANCEL_RIDE);
-//        registerReceiver(cancelRideReceiver, intentFilter);
     }
 
     /**
@@ -423,55 +421,4 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
-
-
-    @Subscribe
-    public void onEvent(final Intent intent) {
-        if (mCurrentActivity != null) {
-            mCurrentActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (null != intent && null != intent.getExtras()) {
-                        if (intent.getStringExtra(Constants.ACTION).
-                                equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
-                                || intent.getStringExtra(Constants.ACTION).
-                                equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
-                            Utils.setCallIncomingState();
-                            AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                            stopSound();
-                            ActivityStackManager.getInstance().
-                                    startHomeActivityFromCancelTrip(
-                                            false, mCurrentActivity);
-                            finishActivity();
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-/*
-    private BroadcastReceiver cancelRideReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, final Intent intent) {
-
-            if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (null != intent && null != intent.getExtras()) {
-                            if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)) {
-                                Utils.setCallIncomingState();
-                                AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                                stopSound();
-                                ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, "", mCurrentActivity);
-                                mCurrentActivity.finish();
-                            }
-                        }
-                    }
-                });
-            }
-
-        }
-    };*/
 }
