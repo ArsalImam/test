@@ -7,6 +7,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
@@ -149,7 +150,7 @@ public class WebIORequestHandler {
      * {@link ApiTags#MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE} and attach the
      * generic listener to listen the event.
      *
-     * @param callDriverData The json object that will be emit on the event.
+     * @param callDriverData   The json object that will be emit on the event.
      * @param responseCallBack The callback that will be invoked when event response received.
      */
     public void sendCallDriverAcknowledge(JSONObject callDriverData,
@@ -170,7 +171,7 @@ public class WebIORequestHandler {
      * {@link ApiTags#MULTI_DELIVERY_SOCKET_ACCEPT_CALL} and attach the
      * generic listener to listen the event.
      *
-     * @param acceptCallData The json object that will be emit on the accept event.
+     * @param acceptCallData   The json object that will be emit on the accept event.
      * @param responseCallBack The callback that will be invoked when event response received.
      */
     public void acceptMultiDeliveryRequest(JSONObject acceptCallData,
@@ -183,6 +184,27 @@ public class WebIORequestHandler {
                         responseCallBack
                 ),
                 acceptCallData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverArrivedData The json object that will be emit on the driver arrived event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultideliveryDriverArrived(JSONObject driverArrivedData,
+                                                  IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED,
+                        MultiDeliveryDriverArrivedResponse.class,
+                        responseCallBack
+                ),
+                driverArrivedData
         );
     }
 
@@ -474,6 +496,19 @@ public class WebIORequestHandler {
                 e.printStackTrace();
             }
 
+        }
+    }
+
+    /**
+     * Multi Delivery Trip Missed Listener
+     */
+    public static class MultiDeliveryTripMissedListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("MultiDeliveryTripMissedListener", serverResponse);
+            EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
         }
     }
 

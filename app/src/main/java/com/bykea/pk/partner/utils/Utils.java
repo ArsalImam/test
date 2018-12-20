@@ -418,6 +418,62 @@ public class Utils {
         }
     }
 
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param mCallData MultiDeliveryCallDriverData object to fetch the lat lng.
+     */
+    public static void navigateToGoogleMap(Context context,
+                                           MultiDeliveryCallDriverData mCallData) {
+        try {
+                String startAddr = getCurrentLocation();
+                String endAddr = mCallData.getPickup().getLat() + "," +
+                        mCallData.getPickup().getLng();
+                String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                        Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                        Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(intent);
+                }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param latLng the drop off lat lng.
+     */
+    public static void navigateDropDownToGoogleMap(Context context,
+                                           LatLng latLng) {
+        try {
+            String startAddr = getCurrentLocation();
+            String endAddr = latLng.latitude + "," +
+                    latLng.longitude;
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String formatETA(String value) {
         if (StringUtils.isBlank(value) || value.equalsIgnoreCase("0") || value.equalsIgnoreCase("0.0")
                 || value.equalsIgnoreCase("0.00"))
@@ -2612,15 +2668,10 @@ public class Utils {
      * @return The distance in meter or kilometer
      */
     public static String getDistance(float distanceInMeter) {
-        if (distanceInMeter >= 1000) {
             return String.format(DriverApp.
                             getContext().
                             getString(R.string.decimal_format_one_digit),
                     distanceInMeter / 1000);
-        }
-
-        return String.format(DriverApp.getContext().getString(R.string.decimal_format_one_digit),
-                distanceInMeter);
     }
 
     /**
@@ -2635,14 +2686,7 @@ public class Utils {
      */
     public static int getDuration(int durationInSeconds) {
         int SECONDS_IN_MINUTES = 60;
-        int SECONDS_IN_HOUR = 3600;
-        if (durationInSeconds >= SECONDS_IN_MINUTES && durationInSeconds < SECONDS_IN_HOUR) {
-            return durationInSeconds / SECONDS_IN_MINUTES;
-        } else if (durationInSeconds >= SECONDS_IN_HOUR) {
-            return durationInSeconds / SECONDS_IN_HOUR;
-        }
-
-        return durationInSeconds;
+        return durationInSeconds / SECONDS_IN_MINUTES;
     }
 
     /**
