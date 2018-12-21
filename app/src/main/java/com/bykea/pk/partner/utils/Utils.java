@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.utils;
 
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -19,12 +18,9 @@ import android.content.pm.Signature;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -44,18 +40,15 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -74,9 +67,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bykea.pk.partner.BuildConfig;
@@ -97,7 +88,6 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
-import com.bykea.pk.partner.widgets.CustomMarkerWithText;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.facebook.appevents.AppEventsLogger;
@@ -139,7 +129,6 @@ import java.security.cert.CertificateFactory;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -156,11 +145,6 @@ import retrofit.Converter;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-import retrofit.Converter;
-import retrofit.Response;
-import retrofit.Retrofit;
-
-import static com.thefinestartist.utils.content.ContextUtil.getMainLooper;
 import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 
@@ -655,16 +639,6 @@ public class Utils {
     }
 
     public static BitmapDescriptor getDropOffBitmapDiscriptor(Context context, String number) {
-        CustomMarkerWithText customMarkerWithText = new CustomMarkerWithText(context);
-        customMarkerWithText.setText(number);
-        customMarkerWithText.setTextSize(R.dimen.defaultMenuTextSize);
-        customMarkerWithText.setBackground(
-                context
-                        .getResources()
-                        .getDrawable(
-                                R.drawable.drop_off_icon
-                        ));
-
         Bitmap bmp = createDropOffMarker(context, number);
         return BitmapDescriptorFactory.fromBitmap(bmp);
     }

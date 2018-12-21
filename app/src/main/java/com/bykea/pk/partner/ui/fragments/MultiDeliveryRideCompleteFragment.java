@@ -24,6 +24,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/**
+ * Multi Delivery Ride Complete Fragment
+ */
 public class MultiDeliveryRideCompleteFragment extends Fragment {
     @BindView(R.id.ride_recycler_view)
     RecyclerView mRecyclerView;
