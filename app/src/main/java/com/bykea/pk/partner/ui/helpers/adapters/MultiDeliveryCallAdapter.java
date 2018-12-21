@@ -13,21 +13,36 @@ import com.bykea.pk.partner.models.data.MultiDeliveryCallData;
 import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
 
 /***
- * Call Adapter an adaptet class is used to collect child view to represent a parent view.
+ * Multi Delivery Call Adapter an adaptet class is used to collect child view to represent a parent view.
  */
-public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
+public class MultiDeliveryCallAdapter extends RecyclerView.Adapter<MultiDeliveryCallAdapter.ViewHolder> {
 
-    MultiDeliveryCallData data;
+    private MultiDeliveryCallData data;
+    private CallClickListener callClickListener;
     private int TYPE_HEADER = 0;
     private int TYPE_ITEM = 1;
+
+    /**
+     * Interface Definition for callback to be invoked when call button view has been clicked.
+     */
+    public interface CallClickListener {
+        /**
+         * Called when call button view has been clicked.
+         *
+         * @param position The position of the view that has been clicked.
+         */
+        void onCallClick(int position);
+    }
 
     /***
      * Constructor.
      *
      * @param data MultiDeliveryCallData object.
      */
-    public CallAdapter(MultiDeliveryCallData data) {
+    public MultiDeliveryCallAdapter(MultiDeliveryCallData data,
+                                    CallClickListener callClickListener) {
         this.data = data;
+        this.callClickListener = callClickListener;
     }
 
     @NonNull
@@ -90,7 +105,7 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
     /***
      * View Holder class Pattern for caches fields
      */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView areaTv;
         TextView streetAddressTv;
@@ -112,6 +127,12 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.ViewHolder> {
             streetAddressTv = itemView.findViewById(R.id.streetAddress);
             numberTv = itemView.findViewById(R.id.numberTv);
             callIv = itemView.findViewById(R.id.callBtn);
+            callIv.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            callClickListener.onCallClick(getAdapterPosition());
         }
     }
 }

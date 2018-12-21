@@ -13,15 +13,12 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
-import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -34,7 +31,6 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
 import com.bykea.pk.partner.ui.helpers.Spherical;
-import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -62,7 +58,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;

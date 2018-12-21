@@ -1,13 +1,11 @@
 package com.bykea.pk.partner.ui.fragments;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,13 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallData;
 import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
 import com.bykea.pk.partner.models.data.MultiDeliveryPickup;
-import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCallAdapter;
+import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
 import java.util.ArrayList;
@@ -26,6 +30,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/**
+ * Multi Delivery Call Fragment
+ */
 public class MultiDeliveryCallFragment extends Fragment {
 
     @BindView(R.id.call_recycler_view)
@@ -33,6 +40,7 @@ public class MultiDeliveryCallFragment extends Fragment {
 
     private Unbinder unbinder;
     private LinearLayoutManager mLayoutManager;
+    private MultiDeliveryCallDriverData callDriverData;
 
     @Nullable
     @Override
@@ -52,26 +60,53 @@ public class MultiDeliveryCallFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getActivity());
+        callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //Todo 1: Mock Data for testing need to be change when backend team provide an API
 
         MultiDeliveryPickup pickup = new MultiDeliveryPickup("University Road",
-                "Akhtar Feeder",
-                "House # 1, Street 35, Block B3  House # 1, Street  35, Block B3");
+                callDriverData.getPickup().getFeederName(),
+                callDriverData.getPickup().getPickupAddress(),
+                callDriverData.getPickup().getContactNumer());
 
-        List<MultiDeliveryDropOff> list = new ArrayList<>();
-        for (int i = 1; i < 6; i++) {
+        final List<MultiDeliveryDropOff> list = new ArrayList<>();
+        for (int i = 0; i < callDriverData.getBookings().size(); i++) {
+            MultipleDeliveryBookingResponse response = callDriverData.getBookings().get(i);
             MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff("University Road",
-                    "House # 1, Street 35, Block B3  House # 1, Street  35, Block B3",
-                    String.valueOf(i));
-
+                    response.getDropOff().getPickupAddress(),
+                    String.valueOf(i+1), response.getPassenger().getPhone());
             list.add(dropOff);
         }
 
-        MultiDeliveryCallData data = new MultiDeliveryCallData(pickup, list);
+        final MultiDeliveryCallData data = new MultiDeliveryCallData(pickup, list);
 
-        CallAdapter adapter = new CallAdapter(data);
+        MultiDeliveryCallAdapter adapter = new MultiDeliveryCallAdapter(
+                data,
+                new MultiDeliveryCallAdapter.CallClickListener() {
+                    @Override
+                    public void onCallClick(int position) {
+                        try {
+                            if (position != 0) { //0 position of the list have the pickup
+                                if (callDriverData.getBatchStatus()
+                                        .equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) return;
+                                position--;
+                                Utils.callingIntent(getActivity(),
+                                        Utils.phoneNumberToShow(
+                                                list.get(position).getContactNumer()
+                                        ));
+                            } else {
+                                Utils.callingIntent(getActivity(),
+                                        Utils.phoneNumberToShow(
+                                                data.getPickupData().getContactNumber()
+                                        ));
+                            }
+
+                        } catch (IndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
         mRecyclerView.setAdapter(adapter);
 
 
