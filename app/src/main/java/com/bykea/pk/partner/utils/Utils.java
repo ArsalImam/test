@@ -597,7 +597,17 @@ public class Utils {
             return BitmapDescriptorFactory.fromBitmap(bm);
 
         } else {
-            return BitmapDescriptorFactory.fromResource(drawableId);
+            Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+
+            Bitmap bmp = Bitmap.createBitmap(
+                    drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+            Canvas canvas = new Canvas(bmp);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return BitmapDescriptorFactory.fromBitmap(bmp);
         }
     }
 
