@@ -12,6 +12,16 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
     String passengerName;
     int codValue;
 
+    /**
+     * Constructor
+     *
+     * @param mArea The area of drop off.
+     * @param tripNumber The trip number.
+     * @param passengerName The passenger name.
+     * @param codValue The value of cash on delivery.
+     * @param streetAddress The street address of drop off.
+     * @param dropOffNumberText The number place in the drop off marker
+     */
     public DirectionDropOffData(String mArea, String tripNumber, String passengerName, int codValue,
                                 String streetAddress, String dropOffNumberText) {
         super(mArea, streetAddress, dropOffNumberText);
