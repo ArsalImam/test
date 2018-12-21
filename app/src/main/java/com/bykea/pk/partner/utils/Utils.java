@@ -178,6 +178,12 @@ public class Utils {
         return linearLayoutManager;
     }
 
+    /**
+     * Show application toast
+     *
+     * @param context Holding the reference of an activity.
+     * @param message The message that will display in toast.
+     */
     public static void appToast(final Context context, final String message) {
         try {
             if (StringUtils.isNotBlank(message)) {
