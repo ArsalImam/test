@@ -51,14 +51,17 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -71,7 +74,9 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bykea.pk.partner.BuildConfig;
@@ -92,7 +97,9 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
+import com.bykea.pk.partner.widgets.CustomMarkerWithText;
 import com.bykea.pk.partner.widgets.FontEditText;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -577,11 +584,11 @@ public class Utils {
      * Convert the drawable id into BitmapDescriptor.
      *
      * @param context holds the reference of an activity.
-     * @param isPickUp is a boolean indicating that pickup / dropoff
+     *
      * @return The BitmapDescriptor.
      */
-    public static BitmapDescriptor getBitmapDiscriptor(Context context, boolean isPickUp) {
-        int drawableId = isPickUp ? R.drawable.ic_pickupmarker : R.drawable.ic_dropoff_icon;
+    public static BitmapDescriptor getBitmapDiscriptor(Context context) {
+        int drawableId = R.drawable.ic_pickupmarker;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             VectorDrawable vectorDrawable = (VectorDrawable) context.getDrawable(drawableId);
 
@@ -597,74 +604,69 @@ public class Utils {
             return BitmapDescriptorFactory.fromBitmap(bm);
 
         } else {
-            return BitmapDescriptorFactory.fromResource(drawableId);
+            Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+
+            Bitmap bmp = Bitmap.createBitmap(
+                    drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+            Canvas canvas = new Canvas(bmp);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return BitmapDescriptorFactory.fromBitmap(bmp);
         }
+    }
+
+    /**
+     * Create drop off marker.
+     *
+     * @param context Holding the reference of an activity.
+     * @param number The number of drop off.
+     *
+     * @return The bitmap for dropoff marker.
+     */
+    public static Bitmap createDropOffMarker(Context context, String number) {
+
+        View marker = ((LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.drop_off_marker_layout, null);
+
+
+        FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
+        txt_name.setText(number);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(
+                40,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(
+                marker.getMeasuredWidth(),
+                marker.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
     }
 
     public static BitmapDescriptor getDropOffBitmapDiscriptor(Context context, String number) {
-        Bitmap bmp = drawTextToBitmap(context, R.drawable.ic_dropoff_icon, number);
+        CustomMarkerWithText customMarkerWithText = new CustomMarkerWithText(context);
+        customMarkerWithText.setText(number);
+        customMarkerWithText.setTextSize(R.dimen.defaultMenuTextSize);
+        customMarkerWithText.setBackground(
+                context
+                        .getResources()
+                        .getDrawable(
+                                R.drawable.drop_off_icon
+                        ));
+
+        Bitmap bmp = createDropOffMarker(context, number);
         return BitmapDescriptorFactory.fromBitmap(bmp);
-    }
-
-    /***
-     * Create a bitmap from drawable resource & draw a text on the generated bitmap.
-     *
-     * @param mContext holding a reference of an activity.
-     * @param resourceId a drawable resource ID.
-     * @param mText a text to be drawn on the bitmap.
-     *
-     * @return The final text drawn bitmap.
-     */
-    public synchronized static Bitmap drawTextToBitmap(Context mContext, int resourceId, String mText) {
-        try {
-            Resources resources = mContext.getResources();
-            float scale = resources.getDisplayMetrics().density;
-            Drawable drawable = resources.getDrawable(resourceId);
-
-            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas1 = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas1.getWidth(), canvas1.getHeight());
-            drawable.draw(canvas1);
-
-            android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
-            // set default bitmap config if none
-            if (bitmapConfig == null) {
-                bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
-            }
-            // resource bitmaps are imutable,
-            // so we need to convert it to mutable one
-            bitmap = bitmap.copy(bitmapConfig, true);
-
-            Canvas canvas = new Canvas(bitmap);
-            // new antialised Paint
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            // text color - #3D3D3D
-            paint.setColor(Color.WHITE);
-            // text size in pixels
-            paint.setTextSize((int) (18 * scale));
-            Typeface plain = Typeface.createFromAsset(mContext.getAssets(),
-                    "fonts/open_sans_regular.ttf");
-            Typeface bold = Typeface.create(plain, Typeface.BOLD);
-            paint.setTypeface(bold);
-            // text shadow
-            //paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
-
-            // draw text to the Canvas center
-            Rect bounds = new Rect();
-            paint.getTextBounds(mText, 0, mText.length(), bounds);
-            int x = (bitmap.getWidth() - bounds.width()) / 5;
-            int y = (bitmap.getHeight() + bounds.height()) / 4;
-
-            canvas.drawText(mText, x * scale, y * scale, paint);
-
-            return bitmap;
-        } catch (Exception e) {
-            // TODO: handle exception
-
-            return null;
-        }
-
     }
 
     /***

@@ -601,7 +601,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                         callDriverData.getPickup().getLng()
                 );
                 pickupMarker = mGoogleMap.addMarker(new MarkerOptions().
-                        icon(Utils.getBitmapDiscriptor(mCurrentActivity, true))
+                        icon(Utils.getBitmapDiscriptor(mCurrentActivity))
                         .position(startLatLng));
             }
         } catch (NumberFormatException e) {
@@ -904,7 +904,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     String.valueOf((route.get(0).getDurationValue())),
                     String.valueOf(
                             (route.get(0).getDistanceValue())));
-            updatePolyLine(route);
+            if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))
+                updatePolyLine(route);
         } else {
             lastApiCallLatLng = null;
         }
@@ -970,7 +971,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 public void run() {
                     if (mCurrentActivity != null) {
                         Dialogs.INSTANCE.dismissDialog();
-                        mapPolylines.remove();
+                        if (mapPolylines != null)
+                            mapPolylines.remove();
                         timeTv.setVisibility(View.GONE);
                         timeUnitLabelTv.setVisibility(View.GONE);
                         timeView.setVisibility(View.GONE);
