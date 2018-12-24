@@ -391,7 +391,6 @@ public class LocationService extends Service {
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
-                                if (!AppPreferences.isMultiDelivery())
                                     mUserRepository
                                             .requestLocationUpdate(mContext, handler, lat, lon);
                             } else {

@@ -41,6 +41,7 @@ import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -229,6 +230,15 @@ public interface IUserDataHandler {
      * @param response The {@link MultiDeliveryDriverStartedResponse} object.
      */
     void onMultiDeliveryDriverStarted(MultiDeliveryDriverStartedResponse response);
+
+    /**
+     * This method will be invoked when multi delivery finished response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED
+     *
+     * @param response The {@link MultiDeliveryCompleteRideResponse} object.
+     */
+    void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response);
 
     //end region
 }

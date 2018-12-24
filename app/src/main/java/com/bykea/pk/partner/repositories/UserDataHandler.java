@@ -41,6 +41,7 @@ import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -410,6 +411,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onMultiDeliveryDriverStarted(MultiDeliveryDriverStartedResponse response) {
+
+    }
+
+    @Override
+    public void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response) {
 
     }
 

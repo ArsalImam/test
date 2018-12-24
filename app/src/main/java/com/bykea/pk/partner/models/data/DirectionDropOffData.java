@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DirectionDropOffData extends MultiDeliveryDropOff {
 
     String tripNumber;
+    String tripID;
     String passengerName;
     int codValue;
 
@@ -22,13 +23,17 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
      * @param streetAddress The street address of drop off.
      * @param dropOffNumberText The number place in the drop off marker
      */
-    public DirectionDropOffData(String mArea, String tripNumber, String passengerName, int codValue,
-                                String streetAddress, String dropOffNumberText) {
+    public DirectionDropOffData(String mArea, String tripID, String tripNumber,
+                                String passengerName, int codValue, String streetAddress,
+                                String dropOffNumberText) {
         super(mArea, streetAddress, dropOffNumberText);
         this.tripNumber = tripNumber;
+        this.tripID = tripID;
         this.passengerName = passengerName;
         this.codValue = codValue;
     }
+
+
 
     public String getmArea() {
         return mArea;
@@ -78,6 +83,14 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
         this.dropOffNumberText = dropOffNumberText;
     }
 
+    public String getTripID() {
+        return tripID;
+    }
+
+    public void setTripID(String tripID) {
+        this.tripID = tripID;
+    }
+
     /***
      * Builder pattern is a creational design pattern it means its solves problem related to
      * object creation.It is also very oftenly used in android development. Best example would be
@@ -87,17 +100,23 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
      */
     public static class Builder {
 
-        String driverName;
+        String passengerName;
         String mArea;
         String dropOffNumberText;
+        String tripID;
 
-        public Builder setDriverName(String driverName) {
-            this.driverName = driverName;
+        public Builder setPassengerName(String passengerName) {
+            this.passengerName = passengerName;
             return this;
         }
 
         public Builder setmArea(String mArea) {
             this.mArea = mArea;
+            return this;
+        }
+
+        public Builder setTripID(String tripID) {
+            this.tripID = tripID;
             return this;
         }
 
@@ -107,8 +126,10 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
         }
 
         public DirectionDropOffData build(){
-            return new DirectionDropOffData(mArea, StringUtils.EMPTY, driverName, 0,
-                    StringUtils.EMPTY, dropOffNumberText);
+            return new DirectionDropOffData(mArea, tripID , StringUtils.EMPTY,  passengerName,
+                    0, StringUtils.EMPTY, dropOffNumberText);
         }
+
+
     }
 }

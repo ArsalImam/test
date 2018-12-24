@@ -10,5 +10,6 @@ class CallDriverAcknowledgeData(
         @SerializedName("batch_id")
         var batchID: String? = StringUtils.EMPTY,
         @SerializedName("driver_id")
-        var driverID: String? = StringUtils.EMPTY
+        var driverID: String? = StringUtils.EMPTY,
+        var invoice: MultiDeliveryInvoiceData? = null
 )

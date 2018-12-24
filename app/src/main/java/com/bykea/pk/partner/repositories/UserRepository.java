@@ -3,7 +3,6 @@ package com.bykea.pk.partner.repositories;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
@@ -56,6 +55,7 @@ import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -299,8 +299,6 @@ public class UserRepository {
                         ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
                 jsonObject.put("eta", AppPreferences.getEta());
                 jsonObject.put("distance", AppPreferences.getEstimatedDistance());
-                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
-                jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
                 jsonObject.put("inCall", true);
                 ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
                 if (trackingData.size() == 0) {
@@ -309,8 +307,18 @@ public class UserRepository {
                     data.setLng(lon + "");
                     trackingData.add(data);
                 }
+
+                MultiDeliveryCallDriverData callDriverData =
+                        AppPreferences.getMultiDeliveryCallDriverData();
                 jsonObject.put("track", new JSONArray(new Gson().toJson(trackingData)));
-                AppPreferences.clearTrackingData();
+                if (AppPreferences.isMultiDelivery()) {
+                    jsonObject.put("batch_id", callDriverData.getBatchID());
+                } else {
+                    jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+                    jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+                    AppPreferences.clearTrackingData();
+                }
+
             } else {
                 //to free driver after trip Finished
                 if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus())) {
@@ -765,7 +773,30 @@ public class UserRepository {
             e.printStackTrace();
         }
         mWebIORequestHandler.requestMultiDriverStartedRide(jsonObject, mDataCallback);
+    }
 
+    /**
+     * Emit Driver Finished data.
+     *
+     * @param handler The Callback that will be invoked when driver finish event response received.
+     *
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverFinishRide(String tripID,
+                                                     IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            jsonObject.put("trip_id", tripID);
+            jsonObject.put("route", new Gson().toJson(AppPreferences.getTrackingData()));
+            AppPreferences.clearTrackingData();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultiDriverFinishRide(jsonObject, mDataCallback);
     }
 
     //endregion

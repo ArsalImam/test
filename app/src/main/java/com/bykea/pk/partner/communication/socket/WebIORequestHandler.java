@@ -7,6 +7,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
@@ -214,10 +215,10 @@ public class WebIORequestHandler {
      * {@link ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED} and attach the
      * generic listener to listen the event.
      *
-     * @param driverArrivedData The json object that will be emit on the driver arrived event.
+     * @param driverStartData The json object that will be emit on the driver arrived event.
      * @param responseCallBack  The callback that will be invoked when event response received.
      */
-    public void requestMultiDriverStartedRide(JSONObject driverArrivedData,
+    public void requestMultiDriverStartedRide(JSONObject driverStartData,
                                                    IResponseCallback responseCallBack) {
         emitWithJObject(
                 ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_STARTED,
@@ -226,7 +227,28 @@ public class WebIORequestHandler {
                         MultiDeliveryDriverStartedResponse.class,
                         responseCallBack
                 ),
-                driverArrivedData
+                driverStartData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverFinishData The json object that will be emit on the driver finished event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultiDriverFinishRide(JSONObject driverFinishData,
+                                             IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FINISHED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FINISHED,
+                        MultiDeliveryCompleteRideResponse.class,
+                        responseCallBack
+                ),
+                driverFinishData
         );
     }
 

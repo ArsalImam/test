@@ -12,11 +12,21 @@ import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
-import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
-import com.bykea.pk.partner.models.data.MultiDeliveryPickup;
-import com.bykea.pk.partner.ui.helpers.adapters.DirectionAdapter;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCompleteRideAdapter;
+import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.HTTPStatus;
+import com.bykea.pk.partner.utils.Keys;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +38,15 @@ import butterknife.Unbinder;
  * Multi Delivery Ride Complete Fragment
  */
 public class MultiDeliveryRideCompleteFragment extends Fragment {
+
     @BindView(R.id.ride_recycler_view)
     RecyclerView mRecyclerView;
 
     private Unbinder unbinder;
     private LinearLayoutManager mLayoutManager;
+    private MultiDeliveryCallDriverData callDriverData;
+    private UserRepository repository;
+    private List<DirectionDropOffData> list = new ArrayList<>();
 
     @Nullable
     @Override
@@ -53,20 +67,70 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        repository = new UserRepository();
 
-        //Todo 1: Mock Data for testing need to be change when backend team provide an API
+        callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
 
-        List<DirectionDropOffData> list = new ArrayList<>();
-        for (int i = 1; i < 6; i++) {
+
+        populateCompleteRideData(list);
+
+        MultiDeliveryCompleteRideAdapter adapter = new MultiDeliveryCompleteRideAdapter(
+                list,
+                new MultiDeliveryCompleteRideAdapter.MultiDeliveryCompleteRideListener() {
+                    @Override
+                    public void onMultiDeliveryCompleteRide(int position) {
+                        requestRideFinish(position);
+                    }
+                });
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * Show confirm dialog for ride finish.
+     *
+     * @param position The position of the view that has been clicked.
+     */
+    private void requestRideFinish(int position) {
+        Dialogs.INSTANCE.showLoader(getActivity());
+        final DirectionDropOffData data = list.get(position);
+        Dialogs.INSTANCE.showRideStatusDialog(getActivity(), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                repository.requestMultiDeliveryDriverFinishRide(
+                        data.getTripID(), handler);
+
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }, " مکمل؟");
+    }
+
+    /**
+     * Populate the colection of complete ride data.
+     *
+     * By ignoring the constants. Time Complexity or Rate of growth of a function is: O(n)
+     *
+     * @param list The collection of multi delivery complete ride data.
+     */
+    private void populateCompleteRideData(List<DirectionDropOffData> list) {
+        List<MultipleDeliveryBookingResponse> bookingResponses = callDriverData.getBookings();
+        int n = bookingResponses.size();
+        for (int i = 0; i < n; i++) {
+            MultipleDeliveryBookingResponse multipleDeliveryBookingResponse =
+                    bookingResponses.get(i);
             DirectionDropOffData dropOff = new DirectionDropOffData.Builder()
                     .setmArea("University Road")
-                    .setDriverName("Shafiq Khalid")
-                    .setDropOffNumberText(String.valueOf(i))
+                    .setPassengerName(multipleDeliveryBookingResponse
+                            .getPassenger()
+                            .getName())
+                    .setTripID(multipleDeliveryBookingResponse.getTrip().getId())
+                    .setDropOffNumberText(String.valueOf(i + 1))
                     .build();
             list.add(dropOff);
         }
-        MultiDeliveryCompleteRideAdapter adapter = new MultiDeliveryCompleteRideAdapter(list);
-        mRecyclerView.setAdapter(adapter);
     }
 
     public static MultiDeliveryRideCompleteFragment newInstance() {
@@ -77,5 +141,33 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    private UserDataHandler handler = new UserDataHandler(){
+
+        @Override
+        public void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response) {
+            if (response.getCode() == HttpURLConnection.HTTP_OK) {
+                ActivityStackManager.getInstance()
+                        .startFeedbackActivity(getActivity());
+                getActivity().finish();
+            }
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            Dialogs.INSTANCE.dismissDialog();
+            if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+            } else {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+            }
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        list = null;
     }
 }

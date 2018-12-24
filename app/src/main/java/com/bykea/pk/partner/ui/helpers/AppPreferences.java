@@ -252,6 +252,7 @@ public class AppPreferences {
             TrackingData latLng = new TrackingData();
             latLng.setLat(location.latitude + "");
             latLng.setLng(location.longitude + "");
+            latLng.setDate(Utils.getIsoDate());
             ArrayList<TrackingData> prevLatLngList = getTrackingData();
 //            int size = prevLatLngList.size();
 //            if (size > 0 && prevLatLngList.get(size - 1))

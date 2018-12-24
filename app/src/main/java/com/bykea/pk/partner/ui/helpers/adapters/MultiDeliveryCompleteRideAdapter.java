@@ -16,7 +16,20 @@ import java.util.List;
 public class MultiDeliveryCompleteRideAdapter extends
         RecyclerView.Adapter<MultiDeliveryCompleteRideAdapter.ViewHolder> {
 
-    List<DirectionDropOffData> list;
+    private List<DirectionDropOffData> list;
+    private MultiDeliveryCompleteRideListener listener;
+
+    /**
+     * Interface definition for a callback to be invoked when multi delivery ride has been completed
+     */
+    public interface MultiDeliveryCompleteRideListener {
+        /**
+         * Called when complete ride item view has been clicked.
+         *
+         * @param position The postion of the view that has been clicked.
+         */
+        void onMultiDeliveryCompleteRide(int position);
+    }
 
     /***
      * Constructor.
@@ -27,6 +40,20 @@ public class MultiDeliveryCompleteRideAdapter extends
      */
     public MultiDeliveryCompleteRideAdapter(List<DirectionDropOffData> list) {
         this.list = list;
+    }
+
+    /***
+     * Constructor.
+     *
+     * Construct MultiDeliveryCompleteRideAdapter
+     *
+     * @param list a collection of DirectionDropOffData.
+     * @param listener Callback to be invoked when complete multi delivery ride has been clicked.
+     */
+    public MultiDeliveryCompleteRideAdapter(List<DirectionDropOffData> list,
+                                            MultiDeliveryCompleteRideListener listener) {
+        this.list = list;
+        this.listener = listener;
     }
 
     @NonNull
@@ -59,7 +86,7 @@ public class MultiDeliveryCompleteRideAdapter extends
     /***
      * View Holder class Pattern for caches fields
      */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView areaTv;
         TextView driverNameTv;
@@ -77,6 +104,14 @@ public class MultiDeliveryCompleteRideAdapter extends
             driverNameTv = itemView.findViewById(R.id.driverNameTv);
             numberTv = itemView.findViewById(R.id.numberTv);
             completeBtn = itemView.findViewById(R.id.completeBtn);
+
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onMultiDeliveryCompleteRide(getAdapterPosition());
         }
     }
 }
