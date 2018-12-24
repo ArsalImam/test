@@ -18,6 +18,7 @@ import android.support.v4.app.NotificationCompat;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
@@ -91,7 +92,11 @@ public class LocationService extends Service {
         String msg = "Your Status: ACTIVE";
         if (AppPreferences.isOnTrip()) {
             NormalCallData callData = AppPreferences.getCallData();
-            msg = "TRIP# " + callData.getTripNo() + " is in " + StringUtils.capitalize(callData.getStatus()) + " state";
+            MultiDeliveryCallDriverData multiDeliveryCallDriverData =
+                    AppPreferences.getMultiDeliveryCallDriverData();
+            if (callData != null)
+                msg = "TRIP# " + callData.getTripNo() + " is in " +
+                        StringUtils.capitalize(callData.getStatus()) + " state";
         } else if (!AppPreferences.getAvailableStatus()) {
             msg = "Your Status: INACTIVE";
         }

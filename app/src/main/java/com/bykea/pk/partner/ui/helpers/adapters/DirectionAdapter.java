@@ -11,24 +11,37 @@ import android.widget.TextView;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
-import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
-import com.bykea.pk.partner.utils.Constants;
 
 public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.ViewHolder> {
 
     private MultiDeliveryDirectionDetails data;
+    private DirectionClickListener directionClickListener;
 
     private int TYPE_HEADER = 0;
     private int TYPE_ITEM = 1;
+
+    /**
+     * Interface definition for a callback to be invoked when direction button has been clicked.
+     */
+    public interface DirectionClickListener {
+        /**
+         * Called when direction button has been clicked.
+         *
+         * @param position The position of the view that has been clicked.
+         */
+        void onDirectionClick(int position);
+    }
 
     /***
      * Constructor.
      * Generate or construct DirectionAdapter.
      *
      * @param data MultiDeliveryDirectionDetails response to map on the UI.
+     * @param listener The direction click listener {@link DirectionClickListener}
      */
-    public DirectionAdapter(MultiDeliveryDirectionDetails data) {
+    public DirectionAdapter(MultiDeliveryDirectionDetails data, DirectionClickListener listener) {
         this.data = data;
+        directionClickListener = listener;
     }
 
     @NonNull
@@ -62,7 +75,7 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.View
                 holder.areaTv.setText(dropOff.getmArea());
                 holder.streetAddressTv.setText(dropOff.getStreetAddress());
                 holder.tripNumberTv.setText(dropOff.getTripNumber());
-                holder.driverNameTv.setText(dropOff.getDriverName());
+                holder.driverNameTv.setText(dropOff.getPassengerName());
                 holder.codValueTv.setText(holder.codValueTv.getContext().
                         getString(R.string.code_value,
                                 dropOff.getCodValue()));
@@ -73,6 +86,7 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.View
                 holder.areaTv.setText(data.getPickupData().getArea());
                 holder.streetAddressTv.setText(data.getPickupData().getStreetAddress());
                 holder.feederTv.setText(data.getPickupData().getFeederName());
+                holder.directionBtn.setVisibility(View.INVISIBLE);
             }
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
@@ -97,7 +111,7 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.View
     /***
      * View Holder class Pattern for caches fields
      */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView areaTv;
         TextView streetAddressTv;
@@ -125,6 +139,12 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.View
             tripNumberTv = itemView.findViewById(R.id.tripNoTv);
             driverNameTv = itemView.findViewById(R.id.driverNameTv);
             codValueTv = itemView.findViewById(R.id.codTv);
+            directionBtn.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            directionClickListener.onDirectionClick(getAdapterPosition());
         }
     }
 }

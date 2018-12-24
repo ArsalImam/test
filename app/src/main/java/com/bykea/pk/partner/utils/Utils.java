@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.utils;
 
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -19,12 +18,9 @@ import android.content.pm.Signature;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -39,10 +35,11 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -57,6 +54,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -81,6 +79,8 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -89,6 +89,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -128,7 +129,6 @@ import java.security.cert.CertificateFactory;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -140,10 +140,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-
-import retrofit.Converter;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 import retrofit.Converter;
 import retrofit.Response;
@@ -182,10 +178,16 @@ public class Utils {
         return linearLayoutManager;
     }
 
-    public static void appToast(Context context, String message) {
+    public static void appToast(final Context context, final String message) {
         try {
             if (StringUtils.isNotBlank(message)) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -407,6 +409,62 @@ public class Utils {
         }
     }
 
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param mCallData MultiDeliveryCallDriverData object to fetch the lat lng.
+     */
+    public static void navigateToGoogleMap(Context context,
+                                           MultiDeliveryCallDriverData mCallData) {
+        try {
+                String startAddr = getCurrentLocation();
+                String endAddr = mCallData.getPickup().getLat() + "," +
+                        mCallData.getPickup().getLng();
+                String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                        Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                        Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(intent);
+                }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param latLng the drop off lat lng.
+     */
+    public static void navigateDropDownToGoogleMap(Context context,
+                                           LatLng latLng) {
+        try {
+            String startAddr = getCurrentLocation();
+            String endAddr = latLng.latitude + "," +
+                    latLng.longitude;
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String formatETA(String value) {
         if (StringUtils.isBlank(value) || value.equalsIgnoreCase("0") || value.equalsIgnoreCase("0.0")
                 || value.equalsIgnoreCase("0.00"))
@@ -510,11 +568,11 @@ public class Utils {
      * Convert the drawable id into BitmapDescriptor.
      *
      * @param context holds the reference of an activity.
-     * @param isPickUp is a boolean indicating that pickup / dropoff
+     *
      * @return The BitmapDescriptor.
      */
-    public static BitmapDescriptor getBitmapDiscriptor(Context context, boolean isPickUp) {
-        int drawableId = isPickUp ? R.drawable.ic_pickupmarker : R.drawable.ic_dropoff_icon;
+    public static BitmapDescriptor getBitmapDiscriptor(Context context) {
+        int drawableId = R.drawable.ic_pickupmarker;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             VectorDrawable vectorDrawable = (VectorDrawable) context.getDrawable(drawableId);
 
@@ -530,74 +588,59 @@ public class Utils {
             return BitmapDescriptorFactory.fromBitmap(bm);
 
         } else {
-            return BitmapDescriptorFactory.fromResource(drawableId);
+            Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+
+            Bitmap bmp = Bitmap.createBitmap(
+                    drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+            Canvas canvas = new Canvas(bmp);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return BitmapDescriptorFactory.fromBitmap(bmp);
         }
+    }
+
+    /**
+     * Create drop off marker.
+     *
+     * @param context Holding the reference of an activity.
+     * @param number The number of drop off.
+     *
+     * @return The bitmap for dropoff marker.
+     */
+    public static Bitmap createDropOffMarker(Context context, String number) {
+
+        View marker = ((LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.drop_off_marker_layout, null);
+
+
+        FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
+        txt_name.setText(number);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(
+                40,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(
+                marker.getMeasuredWidth(),
+                marker.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
     }
 
     public static BitmapDescriptor getDropOffBitmapDiscriptor(Context context, String number) {
-        Bitmap bmp = drawTextToBitmap(context, R.drawable.ic_dropoff_icon, number);
+        Bitmap bmp = createDropOffMarker(context, number);
         return BitmapDescriptorFactory.fromBitmap(bmp);
-    }
-
-    /***
-     * Create a bitmap from drawable resource & draw a text on the generated bitmap.
-     *
-     * @param mContext holding a reference of an activity.
-     * @param resourceId a drawable resource ID.
-     * @param mText a text to be drawn on the bitmap.
-     *
-     * @return The final text drawn bitmap.
-     */
-    public synchronized static Bitmap drawTextToBitmap(Context mContext, int resourceId, String mText) {
-        try {
-            Resources resources = mContext.getResources();
-            float scale = resources.getDisplayMetrics().density;
-            Drawable drawable = resources.getDrawable(resourceId);
-
-            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas1 = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas1.getWidth(), canvas1.getHeight());
-            drawable.draw(canvas1);
-
-            android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
-            // set default bitmap config if none
-            if (bitmapConfig == null) {
-                bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
-            }
-            // resource bitmaps are imutable,
-            // so we need to convert it to mutable one
-            bitmap = bitmap.copy(bitmapConfig, true);
-
-            Canvas canvas = new Canvas(bitmap);
-            // new antialised Paint
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            // text color - #3D3D3D
-            paint.setColor(Color.WHITE);
-            // text size in pixels
-            paint.setTextSize((int) (18 * scale));
-            Typeface plain = Typeface.createFromAsset(mContext.getAssets(),
-                    "fonts/open_sans_regular.ttf");
-            Typeface bold = Typeface.create(plain, Typeface.BOLD);
-            paint.setTypeface(bold);
-            // text shadow
-            //paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
-
-            // draw text to the Canvas center
-            Rect bounds = new Rect();
-            paint.getTextBounds(mText, 0, mText.length(), bounds);
-            int x = (bitmap.getWidth() - bounds.width()) / 5;
-            int y = (bitmap.getHeight() + bounds.height()) / 4;
-
-            canvas.drawText(mText, x * scale, y * scale, paint);
-
-            return bitmap;
-        } catch (Exception e) {
-            // TODO: handle exception
-
-            return null;
-        }
-
     }
 
     /***
@@ -2601,15 +2644,10 @@ public class Utils {
      * @return The distance in meter or kilometer
      */
     public static String getDistance(float distanceInMeter) {
-        if (distanceInMeter >= 1000) {
             return String.format(DriverApp.
                             getContext().
                             getString(R.string.decimal_format_one_digit),
                     distanceInMeter / 1000);
-        }
-
-        return String.format(DriverApp.getContext().getString(R.string.decimal_format_one_digit),
-                distanceInMeter);
     }
 
     /**
@@ -2624,14 +2662,7 @@ public class Utils {
      */
     public static int getDuration(int durationInSeconds) {
         int SECONDS_IN_MINUTES = 60;
-        int SECONDS_IN_HOUR = 3600;
-        if (durationInSeconds >= SECONDS_IN_MINUTES && durationInSeconds < SECONDS_IN_HOUR) {
-            return durationInSeconds / SECONDS_IN_MINUTES;
-        } else if (durationInSeconds >= SECONDS_IN_HOUR) {
-            return durationInSeconds / SECONDS_IN_HOUR;
-        }
-
-        return durationInSeconds;
+        return durationInSeconds / SECONDS_IN_MINUTES;
     }
 
     /**
@@ -2647,6 +2678,27 @@ public class Utils {
 
     public static int getTimeInPercentage(int timeInMilliSeconds, float percentage) {
         return (int) ((percentage / 100f) * timeInMilliSeconds);
+    }
+
+    /**
+     * Fetch drop down lat lng list.
+     *
+     * @param deliveryCallDriverData The {@link MultiDeliveryCallDriverData} object.
+     *
+     * @return The collection of drop down lat lng.
+     */
+    public static List<LatLng> getDropDownLatLngList(MultiDeliveryCallDriverData
+                                                              deliveryCallDriverData) {
+        List<LatLng> latLngList = new ArrayList<>();
+        for (MultipleDeliveryBookingResponse response : deliveryCallDriverData.getBookings()) {
+            latLngList.add(new LatLng(
+                    response.getDropOff().getLat(),
+                    response.getDropOff().getLng()
+            ));
+        }
+
+        return latLngList;
+
     }
 
     //endregion

@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.repositories;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
@@ -51,7 +52,9 @@ import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -651,14 +654,13 @@ public class UserRepository {
      *
      * @throws JSONException if something went wrong with json object it will throw an exception.
      */
-    private void setDriverAcknowledgedData(JSONObject jsonObject) throws JSONException {
+    private void setMultiDeliveryData(JSONObject jsonObject) throws JSONException {
         jsonObject.put("batch_id", AppPreferences
                 .getMultiDeliveryCallDriverData()
                 .getBatchID());
         jsonObject.put("_id", AppPreferences.getDriverId());
-        jsonObject.put("token", AppPreferences.getAccessToken());
+        jsonObject.put("token_id", AppPreferences.getAccessToken());
         jsonObject.put("trip_type", Constants.TripTypes.BATCH_TYPE);
-        //jsonObject.put("lat", "SDFSDF");
         jsonObject.put("lat", AppPreferences.getLatitude());
         jsonObject.put("lng", AppPreferences.getLongitude());
     }
@@ -669,17 +671,72 @@ public class UserRepository {
      * @param handler The Callback that will be invoked when response received.
      *
      * @see IUserDataHandler
-     * @see UserRepository#setDriverAcknowledgedData(JSONObject)
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
     public void requestDriverAcknowledged(IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         try {
-            setDriverAcknowledgedData(jsonObject);
+            setMultiDeliveryData(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
         mWebIORequestHandler.sendCallDriverAcknowledge(jsonObject, mDataCallback);
+
+    }
+
+    /**
+     * Emit request MuliDelivery Accept Call event
+     *
+     * @param context Holding the reference of an activity.
+     * @param acceptedSecond The timer interval at which driver accept the call.
+     * @param handler The Callback that will be invoked when response received.
+     */
+    public void requestMultiDeliveryAcceptCall(Context context, String acceptedSecond,
+                                               IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        mContext = context;
+        try {
+
+            setMultiDeliveryData(jsonObject);
+            jsonObject.put("accept_timer_seconds", acceptedSecond);
+            jsonObject.put("os", Build.VERSION.SDK_INT);
+            jsonObject.put("os_name", Constants.OS_NAME);
+            jsonObject.put("imei", Utils.getDeviceId(context));
+            try {
+                int battery = Integer.parseInt(Utils.getBatteryPercentage(context)
+                        .split(" ")[0]);
+                int signalStrength = Integer.parseInt(Utils.getSignalStrength(context));
+                jsonObject.put("battery", battery);
+                jsonObject.put("connection_strength", signalStrength);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        mWebIORequestHandler.acceptMultiDeliveryRequest(jsonObject, mDataCallback);
+
+    }
+
+    /**
+     * Emit Driver Arrived data.
+     *
+     * @param handler The Callback that will be invoked when driver arrived response received.
+     *
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverArrived(IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultideliveryDriverArrived(jsonObject, mDataCallback);
 
     }
 
@@ -1272,6 +1329,16 @@ public class UserRepository {
                     case "MultiDeliveryCallDriverAcknowledgeResponse":
                         mUserCallback.onDriverAcknowledgeResponse(
                                 (MultiDeliveryCallDriverAcknowledgeResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryDriverArrivedResponse":
+                        mUserCallback.onMultiDeliveryDriverArrived(
+                                (MultiDeliveryDriverArrivedResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryAcceptCallResponse":
+                        mUserCallback.onMultiDeliveryAcceptCall(
+                                (MultiDeliveryAcceptCallResponse) object
                         );
                         break;
                     case "CommonResponse":

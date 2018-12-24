@@ -479,6 +479,7 @@ public class HomeFragmentTesting extends Fragment {
         AppPreferences.saveLoginStatus(false);
         AppPreferences.setIncomingCall(false);
         AppPreferences.setCallData(null);
+        AppPreferences.setMultiDeliveryCallDriverData(null);
         AppPreferences.setTripStatus("");
         AppPreferences.saveLoginStatus(false);
         AppPreferences.setPilotData(null);
@@ -788,11 +789,14 @@ public class HomeFragmentTesting extends Fragment {
                                 AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                     WebIORequestHandler.getInstance().registerChatListener();
+
                                     ActivityStackManager.getInstance()
-                                            .startJobActivity(mCurrentActivity);
-                                    //ActivityStackManager.
-                                      //      getInstance().
-                                        //    startMultiDeliveryBookingActivity(mCurrentActivity);
+                                                .startJobActivity(mCurrentActivity);
+                                        /*ActivityStackManager.
+                                                getInstance().
+                                                startMultiDeliveryBookingActivity(mCurrentActivity);*/
+
+
                                 } else {
                                     ActivityStackManager.getInstance()
                                             .startFeedbackFromResume(mCurrentActivity);

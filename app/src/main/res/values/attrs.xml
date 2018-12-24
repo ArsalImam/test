@@ -9,6 +9,17 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="CustomMarkerWithText">
+    <attr name="imageText" format="string"/>
+    <attr name="textSize" format="dimension"/>
+    <attr name="textStyle" format="enum">
+        <enum name="normal" value="0" />
+        <enum name="bold" value="1" />
+        <enum name="italic" value="2" />
+        <enum name="boldItalic" value="3" />
+    </attr>
+    </declare-styleable>
+
 
     <declare-styleable name="DividerView">
         <attr name="dashGap" format="dimension" />

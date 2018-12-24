@@ -125,7 +125,9 @@ public class CallingActivity extends BaseActivity {
         AppPreferences.setStatsApiCallRequired(true);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        repository.requestLocationUpdate(mCurrentActivity, handler,
+                AppPreferences.getLatitude(),
+                AppPreferences.getLongitude());
 
         donutProgress.setProgress(20);
         startAnimation();

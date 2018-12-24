@@ -63,7 +63,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!--Driver marker bitmap width & height-->
-    <dimen name="driver_marker_width">@dimen/_45sdp</dimen>
-    <dimen name="driver_marker_height">@dimen/_45sdp</dimen>
+    <dimen name="driver_marker_width">@dimen/_40sdp</dimen>
+    <dimen name="driver_marker_height">@dimen/_40sdp</dimen>
 
 </resources>

@@ -9,14 +9,24 @@ import org.apache.commons.lang3.StringUtils;
 public class DirectionDropOffData extends MultiDeliveryDropOff {
 
     String tripNumber;
-    String driverName;
+    String passengerName;
     int codValue;
 
-    public DirectionDropOffData(String mArea, String tripNumber, String driverName, int codValue,
+    /**
+     * Constructor
+     *
+     * @param mArea The area of drop off.
+     * @param tripNumber The trip number.
+     * @param passengerName The passenger name.
+     * @param codValue The value of cash on delivery.
+     * @param streetAddress The street address of drop off.
+     * @param dropOffNumberText The number place in the drop off marker
+     */
+    public DirectionDropOffData(String mArea, String tripNumber, String passengerName, int codValue,
                                 String streetAddress, String dropOffNumberText) {
         super(mArea, streetAddress, dropOffNumberText);
         this.tripNumber = tripNumber;
-        this.driverName = driverName;
+        this.passengerName = passengerName;
         this.codValue = codValue;
     }
 
@@ -36,12 +46,12 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
         this.tripNumber = tripNumber;
     }
 
-    public String getDriverName() {
-        return driverName;
+    public String getPassengerName() {
+        return passengerName;
     }
 
-    public void setDriverName(String driverName) {
-        this.driverName = driverName;
+    public void setPassengerName(String passengerName) {
+        this.passengerName = passengerName;
     }
 
     public int getCodValue() {

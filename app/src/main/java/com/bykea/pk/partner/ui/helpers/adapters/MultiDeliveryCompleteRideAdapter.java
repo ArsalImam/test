@@ -47,7 +47,7 @@ public class MultiDeliveryCompleteRideAdapter extends
         if (data == null) return;
 
         holder.areaTv.setText(data.getmArea());
-        holder.driverNameTv.setText(data.getDriverName());
+        holder.driverNameTv.setText(data.getPassengerName());
         holder.numberTv.setText(data.getDropOffNumberText());
     }
 
