@@ -13,12 +13,17 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.repositories.IUserDataHandler;
+import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
@@ -54,7 +59,9 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +97,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private static final int SECONDS_IN_MINUTES = 60;
     private static final double METERS_IN_KILOMETER = 1000.0;
     private MultiDeliveryCallDriverData callDriverData;
+    private UserRepository repository;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
@@ -132,11 +140,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         Notifications.removeAllNotifications(mCurrentActivity);
     }
 
+
+
     /***
      * Initialize data i.e activity, register ButterKnife, initialize UserRepository,  etc
      */
     private void initialize() {
         mCurrentActivity = this;
+        repository = new UserRepository();
         ButterKnife.bind(this);
         dataRepository = new UserRepository();
         mapView = (MapView) findViewById(R.id.mapFragment);
@@ -271,8 +282,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Invoked this method when direction API call required.
      *
      * @param currentApiCallLatLng The Pickup lat lang from
-     *          {@link MultiDeliveryCallDriverData#getPickup()}
-     *
+     *                             {@link MultiDeliveryCallDriverData#getPickup()}
      * @return true if last api lat lng is not equals and if the current lat lng
      * and last api call lat lng difference is greater than 15 other wise return false
      */
@@ -534,8 +544,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * This method will be invoked when location API has been called.
      * Update the driver marker according to current lat lng
      *
-     * @param snappedLatitude The current driver latitude.
-     * @param snappedLongitude  The current driver longitude.
+     * @param snappedLatitude  The current driver latitude.
+     * @param snappedLongitude The current driver longitude.
      */
     private void updateDriverMarker(String snappedLatitude, String snappedLongitude) {
         if (null != mGoogleMap) {
@@ -596,7 +606,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                         callDriverData.getPickup().getLng()
                 );
                 pickupMarker = mGoogleMap.addMarker(new MarkerOptions().
-                        icon(Utils.getBitmapDiscriptor(mCurrentActivity, true))
+                        icon(Utils.getBitmapDiscriptor(mCurrentActivity))
                         .position(startLatLng));
             }
         } catch (NumberFormatException e) {
@@ -705,7 +715,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Invoked this method when direction google button has been clicked.
      */
     private void directionClick() {
-        if (callDriverData != null) {
+        if (callDriverData != null && callDriverData.getBatchStatus()
+                .equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+            Utils.navigateToGoogleMap(mCurrentActivity, callDriverData);
+        } else {
             ActivityStackManager.getInstance().startMapDetailsActivity(
                     mCurrentActivity,
                     Constants.MapDetailsFragmentTypes.TYPE_TAFSEEL
@@ -806,20 +819,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     /***
      * Set the trip arrived state.
-     *
-     * Todo 3: set the arrived data when socket implemented
      */
     private void setArrivedState() {
-        timeTv.setVisibility(View.GONE);
-        timeUnitLabelTv.setVisibility(View.GONE);
-        timeView.setVisibility(View.GONE);
-
-        pickView.setVisibility(View.GONE);
-        distanceTv.setVisibility(View.GONE);
-        pickUpDistanceUnit.setVisibility(View.GONE);
-
-        jobBtn.setText(getString(R.string.button_text_start));
-        tafseelLayout.setVisibility(View.VISIBLE);
+        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+        repository.requestMultiDeliveryDriverArrived(handler);
     }
 
     /***
@@ -906,7 +909,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     String.valueOf((route.get(0).getDurationValue())),
                     String.valueOf(
                             (route.get(0).getDistanceValue())));
-            updatePolyLine(route);
+            if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))
+                updatePolyLine(route);
         } else {
             lastApiCallLatLng = null;
         }
@@ -958,6 +962,48 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         setInitialData();
         super.onResume();
     }
+
+    /**
+     * Call back that will be invoked when response received for the event
+     * i.e arrived, started & complete.
+     */
+    private IUserDataHandler handler = new UserDataHandler() {
+
+        @Override
+        public void onMultiDeliveryDriverArrived(MultiDeliveryDriverArrivedResponse response) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mCurrentActivity != null) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        if (mapPolylines != null)
+                            mapPolylines.remove();
+                        timeTv.setVisibility(View.GONE);
+                        timeUnitLabelTv.setVisibility(View.GONE);
+                        timeView.setVisibility(View.GONE);
+                        pickupMarker.remove();
+                        pickView.setVisibility(View.GONE);
+                        distanceTv.setVisibility(View.GONE);
+                        pickUpDistanceUnit.setVisibility(View.GONE);
+                        callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
+                        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+                        jobBtn.setText(getString(R.string.button_text_start));
+                        tafseelLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+            EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+            } else {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+            }
+        }
+    };
 
     @Override
     protected void onDestroy() {

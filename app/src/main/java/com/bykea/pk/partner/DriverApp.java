@@ -34,6 +34,8 @@ public class DriverApp extends MultiDexApplication {
     private BasicComponent mBasicComponent;
     private Emitter.Listener mJobCallListener = new WebIORequestHandler.JobCallListener();
     private Emitter.Listener mCallDriverListener = new WebIORequestHandler.CallDriverListener();
+    private Emitter.Listener mTripMissedListener =
+            new WebIORequestHandler.MultiDeliveryTripMissedListener();
 
     @Override
     public void onCreate() {
@@ -100,6 +102,7 @@ public class DriverApp extends MultiDexApplication {
         EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
         WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
         WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER, mCallDriverListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED, mTripMissedListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
         }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
@@ -117,6 +118,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     private int timePercentage;
     private int ACCEPTANCE_TIMEOUT;
     private CountDownTimer timer;
+    private boolean isRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,8 +149,9 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
         setInitialData();
 
-
     }
+
+
 
     @Override
     protected void onResume() {
@@ -286,6 +289,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {
+            isRunning = true;
             progress = (ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
 
             if (progress >= response.getTimer()) {
@@ -306,6 +310,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
         @Override
         public void onFinish() {
+            isRunning = false;
             totalTime = 0;
             donutProgress.setProgress(response.getTimer());
             counterTv.setText(String.valueOf(totalTime));
@@ -421,4 +426,16 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+
+    @Subscribe
+    public void onEvent(final String action) {
+        if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_MISSED_EVENT)) {
+            if (isRunning) {
+                finishActivity();
+                stopSound();
+            }
+        }
+    }
+
+
 }
