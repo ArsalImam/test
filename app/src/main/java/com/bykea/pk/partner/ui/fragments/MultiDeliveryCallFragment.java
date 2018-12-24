@@ -16,10 +16,8 @@ import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
 import com.bykea.pk.partner.models.data.MultiDeliveryPickup;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
-import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCallAdapter;
-import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
@@ -71,13 +69,7 @@ public class MultiDeliveryCallFragment extends Fragment {
                 callDriverData.getPickup().getContactNumer());
 
         final List<MultiDeliveryDropOff> list = new ArrayList<>();
-        for (int i = 0; i < callDriverData.getBookings().size(); i++) {
-            MultipleDeliveryBookingResponse response = callDriverData.getBookings().get(i);
-            MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff("University Road",
-                    response.getDropOff().getPickupAddress(),
-                    String.valueOf(i+1), response.getPassenger().getPhone());
-            list.add(dropOff);
-        }
+        addDropOffData(list);
 
         final MultiDeliveryCallData data = new MultiDeliveryCallData(pickup, list);
 
@@ -110,6 +102,28 @@ public class MultiDeliveryCallFragment extends Fragment {
         mRecyclerView.setAdapter(adapter);
 
 
+    }
+
+    /**
+     * Fetch the collection of drop off data.
+     *
+     * @param list The collection that will return
+     *
+     *  f(n) = 2 + 5n
+     *  g(n) = n (tightest coupled)
+     *  By ignoring the constant. Time Complexity OR Rate of a growth of a function = O(n)
+     *
+     * @return The collection of data.
+     */
+    private void addDropOffData(List<MultiDeliveryDropOff> list) {
+        int length = callDriverData.getBookings().size();
+        for (int i = 0; i < length; i++) {
+            MultipleDeliveryBookingResponse response = callDriverData.getBookings().get(i);
+            MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff("University Road",
+                    response.getDropOff().getPickupAddress(),
+                    String.valueOf(i+1), response.getPassenger().getPhone());
+            list.add(dropOff);
+        }
     }
 
     public static MultiDeliveryCallFragment newInstance() {

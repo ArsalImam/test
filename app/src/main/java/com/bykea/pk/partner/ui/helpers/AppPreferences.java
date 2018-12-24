@@ -1177,6 +1177,28 @@ public class AppPreferences {
                 MultiDeliveryCallDriverData.class);
     }
 
+    /**
+     * Set the multi delivery status.
+     *
+     * @param isMultiDelivery true if multi delivery ride other wise false.
+     */
+    public static void setIsMultiDelivery(boolean isMultiDelivery) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.MULTIDELIVERY_IS_MULTI_DELIVERY, isMultiDelivery)
+                .apply();
+    }
+
+    /**
+     * Fetch the status of ride i.e Multi Delivery ride or not.
+     *
+     * @return The status true or false indicating the ride is of Multi Delivery or not.
+     */
+    public static Boolean isMultiDelivery() {
+        return mSharedPreferences
+                .getBoolean(Keys.MULTIDELIVERY_IS_MULTI_DELIVERY, false);
+    }
+
     //endregion
 
 }

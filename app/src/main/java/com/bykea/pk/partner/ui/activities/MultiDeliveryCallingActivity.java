@@ -232,8 +232,8 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 }
 
                 Dialogs.INSTANCE.dismissDialog();
-                //Todo 1: add this when get running trip event handle regarding multiple delivery
-                //AppPreferences.setIsOnTrip(true);
+                AppPreferences.setIsOnTrip(true);
+                AppPreferences.setIsMultiDelivery(true);
                 ActivityStackManager
                         .getInstance()
                         .startMultiDeliveryBookingActivity(mCurrentActivity);
