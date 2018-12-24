@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <attr format="enum" name="fontName">
+        <enum name="open_sans_regular.ttf" value="0"/>
+        <enum name="open_sans_semi_bold.ttf" value="0"/>
+        <enum name="roboto_italic.ttf" value="1"/>
+        <enum name="roboto_light.ttf" value="2"/>
+        <enum name="roboto_light_italic.ttf" value="3"/>
+        <enum name="roboto_medium.ttf" value="4"/>
+        <enum name="roboto_medium_italic.ttf" value="5"/>
+        <enum name="roboto_regular.ttf" value="6"/>
+        <enum name="roboto_thin.ttf" value="7"/>
+        <enum name="roboto_thin_italic.ttf" value="8"/>
+        <enum name="signika_regular.ttf" value="9"/>
+        <enum name="MuseoSans_1.otf" value="10"/>
+        <enum name="roboto_bold.ttf" value="11"/>
+        <enum name="open_sans_light.ttf" value="12"/>
+        <enum name="jameel_noori_nastaleeq.ttf" value="13"/>
+        <enum name="pak_nastaleeq_urdu.ttf" value="14"/>
+    </attr>
+    <color name="chatWindow">#f6f6f6</color>
+    <color name="chatWindow_bottom">#fafafa</color>
+    <color name="chat_send_color">#e1ffc7</color>
+    <color name="color.error">#f51c1c</color>
+    <color name="colorAccent">#04aa32</color>
+    <color name="colorAccentDark">#068629</color>
+    <color name="colorPrimary">#0EAA4B</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimaryLight">#43d26a</color>
+    <color name="dark_gray">#848a8f</color>
+    <color name="darkest_gray">#606060</color>
+    <color name="date_chat_color">#dbf3fa</color>
+    <color name="gray_border">#c5c5c5</color>
+    <color name="image_color">#858B90</color>
+    <color name="image_fillColor">#FF000000</color>
+    <color name="light_gray">#d3d3d3</color>
+    <color name="seekbar_line">#dfdfdf</color>
+    <color name="seekbar_thumb">#00a723</color>
+    <color name="send_btn_circle_bg">#00a723</color>
+    <color name="textColorPrimary">#302d2d</color>
+    <color name="textColorSecondary">#b4b2b2</color>
+    <color name="transparent">#00000000</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <declare-styleable name="ButtonBarContainerTheme"><attr format="reference" name="metaButtonBarStyle"/><attr format="reference" name="metaButtonBarButtonStyle"/></declare-styleable>
+    <declare-styleable name="DividerView"><attr format="dimension" name="dashGap"/><attr format="color" name="dashColor"/><attr format="dimension" name="dashLength"/><attr format="dimension" name="dashThickness"/><attr format="enum" name="orientation">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr></declare-styleable>
+    <declare-styleable name="FontEditText"><attr name="fontName"/></declare-styleable>
+    <declare-styleable name="FontTextView"><attr name="fontName"/></declare-styleable>
+    <declare-styleable name="HorizontalBarViewGroup"><attr format="integer" name="mv_last_line_width"/><attr format="integer" name="tv_width"/></declare-styleable>
+    <declare-styleable name="MaxHeightScrollView"><attr format="dimension" name="maxHeight"/></declare-styleable>
+    <declare-styleable name="MyRangeBar"><attr format="integer" name="rangeCount"/><attr format="color" name="filledColor"/><attr format="color" name="emptyColor"/><attr format="float" name="barHeightPercent"/><attr format="float" name="slotRadiusPercent"/><attr format="float" name="sliderRadiusPercent"/><attr format="color" name="slider_color"/><attr format="color" name="stroke_color"/><attr format="color" name="filledStrokeColor"/><attr format="float" name="filledStrokeWidth"/><attr format="float" name="stroke_width"/><attr format="boolean" name="ripple"/></declare-styleable>
+    <declare-styleable name="OutlineTextView"><attr format="color" name="outlineColor"/><attr format="dimension" name="outlineWidth"/></declare-styleable>
+    <dimen name="audio_icon_size">@dimen/_24sdp</dimen>
+    <dimen name="button.next.height">@dimen/_36sdp</dimen>
+    <dimen name="elevation.toolbar">8dp</dimen>
+    <dimen name="feedback_height">@dimen/_35sdp</dimen>
+    <dimen name="feedback_padding">@dimen/_4sdp</dimen>
+    <dimen name="feedback_padding_bottom">@dimen/_7sdp</dimen>
+    <dimen name="grid_line">0.5sp</dimen>
+    <dimen name="height.large">@dimen/_30sdp</dimen>
+    <dimen name="height.large.medium">@dimen/_40sdp</dimen>
+    <dimen name="height.medium">@dimen/_24sdp</dimen>
+    <dimen name="height.xlarge">@dimen/_48sdp</dimen>
+    <dimen name="height.xxxlarge">@dimen/_92sdp</dimen>
+    <dimen name="map.padding.bottom">@dimen/_50sdp</dimen>
+    <dimen name="margin.large">@dimen/_32sdp</dimen>
+    <dimen name="margin.medium">@dimen/_24sdp</dimen>
+    <dimen name="margin.normal">@dimen/_16sdp</dimen>
+    <dimen name="margin.small">@dimen/_8sdp</dimen>
+    <dimen name="margin.tiny">@dimen/_4sdp</dimen>
+    <dimen name="margin.xlarge">@dimen/_48sdp</dimen>
+    <dimen name="padding.normal">@dimen/_16sdp</dimen>
+    <dimen name="padding.small">@dimen/_8sdp</dimen>
+    <dimen name="padding.tiny">@dimen/_4sdp</dimen>
+    <dimen name="text_size_feedback">@dimen/_14sdp</dimen>
+    <dimen name="textsize.body1">@dimen/_14sdp</dimen>
+    <dimen name="textsize.body2">@dimen/_14sdp</dimen>
+    <dimen name="textsize.body3">16sp</dimen>
+    <dimen name="textsize.large">@dimen/_20sdp</dimen>
+    <dimen name="textsize.medium">@dimen/_16sdp</dimen>
+    <dimen name="textsize.normal">@dimen/_14sdp</dimen>
+    <dimen name="textsize.small">@dimen/_10sdp</dimen>
+    <dimen name="textsize.small.medium">@dimen/_12sdp</dimen>
+    <dimen name="textsize.tiny">@dimen/_8sdp</dimen>
+    <dimen name="textsize.title">@dimen/_18sdp</dimen>
+    <dimen name="textsize.wallet">@dimen/_14sdp</dimen>
+    <dimen name="textsize.wallet.item">@dimen/_10sdp</dimen>
+    <dimen name="textsize.wallet.item_1">@dimen/_14sdp</dimen>
+    <dimen name="textsize.xlarge">@dimen/_24sdp</dimen>
+    <dimen name="top.logo.height">@dimen/_70sdp</dimen>
+    <dimen name="top.logo.width">@dimen/_70sdp</dimen>
+    <dimen name="width.xlarge">@dimen/_48sdp</dimen>
+    <dimen name="width.xxxlarge">@dimen/_92sdp</dimen>
+    <string name="app_name">ChatModule</string>
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+    <string name="error_try_again">Something went wrong. Please try again later.</string>
+    <string name="google_api_client_key" translatable="false">"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"</string>
+    <string name="internet_error">Problem in internet connectivity. Check your internet connection.</string>
+    <string name="preference_file_key">ChatPreference</string>
+    <style name="AppTheme" parent="AppTheme.Base">
+        <item name="android:windowBackground">@color/windowBackground</item>
+    </style>
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up_dialog</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+    <style name="DialogSlideAnim" parent="@android:style/Theme.Dialog">
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+    </style>
+    <style name="NewTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+    <style name="actionSheetTheme" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="actionSheetTheme1" parent="android:Theme.Holo.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="actionSheetThemeFullScreen" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="actionSheetThemeTimer" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="seekbarStyle" parent="Widget.AppCompat.SeekBar">
+        <item name="android:colorControlActivated" ns1:targetApi="lollipop">@color/seekbar_thumb
+        </item>
+        <item name="android:colorControlNormal" ns1:targetApi="lollipop">@color/seekbar_line
+        </item>
+    </style>
+    <style name="toolbarIconColor" parent="AppTheme">
+        <item name="android:textColorSecondary">@color/colorAccent</item>
+    </style>
+</resources>

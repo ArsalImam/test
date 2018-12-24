@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3" xmlns:ns1="http://schemas.android.com/tools"><dataSet config="main$Generated" generated="true"><source path="E:\android-driver\chat\src\main\res"/><source path="E:\android-driver\chat\build\generated\res\rs\livetesting\debug"/><source path="E:\android-driver\chat\build\generated\res\resValues\livetesting\debug"/></dataSet><dataSet config="main" generated-set="main$Generated"><source path="E:\android-driver\chat\src\main\res"><file name="fade_in" path="E:\android-driver\chat\src\main\res\anim\fade_in.xml" qualifiers="" type="anim"/><file name="fade_out" path="E:\android-driver\chat\src\main\res\anim\fade_out.xml" qualifiers="" type="anim"/><file name="slide_out_down" path="E:\android-driver\chat\src\main\res\anim\slide_out_down.xml" qualifiers="" type="anim"/><file name="slide_up_dialog" path="E:\android-driver\chat\src\main\res\anim\slide_up_dialog.xml" qualifiers="" type="anim"/><file name="zoom_in" path="E:\android-driver\chat\src\main\res\anim\zoom_in.xml" qualifiers="" type="anim"/><file name="audio_layout_round" path="E:\android-driver\chat\src\main\res\drawable\audio_layout_round.xml" qualifiers="" type="drawable"/><file name="chat_bubble_incomming" path="E:\android-driver\chat\src\main\res\drawable\chat_bubble_incomming.xml" qualifiers="" type="drawable"/><file name="chat_bubble_outgoing" path="E:\android-driver\chat\src\main\res\drawable\chat_bubble_outgoing.xml" qualifiers="" type="drawable"/><file name="chat_messageborder" path="E:\android-driver\chat\src\main\res\drawable\chat_messageborder.xml" qualifiers="" type="drawable"/><file name="chat_voice_btn_selector" path="E:\android-driver\chat\src\main\res\drawable\chat_voice_btn_selector.xml" qualifiers="" type="drawable"/><file name="date_chat_bg" path="E:\android-driver\chat\src\main\res\drawable\date_chat_bg.xml" qualifiers="" type="drawable"/><file name="ic_arrow_back_48px" path="E:\android-driver\chat\src\main\res\drawable\ic_arrow_back_48px.xml" qualifiers="" type="drawable"/><file name="ic_arrow_back_white_24dp" path="E:\android-driver\chat\src\main\res\drawable\ic_arrow_back_white_24dp.xml" qualifiers="" type="drawable"/><file name="ic_camera_alt_black_24dp" path="E:\android-driver\chat\src\main\res\drawable\ic_camera_alt_black_24dp.xml" qualifiers="" type="drawable"/><file name="ic_crop_rotate_black_24dp" path="E:\android-driver\chat\src\main\res\drawable\ic_crop_rotate_black_24dp.xml" qualifiers="" type="drawable"/><file name="ic_mic_black_24dp" path="E:\android-driver\chat\src\main\res\drawable\ic_mic_black_24dp.xml" qualifiers="" type="drawable"/><file name="ic_mode_edit_black_24dp" path="E:\android-driver\chat\src\main\res\drawable\ic_mode_edit_black_24dp.xml" qualifiers="" type="drawable"/><file name="ic_pause_black_24dp" path="E:\android-driver\chat\src\main\res\drawable\ic_pause_black_24dp.xml" qualifiers="" type="drawable"/><file name="ic_play_arrow_black_24dp" path="E:\android-driver\chat\src\main\res\drawable\ic_play_arrow_black_24dp.xml" qualifiers="" type="drawable"/><file name="ic_send_black_24dp" path="E:\android-driver\chat\src\main\res\drawable\ic_send_black_24dp.xml" qualifiers="" type="drawable"/><file name="photo_circle" path="E:\android-driver\chat\src\main\res\drawable\photo_circle.xml" qualifiers="" type="drawable"/><file name="send_message_circle" path="E:\android-driver\chat\src\main\res\drawable\send_message_circle.xml" qualifiers="" type="drawable"/><file name="ic_stat_onesignal_default" path="E:\android-driver\chat\src\main\res\drawable-hdpi\ic_stat_onesignal_default.png" qualifiers="hdpi-v4" type="drawable"/><file name="microphone" path="E:\android-driver\chat\src\main\res\drawable-hdpi\microphone.png" qualifiers="hdpi-v4" type="drawable"/><file name="mic_pressed" path="E:\android-driver\chat\src\main\res\drawable-hdpi\mic_pressed.png" qualifiers="hdpi-v4" type="drawable"/><file name="rotate_camera" path="E:\android-driver\chat\src\main\res\drawable-hdpi\rotate_camera.png" qualifiers="hdpi-v4" type="drawable"/><file name="upload" path="E:\android-driver\chat\src\main\res\drawable-hdpi\upload.png" qualifiers="hdpi-v4" type="drawable"/><file name="ic_stat_onesignal_default" path="E:\android-driver\chat\src\main\res\drawable-mdpi\ic_stat_onesignal_default.png" qualifiers="mdpi-v4" type="drawable"/><file name="microphone" path="E:\android-driver\chat\src\main\res\drawable-mdpi\microphone.png" qualifiers="mdpi-v4" type="drawable"/><file name="mic_pressed" path="E:\android-driver\chat\src\main\res\drawable-mdpi\mic_pressed.png" qualifiers="mdpi-v4" type="drawable"/><file name="rotate_camera" path="E:\android-driver\chat\src\main\res\drawable-mdpi\rotate_camera.png" qualifiers="mdpi-v4" type="drawable"/><file name="slide_to_cancel" path="E:\android-driver\chat\src\main\res\drawable-mdpi\slide_to_cancel.png" qualifiers="mdpi-v4" type="drawable"/><file name="upload" path="E:\android-driver\chat\src\main\res\drawable-mdpi\upload.png" qualifiers="mdpi-v4" type="drawable"/><file name="ic_stat_onesignal_default" path="E:\android-driver\chat\src\main\res\drawable-xhdpi\ic_stat_onesignal_default.png" qualifiers="xhdpi-v4" type="drawable"/><file name="microphone" path="E:\android-driver\chat\src\main\res\drawable-xhdpi\microphone.png" qualifiers="xhdpi-v4" type="drawable"/><file name="mic_pressed" path="E:\android-driver\chat\src\main\res\drawable-xhdpi\mic_pressed.png" qualifiers="xhdpi-v4" type="drawable"/><file name="rotate_camera" path="E:\android-driver\chat\src\main\res\drawable-xhdpi\rotate_camera.png" qualifiers="xhdpi-v4" type="drawable"/><file name="upload" path="E:\android-driver\chat\src\main\res\drawable-xhdpi\upload.png" qualifiers="xhdpi-v4" type="drawable"/><file name="ic_stat_onesignal_default" path="E:\android-driver\chat\src\main\res\drawable-xxhdpi\ic_stat_onesignal_default.png" qualifiers="xxhdpi-v4" type="drawable"/><file name="microphone" path="E:\android-driver\chat\src\main\res\drawable-xxhdpi\microphone.png" qualifiers="xxhdpi-v4" type="drawable"/><file name="mic_pressed" path="E:\android-driver\chat\src\main\res\drawable-xxhdpi\mic_pressed.png" qualifiers="xxhdpi-v4" type="drawable"/><file name="rotate_camera" path="E:\android-driver\chat\src\main\res\drawable-xxhdpi\rotate_camera.png" qualifiers="xxhdpi-v4" type="drawable"/><file name="upload" path="E:\android-driver\chat\src\main\res\drawable-xxhdpi\upload.png" qualifiers="xxhdpi-v4" type="drawable"/><file name="ic_stat_onesignal_default" path="E:\android-driver\chat\src\main\res\drawable-xxxhdpi\ic_stat_onesignal_default.png" qualifiers="xxxhdpi-v4" type="drawable"/><file name="microphone" path="E:\android-driver\chat\src\main\res\drawable-xxxhdpi\microphone.png" qualifiers="xxxhdpi-v4" type="drawable"/><file name="mic_pressed" path="E:\android-driver\chat\src\main\res\drawable-xxxhdpi\mic_pressed.png" qualifiers="xxxhdpi-v4" type="drawable"/><file name="rotate_camera" path="E:\android-driver\chat\src\main\res\drawable-xxxhdpi\rotate_camera.png" qualifiers="xxxhdpi-v4" type="drawable"/><file name="upload" path="E:\android-driver\chat\src\main\res\drawable-xxxhdpi\upload.png" qualifiers="xxxhdpi-v4" type="drawable"/><file name="activity_chats" path="E:\android-driver\chat\src\main\res\layout\activity_chats.xml" qualifiers="" type="layout"/><file name="activity_custom_camera" path="E:\android-driver\chat\src\main\res\layout\activity_custom_camera.xml" qualifiers="" type="layout"/><file name="activity_photo_edit" path="E:\android-driver\chat\src\main\res\layout\activity_photo_edit.xml" qualifiers="" type="layout"/><file name="chat_message_in_row" path="E:\android-driver\chat\src\main\res\layout\chat_message_in_row.xml" qualifiers="" type="layout"/><file name="chat_message_out_row" path="E:\android-driver\chat\src\main\res\layout\chat_message_out_row.xml" qualifiers="" type="layout"/><file name="chat_toolbar" path="E:\android-driver\chat\src\main\res\layout\chat_toolbar.xml" qualifiers="" type="layout"/><file name="loading" path="E:\android-driver\chat\src\main\res\layout\loading.xml" qualifiers="" type="layout"/><file name="toolbar_photoedit" path="E:\android-driver\chat\src\main\res\layout\toolbar_photoedit.xml" qualifiers="" type="layout"/><file name="notification_sound" path="E:\android-driver\chat\src\main\res\raw\notification_sound.mp3" qualifiers="" type="raw"/><file name="ringtone" path="E:\android-driver\chat\src\main\res\raw\ringtone.mp3" qualifiers="" type="raw"/><file name="star_bykea_net" path="E:\android-driver\chat\src\main\res\raw\star_bykea_net.crt" qualifiers="" type="raw"/><file path="E:\android-driver\chat\src\main\res\values\attrs.xml" qualifiers=""><declare-styleable name="ButtonBarContainerTheme">
+        <attr format="reference" name="metaButtonBarStyle"/>
+        <attr format="reference" name="metaButtonBarButtonStyle"/>
+    </declare-styleable><declare-styleable name="HorizontalBarViewGroup">
+        <attr format="integer" name="mv_last_line_width"/>
+        <attr format="integer" name="tv_width"/>
+    </declare-styleable><declare-styleable name="DividerView">
+        <attr format="dimension" name="dashGap"/>
+        <attr format="color" name="dashColor"/>
+        <attr format="dimension" name="dashLength"/>
+
+        <attr format="dimension" name="dashThickness"/>
+        <attr format="enum" name="orientation">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr>
+    </declare-styleable><declare-styleable name="MaxHeightScrollView">
+        <attr format="dimension" name="maxHeight"/>
+    </declare-styleable><declare-styleable name="MyRangeBar">
+        <attr format="integer" name="rangeCount"/>
+        <attr format="color" name="filledColor"/>
+        <attr format="color" name="emptyColor"/>
+        <attr format="float" name="barHeightPercent"/>
+        <attr format="float" name="slotRadiusPercent"/>
+        <attr format="float" name="sliderRadiusPercent"/>
+        <attr format="color" name="slider_color"/>
+        <attr format="color" name="stroke_color"/>
+        <attr format="color" name="filledStrokeColor"/>
+        <attr format="float" name="filledStrokeWidth"/>
+        <attr format="float" name="stroke_width"/>
+        <attr format="boolean" name="ripple"/>
+    </declare-styleable><declare-styleable name="OutlineTextView">
+        <attr format="color" name="outlineColor"/>
+        <attr format="dimension" name="outlineWidth"/>
+    </declare-styleable></file><file path="E:\android-driver\chat\src\main\res\values\attrs_fonts.xml" qualifiers=""><declare-styleable name="FontTextView">
+        <attr name="fontName"/>
+    </declare-styleable><declare-styleable name="FontEditText">
+        <attr name="fontName"/>
+    </declare-styleable><attr format="enum" name="fontName">
+        <enum name="open_sans_regular.ttf" value="0"/>
+        <enum name="open_sans_semi_bold.ttf" value="0"/>
+        <enum name="roboto_italic.ttf" value="1"/>
+        <enum name="roboto_light.ttf" value="2"/>
+        <enum name="roboto_light_italic.ttf" value="3"/>
+        <enum name="roboto_medium.ttf" value="4"/>
+        <enum name="roboto_medium_italic.ttf" value="5"/>
+        <enum name="roboto_regular.ttf" value="6"/>
+        <enum name="roboto_thin.ttf" value="7"/>
+        <enum name="roboto_thin_italic.ttf" value="8"/>
+        <enum name="signika_regular.ttf" value="9"/>
+        <enum name="MuseoSans_1.otf" value="10"/>
+        <enum name="roboto_bold.ttf" value="11"/>
+        <enum name="open_sans_light.ttf" value="12"/>
+        <enum name="jameel_noori_nastaleeq.ttf" value="13"/>
+        <enum name="pak_nastaleeq_urdu.ttf" value="14"/>
+    </attr></file><file path="E:\android-driver\chat\src\main\res\values\colors.xml" qualifiers=""><color name="colorPrimary">#0EAA4B</color><color name="colorPrimaryDark">#000000</color><color name="colorAccentDark">#068629</color><color name="colorPrimaryLight">#43d26a</color><color name="textColorPrimary">#302d2d</color><color name="colorAccent">#04aa32</color><color name="windowBackground">#FFFFFF</color><color name="transparent">#00000000</color><color name="chatWindow">#f6f6f6</color><color name="chatWindow_bottom">#fafafa</color><color name="gray_border">#c5c5c5</color><color name="dark_gray">#848a8f</color><color name="darkest_gray">#606060</color><color name="image_color">#858B90</color><color name="image_fillColor">#FF000000</color><color name="send_btn_circle_bg">#00a723</color><color name="color.error">#f51c1c</color><color name="date_chat_color">#dbf3fa</color><color name="seekbar_thumb">#00a723</color><color name="seekbar_line">#dfdfdf</color><color name="textColorSecondary">#b4b2b2</color><color name="light_gray">#d3d3d3</color><color name="chat_send_color">#e1ffc7</color></file><file path="E:\android-driver\chat\src\main\res\values\dimens.xml" qualifiers=""><dimen name="elevation.toolbar">8dp</dimen><dimen name="textsize.body3">16sp</dimen><dimen name="textsize.tiny">@dimen/_8sdp</dimen><dimen name="textsize.small">@dimen/_10sdp</dimen><dimen name="textsize.small.medium">@dimen/_12sdp</dimen><dimen name="textsize.normal">@dimen/_14sdp</dimen><dimen name="textsize.medium">@dimen/_16sdp</dimen><dimen name="textsize.large">@dimen/_20sdp</dimen><dimen name="textsize.xlarge">@dimen/_24sdp</dimen><dimen name="textsize.title">@dimen/_18sdp</dimen><dimen name="textsize.body1">@dimen/_14sdp</dimen><dimen name="textsize.body2">@dimen/_14sdp</dimen><dimen name="grid_line">0.5sp</dimen><dimen name="top.logo.width">@dimen/_70sdp</dimen><dimen name="top.logo.height">@dimen/_70sdp</dimen><dimen name="button.next.height">@dimen/_36sdp</dimen><dimen name="height.medium">@dimen/_24sdp</dimen><dimen name="height.large">@dimen/_30sdp</dimen><dimen name="height.large.medium">@dimen/_40sdp</dimen><dimen name="height.xlarge">@dimen/_48sdp</dimen><dimen name="height.xxxlarge">@dimen/_92sdp</dimen><dimen name="width.xlarge">@dimen/_48sdp</dimen><dimen name="width.xxxlarge">@dimen/_92sdp</dimen><dimen name="margin.tiny">@dimen/_4sdp</dimen><dimen name="margin.small">@dimen/_8sdp</dimen><dimen name="margin.normal">@dimen/_16sdp</dimen><dimen name="margin.medium">@dimen/_24sdp</dimen><dimen name="margin.large">@dimen/_32sdp</dimen><dimen name="margin.xlarge">@dimen/_48sdp</dimen><dimen name="padding.tiny">@dimen/_4sdp</dimen><dimen name="padding.small">@dimen/_8sdp</dimen><dimen name="padding.normal">@dimen/_16sdp</dimen><dimen name="textsize.wallet">@dimen/_14sdp</dimen><dimen name="textsize.wallet.item">@dimen/_10sdp</dimen><dimen name="textsize.wallet.item_1">@dimen/_14sdp</dimen><dimen name="map.padding.bottom">@dimen/_50sdp</dimen><dimen name="audio_icon_size">@dimen/_24sdp</dimen><dimen name="text_size_feedback">@dimen/_14sdp</dimen><dimen name="feedback_padding">@dimen/_4sdp</dimen><dimen name="feedback_padding_bottom">@dimen/_7sdp</dimen><dimen name="feedback_height">@dimen/_35sdp</dimen></file><file path="E:\android-driver\chat\src\main\res\values\strings.xml" qualifiers=""><string name="app_name">ChatModule</string><string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string><string name="preference_file_key">ChatPreference</string><string name="internet_error">Problem in internet connectivity. Check your internet connection.</string><string name="error_try_again">Something went wrong. Please try again later.</string></file><file path="E:\android-driver\chat\src\main\res\values\styles.xml" qualifiers=""><style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style><style name="AppTheme" parent="AppTheme.Base">
+        <item name="android:windowBackground">@color/windowBackground</item>
+    </style><style name="NewTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style><style name="toolbarIconColor" parent="AppTheme">
+        <item name="android:textColorSecondary">@color/colorAccent</item>
+    </style><style name="actionSheetTheme" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style><style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style><style name="actionSheetTheme1" parent="android:Theme.Holo.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style><style name="actionSheetThemeFullScreen" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style><style name="DialogSlideAnim" parent="@android:style/Theme.Dialog">
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+    </style><style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up_dialog</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style><style name="actionSheetThemeTimer" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style><style name="seekbarStyle" parent="Widget.AppCompat.SeekBar">
+        <item name="android:colorControlActivated" ns1:targetApi="lollipop">@color/seekbar_thumb
+        </item>
+        <item name="android:colorControlNormal" ns1:targetApi="lollipop">@color/seekbar_line
+        </item>
+    </style></file></source><source path="E:\android-driver\chat\build\generated\res\rs\livetesting\debug"/><source path="E:\android-driver\chat\build\generated\res\resValues\livetesting\debug"><file path="E:\android-driver\chat\build\generated\res\resValues\livetesting\debug\values\generated.xml" qualifiers=""><string name="google_api_client_key" translatable="false">"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"</string></file></source></dataSet><dataSet config="livetesting$Generated" generated="true"><source path="E:\android-driver\chat\src\livetesting\res"/></dataSet><dataSet config="livetesting" generated-set="livetesting$Generated"><source path="E:\android-driver\chat\src\livetesting\res"/></dataSet><dataSet config="debug$Generated" generated="true"><source path="E:\android-driver\chat\src\debug\res"/></dataSet><dataSet config="debug" generated-set="debug$Generated"><source path="E:\android-driver\chat\src\debug\res"/></dataSet><dataSet config="livetestingDebug$Generated" generated="true"><source path="E:\android-driver\chat\src\livetestingDebug\res"/></dataSet><dataSet config="livetestingDebug" generated-set="livetestingDebug$Generated"><source path="E:\android-driver\chat\src\livetestingDebug\res"/></dataSet><mergedItems><configuration qualifiers=""><declare-styleable name="ButtonBarContainerTheme"><attr format="reference" name="metaButtonBarStyle"/><attr format="reference" name="metaButtonBarButtonStyle"/></declare-styleable><declare-styleable name="MaxHeightScrollView"><attr format="dimension" name="maxHeight"/></declare-styleable><declare-styleable name="DividerView"><attr format="dimension" name="dashGap"/><attr format="color" name="dashColor"/><attr format="dimension" name="dashLength"/><attr format="dimension" name="dashThickness"/><attr format="enum" name="orientation">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr></declare-styleable><declare-styleable name="FontEditText"><attr name="fontName"/></declare-styleable><declare-styleable name="HorizontalBarViewGroup"><attr format="integer" name="mv_last_line_width"/><attr format="integer" name="tv_width"/></declare-styleable><declare-styleable name="FontTextView"><attr name="fontName"/></declare-styleable><declare-styleable name="MyRangeBar"><attr format="integer" name="rangeCount"/><attr format="color" name="filledColor"/><attr format="color" name="emptyColor"/><attr format="float" name="barHeightPercent"/><attr format="float" name="slotRadiusPercent"/><attr format="float" name="sliderRadiusPercent"/><attr format="color" name="slider_color"/><attr format="color" name="stroke_color"/><attr format="color" name="filledStrokeColor"/><attr format="float" name="filledStrokeWidth"/><attr format="float" name="stroke_width"/><attr format="boolean" name="ripple"/></declare-styleable><declare-styleable name="OutlineTextView"><attr format="color" name="outlineColor"/><attr format="dimension" name="outlineWidth"/></declare-styleable></configuration></mergedItems></merger>
