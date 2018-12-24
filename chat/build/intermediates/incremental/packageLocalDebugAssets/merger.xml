@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="E:\android-driver\chat\src\main\assets"/><source path="E:\android-driver\chat\build\generated\assets\shaders\local\debug"/></dataSet><dataSet config="local"><source path="E:\android-driver\chat\src\local\assets"/></dataSet><dataSet config="debug"><source path="E:\android-driver\chat\src\debug\assets"/></dataSet><dataSet config="localDebug"><source path="E:\android-driver\chat\src\localDebug\assets"/></dataSet></merger>

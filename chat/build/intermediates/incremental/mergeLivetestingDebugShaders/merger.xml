@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="E:\android-driver\chat\src\main\shaders"/></dataSet><dataSet config="livetesting"><source path="E:\android-driver\chat\src\livetesting\shaders"/></dataSet><dataSet config="debug"><source path="E:\android-driver\chat\src\debug\shaders"/></dataSet><dataSet config="livetestingDebug"><source path="E:\android-driver\chat\src\livetestingDebug\shaders"/></dataSet></merger>
