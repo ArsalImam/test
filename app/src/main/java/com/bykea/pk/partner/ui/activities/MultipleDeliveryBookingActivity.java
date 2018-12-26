@@ -20,6 +20,7 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
@@ -34,6 +35,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
 import com.bykea.pk.partner.ui.helpers.Spherical;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -662,7 +664,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      *
      * @param view The view that has been clicked.
      */
-    @OnClick({R.id.currentLocationIv, R.id.cvLocation, R.id.jobBtn, R.id.callBtn, R.id.tafseelLayout})
+    @OnClick({R.id.currentLocationIv, R.id.cancelBtn, R.id.cvLocation, R.id.jobBtn,
+            R.id.callBtn, R.id.tafseelLayout})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.currentLocationIv: {
@@ -672,6 +675,12 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
             case R.id.jobBtn: {
                 checkTripButtonClick();
+                break;
+            }
+
+            case R.id.cancelBtn: {
+                //Todo 1: Add Fee charge dialog later.
+                cancelReasonDialog();
                 break;
             }
 
@@ -696,6 +705,20 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 break;
             }
         }
+    }
+
+    /**
+     * Cancel the multi delivery batch request by giving the cancel reason.
+     */
+    private void cancelReasonDialog() {
+        Dialogs.INSTANCE.showCancelDialog(mCurrentActivity, new StringCallBack() {
+            @Override
+            public void onCallBack(String msg) {
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                dataRepository.requestMultiDeliveryCancelBatch(msg, handler);
+            }
+        });
+
     }
 
     /**
@@ -968,6 +991,27 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * i.e arrived, started & complete.
      */
     private IUserDataHandler handler = new UserDataHandler() {
+
+        @Override
+        public void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response) {
+            Dialogs.INSTANCE.dismissDialog();
+            AppPreferences.setAvailableStatus(true);
+            dataRepository.requestLocationUpdate(
+                    mCurrentActivity,
+                    handler,
+                    AppPreferences.getLatitude(),
+                    AppPreferences.getLongitude());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ActivityStackManager
+                            .getInstance()
+                            .startHomeActivity(true, mCurrentActivity);
+                    finish();
+                }
+            });
+            EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+        }
 
         @Override
         public void onMultiDeliveryDriverArrived(MultiDeliveryDriverArrivedResponse response) {

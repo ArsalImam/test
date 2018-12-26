@@ -2,7 +2,6 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
 
-import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
@@ -201,6 +200,27 @@ public class WebIORequestHandler {
                 ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED,
                 new MyGenericListener(
                         ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED,
+                        MultiDeliveryDriverArrivedResponse.class,
+                        responseCallBack
+                ),
+                driverArrivedData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverArrivedData The json object that will be emit on the driver arrived event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultideliveryCancelBatch(JSONObject driverArrivedData,
+                                                  IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
                         MultiDeliveryDriverArrivedResponse.class,
                         responseCallBack
                 ),
