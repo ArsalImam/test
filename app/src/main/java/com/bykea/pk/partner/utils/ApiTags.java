@@ -77,7 +77,7 @@ public class ApiTags {
     public static final String CHANGE_PIN = "/api/v1/common/changePin";
     public static final String GET_CITIES = "/api/v1/admin/cities";
     public static final String SET_DRIVER_DROP_OFF = "/api/v1/driver/setDropoff";
-    public static final String SET_DRIVER_LOCATION = "/api/v1/driver/location";
+    public static final String SET_DRIVER_LOCATION = "/api/v1/driver/update/location";
 
 
     public static final String LOGOUT_API = "/api/v1/driver/logout";
@@ -109,7 +109,6 @@ public class ApiTags {
     public static final String DRIVER_STATUS_ONLINE_OFFLINE = "/api/v1/driver/status";
 
 
-
     /******************************************************************************
      * SOCKET METHODS STRINGS                                                     *
      ******************************************************************************/
@@ -119,6 +118,8 @@ public class ApiTags {
     public static final String SOCKET_FREE_PILOT = "free-when-call-end";
     public static final String SOCKET_DRIVER_FEEDBACK = "trip-driverFeedback";
     public static final String SOCKET_PASSENGER_CALL = "trip-notification";
+    public static final String SOCKEY_AUTH_FAILED = "AUTH_FAILED";
+    public static final String SOCKEY_AUTH_SUCCESS = "AUTH_SUCCESS";
     public static final String SOCKET_CANCEL_RIDE_DRIVER = "trip-driverCancelTrip";
     public static final String SOCKET_ACCEPT_CALL = "accept-call";
     public static final String ACK_CALL = "Send-Acknowledge";

@@ -48,6 +48,8 @@
             android:theme="@style/NewTheme" />
         <activity
             android:name=".ui.activities.HomeActivity"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:exported="true"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
             android:launchMode="singleTask" />
@@ -61,6 +63,8 @@
         <activity android:name=".ui.activities.BaseActivity" />
         <activity
             android:name=".ui.activities.CallingActivity"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.Base" />
@@ -129,6 +133,10 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <service
+            android:name=".services.DriverETAService"
+            android:exported="false"/>
 
         <service
             android:name=".services.OneSignalNotificationExtenderService"

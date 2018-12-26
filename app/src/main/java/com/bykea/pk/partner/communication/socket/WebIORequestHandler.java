@@ -275,14 +275,14 @@ public class WebIORequestHandler {
 //                if (null == mContext) {
 //                    mContext = DriverApp.getContext();
 //                }
-                if (AppPreferences.isLoggedIn() && locationResponse.getData() != null) {
-                    if (StringUtils.isNotBlank(locationResponse.getData().getLat())
-                            && StringUtils.isNotBlank(locationResponse.getData().getLng())) {
+                if (AppPreferences.isLoggedIn() && locationResponse.getLocation() != null) {
+                    if (StringUtils.isNotBlank(locationResponse.getLocation().getLat())
+                            && StringUtils.isNotBlank(locationResponse.getLocation().getLng())) {
                         AppPreferences.saveLastUpdatedLocation(
-                                new LatLng(Double.parseDouble(locationResponse.getData().getLat()),
-                                        Double.parseDouble(locationResponse.getData().getLng())));
+                                new LatLng(Double.parseDouble(locationResponse.getLocation().getLat()),
+                                        Double.parseDouble(locationResponse.getLocation().getLng())));
                     }
-                    Utils.saveServerTimeDifference(locationResponse.getTimestampserver());
+                    Utils.saveServerTimeDifference(locationResponse.getTimeStampServer());
                 }
                 if (locationResponse.isSuccess()) {
                     if (AppPreferences.isWalletAmountIncreased()) {

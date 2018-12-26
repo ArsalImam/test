@@ -24,7 +24,6 @@ import android.support.v4.app.NotificationCompat;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
-import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -33,17 +32,16 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
+
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.activities.SplashActivity;
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -132,7 +130,10 @@ public class LocationService extends Service {
         }
         requestLocationUpdates();
         cancelTimer();
-        mCountDownTimer.start();
+        mCountDownLocationTimer.start();
+        //DriverETAService.startDriverETAUpdate(this);
+        //DriverLocationUpdateJob.scheduleLocationUpdateJob();
+        //DriverETAUpdateJob.scheduleDriverETAJob();
         if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
             if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
                 STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
@@ -214,6 +215,7 @@ public class LocationService extends Service {
         stopForeground(true);
         stopSelf();
     }
+
 
     //endregion
 
@@ -630,17 +632,22 @@ public class LocationService extends Service {
     //endregion
 
     //region  Countdown timer for sending location to server.
-    private CountDownTimer mCountDownTimer = new CountDownTimer(10000, 4990) {
+    //10000, 4990
+    private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
-            if (Connectivity.isConnectedFast(mContext)) {
-                DriverApp.getApplication().connect();
+            Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
+             if (Connectivity.isConnectedFast(mContext)) {
+                if (AppPreferences.isLoggedIn()) {
+                    DriverApp.getApplication().connect();
+                }
             }
         }
 
 
         @Override
         public void onFinish() {
+            Utils.redLog(TAG, "CountDown Timer onFinish: called ");
             if (Utils.canSendLocation()) {
                 synchronized (this) {
                     double lat = AppPreferences.getLatitude();
@@ -648,13 +655,14 @@ public class LocationService extends Service {
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         updateTripRouteList(lat, lon);
-                        updateETAIfRequired();
+                        //DriverETAService.startDriverETAUpdate(DriverApp.getContext());
+
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                                 //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
-                                validateDriverOfflineStatus();
+                                //validateDriverOfflineStatus();
                                 mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
 
                             } else {
@@ -666,18 +674,16 @@ public class LocationService extends Service {
                             shouldCallLocApi = true;
                         }
                     }
-                    // restart the timer
-                    mCountDownTimer.start();
+                    Utils.redLog(TAG, "CountDown Timer restarted: called ");
+                    mCountDownLocationTimer.start();
+                    Utils.redLog(TAG, "updateETAIfRequired: called ");
+                    updateETAIfRequired();
                 }
-            } else if (Utils.hasLocationCoordinates())
-
-            {
+            } else if (Utils.hasLocationCoordinates()) {
                 stopForegroundService();
-            } else
-
-            {
-                // restart the timer
-                mCountDownTimer.start();
+            } else {
+                Utils.redLog(TAG, "CountDown Timer restarted: called ");
+                mCountDownLocationTimer.start();
             }
 
         }
@@ -731,8 +737,8 @@ public class LocationService extends Service {
      * Cancel count down timer
      */
     private void cancelTimer() {
-        if (mCountDownTimer != null) {
-            mCountDownTimer.cancel();
+        if (mCountDownLocationTimer != null) {
+            mCountDownLocationTimer.cancel();
         }
     }
 
@@ -753,15 +759,9 @@ public class LocationService extends Service {
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
-        public void onDriverLocationResponse(DriverLocationResponse response) {
-            Utils.redLogLocation(TAG, "Driver location Response: " + new Gson().toJson(response));
-
-        }
-
-        @Override
         public void onLocationUpdate(LocationResponse response) {
             super.onLocationUpdate(response);
-            Utils.redLogLocation(TAG, "location Socket Response: " + new Gson().toJson(response));
+            Utils.redLogLocation(TAG, "location API Response: " + new Gson().toJson(response));
             AppPreferences.setDriverOfflineForcefully(false);
             AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
         }

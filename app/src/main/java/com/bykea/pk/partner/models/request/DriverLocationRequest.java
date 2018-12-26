@@ -1,34 +1,54 @@
 package com.bykea.pk.partner.models.request;
 
+import com.bykea.pk.partner.models.data.TrackingData;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 
 /***
  *  Driver Location Request Body model which would be used to send Request Parameters to API Server
  */
 public class DriverLocationRequest {
 
-    @SerializedName("driver_id")
+    @SerializedName("token_id")
+    private String tokenID;
+
+    @SerializedName("_id")
     private String driverID;
 
-    @SerializedName("token")
-    private String token;
+    @SerializedName("lat")
+    private String latitude;
+
+    @SerializedName("lng")
+    private String longitude;
 
     @SerializedName("status")
-    private String status;
+    private String availableStatus;
+
+    @SerializedName("eta")
+    private String eta;
+
+    @SerializedName("distance")
+    private String distance;
 
     @SerializedName("trip_id")
     private String tripID;
 
-    @SerializedName("in_call")
-    private boolean inCall;
+    @SerializedName("track")
+    private ArrayList<TrackingData> trackingData;
 
-    @SerializedName("lat")
-    private double latitude;
-
-    @SerializedName("lng")
-    private double longitude;
+    @SerializedName("uuid")
+    private String uuid;
 
     //region Getter Setter
+
+    public String getTokenID() {
+        return tokenID;
+    }
+
+    public void setTokenID(String tokenID) {
+        this.tokenID = tokenID;
+    }
 
     public String getDriverID() {
         return driverID;
@@ -38,20 +58,44 @@ public class DriverLocationRequest {
         this.driverID = driverID;
     }
 
-    public String getToken() {
-        return token;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
-    public String getStatus() {
-        return status;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getAvailableStatus() {
+        return availableStatus;
+    }
+
+    public void setAvailableStatus(String availableStatus) {
+        this.availableStatus = availableStatus;
+    }
+
+    public String getEta() {
+        return eta;
+    }
+
+    public void setEta(String eta) {
+        this.eta = eta;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 
     public String getTripID() {
@@ -62,29 +106,22 @@ public class DriverLocationRequest {
         this.tripID = tripID;
     }
 
-    public boolean isInCall() {
-        return inCall;
+    public ArrayList<TrackingData> getTrackingData() {
+        return trackingData;
     }
 
-    public void setInCall(boolean inCall) {
-        this.inCall = inCall;
+    public void setTrackingData(ArrayList<TrackingData> trackingData) {
+        this.trackingData = trackingData;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
 
     //endregion
 }

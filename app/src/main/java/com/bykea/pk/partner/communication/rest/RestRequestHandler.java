@@ -28,7 +28,6 @@ import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
-import com.bykea.pk.partner.models.response.DriverLocationResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
@@ -39,6 +38,7 @@ import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -65,6 +65,7 @@ import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.squareup.okhttp.ResponseBody;
 
@@ -154,6 +155,22 @@ public class RestRequestHandler {
         });
 
 
+    }
+
+    /***
+     * Send driver location update request to API server.
+     * @param context Calling context.
+     * @param onResponseCallBack  Response Handler Callback
+     * @param locationRequest driver location update request model
+     */
+    public void sendDriverLocationUpdate(Context context,
+                                         final IResponseCallback onResponseCallBack,
+                                         DriverLocationRequest locationRequest) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getClient(mContext);
+        Call<LocationResponse> restCall = mRestClient.updateDriverLocation(locationRequest);
+        restCall.enqueue(new GenericLocationRetrofitCallBack(onResponseCallBack));
     }
 
     /***
@@ -868,8 +885,7 @@ public class RestRequestHandler {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
                         PilotStatusResponse pilotStatusResponse =
-                                Utils.parseAPIErrorResponse(response, retrofit,
-                                        PilotStatusResponse.class);
+                                Utils.parseAPIErrorResponse(response, retrofit, PilotStatusResponse.class);
                         if (pilotStatusResponse != null) {
                             mResponseCallBack.onResponse(pilotStatusResponse);
                         } else {
@@ -1038,6 +1054,93 @@ public class RestRequestHandler {
         }
     }
 
+    /***
+     * Generic location handler for driver location update rest event.
+     *
+     */
+    public class GenericLocationRetrofitCallBack implements Callback<LocationResponse> {
+        private IResponseCallback mCallBack;
+
+        public GenericLocationRetrofitCallBack(IResponseCallback callBack) {
+            mCallBack = callBack;
+        }
+
+        @Override
+        public void onResponse(Response<LocationResponse> response, Retrofit retrofit) {
+            if (response == null || response.body() == null) {
+                if (response != null && response.errorBody() != null) {
+                    LocationResponse LocationResponse =
+                            Utils.parseAPIErrorResponse(response, retrofit, LocationResponse.class);
+                    if (LocationResponse != null) {
+                        mResponseCallBack.onError(LocationResponse.getCode(),
+                                LocationResponse.getMessage());
+                    } else {
+                        Utils.redLog(TAG, "Location on Failure: " + response.code() + " Internal Server Error");
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
+
+                } else {
+                    Utils.redLog(TAG, "Location on Failure: " + response.code() + " Internal Server Error");
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                            mContext.getString(R.string.error_try_again) + " ");
+                }
+            } else {
+                if (AppPreferences.isLoggedIn() && response.body().getLocation() != null) {
+                    if (StringUtils.isNotBlank(response.body().getLocation().getLat())
+                            && StringUtils.isNotBlank(response.body().getLocation().getLng())) {
+                        AppPreferences.saveLastUpdatedLocation(
+                                new LatLng(Double.parseDouble(response.body().getLocation().getLat()),
+                                        Double.parseDouble(response.body().getLocation().getLng())));
+                    }
+                    Utils.saveServerTimeDifference(response.body().getTimeStampServer());
+                }
+                if (response.isSuccess()) {
+                    //todo This would be removed when backend handle custom business logic.
+                    switch (response.body().getCode()) {
+                        case HTTPStatus.UNAUTHORIZED:
+                        case HTTPStatus.FENCE_ERROR:
+                        case HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT:
+                            mResponseCallBack.onError(response.body().getCode(),
+                                    response.body().getMessage());
+                            return;
+                        case HTTPStatus.BAD_REQUEST:
+                            String errorMessage = response.body().getMessage();
+
+                            if (errorMessage.contains(Constants.FRIVOLOUS_CANCELLATIONS_ER)
+                                    || errorMessage.contains(Constants.FRIVILOUS_CANCELLATIONS_UR))
+                                mResponseCallBack.onError(HTTPStatus.CANCELLATION_RIDE_BLOCK,
+                                        response.body().getMessage());
+                            break;
+                    }
+
+                    if (AppPreferences.isWalletAmountIncreased()) {
+                        AppPreferences.setWalletAmountIncreased(false);
+                        AppPreferences.setAvailableStatus(true);
+                    }
+                    if (AppPreferences.isOutOfFence()) {
+                        AppPreferences.setOutOfFence(false);
+                        AppPreferences.setAvailableStatus(true);
+                        mResponseCallBack.onError(HTTPStatus.FENCE_SUCCESS, response.body().getMessage());
+                    } else {
+                        mResponseCallBack.onResponse(response.body());
+                    }
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(),
+                            response.body().getMessage());
+                }
+            }
+
+
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Utils.redLog(TAG, "Location on Failure: " + t.getMessage());
+            mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+        }
+    }
+
     public void requestDriverDropOff(Context context, IResponseCallback onResponseCallBack,
                                      String lat, String lng, String address) {
         mContext = context;
@@ -1174,8 +1277,8 @@ public class RestRequestHandler {
             Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.TIME_OUT_ERROR + String.valueOf(error.getCause()));
             errorMsg = mContext.getString(R.string.internet_error);
             //To prompt user to input base url for local builds again in case when URL is not working/wrong url. (BS-1017)
-            AppPreferences.setLocalBaseUrl(BuildConfig.FLAVOR_URL);
-            ApiTags.LOCAL_BASE_URL = BuildConfig.FLAVOR_URL;
+            /*AppPreferences.setLocalBaseUrl(BuildConfig.FLAVOR_URL);
+            ApiTags.LOCAL_BASE_URL = BuildConfig.FLAVOR_URL;*/
         } else if (error instanceof IllegalStateException) {
             Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.CONVERSION_ERROR + String.valueOf(error.getCause()));
             errorMsg = mContext.getString(R.string.error_try_again);
@@ -1455,45 +1558,6 @@ public class RestRequestHandler {
             }
         });
 
-    }
-
-
-    /***
-     * Update Driver Location on server for background tracking.
-     * @param context calling context
-     * @param onResponseCallBack on Response callback handler for API
-     * @param lat current driver latitude
-     * @param lng current driver longitude
-     */
-    public void updateDriverLocation(Context context, IResponseCallback onResponseCallBack,
-                                     double lat, double lng) {
-        mContext = context;
-        mRestClient = RestClient.getClient(mContext);
-        String driverId = AppPreferences.getDriverId();
-        if (StringUtils.isBlank(driverId)) {
-            return;
-        }
-        DriverLocationRequest locationRequest = new DriverLocationRequest();
-        locationRequest.setToken(AppPreferences.getAccessToken());
-        locationRequest.setDriverID(driverId);
-        locationRequest.setLatitude(lat);
-        locationRequest.setLongitude(lng);
-        if (AppPreferences.isOnTrip()) {
-            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
-            locationRequest.setInCall(true);
-            String tripStatus = AppPreferences.getCallData() != null
-                    && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
-                    ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
-            locationRequest.setStatus(tripStatus);
-        } else {
-            locationRequest.setInCall(false);
-            locationRequest.setStatus(AppPreferences.getTripStatus());
-        }
-
-        Utils.redLog(TAG, "Request For Driver Location: " + new Gson().toJson(locationRequest));
-        Call<DriverLocationResponse> restCall = mRestClient.updateDriverLocation(locationRequest);
-
-        restCall.enqueue(new GenericRetrofitCallBack<DriverLocationResponse>(onResponseCallBack));
     }
 
 

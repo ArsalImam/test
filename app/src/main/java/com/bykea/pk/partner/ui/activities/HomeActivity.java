@@ -65,6 +65,7 @@ public class HomeActivity extends BaseActivity {
         setToolbarLogo();
         initViews();
         setupDrawerToggle();
+        Utils.unlockScreen(this);
         //Add the Very First i.e Squad Fragment to the Container
         HomeFragmentTesting mainFragment = new HomeFragmentTesting();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -267,7 +268,7 @@ public class HomeActivity extends BaseActivity {
      * When Constants.Extras.NAVIGATE_TO_HOME_SCREEN is set to true with Extras while staring HomeActivity it
      * will load HomeFragment even if any other Fragment from side bar menu is already loaded.
      *
-     * @see Intent.FLAG_ACTIVITY_CLEAR_TOP
+     * @see Intent#FLAG_ACTIVITY_CLEAR_TOP
      */
     @Override
     protected void onNewIntent(Intent intent) {

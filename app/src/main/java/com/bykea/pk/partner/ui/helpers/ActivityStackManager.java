@@ -25,7 +25,6 @@ import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
-import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
@@ -38,7 +37,6 @@ import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
-import com.bykea.pk.partner.ui.activities.SplashActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -127,6 +125,18 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /***
+     * Start Home screen for Inactive push for user interaction
+     * @param mContext Calling context.
+     */
+    public void startHomeActvityForInActivePush(Context mContext) {
+        Intent intent = new Intent(mContext, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        mContext.startActivity(intent);
+    }
+
     /**
      * clears activity stack before starting HomeActivity (if activity is already running it will not launch new instance)
      * HomeFragment will be loaded from onNewIntent method of HomeActivity
@@ -193,7 +203,7 @@ public class ActivityStackManager {
      * This method stops Location Service.
      *
      * @param context Calling Context
-     * @see Constants.Actions.STOPFOREGROUND_ACTION
+     * @see Constants.Actions#STOPFOREGROUND_ACTION
      */
     public synchronized void stopLocationService(Context context) {
         if (Utils.isServiceRunning(context, LocationService.class)) {
@@ -236,8 +246,12 @@ public class ActivityStackManager {
     }
 
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
+
+        Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +
+                "PS status: " + Utils.isGpsEnable() + "Trip Status: " + AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE) +
+                "Not Delayed: " + Utils.isNotDelayed(callData.getData().getSentTime()));
         if (AppPreferences.getAvailableStatus()
-                && !AppPreferences.isAvailableStatusAPICalling()
+                //&& !AppPreferences.isAvailableStatusAPICalling()
                 && Utils.isGpsEnable()
                 && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
                 && Utils.isNotDelayed(callData.getData().getSentTime())) {
@@ -249,6 +263,7 @@ public class ActivityStackManager {
             callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             if (isFromGcm) {
                 callIntent.putExtra("isGcm", true);
+                Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
             }
             mContext.startActivity(callIntent);
         }

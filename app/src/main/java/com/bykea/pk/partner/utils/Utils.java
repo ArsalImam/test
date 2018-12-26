@@ -322,7 +322,11 @@ public class Utils {
         ((Activity) context).finish();
     }
 
-    private static void clearData(Context context) {
+    /***
+     * Clear Data when user is unauthorized.
+     * @param context Calling context.
+     */
+    public static void clearData(Context context) {
 //        Utils.resetMixPanel(context, false);
         FirebaseAnalytics.getInstance(context).resetAnalyticsData();
         String regId = AppPreferences.getRegId();
@@ -507,10 +511,15 @@ public class Utils {
     }
 
     public static void unlockScreen(Context context) {
-        Window window = ((AppCompatActivity) context).getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            ((AppCompatActivity) context).setShowWhenLocked(true);
+            ((AppCompatActivity) context).setTurnScreenOn(true);
+        } else {
+            Window window = ((AppCompatActivity) context).getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        }
     }
 
     public static void setCallIncomingStateWithoutRestartingService() {

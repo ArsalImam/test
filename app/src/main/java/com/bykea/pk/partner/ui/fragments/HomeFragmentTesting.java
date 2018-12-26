@@ -520,12 +520,7 @@ public class HomeFragmentTesting extends Fragment {
     }
 
     private void onUnauthorizedLicenceExpire() {
-        AppPreferences.saveLoginStatus(false);
-        AppPreferences.setIncomingCall(false);
-        AppPreferences.setCallData(null);
-        AppPreferences.setTripStatus("");
-        AppPreferences.saveLoginStatus(false);
-        AppPreferences.setPilotData(null);
+        Utils.clearData(mCurrentActivity);
         HomeActivity.visibleFragmentNumber = 0;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                     @Override
@@ -1394,6 +1389,8 @@ public class HomeFragmentTesting extends Fragment {
         super.onDestroy();
         if (mapView != null)
             mapView.onDestroy();
+
+        Dialogs.INSTANCE.dismissDialog();
     }
 
     private boolean clearMap() {
@@ -1402,7 +1399,7 @@ public class HomeFragmentTesting extends Fragment {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //   public void onRequestPermissionsResult(int requestCode, String[] permis``sions,
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.

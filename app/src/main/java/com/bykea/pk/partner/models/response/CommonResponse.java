@@ -2,6 +2,9 @@ package com.bykea.pk.partner.models.response;
 
 import com.google.gson.annotations.SerializedName;
 
+/***
+ * Generic response pojo class.
+ */
 public class CommonResponse {
 
     private boolean success;
@@ -9,6 +12,8 @@ public class CommonResponse {
     private int code;
     @SerializedName("subcode")
     private int subCode;
+    @SerializedName("uuid")
+    private String uuid;
 
     public int getCode() {
         return code;
@@ -40,5 +45,13 @@ public class CommonResponse {
 
     public void setSubCode(int subCode) {
         this.subCode = subCode;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }
