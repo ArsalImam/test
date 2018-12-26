@@ -6,6 +6,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
@@ -221,7 +222,7 @@ public class WebIORequestHandler {
                 ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
                 new MyGenericListener(
                         ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
-                        MultiDeliveryDriverArrivedResponse.class,
+                        MultiDeliveryCancelBatchResponse.class,
                         responseCallBack
                 ),
                 driverArrivedData
