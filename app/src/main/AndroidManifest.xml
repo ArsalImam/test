@@ -219,7 +219,8 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.Base" />
-        <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"></activity>
+        <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

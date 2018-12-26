@@ -1,12 +1,14 @@
 package com.bykea.pk.partner.models.response
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
 
 /**
  * Multi Delivery Invoice Data
  */
-class MultiDeliveryInvoiceData {
+class MultiDeliveryInvoiceData() : Parcelable {
     @SerializedName("trip_charges")
     var tripCharges: Int? = 0
 
@@ -56,7 +58,7 @@ class MultiDeliveryInvoiceData {
     var minutes: Float? = 0f
 
     @SerializedName("total")
-    var total: Int? = 0
+    var total: Long? = 0
 
     @SerializedName("start_balance")
     var startBalance: Int? = 0
@@ -67,6 +69,65 @@ class MultiDeliveryInvoiceData {
     @SerializedName("__v")
     var mongoDbVersion: Int? = 0
 
+    constructor(parcel: Parcel) : this() {
+        tripCharges = parcel.readValue(Int::class.java.classLoader) as? Int
+        receivedAmount = parcel.readValue(Int::class.java.classLoader) as? Int
+        remainingAmount = parcel.readValue(Int::class.java.classLoader) as? Int
+        walletDeduction = parcel.readValue(Int::class.java.classLoader) as? Int
+        promoDeduction = parcel.readValue(Int::class.java.classLoader) as? Int
+        driverPayout = parcel.readValue(Int::class.java.classLoader) as? Int
+        isDeleted = parcel.readValue(Boolean::class.java.classLoader) as? Boolean
+        _id = parcel.readString()
+        adminFee = parcel.readValue(Int::class.java.classLoader) as? Int
+        tripID = parcel.readString()
+        passengerID = parcel.readString()
+        driverID = parcel.readString()
+        tripNo = parcel.readString()
+        walletCreditValue = parcel.readValue(Int::class.java.classLoader) as? Int
+        waitMins = parcel.readValue(Int::class.java.classLoader) as? Int
+        minutes = parcel.readValue(Float::class.java.classLoader) as? Float
+        total = parcel.readValue(Int::class.java.classLoader) as? Long
+        startBalance = parcel.readValue(Int::class.java.classLoader) as? Int
+        createdAt = parcel.readString()
+        mongoDbVersion = parcel.readValue(Int::class.java.classLoader) as? Int
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeValue(tripCharges)
+        parcel.writeValue(receivedAmount)
+        parcel.writeValue(remainingAmount)
+        parcel.writeValue(walletDeduction)
+        parcel.writeValue(promoDeduction)
+        parcel.writeValue(driverPayout)
+        parcel.writeValue(isDeleted)
+        parcel.writeString(_id)
+        parcel.writeValue(adminFee)
+        parcel.writeString(tripID)
+        parcel.writeString(passengerID)
+        parcel.writeString(driverID)
+        parcel.writeString(tripNo)
+        parcel.writeValue(walletCreditValue)
+        parcel.writeValue(waitMins)
+        parcel.writeValue(minutes)
+        parcel.writeValue(total)
+        parcel.writeValue(startBalance)
+        parcel.writeString(createdAt)
+        parcel.writeValue(mongoDbVersion)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<MultiDeliveryInvoiceData> {
+        override fun createFromParcel(parcel: Parcel): MultiDeliveryInvoiceData {
+            return MultiDeliveryInvoiceData(parcel)
+        }
+
+        override fun newArray(size: Int): Array<MultiDeliveryInvoiceData?> {
+            return arrayOfNulls(size)
+        }
+    }
 
 
 }

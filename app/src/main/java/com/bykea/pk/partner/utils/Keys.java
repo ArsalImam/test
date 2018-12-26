@@ -48,6 +48,8 @@ public class Keys {
     public static final String MULTIDELIVERY_CALLDRIVER_OBJECT = "MULTIDELIVERY_CALLDRIVER_OBJECT";
     public static final String MULTIDELIVERY_MISSED_EVENT = "MULTIDELIVERY_MISSED_EVENT";
     public static final String MULTIDELIVERY_IS_MULTI_DELIVERY = "MULTIDELIVERY_IS_MULTI_DELIVERY";
+    public static final String MULTIDELIVERY_COMPLETE_DATA = "MULTIDELIVERY_COMPLETE_DATA";
+
 
 
     //endregion

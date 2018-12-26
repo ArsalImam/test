@@ -56,6 +56,7 @@ import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -308,16 +309,10 @@ public class UserRepository {
                     trackingData.add(data);
                 }
 
-                MultiDeliveryCallDriverData callDriverData =
-                        AppPreferences.getMultiDeliveryCallDriverData();
                 jsonObject.put("track", new JSONArray(new Gson().toJson(trackingData)));
-                if (AppPreferences.isMultiDelivery()) {
-                    jsonObject.put("batch_id", callDriverData.getBatchID());
-                } else {
-                    jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
-                    jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
-                    AppPreferences.clearTrackingData();
-                }
+                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+                jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+                AppPreferences.clearTrackingData();
 
             } else {
                 //to free driver after trip Finished
@@ -1403,6 +1398,11 @@ public class UserRepository {
                     case "MultiDeliveryDriverStartedResponse":
                         mUserCallback.onMultiDeliveryDriverStarted(
                                 (MultiDeliveryDriverStartedResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryCompleteRideResponse":
+                        mUserCallback.onMultiDeliveryDriverRideFinish(
+                                (MultiDeliveryCompleteRideResponse) object
                         );
                         break;
                     case "CommonResponse":

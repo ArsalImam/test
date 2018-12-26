@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,6 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCompleteRideAdapter;
 import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 
 import org.greenrobot.eventbus.EventBus;
@@ -96,8 +96,8 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
         Dialogs.INSTANCE.showRideStatusDialog(getActivity(), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                repository.requestMultiDeliveryDriverFinishRide(
-                        data.getTripID(), handler);
+                Dialogs.INSTANCE.dismissDialog();
+                onMultiDeliveryTripFinished(data);
 
             }
         }, new View.OnClickListener() {
@@ -106,6 +106,16 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
                 Dialogs.INSTANCE.dismissDialog();
             }
         }, " مکمل؟");
+    }
+
+    /**
+     *
+     * @param data
+     */
+    private void onMultiDeliveryTripFinished(DirectionDropOffData data) {
+        Dialogs.INSTANCE.showLoader(getActivity());
+        repository.requestMultiDeliveryDriverFinishRide(
+                data.getTripID(), handler);
     }
 
     /**
@@ -146,12 +156,21 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
     private UserDataHandler handler = new UserDataHandler(){
 
         @Override
-        public void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response) {
-            if (response.getCode() == HttpURLConnection.HTTP_OK) {
-                ActivityStackManager.getInstance()
-                        .startFeedbackActivity(getActivity());
-                getActivity().finish();
-            }
+        public void onMultiDeliveryDriverRideFinish(final MultiDeliveryCompleteRideResponse
+                                                            response) {
+            Log.d("MultiDeliveryComplete", response.getCode()+"");
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.INSTANCE.dismissDialog();
+                    if (response.getCode() == HttpURLConnection.HTTP_OK) {
+                        ActivityStackManager.getInstance()
+                                .startMultiDeliveryFeedbackActivity(getActivity(), response);
+                        getActivity().finish();
+                    }
+                }
+            });
+
         }
 
         @Override

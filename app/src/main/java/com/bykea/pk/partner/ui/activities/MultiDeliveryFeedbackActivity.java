@@ -14,7 +14,11 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryInvoiceData;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -23,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 
 import static butterknife.OnTextChanged.*;
@@ -52,9 +57,6 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
 
     @BindView(R.id.receivedAmountEt)
     FontEditText receivedAmountEt;
-
-    @BindView(R.id.llKharedari)
-    LinearLayout llKharedari;
 
     @BindView(R.id.llTotal)
     LinearLayout llTotal;
@@ -92,27 +94,6 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
     @BindView(R.id.rlCOD)
     RelativeLayout rlCOD;
 
-    @BindView(R.id.rlDeliveryStatus)
-    RelativeLayout rlDeliveryStatus;
-
-    @BindView(R.id.spDeliveryStatus)
-    Spinner spDeliveryStatus;
-
-    @BindView(R.id.llReceiverInfo)
-    LinearLayout llReceiverInfo;
-
-    @BindView(R.id.ivRight0)
-    ImageView ivRight0;
-
-    @BindView(R.id.etReceiverName)
-    FontEditText etReceiverName;
-
-    @BindView(R.id.etReceiverMobileNo)
-    FontEditText etReceiverMobileNo;
-
-    @BindView(R.id.kharedariAmountEt)
-    FontEditText kharedariAmountEt;
-
     @BindView(R.id.rlDropOffDiscount)
     RelativeLayout rlDropOffDiscount;
 
@@ -133,8 +114,27 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_delivery_feedback);
         mCurrentActivity = this;
+        ButterKnife.bind(this);
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
         updateScroll();
+        init();
+    }
+
+    private void init() {
+        Bundle bundle = getIntent().getExtras();
+        MultiDeliveryCallDriverAcknowledgeResponse response = bundle
+                .getParcelable(Keys.MULTIDELIVERY_COMPLETE_DATA);
+        if (response != null) {
+            MultiDeliveryInvoiceData data = response.getData().getInvoice();
+            tvTotalDistance.setText(getString(R.string.distance_covered, 0f));
+            tvTotalTime.setText(getString(R.string.duration, data.getMinutes()));
+            startAddressTv.setText("2202 Kimberly Way Cambrigde.");
+            endAddressTv.setText("2202 Kimberly Way Cambrigde.");
+            totalAmountTv.setText(String.valueOf(data.getTripCharges()));
+            tvPromoDeduction.setText(String.valueOf(data.getPromoDeduction()));
+            tvWalletDeduction.setText(String.valueOf(data.getWalletDeduction()));
+            tvAmountToGet.setText(Utils.getCommaFormattedAmount(data.getTotal()));
+        }
     }
 
     /**
@@ -149,21 +149,23 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
             }
         });
 
-        etReceiverName.requestFocus();
+        //etReceiverName.requestFocus();
     }
 
     /**
      * This method scrolls down scroll view when it's ready
      */
     private void moveScrollViewToBottom() {
-        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                scrollView.fullScroll(View.FOCUS_DOWN);
-                scrollView.clearFocus();
-                scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        scrollView.fullScroll(View.FOCUS_DOWN);
+                        scrollView.clearFocus();
+                        scrollView.getViewTreeObserver()
+                                .removeOnGlobalLayoutListener(this);
+                    }
+                });
     }
 
     @OnTextChanged(value = R.id.receivedAmountEt,
@@ -173,10 +175,10 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
                 if (Integer.parseInt(editable.toString()) >
                         (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
-                    setEtError("Amount can't be more than " +
-                            (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
+                    //setEtError("Amount can't be more than " +
+                    //      (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
                 } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
-                    setEtError("Amount can't be more than " + AMOUNT_LIMIT);
+                    //setEtError("Amount can't be more than " + AMOUNT_LIMIT);
                 }
             } else {
                 Utils.appToast(mCurrentActivity, "Please enter valid amount.");

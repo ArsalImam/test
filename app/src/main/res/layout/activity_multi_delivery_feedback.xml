@@ -128,7 +128,8 @@
 
             </LinearLayout>
 
-            <RelativeLayout
+            <!--Delivery Status DropDown-->
+           <!-- <RelativeLayout
                 android:id="@+id/rlDeliveryStatus"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
@@ -156,7 +157,7 @@
                     android:layout_centerInParent="true"
                     android:padding="@dimen/_4sdp"
                     android:src="@drawable/polygon" />
-            </RelativeLayout>
+            </RelativeLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -399,7 +400,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
+           <!-- <LinearLayout
                 android:id="@+id/llKharedari"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -437,9 +438,9 @@
                     android:textColor="@color/textColorPrimary"
                     android:textColorHint="@color/secondaryColorLight"
                     android:textSize="@dimen/_22sdp" />
-            </LinearLayout>
+            </LinearLayout>-->
 
-            <LinearLayout
+           <!-- <LinearLayout
                 android:id="@+id/llReceiverInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -503,16 +504,18 @@
                         android:visibility="visible"
                         app:fontName="roboto_regular.ttf" />
                 </RelativeLayout>
-            </LinearLayout>
+            </LinearLayout>-->
 
+            <!--Total Price layout-->
             <LinearLayout
                 android:id="@+id/llTotal"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_32sdp"
                 android:background="@color/white"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -547,6 +550,7 @@
 
             </LinearLayout>
 
+            <!--Bottom view layout-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
