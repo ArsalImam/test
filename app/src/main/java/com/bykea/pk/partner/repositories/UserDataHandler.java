@@ -44,6 +44,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeRe
 import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
@@ -394,6 +395,8 @@ public class UserDataHandler implements IUserDataHandler {
 
     }
 
+    //region MULTI DELIVERY CONCRETE METHODS
+
     @Override
     public void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse response) {
 
@@ -419,5 +422,10 @@ public class UserDataHandler implements IUserDataHandler {
 
     }
 
+    @Override
+    public void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response) {
 
+    }
+
+    //endregion
 }

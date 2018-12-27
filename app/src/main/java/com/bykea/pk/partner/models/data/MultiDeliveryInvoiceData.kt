@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.models.response
+package com.bykea.pk.partner.models.data
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -69,6 +69,11 @@ class MultiDeliveryInvoiceData() : Parcelable {
     @SerializedName("__v")
     var mongoDbVersion: Int? = 0
 
+    /**
+     * Constructor
+     *
+     * @param source The Parcel to read the object's data from.
+     */
     constructor(parcel: Parcel) : this() {
         tripCharges = parcel.readValue(Int::class.java.classLoader) as? Int
         receivedAmount = parcel.readValue(Int::class.java.classLoader) as? Int
@@ -92,6 +97,11 @@ class MultiDeliveryInvoiceData() : Parcelable {
         mongoDbVersion = parcel.readValue(Int::class.java.classLoader) as? Int
     }
 
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param dest The Parcel in which the object should be written.
+     */
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(tripCharges)
         parcel.writeValue(receivedAmount)
@@ -119,6 +129,12 @@ class MultiDeliveryInvoiceData() : Parcelable {
         return 0
     }
 
+    /**
+     * An object declaration inside a class can be marked with the companion keyword. Members of
+     * the companion object can be called by using simply the class name as the qualifier
+     *
+     * CREATOR: field that generates instances of your Parcelable class from a Parcel
+     */
     companion object CREATOR : Parcelable.Creator<MultiDeliveryInvoiceData> {
         override fun createFromParcel(parcel: Parcel): MultiDeliveryInvoiceData {
             return MultiDeliveryInvoiceData(parcel)

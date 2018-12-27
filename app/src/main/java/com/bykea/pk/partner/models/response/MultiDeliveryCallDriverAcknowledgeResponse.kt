@@ -2,6 +2,7 @@ package com.bykea.pk.partner.models.response
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.bykea.pk.partner.models.data.CallDriverAcknowledgeData
 
 /**
  * Call Driver Acknowledge Response

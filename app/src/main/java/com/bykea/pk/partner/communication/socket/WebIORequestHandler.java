@@ -10,6 +10,7 @@ import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
@@ -249,6 +250,27 @@ public class WebIORequestHandler {
                         responseCallBack
                 ),
                 driverFinishData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverFeedbackData The json object that will be emit on the driver feedback event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultiDeliveryDriverFeedback(JSONObject driverFeedbackData,
+                                                   IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER,
+                        MultiDeliveryFeedbackResponse.class,
+                        responseCallBack
+                ),
+                driverFeedbackData
         );
     }
 
@@ -553,6 +575,19 @@ public class WebIORequestHandler {
             String serverResponse = args[0].toString();
             Utils.redLog("MultiDeliveryTripMissedListener", serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+        }
+    }
+
+    /**
+     * Multi Delivery Trip Batch Completed Listener
+     */
+    public static class MultiDeliveryTripBatchCompletedListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("MultiDeliveryTripBatchCompletedListener", serverResponse);
+            EventBus.getDefault().post(Keys.MULTIDELIVERY_BATCH_COMPLETED);
         }
     }
 

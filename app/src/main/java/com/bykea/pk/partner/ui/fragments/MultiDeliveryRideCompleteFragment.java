@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;

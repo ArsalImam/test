@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -15,13 +14,8 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.FreeDriverResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
-import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.models.response.RejectCallResponse;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -34,14 +28,10 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontTextView;
 
-import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
-import java.util.regex.Matcher;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
