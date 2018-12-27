@@ -35,6 +35,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.net.HttpURLConnection;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -226,7 +228,7 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
     }
 
     /**
-     * Request feed back for a passenger against the completed trip.
+     * Request feed back for a passenger against the completed tripInfo.
      */
     private void requestFeedback() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -312,30 +314,33 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Callback to be invoked when socket event has been emitted.
+     */
     private IUserDataHandler handler = new UserDataHandler() {
 
         @Override
         public void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response) {
             if (mCurrentActivity != null) {
-                if (tripInfo.getTripID().equalsIgnoreCase(
-                                response
-                                        .getData()
-                                        .getTripID())) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, response.getMessage());
-                    Utils.setCallIncomingState();
-                    AppPreferences.setWalletAmountIncreased(!response.getData().isAvailable());
-                    AppPreferences.setAvailableStatus(response.getData().isAvailable());
-                    ActivityStackManager.getInstance().startHomeActivity(true,
-                            mCurrentActivity);
-                    mCurrentActivity.finish();
-                }
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(mCurrentActivity, response.getMessage());
+                Utils.setCallIncomingState();
+                AppPreferences.setWalletAmountIncreased(false);
+                AppPreferences.setAvailableStatus(true);
+                ActivityStackManager.getInstance().startHomeActivity(true,
+                        mCurrentActivity);
+                mCurrentActivity.finish();
             }
         }
 
         @Override
         public void onError(int errorCode, String errorMessage) {
-
+            Dialogs.INSTANCE.dismissDialog();
+            if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+            } else {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+            }
         }
     };
 

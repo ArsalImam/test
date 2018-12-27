@@ -17,7 +17,7 @@ class CallDriverAcknowledgeData(
         var tripID: String? = StringUtils.EMPTY,
         @SerializedName("is_available")
         var isAvailable: Boolean,
-        @SerializedName("trip_info")
+        @SerializedName("trip")
         var tripInfo: MultiDeliveryRideCompleteTripInfo? = null,
         var invoice: MultiDeliveryInvoiceData? = null
 ) : Parcelable {

@@ -315,7 +315,7 @@ public class UserRepository {
                 AppPreferences.clearTrackingData();
 
             } else {
-                //to free driver after trip Finished
+                //to free driver after tripInfo Finished
                 if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus())) {
                     jsonObject.put("inCall", true);
                 } else {
@@ -808,11 +808,12 @@ public class UserRepository {
         mUserCallback = handler;
         try {
             setMultiDeliveryData(jsonObject);
+            jsonObject.remove("batch_id");
+            jsonObject.remove("trip_type");
             jsonObject.put("trip_id", tripID);
             jsonObject.put("rate", rating);
             jsonObject.put("feedback", "nice");
             jsonObject.put("received_amount", receivedAmount);
-            AppPreferences.clearTrackingData();
 
         } catch (Exception e) {
             e.printStackTrace();

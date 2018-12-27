@@ -17,8 +17,8 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
      * Constructor
      *
      * @param mArea The area of drop off.
-     * @param tripNumber The trip number.
-     * @param tripID The trip ID.
+     * @param tripNumber The tripInfo number.
+     * @param tripID The tripInfo ID.
      * @param passengerName The passenger name.
      * @param codValue The value of cash on delivery.
      * @param streetAddress The street address of drop off.
@@ -38,7 +38,7 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
      * Overloaded Constructor
      *
      * @param mArea The area of drop off.
-     * @param tripNumber The trip number.
+     * @param tripNumber The tripInfo number.
      * @param passengerName The passenger name.
      * @param codValue The value of cash on delivery.
      * @param streetAddress The street address of drop off.

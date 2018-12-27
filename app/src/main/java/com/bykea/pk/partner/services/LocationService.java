@@ -283,7 +283,7 @@ public class LocationService extends Service {
     }
 
     /*
-    * when Booking Screen is in background & driver is in any trip then, we need to call distance
+    * when Booking Screen is in background & driver is in any tripInfo then, we need to call distance
     * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
     * is already being handled via Direction API when we are showing Route to driver.
     * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
@@ -529,7 +529,7 @@ public class LocationService extends Service {
     }
 
     /**
-     * updates notification during trip according to its current status
+     * updates notification during tripInfo according to its current status
      */
     private void updateNotification() {
         Notification notification = getForegroundNotification();

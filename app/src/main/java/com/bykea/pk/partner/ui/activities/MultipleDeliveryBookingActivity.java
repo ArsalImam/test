@@ -150,7 +150,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Set data according to trip states
+     * Set data according to tripInfo states
      */
     private void setInitialData() {
         setProgressDialog();
@@ -196,7 +196,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Set the trip states according to the incomming states i.e accepted, arrived, started, etc.
+     * Set the tripInfo states according to the incomming states i.e accepted, arrived, started, etc.
      */
     private void setTripStates() {
         if (callDriverData != null) {
@@ -723,9 +723,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Check the trip button click if the button text is equal to specific trip status i.e "پہنچ گئے",
+     * Check the tripInfo button click if the button text is equal to specific tripInfo status i.e "پہنچ گئے",
      * etc. To perform the specific operation like driver arrival dialog,
-     * start trip dialog & finish trip dialog
+     * start tripInfo dialog & finish tripInfo dialog
      */
     private void checkTripButtonClick() {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
@@ -750,7 +750,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
 
     /***
-     * show trip started confirmation dialog.
+     * show tripInfo started confirmation dialog.
      *
      * Todo 2: add request started socket event
      */
@@ -814,7 +814,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Set the trip arrived state.
+     * Set the tripInfo arrived state.
      */
     private void setArrivedState() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -822,7 +822,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Set the trip started state.
+     * Set the tripInfo started state.
      */
     private void setStartedState() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);

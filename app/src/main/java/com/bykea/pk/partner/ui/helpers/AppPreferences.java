@@ -387,7 +387,7 @@ public class AppPreferences {
         SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putBoolean(Keys.ON_END_TRIP, value);
         ed.apply();
-        // Clear distance only on begin trip not on end trip
+        // Clear distance only on begin tripInfo not on end tripInfo
         if (value) {
             ed.putFloat(Keys.TRIP_TOTAL_DISTANCE, 0.0f);
         }

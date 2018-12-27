@@ -22,7 +22,7 @@ class MultiDeliveryRideCompleteTripInfo() : Parcelable {
     @SerializedName("trip_distance")
     var tripDistance: String? = StringUtils.EMPTY
 
-    @SerializedName("trip_id")
+    @SerializedName("id")
     var tripID: String? = StringUtils.EMPTY
 
     constructor(parcel: Parcel) : this() {

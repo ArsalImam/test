@@ -181,8 +181,8 @@ public class SplashActivity extends BaseActivity {
 
     /***
      * Validate Login flow for the user.
-     * If user is already login we connect socket with server and check if there are some running trip.
-     * If we find there are some running trip for the login user to redirect him to ride screen.
+     * If user is already login we connect socket with server and check if there are some running tripInfo.
+     * If we find there are some running tripInfo for the login user to redirect him to ride screen.
      * Otherwise, we redirect him to dashboard screen.
      *
      * If the user not logged In we hide splash view and show welcome screen view
@@ -301,7 +301,7 @@ public class SplashActivity extends BaseActivity {
                                 }
                                 finish();
                             } catch (NullPointerException e) {
-                                //If there is no pending trip free all states for new trip..
+                                //If there is no pending tripInfo free all states for new tripInfo..
                                 Utils.setCallIncomingState();
                                 startHomeActivity();
                             }
@@ -309,7 +309,7 @@ public class SplashActivity extends BaseActivity {
                             if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
-                                //If there is no pending trip free all states for new trip..
+                                //If there is no pending tripInfo free all states for new tripInfo..
                                 Utils.setCallIncomingState();
                                 startHomeActivity();
                             }

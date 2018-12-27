@@ -112,15 +112,15 @@ public class ApiTags {
     public static final String SOCKET_UPDATE_DRIVER_LOC = "update-lat-lng";
     public static final String SOCKET_UPDATE_DRIVER_STATUS = "driver-update-status";
     public static final String SOCKET_FREE_PILOT = "free-when-call-end";
-    public static final String SOCKET_DRIVER_FEEDBACK = "trip-driverFeedback";
-    public static final String SOCKET_PASSENGER_CALL = "trip-notification";
-    public static final String SOCKET_CANCEL_RIDE_DRIVER = "trip-driverCancelTrip";
+    public static final String SOCKET_DRIVER_FEEDBACK = "tripInfo-driverFeedback";
+    public static final String SOCKET_PASSENGER_CALL = "tripInfo-notification";
+    public static final String SOCKET_CANCEL_RIDE_DRIVER = "tripInfo-driverCancelTrip";
     public static final String SOCKET_ACCEPT_CALL = "accept-call";
     public static final String ACK_CALL = "Send-Acknowledge";
-    public static final String SOCKET_REJECT_CALL = "trip-driverRejectCall";
+    public static final String SOCKET_REJECT_CALL = "tripInfo-driverRejectCall";
     public static final String SOCKET_ARRIVED = "i-am-arrived";
-    public static final String SOCKET_BEGIN_TRIP = "start-trip";
-    public static final String SOCKET_END_TRIP = "finish-trip";
+    public static final String SOCKET_BEGIN_TRIP = "start-tripInfo";
+    public static final String SOCKET_END_TRIP = "finish-tripInfo";
 
     //region MULTI DELIVERY SOCKET EVENTS
     public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER = "CALL_DRIVER";
@@ -137,11 +137,11 @@ public class ApiTags {
 
     /*CHAT APIS*/
     public static final String SOCKET_SEND_CHAT_MESSAGE = "send-message";
-    public static final String SOCKET_GET_DRIVER_STATS = "driver:trip-status";
+    public static final String SOCKET_GET_DRIVER_STATS = "driver:tripInfo-status";
     public static final String SOCKET_GET_CONVERSATION = "get-conversation-info";
     public static final String SOCKET_GET_CONVERSATION_ID = "get-my-conversation";
     public static final String SOCKET_RECEIVE_CHAT_MESSAGE = "chat-receiver";
     public static final String SOCKET_UPDATE_STATUS = "update-driver-status";
-    public static final String UPDATE_DROP_OFF = "trip-endaddress";
+    public static final String UPDATE_DROP_OFF = "tripInfo-endaddress";
     public static final String PLACES_DISTANCEMATRIX_EXT_URL = "maps/api/distancematrix/json";
 }
