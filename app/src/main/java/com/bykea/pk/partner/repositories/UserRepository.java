@@ -744,6 +744,7 @@ public class UserRepository {
     /**
      * Emit driver cancel batch request.
      *
+     * @param cancelReason The cancellation reason.
      * @param handler The Callback that will be invoked when driver arrived response received.
      *
      * @see IUserDataHandler

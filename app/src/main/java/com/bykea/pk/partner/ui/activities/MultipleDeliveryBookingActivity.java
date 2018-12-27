@@ -143,7 +143,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
 
-
     /***
      * Initialize data i.e activity, register ButterKnife, initialize UserRepository,  etc
      */
@@ -994,22 +993,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
         @Override
         public void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response) {
-            Dialogs.INSTANCE.dismissDialog();
-            AppPreferences.setAvailableStatus(true);
-            dataRepository.requestLocationUpdate(
-                    mCurrentActivity,
-                    handler,
-                    AppPreferences.getLatitude(),
-                    AppPreferences.getLongitude());
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ActivityStackManager
-                            .getInstance()
-                            .startHomeActivity(true, mCurrentActivity);
-                    finish();
-                }
-            });
+            onCancelBatch();
             EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
         }
 
@@ -1019,20 +1003,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 @Override
                 public void run() {
                     if (mCurrentActivity != null) {
-                        Dialogs.INSTANCE.dismissDialog();
-                        if (mapPolylines != null)
-                            mapPolylines.remove();
-                        timeTv.setVisibility(View.GONE);
-                        timeUnitLabelTv.setVisibility(View.GONE);
-                        timeView.setVisibility(View.GONE);
-                        pickupMarker.remove();
-                        pickView.setVisibility(View.GONE);
-                        distanceTv.setVisibility(View.GONE);
-                        pickUpDistanceUnit.setVisibility(View.GONE);
-                        callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
-                        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
-                        jobBtn.setText(getString(R.string.button_text_start));
-                        tafseelLayout.setVisibility(View.VISIBLE);
+                        onArrivedResponse();
                     }
                 }
             });
@@ -1048,6 +1019,54 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             }
         }
     };
+
+    /**
+     * Invoked this method when multi delivery arrived response received
+     */
+    private void onArrivedResponse() {
+        Dialogs.INSTANCE.dismissDialog();
+        if (mapPolylines != null)
+            mapPolylines.remove();
+        timeTv.setVisibility(View.GONE);
+        timeUnitLabelTv.setVisibility(View.GONE);
+        timeView.setVisibility(View.GONE);
+        pickupMarker.remove();
+        pickView.setVisibility(View.GONE);
+        distanceTv.setVisibility(View.GONE);
+        pickUpDistanceUnit.setVisibility(View.GONE);
+        callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
+        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+        jobBtn.setText(getString(R.string.button_text_start));
+        tafseelLayout.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Invoked this method when multi delivery batch has been canceled.
+     */
+    private void onCancelBatch() {
+        try {
+            Dialogs.INSTANCE.dismissDialog();
+            AppPreferences.setAvailableStatus(true);
+            callDriverData.setBatchStatus(TripStatus.ON_FREE);
+            AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+            dataRepository.requestLocationUpdate(
+                    mCurrentActivity,
+                    handler,
+                    AppPreferences.getLatitude(),
+                    AppPreferences.getLongitude());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ActivityStackManager
+                            .getInstance()
+                            .startHomeActivity(true, mCurrentActivity);
+                    finish();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void onDestroy() {

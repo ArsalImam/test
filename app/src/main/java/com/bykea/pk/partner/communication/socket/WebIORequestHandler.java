@@ -213,10 +213,10 @@ public class WebIORequestHandler {
      * {@link ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED} and attach the
      * generic listener to listen the event.
      *
-     * @param driverArrivedData The json object that will be emit on the driver arrived event.
+     * @param driverCancelData The json object that will be emit on the driver cancel batch event.
      * @param responseCallBack  The callback that will be invoked when event response received.
      */
-    public void requestMultideliveryCancelBatch(JSONObject driverArrivedData,
+    public void requestMultideliveryCancelBatch(JSONObject driverCancelData,
                                                   IResponseCallback responseCallBack) {
         emitWithJObject(
                 ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
@@ -225,7 +225,7 @@ public class WebIORequestHandler {
                         MultiDeliveryCancelBatchResponse.class,
                         responseCallBack
                 ),
-                driverArrivedData
+                driverCancelData
         );
     }
 
