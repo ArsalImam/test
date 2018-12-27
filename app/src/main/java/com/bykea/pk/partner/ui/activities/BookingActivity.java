@@ -363,6 +363,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
             R.id.endAddressTv, R.id.ivTopUp, R.id.tvCustomerPhone})
     public void onClick(View view) {
+
         switch (view.getId()) {
             case R.id.chatBtn:
                 if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
@@ -820,7 +821,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             progressDialogJobActivity.setMessage(getString(R.string.internet_error));
         }
         AppPreferences.setIsOnTrip(true);
-        ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+        ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
         mLocBearing = AppPreferences.getBearing() + "";
         mCurrentLocation = new Location("");
         mCurrentLocation.setLongitude(AppPreferences.getLongitude());

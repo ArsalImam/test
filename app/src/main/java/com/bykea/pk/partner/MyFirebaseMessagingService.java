@@ -6,30 +6,28 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
-import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.HTTPStatus;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
-import com.google.gson.Gson;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
-
-import okhttp3.internal.Util;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -66,10 +64,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         // Check if message contains a notification payload.
-        if (remoteMessage.getData() != null && remoteMessage.getData().get("event") != null) {
+        if (remoteMessage.getData() != null && remoteMessage.getData()
+                .get(Constants.Notification.EVENT_TYPE) != null) {
             Utils.redLog(TAG, "NOTIFICATION DATA (FCM) : " + remoteMessage.getData().toString());
-            if (remoteMessage.getData().get("event").equalsIgnoreCase("1")) {
-                NormalCallData callData = gson.fromJson(remoteMessage.getData().get("data"), NormalCallData.class);
+            if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase("1")) {
+                NormalCallData callData = gson.fromJson(remoteMessage.getData()
+                        .get(Constants.Notification.DATA_TYPE), NormalCallData.class);
                 if (StringUtils.isNotBlank(callData.getStatus())) {
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                         if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
@@ -90,10 +90,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) && AppPreferences.getAvailableStatus()) {
 
                         /*
-                        * when Gps is off, we don't show Calling Screen so we don't need to show
-                        * Cancel notification either if passenger cancels it before booking.
-                        * If passenger has cancelled it after booking we will entertain this Cancel notification
-                        * */
+                         * when Gps is off, we don't show Calling Screen so we don't need to show
+                         * Cancel notification either if passenger cancels it before booking.
+                         * If passenger has cancelled it after booking we will entertain this Cancel notification
+                         * */
 
                         if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                             Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
@@ -108,12 +108,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             }
                         }
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING)) {
+                        Utils.redLog(TAG,"On Call FCM");
                         ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
                     } else {
                         Utils.updateTripData(callData);
                     }
                 }
-            } else if (remoteMessage.getData().get("event").equalsIgnoreCase("2")) {
+            } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("2")) {
                 if (AppPreferences.isOnTrip()) {
                     Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivityNew.class);
                     chatIntent.putExtra("chat", true);
@@ -123,22 +125,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     startActivity(chatIntent);
                     WebIORequestHandler.getInstance().registerChatListener();
                 }
-            } else if (remoteMessage.getData().get("event").equalsIgnoreCase("7")) {//when server inactive any driver via Cron job
-                onInactivePushReceived(remoteMessage, gson);
-            } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("3"))) {
+            } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("7")) {//when server inactive any driver via Cron job
+                OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), OfflineNotificationData.class);
+                ActivityStackManager.getInstance().startHandleInactivePushService(mContext, data);
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("3"))) {
                 if (AppPreferences.isLoggedIn()) {
-                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
+                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), NotificationData.class);
                     AppPreferences.setAdminMsg(adminNotification);
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
-            } else if ((remoteMessage.getData().get("event").equalsIgnoreCase("4"))) {
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("4"))) {
                 if (AppPreferences.isLoggedIn()) {
-                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData().get("data"), NotificationData.class);
+                    NotificationData adminNotification = gson.fromJson(remoteMessage.getData()
+                            .get(Constants.Notification.DATA_TYPE), NotificationData.class);
                     AppPreferences.setAdminMsg(adminNotification);
                     Notifications.generateAdminNotification(this, adminNotification.getMessage());
                     if (AppPreferences.getAvailableStatus() != adminNotification.isActive()
-                            && !AppPreferences.isOutOfFence() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
+                            && !AppPreferences.isOutOfFence() && AppPreferences.getTripStatus()
+                            .equalsIgnoreCase(TripStatus.ON_FREE)) {
                         AppPreferences.setAvailableStatus(adminNotification.isActive());
                         AppPreferences.setWalletAmountIncreased(!adminNotification.isActive());
                         mBus.post("INACTIVE-PUSH");
@@ -150,20 +158,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private synchronized void onInactivePushReceived(RemoteMessage remoteMessage, Gson gson) {
+        Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Inactive Push Received");
         if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() || AppPreferences.isOutOfFence()) && Utils.isInactiveCheckRequired()) {
+            Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Driver is Logged In");
             AppPreferences.setInactiveCheckTime(System.currentTimeMillis());
-            final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get("data"), OfflineNotificationData.class);
+            final OfflineNotificationData data = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), OfflineNotificationData.class);
             /*
-            * Check Coordinates when there's any delay in FCM Push Notification and ignore
-            * this notification when there are different coordinates.
-            * */
+             * Check Coordinates when there's any delay in FCM Push Notification and ignore
+             * this notification when there are different coordinates.
+             * */
             if (StringUtils.isNotBlank(data.getLat()) && StringUtils.isNotBlank(data.getLng())
                     && data.getLat().equalsIgnoreCase(AppPreferences.getLastUpdatedLatitude())
                     && data.getLng().equalsIgnoreCase(AppPreferences.getLastUpdatedLongitude()) && !isCountDownTimerRunning) {
-
+                Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Data");
                 if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                     //If we don't get response of location update in 15 sec, then we'll consider driver is in inactive state
-
+                    Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Valid Connection and GPS is active");
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
@@ -172,6 +182,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             countDownTimer.start();
                             WebIO.getInstance().clearConnectionData();
                             new UserRepository().requestLocationUpdate(mContext, new UserDataHandler() {
+
                                 @Override
                                 public void onLocationUpdate(LocationResponse response) {
                                     countDownTimer.cancel();
@@ -188,14 +199,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         }
                     });
                 } else {
+                    Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob | GPS = " + Utils.isGpsEnable() + " Internet = " + Connectivity.isConnectedFast(mContext));
                     onInactiveByCronJob(data.getMessage());
                 }
+            } else {
+                Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "FCM Ignored. Location Already Updated via update-lat-lng API or API is being called.");
             }
+        } else {
+            String logMsg = "FCM Ignored. login = " + AppPreferences.isLoggedIn() + "active = " + AppPreferences.getAvailableStatus() + " outOfFense = " + AppPreferences.isOutOfFence() + " InactiveCheckRequired = " + Utils.isInactiveCheckRequired();
+            Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, logMsg);
         }
     }
 
 
     private void onLocationUpdateError(int errorCode, String errorMessage, OfflineNotificationData data) {
+        Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onLocationUpdateError " + errorMessage);
         if (errorCode == HTTPStatus.UNAUTHORIZED) {
             Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
             sendBroadcast(locationIntent);
@@ -220,9 +238,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void onInactiveByCronJob(String data) {
+        Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob " + data);
         AppPreferences.setAdminMsg(null);
         AppPreferences.setAvailableStatus(false);
         mBus.post(Keys.INACTIVE_PUSH);
         Notifications.generateAdminNotification(mContext, data);
+    }
+
+    /**
+     * This method handles fcm token when refreshed
+     * Updated previous code that was being handled in FirebaseInstanceIdService as
+     * FirebaseInstanceIdService is depricated in latest sdk versions
+     *
+     * @param refreshedToken String fcm token
+     */
+    @Override
+    public void onNewToken(String refreshedToken) {
+        super.onNewToken(refreshedToken);
+        Utils.redLog(TAG, "REFRESHED TOKEN GENERATED : " + refreshedToken);
+        sendRegistrationToServer(refreshedToken);
+    }
+
+    /**
+     * Persist token to Bykea servers.
+     * This method associates the user's FCM InstanceID token with bykea server-side account
+     *
+     * @param token String The new token.
+     */
+    private void sendRegistrationToServer(String token) {
+        AppPreferences.setRegId(token);
+        if (Utils.isFcmIdUpdateRequired(AppPreferences.isLoggedIn())) {
+            new UserRepository().updateRegid(this, new UserDataHandler());
+        }
     }
 }

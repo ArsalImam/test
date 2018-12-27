@@ -10,21 +10,28 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-public class FileUtils {
-
+public class FileUtil {
+    private static final String LOG_ROOT_FOLDER_NAME = "Logs";
     //replace this with your authority
     public static final String AUTHORITY = "com.ianhanniballake.localstorage.documents";
 
 
-    private FileUtils() {
+    private FileUtil() {
     } //private constructor to enforce Singleton pattern
 
     /**
      * TAG for log messages.
      */
-    static final String TAG = "FileUtils";
+    static final String TAG = "FileUtil";
     private static final boolean DEBUG = false; // Set to true to enable logging
 
 
@@ -217,6 +224,116 @@ public class FileUtils {
             }
         }
         return null;
+    }
+
+    /***
+     * Create Logs Root folder inside App installation directory.
+     * @param context calling context.
+     * @return {@link File} object is returned
+     *
+     */
+    public static File createRootDirectoryForLogs(Context context) {
+        //If you save data on this path and uninstall the app, that data won't be lost.
+        File root = new File(context.getFilesDir()
+                + File.separator
+                + LOG_ROOT_FOLDER_NAME
+                + File.separator);
+
+        if (!root.exists()) {
+            root.mkdirs();
+        }
+        return root;
+    }
+
+
+    /***
+     * Zips a file at a location and places the resulting zip file at the toLocation
+     * Example: zipFileAtPath("downloads/myfolder", "downloads/myFolder.zip");
+     * @param sourcePath Source path
+     * @param toLocation destination path
+     * @return True if zip is completed successfully else returns false.
+     */
+    public static boolean zipFileAtPath(String sourcePath, String toLocation) {
+        final int BUFFER = 2048;
+
+        File sourceFile = new File(sourcePath);
+        try {
+            BufferedInputStream origin = null;
+            FileOutputStream dest = new FileOutputStream(toLocation);
+            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
+                    dest));
+            if (sourceFile.isDirectory()) {
+                zipSubFolder(out, sourceFile, sourceFile.getParent().length());
+            } else {
+                byte data[] = new byte[BUFFER];
+                FileInputStream fi = new FileInputStream(sourcePath);
+                origin = new BufferedInputStream(fi, BUFFER);
+                ZipEntry entry = new ZipEntry(getLastPathComponent(sourcePath));
+                entry.setTime(sourceFile.lastModified()); // to keep modification time after unzipping
+                out.putNextEntry(entry);
+                int count;
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+            }
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Zips a subfolder
+     *
+     * @param out            ZipOutputStream object which is used write zip stream.
+     * @param folder         folder which needs to be zip
+     * @param basePathLength Parent folder in which current folder resides.
+     * @throws IOException
+     */
+    private static void zipSubFolder(ZipOutputStream out, File folder,
+                                     int basePathLength) throws IOException {
+
+        final int BUFFER = 2048;
+
+        File[] fileList = folder.listFiles();
+        BufferedInputStream origin = null;
+        for (File file : fileList) {
+            if (file.isDirectory()) {
+                zipSubFolder(out, file, basePathLength);
+            } else {
+                byte data[] = new byte[BUFFER];
+                String unmodifiedFilePath = file.getPath();
+                String relativePath = unmodifiedFilePath
+                        .substring(basePathLength);
+                FileInputStream fi = new FileInputStream(unmodifiedFilePath);
+                origin = new BufferedInputStream(fi, BUFFER);
+                ZipEntry entry = new ZipEntry(relativePath);
+                entry.setTime(file.lastModified()); // to keep modification time after unzipping
+                out.putNextEntry(entry);
+                int count;
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+                origin.close();
+            }
+        }
+    }
+
+    /***
+     * gets the last path component
+     * <p>
+     * Example: getLastPathComponent("downloads/example/fileToZip");
+     * Result: "fileToZip"
+     * @param filePath File path
+     * @return File last segment is returned if count is > 0 else return empty string
+     */
+    private static String getLastPathComponent(String filePath) {
+        String[] segments = filePath.split(File.separator);
+        if (segments.length == 0)
+            return "";
+        return segments[segments.length - 1];
     }
 
 

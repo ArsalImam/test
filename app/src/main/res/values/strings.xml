@@ -163,15 +163,23 @@
     <string name="customer_ki_taraf_se_rating">\u0020کسٹمر کی طرف سے ریٹنگ\u0020</string>
     <string name="logout_text_ur">\u0020لاگ آوٹ؟\u0020</string>
     <string name="cancel_notification">\u0020کسٹمر نے بکنگ کینسل کردی\u0020</string>
-    <string name="cancel_notification_by_admin">\u0020ایڈمن نے بکنگ کینسل کردی\u0020</string>
+    <string name="cancel_notification_by_admin">\u0020آپکی بکنگ کینسل ہوگئی ہے۔\u0020</string>
     <string name="score_urdu">\u0020سکور</string>
     <string name="rs">Rs\u0020</string>
     <string name="percentage_sign">%</string>
     <string name="minus_sign">-</string>
     <string name="no_internet_msg_ur">انٹرنیٹ کنکشن میں کچھ مسئلہ ہے\n برائے مہربانی اپنا انٹرنیٹ کنکشن چیک کریں</string>
+    <string name="global_tag" translatable="false">Bykea XLog</string>
+    <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
+    <string name="zaari_malomaat">ذاتی معلومات</string>
+    <string name="khufia_code_badlain">خفیہ کوڈ بدلیں</string>
+    <string name="khidmaat_ki_shart">خدمات کی شرائط</string>
+    <string name="licence_ki_maloomaat">لائسنس کی معلومات</string>
+    <string name="motorcycle_ki_maloomat">موٹربائیک کی معلومات</string>
+    <string name="bank_account_ki_malomaat">بینک اکاؤنٹ کی معلومات</string>
+    <string name="email_log_files_to_developer">Email Log Files to developer</string>
     <string name="register_tarining_link_msg">ہم نے آپ کو بزریعہ SMS %1$s پر ٹریننگ ویڈیو کا لنک بھیج دیا ہے۔ اس کو دیکھیں اور کام کا طریقہ سمجھیں۔</string>
     <string name="register_account_active_msg">آپ کا اکاونٹ کاغذات کی تصدیق کے بعد 48 گھنٹے کے اندر ایکٹیو کردیا جائیگا۔</string>
-    <string name="offline_msg_ur">آف لائن ہونے کے بعد آپ کوئی بکنگ نہیں لے سکتے</string>
     <string name="invalid_phone_urdu">\u0020خفیہ کوڈ درست نہیں ہے\u0020</string>
     <string name="invalid_phone">Invalid phone</string>
     <string name="invalid_code_error_message">Invalid Code</string>
@@ -205,6 +213,7 @@
     <string name="enter_verification_code">Enter verification code</string>
     <string name="force_app_update_link">https://play.google.com/store/apps/details?id=%1$s</string>
     <string name="force_app_update_title">اعلان !</string>
+    <string name="force_app_update_message_local_ur">بائيکیا پارٹنر ایپ کو برائے مہربانی فوراً اپڈیٹ کریں۔</string>
     <string name="driver_licence_expire_error">your license has expired</string>
     <string name="driver_licence_expire_error_ur">آپکا لائسنس ایکسپائر ہے ، كال بائیکیا</string>
     <string name="error_heading">Error</string>
@@ -221,5 +230,24 @@
     <string name="GPS_middle_message">GPS</string>
     <string name="gps_enable_ending_message"> آن کریں </string>
     <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
+    <string name="notification_title_driver_login_location">Logged in fetching location</string>
+    <string name="notification_title_driver_logout_location">Fetching location</string>
+    <string name="notification_title_driver_status">Your Status: %1$s</string>
+    <string name="notification_title_driver_trip">TRIP# %1$s is in %2$s state</string>
+    <string name="battery_optimize_error_title">Battery Optimize Error</string>
+    <string name="battery_optimize_error_message">Provide Battery Optimize permission for making you online</string>
+    <string name="imei_report_part_one_ur">اس موبائل کا </string>
+    <string name="imei_report_part_two"> IMEI</string>
+    <string name="imei_report_part_three_ur">نمبر ہمارے ریکارڈ میں موجود نہیں ہے۔</string>
+    <string name="imei_report_part_four_ur">\n نئے </string>
+    <string name="imei_report_part_five_ur">کے اندراج کے لئے نیچے دیئے گئے بٹن پر کلک کریں۔</string>
+    <string name="imei_report_submit_ur">مسئلہ درج کریں</string>
+    <string name="frequent_booking_cancel_error_ur">مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے</string>
+    <string name="wallet_amount_exceed_error_ur">مزید بوکنگز لینے کے لیے پیسے جمع کروائے۔</string>
+    <string name="account_inactive_message_error_ur">آپکا اکاؤنٹ بند ہے ، کال بائيکیا</string>
+    <string name="retrofit_logging_request">Sending request %s on %s%n%s%s</string>
+    <string name="retrofit_logging_response">Received response for %s in %.1fms%n%s</string>
+    <string name="retrofit_request_method_type"> Method </string>
+    <string name="driver_offline_crone_job_ur">App Offline Hochuke Hain!</string>
 
 </resources>

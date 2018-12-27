@@ -13,7 +13,17 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.FileUtil;
 import com.bykea.pk.partner.utils.Utils;
+import com.elvishew.xlog.LogConfiguration;
+import com.elvishew.xlog.LogLevel;
+import com.elvishew.xlog.XLog;
+import com.elvishew.xlog.flattener.ClassicFlattener;
+import com.elvishew.xlog.printer.AndroidPrinter;
+import com.elvishew.xlog.printer.Printer;
+import com.elvishew.xlog.printer.file.FilePrinter;
+import com.elvishew.xlog.printer.file.backup.FileSizeBackupStrategy;
+import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator;
 import com.facebook.appevents.AppEventsLogger;
 import com.instabug.library.Instabug;
 import com.instabug.library.invocation.InstabugInvocationEvent;
@@ -25,6 +35,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
+import java.io.File;
+
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
@@ -33,6 +45,10 @@ public class DriverApp extends MultiDexApplication {
     private static DriverApp mContext;
     private BasicComponent mBasicComponent;
     private Emitter.Listener mJobCallListener = new WebIORequestHandler.JobCallListener();
+    /**
+     * XLog Printer global object which would be used for writing logs on file.
+     */
+    public static Printer globalFilePrinter;
 
     @Override
     public void onCreate() {
@@ -67,6 +83,41 @@ public class DriverApp extends MultiDexApplication {
                 .setNotificationOpenedHandler(new OneSignalNotificationOpenedHandler())
                 .filterOtherGCMReceivers(true)
                 .init();
+        setupLoggerConfigurations();
+    }
+
+    /***
+     * Setup logging configurations where all logs are stored date wise and app cache folder
+     */
+    private void setupLoggerConfigurations() {
+
+        LogConfiguration config = new LogConfiguration.Builder()
+                .logLevel(BuildConfig.DEBUG ? LogLevel.ALL // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
+                        : LogLevel.NONE)
+                .tag(getString(R.string.global_tag))
+//                .t()    // Enable thread info, disabled by default
+//                .st(2) // Enable stack trace info with depth 2, disabled by default
+                .build();
+
+        // Printer that print the log using com.elvishew.xlog.XLog.Log
+        Printer androidPrinter = new AndroidPrinter();
+        // Printer that print the log to the file system
+
+        File logRootFolder = FileUtil.createRootDirectoryForLogs(this);
+        Printer filePrinter = new FilePrinter
+                .Builder(logRootFolder.getPath())       // Specify the path to save log file
+                .fileNameGenerator(new DateFileNameGenerator()) // saves each log file according to DateFileName
+                .backupStrategy(new FileSizeBackupStrategy(Constants.LogTags.LOG_FILE_MAX_SIZE))
+                .logFlattener(new ClassicFlattener())
+                .build();
+
+
+        //Initialize XLog and with provided configuration and Android Printer
+        XLog.init(config, androidPrinter, filePrinter);
+
+        // For future usage: partial usage in MainActivity.
+        globalFilePrinter = filePrinter;
+
     }
 
     public static DriverApp getApplication() {

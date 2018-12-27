@@ -3,10 +3,6 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
-import java.net.HttpURLConnection;
-
-import javax.net.ssl.HttpsURLConnection;
-
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
@@ -75,6 +71,44 @@ public class Constants {
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
 
+    public static final String MOBILE_IMEI_ERROR = "IMEI";
+
+    public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
+    public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
+
+
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000; //10000; 60 seconds
+
+    /**
+     * The fastest rate for active location updates. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2; //30 seconds
+
+    public static final float LOCATION_SMALLEST_DISPLACEMENT = 10f;
+
+    public static final int LOCATION_RESPONSE_COUNTER_RESET = 0;
+    public static final int LOCATION_RESPONSE_NOT_RECEIEVED_ALLOWED_COUNTER = 3;
+
+    public static final int BATTERY_OPTIMIZATION_RESULT = 2000;
+
+    public static final String RETROFIT_METHOD_POST = "post";
+    public static final String RETROFIT_METHOD_GET = "get";
+
+
+    public static class Notification {
+        public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
+        public static final String NOTIFICATION_CHANNEL_NAME = "Bykea Active/Inactive Status";
+        public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
+
+        public static final String EVENT_TYPE = "event";
+        public static final String DATA_TYPE = "data";
+    }
+
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
     public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
 
@@ -92,6 +126,8 @@ public class Constants {
     public static final int RESET_CASH_TO_DEFAULT_POSITION = 1;
     public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
+
+    public static final int IN_ACTIVE_MUSIC_SOUND = 5000;
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
@@ -131,6 +167,7 @@ public class Constants {
         public static final String POSITION_DELIVERY_SCHEDULE = "POSITION_DELIVERY_SCHEDULE";
         public static final String IS_CANCELED_TRIP = "isCancelledTrip";
         public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
+        public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
     }
 
     public static class Broadcast {
@@ -141,6 +178,7 @@ public class Constants {
         public final static String STARTFOREGROUND_ACTION = "STARTFOREGROUND_ACTION";
         public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";
         public final static String ON_NOTIFICATION_CLICK = "ON_NOTIFICATION_CLICK";
+        public final static String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
     }
 
     public static class RequestCode {
@@ -185,8 +223,11 @@ public class Constants {
     public final static int REQUEST_GALLERY = 22;
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
+    public final static int LOCATION_API_WAIT_ON_INACTIVE_PUSH = 15000;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
+
+    public final static String DRIVER_SOCKET_CLIENT_TYPE = "PARTNER_ANDROID";
 
     /**
      * This inner class will contain Constants for Log Tags and Error Log Messages
@@ -196,7 +237,29 @@ public class Constants {
         public final static String TIME_OUT_ERROR = "TimeOut ";
         public final static String CONVERSION_ERROR = "ConversionError ";
         public final static String OTHER_ERROR = "Other Error ";
+        // Log file Max file size before it creates a new file for logs
+        public static final long LOG_FILE_MAX_SIZE = 1024 * 1024;
+        //Developer email address which is used for sending logs.
+        public static final String LOG_SEND_DEVELOPER_EMAIL = "raheel@mobinspire.com";
+        public static final String LOG_SEND_SUBJECT = "Log Files";
+        public static final String LOG_SEND_MESSAGE_BODY = "Latest logs attached";
+        public static final String BYKEA_LOG_TAG = "BYKEA_LOG_TAG";
+        public static final String BYKEA_INACTIVE_PUSH = "INACTIVE_PUSH";
+
     }
+
+    /**
+     * This inner class will contain Constants for Fcm Push Notification's Events
+     */
+    public static class FcmEvents {
+        public static final String INACTIVE_PUSH = "7";
+    }
+
+    public static class Driver {
+        public static String STATUS_ACTIVE = "ACTIVE";
+        public static String STATUS_INACTIVE = "INACTIVE";
+    }
+
 
     /**
      * List of supported services name and title by our eco system.
@@ -235,13 +298,27 @@ public class Constants {
 
     }
 
+    /***
+     * list of Connectivity signal status constant which would be used for future reference
+     */
+    public static class ConnectionSignalStatus {
+
+        public static final String UNKNOWN_STATUS = "Unknown Status";
+        public static final String BATTERY_LOW = "Battery Low";
+        public static final String POOR_STRENGTH = "Poor Connection";
+        public static final String FAIR_STRENGTH = "Fair Connection";
+        public static final String GOOD_STRENGTH = "Good Connection";
+        public static final String NO_CONNECTIVITY = "No Connection";
+
+    }
+
     /**
      * Inner class for Font Names
      */
     public static class FontNames {
         public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
         public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
-        public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
+        public static final String OPEN_SANS_BOLD = "open_sans_semi_bold.ttf";
     }
 
     /***
@@ -255,6 +332,12 @@ public class Constants {
         public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
         public static final int DRIVER_LICENSE_EXPIRED = 1004;
         public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
+        public static final int MULTIPLE_CANCELLATION_BLOCK = 1007;
+        public static final int IMEI_NOT_REGISTERED = 1008;
+        public static final int WALLET_EXCEED_THRESHOLD = 1009;
+        public static final int OUT_OF_SERVICE_REGION = 1010;
+        public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+
     }
 
 }

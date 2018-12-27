@@ -10,15 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.Toast;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
-import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragmentTesting;
 import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
 import com.bykea.pk.partner.ui.fragments.PerformanceFragment;
@@ -28,7 +25,6 @@ import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -104,27 +100,27 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             switch (getLayoutPosition()) {
                 case 0:// This case is for driver header part click.
                     if (HomeActivity.visibleFragmentNumber != 0) {
-                        updateCurrentFragment(new ProfileFragment(),0);
+                        updateCurrentFragment(new ProfileFragment(), 0);
                     }
                     break;
                 case 1:
                     if (HomeActivity.visibleFragmentNumber != 1) {
-                        updateCurrentFragment(new HomeFragmentTesting(),1);
+                        updateCurrentFragment(new HomeFragmentTesting(), 1);
                     }
                     break;
                 case 2:
                     if (HomeActivity.visibleFragmentNumber != 2) {
-                        updateCurrentFragment(new TripHistoryFragment(),2);
+                        updateCurrentFragment(new TripHistoryFragment(), 2);
                     }
                     break;
                 case 3:
                     if (HomeActivity.visibleFragmentNumber != 3) {
-                        updateCurrentFragment(new WalletFragment(),3);
+                        updateCurrentFragment(new WalletFragment(), 3);
                     }
                     break;
                 case 4:
                     if (HomeActivity.visibleFragmentNumber != 4) {
-                        updateCurrentFragment(new PerformanceFragment(),4);
+                        updateCurrentFragment(new PerformanceFragment(), 4);
                     }
                     break;
                 case 5:

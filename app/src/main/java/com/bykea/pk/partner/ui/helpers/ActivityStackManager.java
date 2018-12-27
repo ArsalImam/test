@@ -5,14 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
+import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.services.HandleInactivePushService;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
@@ -37,7 +37,6 @@ import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
-import com.bykea.pk.partner.ui.activities.SplashActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -126,6 +125,18 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /***
+     * Start Home screen for Inactive push for user interaction
+     * @param mContext Calling context.
+     */
+    public void startHomeActvityForInActivePush(Context mContext) {
+        Intent intent = new Intent(mContext, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        mContext.startActivity(intent);
+    }
+
     /**
      * clears activity stack before starting HomeActivity (if activity is already running it will not launch new instance)
      * HomeFragment will be loaded from onNewIntent method of HomeActivity
@@ -192,7 +203,7 @@ public class ActivityStackManager {
      * This method stops Location Service.
      *
      * @param context Calling Context
-     * @see Constants.Actions.STOPFOREGROUND_ACTION
+     * @see Constants.Actions#STOPFOREGROUND_ACTION
      */
     public synchronized void stopLocationService(Context context) {
         if (Utils.isServiceRunning(context, LocationService.class)) {
@@ -211,13 +222,17 @@ public class ActivityStackManager {
      * @param context Calling Context
      */
     public void restartLocationService(final Context context) {
-        stopLocationService(context);
+        /*stopLocationService(context);
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 startLocationService(context);
             }
-        }, Constants.RESTART_LOCATION_SERVICE_DELAY);
+        }, Constants.RESTART_LOCATION_SERVICE_DELAY);*/
+        Intent intent = new Intent(context, LocationService.class);
+        intent.setAction(Utils.isServiceRunning(context, LocationService.class) ?
+                Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
+        startService(context, intent);
     }
 
     public void restartLocationService(Context mContext, String STATUS) {
@@ -231,8 +246,12 @@ public class ActivityStackManager {
     }
 
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
+
+        Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +
+                "PS status: " + Utils.isGpsEnable() + "Trip Status: " + AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE) +
+                "Not Delayed: " + Utils.isNotDelayed(callData.getData().getSentTime()));
         if (AppPreferences.getAvailableStatus()
-                && !AppPreferences.isAvailableStatusAPICalling()
+                //&& !AppPreferences.isAvailableStatusAPICalling()
                 && Utils.isGpsEnable()
                 && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
                 && Utils.isNotDelayed(callData.getData().getSentTime())) {
@@ -244,6 +263,7 @@ public class ActivityStackManager {
             callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             if (isFromGcm) {
                 callIntent.putExtra("isGcm", true);
+                Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
             }
             mContext.startActivity(callIntent);
         }
@@ -356,6 +376,21 @@ public class ActivityStackManager {
         Intent intent = new Intent(context, RegistrationActivity.class);
 //        Intent intent = new Intent(context, JsBankFingerSelectionActivity.class);
         context.startActivity(intent);
+    }
+
+
+    /**
+     * This method starts a service to handle Inactive Push Notification
+     *
+     * @param data    Notifiation data
+     * @param context Calling context
+     */
+    public void startHandleInactivePushService(Context context, OfflineNotificationData data) {
+        if (!Utils.isServiceRunning(context, HandleInactivePushService.class)) {
+            Intent intent = new Intent(context, HandleInactivePushService.class);
+            intent.putExtra(Constants.Extras.INACTIVE_PUSH_DATA, data);
+            context.startService(intent);
+        }
     }
 
 }

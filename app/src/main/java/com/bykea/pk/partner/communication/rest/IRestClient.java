@@ -9,8 +9,10 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
+import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
+import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
@@ -28,8 +30,10 @@ import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -64,6 +68,7 @@ import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Part;
 import retrofit.http.Query;
 import retrofit.http.Url;
@@ -262,6 +267,9 @@ interface IRestClient {
                                                   @Query("lat") String lat,
                                                   @Query("lng") String lng);
 
+    @PUT(ApiTags.DRIVER_STATUS_ONLINE_OFFLINE)
+    Call<PilotStatusResponse> updateDriverStatus(@Body DriverAvailabilityRequest availabilityRequest);
+
     @GET(ApiTags.GET_BANK_ACCOUNT_DETAILS)
     Call<BankDetailsResponse> getBankAccountDetails(@Query("_id") String Id,
                                                     @Query("token_id") String tokenId,
@@ -391,21 +399,18 @@ interface IRestClient {
     @GET(ApiTags.GET_LOAD_BOARD)
     Call<LoadBoardResponse> requestLoadBoard(@Query("_id") String id, @Query("token_id") String accessToken,
                                              @Query("lat") String lat, @Query("lng") String lng);
+
+
+    @PUT(ApiTags.SET_DRIVER_LOCATION)
+    Call<LocationResponse> updateDriverLocation(@Body DriverLocationRequest driverLocation);
+
+
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(
 //            @QueryMap Map<String, String> params);
 
 
   /*  @FormUrlEncoded
-
-
-
-
-
-
-
-
-
     @Multipart
     @POST(Tags.UPLOAD_DRIVER_DOCUMENTS_API)
     Call<UploadDocumentFile> uploadDocumentFile(@Part("file\"; filename=\"file.jpg\" ")

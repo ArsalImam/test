@@ -9,9 +9,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -88,6 +90,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class HomeFragmentTesting extends Fragment {
@@ -220,12 +223,15 @@ public class HomeFragmentTesting extends Fragment {
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
     private boolean isCalled;
-
+    private boolean handleUIChangeForInActive = true;
+    private boolean isDialogDisplayingForBattery = false;
+    private View view;
+    private String currentVersion, latestVersion;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home_testing, container, false);
+        view = inflater.inflate(R.layout.fragment_home_testing, container, false);
         unbinder = ButterKnife.bind(this, view);
 
         mCurrentActivity = ((HomeActivity) getActivity());
@@ -306,15 +312,18 @@ public class HomeFragmentTesting extends Fragment {
                             }
                         });
                     } else {
-                        callAvailableStatusAPI(true);
-                        mCurrentActivity.showBismillah();
-                        mapView.setVisibility(View.GONE);
-                        mapPinIv.setVisibility(View.GONE);
-                        headerTopActiveLayout.setVisibility(View.GONE);
-                        headerTopUnActiveLayout.setVisibility(View.VISIBLE);
-                        layoutUpper.setVisibility(View.VISIBLE);
-                        layoutDuration.setVisibility(View.VISIBLE);
-                        driverStatsLayout.setVisibility(View.VISIBLE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            // TODO call battery optimization
+                            boolean calledOptimize = Utils.disableBatteryOptimization(mCurrentActivity,
+                                    HomeFragmentTesting.this);
+                            if (!calledOptimize) {
+                                handleActivationStatusForBattery(true);
+                            }
+                        } else {
+                            handleUIChangeForInActive = true;
+                            handleActivationStatusForBattery(true);
+                        }
+
                     }
 
 
@@ -353,17 +362,18 @@ public class HomeFragmentTesting extends Fragment {
                                 }
                             });
                         } else {
-                            callAvailableStatusAPI(true);
-                            mCurrentActivity.showKhudaHafiz();
-                            mapView.setVisibility(View.VISIBLE);
-                            headerTopActiveLayout.setVisibility(View.VISIBLE);
-                            mapPinIv.setVisibility(View.VISIBLE);
-                            headerTopUnActiveLayout.setVisibility(View.GONE);
-                            layoutUpper.setVisibility(View.GONE);
-                            layoutDuration.setVisibility(View.GONE);
-                            driverStatsLayout.setVisibility(View.GONE);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                // TODO call battery optimization
+                                boolean calledOptimize = Utils.disableBatteryOptimization(
+                                        mCurrentActivity, HomeFragmentTesting.this);
+                                if (!calledOptimize) {
+                                    handleActivationStatusForBattery(false);
+                                }
+                            } else {
+                                handleUIChangeForInActive = false;
+                                handleActivationStatusForBattery(false);
+                            }
                         }
-
 
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity
@@ -381,7 +391,40 @@ public class HomeFragmentTesting extends Fragment {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             AppPreferences.setAvailableAPICalling(true);
-            repository.requestUpdateStatus(mCurrentActivity, handler, status);
+            repository.requestDriverUpdateStatus(mCurrentActivity, handler, status);
+            //repository.requestUpdateStatus(mCurrentActivity, handler, status);
+        }
+    }
+
+    /***
+     * Handle UI logic and API status call for driver availability according to
+     * ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS check if user allowed it.
+     * Only then we would call status API and update respective UI
+     *
+     * @param handleForInactive should update UI for Inactive/Active
+     * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     */
+    private void handleActivationStatusForBattery(boolean handleForInactive) {
+        if (handleForInactive) {
+            callAvailableStatusAPI(true);
+            mCurrentActivity.showBismillah();
+            mapView.setVisibility(View.GONE);
+            mapPinIv.setVisibility(View.GONE);
+            headerTopActiveLayout.setVisibility(View.GONE);
+            headerTopUnActiveLayout.setVisibility(View.VISIBLE);
+            layoutUpper.setVisibility(View.VISIBLE);
+            layoutDuration.setVisibility(View.VISIBLE);
+            driverStatsLayout.setVisibility(View.VISIBLE);
+        } else {
+            callAvailableStatusAPI(true);
+            mCurrentActivity.showKhudaHafiz();
+            mapView.setVisibility(View.VISIBLE);
+            headerTopActiveLayout.setVisibility(View.VISIBLE);
+            mapPinIv.setVisibility(View.VISIBLE);
+            headerTopUnActiveLayout.setVisibility(View.GONE);
+            layoutUpper.setVisibility(View.GONE);
+            layoutDuration.setVisibility(View.GONE);
+            driverStatsLayout.setVisibility(View.GONE);
         }
     }
 
@@ -467,7 +510,8 @@ public class HomeFragmentTesting extends Fragment {
 
             }
 
-            Dialogs.INSTANCE.dismissDialog();
+            if (!isDialogDisplayingForBattery)
+                Dialogs.INSTANCE.dismissDialog();
         }
     }
 
@@ -476,12 +520,7 @@ public class HomeFragmentTesting extends Fragment {
     }
 
     private void onUnauthorizedLicenceExpire() {
-        AppPreferences.saveLoginStatus(false);
-        AppPreferences.setIncomingCall(false);
-        AppPreferences.setCallData(null);
-        AppPreferences.setTripStatus("");
-        AppPreferences.saveLoginStatus(false);
-        AppPreferences.setPilotData(null);
+        Utils.clearData(mCurrentActivity);
         HomeActivity.visibleFragmentNumber = 0;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                     @Override
@@ -833,7 +872,8 @@ public class HomeFragmentTesting extends Fragment {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
+                        if (!isDialogDisplayingForBattery)
+                            Dialogs.INSTANCE.dismissDialog();
                         if (pilotStatusResponse.isSuccess()) {
                             AppPreferences.setAvailableStatus(!AppPreferences.getAvailableStatus());
                             AppPreferences.setAvailableAPICalling(false);
@@ -844,7 +884,7 @@ public class HomeFragmentTesting extends Fragment {
                                 if (AppPreferences.isOutOfFence()) {
                                     AppPreferences.setOutOfFence(false);
                                 }
-                                ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
@@ -853,14 +893,7 @@ public class HomeFragmentTesting extends Fragment {
                             }
                             setStatusBtn();
                         } else {
-                            if (pilotStatusResponse.getCode() == HTTPStatus.UNAUTHORIZED) {
-                                Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                Utils.appToast(mCurrentActivity, pilotStatusResponse.getMessage());
-                                AppPreferences.setAvailableStatus(false);
-                                AppPreferences.setDriverDestination(null);
-                                setStatusBtn();
-                            }
+                            handleDriverStatusErrorCase(pilotStatusResponse);
                         }
                     }
                 });
@@ -887,7 +920,8 @@ public class HomeFragmentTesting extends Fragment {
                     @Override
                     public void run() {
 //                        destinationSet(false);
-                        Dialogs.INSTANCE.dismissDialog();
+                        if (!isDialogDisplayingForBattery)
+                            Dialogs.INSTANCE.dismissDialog();
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
                             Utils.onUnauthorized(mCurrentActivity);
                         } else {
@@ -898,6 +932,101 @@ public class HomeFragmentTesting extends Fragment {
             }
         }
     };
+
+    //region Handle Error cases for Driver Status API
+
+    /***
+     * Handle Driver status API Error case for API failures.
+     * @param driverStatusResponse latest response from server.
+     */
+    private void handleDriverStatusErrorCase(PilotStatusResponse driverStatusResponse) {
+        if (driverStatusResponse != null) {
+            switch (driverStatusResponse.getCode()) {
+                case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
+                    handleDriverStatusBusinessLogicErrors(driverStatusResponse);
+                    break;
+                }
+                //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
+                case HTTPStatus.UNAUTHORIZED: {
+                    Utils.onUnauthorized(mCurrentActivity);
+                    break;
+                }
+                default:
+                    Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
+                    AppPreferences.setAvailableStatus(false);
+                    AppPreferences.setDriverDestination(null);
+                    setStatusBtn();
+            }
+        }
+    }
+
+    /***
+     * Handle business logic driver Failure use cases for driver status .
+     * <ul>
+     *     <li> IMEI not registered. </li>
+     *     <li> Multiple cancellation block. </li>
+     *     <li> Wallet amount exceeds threshold. </li>
+     *     <li> Out of service region area block. </li>
+     *     <li> Status change during rides. </li>
+     * </ul>
+     *
+     * @param driverStatusResponse Latest response received from API Server
+     */
+    private void handleDriverStatusBusinessLogicErrors(PilotStatusResponse driverStatusResponse) {
+        String displayErrorMessage;
+        switch (driverStatusResponse.getSubCode()) {
+            case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
+                displayErrorMessage = getString(R.string.frequent_booking_cancel_error_ur);
+                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                        displayErrorMessage, 0f, null, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        });
+                break;
+            case Constants.ApiError.IMEI_NOT_REGISTERED:
+                Dialogs.INSTANCE.showImeiRegistrationErrorDialog(mCurrentActivity,
+                        Utils.generateImeiRegistrationErrorMessage(mCurrentActivity),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityStackManager.getInstance().startReportActivity(
+                                        view.getContext(), "s");
+                            }
+                        });
+                break;
+            case Constants.ApiError.WALLET_EXCEED_THRESHOLD:
+                displayErrorMessage = getString(R.string.wallet_amount_exceed_error_ur);
+                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
+                        displayErrorMessage, 0f, null, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        });
+                break;
+            case Constants.ApiError.OUT_OF_SERVICE_REGION:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        getString(R.string.region_out_support_helpline),
+                        getString(R.string.region_out_message_ur));
+                break;
+
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        getString(R.string.region_out_support_helpline),
+                        getString(R.string.account_blocked_message_ur));
+                break;
+            case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
+            default:
+                Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
+        }
+        AppPreferences.setAvailableStatus(false);
+        AppPreferences.setDriverDestination(null);
+        setStatusBtn();
+    }
+    //endregion
+
 
     private ArrayList<Polygon> mPolygonList = new ArrayList<>();
 
@@ -1196,6 +1325,22 @@ public class HomeFragmentTesting extends Fragment {
                     PlacesResult mDropOff = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT);
                     AppPreferences.setDriverDestination(mDropOff);
                 }
+            } else if (requestCode == Constants.BATTERY_OPTIMIZATION_RESULT) {
+                if (resultCode == RESULT_OK) {
+                    handleActivationStatusForBattery(handleUIChangeForInActive);
+                } else if (resultCode == RESULT_CANCELED) {
+                    isDialogDisplayingForBattery = true;
+                    Dialogs.INSTANCE.showAlertDialogForBattery(mCurrentActivity,
+                            getString(R.string.battery_optimize_error_title),
+                            getString(R.string.battery_optimize_error_message),
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    isDialogDisplayingForBattery = false;
+                                    Dialogs.INSTANCE.dismissDialog();
+                                }
+                            });
+                }
             }
         }
     }
@@ -1244,6 +1389,8 @@ public class HomeFragmentTesting extends Fragment {
         super.onDestroy();
         if (mapView != null)
             mapView.onDestroy();
+
+        Dialogs.INSTANCE.dismissDialog();
     }
 
     private boolean clearMap() {
@@ -1252,7 +1399,7 @@ public class HomeFragmentTesting extends Fragment {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //   public void onRequestPermissionsResult(int requestCode, String[] permis``sions,
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
@@ -1262,6 +1409,55 @@ public class HomeFragmentTesting extends Fragment {
             mGoogleMap.clear();
         }
         return false;
+    }
+
+    /***
+     * Get Current App version and compare it with latest version returned by Setting API.
+     * Show force app update dialog.
+     */
+    public void getCurrentVersion() {
+        if (mCurrentActivity != null && getView() != null) {
+            currentVersion = Utils.getAppCurrentVersion();
+            if (AppPreferences.getSettings() != null
+                    && AppPreferences.getSettings().getSettings() != null) {
+                latestVersion = AppPreferences.getSettings().getSettings().getApp_version();
+            }
+            if (StringUtils.isNotBlank(latestVersion) && StringUtils.isNotBlank(currentVersion)) {
+                Utils.redLog("VERSION", "Current: " + currentVersion + " Play Store: " + latestVersion);
+                if (Double.parseDouble(currentVersion) < Double.parseDouble(latestVersion)) {
+                    Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
+                            getString(R.string.force_app_update_title),
+                            getString(R.string.force_app_update_message_local_ur),
+                            getString(R.string.force_app_update_link));
+                }
+            }
+        }
+
+    }
+
+    /***
+     * Event subscribe for driver active inactive use case.
+     * @param action Event action
+     */
+    public void onEvent(final String action) {
+        if (mCurrentActivity != null && getView() != null) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (action.equalsIgnoreCase(Keys.CONNECTION_BROADCAST)) {
+                        setConnectionStatus();
+                    } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) ||
+                            action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
+                        AppPreferences.setDriverDestination(null);
+                        setStatusBtn();
+                    } else if (action.equalsIgnoreCase(Keys.ACTIVE_FENCE)) {
+                        setStatusBtn();
+                    }
+                }
+            });
+
+        }
+
     }
 
 
