@@ -186,14 +186,13 @@ public class HandleInactivePushService extends Service {
             isCountDownTimerRunning = false;
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH,
                     "location API Response: " + new Gson().toJson(response));
-            AppPreferences.setDriverOfflineForcefully(false);
-            AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
-            ActivityStackManager.getInstance().restartLocationService(mContext);
-
-            //playMusic = false;
-            //countDownTimer.cancel();
-            //stopMusicPlayer();
-            //stopSelf();
+            if (response.isSuccess()) {
+                AppPreferences.setDriverOfflineForcefully(false);
+                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
+                ActivityStackManager.getInstance().restartLocationService(mContext);
+            }else{
+                handleLocationErrorUseCase(response);
+            }
         }
 
         @Override
@@ -203,6 +202,30 @@ public class HandleInactivePushService extends Service {
             stopSelf();
         }
     };
+
+    /***
+     * Handle Location API Error case for API failures.
+     * @param locationResponse latest response from server.
+     */
+    private void handleLocationErrorUseCase(LocationResponse locationResponse) {
+        if (locationResponse != null) {
+            switch (locationResponse.getCode()) {
+                case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
+                    Utils.handleLocationBusinessLogicErrors(mBus,locationResponse);
+                    break;
+                }
+                //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
+                case HTTPStatus.UNAUTHORIZED: {
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+                }
+                default:
+                    Utils.appToast(this, locationResponse.getMessage());
+            }
+        }
+
+    }
+
     //endregion
 
 

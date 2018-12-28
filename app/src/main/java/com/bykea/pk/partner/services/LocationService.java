@@ -32,7 +32,6 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
-
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
@@ -54,7 +53,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -637,7 +635,7 @@ public class LocationService extends Service {
         @Override
         public void onTick(long millisUntilFinished) {
             Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
-             if (Connectivity.isConnectedFast(mContext)) {
+            if (Connectivity.isConnectedFast(mContext)) {
                 if (AppPreferences.isLoggedIn()) {
                     DriverApp.getApplication().connect();
                 }
@@ -761,9 +759,14 @@ public class LocationService extends Service {
         @Override
         public void onLocationUpdate(LocationResponse response) {
             super.onLocationUpdate(response);
-            Utils.redLogLocation(TAG, "location API Response: " + new Gson().toJson(response));
-            AppPreferences.setDriverOfflineForcefully(false);
-            AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
+            if (response.isSuccess()) {
+                AppPreferences.setDriverOfflineForcefully(false);
+                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
+                mBus.post(Keys.ACTIVE_FENCE);
+            } else {
+                handleLocationErrorUseCase(response);
+            }
+
         }
 
         @Override
@@ -788,7 +791,7 @@ public class LocationService extends Service {
                 case HTTPStatus.UNAUTHORIZED:
                     EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
                     break;
-                case HTTPStatus.FENCE_ERROR:
+                /*case HTTPStatus.FENCE_ERROR:
                     AppPreferences.setOutOfFence(true);
                     AppPreferences.setAvailableStatus(false);
                     mBus.post(Keys.INACTIVE_FENCE);
@@ -805,11 +808,37 @@ public class LocationService extends Service {
                     AppPreferences.setOutOfFence(false);
                     AppPreferences.setAvailableStatus(true);
                     mBus.post(Keys.ACTIVE_FENCE);
-                    break;
+                    break;*/
             }
         }
     };
     //endregion
+
+    /***
+     * Handle Location API Error case for API failures.
+     * @param locationResponse latest response from server.
+     */
+    private void handleLocationErrorUseCase(LocationResponse locationResponse) {
+        if (locationResponse != null) {
+            switch (locationResponse.getCode()) {
+                case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
+                    Utils.handleLocationBusinessLogicErrors(mBus,locationResponse);
+                    break;
+                }
+                //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
+                case HTTPStatus.UNAUTHORIZED: {
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+                }
+                default:
+                    Utils.appToast(this, locationResponse.getMessage());
+            }
+        }
+
+    }
+
+
+
 
     //region Event bus socket
 

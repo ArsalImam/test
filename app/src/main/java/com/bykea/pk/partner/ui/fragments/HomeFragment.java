@@ -93,7 +93,10 @@ import butterknife.Unbinder;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-public class HomeFragmentTesting extends Fragment {
+/**
+ * Home landing screen which holds all the options for driver
+ */
+public class HomeFragment extends Fragment {
 
     private Unbinder unbinder;
 
@@ -218,6 +221,7 @@ public class HomeFragmentTesting extends Fragment {
     FontTextView muntakhibTvUrdu;
 
     public static int WEEK_STATUS = 0;
+    private boolean makeDriverOffline = false;
 
 
     private HeatmapTileProvider mProvider;
@@ -315,7 +319,7 @@ public class HomeFragmentTesting extends Fragment {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             // TODO call battery optimization
                             boolean calledOptimize = Utils.disableBatteryOptimization(mCurrentActivity,
-                                    HomeFragmentTesting.this);
+                                    HomeFragment.this);
                             if (!calledOptimize) {
                                 handleActivationStatusForBattery(true);
                             }
@@ -365,7 +369,7 @@ public class HomeFragmentTesting extends Fragment {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 // TODO call battery optimization
                                 boolean calledOptimize = Utils.disableBatteryOptimization(
-                                        mCurrentActivity, HomeFragmentTesting.this);
+                                        mCurrentActivity, HomeFragment.this);
                                 if (!calledOptimize) {
                                     handleActivationStatusForBattery(false);
                                 }
@@ -669,6 +673,7 @@ public class HomeFragmentTesting extends Fragment {
             tvFenceError.setVisibility(View.GONE);
             achaconnectionTv.setVisibility(View.VISIBLE);
         }
+        makeDriverOffline = false;
     }
 
     private void setFenceError(String errorMessage) {
@@ -875,7 +880,11 @@ public class HomeFragmentTesting extends Fragment {
                         if (!isDialogDisplayingForBattery)
                             Dialogs.INSTANCE.dismissDialog();
                         if (pilotStatusResponse.isSuccess()) {
-                            AppPreferences.setAvailableStatus(!AppPreferences.getAvailableStatus());
+                            if (makeDriverOffline) {
+                                AppPreferences.setAvailableStatus(false);
+                            } else {
+                                AppPreferences.setAvailableStatus(!AppPreferences.getAvailableStatus());
+                            }
                             AppPreferences.setAvailableAPICalling(false);
                             if (AppPreferences.getAvailableStatus()) {
                                 if (AppPreferences.isWalletAmountIncreased()) {
@@ -1092,7 +1101,7 @@ public class HomeFragmentTesting extends Fragment {
             Utils.formatMap(mGoogleMap);
             mGoogleMap.clear();
             if (mCurrentActivity != null && !Permissions.hasLocationPermissions(mCurrentActivity)) {
-                Permissions.getLocationPermissions(HomeFragmentTesting.this);
+                Permissions.getLocationPermissions(HomeFragment.this);
             } else {
                 if (enableLocation()) return;
             }
@@ -1449,7 +1458,12 @@ public class HomeFragmentTesting extends Fragment {
                     } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) ||
                             action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
                         AppPreferences.setDriverDestination(null);
-                        setStatusBtn();
+                        if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                            makeDriverOffline = true;
+                            callAvailableStatusAPI(false);
+                        } else {
+                            setStatusBtn();
+                        }
                     } else if (action.equalsIgnoreCase(Keys.ACTIVE_FENCE)) {
                         setStatusBtn();
                     }

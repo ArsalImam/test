@@ -16,7 +16,7 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
-import com.bykea.pk.partner.ui.fragments.HomeFragmentTesting;
+import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
 import com.bykea.pk.partner.ui.fragments.PerformanceFragment;
 import com.bykea.pk.partner.ui.fragments.ProfileFragment;
@@ -105,7 +105,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
                 case 1:
                     if (HomeActivity.visibleFragmentNumber != 1) {
-                        updateCurrentFragment(new HomeFragmentTesting(), 1);
+                        updateCurrentFragment(new HomeFragment(), 1);
                     }
                     break;
                 case 2:

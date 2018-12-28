@@ -187,7 +187,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                 public void onLocationUpdate(LocationResponse response) {
                                     countDownTimer.cancel();
                                     isCountDownTimerRunning = false;
-                                    ActivityStackManager.getInstance().restartLocationService(mContext);
+                                    if (response.isSuccess()) {
+                                        ActivityStackManager.getInstance().restartLocationService(mContext);
+                                    } else {
+                                        handleLocationErrorUseCase(response);
+                                    }
                                 }
 
                                 @Override
@@ -217,7 +221,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (errorCode == HTTPStatus.UNAUTHORIZED) {
             Intent locationIntent = new Intent(Keys.UNAUTHORIZED_BROADCAST);
             sendBroadcast(locationIntent);
-        } else if (errorCode == HTTPStatus.FENCE_ERROR) {
+        } /*else if (errorCode == HTTPStatus.FENCE_ERROR) {
             AppPreferences.setOutOfFence(true);
             AppPreferences.setAvailableStatus(false);
             mBus.post(Keys.INACTIVE_FENCE);
@@ -232,10 +236,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             AppPreferences.setOutOfFence(false);
             AppPreferences.setAvailableStatus(true);
             mBus.post(Keys.INACTIVE_FENCE);
-        } /*else {
+        }*/ /*else {
             onInactiveByCronJob(data.getMessage());
         }*/
     }
+
+    /***
+     * Handle Location API Error case for API failures.
+     * @param locationResponse latest response from server.
+     */
+    private void handleLocationErrorUseCase(LocationResponse locationResponse) {
+        if (locationResponse != null) {
+            switch (locationResponse.getCode()) {
+                case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
+                    Utils.handleLocationBusinessLogicErrors(mBus,locationResponse);
+                    break;
+                }
+                //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
+                case HTTPStatus.UNAUTHORIZED: {
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+                }
+                default:
+                    Utils.appToast(this, locationResponse.getMessage());
+            }
+        }
+
+    }
+
 
     private void onInactiveByCronJob(String data) {
         Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "onInactiveByCronJob " + data);
