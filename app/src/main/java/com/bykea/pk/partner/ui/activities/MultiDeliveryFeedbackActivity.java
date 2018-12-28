@@ -139,6 +139,9 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         init();
     }
 
+    /**
+     * Initialize the data and map data into view.
+     */
     private void init() {
         TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();

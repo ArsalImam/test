@@ -110,7 +110,9 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
     }
 
     /**
-     * @param data
+     * Invoked this method when multi delivery trip is going to finish
+     *
+     * @param data The data id trip that is going to be finished.
      */
     private void requestMultiDeliveryTripFinished(DirectionDropOffData data) {
         Dialogs.INSTANCE.showLoader(getActivity());
@@ -164,6 +166,11 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
         }
     }
 
+    /**
+     * Fetch the instance of this fragment.
+     *
+     * @return The instance of multi delivery ride complete fragment.
+     */
     public static MultiDeliveryRideCompleteFragment newInstance() {
         return new MultiDeliveryRideCompleteFragment();
     }
@@ -174,6 +181,9 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
         unbinder.unbind();
     }
 
+    /**
+     * Callback that will be invoked when multi delivery ride completed event emitted.
+     */
     private UserDataHandler handler = new UserDataHandler() {
 
         @Override

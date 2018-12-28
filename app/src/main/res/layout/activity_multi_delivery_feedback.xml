@@ -536,7 +536,7 @@
                     android:gravity="center"
                     android:hint="Received Rs."
                     android:imeOptions="actionDone"
-                    android:inputType="numberPassword"
+                    android:inputType="number"
                     android:maxLength="5"
                     android:paddingBottom="@dimen/_2sdp"
                     android:paddingLeft="@dimen/_2sdp"

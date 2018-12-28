@@ -1234,6 +1234,11 @@ public class AppPreferences {
         return list;
     }
 
+    /**
+     * Save Multi Delivery Complete Trip Counts
+     *
+     * @param count The count of completed trip in the batch.
+     */
     public static void saveMultiDeliveryCompletedTripCounts(int count) {
         mSharedPreferences
                 .edit()
@@ -1241,6 +1246,11 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * Fetch the multi delivery completed trip count.
+     *
+     * @return The count of multi delivery completed trip count.
+     */
     public static int getMultiDeliveryCompletedTripCounts() {
         return mSharedPreferences.getInt(Keys.MULTIDELIVERY_COMPLETED_COUNT, 0);
     }
