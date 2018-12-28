@@ -93,6 +93,9 @@ import butterknife.Unbinder;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * Home landing screen which holds all the options for driver
+ */
 public class HomeFragment extends Fragment {
 
     private Unbinder unbinder;

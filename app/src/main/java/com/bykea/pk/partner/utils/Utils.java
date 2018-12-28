@@ -73,6 +73,7 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -2593,5 +2594,41 @@ public class Utils {
         return null;
     }
     //endregion
+
+    /***
+     * Handle business logic location Failure use cases for driver Location API .
+     * <ul>
+     *     <li> Multiple cancellation block. </li>
+     *     <li> Wallet amount exceeds threshold. </li>
+     *     <li> Out of service region area block. </li>
+     *     <li> Account Blocked</li>
+     * </ul>
+     *
+     * @param eventBus {@link EventBus} object
+     * @param locationResponse Latest response received from API Server
+     */
+    public static void handleLocationBusinessLogicErrors(EventBus eventBus,
+                                                         LocationResponse locationResponse) {
+        switch (locationResponse.getSubCode()) {
+            case Constants.ApiError.WALLET_EXCEED_THRESHOLD:
+                if (StringUtils.isNotBlank(locationResponse.getMessage())) {
+                    AppPreferences.setWalletIncreasedError(locationResponse.getMessage());
+                }
+                AppPreferences.setWalletAmountIncreased(true);
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+            case Constants.ApiError.OUT_OF_SERVICE_REGION:
+                AppPreferences.setOutOfFence(true);
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+            case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+        }
+    }
 
 }

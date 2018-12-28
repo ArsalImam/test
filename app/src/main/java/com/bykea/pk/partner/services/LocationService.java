@@ -825,7 +825,7 @@ public class LocationService extends Service {
         if (locationResponse != null) {
             switch (locationResponse.getCode()) {
                 case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
-                    handleLocationBusinessLogicErrors(locationResponse);
+                    Utils.handleLocationBusinessLogicErrors(mBus,locationResponse);
                     break;
                 }
                 //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
@@ -840,39 +840,7 @@ public class LocationService extends Service {
 
     }
 
-    /***
-     * Handle business logic location Failure use cases for driver Location API .
-     * <ul>
-     *     <li> Multiple cancellation block. </li>
-     *     <li> Wallet amount exceeds threshold. </li>
-     *     <li> Out of service region area block. </li>
-     *     <li> Account Blocked</li>
-     * </ul>
-     *
-     * @param locationResponse Latest response received from API Server
-     */
-    private void handleLocationBusinessLogicErrors(LocationResponse locationResponse) {
-        switch (locationResponse.getSubCode()) {
-            case Constants.ApiError.WALLET_EXCEED_THRESHOLD:
-                if (StringUtils.isNotBlank(locationResponse.getMessage())) {
-                    AppPreferences.setWalletIncreasedError(locationResponse.getMessage());
-                }
-                AppPreferences.setWalletAmountIncreased(true);
-                AppPreferences.setAvailableStatus(false);
-                mBus.post(Keys.INACTIVE_FENCE);
-                break;
-            case Constants.ApiError.OUT_OF_SERVICE_REGION:
-                AppPreferences.setOutOfFence(true);
-                AppPreferences.setAvailableStatus(false);
-                mBus.post(Keys.INACTIVE_FENCE);
-                break;
-            case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
-            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
-                AppPreferences.setAvailableStatus(false);
-                mBus.post(Keys.INACTIVE_FENCE);
-                break;
-        }
-    }
+
 
 
     //region Event bus socket
