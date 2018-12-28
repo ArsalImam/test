@@ -13,15 +13,13 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
-import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -34,7 +32,6 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
 import com.bykea.pk.partner.ui.helpers.Spherical;
-import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -62,7 +59,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -827,16 +823,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     /***
      * Set the trip started state.
-     *
-     * Todo 4: set the trip started data
      */
     private void setStartedState() {
-        cancelBtn.setVisibility(View.GONE);
-        jobBtn.setText(getString(R.string.button_text_finish));
-        if (mapPolylines != null) {
-            mapPolylines.remove();
-        }
-
+        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+        repository.requestMultiDeliveryDriverStarted(mCurrentActivity, handler);
     }
 
     /***
@@ -976,19 +966,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 public void run() {
                     if (mCurrentActivity != null) {
                         Dialogs.INSTANCE.dismissDialog();
-                        if (mapPolylines != null)
-                            mapPolylines.remove();
-                        timeTv.setVisibility(View.GONE);
-                        timeUnitLabelTv.setVisibility(View.GONE);
-                        timeView.setVisibility(View.GONE);
-                        pickupMarker.remove();
-                        pickView.setVisibility(View.GONE);
-                        distanceTv.setVisibility(View.GONE);
-                        pickUpDistanceUnit.setVisibility(View.GONE);
-                        callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
-                        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
-                        jobBtn.setText(getString(R.string.button_text_start));
-                        tafseelLayout.setVisibility(View.VISIBLE);
+                        onDriverArrived();
                     }
                 }
             });
@@ -996,7 +974,21 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         }
 
         @Override
+        public void onMultiDeliveryDriverStarted(MultiDeliveryDriverStartedResponse response) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mCurrentActivity != null) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        onDriverStarted();
+                    }
+                }
+            });
+        }
+
+        @Override
         public void onError(int errorCode, String errorMessage) {
+            Dialogs.INSTANCE.dismissDialog();
             if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
             } else {
@@ -1004,6 +996,45 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             }
         }
     };
+
+    /**
+     * Invoked this method when driver has been started.
+     * Change the batch status, remove the poly lines & set the bottom button to "Mukamal"
+     */
+    private void onDriverStarted() {
+        cancelBtn.setVisibility(View.GONE);
+        if (mapPolylines != null) {
+            mapPolylines.remove();
+        }
+        callDriverData.setBatchStatus(TripStatus.ON_START_TRIP);
+        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+        updateDriverMarker(
+                String.valueOf(mCurrentLocation.getLatitude()),
+                String.valueOf(mCurrentLocation.getLongitude())
+        );
+        tafseelLayout.setVisibility(View.VISIBLE);
+        jobBtn.setText(getString(R.string.button_text_finish));
+    }
+
+    /**
+     * Invoked this method when driver has been arrived.
+     * Change the batch status, remove the poly lines & set the bottom button to "Start"
+     */
+    private void onDriverArrived() {
+        if (mapPolylines != null)
+            mapPolylines.remove();
+        timeTv.setVisibility(View.GONE);
+        timeUnitLabelTv.setVisibility(View.GONE);
+        timeView.setVisibility(View.GONE);
+        pickupMarker.remove();
+        pickView.setVisibility(View.GONE);
+        distanceTv.setVisibility(View.GONE);
+        pickUpDistanceUnit.setVisibility(View.GONE);
+        callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
+        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+        jobBtn.setText(getString(R.string.button_text_start));
+        tafseelLayout.setVisibility(View.VISIBLE);
+    }
 
     @Override
     protected void onDestroy() {
