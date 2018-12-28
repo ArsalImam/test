@@ -28,7 +28,9 @@ import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
+import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
+import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
@@ -39,13 +41,17 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
+import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -330,14 +336,14 @@ public class WebIORequestHandler {
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
                         }
-                        Utils.redLog("Request at " + socket + " (onConnect)", json.toString());
+                        Utils.redLogLocation("Request at " + socket + " (onConnect)", json.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
         } else {
-            Utils.redLog("Request at " + socket, json.toString());
+            Utils.redLogLocation("Request at " + socket, json.toString());
         }
     }
 
@@ -414,7 +420,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("Response at " + mSocketName, serverResponse);
+            Utils.redLogLocation("Response at " + mSocketName, serverResponse);
 
             Gson gson = new Gson();
             try {
@@ -422,14 +428,14 @@ public class WebIORequestHandler {
 //                if (null == mContext) {
 //                    mContext = DriverApp.getContext();
 //                }
-                if (AppPreferences.isLoggedIn() && locationResponse.getData() != null) {
-                    if (StringUtils.isNotBlank(locationResponse.getData().getLat())
-                            && StringUtils.isNotBlank(locationResponse.getData().getLng())) {
+                if (AppPreferences.isLoggedIn() && locationResponse.getLocation() != null) {
+                    if (StringUtils.isNotBlank(locationResponse.getLocation().getLat())
+                            && StringUtils.isNotBlank(locationResponse.getLocation().getLng())) {
                         AppPreferences.saveLastUpdatedLocation(
-                                new LatLng(Double.parseDouble(locationResponse.getData().getLat()),
-                                        Double.parseDouble(locationResponse.getData().getLng())));
+                                new LatLng(Double.parseDouble(locationResponse.getLocation().getLat()),
+                                        Double.parseDouble(locationResponse.getLocation().getLng())));
                     }
-                    Utils.saveServerTimeDifference(locationResponse.getTimestampserver());
+                    Utils.saveServerTimeDifference(locationResponse.getTimeStampServer());
                 }
                 if (locationResponse.isSuccess()) {
                     if (AppPreferences.isWalletAmountIncreased()) {

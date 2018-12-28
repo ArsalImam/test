@@ -113,6 +113,8 @@ public class CallingActivity extends BaseActivity {
 
     private boolean isFreeDriverApiCalled = false;
 
+    public String TAG = CallingActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -420,15 +422,15 @@ public class CallingActivity extends BaseActivity {
 
     private void setInitialData() {
         NormalCallData callData = AppPreferences.getCallData();
-        Log.d("callData", new Gson().toJson(callData));
+        Utils.redLog(TAG, "Call Data: "+new Gson().toJson(callData));
         logMixpanelEvent(callData, false);
-//        callerNameTv.setText(callData.getPassName());
-//        startAddressTv.setText(callData.getStartAddress());
-//        timeTv.setText(callData.getArivalTime() + " min");
-//        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
 
-        String icon = Utils.getServiceIcon(callData.getCallType());
+        String icon = StringUtils.EMPTY;
+        //String icon = Utils.getServiceIcon(callData.getCallType());
+        if (Utils.useServiceIconProvidedByAPI(callData.getCallType())) {
+            icon = callData.getIcon();
+        }
         if (StringUtils.isNotBlank(icon)) {
             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
             Picasso.get().load(Utils.getCloudinaryLink(icon))
@@ -458,7 +460,7 @@ public class CallingActivity extends BaseActivity {
             customerRatingTv.setText(callData.getRating());
             if (Utils.isSkipDropOff(callData)) {
                 estimatedDistanceTv.setText("?");
-                destinationTv.setText(getString(R.string.muntakhib_nahi_ki_gayi_label));
+                destinationTv.setText("منتخب نہیں کی گئی");
                 cashKiWasooliLayout.setVisibility(View.GONE);
                 kraiKiKamaiLayout.setVisibility(View.GONE);
                 kharidariPriceLayout.setVisibility(View.GONE);
@@ -492,6 +494,7 @@ public class CallingActivity extends BaseActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Utils.redLog(TAG, e.getMessage(), e);
         }
     }
 

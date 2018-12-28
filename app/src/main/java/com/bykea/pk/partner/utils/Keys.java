@@ -157,6 +157,8 @@ public class Keys {
     public static final String WALLET_ERROR = "WALLET_ERROR";
     public static final String SETTINGS_VERSION = "SETTINGS_VERSION";
     public static final String CASH_IN_HANDS = "CASH_IN_HANDS";
+    public static final String LOCATION_RESPONSE_NOT_RECEIVED_COUNT = "LOCATION_RESPONSE_NOT_RECEIVED_COUNT";
+    public static final String DRIVER_OFFLINE_FORCEFULLY = "DRIVER_OFFLINE_FORCEFULLY";
     public static final String CASH_IN_HANDS_RANGE = "CASH_IN_HANDS_RANGE";
     public static final String CASH_IN_HANDS_INDEX = "CASH_IN_HANDS_INDEX";
     public static final String TRIP_DELAY = "TRIP_DELAY";

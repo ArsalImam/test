@@ -8,9 +8,9 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
@@ -72,6 +72,10 @@ import java.util.ArrayList;
 
 public interface IUserDataHandler {
 
+    /***
+     * Update Drop off location response received from API Server.
+     * @param commonResponse Pojo class which hold latest driver destination response.
+     */
     void onDropOffUpdated(DriverDestResponse commonResponse);
 
     void onForgotPassword(ForgotPasswordResponse commonResponse);
@@ -113,6 +117,7 @@ public interface IUserDataHandler {
     void getWalletData(WalletHistoryResponse walletHistoryResponse);
 
     void getAccountNumbers(BankAccountListResponse walletHistoryResponse);
+
     void onBankDetailsResponse(BankDetailsResponse response);
 
     void getContactNumbers(ContactNumbersResponse walletHistoryResponse);
@@ -181,18 +186,27 @@ public interface IUserDataHandler {
     void onZoneAreasResponse(ZoneAreaResponse response);
 
     void onShahkarResponse(ShahkarResponse response);
+
     void onBonusChartResponse(RankingResponse response);
+
     void onDriverPerformanceResponse(DriverPerformanceResponse response);
 
     void onLoadBoardResponse(LoadBoardResponse response);
 
     void onTopUpPassWallet(TopUpPassWalletResponse response);
+
     void onLocationUpdate(LocationResponse response);
+
     void onSignUpSettingsResponse(SignUpSettingsResponse response);
+
     void onSignUpAddNumberResponse(SignUpAddNumberResponse response);
+
     void onSignUpImageResponse(SignupUplodaImgResponse response);
+
     void onSignUpOptionalResponse(SignUpOptionalDataResponse response);
+
     void onSignupCompleteResponse(SignUpCompleteResponse response);
+
     void onBiometricApiResponse(BiometricApiResponse response);
 
     void onError(int errorCode, String errorMessage);

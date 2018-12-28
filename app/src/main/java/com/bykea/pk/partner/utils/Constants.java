@@ -99,9 +99,48 @@ public class Constants {
 
     public final static String ACTION = "action";
 
+    public static final int IN_ACTIVE_MUSIC_SOUND = 5000;
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
     public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";
+
+    public static final String MOBILE_IMEI_ERROR = "IMEI";
+
+    public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
+    public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
+
+
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000; //10000; 60 seconds
+
+    /**
+     * The fastest rate for active location updates. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2; //30 seconds
+
+    public static final float LOCATION_SMALLEST_DISPLACEMENT = 10f;
+
+    public static final int LOCATION_RESPONSE_COUNTER_RESET = 0;
+    public static final int LOCATION_RESPONSE_NOT_RECEIEVED_ALLOWED_COUNTER = 3;
+
+    public static final int BATTERY_OPTIMIZATION_RESULT = 2000;
+
+    public static final String RETROFIT_METHOD_POST = "post";
+    public static final String RETROFIT_METHOD_GET = "get";
+
+
+    public static class Notification {
+        public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
+        public static final String NOTIFICATION_CHANNEL_NAME = "Bykea Active/Inactive Status";
+        public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
+
+        public static final String EVENT_TYPE = "event";
+        public static final String DATA_TYPE = "data";
+    }
 
 
     public static class Extras {
@@ -137,6 +176,7 @@ public class Constants {
         public static final String POSITION_DELIVERY_SCHEDULE = "POSITION_DELIVERY_SCHEDULE";
         public static final String IS_CANCELED_TRIP = "isCancelledTrip";
         public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
+        public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
     }
 
     public static class Broadcast {
@@ -147,6 +187,7 @@ public class Constants {
         public final static String STARTFOREGROUND_ACTION = "STARTFOREGROUND_ACTION";
         public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";
         public final static String ON_NOTIFICATION_CLICK = "ON_NOTIFICATION_CLICK";
+        public final static String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
         public final static String ON_GPS_ENABLED_CHANGE = "android.location.GPS_ENABLED_CHANGE";
         public final static String ON_LOCATION_CHANGED = "android.location.PROVIDERS_CHANGED";
         public final static String ON_CONECTIVITY_CHANGED = "android.net.conn.CONNECTIVITY_CHANGE";
@@ -211,8 +252,10 @@ public class Constants {
     public final static int REQUEST_GALLERY = 22;
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
-
+    public final static int LOCATION_API_WAIT_ON_INACTIVE_PUSH = 15000;
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
+    public final static String DRIVER_SOCKET_CLIENT_TYPE = "PARTNER_ANDROID";
+
 
     /**
      * This inner class will contain Constants for Log Tags and Error Log Messages
@@ -222,6 +265,79 @@ public class Constants {
         public final static String TIME_OUT_ERROR = "TimeOut ";
         public final static String CONVERSION_ERROR = "ConversionError ";
         public final static String OTHER_ERROR = "Other Error ";
+        // Log file Max file size before it creates a new file for logs
+        public static final long LOG_FILE_MAX_SIZE = 1024 * 1024;
+        //Developer email address which is used for sending logs.
+        public static final String LOG_SEND_DEVELOPER_EMAIL = "raheel@mobinspire.com";
+        public static final String LOG_SEND_SUBJECT = "Log Files";
+        public static final String LOG_SEND_MESSAGE_BODY = "Latest logs attached";
+        public static final String BYKEA_LOG_TAG = "BYKEA_LOG_TAG";
+        public static final String BYKEA_INACTIVE_PUSH = "INACTIVE_PUSH";
+
+    }
+
+    /**
+     * This inner class will contain Constants for Fcm Push Notification's Events
+     */
+    public static class FcmEvents {
+        public static final String INACTIVE_PUSH = "7";
+    }
+
+    public static class Driver {
+        public static String STATUS_ACTIVE = "ACTIVE";
+        public static String STATUS_INACTIVE = "INACTIVE";
+    }
+
+
+    /**
+     * List of supported services name and title by our eco system.
+     */
+    public static class ServiceType {
+
+        public static final String RIDE_NAME = "Ride";
+        public static final String RIDE_TITLE = "Ride";
+
+        public static final String SEND_NAME = "Send";
+        public static final String SEND_TITLE = "Delivery";
+
+        public static final String BRING_NAME = "Bring";
+        public static final String BRING_TITLE = "Purchase";
+
+        public static final String TICKETS_NAME = "Bus Ticket";
+        public static final String TICKETS_TITLE = "Ticket";
+
+        public static final String JOBS_NAME = "Jobs";
+        public static final String JOBS_TITLE = "Jobs";
+
+        public static final String CLASSIFIEDS_NAME = "Classifieds";
+        public static final String CLASSIFIEDS_TITLE = "Classifieds";
+
+        public static final String CARRY_VAN_NAME = "Carry Van";
+        public static final String CARRY_VAN_TITLE = "Bachat Courier";
+
+        public static final String ADS_NAME = "Ads";
+        public static final String ADS_TITLE = "Food";
+
+        public static final String UTILITY_BILL_NAME = "Utility Bill";
+        public static final String UTILITY_BILL_TITLE = "Utility Bill";
+
+        public static final String FOOD_DELIVERY_NAME = "FoodDelivery";
+        public static final String FOOD_DELIVERY_TITLE = "Food Delivery";
+
+    }
+
+    /***
+     * list of Connectivity signal status constant which would be used for future reference
+     */
+    public static class ConnectionSignalStatus {
+
+        public static final String UNKNOWN_STATUS = "Unknown Status";
+        public static final String BATTERY_LOW = "Battery Low";
+        public static final String POOR_STRENGTH = "Poor Connection";
+        public static final String FAIR_STRENGTH = "Fair Connection";
+        public static final String GOOD_STRENGTH = "Good Connection";
+        public static final String NO_CONNECTIVITY = "No Connection";
+
     }
 
     /***
@@ -266,49 +382,12 @@ public class Constants {
     }
 
     /**
-     * List of supported services name and title by our eco system.
-     */
-    public static class ServiceType {
-
-        public static final String RIDE_NAME = "Ride";
-        public static final String RIDE_TITLE = "Ride";
-
-        public static final String SEND_NAME = "Send";
-        public static final String SEND_TITLE = "Delivery";
-
-        public static final String BRING_NAME = "Bring";
-        public static final String BRING_TITLE = "Purchase";
-
-        public static final String TICKETS_NAME = "Bus Ticket";
-        public static final String TICKETS_TITLE = "Ticket";
-
-        public static final String JOBS_NAME = "Jobs";
-        public static final String JOBS_TITLE = "Jobs";
-
-        public static final String CLASSIFIEDS_NAME = "Classifieds";
-        public static final String CLASSIFIEDS_TITLE = "Classifieds";
-
-        public static final String CARRY_VAN_NAME = "Carry Van";
-        public static final String CARRY_VAN_TITLE = "Bachat Courier";
-
-        public static final String ADS_NAME = "Ads";
-        public static final String ADS_TITLE = "Food";
-
-        public static final String UTILITY_BILL_NAME = "Utility Bill";
-        public static final String UTILITY_BILL_TITLE = "Utility Bill";
-
-        public static final String FOOD_DELIVERY_NAME = "FoodDelivery";
-        public static final String FOOD_DELIVERY_TITLE = "Food Delivery";
-
-    }
-
-    /**
      * Inner class for Font Names
      */
     public static class FontNames {
         public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
         public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
-        public static final String OPEN_SANS_BOLD = "open_sans_bold.ttf";
+        public static final String OPEN_SANS_BOLD = "open_sans_semi_bold.ttf";
     }
 
     /***
@@ -322,6 +401,12 @@ public class Constants {
         public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
         public static final int DRIVER_LICENSE_EXPIRED = 1004;
         public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
+        public static final int MULTIPLE_CANCELLATION_BLOCK = 1007;
+        public static final int IMEI_NOT_REGISTERED = 1008;
+        public static final int WALLET_EXCEED_THRESHOLD = 1009;
+        public static final int OUT_OF_SERVICE_REGION = 1010;
+        public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+
     }
 
 }

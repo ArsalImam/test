@@ -16,15 +16,13 @@ import android.widget.FrameLayout;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
-import com.bykea.pk.partner.ui.fragments.HomeFragmentTesting;
-import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Permissions;
@@ -67,8 +65,9 @@ public class HomeActivity extends BaseActivity {
         setToolbarLogo();
         initViews();
         setupDrawerToggle();
+        Utils.unlockScreen(this);
         //Add the Very First i.e Squad Fragment to the Container
-        HomeFragmentTesting mainFragment = new HomeFragmentTesting();
+        HomeFragment mainFragment = new HomeFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.containerView, mainFragment, null);
         fragmentTransaction.commit();
@@ -83,9 +82,7 @@ public class HomeActivity extends BaseActivity {
 
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
-
-        Utils.disableBatteryOptimization(mCurrentActivity);
-
+        Utils.disableBatteryOptimization(this, mCurrentActivity);
     }
 
     @Override
@@ -105,7 +102,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-         /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
+        /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(HomeActivity.this);
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         AppPreferences.setProfileUpdated(true);
@@ -146,7 +143,7 @@ public class HomeActivity extends BaseActivity {
      * This method loads home fragment with in HomeActivity context.
      */
     private void showHomeFragment() {
-        HomeFragmentTesting homeFragment = new HomeFragmentTesting();
+        HomeFragment homeFragment = new HomeFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.fade_in,
                 R.anim.fade_out);
@@ -271,7 +268,7 @@ public class HomeActivity extends BaseActivity {
      * When Constants.Extras.NAVIGATE_TO_HOME_SCREEN is set to true with Extras while staring HomeActivity it
      * will load HomeFragment even if any other Fragment from side bar menu is already loaded.
      *
-     * @see Intent.FLAG_ACTIVITY_CLEAR_TOP
+     * @see Intent#FLAG_ACTIVITY_CLEAR_TOP
      */
     @Override
     protected void onNewIntent(Intent intent) {
