@@ -12,6 +12,7 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
     String tripID;
     String passengerName;
     int codValue;
+    boolean isCompleted;
 
     /**
      * Constructor
@@ -113,6 +114,14 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
         this.tripID = tripID;
     }
 
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
+    }
+
     /***
      * Builder pattern is a creational design pattern it means its solves problem related to
      * object creation.It is also very oftenly used in android development. Best example would be
@@ -126,6 +135,7 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
         String mArea;
         String dropOffNumberText;
         String tripID;
+        boolean isCompleted;
 
         public Builder setPassengerName(String passengerName) {
             this.passengerName = passengerName;
@@ -144,6 +154,11 @@ public class DirectionDropOffData extends MultiDeliveryDropOff {
 
         public Builder setDropOffNumberText(String dropOffNumberText) {
             this.dropOffNumberText = dropOffNumberText;
+            return this;
+        }
+
+        public Builder setIsCompleted(boolean isCompleted) {
+            this.isCompleted = isCompleted;
             return this;
         }
 

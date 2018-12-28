@@ -8,6 +8,7 @@ import android.util.Log;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.RankingResponse;
@@ -102,6 +103,8 @@ public class UserRepository {
     private IUserDataHandler mUserCallback;
     private WebIORequestHandler mWebIORequestHandler;
     private RestRequestHandler mRestRequestHandler;
+
+    private DirectionDropOffData directionDropOffData;
 
     public UserRepository() {
         mWebIORequestHandler = WebIORequestHandler.getInstance();
@@ -778,15 +781,15 @@ public class UserRepository {
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
-    public void requestMultiDeliveryDriverFinishRide(String tripID,
+    public void requestMultiDeliveryDriverFinishRide(DirectionDropOffData data,
                                                      IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         try {
             setMultiDeliveryData(jsonObject);
-            jsonObject.put("trip_id", tripID);
+            jsonObject.put("trip_id", data.getTripID());
             jsonObject.put("route", new Gson().toJson(AppPreferences.getTrackingData()));
-            AppPreferences.clearTrackingData();
+            directionDropOffData = data;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1429,7 +1432,8 @@ public class UserRepository {
                         break;
                     case "MultiDeliveryCompleteRideResponse":
                         mUserCallback.onMultiDeliveryDriverRideFinish(
-                                (MultiDeliveryCompleteRideResponse) object
+                                (MultiDeliveryCompleteRideResponse) object,
+                                directionDropOffData
                         );
                         break;
                     case "MultiDeliveryFeedbackResponse":

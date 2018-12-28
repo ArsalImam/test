@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -238,8 +239,10 @@ public interface IUserDataHandler {
      * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED
      *
      * @param response The {@link MultiDeliveryCompleteRideResponse} object.
+     * @param data The {@linkplain DirectionDropOffData} object.
      */
-    void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response);
+    void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response,
+                                         DirectionDropOffData data);
 
     /**
      * This method will be invoked when multi delivery feedback response received
@@ -247,6 +250,7 @@ public interface IUserDataHandler {
      * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER
      *
      * @param response The {@link MultiDeliveryFeedbackResponse} object.
+     *
      */
     void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response);
 

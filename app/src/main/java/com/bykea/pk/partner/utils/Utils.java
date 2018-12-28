@@ -178,6 +178,8 @@ public class Utils {
         return linearLayoutManager;
     }
 
+
+
     /**
      * Show application toast
      *
@@ -2704,7 +2706,17 @@ public class Utils {
         }
 
         return latLngList;
+    }
 
+    /**
+     * Multi Delivery Free Driver on Batch Complete.
+     */
+    public static void multiDeliveryFreeDriverOnBatchComplete() {
+        setCallIncomingState();
+        AppPreferences.setWalletAmountIncreased(false);
+        AppPreferences.setAvailableStatus(true);
+        AppPreferences.setMultiDeliveryTrips(null);
+        AppPreferences.saveMultiDeliveryCompletedTripCounts(0);
     }
 
     //endregion

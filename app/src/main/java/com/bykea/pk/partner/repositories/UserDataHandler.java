@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -418,7 +419,7 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     @Override
-    public void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response) {
+    public void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response, DirectionDropOffData data) {
 
     }
 

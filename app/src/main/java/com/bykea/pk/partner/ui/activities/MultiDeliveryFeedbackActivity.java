@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,7 +45,7 @@ import butterknife.OnTextChanged;
 
 import static butterknife.OnTextChanged.*;
 
-public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
+public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
     @BindView(R.id.tvTripId)
     FontTextView tvTripId;
@@ -123,6 +124,8 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
     private long mLastClickTime;
     private UserRepository repository;
     private MultiDeliveryRideCompleteTripInfo tripInfo;
+    private int completedTripsCount;
+    private int tripCounts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,24 +142,38 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
     private void init() {
         TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
+        tripCounts = AppPreferences.getMultiDeliveryCallDriverData().getBookings().size();
+        completedTripsCount = AppPreferences.getMultiDeliveryCompletedTripCounts();
         Bundle bundle = getIntent().getExtras();
-        MultiDeliveryCallDriverAcknowledgeResponse response = bundle
-                .getParcelable(Keys.MULTIDELIVERY_COMPLETE_DATA);
+        MultiDeliveryCallDriverAcknowledgeResponse response = null;
+        if (bundle != null) {
+            response = bundle
+                    .getParcelable(Keys.MULTIDELIVERY_COMPLETE_DATA);
+        }
         if (response != null) {
             CallDriverAcknowledgeData data = response.getData();
-            MultiDeliveryInvoiceData invoice = data.getInvoice();
-            tripInfo = data.getTripInfo();
-            tvTotalDistance.setText(getString(R.string.distance_covered,
-                    Utils.getDistance(
-                            Float.valueOf(tripInfo.getTripDistance())
-                    )));
-            tvTotalTime.setText(getString(R.string.duration, tripInfo.getTripDuration()));
-            startAddressTv.setText(tripInfo.getStartAddress());
-            endAddressTv.setText(tripInfo.getEndAddress());
-            totalAmountTv.setText(String.valueOf(invoice.getTripCharges()));
-            tvPromoDeduction.setText(String.valueOf(invoice.getPromoDeduction()));
-            tvWalletDeduction.setText(String.valueOf(invoice.getWalletDeduction()));
-            totalCharges = invoice.getTotal();
+            MultiDeliveryInvoiceData invoice = null;
+            if (data != null) {
+                invoice = data.getInvoice();
+                tripInfo = data.getTripInfo();
+            }
+            if (tripInfo != null) {
+                tvTotalDistance.setText(getString(R.string.distance_covered,
+                        Utils.getDistance(
+                                Float.valueOf(tripInfo.getTripDistance())
+                        )));
+                tvTotalTime.setText(getString(R.string.duration,
+                        Float.valueOf(tripInfo.getTripDuration())
+                ));
+                startAddressTv.setText(tripInfo.getStartAddress());
+                endAddressTv.setText(tripInfo.getEndAddress());
+            }
+            if (invoice != null) {
+                totalAmountTv.setText(String.valueOf(invoice.getTripCharges()));
+                tvPromoDeduction.setText(String.valueOf(invoice.getPromoDeduction()));
+                tvWalletDeduction.setText(String.valueOf(invoice.getWalletDeduction()));
+                totalCharges = invoice.getTotal();
+            }
             tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
         }
     }
@@ -167,6 +184,7 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
     private void updateScroll() {
         moveScrollViewToBottom();
         receivedAmountEt.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return false;
@@ -270,7 +288,7 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
      * <li>Check that the amount should be entered & should not less than 0</li>
      * </ul>
      *
-     * @return
+     * @return true if all the validation is true otherwise false
      */
     private boolean isValid() {
         String charges = StringUtils.EMPTY;
@@ -320,16 +338,17 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
     private IUserDataHandler handler = new UserDataHandler() {
 
         @Override
-        public void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response) {
+        public void onMultiDeliveryDriverFeedback(final MultiDeliveryFeedbackResponse response) {
             if (mCurrentActivity != null) {
-                Dialogs.INSTANCE.dismissDialog();
-                Dialogs.INSTANCE.showToast(mCurrentActivity, response.getMessage());
-                Utils.setCallIncomingState();
-                AppPreferences.setWalletAmountIncreased(false);
-                AppPreferences.setAvailableStatus(true);
-                ActivityStackManager.getInstance().startHomeActivity(true,
-                        mCurrentActivity);
-                mCurrentActivity.finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (tripInfo.getTripID().equalsIgnoreCase(response.getData().getTripID())) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            checkForUnfinishedTrip();
+                        }
+                    }
+                });
             }
         }
 
@@ -344,9 +363,29 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
         }
     };
 
-    @Subscribe
+    /**
+     * Check for un finished trip.
+     * <p>
+     * If batch have the unfinished trip navigate to Multi Delivery Booking Screen
+     * other wise navigate to home screen
+     */
+    private void checkForUnfinishedTrip() {
+        if (tripCounts != completedTripsCount) {
+            ActivityStackManager.getInstance()
+                    .startMultiDeliveryBookingActivity(mCurrentActivity);
+        } else {
+            Utils.multiDeliveryFreeDriverOnBatchComplete();
+            ActivityStackManager.getInstance().startHomeActivity(true,
+                  mCurrentActivity);
+            mCurrentActivity.finish();
+        }
+
+    }
+
+    @Override
     public void onEvent(final String action) {
-        if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED)) {
+        if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
+            Utils.multiDeliveryFreeDriverOnBatchComplete();
             ActivityStackManager
                     .getInstance()
                     .startHomeActivity(true, mCurrentActivity);
@@ -354,4 +393,8 @@ public class MultiDeliveryFeedbackActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

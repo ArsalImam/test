@@ -137,7 +137,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
 
-
     /***
      * Initialize data i.e activity, register ButterKnife, initialize UserRepository,  etc
      */
@@ -998,34 +997,42 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     };
 
     private void onDriverStarted() {
-        cancelBtn.setVisibility(View.GONE);
-        if (mapPolylines != null) {
-            mapPolylines.remove();
+        try {
+            cancelBtn.setVisibility(View.GONE);
+            if (mapPolylines != null) {
+                mapPolylines.remove();
+            }
+            callDriverData.setBatchStatus(TripStatus.ON_START_TRIP);
+            AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+            updateDriverMarker(
+                    String.valueOf(mCurrentLocation.getLatitude()),
+                    String.valueOf(mCurrentLocation.getLongitude())
+            );
+            tafseelLayout.setVisibility(View.VISIBLE);
+            jobBtn.setText(getString(R.string.button_text_finish));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        callDriverData.setBatchStatus(TripStatus.ON_START_TRIP);
-        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
-        updateDriverMarker(
-                String.valueOf(mCurrentLocation.getLatitude()),
-                String.valueOf(mCurrentLocation.getLongitude())
-        );
-        tafseelLayout.setVisibility(View.VISIBLE);
-        jobBtn.setText(getString(R.string.button_text_finish));
     }
 
     private void onDriverArrived() {
-        if (mapPolylines != null)
-            mapPolylines.remove();
-        timeTv.setVisibility(View.GONE);
-        timeUnitLabelTv.setVisibility(View.GONE);
-        timeView.setVisibility(View.GONE);
-        pickupMarker.remove();
-        pickView.setVisibility(View.GONE);
-        distanceTv.setVisibility(View.GONE);
-        pickUpDistanceUnit.setVisibility(View.GONE);
-        callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
-        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
-        jobBtn.setText(getString(R.string.button_text_start));
-        tafseelLayout.setVisibility(View.VISIBLE);
+        try {
+            if (mapPolylines != null)
+                mapPolylines.remove();
+            timeTv.setVisibility(View.GONE);
+            timeUnitLabelTv.setVisibility(View.GONE);
+            timeView.setVisibility(View.GONE);
+            pickupMarker.remove();
+            pickView.setVisibility(View.GONE);
+            distanceTv.setVisibility(View.GONE);
+            pickUpDistanceUnit.setVisibility(View.GONE);
+            callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
+            AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+            jobBtn.setText(getString(R.string.button_text_start));
+            tafseelLayout.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

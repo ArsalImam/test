@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.helpers;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -29,7 +30,10 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class AppPreferences {
 
@@ -1198,6 +1202,47 @@ public class AppPreferences {
     public static Boolean isMultiDelivery() {
         return mSharedPreferences
                 .getBoolean(Keys.MULTIDELIVERY_IS_MULTI_DELIVERY, false);
+    }
+
+    /**
+     * Save Multi Delivery Trip ID's into shared preference.
+     *
+     * @param TripID The trip id collection.
+     */
+    public static void setMultiDeliveryTrips(List<String> TripID) {
+        Set<String> set = new HashSet<String>();
+        if (TripID != null)
+            set.addAll(TripID);
+        mSharedPreferences
+                .edit()
+                .putStringSet(Keys.MULTIDELIVERY_TRIP_ID,
+                        set)
+                .apply();
+    }
+
+    /**
+     * Fetch the Multi Delivery Trip ID Collection.
+     *
+     * @return The collection of trip id.
+     */
+    public static List<String> getMultiDeliveryTrip() {
+        Set<String> set = mSharedPreferences
+                .getStringSet(Keys.MULTIDELIVERY_TRIP_ID, null);
+        if (set==null) return null;
+        List<String> list = new ArrayList<>();
+        list.addAll(set);
+        return list;
+    }
+
+    public static void saveMultiDeliveryCompletedTripCounts(int count) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.MULTIDELIVERY_COMPLETED_COUNT, count)
+                .apply();
+    }
+
+    public static int getMultiDeliveryCompletedTripCounts() {
+        return mSharedPreferences.getInt(Keys.MULTIDELIVERY_COMPLETED_COUNT, 0);
     }
 
     //endregion

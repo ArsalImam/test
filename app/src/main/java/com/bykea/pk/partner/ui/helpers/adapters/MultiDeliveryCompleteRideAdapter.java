@@ -37,17 +37,6 @@ public class MultiDeliveryCompleteRideAdapter extends
      * Construct MultiDeliveryCompleteRideAdapter
      *
      * @param list a collection of DirectionDropOffData.
-     */
-    public MultiDeliveryCompleteRideAdapter(List<DirectionDropOffData> list) {
-        this.list = list;
-    }
-
-    /***
-     * Constructor.
-     *
-     * Construct MultiDeliveryCompleteRideAdapter
-     *
-     * @param list a collection of DirectionDropOffData.
      * @param listener Callback to be invoked when complete multi delivery ride has been clicked.
      */
     public MultiDeliveryCompleteRideAdapter(List<DirectionDropOffData> list,
@@ -76,6 +65,7 @@ public class MultiDeliveryCompleteRideAdapter extends
         holder.areaTv.setText(data.getmArea());
         holder.driverNameTv.setText(data.getPassengerName());
         holder.numberTv.setText(data.getDropOffNumberText());
+        holder.completeBtn.setVisibility(data.isCompleted() ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override

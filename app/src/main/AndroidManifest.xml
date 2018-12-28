@@ -212,7 +212,8 @@
             android:name=".ui.activities.NumberVerificationActivity"
             android:theme="@style/NewTheme" />
         <activity android:name=".ui.activities.LandingActivity" />
-        <activity android:name=".ui.activities.MultipleDeliveryBookingActivity" />
+        <activity android:name=".ui.activities.MultipleDeliveryBookingActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".ui.activities.MapDetailsActivity" />
         <activity
             android:name=".ui.activities.CallingActivity"
