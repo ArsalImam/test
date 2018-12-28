@@ -73,9 +73,13 @@
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginLeft="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:textColor="@color/black"
         android:textSize="@dimen/_12sdp"
+        android:maxLines="1"
         app:fontName="open_sans_regular.ttf"
+        app:layout_constraintEnd_toStartOf="@+id/codTv"
         app:layout_constraintStart_toEndOf="@+id/dropOffMarker"
         app:layout_constraintTop_toBottomOf="@+id/tripNoTv"
         tools:text="Shafiq Khalid" />
@@ -119,7 +123,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/areaTv"
         app:srcCompat="@drawable/ic_direction" />
-
-
 
 </android.support.constraint.ConstraintLayout>

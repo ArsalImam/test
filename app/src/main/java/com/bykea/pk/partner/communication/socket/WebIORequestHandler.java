@@ -8,6 +8,7 @@ import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
@@ -202,6 +203,27 @@ public class WebIORequestHandler {
                 new MyGenericListener(
                         ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED,
                         MultiDeliveryDriverArrivedResponse.class,
+                        responseCallBack
+                ),
+                driverArrivedData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverArrivedData The json object that will be emit on the driver arrived event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultiDriverStartedRide(JSONObject driverArrivedData,
+                                                   IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_STARTED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_STARTED,
+                        MultiDeliveryDriverStartedResponse.class,
                         responseCallBack
                 ),
                 driverArrivedData

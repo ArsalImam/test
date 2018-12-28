@@ -1,7 +1,9 @@
 package com.bykea.pk.partner.repositories;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
@@ -56,6 +58,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -742,6 +745,31 @@ public class UserRepository {
     }
 
     /**
+     * Emit Driver Started data.
+     *
+     * @param handler The Callback that will be invoked when driver started response received.
+     *
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverStarted(Activity activity, IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            String address = Utils.getLocationAddress(
+                    AppPreferences.getLatitude() + "",
+                    AppPreferences.getLongitude() + "",
+                    activity).split(",")[0];
+            jsonObject.put("start_address", address);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultiDriverStartedRide(jsonObject, mDataCallback);
+
+    }
+
+    /**
      * Emit driver cancel batch request.
      *
      * @param cancelReason The cancellation reason.
@@ -764,6 +792,7 @@ public class UserRepository {
         mWebIORequestHandler.requestMultideliveryCancelBatch(jsonObject, mDataCallback);
 
     }
+
 
     //endregion
 
@@ -1364,6 +1393,11 @@ public class UserRepository {
                     case "MultiDeliveryAcceptCallResponse":
                         mUserCallback.onMultiDeliveryAcceptCall(
                                 (MultiDeliveryAcceptCallResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryDriverStartedResponse":
+                        mUserCallback.onMultiDeliveryDriverStarted(
+                                (MultiDeliveryDriverStartedResponse) object
                         );
                         break;
                     case "MultiDeliveryCancelBatchResponse":

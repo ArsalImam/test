@@ -58,6 +58,7 @@
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginLeft="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_4sdp"
+        android:maxLines="3"
         android:layout_marginEnd="@dimen/_24sdp"
         android:layout_marginRight="@dimen/_24sdp"
         android:textColor="@color/black"

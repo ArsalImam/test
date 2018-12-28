@@ -5,11 +5,20 @@ public class MultiDeliveryPickup {
     String mArea;
     String feederName;
     String streetAddress;
+    String contactNumber;
 
     public MultiDeliveryPickup(String mArea, String feederName, String streetAddress) {
         this.mArea = mArea;
         this.feederName = feederName;
         this.streetAddress = streetAddress;
+    }
+
+    public MultiDeliveryPickup(String mArea, String feederName, String streetAddress,
+                               String contactNumber) {
+        this.mArea = mArea;
+        this.feederName = feederName;
+        this.streetAddress = streetAddress;
+        this.contactNumber = contactNumber;
     }
 
     public String getArea() {
@@ -34,5 +43,13 @@ public class MultiDeliveryPickup {
 
     public void setStreetAddress(String streetAddress) {
         this.streetAddress = streetAddress;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
     }
 }

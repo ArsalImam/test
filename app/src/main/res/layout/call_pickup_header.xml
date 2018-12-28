@@ -66,16 +66,17 @@
         android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginEnd="@dimen/_24sdp"
         android:layout_marginRight="@dimen/_24sdp"
+        android:maxLines="3"
         android:textColor="@color/black"
         android:textSize="@dimen/_12sdp"
         app:fontName="open_sans_regular.ttf"
-        app:layout_constraintEnd_toStartOf="@+id/callIv"
+        app:layout_constraintEnd_toStartOf="@+id/callBtn"
         app:layout_constraintStart_toEndOf="@+id/pickupMarker"
         app:layout_constraintTop_toBottomOf="@+id/feaderTv"
         tools:text="House # 1, Street 35, Block B3  House # 1,Street  35, Block B3  " />
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/callIv"
+        android:id="@+id/callBtn"
         android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_35sdp"
         android:layout_marginEnd="@dimen/_10sdp"
