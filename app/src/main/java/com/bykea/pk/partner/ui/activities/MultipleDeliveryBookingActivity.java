@@ -996,6 +996,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         }
     };
 
+    /**
+     * Invoked this method when driver has been started.
+     * Change the batch status, remove the poly lines & set the bottom button to "Mukamal"
+     */
     private void onDriverStarted() {
         try {
             cancelBtn.setVisibility(View.GONE);
@@ -1015,6 +1019,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         }
     }
 
+    /**
+     * Invoked this method when driver has been arrived.
+     * Change the batch status, remove the poly lines & set the bottom button to "Start"
+     */
     private void onDriverArrived() {
         try {
             if (mapPolylines != null)

@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils
  * Multiple Delivery Pickup Response
  */
 open class MultipleDeliveryPickupResponse {
-    var lat: Float? = 24.7797059f
-    var lng: Float? = 67.0527337f
+    var lat: Float? = 0.0f
+    var lng: Float? = 0.0f
     @SerializedName("formatted")
     var pickupAddress: String? = StringUtils.EMPTY
     var distance: Int? = 0 //distance in meter
