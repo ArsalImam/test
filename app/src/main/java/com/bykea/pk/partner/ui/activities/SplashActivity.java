@@ -10,6 +10,14 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.utils.ApiTags;
+import com.bykea.pk.partner.utils.Constants;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -25,6 +33,9 @@ import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -80,6 +91,26 @@ public class SplashActivity extends BaseActivity {
         if (AppPreferences.isGeoCoderApiKeyRequired()
                 && Utils.isGeoCoderApiKeyCheckRequired()) {
             AppPreferences.setGeoCoderApiKeyRequired(false);
+        }
+        Utils.setOneSignalPlayerId();
+        checkInactivePush();
+
+    }
+
+    /**
+     * This method check if Splash Activity is launched from Inactive Push Notification
+     */
+    private void checkInactivePush() {
+        //get notification data info
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.get("event") != null) {
+            String event = (String) bundle.get("event");
+            if (Constants.FcmEvents.INACTIVE_PUSH.equalsIgnoreCase(event)) {
+                Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Notification Clicked");
+                String dataJsonString = (String) bundle.get("data");
+                ActivityStackManager.getInstance().startHandleInactivePushService(mCurrentActivity,
+                        new Gson().fromJson(dataJsonString, OfflineNotificationData.class));
+            }
         }
     }
 
@@ -362,6 +393,7 @@ public class SplashActivity extends BaseActivity {
             Utils.unbindDrawables(findViewById(R.id.activity_splash));
         }
         disconnectTimer();
+        Dialogs.INSTANCE.dismissDialog();
     }
     //endregion
 

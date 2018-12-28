@@ -12,4 +12,5 @@ public class HTTPStatus {
     public static final int FENCE_ERROR = 800;
     public static final int INACTIVE_DUE_TO_WALLET_AMOUNT = 801;
     public static final int FENCE_SUCCESS = 808; //for local check
+    public static final int CANCELLATION_RIDE_BLOCK = 900;
 }

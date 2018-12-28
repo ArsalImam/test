@@ -46,6 +46,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "767103339988-52esmeo35prsorrcp53qr0hmio1fppd9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bykea.pk.partner",
+            "certificate_hash": "f0e584db96350e06ea238a546a6f1de75d30ec43"
+          }
+        },
+        {
           "client_id": "767103339988-mqfi2tf6vbusqnp5bhe2pq82hj90lh6g.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -60,8 +68,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767103339988-mqfi2tf6vbusqnp5bhe2pq82hj90lh6g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "767103339988-i7hqnpbrr0hbrma28ilbpt1ai0bf19uq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bykea.pk"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2

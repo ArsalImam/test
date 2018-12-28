@@ -20,6 +20,8 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
+import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
+import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
@@ -88,12 +90,12 @@ import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class UserRepository {
 
@@ -144,6 +146,19 @@ public class UserRepository {
         mUserCallback = handler;
         mRestRequestHandler.sendUserLogin(context, mDataCallback, phoneNumber, otpCode,
                 Constants.DEVICE_TYPE, AppPreferences.getRegId());
+
+    }
+
+    /***
+     * Update driver location with latest latitude and longitude
+     * @param context calling context
+     * @param handler Response handler
+     * @param locationRequest Driver location request model
+     */
+    public void updateDriverLocation(Context context, IUserDataHandler handler, DriverLocationRequest locationRequest) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.sendDriverLocationUpdate(context, mDataCallback, locationRequest);
 
     }
 
@@ -275,64 +290,53 @@ public class UserRepository {
         mRestRequestHandler.requestHeatMap(context, mDataCallback);
     }
 
+    /***
+     * Send driver Location update request to our API server.
+     *
+     * @param context Calling context.
+     * @param handler Response handler
+     * @param lat current driver latitude.
+     * @param lon current driver longitude.
+     */
     public void requestLocationUpdate(Context context, IUserDataHandler handler,
                                       double lat, double lon) {
 
         mContext = context;
         mUserCallback = handler;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            Utils.redLog("token_id at Location", AppPreferences.getAccessToken());
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            String driverId = AppPreferences.getDriverId();
-            if (StringUtils.isBlank(driverId)) {
-                return;
-            }
-            jsonObject.put("_id", driverId);
-            jsonObject.put("lat", lat + "");
-            jsonObject.put("lng", lon + "");
-            String tripStatus = StringUtils.EMPTY;
-            // THIS CHECK IS FOR TRACKING DURING TRIP...
-            if (AppPreferences.isOnTrip()) {
-                tripStatus = AppPreferences.getCallData() != null
-                        && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
-                        ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
-                jsonObject.put("eta", AppPreferences.getEta());
-                jsonObject.put("distance", AppPreferences.getEstimatedDistance());
-                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
-                jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
-                jsonObject.put("inCall", true);
-                ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
-                if (trackingData.size() == 0) {
-                    TrackingData data = new TrackingData();
-                    data.setLat(lat + "");
-                    data.setLng(lon + "");
-                    trackingData.add(data);
-                }
-                jsonObject.put("track", new JSONArray(new Gson().toJson(trackingData)));
-                AppPreferences.clearTrackingData();
-            } else {
-                //to free driver after trip Finished
-                if ("finished".equalsIgnoreCase(AppPreferences.getTripStatus())) {
-                    jsonObject.put("inCall", true);
-                } else {
-                    jsonObject.put("inCall", false);
-                }
-            }
-            if (StringUtils.isBlank(tripStatus)) {
-                tripStatus = AppPreferences.getTripStatus();
-            }
-            jsonObject.put("status", tripStatus);
-            Utils.redLog("isInCall", jsonObject.get("inCall") + "");
-
-
-        } catch (Exception ignored) {
-
+        String driverId = AppPreferences.getDriverId();
+        if (StringUtils.isBlank(driverId)) {
+            return;
         }
 
-        Log.d("FREEONCALL", jsonObject.toString());
-        mWebIORequestHandler.requestLocationUpdate(jsonObject, mDataCallback);
-
+        DriverLocationRequest locationRequest = new DriverLocationRequest();
+        locationRequest.setTokenID(AppPreferences.getAccessToken());
+        locationRequest.setDriverID(driverId);
+        locationRequest.setLatitude(lat + "");
+        locationRequest.setLongitude(lon + "");
+        String tripStatus = StringUtils.EMPTY;
+        if (AppPreferences.isOnTrip()) {
+            tripStatus = AppPreferences.getCallData() != null
+                    && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
+                    ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
+            locationRequest.setEta(AppPreferences.getEta());
+            locationRequest.setDistance(AppPreferences.getEstimatedDistance());
+            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
+            ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
+            if (trackingData.size() == 0) {
+                TrackingData data = new TrackingData();
+                data.setLat(lat + "");
+                data.setLng(lon + "");
+                trackingData.add(data);
+            }
+            locationRequest.setTrackingData(trackingData);
+            AppPreferences.clearTrackingData();
+        }
+        if (StringUtils.isBlank(tripStatus)) {
+            tripStatus = AppPreferences.getTripStatus();
+        }
+        locationRequest.setAvailableStatus(tripStatus);
+        locationRequest.setUuid(UUID.randomUUID().toString());
+        mRestRequestHandler.sendDriverLocationUpdate(context, mDataCallback, locationRequest);
     }
 
     public void freeDriverStatus(Context context, IUserDataHandler handler) {
@@ -883,6 +887,65 @@ public class UserRepository {
         mWebIORequestHandler.getConversationChat(mDataCallback, jsonObject);
     }
 
+    /***
+     * Update driver availability status on API server.
+     * @param context Calling Context.
+     * @param handler Response callback
+     * @param driverStatus driver status
+     */
+    public void requestDriverUpdateStatus(Context context, IUserDataHandler handler, boolean driverStatus) {
+        mContext = context;
+        mUserCallback = handler;
+        PilotData pilotData = AppPreferences.getPilotData();
+        DriverAvailabilityRequest statusRequest = new DriverAvailabilityRequest();
+        try {
+            //region Setting MixPanel properties JSON
+            JSONObject properties = new JSONObject();
+            properties.put("DriverID", pilotData.getId());
+            properties.put("timestamp", Utils.getIsoDate());
+            properties.put("SignUpCity", pilotData.getCity() != null
+                    ? pilotData.getCity().getName() : "N/A");
+            properties.put("DriverName", pilotData.getFullName());
+            properties.put("CurrentLocation", Utils.getCurrentLocation());
+            properties.put("cih", AppPreferences.getCashInHands());
+            properties.put("status", driverStatus ? "Active" : "Inactive");
+
+            //endregion
+
+            //region Driver status request Body
+            statusRequest.setAvailable(driverStatus);
+            statusRequest.setId(AppPreferences.getDriverId());
+            statusRequest.setTokenID(AppPreferences.getAccessToken());
+
+            statusRequest.setLatitude(AppPreferences.getLatitude());
+            statusRequest.setLongitude(AppPreferences.getLongitude());
+            statusRequest.setCih(AppPreferences.getCashInHands());
+            statusRequest.setImei(Utils.getDeviceId(mContext));
+
+            //endregion
+
+            if (driverStatus && AppPreferences.getDriverDestination() != null) {
+                statusRequest.setEndingLatitude(String.valueOf(AppPreferences.getDriverDestination().latitude));
+                statusRequest.setEndingLongitude(String.valueOf(AppPreferences.getDriverDestination().longitude));
+                statusRequest.setEndingAddress(AppPreferences.getDriverDestination().address);
+
+                properties.put("DD", true);
+                properties.put("DDLocation", AppPreferences.getDriverDestination().latitude
+                        + "," + AppPreferences.getDriverDestination().longitude);
+                properties.put("DDAddress", AppPreferences.getDriverDestination().address);
+            } else {
+                properties.put("DD", false);
+            }
+            Utils.logEvent(context, pilotData.getId(),
+                    Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mRestRequestHandler.requestDriverStatusUpdate(mContext, statusRequest, mDataCallback);
+
+
+    }
 
     public void requestUpdateStatus(Context context, IUserDataHandler handler, boolean status) {
 

@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -16,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -34,6 +37,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NotificationData;
+import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -85,6 +89,12 @@ public class BaseActivity extends AppCompatActivity {
     private final String SMS_RECIEVE = Manifest.permission.RECEIVE_SMS;
     private RelativeLayout statusLayout;
 
+    // A reference to the service used to get location updates.
+    private LocationService mService = null;
+
+    // Tracks the bound state of the service.
+    private boolean mBound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +113,16 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+        //TODO check bindservice
+        /*bindService(new Intent(this, LocationService.class), mServiceConnection,
+                Context.BIND_AUTO_CREATE);*/
     }
 
     @Override
@@ -136,7 +156,7 @@ public class BaseActivity extends AppCompatActivity {
             int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
             int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), PHONE_STATE);
             int call = ContextCompat.checkSelfPermission(getApplicationContext(), CALL_STATE);
-            boolean smsPermissionRequired = Permissions.hasSMSPermissions(mCurrentActivity);
+            boolean smsPermissionRequired = !Permissions.hasSMSPermissions(mCurrentActivity);
             if (location != PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
                 if (smsPermissionRequired) {
                     requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE, SMS_READ,SMS_RECIEVE},
@@ -833,5 +853,23 @@ public class BaseActivity extends AppCompatActivity {
         mLastClickTime = currentTime;
         return false;
     }
+
+
+    // Monitors the state of the connection to the service.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            mBound = false;
+        }
+    };
 
 }

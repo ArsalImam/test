@@ -3,6 +3,7 @@ package com.bykea.pk.partner.utils;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
@@ -48,10 +49,11 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -79,6 +81,7 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -90,6 +93,8 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.FontUtils;
+import com.elvishew.xlog.XLog;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -102,6 +107,7 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.okhttp.MediaType;
@@ -151,9 +157,35 @@ import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 public class Utils {
 
 
+    /**
+     * This method handles error logs for Location Service and maintains files via XLog lib for debug builds
+     *
+     * @param tag     Error tag
+     * @param message Error Message
+     */
+    public static void redLogLocation(String tag, String message) {
+        if (BuildConfig.DEBUG) {
+            XLog.Log.e(tag + " : ", message);
+//            XLog.e(tag, message);
+        }
+    }
+
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            Log.e(tag + " : ", message);
+            XLog.Log.e(tag + " : ", message);
+        }
+    }
+
+    /**
+     * This method handles error logs for Location Service and maintains files via XLog lib for debug builds
+     *
+     * @param tag     Error tag
+     * @param message Error Message
+     * @param ex      Exception object
+     */
+    public static void redLog(String tag, String message, Exception ex) {
+        if (BuildConfig.DEBUG) {
+            XLog.Log.e(tag + " : ", message, ex);
         }
     }
 
@@ -166,6 +198,7 @@ public class Utils {
             }
         }
     }
+
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -317,7 +350,11 @@ public class Utils {
         ((Activity) context).finish();
     }
 
-    private static void clearData(Context context) {
+    /***
+     * Clear Data when user is unauthorized.
+     * @param context Calling context.
+     */
+    public static void clearData(Context context) {
 //        Utils.resetMixPanel(context, false);
         FirebaseAnalytics.getInstance(context).resetAnalyticsData();
         String regId = AppPreferences.getRegId();
@@ -702,10 +739,15 @@ public class Utils {
     }
 
     public static void unlockScreen(Context context) {
-        Window window = ((AppCompatActivity) context).getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            ((AppCompatActivity) context).setShowWhenLocked(true);
+            ((AppCompatActivity) context).setTurnScreenOn(true);
+        } else {
+            Window window = ((AppCompatActivity) context).getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        }
     }
 
     public static void setCallIncomingStateWithoutRestartingService() {
@@ -734,6 +776,29 @@ public class Utils {
         }
         return false;
     }
+
+    /**
+     * Check is service running in foreground service.
+     *
+     * @param context      The {@link Context}.
+     * @param serviceClass Service class which needs to be checked for foreground service.
+     */
+    public static boolean serviceIsRunningInForeground(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(
+                Context.ACTIVITY_SERVICE);
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
+                    Integer.MAX_VALUE)) {
+                if (serviceClass.getClass().getName().equals(service.service.getClassName())) {
+                    if (service.foreground) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     public static void callingIntent(Context context, String number) {
 
@@ -1903,8 +1968,13 @@ public class Utils {
         }
     }
 
-
+    /**
+     * This method compares FCM token of SP with token placed with User (PilotData) data model to indicate if we need to update FCM token on our server or not.
+     *
+     * @return boolean true/false
+     */
     public static boolean isFcmIdUpdateRequired(boolean isLoggedIn) {
+        AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken()); //on Android 8, sometimes onNewToken gets called 2 times and 2nd one is not latest(Unexpected behaviour). That's why updating SP with latest FCM Token
         boolean required = false;
         if (isLoggedIn && StringUtils.isNotBlank(AppPreferences.getRegId())
                 && AppPreferences.getPilotData() != null && !AppPreferences.getRegId().equalsIgnoreCase(AppPreferences.getPilotData().getReg_id())) {
@@ -2412,20 +2482,19 @@ public class Utils {
      * @return notification chanel id
      */
     public static String getChannelIDForOnGoingNotification(Context context) {
-        String chanelId = "bykea_p_channel_id_for_loc";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-//            String channelId = "bykea_p_channel_id";
-            CharSequence channelName = "Bykea Active/Inactive Status";
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
+            NotificationChannel notificationChannel = new NotificationChannel(
+                    Constants.Notification.NOTIFICATION_CHANNEL_ID,
+                    Constants.Notification.NOTIFICATION_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(notificationChannel);
             }
-            chanelId = notificationChannel.getId();
+            return notificationChannel.getId();
         }
-        return chanelId;
+        return Constants.Notification.NOTIFICATION_CHANNEL_ID;
     }
 
     public static void printHashKey(Context pContext) {
@@ -2541,10 +2610,12 @@ public class Utils {
     /**
      * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
      *
-     * @param context calling context
-     * @see Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     * @param context  calling context
+     * @param activity calling activity
+     * @return True if we are going to ask Battery optimization, else false.
+     * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
      */
-    public static void disableBatteryOptimization(Context context) {
+    public static boolean disableBatteryOptimization(Context context, AppCompatActivity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = context.getPackageName();
@@ -2552,7 +2623,79 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                context.startActivity(intent);
+                activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create email intent
+     *
+     * @param toEmail Receiver email address
+     * @param subject Email subject
+     * @param message Email message body
+     * @param uri     attachment file URI
+     * @return {@link Intent} intent object which we will use to invoke action
+     */
+    public static Intent createEmailIntentWithAttachment(final String toEmail,
+                                                         final String subject,
+                                                         final String message,
+                                                         Uri uri) {
+
+        // Nothing resolves send to, so fallback to send...
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        //emailIntent.setType("plain/text");
+        emailIntent.setType("message/rfc822");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL,
+                new String[]{toEmail});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+        if (uri != null) {
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        }
+        emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        return Intent.createChooser(emailIntent, "Send mail");
+
+    }
+
+    /**
+     * Send email to developer using email client on device.
+     *
+     * @param currentActivity Calling activity
+     */
+    public static void sendEmailToDeveloper(AppCompatActivity currentActivity) {
+        File logFileDir = FileUtil.createRootDirectoryForLogs(currentActivity);
+        if (logFileDir != null) {
+
+            String fileName = String.format("%1$s-%2$s-%3$s-%4$s.zip",
+                    BuildConfig.APPLICATION_ID,
+                    BuildConfig.FLAVOR,
+                    BuildConfig.VERSION_CODE,
+                    BuildConfig.VERSION_NAME);
+            boolean zipResult = FileUtil.zipFileAtPath(logFileDir.getAbsolutePath(),
+                    currentActivity.getExternalCacheDir() + File.separator + fileName);
+            if (zipResult) {
+                Uri uri;
+                File file = new File(currentActivity.getExternalCacheDir() + File.separator + fileName);
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                    uri = Uri.fromFile(file);
+                } else {
+                    uri = FileProvider.getUriForFile(currentActivity,
+                            currentActivity.getApplicationContext().getPackageName() + ".fileprovider", file);
+                }
+                Intent emailIntent = Utils.createEmailIntentWithAttachment(
+                        Constants.LogTags.LOG_SEND_DEVELOPER_EMAIL,
+                        Constants.LogTags.LOG_SEND_SUBJECT,
+                        Constants.LogTags.LOG_SEND_MESSAGE_BODY,
+                        uri);
+                // Verify the intent will resolve to at least one activity
+                if (emailIntent.resolveActivity(currentActivity.getPackageManager()) != null) {
+                    Utils.redLogLocation(Constants.LogTags.BYKEA_LOG_TAG, "Email intent set");
+                    currentActivity.startActivity(emailIntent);
+                }
             }
         }
     }
@@ -2587,6 +2730,28 @@ public class Utils {
         return false;
     }
 
+    /****
+     * Generate IMEI not registered error message for user.
+     * @param context Calling context.
+     * @return Spannable String format object
+     */
+    public static SpannableStringBuilder generateImeiRegistrationErrorMessage(Context context) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_one_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_three_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_four_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_five_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        return spannableStringBuilder;
+    }
+
     /***
      *  Check is provided activity in running task.
      *
@@ -2613,6 +2778,27 @@ public class Utils {
         return false;
     }
 
+
+    /**
+     * Get Application Current version from device Package manager.
+     *
+     * @return Application installed version number.
+     */
+    public static String getAppCurrentVersion() {
+        Context context = DriverApp.getApplication();
+        if (context != null) {
+            PackageManager pm = context.getPackageManager();
+            PackageInfo pInfo;
+            try {
+                pInfo = pm.getPackageInfo(context.getPackageName(), 0);
+                return pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     //region API error response Body parsing
 
     /***
@@ -2637,6 +2823,42 @@ public class Utils {
     }
     //endregion
 
+    /***
+     * Handle business logic location Failure use cases for driver Location API .
+     * <ul>
+     *     <li> Multiple cancellation block. </li>
+     *     <li> Wallet amount exceeds threshold. </li>
+     *     <li> Out of service region area block. </li>
+     *     <li> Account Blocked</li>
+     * </ul>
+     *
+     * @param eventBus {@link EventBus} object
+     * @param locationResponse Latest response received from API Server
+     */
+    public static void handleLocationBusinessLogicErrors(EventBus eventBus,
+                                                         LocationResponse locationResponse) {
+        switch (locationResponse.getSubCode()) {
+            case Constants.ApiError.WALLET_EXCEED_THRESHOLD:
+                if (StringUtils.isNotBlank(locationResponse.getMessage())) {
+                    AppPreferences.setWalletIncreasedError(locationResponse.getMessage());
+                }
+                AppPreferences.setWalletAmountIncreased(true);
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+            case Constants.ApiError.OUT_OF_SERVICE_REGION:
+                AppPreferences.setOutOfFence(true);
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+            case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+        }
+
+    }
 
     //region MultiDelivery Helper Methods
 
@@ -2650,10 +2872,10 @@ public class Utils {
      * @return The distance in meter or kilometer
      */
     public static String getDistance(float distanceInMeter) {
-            return String.format(DriverApp.
-                            getContext().
-                            getString(R.string.decimal_format_one_digit),
-                    distanceInMeter / 1000);
+        return String.format(DriverApp.
+                        getContext().
+                        getString(R.string.decimal_format_one_digit),
+                distanceInMeter / 1000);
     }
 
     /**
@@ -2694,7 +2916,7 @@ public class Utils {
      * @return The collection of drop down lat lng.
      */
     public static List<LatLng> getDropDownLatLngList(MultiDeliveryCallDriverData
-                                                              deliveryCallDriverData) {
+                                                             deliveryCallDriverData) {
         List<LatLng> latLngList = new ArrayList<>();
         for (MultipleDeliveryBookingResponse response : deliveryCallDriverData.getBookings()) {
             latLngList.add(new LatLng(
@@ -2708,4 +2930,6 @@ public class Utils {
     }
 
     //endregion
+
+
 }
