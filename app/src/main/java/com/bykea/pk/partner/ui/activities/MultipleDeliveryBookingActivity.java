@@ -34,7 +34,6 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
 import com.bykea.pk.partner.ui.helpers.Spherical;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.ui.helpers.adapters.CallAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
