@@ -788,7 +788,8 @@ public class UserRepository {
         try {
             setMultiDeliveryData(jsonObject);
             jsonObject.put("trip_id", data.getTripID());
-            jsonObject.put("route", new Gson().toJson(AppPreferences.getTrackingData()));
+            jsonObject.put("route", new Gson()
+                    .toJson(AppPreferences.getLocCoordinatesInTrip()));
             directionDropOffData = data;
 
         } catch (Exception e) {

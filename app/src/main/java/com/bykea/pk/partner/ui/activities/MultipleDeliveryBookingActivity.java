@@ -1007,6 +1007,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 mapPolylines.remove();
             }
             callDriverData.setBatchStatus(TripStatus.ON_START_TRIP);
+            AppPreferences.setTripStatus(TripStatus.ON_START_TRIP);
             AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
             updateDriverMarker(
                     String.valueOf(mCurrentLocation.getLatitude()),
@@ -1035,6 +1036,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             distanceTv.setVisibility(View.GONE);
             pickUpDistanceUnit.setVisibility(View.GONE);
             callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
+            AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
             AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
             jobBtn.setText(getString(R.string.button_text_start));
             tafseelLayout.setVisibility(View.VISIBLE);
