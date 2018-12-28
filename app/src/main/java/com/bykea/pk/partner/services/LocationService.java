@@ -391,7 +391,9 @@ public class LocationService extends Service {
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
-                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                                if (!AppPreferences.isMultiDelivery())
+                                    mUserRepository
+                                            .requestLocationUpdate(mContext, handler, lat, lon);
                             } else {
                                 Utils.redLog("request failed", "WiFi -> " + Connectivity.isConnectedFast(mContext)
                                         + " && GPS -> " + Utils.isGpsEnable());

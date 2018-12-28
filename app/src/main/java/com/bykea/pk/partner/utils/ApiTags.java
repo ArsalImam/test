@@ -127,6 +127,7 @@ public class ApiTags {
     public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE = "CALL_DRIVER_ACKNOWLEDGE";
     public static final String MULTI_DELIVERY_SOCKET_ACCEPT_CALL = "DRIVER_ACCEPTED";
     public static final String MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED = "DRIVER_ARRIVED";
+    public static final String MULTI_DELIVERY_SOCKET_DRIVER_STARTED = "DRIVER_STARTED";
     public static final String MULTI_DELIVERY_SOCKET_TRIP_MISSED = "TRIP_MISSED";
 
     /*CHAT APIS*/
