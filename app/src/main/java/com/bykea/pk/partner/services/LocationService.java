@@ -762,10 +762,7 @@ public class LocationService extends Service {
             if (response.isSuccess()) {
                 AppPreferences.setDriverOfflineForcefully(false);
                 AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
-               /* //todo double check this.
-                AppPreferences.setOutOfFence(false);
-                AppPreferences.setAvailableStatus(true);
-                mBus.post(Keys.ACTIVE_FENCE);*/
+                mBus.post(Keys.ACTIVE_FENCE);
             } else {
                 handleLocationErrorUseCase(response);
             }
