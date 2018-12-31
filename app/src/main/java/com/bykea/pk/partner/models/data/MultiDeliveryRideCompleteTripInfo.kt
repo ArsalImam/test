@@ -25,6 +25,11 @@ class MultiDeliveryRideCompleteTripInfo() : Parcelable {
     @SerializedName("id")
     var tripID: String? = StringUtils.EMPTY
 
+    /**
+     * Constructor.
+     *
+     * Read the fields from the parcel.
+     */
     constructor(parcel: Parcel) : this() {
         startAddress = parcel.readString()
         endAddress = parcel.readString()
@@ -45,6 +50,16 @@ class MultiDeliveryRideCompleteTripInfo() : Parcelable {
         return 0
     }
 
+    /**
+     * Declare object inside class using companion object.
+     *
+     * Interface that must be implemented and provided as a public CREATOR
+     * field that generates instances of your Parcelable class from a Parcel.
+     *
+     * Call back to be invoked when creating a new instance of the Parcelable class, instantiating it
+     * from the given Parcel whose data had previously been written.
+     *
+     */
     companion object CREATOR : Parcelable.Creator<MultiDeliveryRideCompleteTripInfo> {
         override fun createFromParcel(parcel: Parcel): MultiDeliveryRideCompleteTripInfo {
             return MultiDeliveryRideCompleteTripInfo(parcel)

@@ -10,6 +10,13 @@ import com.bykea.pk.partner.models.data.CallDriverAcknowledgeData
 open class MultiDeliveryCallDriverAcknowledgeResponse(
     var data: CallDriverAcknowledgeData? = null
 ) : CommonResponse(), Parcelable {
+
+
+    /**
+     * Constructor.
+     *
+     * Read the fields from the parcel.
+     */
     constructor(parcel: Parcel) :
             this(parcel.readParcelable<CallDriverAcknowledgeData>(
                     CallDriverAcknowledgeData::class.java.classLoader)) {
@@ -23,6 +30,16 @@ open class MultiDeliveryCallDriverAcknowledgeResponse(
         return 0
     }
 
+    /**
+     * Declare object inside class using companion object.
+     *
+     * Interface that must be implemented and provided as a public CREATOR
+     * field that generates instances of your Parcelable class from a Parcel.
+     *
+     * Call back to be invoked when creating a new instance of the Parcelable class, instantiating it
+     * from the given Parcel whose data had previously been written.
+     *
+     */
     companion object CREATOR : Parcelable.Creator<MultiDeliveryCallDriverAcknowledgeResponse> {
         override fun createFromParcel(parcel: Parcel): MultiDeliveryCallDriverAcknowledgeResponse {
             return MultiDeliveryCallDriverAcknowledgeResponse(parcel)

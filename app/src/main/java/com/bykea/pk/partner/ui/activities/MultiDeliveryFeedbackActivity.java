@@ -45,6 +45,10 @@ import butterknife.OnTextChanged;
 
 import static butterknife.OnTextChanged.*;
 
+/**
+ * Multi Delivery Feedback Activity for providing
+ * feedback for passenger against the multi delivery trip
+ */
 public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
     @BindView(R.id.tvTripId)
@@ -213,6 +217,12 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * Text watcher for listening text changes in amount edit text.
+     *
+     * @param editable This is the interface for text whose content and markup
+     *    can be changed (as opposed to immutable text like Strings).
+     */
     @OnTextChanged(value = R.id.receivedAmountEt,
             callback = Callback.AFTER_TEXT_CHANGED)
     void afterTextChanged(Editable editable) {

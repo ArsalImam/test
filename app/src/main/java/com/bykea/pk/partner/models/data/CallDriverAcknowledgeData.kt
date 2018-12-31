@@ -19,10 +19,14 @@ class CallDriverAcknowledgeData(
         var isAvailable: Boolean,
         @SerializedName("trip")
         var tripInfo: MultiDeliveryRideCompleteTripInfo? = null,
+        @SerializedName("invoice")
         var invoice: MultiDeliveryInvoiceData? = null
 ) : Parcelable {
+
     /**
+     * Constructor.
      *
+     * Read the fields from the parcel.
      */
     constructor(source: Parcel) : this(
             source.readString(),
@@ -39,9 +43,7 @@ class CallDriverAcknowledgeData(
 
     override fun describeContents() = 0
 
-    /**
-     *
-     */
+
     override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
         writeString(batchID)
         writeString(driverID)
@@ -52,6 +54,13 @@ class CallDriverAcknowledgeData(
     }
 
     /**
+     * Declare object inside class using companion object.
+     *
+     * Interface that must be implemented and provided as a public CREATOR
+     * field that generates instances of your Parcelable class from a Parcel.
+     *
+     * Call back to be invoked when creating a new instance of the Parcelable class, instantiating it
+     * from the given Parcel whose data had previously been written.
      *
      */
     companion object {
