@@ -1124,6 +1124,20 @@ public class Utils {
         return diff <= 6000;
     }
 
+    /**
+     * Invoked this method to check that the customer is
+     * canceling the ride after 5 minutes of its acceptance
+     *
+     * <p>Calculate the difference of current time in millisecond, server time that keep on
+     * updating from location update & the acceptance time.</p>
+     *
+     * @see AppPreferences#getSettings()
+     *
+     * @param acceptedTime The accepted time in millisecond.
+     *
+     * @return true if calculated difference is greater than equal to
+     * cancellation time otherwise false
+     */
     public static boolean isCancelAfter5Min(long acceptedTime) {
         long diff = (System.currentTimeMillis() -
                 (AppPreferences.getServerTimeDifference() + acceptedTime));
