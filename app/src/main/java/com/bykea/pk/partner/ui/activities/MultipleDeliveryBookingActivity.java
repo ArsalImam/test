@@ -375,7 +375,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     );
                     getDriverRoadPosition(driverLatLng);
                     addPickupMarker();
-                    addDropOffMarkers();
+                    updateDropOffMarkers();
                     setPickupBounds();
                 }
             });
@@ -612,10 +612,12 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     /***
      * Add Pickup marker to the pickup location.
+     *
+     * The Time complexity or rate of growth of a function is: O(n)
      */
-    private void addDropOffMarkers() {
+    private void updateDropOffMarkers() {
         try {
-            if (null == mGoogleMap) return;
+            if (null == mGoogleMap || callDriverData == null) return;
             if (dropOffMarker != null) {
                 dropOffMarker.remove();
             }
@@ -993,6 +995,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     protected void onResume() {
         mapView.onResume();
         setInitialData();
+        updateDropOffMarkers();
         super.onResume();
     }
 
@@ -1135,8 +1138,12 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
 
+
+
     @Override
     public void onBackPressed() {
 
     }
+
+
 }
