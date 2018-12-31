@@ -47,7 +47,12 @@ public class Keys {
     //region MULTI DELIVERY OBJECT STRING KEY
     public static final String MULTIDELIVERY_CALLDRIVER_OBJECT = "MULTIDELIVERY_CALLDRIVER_OBJECT";
     public static final String MULTIDELIVERY_MISSED_EVENT = "MULTIDELIVERY_MISSED_EVENT";
+    public static final String MULTIDELIVERY_BATCH_COMPLETED = "MULTIDELIVERY_BATCH_TRIP_COMPLETED";
     public static final String MULTIDELIVERY_IS_MULTI_DELIVERY = "MULTIDELIVERY_IS_MULTI_DELIVERY";
+    public static final String MULTIDELIVERY_COMPLETE_DATA = "MULTIDELIVERY_COMPLETE_DATA";
+    public static final String MULTIDELIVERY_TRIP_ID = "MULTIDELIVERY_TRIP_ID";
+    public static final String MULTIDELIVERY_COMPLETED_COUNT = "MULTIDELIVERY_COMPLETED_COUNT";
+
 
 
     //endregion
@@ -152,6 +157,8 @@ public class Keys {
     public static final String WALLET_ERROR = "WALLET_ERROR";
     public static final String SETTINGS_VERSION = "SETTINGS_VERSION";
     public static final String CASH_IN_HANDS = "CASH_IN_HANDS";
+    public static final String LOCATION_RESPONSE_NOT_RECEIVED_COUNT = "LOCATION_RESPONSE_NOT_RECEIVED_COUNT";
+    public static final String DRIVER_OFFLINE_FORCEFULLY = "DRIVER_OFFLINE_FORCEFULLY";
     public static final String CASH_IN_HANDS_RANGE = "CASH_IN_HANDS_RANGE";
     public static final String CASH_IN_HANDS_INDEX = "CASH_IN_HANDS_INDEX";
     public static final String TRIP_DELAY = "TRIP_DELAY";

@@ -77,6 +77,7 @@ public class ApiTags {
     public static final String CHANGE_PIN = "/api/v1/common/changePin";
     public static final String GET_CITIES = "/api/v1/admin/cities";
     public static final String SET_DRIVER_DROP_OFF = "/api/v1/driver/setDropoff";
+    public static final String SET_DRIVER_LOCATION = "/api/v1/driver/update/location";
 
 
     public static final String LOGOUT_API = "/api/v1/driver/logout";
@@ -104,6 +105,9 @@ public class ApiTags {
     //LOAD BOARD
     public static final String GET_LOAD_BOARD = "/api/v1/driver/load-board?";
 
+    //Driver Status
+    public static final String DRIVER_STATUS_ONLINE_OFFLINE = "/api/v1/driver/status";
+
 
     /******************************************************************************
      * SOCKET METHODS STRINGS                                                     *
@@ -114,6 +118,8 @@ public class ApiTags {
     public static final String SOCKET_FREE_PILOT = "free-when-call-end";
     public static final String SOCKET_DRIVER_FEEDBACK = "trip-driverFeedback";
     public static final String SOCKET_PASSENGER_CALL = "trip-notification";
+    public static final String SOCKEY_AUTH_FAILED = "AUTH_FAILED";
+    public static final String SOCKEY_AUTH_SUCCESS = "AUTH_SUCCESS";
     public static final String SOCKET_CANCEL_RIDE_DRIVER = "trip-driverCancelTrip";
     public static final String SOCKET_ACCEPT_CALL = "accept-call";
     public static final String ACK_CALL = "Send-Acknowledge";
@@ -122,14 +128,19 @@ public class ApiTags {
     public static final String SOCKET_BEGIN_TRIP = "start-trip";
     public static final String SOCKET_END_TRIP = "finish-trip";
 
-    //MULTI DELIVERY SOCKET EVENTS
+    //region MULTI DELIVERY SOCKET EVENTS
     public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER = "CALL_DRIVER";
     public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE = "CALL_DRIVER_ACKNOWLEDGE";
     public static final String MULTI_DELIVERY_SOCKET_ACCEPT_CALL = "DRIVER_ACCEPTED";
     public static final String MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED = "DRIVER_ARRIVED";
     public static final String MULTI_DELIVERY_SOCKET_DRIVER_STARTED = "DRIVER_STARTED";
+    public static final String MULTI_DELIVERY_SOCKET_TRIP_FINISHED = "TRIP_FINISHED";
+    public static final String MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER = "TRIP_FEEDBACK_DRIVER";
     public static final String MULTI_DELIVERY_SOCKET_TRIP_MISSED = "TRIP_MISSED";
     public static final String MULTI_DELIVERY_SOCKET_BATCH_CANCELED = "TRIP_CANCELLED";
+    public static final String MULTI_DELIVERY_SOCKET_BATCH_COMPLETED= "BATCH_TRIP_COMPLETED";
+
+    //endregion
 
     /*CHAT APIS*/
     public static final String SOCKET_SEND_CHAT_MESSAGE = "send-message";

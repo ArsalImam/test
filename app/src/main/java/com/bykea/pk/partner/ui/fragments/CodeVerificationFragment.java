@@ -120,6 +120,7 @@ public class CodeVerificationFragment extends Fragment {
         initVerificationEditText();
         initDonutProgress();
         animateDonutProgress();
+        checkPermissions();
         titleMsg.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber()));
     }
 

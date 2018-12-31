@@ -19,6 +19,7 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
@@ -151,7 +152,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Set data according to trip states
+     * Set data according to tripInfo states
      */
     private void setInitialData() {
         setProgressDialog();
@@ -197,7 +198,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Set the trip states according to the incomming states i.e accepted, arrived, started, etc.
+     * Set the tripInfo states according to the incomming states i.e accepted, arrived, started, etc.
      */
     private void setTripStates() {
         if (callDriverData != null) {
@@ -745,9 +746,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Check the trip button click if the button text is equal to specific trip status i.e "پہنچ گئے",
+     * Check the tripInfo button click if the button text is equal to specific tripInfo status i.e "پہنچ گئے",
      * etc. To perform the specific operation like driver arrival dialog,
-     * start trip dialog & finish trip dialog
+     * start tripInfo dialog & finish tripInfo dialog
      */
     private void checkTripButtonClick() {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
@@ -772,7 +773,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
 
     /***
-     * show trip started confirmation dialog.
+     * show tripInfo started confirmation dialog.
      *
      * Todo 2: add request started socket event
      */
@@ -836,7 +837,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Set the trip arrived state.
+     * Set the tripInfo arrived state.
      */
     private void setArrivedState() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -844,7 +845,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Set the trip started state.
+     * Set the tripInfo started state.
      */
     private void setStartedState() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -1030,18 +1031,23 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Change the batch status, remove the poly lines & set the bottom button to "Mukamal"
      */
     private void onDriverStarted() {
-        cancelBtn.setVisibility(View.GONE);
-        if (mapPolylines != null) {
-            mapPolylines.remove();
+        try {
+            cancelBtn.setVisibility(View.GONE);
+            if (mapPolylines != null) {
+                mapPolylines.remove();
+            }
+            callDriverData.setBatchStatus(TripStatus.ON_START_TRIP);
+            AppPreferences.setTripStatus(TripStatus.ON_START_TRIP);
+            AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+            updateDriverMarker(
+                    String.valueOf(mCurrentLocation.getLatitude()),
+                    String.valueOf(mCurrentLocation.getLongitude())
+            );
+            tafseelLayout.setVisibility(View.VISIBLE);
+            jobBtn.setText(getString(R.string.button_text_finish));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        callDriverData.setBatchStatus(TripStatus.ON_START_TRIP);
-        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
-        updateDriverMarker(
-                String.valueOf(mCurrentLocation.getLatitude()),
-                String.valueOf(mCurrentLocation.getLongitude())
-        );
-        tafseelLayout.setVisibility(View.VISIBLE);
-        jobBtn.setText(getString(R.string.button_text_finish));
     }
 
     /**
@@ -1049,19 +1055,24 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Change the batch status, remove the poly lines & set the bottom button to "Start"
      */
     private void onDriverArrived() {
-        if (mapPolylines != null)
-            mapPolylines.remove();
-        timeTv.setVisibility(View.GONE);
-        timeUnitLabelTv.setVisibility(View.GONE);
-        timeView.setVisibility(View.GONE);
-        pickupMarker.remove();
-        pickView.setVisibility(View.GONE);
-        distanceTv.setVisibility(View.GONE);
-        pickUpDistanceUnit.setVisibility(View.GONE);
-        callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
-        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
-        jobBtn.setText(getString(R.string.button_text_start));
-        tafseelLayout.setVisibility(View.VISIBLE);
+        try {
+            if (mapPolylines != null)
+                mapPolylines.remove();
+            timeTv.setVisibility(View.GONE);
+            timeUnitLabelTv.setVisibility(View.GONE);
+            timeView.setVisibility(View.GONE);
+            pickupMarker.remove();
+            pickView.setVisibility(View.GONE);
+            distanceTv.setVisibility(View.GONE);
+            pickUpDistanceUnit.setVisibility(View.GONE);
+            callDriverData.setBatchStatus(TripStatus.ON_ARRIVED_TRIP);
+            AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
+            AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+            jobBtn.setText(getString(R.string.button_text_start));
+            tafseelLayout.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

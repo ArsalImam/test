@@ -1,5 +1,7 @@
-package com.bykea.pk.partner.models.response
+package com.bykea.pk.partner.models.data
 
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse
+import com.bykea.pk.partner.models.response.MultipleDeliveryPickupResponse
 import com.google.android.gms.common.util.CollectionUtils.mutableListOf
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils

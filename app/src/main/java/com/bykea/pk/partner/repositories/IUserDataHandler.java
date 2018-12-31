@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -7,9 +8,9 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
@@ -41,9 +42,11 @@ import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
@@ -70,6 +73,10 @@ import java.util.ArrayList;
 
 public interface IUserDataHandler {
 
+    /***
+     * Update Drop off location response received from API Server.
+     * @param commonResponse Pojo class which hold latest driver destination response.
+     */
     void onDropOffUpdated(DriverDestResponse commonResponse);
 
     void onForgotPassword(ForgotPasswordResponse commonResponse);
@@ -111,6 +118,7 @@ public interface IUserDataHandler {
     void getWalletData(WalletHistoryResponse walletHistoryResponse);
 
     void getAccountNumbers(BankAccountListResponse walletHistoryResponse);
+
     void onBankDetailsResponse(BankDetailsResponse response);
 
     void getContactNumbers(ContactNumbersResponse walletHistoryResponse);
@@ -179,18 +187,27 @@ public interface IUserDataHandler {
     void onZoneAreasResponse(ZoneAreaResponse response);
 
     void onShahkarResponse(ShahkarResponse response);
+
     void onBonusChartResponse(RankingResponse response);
+
     void onDriverPerformanceResponse(DriverPerformanceResponse response);
 
     void onLoadBoardResponse(LoadBoardResponse response);
 
     void onTopUpPassWallet(TopUpPassWalletResponse response);
+
     void onLocationUpdate(LocationResponse response);
+
     void onSignUpSettingsResponse(SignUpSettingsResponse response);
+
     void onSignUpAddNumberResponse(SignUpAddNumberResponse response);
+
     void onSignUpImageResponse(SignupUplodaImgResponse response);
+
     void onSignUpOptionalResponse(SignUpOptionalDataResponse response);
+
     void onSignupCompleteResponse(SignUpCompleteResponse response);
+
     void onBiometricApiResponse(BiometricApiResponse response);
 
     void onError(int errorCode, String errorMessage);
@@ -230,6 +247,27 @@ public interface IUserDataHandler {
      * @param response The {@link MultiDeliveryDriverStartedResponse} object.
      */
     void onMultiDeliveryDriverStarted(MultiDeliveryDriverStartedResponse response);
+
+    /**
+     * This method will be invoked when multi delivery finished response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED
+     *
+     * @param response The {@link MultiDeliveryCompleteRideResponse} object.
+     * @param data The {@linkplain DirectionDropOffData} object.
+     */
+    void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response,
+                                         DirectionDropOffData data);
+
+    /**
+     * This method will be invoked when multi delivery feedback response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER
+     *
+     * @param response The {@link MultiDeliveryFeedbackResponse} object.
+     *
+     */
+    void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response);
 
     /**
      * This method will be invoked when multi delivery batch request canceled response received

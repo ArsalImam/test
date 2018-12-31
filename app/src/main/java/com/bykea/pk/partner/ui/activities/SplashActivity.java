@@ -10,6 +10,14 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.utils.ApiTags;
+import com.bykea.pk.partner.utils.Constants;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -25,6 +33,9 @@ import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -80,6 +91,26 @@ public class SplashActivity extends BaseActivity {
         if (AppPreferences.isGeoCoderApiKeyRequired()
                 && Utils.isGeoCoderApiKeyCheckRequired()) {
             AppPreferences.setGeoCoderApiKeyRequired(false);
+        }
+        Utils.setOneSignalPlayerId();
+        checkInactivePush();
+
+    }
+
+    /**
+     * This method check if Splash Activity is launched from Inactive Push Notification
+     */
+    private void checkInactivePush() {
+        //get notification data info
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.get("event") != null) {
+            String event = (String) bundle.get("event");
+            if (Constants.FcmEvents.INACTIVE_PUSH.equalsIgnoreCase(event)) {
+                Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH, "Notification Clicked");
+                String dataJsonString = (String) bundle.get("data");
+                ActivityStackManager.getInstance().startHandleInactivePushService(mCurrentActivity,
+                        new Gson().fromJson(dataJsonString, OfflineNotificationData.class));
+            }
         }
     }
 
@@ -181,8 +212,8 @@ public class SplashActivity extends BaseActivity {
 
     /***
      * Validate Login flow for the user.
-     * If user is already login we connect socket with server and check if there are some running trip.
-     * If we find there are some running trip for the login user to redirect him to ride screen.
+     * If user is already login we connect socket with server and check if there are some running tripInfo.
+     * If we find there are some running tripInfo for the login user to redirect him to ride screen.
      * Otherwise, we redirect him to dashboard screen.
      *
      * If the user not logged In we hide splash view and show welcome screen view
@@ -301,7 +332,7 @@ public class SplashActivity extends BaseActivity {
                                 }
                                 finish();
                             } catch (NullPointerException e) {
-                                //If there is no pending trip free all states for new trip..
+                                //If there is no pending tripInfo free all states for new tripInfo..
                                 Utils.setCallIncomingState();
                                 startHomeActivity();
                             }
@@ -309,7 +340,7 @@ public class SplashActivity extends BaseActivity {
                             if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
-                                //If there is no pending trip free all states for new trip..
+                                //If there is no pending tripInfo free all states for new tripInfo..
                                 Utils.setCallIncomingState();
                                 startHomeActivity();
                             }
@@ -362,6 +393,7 @@ public class SplashActivity extends BaseActivity {
             Utils.unbindDrawables(findViewById(R.id.activity_splash));
         }
         disconnectTimer();
+        Dialogs.INSTANCE.dismissDialog();
     }
     //endregion
 

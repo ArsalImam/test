@@ -6,9 +6,11 @@ import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
@@ -26,7 +28,9 @@ import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
+import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
+import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
@@ -37,13 +41,17 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
+import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -214,10 +222,10 @@ public class WebIORequestHandler {
      * {@link ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED} and attach the
      * generic listener to listen the event.
      *
-     * @param driverArrivedData The json object that will be emit on the driver arrived event.
+     * @param driverStartData The json object that will be emit on the driver arrived event.
      * @param responseCallBack  The callback that will be invoked when event response received.
      */
-    public void requestMultiDriverStartedRide(JSONObject driverArrivedData,
+    public void requestMultiDriverStartedRide(JSONObject driverStartData,
                                                    IResponseCallback responseCallBack) {
         emitWithJObject(
                 ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_STARTED,
@@ -226,7 +234,49 @@ public class WebIORequestHandler {
                         MultiDeliveryDriverStartedResponse.class,
                         responseCallBack
                 ),
-                driverArrivedData
+                driverStartData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverFinishData The json object that will be emit on the driver finished event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultiDriverFinishRide(JSONObject driverFinishData,
+                                             IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FINISHED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FINISHED,
+                        MultiDeliveryCompleteRideResponse.class,
+                        responseCallBack
+                ),
+                driverFinishData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverFeedbackData The json object that will be emit on the driver feedback event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultiDeliveryDriverFeedback(JSONObject driverFeedbackData,
+                                                   IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER,
+                        MultiDeliveryFeedbackResponse.class,
+                        responseCallBack
+                ),
+                driverFeedbackData
         );
     }
 
@@ -307,14 +357,14 @@ public class WebIORequestHandler {
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
                         }
-                        Utils.redLog("Request at " + socket + " (onConnect)", json.toString());
+                        Utils.redLogLocation("Request at " + socket + " (onConnect)", json.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
         } else {
-            Utils.redLog("Request at " + socket, json.toString());
+            Utils.redLogLocation("Request at " + socket, json.toString());
         }
     }
 
@@ -391,7 +441,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("Response at " + mSocketName, serverResponse);
+            Utils.redLogLocation("Response at " + mSocketName, serverResponse);
 
             Gson gson = new Gson();
             try {
@@ -399,14 +449,14 @@ public class WebIORequestHandler {
 //                if (null == mContext) {
 //                    mContext = DriverApp.getContext();
 //                }
-                if (AppPreferences.isLoggedIn() && locationResponse.getData() != null) {
-                    if (StringUtils.isNotBlank(locationResponse.getData().getLat())
-                            && StringUtils.isNotBlank(locationResponse.getData().getLng())) {
+                if (AppPreferences.isLoggedIn() && locationResponse.getLocation() != null) {
+                    if (StringUtils.isNotBlank(locationResponse.getLocation().getLat())
+                            && StringUtils.isNotBlank(locationResponse.getLocation().getLng())) {
                         AppPreferences.saveLastUpdatedLocation(
-                                new LatLng(Double.parseDouble(locationResponse.getData().getLat()),
-                                        Double.parseDouble(locationResponse.getData().getLng())));
+                                new LatLng(Double.parseDouble(locationResponse.getLocation().getLat()),
+                                        Double.parseDouble(locationResponse.getLocation().getLng())));
                     }
-                    Utils.saveServerTimeDifference(locationResponse.getTimestampserver());
+                    Utils.saveServerTimeDifference(locationResponse.getTimeStampServer());
                 }
                 if (locationResponse.isSuccess()) {
                     if (AppPreferences.isWalletAmountIncreased()) {
@@ -552,6 +602,19 @@ public class WebIORequestHandler {
             String serverResponse = args[0].toString();
             Utils.redLog("MultiDeliveryTripMissedListener", serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+        }
+    }
+
+    /**
+     * Multi Delivery Trip Batch Completed Listener
+     */
+    public static class MultiDeliveryTripBatchCompletedListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("MultiDeliveryTripBatchCompletedListener", serverResponse);
+            EventBus.getDefault().post(Keys.MULTIDELIVERY_BATCH_COMPLETED);
         }
     }
 
