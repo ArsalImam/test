@@ -218,6 +218,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                         AppPreferences.getMultiDeliveryCallDriverData();
                 if (multiDeliveryAcceptCallResponse != null) {
                     multiDeliveryAcceptCallResponse.setBatchStatus(TripStatus.ON_ACCEPT_CALL);
+                    multiDeliveryAcceptCallResponse.setAcceptTime(System.currentTimeMillis());
                     AppPreferences.setMultiDeliveryCallDriverData(multiDeliveryAcceptCallResponse);
                 }
 

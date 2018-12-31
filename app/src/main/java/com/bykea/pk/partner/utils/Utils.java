@@ -1102,8 +1102,9 @@ public class Utils {
         return diff <= 6000;
     }
 
-    public static boolean isCancelAfter5Min() {
-        long diff = (System.currentTimeMillis() - (AppPreferences.getServerTimeDifference() + AppPreferences.getCallData().getSentTime()));
+    public static boolean isCancelAfter5Min(long acceptedTime) {
+        long diff = (System.currentTimeMillis() -
+                (AppPreferences.getServerTimeDifference() + acceptedTime));
         Utils.redLog("Time Diff Call", "" + diff);
         long cancel_time = 5;
         if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&

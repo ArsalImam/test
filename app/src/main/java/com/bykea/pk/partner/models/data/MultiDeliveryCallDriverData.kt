@@ -35,5 +35,8 @@ data class MultiDeliveryCallDriverData(
         @SerializedName("est_fare")
         var estFare: Int? = 0,
         @SerializedName("est_cash_collection")
-        var estCashCollection: Int? = 0
-)
+        var estCashCollection: Int? = 0,
+        var acceptTime: Long
+) {
+        fun getAcceptedTime(): Long = if (acceptTime > 0) acceptTime else System.currentTimeMillis()
+}

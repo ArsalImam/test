@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
@@ -138,7 +137,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
     }
-
 
     /***
      * Initialize data i.e activity, register ButterKnife, initialize UserRepository,  etc
@@ -675,8 +673,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             }
 
             case R.id.cancelBtn: {
-                //Todo 1: Add Fee charge dialog later.
-                cancelReasonDialog();
+                if (Utils.isCancelAfter5Min(callDriverData.getAcceptedTime())) {
+                    showCancelationDialogWIthFee();
+                } else {
+                    cancelReasonDialog();
+                }
                 break;
             }
 
@@ -701,6 +702,26 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 break;
             }
         }
+    }
+
+    /**
+     * Show the cancelation Dialog with cancelation fee message.
+     */
+    private void showCancelationDialogWIthFee() {
+        String msg = getString(R.string.cancelation_message,
+                AppPreferences.getSettings().getSettings().getCancel_time());
+        Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialogs.INSTANCE.dismissDialog();
+                cancelReasonDialog();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }, getString(R.string.cancel_batch), msg);
     }
 
     /**
