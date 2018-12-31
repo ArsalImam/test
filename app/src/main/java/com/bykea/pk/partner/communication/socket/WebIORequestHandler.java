@@ -2,6 +2,7 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
 
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
@@ -581,8 +582,9 @@ public class WebIORequestHandler {
                 MultipleDeliveryCallDriverResponse response = gson.fromJson(
                         serverResponse,
                         MultipleDeliveryCallDriverResponse.class);
-                if (response != null) {
-                    AppPreferences.setMultiDeliveryCallDriverData(response.getData());
+                MultiDeliveryCallDriverData data = response.getData();
+                if (data != null) {
+                    AppPreferences.setMultiDeliveryCallDriverData(data);
                     new UserRepository().requestDriverAcknowledged(handler);
                 }
             } catch (Exception e) {

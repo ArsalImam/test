@@ -660,7 +660,6 @@ public class Utils {
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.drop_off_marker_layout, null);
 
-
         FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
         txt_name.setText(number);
 

@@ -154,7 +154,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void setInitialData() {
         setProgressDialog();
-        AppPreferences.setIsOnTrip(true);
         callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
         ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
         mLocBearing = (float) AppPreferences.getBearing();
