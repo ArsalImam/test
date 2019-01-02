@@ -22,7 +22,6 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.PostBankAccountActivity;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
-import com.bykea.pk.partner.ui.activities.ChangePinActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LicenseActivity;
 import com.bykea.pk.partner.ui.activities.MotorbikeActivity;
@@ -62,8 +61,6 @@ public class ProfileFragment extends Fragment {
     FontTextView driverLatLngTv;
     @BindView(R.id.personalInfoTv)
     FontTextView personalInfoTv;
-    @BindView(R.id.pinCodeTv)
-    FontTextView pinCodeTv;
     @BindView(R.id.licenseInfoTv)
     FontTextView licenseInfoTv;
     @BindView(R.id.motorbikeInfoTv)
@@ -150,7 +147,7 @@ public class ProfileFragment extends Fragment {
         repository.getProfileData(mCurrentActivity, callbackHandler);
     }
 
-    @OnClick({R.id.personalInfoTv, R.id.termsTv, R.id.pinCodeTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv,
+    @OnClick({R.id.personalInfoTv, R.id.termsTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv,
             R.id.bankAccDetailsTv, R.id.tvEmailLogFiles})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -161,9 +158,7 @@ public class ProfileFragment extends Fragment {
                     startActivity(intent);
                 }
                 break;
-            case R.id.pinCodeTv:
-                startActivity(new Intent(getActivity(), ChangePinActivity.class));
-                break;
+
             case R.id.licenseInfoTv:
                 if (mPersonalInfo != null) {
                     Intent intent2 = new Intent(mCurrentActivity, LicenseActivity.class);
@@ -266,7 +261,6 @@ public class ProfileFragment extends Fragment {
 
     private void enableViews(boolean enabled) {
         personalInfoTv.setEnabled(enabled);
-        pinCodeTv.setEnabled(enabled);
         licenseInfoTv.setEnabled(enabled);
         motorbikeInfoTv.setEnabled(enabled);
         bankAccDetailsTv.setEnabled(enabled);
