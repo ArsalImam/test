@@ -23,9 +23,10 @@
         android:id="@+id/numberTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginRight="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:textColor="@color/white"
         android:textSize="@dimen/_14sdp"
         app:fontName="open_sans_regular.ttf"
@@ -33,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="@+id/dropOffMarker"
         app:layout_constraintStart_toStartOf="@+id/dropOffMarker"
         app:layout_constraintTop_toTopOf="@+id/dropOffMarker"
-        tools:text="1" />
+        tools:text="2" />
 
     <com.bykea.pk.partner.widgets.FontTextView
         android:id="@+id/areaTv"
