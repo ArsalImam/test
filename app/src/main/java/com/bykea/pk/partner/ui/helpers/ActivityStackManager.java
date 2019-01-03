@@ -5,13 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.HandleInactivePushService;
 import com.bykea.pk.partner.services.LocationService;
@@ -31,6 +35,7 @@ import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
+import com.bykea.pk.partner.ui.activities.MultiDeliveryFeedbackActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
@@ -44,7 +49,6 @@ import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
-import com.bykea.pk.partner.ui.activities.SplashActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -199,6 +203,21 @@ public class ActivityStackManager {
 
     public void startFeedbackActivity(Context mContext) {
         Intent intent = new Intent(mContext, FeedbackActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * Start multi delivery feedback activity.
+     *
+     * @param mContext Holding the reference of an activity.
+     * @param response The invoice response.
+     */
+    public void startMultiDeliveryFeedbackActivity(Context mContext,
+                                                   MultiDeliveryCompleteRideResponse response) {
+        Intent intent = new Intent(mContext, MultiDeliveryFeedbackActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Keys.MULTIDELIVERY_COMPLETE_DATA, response);
+        intent.putExtras(bundle);
         mContext.startActivity(intent);
     }
 

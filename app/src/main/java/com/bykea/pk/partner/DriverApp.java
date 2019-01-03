@@ -52,6 +52,8 @@ public class DriverApp extends MultiDexApplication {
     private Emitter.Listener mCallDriverListener = new WebIORequestHandler.CallDriverListener();
     private Emitter.Listener mTripMissedListener =
             new WebIORequestHandler.MultiDeliveryTripMissedListener();
+    private Emitter.Listener mBatachCompletedListener =
+            new WebIORequestHandler.MultiDeliveryTripBatchCompletedListener();
 
     @Override
     public void onCreate() {
@@ -149,11 +151,19 @@ public class DriverApp extends MultiDexApplication {
         }
     };
 
+    /**
+     * Attach socket listener on socket connected
+     */
     public void attachListenersOnSocketConnected() {
         EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
-        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
-        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER, mCallDriverListener);
-        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED, mTripMissedListener);
+        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL,
+                mJobCallListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER,
+                mCallDriverListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED,
+                mTripMissedListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_COMPLETED,
+                mBatachCompletedListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
         }

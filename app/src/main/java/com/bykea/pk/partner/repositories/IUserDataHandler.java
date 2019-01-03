@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -41,8 +42,11 @@ import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
@@ -243,6 +247,36 @@ public interface IUserDataHandler {
      * @param response The {@link MultiDeliveryDriverStartedResponse} object.
      */
     void onMultiDeliveryDriverStarted(MultiDeliveryDriverStartedResponse response);
+
+    /**
+     * This method will be invoked when multi delivery finished response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED
+     *
+     * @param response The {@link MultiDeliveryCompleteRideResponse} object.
+     * @param data The {@linkplain DirectionDropOffData} object.
+     */
+    void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response,
+                                         DirectionDropOffData data);
+
+    /**
+     * This method will be invoked when multi delivery feedback response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER
+     *
+     * @param response The {@link MultiDeliveryFeedbackResponse} object.
+     *
+     */
+    void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response);
+
+    /**
+     * This method will be invoked when multi delivery batch request canceled response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED
+     *
+     * @param response The {@link MultiDeliveryCancelBatchResponse} object.
+     */
+    void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response);
 
     //end region
 }

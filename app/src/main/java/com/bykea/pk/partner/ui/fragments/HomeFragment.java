@@ -847,7 +847,7 @@ public class HomeFragment extends Fragment {
                             if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
-                                //If there is no pending trip free all states for new trip..
+                                //If there is no pending tripInfo free all states for new tripInfo..
                                 Utils.setCallIncomingState();
                             }
                         }

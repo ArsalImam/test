@@ -14,7 +14,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
 import com.bykea.pk.partner.models.data.MultiDeliveryPickup;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.DirectionAdapter;

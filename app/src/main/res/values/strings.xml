@@ -270,7 +270,20 @@
     <string name="GPS_middle_message">GPS</string>
     <string name="gps_enable_ending_message"> آن کریں </string>
     <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
+
+    <!--Multi Delivery Labels-->
+
     <string name="muntakhib_nahi_ki_gayi_label">منتخب نہیں کی گئی</string>
     <string name="decimal_format_one_digit">%.1f</string>
+    <string name="distance_covered">( %s km, </string>
+    <string name="duration">%.1f mins)</string>
+    <string name="amount_error">Amount can\'t be more than %d</string>
+    <string name="invalid_amout">Please enter valid amount.</string>
+    <string name="error_invalid_amount">Invalid amount</string>
+    <string name="error_amount_greater_than_total">Amount can\'t be less than Total Charges</string>
+    <string name="passenger_rating">Please Rate Passenger.</string>
+    <string name="amount_not_acceptable">Amount is not acceptable</string>
+    <string name="cancelation_message"> پہنچنے کے %s منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی </string>
+    <string name="cancel_batch">Cancel Multi Delivery Batch</string>
 
 </resources>

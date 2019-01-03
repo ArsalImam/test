@@ -3,12 +3,12 @@ package com.bykea.pk.partner.repositories;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.RankingResponse;
@@ -58,8 +58,11 @@ import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -103,6 +106,8 @@ public class UserRepository {
     private IUserDataHandler mUserCallback;
     private WebIORequestHandler mWebIORequestHandler;
     private RestRequestHandler mRestRequestHandler;
+
+    private DirectionDropOffData directionDropOffData;
 
     public UserRepository() {
         mWebIORequestHandler = WebIORequestHandler.getInstance();
@@ -769,8 +774,84 @@ public class UserRepository {
             e.printStackTrace();
         }
         mWebIORequestHandler.requestMultiDriverStartedRide(jsonObject, mDataCallback);
+    }
+
+    /**
+     * Emit Driver Finished data.
+     *
+     * @param handler The Callback that will be invoked when driver finish event response received.
+     *
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverFinishRide(DirectionDropOffData data,
+                                                     IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            jsonObject.put("trip_id", data.getTripID());
+            jsonObject.put("route", new Gson()
+                    .toJson(AppPreferences.getLocCoordinatesInTrip()));
+            directionDropOffData = data;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultiDriverFinishRide(jsonObject, mDataCallback);
+    }
+
+    /**
+     * Emit Driver Finished data.
+     *
+     * @param handler The Callback that will be invoked when driver finish event response received.
+     *
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverFeedback(String tripID, int receivedAmount, float rating,
+                                                     IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            jsonObject.remove("batch_id");
+            jsonObject.remove("trip_type");
+            jsonObject.put("trip_id", tripID);
+            jsonObject.put("rate", rating);
+            jsonObject.put("feedback", "nice");
+            jsonObject.put("received_amount", receivedAmount);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultiDeliveryDriverFeedback(jsonObject, mDataCallback);
+    }
+
+    /**
+     * Emit driver cancel batch request.
+     *
+     * @param cancelReason The cancellation reason.
+     * @param handler The Callback that will be invoked when driver arrived response received.
+     *
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryCancelBatch(String cancelReason, IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            jsonObject.put("cancelled_at", Utils.getIsoDate());
+            jsonObject.put("cancel_reason", cancelReason);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultideliveryCancelBatch(jsonObject, mDataCallback);
 
     }
+
 
     //endregion
 
@@ -1435,6 +1516,22 @@ public class UserRepository {
                     case "MultiDeliveryDriverStartedResponse":
                         mUserCallback.onMultiDeliveryDriverStarted(
                                 (MultiDeliveryDriverStartedResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryCompleteRideResponse":
+                        mUserCallback.onMultiDeliveryDriverRideFinish(
+                                (MultiDeliveryCompleteRideResponse) object,
+                                directionDropOffData
+                        );
+                        break;
+                    case "MultiDeliveryFeedbackResponse":
+                        mUserCallback.onMultiDeliveryDriverFeedback(
+                                (MultiDeliveryFeedbackResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryCancelBatchResponse":
+                        mUserCallback.onMultiDeliveryDriverCancelBatch(
+                                (MultiDeliveryCancelBatchResponse) object
                         );
                         break;
                     case "CommonResponse":
