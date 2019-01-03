@@ -150,10 +150,6 @@
         <activity
             android:name=".ui.activities.ChatActivityNew"
             android:launchMode="singleTask" />
-        <activity
-            android:name=".ui.activities.ChangePinActivity"
-            android:label="@string/title_activity_change_pin"
-            android:theme="@style/AppTheme" />
         <activity android:name=".ui.activities.PersonalActivity" />
         <activity android:name=".ui.activities.LicenseActivity" />
         <activity android:name=".ui.activities.PostBankAccountActivity" />

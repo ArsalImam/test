@@ -191,24 +191,6 @@
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:background="@color/divider" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/pinCodeTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_44sdp"
-                    android:background="@drawable/clickable_bg"
-                    android:drawableLeft="@drawable/ic_left_arrowhead_1"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/padding.normal"
-                    android:paddingRight="@dimen/padding.small"
-                    android:text="@string/khufia_code_badlain"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 <View
                     android:layout_width="match_parent"
