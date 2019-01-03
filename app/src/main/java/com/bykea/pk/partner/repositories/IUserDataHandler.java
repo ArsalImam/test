@@ -43,6 +43,7 @@ import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
@@ -267,6 +268,15 @@ public interface IUserDataHandler {
      *
      */
     void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response);
+
+    /**
+     * This method will be invoked when multi delivery batch request canceled response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED
+     *
+     * @param response The {@link MultiDeliveryCancelBatchResponse} object.
+     */
+    void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response);
 
     //end region
 }

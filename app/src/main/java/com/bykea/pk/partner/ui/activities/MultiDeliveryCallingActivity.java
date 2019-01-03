@@ -218,11 +218,14 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                         AppPreferences.getMultiDeliveryCallDriverData();
                 if (multiDeliveryAcceptCallResponse != null) {
                     multiDeliveryAcceptCallResponse.setBatchStatus(TripStatus.ON_ACCEPT_CALL);
+                    multiDeliveryAcceptCallResponse.setAcceptTime(
+                            System.currentTimeMillis() +
+                            AppPreferences.getServerTimeDifference()
+                    );
                     AppPreferences.setMultiDeliveryCallDriverData(multiDeliveryAcceptCallResponse);
                 }
 
                 Dialogs.INSTANCE.dismissDialog();
-                AppPreferences.setIsOnTrip(true);
                 AppPreferences.setIsMultiDelivery(true);
                 ActivityStackManager
                         .getInstance()

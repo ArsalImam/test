@@ -1,6 +1,11 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 
@@ -18,6 +24,8 @@ public class MultiDeliveryCompleteRideAdapter extends
 
     private List<DirectionDropOffData> list;
     private MultiDeliveryCompleteRideListener listener;
+
+    private Context context;
 
     /**
      * Interface definition for a callback to be invoked when multi delivery ride has been completed
@@ -48,7 +56,8 @@ public class MultiDeliveryCompleteRideAdapter extends
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(
                 R.layout.multidelivery_ride_complete_row,
                 parent,
@@ -65,7 +74,24 @@ public class MultiDeliveryCompleteRideAdapter extends
         holder.areaTv.setText(data.getmArea());
         holder.driverNameTv.setText(data.getPassengerName());
         holder.numberTv.setText(data.getDropOffNumberText());
-        holder.completeBtn.setVisibility(data.isCompleted() ? View.VISIBLE : View.INVISIBLE);
+
+        if (data.isCompleted()) {
+            holder.completeBtn.setVisibility(View.VISIBLE);
+            holder.dropOffMarker.setColorFilter(ContextCompat.getColor(
+                            DriverApp.getContext(),
+                            R.color.multi_delivery_dropoff_completed
+                    ),
+                    android.graphics.PorterDuff.Mode.SRC_IN
+            );
+        } else {
+            holder.completeBtn.setVisibility(View.INVISIBLE);
+            holder.dropOffMarker.setColorFilter(ContextCompat.getColor(
+                    DriverApp.getContext(),
+                    R.color.red_dropoff
+                    ),
+                    android.graphics.PorterDuff.Mode.SRC_IN
+            );
+        }
     }
 
     @Override
@@ -82,6 +108,7 @@ public class MultiDeliveryCompleteRideAdapter extends
         TextView driverNameTv;
         TextView numberTv;
         AppCompatImageView completeBtn;
+        AppCompatImageView dropOffMarker;
 
         /***
          * Constructor.
@@ -94,6 +121,7 @@ public class MultiDeliveryCompleteRideAdapter extends
             driverNameTv = itemView.findViewById(R.id.driverNameTv);
             numberTv = itemView.findViewById(R.id.numberTv);
             completeBtn = itemView.findViewById(R.id.completeBtn);
+            dropOffMarker = itemView.findViewById(R.id.dropOffMarker);
 
             itemView.setOnClickListener(this);
 

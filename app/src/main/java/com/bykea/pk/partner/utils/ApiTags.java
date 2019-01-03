@@ -137,6 +137,7 @@ public class ApiTags {
     public static final String MULTI_DELIVERY_SOCKET_TRIP_FINISHED = "TRIP_FINISHED";
     public static final String MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER = "TRIP_FEEDBACK_DRIVER";
     public static final String MULTI_DELIVERY_SOCKET_TRIP_MISSED = "TRIP_MISSED";
+    public static final String MULTI_DELIVERY_SOCKET_BATCH_CANCELED = "TRIP_CANCELLED";
     public static final String MULTI_DELIVERY_SOCKET_BATCH_COMPLETED= "BATCH_TRIP_COMPLETED";
 
     //endregion

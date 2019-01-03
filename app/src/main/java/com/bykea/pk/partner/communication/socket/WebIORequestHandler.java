@@ -2,12 +2,13 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
 
-import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
@@ -277,6 +278,27 @@ public class WebIORequestHandler {
                         responseCallBack
                 ),
                 driverFeedbackData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverCancelData The json object that will be emit on the driver cancel batch event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultideliveryCancelBatch(JSONObject driverCancelData,
+                                                  IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
+                        MultiDeliveryCancelBatchResponse.class,
+                        responseCallBack
+                ),
+                driverCancelData
         );
     }
 
@@ -560,8 +582,9 @@ public class WebIORequestHandler {
                 MultipleDeliveryCallDriverResponse response = gson.fromJson(
                         serverResponse,
                         MultipleDeliveryCallDriverResponse.class);
-                if (response != null) {
-                    AppPreferences.setMultiDeliveryCallDriverData(response.getData());
+                MultiDeliveryCallDriverData data = response.getData();
+                if (data != null) {
+                    AppPreferences.setMultiDeliveryCallDriverData(data);
                     new UserRepository().requestDriverAcknowledged(handler);
                 }
             } catch (Exception e) {

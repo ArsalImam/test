@@ -45,6 +45,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -652,6 +653,8 @@ public class Utils {
      * @param context Holding the reference of an activity.
      * @param number The number of drop off.
      *
+     * By ignoring the constant, Time complexity of this function is O(n)^2
+     *               because this function execute in a loop.
      * @return The bitmap for dropoff marker.
      */
     public static Bitmap createDropOffMarker(Context context, String number) {
@@ -660,9 +663,28 @@ public class Utils {
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.drop_off_marker_layout, null);
 
-
         FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
         txt_name.setText(number);
+        try {
+            MultiDeliveryCallDriverData data = AppPreferences.getMultiDeliveryCallDriverData();
+            List<String> tripIDList = AppPreferences.getMultiDeliveryTrip();
+            int index = Integer.parseInt(number) - 1;
+            String id = data.getBookings().get(index).getTrip().getId();
+            for (String tripID : tripIDList) {
+                if (tripID.equalsIgnoreCase(id)) {
+                    ViewCompat.setBackgroundTintList(txt_name, ContextCompat
+                            .getColorStateList(context,
+                                    R.color.multi_delivery_dropoff_completed));
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -1102,8 +1124,23 @@ public class Utils {
         return diff <= 6000;
     }
 
-    public static boolean isCancelAfter5Min() {
-        long diff = (System.currentTimeMillis() - (AppPreferences.getServerTimeDifference() + AppPreferences.getCallData().getSentTime()));
+    /**
+     * Invoked this method to check that the customer is
+     * canceling the ride after 5 minutes of its acceptance
+     *
+     * <p>Calculate the difference of current time in millisecond, server time that keep on
+     * updating from location update & the acceptance time.</p>
+     *
+     * @see AppPreferences#getSettings()
+     *
+     * @param acceptedTime The accepted time in millisecond.
+     *
+     * @return true if calculated difference is greater than equal to
+     * cancellation time otherwise false
+     */
+    public static boolean isCancelAfter5Min(long acceptedTime) {
+        long diff = (System.currentTimeMillis() -
+                (AppPreferences.getServerTimeDifference() + acceptedTime));
         Utils.redLog("Time Diff Call", "" + diff);
         long cancel_time = 5;
         if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
