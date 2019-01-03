@@ -85,6 +85,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -1813,21 +1814,33 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     @Override
                     public void run() {
                         try {
-                            if (response.getMessage().equalsIgnoreCase("Trip Not Found")) {
-                                cancelByPassenger(false);
-                            } else {
-                                if (shouldUpdateTripData(response.getData().getStatus())) {
-                                    AppPreferences.setCallData(response.getData());
-                                    AppPreferences.setTripStatus(response.getData().getStatus());
-                                    callData = response.getData();
-                                    updateDropOff();
-                                }
+                            if (shouldUpdateTripData(response.getData().getStatus())) {
+                                AppPreferences.setCallData(response.getData());
+                                AppPreferences.setTripStatus(response.getData().getStatus());
+                                callData = response.getData();
+                                updateDropOff();
                             }
-                        } catch (NullPointerException ignored) {
 
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
+            }
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            switch (errorCode) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    cancelByPassenger(false);
+                    break;
+                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                    EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                    break;
             }
         }
     };

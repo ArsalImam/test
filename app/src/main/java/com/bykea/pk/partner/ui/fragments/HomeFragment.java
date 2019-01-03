@@ -824,11 +824,7 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                /*if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
-                                    AppPreferences.setStartTripTime(
-                                            AppPreferences.getServerTimeDifference() +
-                                                    Utils.getTimeInMiles(response.getData().getStarted_at()));
-                                }*/
+
                                 AppPreferences.setCallData(response.getData());
                                 AppPreferences.setTripStatus(response.getData().getStatus());
                                 if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {

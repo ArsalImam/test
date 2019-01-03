@@ -4,6 +4,7 @@ public class CheckDriverStatusResponse extends CommonResponse {
 
     private NormalCallData data;
 
+
     public NormalCallData getData() {
         return data;
     }

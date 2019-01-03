@@ -15,6 +15,7 @@ import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Keys;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -42,6 +43,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.net.HttpURLConnection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -352,33 +355,27 @@ public class SplashActivity extends BaseActivity {
         }
 
         @Override
-        public void onError(final int errorCode, final String errorMessage) {
+        public void onError(int errorCode, String errorMessage) {
             if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                            AppPreferences.saveLoginStatus(false);
-                            AppPreferences.setIncomingCall(false);
-                            AppPreferences.setCallData(null);
-                            AppPreferences.setTripStatus("");
-                            AppPreferences.saveLoginStatus(false);
-                            AppPreferences.setPilotData(null);
-                            HomeActivity.visibleFragmentNumber = 0;
-                            Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Dialogs.INSTANCE.dismissDialog();
-                                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                                            finish();
-                                        }
-                                    }, null, getString(R.string.unauthorized_title),
-                                    getString(R.string.unauthorized_message));
-                        } else {
-                            splashTimer.onFinish();
-                        }
-                    }
-                });
+                switch (errorCode) {
+                    case HttpURLConnection.HTTP_UNAUTHORIZED:
+                        AppPreferences.saveLoginStatus(false);
+                        AppPreferences.setIncomingCall(false);
+                        AppPreferences.setCallData(null);
+                        AppPreferences.setTripStatus("");
+                        AppPreferences.saveLoginStatus(false);
+                        AppPreferences.setPilotData(null);
+                        HomeActivity.visibleFragmentNumber = 0;
+                        EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                        break;
+                    case HttpURLConnection.HTTP_NOT_FOUND:
+                        splashTimer.onFinish();
+                        break;
+                    case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                        EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                        splashTimer.onFinish();
+                        break;
+                }
             }
 
         }
