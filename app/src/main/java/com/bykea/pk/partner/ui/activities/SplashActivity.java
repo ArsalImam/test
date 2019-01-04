@@ -10,7 +10,9 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.ApiTags;
@@ -315,24 +317,8 @@ public class SplashActivity extends BaseActivity {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
-                                    AppPreferences.setStartTripTime(
-                                            AppPreferences.getServerTimeDifference() +
-                                                    Utils.getTimeInMiles(response.getData().getStarted_at()));
-                                }
-                                AppPreferences.setCallData(response.getData());
-                                AppPreferences.setTripStatus(response.getData().getStatus());
-                                if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                                    WebIORequestHandler.getInstance().registerChatListener();
-                                    ActivityStackManager.getInstance()
-                                            .startJobActivity(mCurrentActivity);
-                                    //ActivityStackManager.
-                                      //      getInstance().
-                                        //    startMultiDeliveryBookingActivity(mCurrentActivity);
-                                } else {
-                                    ActivityStackManager.getInstance()
-                                            .startFeedbackFromResume(mCurrentActivity);
-                                }
+                                checkCallType(response);
+
                                 finish();
                             } catch (NullPointerException e) {
                                 //If there is no pending tripInfo free all states for new tripInfo..
@@ -380,6 +366,47 @@ public class SplashActivity extends BaseActivity {
 
         }
     };
+
+    /**
+     *
+     * @param response
+     */
+    private void checkCallType(CheckDriverStatusResponse response) {
+        if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            NormalCallData callData = (NormalCallData) response.
+                    getData().getTrip();
+            if (StringUtils.isNotBlank(callData.getStarted_at())) {
+                AppPreferences.setStartTripTime(
+                        AppPreferences.getServerTimeDifference() +
+                                Utils.getTimeInMiles(
+                                        callData.getStarted_at())
+                );
+            }
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+
+            if (!callData.getStatus().equalsIgnoreCase(
+                    TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler.
+                        getInstance().
+                        registerChatListener();
+                ActivityStackManager.
+                        getInstance().
+                        startJobActivity(mCurrentActivity);
+                //ActivityStackManager.
+                //      getInstance().
+                //    startMultiDeliveryBookingActivity(mCurrentActivity);
+            } else {
+                ActivityStackManager.getInstance()
+                        .startFeedbackFromResume(mCurrentActivity);
+            }
+        } else {
+            MultiDeliveryCallDriverData deliveryCallDriverData = (MultiDeliveryCallDriverData)
+                    response.getData().getTrip();
+
+        }
+    }
 
 
     //region Life Cycle Methods

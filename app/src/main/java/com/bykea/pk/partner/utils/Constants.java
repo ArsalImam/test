@@ -132,6 +132,11 @@ public class Constants {
     public static final String RETROFIT_METHOD_POST = "post";
     public static final String RETROFIT_METHOD_GET = "get";
 
+    public static class CallType {
+        public static final String SINGLE = "single";
+        public static final String BATCH = "batch";
+    }
+
 
     public static class Notification {
         public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
