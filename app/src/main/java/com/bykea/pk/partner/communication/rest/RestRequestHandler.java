@@ -3,7 +3,6 @@ package com.bykea.pk.partner.communication.rest;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.RankingResponse;
@@ -481,7 +480,7 @@ public class RestRequestHandler {
     public void uploadAudioFile(Context context, IResponseCallback responseCallBack, final File file) {
         mContext = context;
         mResponseCallBack = responseCallBack;
-        mRestClient = RestClient.getClient(mContext);
+        mRestClient = RestClient.getChatAudioClient(mContext);
         Call<UploadAudioFile> requestCall = mRestClient.uploadAudioFile(Utils.convertFileToRequestBody(file));
         requestCall.enqueue(new Callback<UploadAudioFile>() {
             @Override
@@ -1298,7 +1297,7 @@ public class RestRequestHandler {
     public void downloadAudioFile(Context context, final IResponseCallback onResponseCallBack,
                                   final String url) {
         mContext = context;
-        mRestClient = RestClient.getClient(mContext);
+        mRestClient = RestClient.getChatAudioClient(mContext);
         Call<ResponseBody> restCall = mRestClient.downloadAudioFile(url);
         restCall.enqueue(new Callback<ResponseBody>() {
             @Override
