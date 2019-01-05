@@ -6,7 +6,8 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Running Trip Data
  */
-class RunningTripData<T> {
+
+class RunningTripData<T: Any> {
     @SerializedName("type")
     var type: String? = StringUtils.EMPTY
 

@@ -1814,10 +1814,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     @Override
                     public void run() {
                         try {
-                            if (shouldUpdateTripData(response.getData().getStatus())) {
-                                AppPreferences.setCallData(response.getData());
-                                AppPreferences.setTripStatus(response.getData().getStatus());
-                                callData = response.getData();
+                            NormalCallData normalCallData = (NormalCallData) response.getData().getTrip();
+                            if (shouldUpdateTripData(normalCallData.getStatus())) {
+                                AppPreferences.setCallData(normalCallData);
+                                AppPreferences.setTripStatus(normalCallData.getStatus());
+                                callData = normalCallData;
                                 updateDropOff();
                             }
 

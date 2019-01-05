@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -19,32 +18,22 @@ import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.bykea.pk.partner.DriverApp;
-import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
-import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.net.HttpURLConnection;
 
@@ -317,9 +306,9 @@ public class SplashActivity extends BaseActivity {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                checkCallType(response);
+                                checkRideType(response);
 
-                                finish();
+
                             } catch (NullPointerException e) {
                                 //If there is no pending tripInfo free all states for new tripInfo..
                                 Utils.setCallIncomingState();
@@ -371,7 +360,13 @@ public class SplashActivity extends BaseActivity {
      *
      * @param response
      */
-    private void checkCallType(CheckDriverStatusResponse response) {
+    private void checkRideType(CheckDriverStatusResponse response) {
+
+        if (response.getData().getTrip() == null) {
+            startHomeActivity();
+            return;
+        }
+
         if (response.getData().getType()
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
             NormalCallData callData = (NormalCallData) response.
@@ -394,9 +389,7 @@ public class SplashActivity extends BaseActivity {
                 ActivityStackManager.
                         getInstance().
                         startJobActivity(mCurrentActivity);
-                //ActivityStackManager.
-                //      getInstance().
-                //    startMultiDeliveryBookingActivity(mCurrentActivity);
+
             } else {
                 ActivityStackManager.getInstance()
                         .startFeedbackFromResume(mCurrentActivity);
@@ -405,7 +398,14 @@ public class SplashActivity extends BaseActivity {
             MultiDeliveryCallDriverData deliveryCallDriverData = (MultiDeliveryCallDriverData)
                     response.getData().getTrip();
 
+            AppPreferences.setMultiDeliveryCallDriverData(deliveryCallDriverData);
+            //Todo 1: check for unfinished ride later
+            ActivityStackManager.
+                  getInstance().
+                startMultiDeliveryBookingActivity(mCurrentActivity);
+
         }
+        finish();
     }
 
 

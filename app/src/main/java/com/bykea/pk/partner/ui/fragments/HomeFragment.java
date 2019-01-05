@@ -34,6 +34,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -41,6 +42,7 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -77,11 +79,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -824,27 +829,15 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-
-                                AppPreferences.setCallData(response.getData());
-                                AppPreferences.setTripStatus(response.getData().getStatus());
-                                if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                                    WebIORequestHandler.getInstance().registerChatListener();
-                                    ActivityStackManager.getInstance()
-                                            .startJobActivity(mCurrentActivity);
-                                } else {
-                                    ActivityStackManager.getInstance()
-                                            .startFeedbackFromResume(mCurrentActivity);
+                                if (response.getData().getTrip() == null) {
+                                    Utils.setCallIncomingState();
+                                    return;
                                 }
-                                mCurrentActivity.finish();
+
+                                checkRideType(response);
+
                             } catch (NullPointerException ignored) {
 
-                            }
-                        } else {
-                            if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
-                                Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                //If there is no pending tripInfo free all states for new tripInfo..
-                                Utils.setCallIncomingState();
                             }
                         }
                     }
@@ -938,6 +931,48 @@ public class HomeFragment extends Fragment {
             }
         }
     };
+
+    private void checkRideType(CheckDriverStatusResponse response) {
+        if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            NormalCallData callData = (NormalCallData)
+                    response.
+                            getData().
+                            getTrip();
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+            if (!callData.getStatus().
+                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler
+                        .getInstance()
+                        .registerChatListener();
+                ActivityStackManager
+                        .getInstance()
+                        .startJobActivity(mCurrentActivity);
+            } else {
+                ActivityStackManager
+                        .getInstance()
+                        .startFeedbackFromResume(mCurrentActivity);
+            }
+            mCurrentActivity.finish();
+        } else {
+
+            Gson gson = new Gson();
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>(){}.getType();
+            MultiDeliveryCallDriverData multiDeliveryCallDriverData = gson.fromJson(trip, type);
+            AppPreferences.
+                    setMultiDeliveryCallDriverData(
+                            multiDeliveryCallDriverData
+                    );
+
+            //Todo 2: Add check for feedback is given or not later.
+
+            ActivityStackManager
+                    .getInstance()
+                    .startMultiDeliveryBookingActivity(mCurrentActivity);
+        }
+    }
 
     //region Handle Error cases for Driver Status API
 

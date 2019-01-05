@@ -430,10 +430,13 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void setPickupBounds() {
         int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._30sdp);
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), padding);
-        padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
-        mGoogleMap.setPadding(0, padding, 0, padding);
-        mGoogleMap.moveCamera(cu);
+        LatLngBounds latLngBounds = getCurrentLatLngBounds();
+        if (latLngBounds != null) {
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), padding);
+            padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
+            mGoogleMap.setPadding(0, padding, 0, padding);
+            mGoogleMap.moveCamera(cu);
+        }
     }
 
     /***
@@ -456,15 +459,21 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             builder.include(driverMarker.getPosition());
         }
 
+        try {
+            LatLngBounds tmpBounds = builder.build();
+            LatLng center = tmpBounds.getCenter();
+            LatLng northEast = move(center, 709, 709);
+            LatLng southWest = move(center, -709, -709);
 
-        LatLngBounds tmpBounds = builder.build();
-        LatLng center = tmpBounds.getCenter();
-        LatLng northEast = move(center, 709, 709);
-        LatLng southWest = move(center, -709, -709);
-
-        builder.include(southWest);
-        builder.include(northEast);
-        return builder.build();
+            builder.include(southWest);
+            builder.include(northEast);
+            return builder.build();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /***
@@ -1136,8 +1145,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         super.onDestroy();
 
     }
-
-
 
 
     @Override
