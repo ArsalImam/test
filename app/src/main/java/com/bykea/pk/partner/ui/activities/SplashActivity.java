@@ -31,10 +31,12 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 
 import butterknife.BindView;
@@ -369,8 +371,12 @@ public class SplashActivity extends BaseActivity {
 
         if (response.getData().getType()
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
-            NormalCallData callData = (NormalCallData) response.
-                    getData().getTrip();
+
+            Gson gson = new Gson();
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>(){}.getType();
+
+            NormalCallData callData = gson.fromJson(trip, type);
             if (StringUtils.isNotBlank(callData.getStarted_at())) {
                 AppPreferences.setStartTripTime(
                         AppPreferences.getServerTimeDifference() +
@@ -395,11 +401,13 @@ public class SplashActivity extends BaseActivity {
                         .startFeedbackFromResume(mCurrentActivity);
             }
         } else {
-            MultiDeliveryCallDriverData deliveryCallDriverData = (MultiDeliveryCallDriverData)
-                    response.getData().getTrip();
-
+            Gson gson = new Gson();
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>(){}.getType();
+            MultiDeliveryCallDriverData deliveryCallDriverData = gson.fromJson(trip, type);
             AppPreferences.setMultiDeliveryCallDriverData(deliveryCallDriverData);
             //Todo 1: check for unfinished ride later
+
             ActivityStackManager.
                   getInstance().
                 startMultiDeliveryBookingActivity(mCurrentActivity);

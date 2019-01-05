@@ -200,6 +200,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void setTripStates() {
         if (callDriverData != null) {
             AppPreferences.setTripStatus(callDriverData.getBatchStatus());
+            //Todo 3: check for trip status and set the specific state accordingly
             setAcceptedState();
         }
     }
@@ -814,7 +815,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 @Override
                 public void onClick(View v) {
                     Dialogs.INSTANCE.dismissDialog();
-                    setStartedState();
+                    requestDriverStarted();
                 }
             }, new View.OnClickListener() {
                 @Override
@@ -847,7 +848,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                         public void onClick(View v) {
                             Dialogs.INSTANCE.dismissDialog();
                             //requestArrived();
-                            setArrivedState();
+                            requestDriverArrived();
                         }
                     });
         } else {
@@ -855,7 +856,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 @Override
                 public void onClick(View v) {
                     Dialogs.INSTANCE.dismissDialog();
-                    setArrivedState();
+                    requestDriverArrived();
                     //requestArrived();
                 }
             }, new View.OnClickListener() {
@@ -870,7 +871,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     /***
      * Set the tripInfo arrived state.
      */
-    private void setArrivedState() {
+    private void requestDriverArrived() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         repository.requestMultiDeliveryDriverArrived(handler);
     }
@@ -878,7 +879,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     /***
      * Set the tripInfo started state.
      */
-    private void setStartedState() {
+    private void requestDriverStarted() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         repository.requestMultiDeliveryDriverStarted(mCurrentActivity, handler);
     }
@@ -1027,7 +1028,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 public void run() {
                     if (mCurrentActivity != null) {
                         Dialogs.INSTANCE.dismissDialog();
-                        onDriverArrived();
+                        setArrivedState();
                     }
                 }
             });
@@ -1041,7 +1042,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 public void run() {
                     if (mCurrentActivity != null) {
                         Dialogs.INSTANCE.dismissDialog();
-                        onDriverStarted();
+                        setStartedState();
                     }
                 }
             });
@@ -1062,7 +1063,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Invoked this method when driver has been started.
      * Change the batch status, remove the poly lines & set the bottom button to "Mukamal"
      */
-    private void onDriverStarted() {
+    private void setStartedState() {
         try {
             cancelBtn.setVisibility(View.GONE);
             if (mapPolylines != null) {
@@ -1086,7 +1087,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Invoked this method when driver has been arrived.
      * Change the batch status, remove the poly lines & set the bottom button to "Start"
      */
-    private void onDriverArrived() {
+    private void setArrivedState() {
         try {
             if (mapPolylines != null)
                 mapPolylines.remove();

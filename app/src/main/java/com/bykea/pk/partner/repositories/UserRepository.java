@@ -496,23 +496,23 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
+            NormalCallData callData = AppPreferences.getCallData();
             String startLat = AppPreferences.getLatitude() + "";
             String startLng = AppPreferences.getLongitude() + "";
             jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-            jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("tid", callData.getTripId());
+            jsonObject.put("trip_id", callData.getTripId());
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("did", AppPreferences.getDriverId());
             jsonObject.put("startlatitude", startLat);
             jsonObject.put("startlongitude", startLng);
-            jsonObject.put("start_address", AppPreferences.getCallData().getStartAddress());
-            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
+            jsonObject.put("start_address", callData.getStartAddress());
+            jsonObject.put("pid", callData.getPassId());
             jsonObject.put("endlatitude", endLat);
             jsonObject.put("endlongitude", endLng);
             jsonObject.put("end_address", endAddress);
 
             //To update start latlng on App Side.
-            NormalCallData callData = AppPreferences.getCallData();
             callData.setStartLat(startLat);
             callData.setStartLng(startLng);
             AppPreferences.setCallData(callData);
