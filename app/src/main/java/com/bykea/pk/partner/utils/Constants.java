@@ -11,6 +11,8 @@ public class Constants {
     public static final String DEVICE_TYPE = "android";
     public static final String USER_TYPE = "d";
 
+    public static final int MINIMUM_VOICE_RECORDING = 1000;
+
     public static final String BYKEA = "BYKEA";
     public static final String BYKEA_URL = "BYKEA URL";
     public static final String BYKEA_ERROR = "BYKEA ERROR";
