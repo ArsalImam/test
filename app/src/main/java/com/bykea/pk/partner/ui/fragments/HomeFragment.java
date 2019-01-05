@@ -933,12 +933,12 @@ public class HomeFragment extends Fragment {
     };
 
     private void checkRideType(CheckDriverStatusResponse response) {
+        Gson gson = new Gson();
         if (response.getData().getType()
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
-            NormalCallData callData = (NormalCallData)
-                    response.
-                            getData().
-                            getTrip();
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>(){}.getType();
+            NormalCallData callData = gson.fromJson(trip, type);
             AppPreferences.setCallData(callData);
             AppPreferences.setTripStatus(callData.getStatus());
             if (!callData.getStatus().
@@ -956,8 +956,6 @@ public class HomeFragment extends Fragment {
             }
             mCurrentActivity.finish();
         } else {
-
-            Gson gson = new Gson();
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<MultiDeliveryCallDriverData>(){}.getType();
             MultiDeliveryCallDriverData multiDeliveryCallDriverData = gson.fromJson(trip, type);

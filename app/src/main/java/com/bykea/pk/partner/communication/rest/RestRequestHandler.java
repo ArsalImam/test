@@ -2,6 +2,7 @@ package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.R;
@@ -468,6 +469,7 @@ public class RestRequestHandler {
                 // Got success from server
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     mResponseCallBack.onResponse(response.body());
+                    Utils.redLog(TAG, new Gson().toJson(response.body().getData()));
                 } else {
                     mResponseCallBack.onError(response.code(), response.message());
                 }

@@ -369,10 +369,11 @@ public class SplashActivity extends BaseActivity {
             return;
         }
 
+
+        Gson gson = new Gson();
         if (response.getData().getType()
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
 
-            Gson gson = new Gson();
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<NormalCallData>(){}.getType();
 
@@ -401,7 +402,6 @@ public class SplashActivity extends BaseActivity {
                         .startFeedbackFromResume(mCurrentActivity);
             }
         } else {
-            Gson gson = new Gson();
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<MultiDeliveryCallDriverData>(){}.getType();
             MultiDeliveryCallDriverData deliveryCallDriverData = gson.fromJson(trip, type);
