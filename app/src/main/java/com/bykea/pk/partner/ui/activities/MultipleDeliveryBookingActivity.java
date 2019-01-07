@@ -160,6 +160,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         mCurrentLocation = new Location(StringUtils.EMPTY);
         setCurrentLocation();
         isResume = true;
+        AppPreferences.setIsOnTrip(true);
         setTripStates();
         checkGps();
         checkConnectivity(mCurrentActivity);
@@ -200,8 +201,16 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void setTripStates() {
         if (callDriverData != null) {
             AppPreferences.setTripStatus(callDriverData.getBatchStatus());
-            //Todo 3: check for trip status and set the specific state accordingly
             setAcceptedState();
+            if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                setAcceptedState();
+            } else if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+                setArrivedState();
+            } else if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                setStartedState();
+            } else {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+            }
         }
     }
 
@@ -375,7 +384,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                             AppPreferences.getLongitude()
                     );
                     getDriverRoadPosition(driverLatLng);
-                    addPickupMarker();
+                    if (!callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP))
+                        addPickupMarker();
                     updateDropOffMarkers();
                     setPickupBounds();
                 }
@@ -1005,7 +1015,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     protected void onResume() {
         mapView.onResume();
         setInitialData();
-        updateDropOffMarkers();
         super.onResume();
     }
 
@@ -1069,6 +1078,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             if (mapPolylines != null) {
                 mapPolylines.remove();
             }
+            timeTv.setVisibility(View.GONE);
+            timeUnitLabelTv.setVisibility(View.GONE);
+            timeView.setVisibility(View.GONE);
+            if (pickupMarker != null)
+                pickupMarker.remove();
+            pickView.setVisibility(View.GONE);
+            distanceTv.setVisibility(View.GONE);
+            pickUpDistanceUnit.setVisibility(View.GONE);
             callDriverData.setBatchStatus(TripStatus.ON_START_TRIP);
             AppPreferences.setTripStatus(TripStatus.ON_START_TRIP);
             AppPreferences.setMultiDeliveryCallDriverData(callDriverData);

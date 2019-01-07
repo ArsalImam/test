@@ -42,6 +42,8 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -375,7 +377,7 @@ public class HomeFragment extends Fragment {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 // TODO call battery optimization
                                 boolean calledOptimize = Utils.disableBatteryOptimization(
-                                        DriverApp.getContext(),mCurrentActivity);
+                                        DriverApp.getContext(), mCurrentActivity);
                                 if (!calledOptimize) {
                                     handleActivationStatusForBattery(false);
                                 }
@@ -937,7 +939,8 @@ public class HomeFragment extends Fragment {
         if (response.getData().getType()
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
             String trip = gson.toJson(response.getData().getTrip());
-            Type type = new TypeToken<NormalCallData>(){}.getType();
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
             NormalCallData callData = gson.fromJson(trip, type);
             AppPreferences.setCallData(callData);
             AppPreferences.setTripStatus(callData.getStatus());
@@ -957,20 +960,42 @@ public class HomeFragment extends Fragment {
             mCurrentActivity.finish();
         } else {
             String trip = gson.toJson(response.getData().getTrip());
-            Type type = new TypeToken<MultiDeliveryCallDriverData>(){}.getType();
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
             MultiDeliveryCallDriverData multiDeliveryCallDriverData = gson.fromJson(trip, type);
             AppPreferences.
                     setMultiDeliveryCallDriverData(
                             multiDeliveryCallDriverData
                     );
 
-            //Todo 2: Add check for feedback is given or not later.
+            List<MultipleDeliveryBookingResponse> bookingResponseList =
+                    multiDeliveryCallDriverData.getBookings();
 
-            ActivityStackManager
-                    .getInstance()
-                    .startMultiDeliveryBookingActivity(mCurrentActivity);
-        }
+            boolean isFinishedStateFound = false;
+
+            for (MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+                // get trip instance
+                MultiDeliveryTrip tripData = bookingResponse.getTrip();
+
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startMultiDeliveryFeedbackActivity(mCurrentActivity,
+                                    tripData.getId());
+                    break;
+                }
+            }
+
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startMultiDeliveryBookingActivity(mCurrentActivity);
     }
+
+}
 
     //region Handle Error cases for Driver Status API
 

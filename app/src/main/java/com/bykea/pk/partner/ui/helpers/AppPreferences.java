@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.helpers;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -18,7 +17,6 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
-import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -1248,10 +1246,10 @@ public class AppPreferences {
      *
      * @param isMultiDelivery true if multi delivery ride other wise false.
      */
-    public static void setIsMultiDelivery(boolean isMultiDelivery) {
+    public static void setDeliveryType(String type) {
         mSharedPreferences
                 .edit()
-                .putBoolean(Keys.MULTIDELIVERY_IS_MULTI_DELIVERY, isMultiDelivery)
+                .putString(Keys.DELIVERY_TYPE, type)
                 .apply();
     }
 
@@ -1260,9 +1258,9 @@ public class AppPreferences {
      *
      * @return The status true or false indicating the ride is of Multi Delivery or not.
      */
-    public static Boolean isMultiDelivery() {
+    public static String getDeliveryType() {
         return mSharedPreferences
-                .getBoolean(Keys.MULTIDELIVERY_IS_MULTI_DELIVERY, false);
+                .getString(Keys.DELIVERY_TYPE, StringUtils.EMPTY);
     }
 
     /**

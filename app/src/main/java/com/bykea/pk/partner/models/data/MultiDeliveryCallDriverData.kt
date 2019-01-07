@@ -39,4 +39,18 @@ data class MultiDeliveryCallDriverData(
         var acceptTime: Long
 ) {
         fun getAcceptedTime(): Long = if (acceptTime > 0) acceptTime else System.currentTimeMillis()
+
+        /**
+         * Get trip by trip id
+         */
+        fun getTripById(tripID: String) : MultipleDeliveryBookingResponse? {
+                bookings?.let {
+                        for (booking in it) {
+                                if (tripID.contentEquals(booking.trip?.id!!)) {
+                                      return booking
+                                }
+                        }
+                }
+                return null
+        }
 }

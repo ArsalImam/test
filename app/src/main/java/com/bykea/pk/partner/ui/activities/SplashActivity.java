@@ -11,6 +11,9 @@ import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -38,6 +41,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -218,6 +222,7 @@ public class SplashActivity extends BaseActivity {
         if (AppPreferences.isLoggedIn()) {
             // Connect socket
             DriverApp.getApplication().connect();
+            AppPreferences.setMultiDeliveryCallDriverData(null);
             if (AppPreferences.isOnTrip()) {
                 repository.requestRunningTrip(mCurrentActivity, handler);
             } else {
@@ -359,7 +364,6 @@ public class SplashActivity extends BaseActivity {
     };
 
     /**
-     *
      * @param response
      */
     private void checkRideType(CheckDriverStatusResponse response) {
@@ -375,7 +379,8 @@ public class SplashActivity extends BaseActivity {
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
 
             String trip = gson.toJson(response.getData().getTrip());
-            Type type = new TypeToken<NormalCallData>(){}.getType();
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
 
             NormalCallData callData = gson.fromJson(trip, type);
             if (StringUtils.isNotBlank(callData.getStarted_at())) {
@@ -403,14 +408,37 @@ public class SplashActivity extends BaseActivity {
             }
         } else {
             String trip = gson.toJson(response.getData().getTrip());
-            Type type = new TypeToken<MultiDeliveryCallDriverData>(){}.getType();
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
             MultiDeliveryCallDriverData deliveryCallDriverData = gson.fromJson(trip, type);
             AppPreferences.setMultiDeliveryCallDriverData(deliveryCallDriverData);
-            //Todo 1: check for unfinished ride later
+            // check for unfinished ride later
+            List<MultipleDeliveryBookingResponse> bookingResponseList =
+                    deliveryCallDriverData.getBookings();
 
-            ActivityStackManager.
-                  getInstance().
-                startMultiDeliveryBookingActivity(mCurrentActivity);
+            boolean isFinishedStateFound = false;
+
+            for (MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+                // get trip instance
+                MultiDeliveryTrip tripData = bookingResponse.getTrip();
+
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startMultiDeliveryFeedbackActivity(mCurrentActivity,
+                                    tripData.getId());
+                    break;
+                }
+            }
+
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startMultiDeliveryBookingActivity(mCurrentActivity);
+
 
         }
         finish();

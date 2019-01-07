@@ -320,21 +320,25 @@ public class UserRepository {
         locationRequest.setLongitude(lon + "");
         String tripStatus = StringUtils.EMPTY;
         if (AppPreferences.isOnTrip()) {
-            tripStatus = AppPreferences.getCallData() != null
-                    && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
-                    ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
-            locationRequest.setEta(AppPreferences.getEta());
-            locationRequest.setDistance(AppPreferences.getEstimatedDistance());
-            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
-            ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
-            if (trackingData.size() == 0) {
-                TrackingData data = new TrackingData();
-                data.setLat(lat + "");
-                data.setLng(lon + "");
-                trackingData.add(data);
+            if (AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.SINGLE)) {
+                tripStatus = AppPreferences.getCallData() != null
+                        && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
+                        ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
+                locationRequest.setEta(AppPreferences.getEta());
+                locationRequest.setDistance(AppPreferences.getEstimatedDistance());
+                locationRequest.setTripID(AppPreferences.getCallData().getTripId());
+                ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
+                if (trackingData.size() == 0) {
+                    TrackingData data = new TrackingData();
+                    data.setLat(lat + "");
+                    data.setLng(lon + "");
+                    trackingData.add(data);
+                }
+                locationRequest.setTrackingData(trackingData);
+                AppPreferences.clearTrackingData();
+            } else {
+
             }
-            locationRequest.setTrackingData(trackingData);
-            AppPreferences.clearTrackingData();
         }
         if (StringUtils.isBlank(tripStatus)) {
             tripStatus = AppPreferences.getTripStatus();

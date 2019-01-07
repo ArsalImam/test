@@ -262,6 +262,7 @@ public class CallingActivity extends BaseActivity {
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
                             AppPreferences.setIsOnTrip(true);
+                            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
                             ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                             stopSound();
                             finishActivity();

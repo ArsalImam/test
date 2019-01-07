@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.models.response
 
+import com.bykea.pk.partner.models.data.MultiDeliveryInvoiceData
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -10,4 +11,5 @@ class MultipleDeliveryBookingResponse {
     @SerializedName("dropoff")
     var dropOff: MultipleDeliveryDropOff? = null
     var passenger: MultiDeliveryPassenger? = null
+    var invoice: MultiDeliveryInvoiceData? = null
 }

@@ -226,7 +226,8 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 }
 
                 Dialogs.INSTANCE.dismissDialog();
-                AppPreferences.setIsMultiDelivery(true);
+                AppPreferences.setIsOnTrip(true);
+                AppPreferences.setDeliveryType(Constants.CallType.BATCH);
                 ActivityStackManager
                         .getInstance()
                         .startMultiDeliveryBookingActivity(mCurrentActivity);

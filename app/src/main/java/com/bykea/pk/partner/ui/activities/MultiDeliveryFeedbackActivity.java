@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -16,10 +17,13 @@ import android.widget.ScrollView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.CallDriverAcknowledgeData;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.MultiDeliveryRideCompleteTripInfo;
 import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryInvoiceData;
 import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -28,15 +32,18 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.net.HttpURLConnection;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -127,9 +134,11 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     private MultiDeliveryFeedbackActivity mCurrentActivity;
     private long mLastClickTime;
     private UserRepository repository;
-    private MultiDeliveryRideCompleteTripInfo tripInfo;
+    private MultiDeliveryTrip tripInfo;
     private int completedTripsCount;
     private int tripCounts;
+    private MultiDeliveryInvoiceData invoice;
+    private String TAG = MultiDeliveryFeedbackResponse.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,18 +160,21 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
         tripCounts = AppPreferences.getMultiDeliveryCallDriverData().getBookings().size();
         completedTripsCount = AppPreferences.getMultiDeliveryCompletedTripCounts();
+
+        MultiDeliveryCallDriverData callDriverData = AppPreferences.
+                getMultiDeliveryCallDriverData();
+
         Bundle bundle = getIntent().getExtras();
-        MultiDeliveryCallDriverAcknowledgeResponse response = null;
+        String tripID = StringUtils.EMPTY;
         if (bundle != null) {
-            response = bundle
-                    .getParcelable(Keys.MULTIDELIVERY_COMPLETE_DATA);
+            tripID = bundle.getString(Keys.MULTIDELIVERY_TRIP_ID, StringUtils.EMPTY);
         }
-        if (response != null) {
-            CallDriverAcknowledgeData data = response.getData();
-            MultiDeliveryInvoiceData invoice = null;
-            if (data != null) {
-                invoice = data.getInvoice();
-                tripInfo = data.getTripInfo();
+        if (callDriverData != null) {
+
+            MultipleDeliveryBookingResponse response = callDriverData.getTripById(tripID);
+            if (response != null) {
+                invoice = response.getInvoice();
+                tripInfo = response.getTrip();
             }
             if (tripInfo != null) {
                 tvTotalDistance.setText(getString(R.string.distance_covered,
@@ -270,7 +282,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             e.printStackTrace();
         }
         repository.requestMultiDeliveryDriverFeedback(
-                tripInfo.getTripID(),
+                tripInfo.getId(),
                 receivedAmount,
                 callerRb.getRating(),
                 handler
@@ -356,9 +368,21 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (tripInfo.getTripID().equalsIgnoreCase(response.getData().getTripID())) {
+                        if (tripInfo.getId().equalsIgnoreCase(response.getData().getTripID())) {
                             Dialogs.INSTANCE.dismissDialog();
-                            checkForUnfinishedTrip();
+                            MultiDeliveryCallDriverData callDriverData = AppPreferences.
+                                    getMultiDeliveryCallDriverData();
+
+                            MultipleDeliveryBookingResponse bookingResponse = callDriverData.
+                                    getTripById(tripInfo.getId());
+
+                            if (bookingResponse != null) {
+                                bookingResponse.getTrip().setStatus(TripStatus.ON_FEEDBACK_TRIP);
+                                checkForUnfinishedTrip(callDriverData);
+                                Utils.redLog(TAG, new Gson().toJson(callDriverData));
+                                AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+                            }
+
                         }
                     }
                 });
@@ -381,15 +405,26 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      * <p>
      * If batch have the unfinished trip navigate to Multi Delivery Booking Screen
      * other wise navigate to home screen
+     * @param callDriverData
      */
-    private void checkForUnfinishedTrip() {
-        if (tripCounts != completedTripsCount) {
-            ActivityStackManager.getInstance()
-                    .startMultiDeliveryBookingActivity(mCurrentActivity);
-        } else {
+    private void checkForUnfinishedTrip(MultiDeliveryCallDriverData callDriverData) {
+        List<MultipleDeliveryBookingResponse> bookingResponseList = callDriverData.getBookings();
+        boolean isUnFinishedRemainig = false;
+        for (MultipleDeliveryBookingResponse response : bookingResponseList) {
+            if ((!response.getTrip().getStatus().
+                    equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP)) &&
+                    (!response.getTrip().getStatus().
+                            equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP))) {
+                isUnFinishedRemainig = true;
+                ActivityStackManager.getInstance()
+                        .startMultiDeliveryBookingActivity(mCurrentActivity);
+            }
+        }
+
+        if (!isUnFinishedRemainig) {
             Utils.multiDeliveryFreeDriverOnBatchComplete();
             ActivityStackManager.getInstance().startHomeActivity(true,
-                  mCurrentActivity);
+                    mCurrentActivity);
             mCurrentActivity.finish();
         }
 
