@@ -2371,8 +2371,11 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
-                return true;
+                if(intent.resolveActivity(context.getPackageManager())!=null){
+                    activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                    return true;
+                }
+                return false;
             }
         }
         return false;
@@ -2395,8 +2398,11 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                fragment.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
-                return true;
+                if(intent.resolveActivity(context.getPackageManager())!=null){
+                    fragment.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                    return true;
+                }
+                return false;
             }
         }
         return false;
