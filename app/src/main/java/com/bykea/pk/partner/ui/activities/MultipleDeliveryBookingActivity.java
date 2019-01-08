@@ -139,7 +139,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Initialize data i.e activity, register ButterKnife, initialize UserRepository,  etc
+     * Initialize data i.e activity, register ButterKnife, initialize UserRepository,  etc.
      */
     private void initialize() {
         mCurrentActivity = this;

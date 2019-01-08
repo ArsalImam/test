@@ -10,6 +10,7 @@ import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
@@ -63,6 +64,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -86,10 +88,16 @@ import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
+import com.bykea.pk.partner.tracking.AbstractRouting;
+import com.bykea.pk.partner.tracking.Route;
+import com.bykea.pk.partner.tracking.RouteException;
+import com.bykea.pk.partner.tracking.Routing;
+import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
@@ -98,10 +106,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class UserRepository {
 
+    private static final String TAG = UserRepository.class.getSimpleName();
     private Context mContext;
     private IUserDataHandler mUserCallback;
     private WebIORequestHandler mWebIORequestHandler;
@@ -337,6 +347,13 @@ public class UserRepository {
                 locationRequest.setTrackingData(trackingData);
                 AppPreferences.clearTrackingData();
             } else {
+                //In Batch Trip
+
+
+
+                //locationRequest.setBatchBookings(trackingDataList);
+                calculateDistanceFromDirectionAPI(locationRequest);
+
 
             }
         }
@@ -345,8 +362,89 @@ public class UserRepository {
         }
         locationRequest.setAvailableStatus(tripStatus);
         locationRequest.setUuid(UUID.randomUUID().toString());
-        mRestRequestHandler.sendDriverLocationUpdate(context, mDataCallback, locationRequest);
+
     }
+
+    /**
+     *
+     * Fetch Tracking Data List
+     *
+     * <p>Calculate the distance & duration between driver location to each drop off location</p>
+     *
+     * Todo 1: Should be update in future with distance matrix api.
+     *
+     * @param locationRequest The {@linkplain DriverLocationRequest} object.
+     */
+    private synchronized void calculateDistanceFromDirectionAPI(final DriverLocationRequest
+                                                                        locationRequest) {
+        final int[] count = {0};
+        LatLng driverLatLng = new LatLng(
+                AppPreferences.getLatitude(),
+                AppPreferences.getLongitude()
+        );
+        final MultiDeliveryCallDriverData callDriverData = AppPreferences.
+                getMultiDeliveryCallDriverData();
+
+        Routing.Builder builder = new Routing.Builder();
+
+        final ArrayList<TrackingData> trackingDataList = new ArrayList<>();
+        final List<MultipleDeliveryBookingResponse> bookingResponseList =
+                callDriverData.getBookings();
+
+        final int bookingSize = bookingResponseList.size();
+
+        for (final MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+            LatLng dropLatLng = new LatLng(bookingResponse.getDropOff().getLat(),
+                    bookingResponse.getDropOff().getLng());
+
+            builder.context(mContext)
+                    .waypoints(driverLatLng, dropLatLng)
+                    .travelMode(AbstractRouting.TravelMode.DRIVING)
+                    .withListener(new RoutingListener() {
+                        @Override
+                        public void onRoutingFailure(int routeType, RouteException e) {
+                            Log.d(TAG, "Failed");
+                        }
+
+                        @Override
+                        public void onRoutingStart() {
+                            Log.d(TAG, "Start");
+                        }
+
+                        @Override
+                        public void onRoutingSuccess(int routeType, List<Route> route,
+                                                     int shortestRouteIndex) {
+                            count[0]++;
+                            String tripID = bookingResponse.getTrip().getId();
+                            TrackingData trackingData = new TrackingData();
+                            trackingData.setTripID(tripID);
+                            trackingData.setRemainingDistance(route.get(0).getDistanceValue());
+                            trackingData.setRemainingTime(route.get(0).getDurationValue());
+                            trackingDataList.add(trackingData);
+                            if (count[0] == bookingSize) {
+                                locationRequest.setBatchBookings(trackingDataList);
+                                mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                                        mDataCallback, locationRequest);
+                            }
+                        }
+
+                        @Override
+                        public void onRoutingCancelled() {
+                            Log.d(TAG, "Canceled");
+                        }
+                    })
+                    .routeType(Routing.dropOffRoute);
+
+            if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mContext))) {
+                builder.key(Utils.getApiKeyForDirections(mContext));
+            }
+
+            Routing routing = builder.build();
+            routing.execute();
+        }
+
+    }
+
 
     public void freeDriverStatus(Context context, IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
@@ -798,6 +896,7 @@ public class UserRepository {
             jsonObject.put("route", new Gson()
                     .toJson(AppPreferences.getLocCoordinatesInTrip()));
             directionDropOffData = data;
+            AppPreferences.clearTripDistanceData();
 
         } catch (Exception e) {
             e.printStackTrace();

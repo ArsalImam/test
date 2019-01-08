@@ -2917,7 +2917,7 @@ public class Utils {
     }
 
     /**
-     * Fetch the duration in seconds or minutes
+     * Fetch the duration in minutes
      *
      * <p>If the duration in second is greater than or equal to 60 than convert
      * it into minutes. If duration in seconds is greater than equal to 3600 convert

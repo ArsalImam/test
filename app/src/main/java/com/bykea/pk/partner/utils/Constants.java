@@ -15,6 +15,8 @@ public class Constants {
 
     public static final String DEVICE_TYPE = "android";
     public static final String USER_TYPE = "d";
+    public static final int ESTIMATION_SPEED = 30;
+
 
     public static final String BYKEA = "BYKEA";
     public static final String BYKEA_URL = "BYKEA URL";

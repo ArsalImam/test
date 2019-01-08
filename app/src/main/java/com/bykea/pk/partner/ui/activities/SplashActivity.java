@@ -221,7 +221,6 @@ public class SplashActivity extends BaseActivity {
         if (AppPreferences.isLoggedIn()) {
             // Connect socket
             DriverApp.getApplication().connect();
-            AppPreferences.setMultiDeliveryCallDriverData(null);
             if (AppPreferences.isOnTrip()) {
                 repository.requestRunningTrip(mCurrentActivity, handler);
             } else {
