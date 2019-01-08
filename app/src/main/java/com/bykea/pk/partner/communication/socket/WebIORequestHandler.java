@@ -618,7 +618,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("MultiDeliveryTripBatchCompletedListener", serverResponse);
+            Utils.redLog(TAG, serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_BATCH_COMPLETED);
         }
     }

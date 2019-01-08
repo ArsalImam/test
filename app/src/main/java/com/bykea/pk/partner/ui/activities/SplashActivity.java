@@ -11,7 +11,6 @@ import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
-import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -313,9 +312,7 @@ public class SplashActivity extends BaseActivity {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                checkRideType(response);
-
-
+                                checkTripType(response);
                             } catch (NullPointerException e) {
                                 //If there is no pending tripInfo free all states for new tripInfo..
                                 Utils.setCallIncomingState();
@@ -350,9 +347,6 @@ public class SplashActivity extends BaseActivity {
                         HomeActivity.visibleFragmentNumber = 0;
                         EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
                         break;
-                    case HttpURLConnection.HTTP_NOT_FOUND:
-                        splashTimer.onFinish();
-                        break;
                     case HttpURLConnection.HTTP_INTERNAL_ERROR:
                         EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
                         splashTimer.onFinish();
@@ -364,9 +358,27 @@ public class SplashActivity extends BaseActivity {
     };
 
     /**
-     * @param response
+     * Check the Type of request is it batch request or single
+     *
+     * <p>
+     *
+     * Check if the type is single parse the single trip object i.e {@link NormalCallData}
+     * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
+     *
+     * Check also for unfinished trips if there is unfinished trip remaining land
+     * to "Feedback Screen" other wise booking screen according to the type
+     *
+     * <ul>
+     *     <li>Check if trip is null thats mean there is no active trip</li>
+     *     <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     *     <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * </ul>
+     *
+     * </p>
+     *
+     * @param response The object of {@linkplain CheckDriverStatusResponse}
      */
-    private void checkRideType(CheckDriverStatusResponse response) {
+    private void checkTripType(CheckDriverStatusResponse response) {
 
         if (response.getData().getTrip() == null) {
             startHomeActivity();

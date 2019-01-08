@@ -378,9 +378,10 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
                             if (bookingResponse != null) {
                                 bookingResponse.getTrip().setStatus(TripStatus.ON_FEEDBACK_TRIP);
+                                AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
                                 checkForUnfinishedTrip(callDriverData);
                                 Utils.redLog(TAG, new Gson().toJson(callDriverData));
-                                AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+
                             }
 
                         }
@@ -402,43 +403,26 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
     /**
      * Check for un finished trip.
-     * <p>
-     * If batch have the unfinished trip navigate to Multi Delivery Booking Screen
-     * other wise navigate to home screen
-     * @param callDriverData
+     *
+     * <p>If batch have the unfinished trip navigate to Multi Delivery
+     * Booking Screen other wise navigate to home screen</p>
+     *
+     * @param callDriverData The Multi Delivery Batch Object.
      */
     private void checkForUnfinishedTrip(MultiDeliveryCallDriverData callDriverData) {
-        List<MultipleDeliveryBookingResponse> bookingResponseList = callDriverData.getBookings();
-        boolean isUnFinishedRemainig = false;
-        for (MultipleDeliveryBookingResponse response : bookingResponseList) {
-            if ((!response.getTrip().getStatus().
-                    equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP)) &&
-                    (!response.getTrip().getStatus().
-                            equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP))) {
-                isUnFinishedRemainig = true;
-                ActivityStackManager.getInstance()
-                        .startMultiDeliveryBookingActivity(mCurrentActivity);
-            }
-        }
 
-        if (!isUnFinishedRemainig) {
+        boolean isUnFinishedTripRemainig = callDriverData.
+                isUnfinishedTripRemaining(callDriverData);
+        if (isUnFinishedTripRemainig) {
+            ActivityStackManager.getInstance()
+                    .startMultiDeliveryBookingActivity(mCurrentActivity);
+        } else {
             Utils.multiDeliveryFreeDriverOnBatchComplete();
             ActivityStackManager.getInstance().startHomeActivity(true,
                     mCurrentActivity);
             mCurrentActivity.finish();
         }
 
-    }
-
-    @Override
-    public void onEvent(final String action) {
-        if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
-            Utils.multiDeliveryFreeDriverOnBatchComplete();
-            ActivityStackManager
-                    .getInstance()
-                    .startHomeActivity(true, mCurrentActivity);
-            finish();
-        }
     }
 
     @Override

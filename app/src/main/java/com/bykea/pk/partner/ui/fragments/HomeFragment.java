@@ -836,7 +836,7 @@ public class HomeFragment extends Fragment {
                                     return;
                                 }
 
-                                checkRideType(response);
+                                checkTripType(response);
 
                             } catch (NullPointerException ignored) {
 
@@ -934,7 +934,28 @@ public class HomeFragment extends Fragment {
         }
     };
 
-    private void checkRideType(CheckDriverStatusResponse response) {
+    /**
+     * Check the Type of request is it batch request or single
+     *
+     * <p>
+     *
+     * Check if the type is single parse the single trip object i.e {@link NormalCallData}
+     * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
+     *
+     * Check also for unfinished trips if there is unfinished trip remaining land
+     * to "Feedback Screen" other wise booking screen according to the type
+     *
+     * <ul>
+     *     <li>Check if trip is null thats mean there is no active trip</li>
+     *     <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     *     <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * </ul>
+     *
+     * </p>
+     *
+     * @param response The object of {@linkplain CheckDriverStatusResponse}
+     */
+    private void checkTripType(CheckDriverStatusResponse response) {
         Gson gson = new Gson();
         if (response.getData().getType()
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
@@ -957,7 +978,6 @@ public class HomeFragment extends Fragment {
                         .getInstance()
                         .startFeedbackFromResume(mCurrentActivity);
             }
-            mCurrentActivity.finish();
         } else {
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<MultiDeliveryCallDriverData>() {
@@ -994,6 +1014,7 @@ public class HomeFragment extends Fragment {
                         getInstance().
                         startMultiDeliveryBookingActivity(mCurrentActivity);
     }
+        mCurrentActivity.finish();
 
 }
 

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.MultiDeliveryCompleteRideData;
 import com.bykea.pk.partner.models.data.MultiDeliveryRideCompleteTripInfo;
 import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -214,20 +215,26 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
     private void onMultiDeliveryRideFinished(DirectionDropOffData data,
                                              MultiDeliveryCompleteRideResponse response) {
 
-        MultiDeliveryRideCompleteTripInfo tripInfo = response.getData().getTripInfo();
+        MultiDeliveryCompleteRideData multiDeliveryCompleteRideData = response.getData();
+        MultiDeliveryRideCompleteTripInfo tripInfo = multiDeliveryCompleteRideData.getTripInfo();
+
         MultipleDeliveryBookingResponse bookingResponse = callDriverData.
                 getTripById(tripInfo.getTripID());
-        bookingResponse.setInvoice(response.getData().getInvoice());
+
+        bookingResponse.setInvoice(multiDeliveryCompleteRideData.getInvoice());
+
         bookingResponse.getTrip().setTripDistance(tripInfo.getTripDistance());
         bookingResponse.getTrip().setTripDuration(tripInfo.getTripDuration());
         bookingResponse.getTrip().setStartAddress(tripInfo.getStartAddress());
         bookingResponse.getTrip().setEndAddress(tripInfo.getEndAddress());
+
         AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
         Utils.redLog(TAG, new Gson().toJson(AppPreferences.getMultiDeliveryCallDriverData()));
+
         if (response.getCode() == HttpURLConnection.HTTP_OK) {
             ActivityStackManager.getInstance()
                     .startMultiDeliveryFeedbackActivity(getActivity(),
-                            response.getData().getTripInfo().getTripID());
+                            multiDeliveryCompleteRideData.getTripInfo().getTripID());
             getActivity().finish();
         }
     }
