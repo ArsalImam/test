@@ -348,10 +348,6 @@ public class UserRepository {
                 AppPreferences.clearTrackingData();
             } else {
                 //In Batch Trip
-
-
-
-                //locationRequest.setBatchBookings(trackingDataList);
                 calculateDistanceFromDirectionAPI(locationRequest);
 
 
