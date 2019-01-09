@@ -65,6 +65,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -390,8 +391,9 @@ public class UserRepository {
         final int bookingSize = bookingResponseList.size();
 
         for (final MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
-            LatLng dropLatLng = new LatLng(bookingResponse.getDropOff().getLat(),
-                    bookingResponse.getDropOff().getLng());
+            MultipleDeliveryDropOff dropOff =bookingResponse.getDropOff();
+            LatLng dropLatLng = new LatLng(dropOff.getLat(),
+                    dropOff.getLng());
 
             builder.context(mContext)
                     .waypoints(driverLatLng, dropLatLng)

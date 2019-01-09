@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.DropOffMarker;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
@@ -56,11 +57,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.clustering.ClusterManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -96,6 +99,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private static final double METERS_IN_KILOMETER = 1000.0;
     private MultiDeliveryCallDriverData callDriverData;
     private UserRepository repository;
+    private ClusterManager<DropOffMarker> mClusterManager;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
@@ -379,6 +383,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     mGoogleMap = googleMap;
                     mGoogleMap.clear();
                     Utils.formatMap(mGoogleMap);
+                    //initialize the cluster manager for clustering drop off markers
+                    mClusterManager = new ClusterManager<>(mCurrentActivity, mGoogleMap);
+                    mGoogleMap.setOnCameraIdleListener(mClusterManager);
+
                     com.google.maps.model.LatLng driverLatLng = new com.google.maps.model.LatLng(
                             AppPreferences.getLatitude(),
                             AppPreferences.getLongitude()
@@ -642,12 +650,20 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 dropOffMarker.remove();
             }
             List<LatLng> latLngList = Utils.getDropDownLatLngList(callDriverData);
-            for (int i = 0; i < latLngList.size(); i++) {
-                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
-                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
-                                String.valueOf(i + 1)))
-                        .position(latLngList.get(i)));
+
+            List<DropOffMarker> clustorItems = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                clustorItems.add(new DropOffMarker(latLngList.get(0)));
+                mClusterManager.addItems(clustorItems);
+                mClusterManager.cluster();
+//                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
+//                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
+//                                String.valueOf(i + 1)))
+//                        .position(latLngList.get(i)));
             }
+
+
+
 
         } catch (NumberFormatException e) {
             e.printStackTrace();

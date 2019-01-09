@@ -52,10 +52,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -77,6 +75,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.DropOffMarker;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
@@ -2958,9 +2957,10 @@ public class Utils {
         List<LatLng> latLngList = new ArrayList<>();
         for (MultipleDeliveryBookingResponse response : deliveryCallDriverData.getBookings()) {
             latLngList.add(new LatLng(
+
                     response.getDropOff().getLat(),
-                    response.getDropOff().getLng()
-            ));
+                    response.getDropOff().getLng())
+            );
         }
 
         return latLngList;
