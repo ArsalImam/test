@@ -666,15 +666,19 @@ public class Utils {
         txt_name.setText(number);
         try {
             MultiDeliveryCallDriverData data = AppPreferences.getMultiDeliveryCallDriverData();
-            List<String> tripIDList = AppPreferences.getMultiDeliveryTrip();
-            int index = Integer.parseInt(number) - 1;
-            String id = data.getBookings().get(index).getTrip().getId();
-            for (String tripID : tripIDList) {
-                if (tripID.equalsIgnoreCase(id)) {
+
+            List<MultipleDeliveryBookingResponse> bookingResponseList = data.getBookings();
+
+                int index = Integer.parseInt(number) - 1;
+                if (bookingResponseList.get(index).getTrip().getStatus().
+                        equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                        bookingResponseList.get(index).getTrip().getStatus().
+                                equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
+
                     ViewCompat.setBackgroundTintList(txt_name, ContextCompat
                             .getColorStateList(context,
                                     R.color.multi_delivery_dropoff_completed));
-                }
+
             }
 
         } catch (NumberFormatException e) {
@@ -2973,8 +2977,7 @@ public class Utils {
         setCallIncomingState();
         AppPreferences.setWalletAmountIncreased(false);
         AppPreferences.setAvailableStatus(true);
-        AppPreferences.setMultiDeliveryTrips(null);
-        AppPreferences.saveMultiDeliveryCompletedTripCounts(0);
+        AppPreferences.setMultiDeliveryCallDriverData(null);
     }
 
     //endregion

@@ -12,6 +12,7 @@ import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
+import com.bykea.pk.partner.models.data.PlacesList;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -52,6 +53,7 @@ import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
+import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -68,6 +70,8 @@ import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
+import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
@@ -89,6 +93,9 @@ import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
+import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
@@ -97,6 +104,7 @@ import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -347,18 +355,34 @@ public class UserRepository {
                 }
                 locationRequest.setTrackingData(trackingData);
                 AppPreferences.clearTrackingData();
+                if (StringUtils.isBlank(tripStatus)) {
+                    tripStatus = AppPreferences.getTripStatus();
+                }
+                locationRequest.setAvailableStatus(tripStatus);
+                locationRequest.setUuid(UUID.randomUUID().toString());
+                mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                        mDataCallback, locationRequest);
             } else {
                 //In Batch Trip
+                if (StringUtils.isBlank(tripStatus)) {
+                    tripStatus = AppPreferences.getTripStatus();
+                }
+                locationRequest.setAvailableStatus(tripStatus);
+                locationRequest.setUuid(UUID.randomUUID().toString());
+
                 calculateDistanceFromDirectionAPI(locationRequest);
 
-
             }
+        } else {
+            if (StringUtils.isBlank(tripStatus)) {
+                tripStatus = AppPreferences.getTripStatus();
+            }
+            locationRequest.setAvailableStatus(tripStatus);
+            locationRequest.setUuid(UUID.randomUUID().toString());
+            mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                    mDataCallback, locationRequest);
         }
-        if (StringUtils.isBlank(tripStatus)) {
-            tripStatus = AppPreferences.getTripStatus();
-        }
-        locationRequest.setAvailableStatus(tripStatus);
-        locationRequest.setUuid(UUID.randomUUID().toString());
+
 
     }
 
@@ -368,78 +392,71 @@ public class UserRepository {
      *
      * <p>Calculate the distance & duration between driver location to each drop off location</p>
      *
-     * Todo 1: Should be update in future with distance matrix api.
-     *
      * @param locationRequest The {@linkplain DriverLocationRequest} object.
      */
     private synchronized void calculateDistanceFromDirectionAPI(final DriverLocationRequest
                                                                         locationRequest) {
-        final int[] count = {0};
-        LatLng driverLatLng = new LatLng(
-                AppPreferences.getLatitude(),
-                AppPreferences.getLongitude()
-        );
+        String driverLatLng =
+                AppPreferences.getLatitude() + "," + AppPreferences.getLongitude();
+        String dropLatLng = StringUtils.EMPTY;
         final MultiDeliveryCallDriverData callDriverData = AppPreferences.
                 getMultiDeliveryCallDriverData();
 
-        Routing.Builder builder = new Routing.Builder();
+        if (!callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                    mDataCallback, locationRequest);
+            return;
+        }
 
         final ArrayList<TrackingData> trackingDataList = new ArrayList<>();
         final List<MultipleDeliveryBookingResponse> bookingResponseList =
                 callDriverData.getBookings();
 
         final int bookingSize = bookingResponseList.size();
-
+        final int[] counter = {0};
         for (final MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+            counter[0]++;
             MultipleDeliveryDropOff dropOff =bookingResponse.getDropOff();
-            LatLng dropLatLng = new LatLng(dropOff.getLat(),
+            dropLatLng = dropLatLng.concat(dropOff.getLat() + "," +
                     dropOff.getLng());
+            Log.d(TAG, bookingResponse.getTrip().getId());
+            if (counter[0] != bookingSize)
+                dropLatLng = dropLatLng.concat("|");
+        }
 
-            builder.context(mContext)
-                    .waypoints(driverLatLng, dropLatLng)
-                    .travelMode(AbstractRouting.TravelMode.DRIVING)
-                    .withListener(new RoutingListener() {
-                        @Override
-                        public void onRoutingFailure(int routeType, RouteException e) {
-                            Log.d(TAG, "Failed");
-                        }
+        new PlacesRepository().getDistanceMatrix(
+                driverLatLng,
+                dropLatLng,
+                mContext,
+                new PlacesDataHandler() {
+                    @Override
+                    public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
 
-                        @Override
-                        public void onRoutingStart() {
-                            Log.d(TAG, "Start");
-                        }
-
-                        @Override
-                        public void onRoutingSuccess(int routeType, List<Route> route,
-                                                     int shortestRouteIndex) {
-                            count[0]++;
-                            String tripID = bookingResponse.getTrip().getId();
+                        counter[0] = 0;
+                        GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
+                        for (GoogleDistanceMatrixApi.Elements element : elements) {
+                            String tripID = bookingResponseList.get(counter[0]).getTrip().getId();
+                            Log.d(TAG, tripID);
+                            int distance = element.getDistance().getValueInt();
+                            int duration = element.getDuration().getValueInt();
                             TrackingData trackingData = new TrackingData();
                             trackingData.setTripID(tripID);
-                            trackingData.setRemainingDistance(route.get(0).getDistanceValue());
-                            trackingData.setRemainingTime(route.get(0).getDurationValue());
+                            trackingData.setRemainingDistance(distance);
+                            trackingData.setRemainingTime(duration);
                             trackingDataList.add(trackingData);
-                            if (count[0] == bookingSize) {
-                                locationRequest.setBatchBookings(trackingDataList);
-                                mRestRequestHandler.sendDriverLocationUpdate(mContext,
-                                        mDataCallback, locationRequest);
-                            }
+                            counter[0]++;
                         }
+                        locationRequest.setBatchBookings(trackingDataList);
+                        mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                                mDataCallback, locationRequest);
 
-                        @Override
-                        public void onRoutingCancelled() {
-                            Log.d(TAG, "Canceled");
-                        }
-                    })
-                    .routeType(Routing.dropOffRoute);
+                    }
 
-            if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mContext))) {
-                builder.key(Utils.getApiKeyForDirections(mContext));
-            }
-
-            Routing routing = builder.build();
-            routing.execute();
-        }
+                    @Override
+                    public void onError(String error) {
+                        Log.d(TAG, error);
+                    }
+                });
 
     }
 
@@ -1661,6 +1678,8 @@ public class UserRepository {
         }
 
     };
+
+
 
 
 }

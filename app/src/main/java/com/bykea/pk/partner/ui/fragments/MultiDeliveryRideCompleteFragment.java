@@ -86,7 +86,8 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
                 new MultiDeliveryCompleteRideAdapter.MultiDeliveryCompleteRideListener() {
                     @Override
                     public void onMultiDeliveryCompleteRide(int position) {
-                        requestRideFinish(position);
+                        if (!list.get(position).isCompleted())
+                            requestRideFinish(position);
                     }
                 });
         mRecyclerView.setAdapter(adapter);
@@ -138,10 +139,11 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
 
         int n = bookingResponses.size();
         for (int i = 0; i < n; i++) {
+            MultipleDeliveryBookingResponse bookingResponse = bookingResponses.get(i);
             MultipleDeliveryBookingResponse multipleDeliveryBookingResponse =
                     bookingResponses.get(i);
             DirectionDropOffData dropOff = new DirectionDropOffData.Builder()
-                    .setmArea("University Road")
+                    .setmArea(bookingResponse.getDropOff().getPickupAddress())
                     .setPassengerName(multipleDeliveryBookingResponse
                             .getPassenger()
                             .getName())

@@ -119,7 +119,8 @@ public class MultiDeliveryCallFragment extends Fragment {
         int length = callDriverData.getBookings().size();
         for (int i = 0; i < length; i++) {
             MultipleDeliveryBookingResponse response = callDriverData.getBookings().get(i);
-            MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff("University Road",
+            MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff(
+                    response.getPassenger().getName(),
                     response.getDropOff().getPickupAddress(),
                     String.valueOf(i+1), response.getPassenger().getPhone());
             list.add(dropOff);

@@ -33,6 +33,7 @@ import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
+import com.bykea.pk.partner.ui.helpers.MarkerClusterRenderer;
 import com.bykea.pk.partner.ui.helpers.Spherical;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
@@ -58,6 +59,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.ClusterRenderer;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -652,15 +655,17 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             List<LatLng> latLngList = Utils.getDropDownLatLngList(callDriverData);
 
             List<DropOffMarker> clustorItems = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                clustorItems.add(new DropOffMarker(latLngList.get(0)));
-                mClusterManager.addItems(clustorItems);
-                mClusterManager.cluster();
+            for (int i = 0; i < latLngList.size(); i++) {
+                clustorItems.add(new DropOffMarker(latLngList.get(i), (i+1)));
+
 //                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
 //                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
 //                                String.valueOf(i + 1)))
 //                        .position(latLngList.get(i)));
             }
+            setRenderer();
+            mClusterManager.addItems(clustorItems);
+            mClusterManager.cluster();
 
 
 
@@ -669,6 +674,18 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Set the Marker Cluster Renderer for the {@linkplain ClusterManager}
+     */
+    private void setRenderer() {
+        DefaultClusterRenderer<DropOffMarker> renderer = new MarkerClusterRenderer<>(
+                mCurrentActivity,
+                mGoogleMap,
+                mClusterManager
+        );
+        mClusterManager.setRenderer(renderer);
     }
 
     /***
@@ -683,7 +700,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             CameraPosition currentPlace = new CameraPosition.Builder()
                     .target(new LatLng(mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude()))
-                    .zoom(16f)
+                    .zoom(ZOOM_LEVEL)
                     .bearing(bearing)
                     .build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace));

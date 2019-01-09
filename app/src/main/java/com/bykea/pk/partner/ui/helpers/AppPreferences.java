@@ -1263,47 +1263,7 @@ public class AppPreferences {
                 .getString(Keys.DELIVERY_TYPE, StringUtils.EMPTY);
     }
 
-    /**
-     * Save Multi Delivery Trip ID's into shared preference.
-     *
-     * @param TripID The trip id collection.
-     */
-    public static void setMultiDeliveryTrips(List<String> TripID) {
-        Set<String> set = new HashSet<String>();
-        if (TripID != null)
-            set.addAll(TripID);
-        mSharedPreferences
-                .edit()
-                .putStringSet(Keys.MULTIDELIVERY_TRIP_ID,
-                        set)
-                .apply();
-    }
 
-    /**
-     * Fetch the Multi Delivery Trip ID Collection.
-     *
-     * @return The collection of trip id.
-     */
-    public static List<String> getMultiDeliveryTrip() {
-        Set<String> set = mSharedPreferences
-                .getStringSet(Keys.MULTIDELIVERY_TRIP_ID, null);
-        if (set==null) return null;
-        List<String> list = new ArrayList<>();
-        list.addAll(set);
-        return list;
-    }
-
-    /**
-     * Save Multi Delivery Complete Trip Counts
-     *
-     * @param count The count of completed trip in the batch.
-     */
-    public static void saveMultiDeliveryCompletedTripCounts(int count) {
-        mSharedPreferences
-                .edit()
-                .putInt(Keys.MULTIDELIVERY_COMPLETED_COUNT, count)
-                .apply();
-    }
 
     /**
      * Fetch the multi delivery completed trip count.

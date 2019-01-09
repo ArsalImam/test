@@ -10,7 +10,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer
 /**
  * Drop Down Marker Class
  */
-data class DropOffMarker(private val position: LatLng) : ClusterItem {
+data class DropOffMarker(private val position: LatLng, var number: Int) : ClusterItem {
 
     override fun getPosition(): LatLng {
         return position

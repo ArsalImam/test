@@ -135,7 +135,6 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     private long mLastClickTime;
     private UserRepository repository;
     private MultiDeliveryTrip tripInfo;
-    private int completedTripsCount;
     private int tripCounts;
     private MultiDeliveryInvoiceData invoice;
     private String TAG = MultiDeliveryFeedbackResponse.class.getSimpleName();
@@ -159,7 +158,6 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
         tripCounts = AppPreferences.getMultiDeliveryCallDriverData().getBookings().size();
-        completedTripsCount = AppPreferences.getMultiDeliveryCompletedTripCounts();
 
         MultiDeliveryCallDriverData callDriverData = AppPreferences.
                 getMultiDeliveryCallDriverData();

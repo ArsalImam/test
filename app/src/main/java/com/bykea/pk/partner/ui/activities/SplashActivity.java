@@ -380,6 +380,7 @@ public class SplashActivity extends BaseActivity {
     private void checkTripType(CheckDriverStatusResponse response) {
 
         if (response.getData().getTrip() == null) {
+            Utils.setCallIncomingState();
             startHomeActivity();
             return;
         }
