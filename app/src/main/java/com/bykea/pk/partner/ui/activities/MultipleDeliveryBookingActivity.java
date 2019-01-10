@@ -169,6 +169,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         isResume = true;
         AppPreferences.setIsOnTrip(true);
         checkGps();
+        setTripStates();
         checkConnectivity(mCurrentActivity);
         AppPreferences.setJobActivityOnForeground(true);
     }
@@ -1144,7 +1145,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             timeTv.setVisibility(View.GONE);
             timeUnitLabelTv.setVisibility(View.GONE);
             timeView.setVisibility(View.GONE);
-            pickupMarker.remove();
+            if (pickupMarker != null)
+                pickupMarker.remove();
             pickView.setVisibility(View.GONE);
             distanceTv.setVisibility(View.GONE);
             pickUpDistanceUnit.setVisibility(View.GONE);

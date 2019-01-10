@@ -959,6 +959,7 @@ public class HomeFragment extends Fragment {
         Gson gson = new Gson();
         if (response.getData().getType()
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<NormalCallData>() {
             }.getType();
@@ -979,6 +980,7 @@ public class HomeFragment extends Fragment {
                         .startFeedbackFromResume(mCurrentActivity);
             }
         } else {
+            AppPreferences.setDeliveryType(Constants.CallType.BATCH);
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<MultiDeliveryCallDriverData>() {
             }.getType();

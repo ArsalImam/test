@@ -1244,7 +1244,7 @@ public class AppPreferences {
     /**
      * Set the multi delivery status.
      *
-     * @param isMultiDelivery true if multi delivery ride other wise false.
+     * @param type The type of delivery {@linkplain Constants.CallType}
      */
     public static void setDeliveryType(String type) {
         mSharedPreferences
@@ -1254,24 +1254,13 @@ public class AppPreferences {
     }
 
     /**
-     * Fetch the status of ride i.e Multi Delivery ride or not.
+     * Fetch the status of delivery i.e BATCH & SINGLE.
      *
-     * @return The status true or false indicating the ride is of Multi Delivery or not.
+     * @return The status i.e BATCH & SINGLE.
      */
     public static String getDeliveryType() {
         return mSharedPreferences
                 .getString(Keys.DELIVERY_TYPE, StringUtils.EMPTY);
-    }
-
-
-
-    /**
-     * Fetch the multi delivery completed trip count.
-     *
-     * @return The count of multi delivery completed trip count.
-     */
-    public static int getMultiDeliveryCompletedTripCounts() {
-        return mSharedPreferences.getInt(Keys.MULTIDELIVERY_COMPLETED_COUNT, 0);
     }
 
     //endregion

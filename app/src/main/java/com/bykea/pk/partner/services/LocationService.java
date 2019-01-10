@@ -305,6 +305,7 @@ public class LocationService extends Service {
         } else if (isDriverLogin && driverOnTrip) {
             String tripNo = StringUtils.EMPTY;
             String status = StringUtils.EMPTY;
+            if (StringUtils.isBlank(AppPreferences.getDeliveryType())) return StringUtils.EMPTY;
             if(AppPreferences.getDeliveryType().
                     equalsIgnoreCase(Constants.CallType.SINGLE)) {
                 NormalCallData callData = AppPreferences.getCallData();

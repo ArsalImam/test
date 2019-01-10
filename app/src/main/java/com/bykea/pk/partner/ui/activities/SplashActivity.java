@@ -389,6 +389,7 @@ public class SplashActivity extends BaseActivity {
         Gson gson = new Gson();
         if (response.getData().getType()
                 .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
 
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<NormalCallData>() {
@@ -422,6 +423,7 @@ public class SplashActivity extends BaseActivity {
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<MultiDeliveryCallDriverData>() {
             }.getType();
+            AppPreferences.setDeliveryType(Constants.CallType.BATCH);
             MultiDeliveryCallDriverData deliveryCallDriverData = gson.fromJson(trip, type);
             AppPreferences.setMultiDeliveryCallDriverData(deliveryCallDriverData);
             // check for unfinished ride later

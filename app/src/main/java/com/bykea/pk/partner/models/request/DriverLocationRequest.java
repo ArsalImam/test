@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.models.request;
 
+import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.google.gson.annotations.SerializedName;
 
@@ -39,7 +40,7 @@ public class DriverLocationRequest {
     private ArrayList<TrackingData> trackingData;
 
     @SerializedName(("bookings"))
-    private List<TrackingData> batchBookings;
+    private List<MultipleDeliveryRemainingETA> batchBookings;
 
     @SerializedName("uuid")
     private String uuid;
@@ -126,11 +127,11 @@ public class DriverLocationRequest {
         this.uuid = uuid;
     }
 
-    public List<TrackingData> getBatchBookings() {
+    public List<MultipleDeliveryRemainingETA> getBatchBookings() {
         return batchBookings;
     }
 
-    public void setBatchBookings(ArrayList<TrackingData> batchBookings) {
+    public void setBatchBookings(List<MultipleDeliveryRemainingETA> batchBookings) {
         this.batchBookings = batchBookings;
     }
 

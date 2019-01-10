@@ -11,6 +11,7 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesList;
 import com.bykea.pk.partner.models.data.RankingResponse;
@@ -408,7 +409,7 @@ public class UserRepository {
             return;
         }
 
-        final ArrayList<TrackingData> trackingDataList = new ArrayList<>();
+        final ArrayList<MultipleDeliveryRemainingETA> trackingDataList = new ArrayList<>();
         final List<MultipleDeliveryBookingResponse> bookingResponseList =
                 callDriverData.getBookings();
 
@@ -439,11 +440,11 @@ public class UserRepository {
                             Log.d(TAG, tripID);
                             int distance = element.getDistance().getValueInt();
                             int duration = element.getDuration().getValueInt();
-                            TrackingData trackingData = new TrackingData();
-                            trackingData.setTripID(tripID);
-                            trackingData.setRemainingDistance(distance);
-                            trackingData.setRemainingTime(duration);
-                            trackingDataList.add(trackingData);
+                            MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
+                            remainingETA.setTripID(tripID);
+                            remainingETA.setRemainingDistance(distance);
+                            remainingETA.setRemainingTime(duration);
+                            trackingDataList.add(remainingETA);
                             counter[0]++;
                         }
                         locationRequest.setBatchBookings(trackingDataList);
