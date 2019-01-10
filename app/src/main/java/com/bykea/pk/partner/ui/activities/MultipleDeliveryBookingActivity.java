@@ -168,7 +168,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         setCurrentLocation();
         isResume = true;
         AppPreferences.setIsOnTrip(true);
-        setTripStates();
         checkGps();
         checkConnectivity(mCurrentActivity);
         AppPreferences.setJobActivityOnForeground(true);
@@ -397,6 +396,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     getDriverRoadPosition(driverLatLng);
                     if (!callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP))
                         addPickupMarker();
+                    setTripStates();
                     updateDropOffMarkers();
                     setPickupBounds();
                 }

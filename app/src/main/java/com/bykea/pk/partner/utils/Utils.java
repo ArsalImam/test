@@ -2977,7 +2977,6 @@ public class Utils {
         setCallIncomingState();
         AppPreferences.setWalletAmountIncreased(false);
         AppPreferences.setAvailableStatus(true);
-        AppPreferences.setMultiDeliveryCallDriverData(null);
     }
 
     //endregion
