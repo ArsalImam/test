@@ -8,7 +8,10 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer
 
 
 /**
- * Drop Down Marker Class
+ * Drop Down Marker Data Class
+ *
+ * @param position The [LatLng] coordinates.
+ * @param number The number that will be display on marker.
  */
 data class DropOffMarker(private val position: LatLng, var number: Int) : ClusterItem {
 

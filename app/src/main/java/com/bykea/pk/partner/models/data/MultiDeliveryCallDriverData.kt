@@ -46,6 +46,11 @@ data class MultiDeliveryCallDriverData(
 
     /**
      * Get trip by trip id
+     *
+     * @param The [MultipleDeliveryBookingResponse] object.
+     *
+     * @return The booking object according to their trip ID.
+     *
      */
     fun getTripById(tripID: String): MultipleDeliveryBookingResponse? {
         bookings?.let {
@@ -60,6 +65,12 @@ data class MultiDeliveryCallDriverData(
 
     /**
      * Check for unfinished trip
+     *
+     * @param response The [MultiDeliveryCallDriverData] object.
+     *
+     * @return True if the trip status is not [TripStatus.ON_COMPLETED_TRIP] &
+     * not [TripStatus.ON_FEEDBACK_TRIP] other wise its mean that there
+     * is not trip available return false
      */
     fun isUnfinishedTripRemaining(response: MultiDeliveryCallDriverData): Boolean {
         val bookingResponseList = response.bookings
