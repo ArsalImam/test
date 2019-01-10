@@ -22,7 +22,6 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.PostBankAccountActivity;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
-import com.bykea.pk.partner.ui.activities.ChangePinActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LicenseActivity;
 import com.bykea.pk.partner.ui.activities.MotorbikeActivity;
@@ -62,8 +61,6 @@ public class ProfileFragment extends Fragment {
     FontTextView driverLatLngTv;
     @BindView(R.id.personalInfoTv)
     FontTextView personalInfoTv;
-    @BindView(R.id.pinCodeTv)
-    FontTextView pinCodeTv;
     @BindView(R.id.licenseInfoTv)
     FontTextView licenseInfoTv;
     @BindView(R.id.motorbikeInfoTv)
@@ -76,6 +73,8 @@ public class ProfileFragment extends Fragment {
     LinearLayout llTop;
     @BindView(R.id.ivHomePin)
     ImageView ivHomePin;
+    @BindView(R.id.tvEmailLogFiles)
+    FontTextView tvEmailLogFiles;
 
     private UserRepository repository;
     private HomeActivity mCurrentActivity;
@@ -124,6 +123,7 @@ public class ProfileFragment extends Fragment {
         }
         String appVersion = "v " + Utils.getVersion(mCurrentActivity);
         if (BuildConfig.DEBUG) {
+            tvEmailLogFiles.setVisibility(View.VISIBLE);
             if (ApiTags.BASE_SERVER_URL.contains("staging")) {
                 appVersion = appVersion + " - Staging URLs " + ApiTags.BASE_SERVER_URL;
             } else {
@@ -147,41 +147,50 @@ public class ProfileFragment extends Fragment {
         repository.getProfileData(mCurrentActivity, callbackHandler);
     }
 
-    @OnClick({R.id.personalInfoTv, R.id.termsTv, R.id.pinCodeTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv, R.id.bankAccDetailsTv})
+    @OnClick({R.id.personalInfoTv, R.id.termsTv, R.id.licenseInfoTv, R.id.motorbikeInfoTv,
+            R.id.bankAccDetailsTv, R.id.tvEmailLogFiles})
     public void onClick(View view) {
-        if (mPersonalInfo != null) {
-            switch (view.getId()) {
-                case R.id.personalInfoTv:
+        switch (view.getId()) {
+            case R.id.personalInfoTv:
+                if (mPersonalInfo != null) {
                     Intent intent = new Intent(mCurrentActivity, PersonalActivity.class);
                     intent.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent);
-                    break;
-                case R.id.pinCodeTv:
-                    startActivity(new Intent(getActivity(), ChangePinActivity.class));
-                    break;
-                case R.id.licenseInfoTv:
+                }
+                break;
+
+            case R.id.licenseInfoTv:
+                if (mPersonalInfo != null) {
                     Intent intent2 = new Intent(mCurrentActivity, LicenseActivity.class);
                     intent2.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent2);
-                    break;
-                case R.id.motorbikeInfoTv:
+                }
+                break;
+            case R.id.motorbikeInfoTv:
+                if (mPersonalInfo != null) {
                     Intent intent3 = new Intent(mCurrentActivity, MotorbikeActivity.class);
                     intent3.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent3);
-                    break;
-                case R.id.bankAccDetailsTv:
+                }
+                break;
+            case R.id.bankAccDetailsTv:
+                if (mPersonalInfo != null) {
                     Intent intent4 = new Intent(mCurrentActivity, PostBankAccountActivity.class);
                     intent4.putExtra(Constants.SETTINGS_DATA_EXTRAS, mPersonalInfo);
                     startActivity(intent4);
-                    break;
-                case R.id.termsTv:
-                    if (AppPreferences.getSettings() != null) {
-                        Utils.startCustomWebViewActivity(mCurrentActivity,
-                                AppPreferences.getSettings().getSettings().getTerms(), "Terms of Services");
-                    }
-                    break;
-            }
+                }
+                break;
+            case R.id.termsTv:
+                if (AppPreferences.getSettings() != null) {
+                    Utils.startCustomWebViewActivity(mCurrentActivity,
+                            AppPreferences.getSettings().getSettings().getTerms(), "Terms of Services");
+                }
+                break;
+            case R.id.tvEmailLogFiles:
+                Utils.sendEmailToDeveloper(mCurrentActivity);
+                break;
         }
+
     }
 
 
@@ -200,13 +209,13 @@ public class ProfileFragment extends Fragment {
                             enableViews(true);
                             mPersonalInfo = response.getData();
                             PilotData data = AppPreferences.getPilotData();
-                            data.setFullName(mPersonalInfo.getFull_name());
-                            data.setPilotImage(mPersonalInfo.getImg_id());
-                            data.setLicenseExpiry(mPersonalInfo.getLicense_expire());
+                            data.setFullName(mPersonalInfo.getFullName());
+                            data.setPilotImage(mPersonalInfo.getImgId());
+                            data.setLicenseExpiry(mPersonalInfo.getLicenseExpire());
                             mCurrentActivity.setPilotData(data);
                             AppPreferences.setPilotData(data);
                             AppPreferences.setProfileUpdated(true);
-                            driverNameTv.setText(mPersonalInfo.getFull_name());
+                            driverNameTv.setText(mPersonalInfo.getFullName());
                             driverAddressTv.setText(mPersonalInfo.getAddress());
                             driverCityTv.setText(mPersonalInfo.getCity());
                             if (StringUtils.isNotBlank(mPersonalInfo.getHomeLat())
@@ -252,7 +261,6 @@ public class ProfileFragment extends Fragment {
 
     private void enableViews(boolean enabled) {
         personalInfoTv.setEnabled(enabled);
-        pinCodeTv.setEnabled(enabled);
         licenseInfoTv.setEnabled(enabled);
         motorbikeInfoTv.setEnabled(enabled);
         bankAccDetailsTv.setEnabled(enabled);

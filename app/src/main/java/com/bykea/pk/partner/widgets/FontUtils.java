@@ -10,15 +10,17 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.MetricAffectingSpan;
 import android.util.LruCache;
 
+import com.bykea.pk.partner.DriverApp;
+
 public class FontUtils {
     private static LruCache<String, Typeface> TYPEFACE =
             new LruCache<String, Typeface>(13);
 //    private static Map<String, Typeface> TYPEFACE = new HashMap<String, Typeface>();
 
-    public static Typeface getFonts(Context context, String name) {
+    public static Typeface getFonts(String name) {
         Typeface typeface = TYPEFACE.get(name);
         if (typeface == null) {
-            typeface = Typeface.createFromAsset(context.getAssets(), "fonts/"
+            typeface = Typeface.createFromAsset(DriverApp.getContext().getAssets(), "fonts/"
                     + name);
             TYPEFACE.put(name, typeface);
         }
@@ -53,7 +55,7 @@ public class FontUtils {
         private Typeface mTypeface;
 
         public TypefaceSpan(Context context, String typefaceName) {
-            mTypeface = getFonts(context, typefaceName);
+            mTypeface = getFonts(typefaceName);
 
 //            if (mTypeface == null) {
 //                mTypeface = Typeface.createFromAsset(context.getApplicationContext()

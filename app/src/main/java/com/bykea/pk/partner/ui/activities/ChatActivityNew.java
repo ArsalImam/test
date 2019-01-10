@@ -446,7 +446,12 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                                                                   voiceMsgLayout.setVisibility(View.GONE);
                                                                   messageEdit.setVisibility(View.VISIBLE);
                                                                   try {
-                                                                      if (isRecording && event.getRawX() > 400) {
+                                                                      long elapsedMillis =
+                                                                              SystemClock.elapsedRealtime() -
+                                                                                      chronometer.getBase();
+                                                                      if (isRecording &&
+                                                                              event.getRawX() > 400 &&
+                                                                              elapsedMillis >= Constants.MINIMUM_VOICE_RECORDING) {
                                                                           stopRecording();
                                                                           shouldUploadFile = true;
                                                                       } else {

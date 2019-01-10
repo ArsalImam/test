@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/country_dialog_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="@dimen/_8sdp"
+        app:srcCompat="@drawable/ic_invalid_code" />
+
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tvErrorMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin.small"
+        android:layout_marginBottom="@dimen/margin.small"
+        android:gravity="center"
+        android:text="@string/invalid_code_error"
+        android:textColor="@color/secondaryColorDark" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+
+        <com.bykea.pk.partner.widgets.FontButton
+            android:id="@+id/ivPositive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_toRightOf="@id/ivNegative"
+            android:background="@drawable/button_green"
+            android:text="@string/button_text_ok"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+</LinearLayout>

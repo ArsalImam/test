@@ -1,11 +1,16 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,29 +18,25 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NotificationData;
+import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -47,6 +48,15 @@ import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -57,7 +67,10 @@ import org.greenrobot.eventbus.Subscribe;
 
 
 public class BaseActivity extends AppCompatActivity {
+    private static final int LOCATION_DIALOG = 221;
     private static final int REQUEST_CODE = 203;
+    private static final int PERMISSION_REQUEST_CODE = 1010;
+    public static final String GPS_ENABLE_EVENT = "GPS_ENABLE_EVENT";
     private Toolbar mToolbar;
     private FontTextView mTitleTv, status, demandBtn;
     private ImageView mLogo, rightIv;
@@ -68,11 +81,18 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isScreenInFront;
     private ProgressDialog progressDialog;
     private Dialog notificationDialog;
-    private final String ACCESS_FINE_LOCATION = "android.permission.ACCESS_FINE_LOCATION";
-    private final String PHONE_STATE = "android.permission.READ_PHONE_STATE";
-    private final String CALL_STATE = "android.permission.CALL_PHONE";
-
+    private final String ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private final String PHONE_STATE = Manifest.permission.READ_PHONE_STATE;
+    private final String CALL_STATE = Manifest.permission.CALL_PHONE;
+    private final String SMS_READ = Manifest.permission.READ_SMS;
+    private final String SMS_RECIEVE = Manifest.permission.RECEIVE_SMS;
     private RelativeLayout statusLayout;
+
+    // A reference to the service used to get location updates.
+    private LocationService mService = null;
+
+    // Tracks the bound state of the service.
+    private boolean mBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +112,16 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+        //TODO check bindservice
+        /*bindService(new Intent(this, LocationService.class), mServiceConnection,
+                Context.BIND_AUTO_CREATE);*/
     }
 
     @Override
@@ -125,14 +155,35 @@ public class BaseActivity extends AppCompatActivity {
             int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
             int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), PHONE_STATE);
             int call = ContextCompat.checkSelfPermission(getApplicationContext(), CALL_STATE);
+            boolean smsPermissionRequired = !Permissions.hasSMSPermissions(mCurrentActivity);
             if (location != PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE}, 1010);
+                if (smsPermissionRequired) {
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE, SMS_READ,SMS_RECIEVE},
+                            PERMISSION_REQUEST_CODE);
+                } else {
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, PHONE_STATE},
+                            PERMISSION_REQUEST_CODE);
+                }
             } else if (location == PackageManager.PERMISSION_GRANTED && phoneState != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{PHONE_STATE}, 1010);
+                if (smsPermissionRequired) {
+                    requestPermissions(new String[]{PHONE_STATE, SMS_READ,SMS_RECIEVE}, PERMISSION_REQUEST_CODE);
+                } else {
+                    requestPermissions(new String[]{PHONE_STATE}, PERMISSION_REQUEST_CODE);
+                }
             } else if (location != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{ACCESS_FINE_LOCATION}, 1010);
-            }else if (call != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{CALL_STATE}, 1010);
+                if (smsPermissionRequired) {
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, SMS_READ,SMS_RECIEVE},
+                            PERMISSION_REQUEST_CODE);
+                } else {
+                    requestPermissions(new String[]{ACCESS_FINE_LOCATION},
+                            PERMISSION_REQUEST_CODE);
+                }
+            } else if (call != PackageManager.PERMISSION_GRANTED) {
+                if (smsPermissionRequired) {
+                    requestPermissions(new String[]{CALL_STATE, SMS_READ,SMS_RECIEVE}, PERMISSION_REQUEST_CODE);
+                } else {
+                    requestPermissions(new String[]{CALL_STATE}, PERMISSION_REQUEST_CODE);
+                }
             } else {
                 hasPermission = true;
             }
@@ -226,6 +277,18 @@ public class BaseActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1010) {
             checkPermissions(false);
+        } else if (requestCode == Permissions.LOCATION_PERMISSION || requestCode == LOCATION_DIALOG) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    EventBus.getDefault().post(GPS_ENABLE_EVENT);
+                    ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+                    Utils.redLog("BaseActivity", "Location Enabled");
+                    break;
+                case Activity.RESULT_CANCELED:
+                    Utils.redLog("BaseActivity", "Location Not Enabled");
+                    break;
+            }
+
         }
     }
 
@@ -269,13 +332,55 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isLocSettingsDialogCalled;
 
     public void checkGps() {
-        if (!Utils.isGpsEnable(mCurrentActivity)) {
+        if (!Utils.isGpsEnable()) {
             isLocSettingsDialogCalled = true;
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         } else if (isLocSettingsDialogCalled) {
             Dialogs.INSTANCE.dismissDialog();
             isLocSettingsDialogCalled = false;
         }
+    }
+
+    /***
+     * Location Dialog for Enabling location via Google Setting Permission.
+     */
+    public void showLocationDialog() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(10000 / 2);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(locationRequest);
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+        builder.setAlwaysShow(true);
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                Utils.redLog("RideCatActivity", "All location settings are satisfied. The client can initialize");
+                // All location settings are satisfied. The client can initialize
+                // location requests here.
+            }
+        });
+
+        task.addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (e instanceof ResolvableApiException) {
+                    // Location settings are not satisfied, but this can be fixed
+                    // by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        resolvable.startResolutionForResult(mCurrentActivity, LOCATION_DIALOG);
+                    } catch (IntentSender.SendIntentException sendEx) {
+                        // Ignore the error.
+                    }
+                }
+            }
+        });
     }
 
 
@@ -392,12 +497,18 @@ public class BaseActivity extends AppCompatActivity {
 //        getToolbar().setLogo(R.drawable.top_logo);
     }
 
-    public void showBismillah(){
+    /***
+     * Display Driver Active button layout
+     */
+    public void showBismillah() {
         frameLayout_khudaHafiz.setVisibility(View.GONE);
         frameLayout_bismilla.setVisibility(View.VISIBLE);
     }
 
-    public void showKhudaHafiz(){
+    /***
+     * Display Driver In-Active button layout.
+     */
+    public void showKhudaHafiz() {
         frameLayout_khudaHafiz.setVisibility(View.VISIBLE);
         frameLayout_bismilla.setVisibility(View.GONE);
     }
@@ -457,6 +568,29 @@ public class BaseActivity extends AppCompatActivity {
         urduTextView.setText(urduText);
     }
 
+    /***
+     * Hide status layout on toolbar
+     */
+    public void hideStatusLayout() {
+        RelativeLayout statusLayout = findViewById(R.id.statusLayout);
+        if (statusLayout != null) {
+            statusLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /***
+     * Show status layout on toolbar
+     */
+    public void showStatusLayout() {
+        RelativeLayout statusLayout = findViewById(R.id.statusLayout);
+        if (statusLayout != null) {
+            statusLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /***
+     * Hide Urdu title from toolbar
+     */
     public void hideUrduTitle() {
         findViewById(R.id.tvTitleUrdu).setVisibility(View.GONE);
     }
@@ -556,9 +690,9 @@ public class BaseActivity extends AppCompatActivity {
         boolean isUrduNotification = StringUtils.isNotBlank(notificationData.getType()) &&
                 notificationData.getType().equalsIgnoreCase("urdu");
         if (isUrduNotification) {
-            msg.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
-            title.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
-            okIv.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
+            msg.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
+            title.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
+            okIv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         }
         setActionButton(notificationData, okIv);
         notificationDialog.setCancelable(false);
@@ -582,7 +716,7 @@ public class BaseActivity extends AppCompatActivity {
         boolean isUrduNotification = StringUtils.isNotBlank(notificationData.getType()) &&
                 notificationData.getType().equalsIgnoreCase("urdu");
         if (isUrduNotification) {
-            okIv.setTypeface(FontUtils.getFonts(mCurrentActivity, "jameel_noori_nastaleeq.ttf"));
+            okIv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         }
         setActionButton(notificationData, okIv);
         notificationDialog.setCancelable(false);
@@ -703,6 +837,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
+
     private long mLastClickTime;
 
     public boolean checkClickTime() {
@@ -713,5 +848,23 @@ public class BaseActivity extends AppCompatActivity {
         mLastClickTime = currentTime;
         return false;
     }
+
+
+    // Monitors the state of the connection to the service.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            mBound = false;
+        }
+    };
 
 }

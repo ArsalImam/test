@@ -103,7 +103,6 @@ public class CallingActivity extends BaseActivity {
     LinearLayout circle_distance_layout;
 
 
-
     private UserRepository repository;
     private MediaPlayer _mpSound;
     private CallingActivity mCurrentActivity;
@@ -113,6 +112,8 @@ public class CallingActivity extends BaseActivity {
     private int total = 1;
 
     private boolean isFreeDriverApiCalled = false;
+
+    public String TAG = CallingActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +148,7 @@ public class CallingActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
-         /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
+        /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(CallingActivity.this);
         AppPreferences.setCallingActivityOnForeground(true);
     }
@@ -353,8 +354,8 @@ public class CallingActivity extends BaseActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT-millisUntilFinished)/1000;
-            Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished+":"+progress+":"+counterTv.getText().toString());
+            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
+            Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished + ":" + progress + ":" + counterTv.getText().toString());
             if (progress >= 20) {
                 timer.onFinish();
             } else {
@@ -362,8 +363,8 @@ public class CallingActivity extends BaseActivity {
                 //progress = progress + 0.1f;
                 donutProgress.setProgress(progress);
                 try {
-                    counterTv.setText(String.valueOf((int)(millisUntilFinished/1000)));
-                }catch (NumberFormatException e){
+                    counterTv.setText(String.valueOf((int) (millisUntilFinished / 1000)));
+                } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
             }
@@ -420,15 +421,15 @@ public class CallingActivity extends BaseActivity {
 
     private void setInitialData() {
         NormalCallData callData = AppPreferences.getCallData();
-        Log.d("callData", new Gson().toJson(callData));
+        Utils.redLog(TAG, "Call Data: "+new Gson().toJson(callData));
         logMixpanelEvent(callData, false);
-//        callerNameTv.setText(callData.getPassName());
-//        startAddressTv.setText(callData.getStartAddress());
-//        timeTv.setText(callData.getArivalTime() + " min");
-//        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
 
-        String icon = Utils.getServiceIcon(callData.getCallType());
+        String icon = StringUtils.EMPTY;
+        //String icon = Utils.getServiceIcon(callData.getCallType());
+        if (Utils.useServiceIconProvidedByAPI(callData.getCallType())) {
+            icon = callData.getIcon();
+        }
         if (StringUtils.isNotBlank(icon)) {
             Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
             Picasso.get().load(Utils.getCloudinaryLink(icon))
@@ -450,49 +451,50 @@ public class CallingActivity extends BaseActivity {
             ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
         }
 
-       try{
-           kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
-           String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
-                   String.valueOf(callData.getCashKiWasooli());
-           cashKiWasooliTv.setText(cashKiWasoliValue);
-           customerRatingTv.setText(callData.getRating());
-           if (Utils.isSkipDropOff(callData)){
-               estimatedDistanceTv.setText("?");
-               destinationTv.setText("منتخب نہیں کی گئی");
-               cashKiWasooliLayout.setVisibility(View.GONE);
-               kraiKiKamaiLayout.setVisibility(View.GONE);
-               kharidariPriceLayout.setVisibility(View.GONE);
-               destinationTv.setAttr(mCurrentActivity, "jameel_noori_nastaleeq.ttf");
-               destinationTv.setGravity(Gravity.CENTER);
-               circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.rating_circle_call));
-               estimatedDistaneUnitTv.setVisibility(View.GONE);
+        try {
+            kraiKiKamaiTv.setText(String.valueOf(callData.getKraiKiKamai()));
+            String cashKiWasoliValue = callData.getCashKiWasooli() < 0 ? "0" :
+                    String.valueOf(callData.getCashKiWasooli());
+            cashKiWasooliTv.setText(cashKiWasoliValue);
+            customerRatingTv.setText(callData.getRating());
+            if (Utils.isSkipDropOff(callData)) {
+                estimatedDistanceTv.setText("?");
+                destinationTv.setText("منتخب نہیں کی گئی");
+                cashKiWasooliLayout.setVisibility(View.GONE);
+                kraiKiKamaiLayout.setVisibility(View.GONE);
+                kharidariPriceLayout.setVisibility(View.GONE);
+                destinationTv.setAttr(mCurrentActivity, "jameel_noori_nastaleeq.ttf");
+                destinationTv.setGravity(Gravity.CENTER);
+                circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.rating_circle_call));
+                estimatedDistaneUnitTv.setVisibility(View.GONE);
 
-           }else {
-               cashKiWasooliLayout.setVisibility(View.VISIBLE);
-               kraiKiKamaiLayout.setVisibility(View.VISIBLE);
-               circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.distance_green_circle_call));
-               estimatedDistaneUnitTv.setVisibility(View.VISIBLE);
-               estimatedDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
-               destinationTv.setText(callData.getEndAddress());
-               distanceAwayTv.setText(callData.getDistance());
-           }
+            } else {
+                cashKiWasooliLayout.setVisibility(View.VISIBLE);
+                kraiKiKamaiLayout.setVisibility(View.VISIBLE);
+                circle_distance_layout.setBackground(getResources().getDrawable(R.drawable.distance_green_circle_call));
+                estimatedDistaneUnitTv.setVisibility(View.VISIBLE);
+                estimatedDistanceTv.setText(String.valueOf(callData.getEstimatedDistance()));
+                destinationTv.setText(callData.getEndAddress());
+                distanceAwayTv.setText(callData.getDistance());
+            }
 
-           if (Utils.isPurchaseService(callData.getCallType())) {
-               kharidariPriceLayout.setVisibility(View.VISIBLE);
-               kharidariKiRaqamTv.setText(callData.getCodAmount());
-           }
+            if (Utils.isPurchaseService(callData.getCallType())) {
+                kharidariPriceLayout.setVisibility(View.VISIBLE);
+                kharidariKiRaqamTv.setText(callData.getCodAmount());
+            }
 
-           if (Utils.isRideService(callData.getCallType())){
-               kharidariPriceLayout.setVisibility(View.GONE);
-           }
+            if (Utils.isRideService(callData.getCallType())) {
+                kharidariPriceLayout.setVisibility(View.GONE);
+            }
 
-           if (Utils.isDeliveryService(callData.getCallType())){
-               kharidariPriceLayout.setVisibility(View.GONE);
+            if (Utils.isDeliveryService(callData.getCallType())) {
+                kharidariPriceLayout.setVisibility(View.GONE);
 
-           }
-       }catch (Exception e){
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-       }
+            Utils.redLog(TAG, e.getMessage(), e);
+        }
     }
 
 
@@ -508,7 +510,7 @@ public class CallingActivity extends BaseActivity {
                             Utils.setCallIncomingState();
                             AppPreferences.setTripStatus(TripStatus.ON_FREE);
                             stopSound();
-                            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, "", mCurrentActivity);
+                            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
                             finishActivity();
                         }
                     }

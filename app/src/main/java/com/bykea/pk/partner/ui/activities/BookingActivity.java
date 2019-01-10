@@ -26,17 +26,40 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bykea.pk.partner.Notifications;
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BeginRideResponse;
+import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
+import com.bykea.pk.partner.models.response.EndRideResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.tracking.AbstractRouting;
+import com.bykea.pk.partner.tracking.Route;
+import com.bykea.pk.partner.tracking.RouteException;
+import com.bykea.pk.partner.tracking.Routing;
+import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
+import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.NetworkChangeListener;
+import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,31 +75,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.response.ArrivedResponse;
-import com.bykea.pk.partner.models.response.BeginRideResponse;
-import com.bykea.pk.partner.models.response.CancelRideResponse;
-import com.bykea.pk.partner.models.response.EndRideResponse;
-import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.tracking.AbstractRouting;
-import com.bykea.pk.partner.tracking.Route;
-import com.bykea.pk.partner.tracking.RouteException;
-import com.bykea.pk.partner.tracking.Routing;
-import com.bykea.pk.partner.tracking.RoutingListener;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Keys;
-import com.bykea.pk.partner.utils.NetworkChangeListener;
-import com.bykea.pk.partner.utils.Permissions;
-import com.bykea.pk.partner.utils.TripStatus;
-import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.maps.android.PolyUtil;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -93,6 +91,9 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+//import com.google.android.gms.location.places.Place;
+//import com.google.android.gms.location.places.Places;
 
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
@@ -156,10 +157,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private String canceOption = "Didn't show up";
 
     //GOOGLE NEAR BY PLACE SEARCH VIEW
-    protected GoogleApiClient mGoogleApiClient;
+//    protected GoogleApiClient mGoogleApiClient;
     private PlaceAutocompleteAdapter mAdapter;
     private AutoCompleteTextView mAutocompleteView;
-    private Place place = null;
+//    private Place place = null;
 
     public static boolean isJobActivityLive = false;
     //    private List<com.google.maps.model.LatLng> mCapturedLocations;
@@ -200,10 +201,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         AppPreferences.setStatsApiCallRequired(true);
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
-        mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
-                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
-                .addApi(Places.GEO_DATA_API)
-                .build();
+//        mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
+//                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
+//                .addApi(Places.GEO_DATA_API)
+//                .build();
 
 
         mapView = (MapView) findViewById(R.id.jobMapFragment);
@@ -362,6 +363,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
             R.id.endAddressTv, R.id.ivTopUp, R.id.tvCustomerPhone})
     public void onClick(View view) {
+
         switch (view.getId()) {
             case R.id.chatBtn:
                 if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
@@ -575,16 +577,69 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                //Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                Utils.callingIntent(mCurrentActivity, getSenderNumber());
                 Utils.redLog("BookingActivity", "Call Sender");
             }
         }, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.callingIntent(mCurrentActivity, callData.getRec_no());
+                //Utils.callingIntent(mCurrentActivity, callData.getRec_no());
+                Utils.callingIntent(mCurrentActivity, getRecipientNumber());
                 Utils.redLog("BookingActivity", "Call Recipient");
             }
         });
+    }
+
+
+    /***
+     * Validates ride type for Food delivery.
+     * @return if service type is Food delivery return true, otherwise false.
+     */
+    private boolean isServiceTypeFoodDelivery() {
+        if (callData != null) {
+            return Constants.RIDE_TYPE_FOOD_DELIVERY.equalsIgnoreCase(callData.getCallType());
+        }
+        return false;
+    }
+
+    /***
+     * Get Sender phone number according to Service type.
+     * @return Phone number for Sender
+     */
+    private String getSenderNumber() {
+        if (callData != null) {
+            if (isServiceTypeFoodDelivery()) {
+                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
+                        || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())
+                        || TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
+                    return callData.getRec_no();
+                }
+            } else {
+                return callData.getPhoneNo();
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /***
+     * Get Receiver phone number according to Service type.
+     * @return Phone number for Receiver
+     */
+    private String getRecipientNumber() {
+        if (callData != null) {
+            if (isServiceTypeFoodDelivery()) {
+                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
+                        || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
+                    return callData.getRec_no();
+                } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
+                    return callData.getPhoneNo();
+                }
+            } else {
+                return callData.getRec_no();
+            }
+        }
+        return StringUtils.EMPTY;
     }
 /*
     private void logMixPanelEvent(String status) {
@@ -683,7 +738,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
         registerReceiver(locationReceiver, new IntentFilter(Keys.LOCATION_UPDATE_BROADCAST));
     }
 
@@ -714,7 +769,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     protected void onStop() {
         super.onStop();
         AppPreferences.setJobActivityOnForeground(false);
-        mGoogleApiClient.disconnect();
+//        mGoogleApiClient.disconnect();
 
     }
 
@@ -766,7 +821,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             progressDialogJobActivity.setMessage(getString(R.string.internet_error));
         }
         AppPreferences.setIsOnTrip(true);
-        ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+        ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
         mLocBearing = AppPreferences.getBearing() + "";
         mCurrentLocation = new Location("");
         mCurrentLocation.setLongitude(AppPreferences.getLongitude());
@@ -795,7 +850,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     setStartedState();
                 }
             }
-            String icon = Utils.getServiceIcon(callData.getCallType());
+            //String icon = Utils.getServiceIcon(callData.getCallType());
+            String icon = StringUtils.EMPTY;
+            //String icon = Utils.getServiceIcon(callData.getCallType());
+            if (Utils.useServiceIconProvidedByAPI(callData.getCallType())) {
+                icon = callData.getIcon();
+            }
             if (StringUtils.isNotBlank(icon)) {
                 Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
                 Picasso.get().load(Utils.getCloudinaryLink(icon))
@@ -993,7 +1053,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (null == driverMarker) {
                 driverMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
                         Utils.getMapIcon(callData.getCallType())))
-                    /*.anchor(0.5f, 0.5f)*/.position(new LatLng(Double.parseDouble(snappedLatitude),
+                        /*.anchor(0.5f, 0.5f)*/.position(new LatLng(Double.parseDouble(snappedLatitude),
                                 Double.parseDouble(snappedLongitude)))/*.flat(true).rotation(Float.parseFloat(mLocBearing))*/);
             }
 
@@ -1527,11 +1587,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     };
 
 
-    private void cancelByPassenger(boolean isCanceledByAdmin, String cancelMsg) {
+    private void cancelByPassenger(boolean isCanceledByAdmin) {
         playNotificationSound();
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, cancelMsg, mCurrentActivity);
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(isCanceledByAdmin, mCurrentActivity);
         mCurrentActivity.finish();
     }
 
@@ -1752,7 +1812,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     public void run() {
                         try {
                             if (response.getMessage().equalsIgnoreCase("Trip Not Found")) {
-                                cancelByPassenger(false, "");
+                                cancelByPassenger(false);
                             } else {
                                 if (shouldUpdateTripData(response.getData().getStatus())) {
                                     AppPreferences.setCallData(response.getData());
@@ -1797,11 +1857,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 @Override
                 public void run() {
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)) {
-                        cancelByPassenger(false, "");
+                        cancelByPassenger(false);
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
                         String message = intent.getStringExtra("msg");
-                        cancelByPassenger(true, message);
+                        cancelByPassenger(true);
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_COMPLETE_BY_ADMIN)) {
                         playNotificationSound();
@@ -1851,7 +1911,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         boolean isAdded = true;
         /*if (StringUtils.isBlank(callData.getRecName())) {
             isAdded = false;
-        } else */if (StringUtils.isBlank(callData.getRec_no())) {
+        } else */
+        if (StringUtils.isBlank(callData.getRec_no())) {
             isAdded = false;
         } else if (StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;

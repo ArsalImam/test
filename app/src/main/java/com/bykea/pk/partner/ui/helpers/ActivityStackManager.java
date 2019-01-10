@@ -8,11 +8,14 @@ import android.os.Build;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
+import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.services.HandleInactivePushService;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
@@ -22,9 +25,9 @@ import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
-import com.bykea.pk.partner.ui.activities.BookingActivity;
-import com.bykea.pk.partner.ui.activities.JsBankFingerSelectionActivity;
+import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
+import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
@@ -53,10 +56,62 @@ public class ActivityStackManager {
         return mActivityStack;
     }
 
-    public void startLoginActivity(Context mContext) {
-        Intent intent = new Intent(mContext, LoginActivity.class);
+
+    /***
+     * Open Number verification screen i.e. OTP
+     *
+     * @param context Calling context
+     */
+    public void startPhoneNumberVerificationActivity(Context context) {
+        Intent intent = new Intent(context, NumberVerificationActivity.class);
+        context.startActivity(intent);
+    }
+
+    /***
+     *  Open Login screen and clear all other activities
+     *
+     * @param context Calling context
+     */
+    public void startLoginActivityNoFlag(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+    }
+
+    /***
+     * Open splash screen and clear all activities from task.
+     * @param context Calling context.
+     */
+    public void startLandingActivity(Context context) {
+        Intent intent = new Intent(context, LandingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Start Login Activity and clear whole stack.
+     *
+     * @param context Calling context.
+     */
+    public void startLoginActivity(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+    }
+
+    /***
+     * Start login Activity
+     * @param mContext Calling context.
+     * @param clearWholeTask should whole stack need to be cleared before opening login screen.
+     */
+    public void startLoginActivity(Context mContext, boolean clearWholeTask) {
+        Intent intent = new Intent(mContext, LoginActivity.class);
+        if (clearWholeTask) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        }
         mContext.startActivity(intent);
     }
 
@@ -70,11 +125,39 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin, String cancelMsg, Context mContext) {
+    /***
+     * Start Home screen for Inactive push for user interaction
+     * @param mContext Calling context.
+     */
+    public void startHomeActvityForInActivePush(Context mContext) {
         Intent intent = new Intent(mContext, HomeActivity.class);
-        intent.putExtra("isCancelledTrip", true);
-        intent.putExtra("isCanceledByAdmin", isCanceledByAdmin);
-        intent.putExtra("cancelMsg", cancelMsg);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * clears activity stack before starting HomeActivity (if activity is already running it will not launch new instance)
+     * HomeFragment will be loaded from onNewIntent method of HomeActivity
+     *
+     * @param context calling activity
+     */
+    public void startHomeActivity(Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(Constants.Extras.NAVIGATE_TO_HOME_SCREEN, true);
+        context.startActivity(intent);
+    }
+
+    /**
+     * This method starts home activity with cancel extras that indicates we need to show cancel notification
+     */
+    public void startHomeActivityFromCancelTrip(boolean isCanceledByAdmin, Context mContext) {
+        Intent intent = new Intent(mContext, HomeActivity.class);
+        intent.putExtra(Constants.Extras.IS_CANCELED_TRIP, true);
+        intent.putExtra(Constants.Extras.IS_CANCELED_TRIP_BY_ADMIN, isCanceledByAdmin);
+//        intent.putExtra("cancelMsg", cancelMsg);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mContext.startActivity(intent);
@@ -104,32 +187,52 @@ public class ActivityStackManager {
         }
     }
 
+    /*
+     * This method check for Android version of device and starts location service as foreground
+     * service when OS is greater or equal to Android O
+     */
     private void startService(Context mContext, Intent intent) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            mContext.startForegroundService(intent);
-//        } else {
-//            mContext.startService(intent);
-//        }
-        mContext.startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mContext.startForegroundService(intent);
+        } else {
+            mContext.startService(intent);
+        }
     }
 
-    public void stopLocationServiceForeGround(Context mContext) {
-        if (Utils.isServiceRunning(mContext, LocationService.class)) {
-            Intent intent = new Intent(mContext, LocationService.class);
+    /**
+     * This method stops Location Service.
+     *
+     * @param context Calling Context
+     * @see Constants.Actions#STOPFOREGROUND_ACTION
+     */
+    public synchronized void stopLocationService(Context context) {
+        if (Utils.isServiceRunning(context, LocationService.class)) {
+            Intent intent = new Intent(context, LocationService.class);
             intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
-            startService(mContext, intent);
+            startService(context, intent);
         }
     }
 
-    public void stopLocationService(Context mContext) {
-        if (Utils.isServiceRunning(mContext, LocationService.class)) {
-            mContext.stopService(new Intent(mContext, LocationService.class));
-        }
-    }
-
-    public void restartLocationService(Context mContext) {
-        stopLocationService(mContext);
-        startLocationService(mContext);
+    /**
+     * This method restarts location service by first stopping the service if it is already running
+     * and then calling startLocationService method to start Location service. Handler added to fix
+     * issue for android 8.0 and above where notification gets removed when we try to start service
+     * immediately after stopping it.
+     *
+     * @param context Calling Context
+     */
+    public void restartLocationService(final Context context) {
+        /*stopLocationService(context);
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startLocationService(context);
+            }
+        }, Constants.RESTART_LOCATION_SERVICE_DELAY);*/
+        Intent intent = new Intent(context, LocationService.class);
+        intent.setAction(Utils.isServiceRunning(context, LocationService.class) ?
+                Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
+        startService(context, intent);
     }
 
     public void restartLocationService(Context mContext, String STATUS) {
@@ -143,9 +246,13 @@ public class ActivityStackManager {
     }
 
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
+
+        Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +
+                "PS status: " + Utils.isGpsEnable() + "Trip Status: " + AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE) +
+                "Not Delayed: " + Utils.isNotDelayed(callData.getData().getSentTime()));
         if (AppPreferences.getAvailableStatus()
-                && !AppPreferences.isAvailableStatusAPICalling()
-                && Utils.isGpsEnable(mContext)
+                //&& !AppPreferences.isAvailableStatusAPICalling()
+                && Utils.isGpsEnable()
                 && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
                 && Utils.isNotDelayed(callData.getData().getSentTime())) {
 
@@ -156,6 +263,7 @@ public class ActivityStackManager {
             callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             if (isFromGcm) {
                 callIntent.putExtra("isGcm", true);
+                Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
             }
             mContext.startActivity(callIntent);
         }
@@ -268,6 +376,21 @@ public class ActivityStackManager {
         Intent intent = new Intent(context, RegistrationActivity.class);
 //        Intent intent = new Intent(context, JsBankFingerSelectionActivity.class);
         context.startActivity(intent);
+    }
+
+
+    /**
+     * This method starts a service to handle Inactive Push Notification
+     *
+     * @param data    Notifiation data
+     * @param context Calling context
+     */
+    public void startHandleInactivePushService(Context context, OfflineNotificationData data) {
+        if (!Utils.isServiceRunning(context, HandleInactivePushService.class)) {
+            Intent intent = new Intent(context, HandleInactivePushService.class);
+            intent.putExtra(Constants.Extras.INACTIVE_PUSH_DATA, data);
+            context.startService(intent);
+        }
     }
 
 }

@@ -7,6 +7,7 @@
 
 
     <!--<color name="textColorPrimary">#5D5757</color>-->
+    <color name="kelly_green">#03a033</color>
     <color name="textColorPrimary">#302d2d</color>
     <color name="textColorPrimary676767">#676767</color>
     <color name="textColorPrimary1">#4e4e4e</color>
@@ -20,6 +21,7 @@
     <color name="secondaryColorLightf2f2f2">#f2f2f2</color>
     <color name="secondaryColorLightest1">#eaeaea</color>
     <color name="secondaryColorDark">#303030</color>
+    <color name="grey_light">#bcbdbc</color>
 
     <color name="colorAccent">#04aa32</color>
     <color name="windowBackground">#FFFFFF</color>
@@ -92,4 +94,5 @@
     <color name="color_e73836">#e73836</color>
 
     <color name="color_128c7e">#128c7e</color>
+    <color name="color_red">#de0200</color>
 </resources>

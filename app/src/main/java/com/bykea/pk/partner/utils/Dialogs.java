@@ -16,15 +16,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -35,7 +43,6 @@ import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
-import com.google.android.exoplayer.BuildConfig;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -111,6 +118,27 @@ public enum Dialogs {
         return ((null != mDialog) && mDialog.isShowing());
     }
 
+    /***
+     * Show Dialog to user for Invalid OTP code entry.
+     *
+     * @param context Calling context
+     */
+    public void showInvalidCodeDialog(Context context) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.invalid_code_dialog);
+        FontButton okIv = mDialog.findViewById(R.id.ivPositive);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+            }
+        });
+        mDialog.setCancelable(false);
+        showDialog();
+    }
+
+
     public void showLoader(Context context) {
         if (null != mDialog && mDialog.isShowing()) return;
         mDialog = new Dialog(context, R.style.actionSheetTheme);
@@ -178,7 +206,7 @@ public enum Dialogs {
         }
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
         FontTextView messageTv = ((FontTextView) mDialog.findViewById(R.id.messageTv));
-        messageTv.setTypeface(FontUtils.getFonts(context, "jameel_noori_nastaleeq.ttf"));
+        messageTv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         messageTv.setText(message);
         messageTv.setTextSize(context.getResources().getDimension(R.dimen._7sdp));
         ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
@@ -205,7 +233,7 @@ public enum Dialogs {
         }
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
         FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
-        messageTv.setTypeface(FontUtils.getFonts(context, "jameel_noori_nastaleeq.ttf"));
+        messageTv.setTypeface(FontUtils.getFonts("jameel_noori_nastaleeq.ttf"));
         messageTv.setText(message);
         messageTv.setTextSize(context.getResources().getDimension(R.dimen._7sdp));
         if (StringUtils.isNotBlank(title)) {
@@ -217,6 +245,32 @@ public enum Dialogs {
         showDialog();
     }
 
+    /***
+     * Shows battery dialog
+     * @param context Calling context
+     * @param title  Title which needs to be displayed.
+     * @param message Message which needs to be displayed.
+     * @param onClick Click listener
+     */
+    public void showAlertDialogForBattery(Context context,
+                                          String title,
+                                          String message,
+                                          View.OnClickListener onClick){
+
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_alert);
+        mDialog.setCancelable(false);
+        mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(onClick);
+        ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(message);
+        ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
+
+        showDialog();
+
+    }
 
     public void showAlertDialog(Context context, String title, String message, View.OnClickListener onClick) {
         dismissDialog();
@@ -331,13 +385,13 @@ public enum Dialogs {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                try{
-                    if (list.get(position).equalsIgnoreCase("Current Week")){
+                try {
+                    if (list.get(position).equalsIgnoreCase(mCurrentActivity.getString(R.string.current_week))) {
                         setCalenderCurrentWeek(tv); //week start from friday to thursday
-                    }else {
+                    } else {
                         setlastWeek(tv); //week start from friday
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -354,15 +408,15 @@ public enum Dialogs {
         try {
             DateFormat df = new SimpleDateFormat("d MMM");
             String startDate = "", endDate = "";
-            Calendar calendar=Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance();
             Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
             // get the starting and ending date
             // Set the calendar to friday of the current week
 
 
-            if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY){
+            if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
                 calendar.add(Calendar.DATE, -7);
-            }else if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY){
+            } else if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY) {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
             } else {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
@@ -379,7 +433,7 @@ public enum Dialogs {
             System.out.println("End Date = " + endDate);
 
             tv.setText(startDate + " - " + endDate);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -387,16 +441,16 @@ public enum Dialogs {
     public static void setCalenderCurrentWeek(TextView tv) {
         try {
             String startDate = "", endDate = "";
-            Calendar calendar=Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance();
             DateFormat df = new SimpleDateFormat("d MMM");
             Log.v("Current Week", String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
             // get the starting and ending date
             // Set the calendar to friday of the current week
 
-            if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY){
+            if (calendar.get(Calendar.DAY_OF_WEEK) > Calendar.FRIDAY) {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
             } else {
-                if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY){
+                if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY) {
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
                     System.out.println("Current week = " + Calendar.DAY_OF_WEEK);
                     calendar.add(Calendar.DATE, -7);
@@ -413,7 +467,7 @@ public enum Dialogs {
             System.out.println("End Date = " + endDate);
 
             tv.setText(startDate + " - " + endDate);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -474,13 +528,40 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showInactiveAccountDialog(final Context context, final String number, final String msg) {
+    /***
+     * Show Driver license expire Account deactivate message
+     * @param context Calling context
+     * @param number Support Helpline number
+     */
+    public void showInactiveAccountDialog(final Context context, final String number) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_inactive_account);
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+                Utils.callingIntent(context, number);
+            }
+        });
+        showDialog();
+    }
+
+    /***
+     * Show Region Out error message with support number
+     * @param context Calling Context
+     * @param number Support number
+     * @param msg Message which needs to be displayed.
+     */
+    public void showRegionOutErrorDialog(final Context context,
+                                         final String number,
+                                         final String msg) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_region_out);
         if (StringUtils.isNotBlank(msg)) {
-            ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(msg);
+            ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
         }
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -491,6 +572,32 @@ public enum Dialogs {
         });
         showDialog();
     }
+
+    /***
+     * Show IMEI not registered error message which takes user to report submit screen.
+     * @param context Calling Context
+     * @param msg Message which needs to be displayed.
+     * @param positive report submit click listener.
+     */
+    public void showImeiRegistrationErrorDialog(final Context context,
+                                                final SpannableStringBuilder msg,
+                                                final View.OnClickListener positive) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_imei_not_registerd);
+        if (StringUtils.isNotBlank(msg)) {
+            ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
+        }
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+                positive.onClick(v);
+            }
+        });
+        showDialog();
+    }
+
 
     public void showTopUpDialog(final Context context, final boolean isCourierType, final StringCallBack callBack) {
         if (null == context) return;
@@ -547,37 +654,28 @@ public enum Dialogs {
     }
 
     public void showLocationSettings(final Context context, final int requestCode) {
+        if (null == context) return;
         dismissDialog();
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.enable_gps_dialog);
 
-        // Setting DialogHelp Title
-        alertDialog.setTitle("GPS Settings");
+        ImageView okIv = mDialog.findViewById(R.id.ivPositive);
 
-        // Setting DialogHelp Message
-        alertDialog
-                .setMessage("Turn on your location from settings.");
-        alertDialog.setCancelable(false);
+        okIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (context instanceof BaseActivity) {
+                    dismissDialog();
+                    ((BaseActivity) context).showLocationDialog();
+                } else {
+                    dismissDialog();
+                    Intent intent = new Intent(
+                            Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ((Activity) context).startActivityForResult(intent, Constants.REQUEST_CODE_GPS_AND_LOCATION);
+                }
 
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Settings",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(
-                                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        ((AppCompatActivity) context).startActivityForResult(intent, requestCode);
-                    }
-                });
-
-        // on pressing cancel button
-        /*alertDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });*/
-
-        // Showing Alert Message
-        mDialog = alertDialog.create();
+            }
+        });
         showDialog();
     }
 
@@ -663,13 +761,23 @@ public enum Dialogs {
         showDialog();
     }
 
-    public void showLogoutDialog(Context context,
-                                 View.OnClickListener onClickListener) {
+    /**
+     * This method shows a pop up dialog with Urdu text and Tick/Cross as Positive/Negative Button
+     * Positive button will have Red background and negative will have green/colorAccent.
+     *
+     * @param context         Calling Context
+     * @param msg             Message to show in String
+     * @param onClickListener Callback to notify that OK/Positive button is clicked
+     */
+    public void showNegativeAlertDialog(Context context, String msg,
+                                        View.OnClickListener onClickListener) {
         dismissDialog();
-        mDialog = new Dialog(context, R.style.actionSheetTheme);
-        mDialog.setContentView(R.layout.logout_dialog);
-        FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
-        FontButton cancelIv = (FontButton) mDialog.findViewById(R.id.ivNegative);
+        mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+        mDialog.setContentView(R.layout.dialog_neg_alert_ur_tick_cross);
+        ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+        ImageView cancelIv = mDialog.findViewById(R.id.ivNegative);
+        FontTextView tvMsg = mDialog.findViewById(R.id.tvMsg);
+        tvMsg.setText(msg);
 
         cancelIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -690,7 +798,7 @@ public enum Dialogs {
         mDialog = new Dialog(context, R.style.actionSheetTheme);
         mDialog.setContentView(R.layout.dialog_alert_update_app);
         mDialog.setCancelable(false);
-        mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+        //mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
 
         mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -727,23 +835,19 @@ public enum Dialogs {
         showDialog();
     }
 
-
-    public void showSuccessDialogForgotPassword(Context context, View.OnClickListener onClick) {
-        dismissDialog();
-        mDialog = new Dialog(context, R.style.actionSheetTheme);
-        mDialog.setContentView(R.layout.forgot_password_success_dialog);
-        FontButton okIv = (FontButton) mDialog.findViewById(R.id.ivPositive);
-        okIv.setOnClickListener(onClick);
-        mDialog.setCancelable(false);
-        showDialog();
-    }
-
-
-    public void showSignUpSuccessDialog(Context context, View.OnClickListener onClick) {
+    /**
+     * This methods shows a pop up dialog when partner has successfully signed up
+     *
+     * @param context Calling context
+     * @param phoneNo Registered Phone No.
+     * @param onClick callback to handle positive button's click
+     */
+    public void showSignUpSuccessDialog(Context context, String phoneNo, View.OnClickListener onClick) {
         if (null == context) return;
         dismissDialog();
         mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
         mDialog.setContentView(R.layout.signup_success_dialog);
+        ((FontTextView) mDialog.findViewById(R.id.tvTrainingLinkMsg)).setText(context.getString(R.string.register_tarining_link_msg, phoneNo));
         mDialog.setCancelable(false);
         mDialog.findViewById(R.id.nextBtn).setOnClickListener(onClick);
         showDialog();
@@ -763,4 +867,115 @@ public enum Dialogs {
         showDialog();
     }
 
+    /**
+     * This method shows a dialog to enter base url for local builds
+     *
+     * @param activity    calling activity
+     * @param dataHandler call back handler
+     */
+    public void showInputAlert(final Activity activity, final StringCallBack dataHandler) {
+        try {
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+            alertDialogBuilder.setTitle("Enter Your IP");
+
+            final EditText input = new EditText(DriverApp.getContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+            input.setTextColor(activity.getResources().getColor(R.color.black));
+            input.setText(BuildConfig.FLAVOR_URL);
+            alertDialogBuilder.setView(input);
+
+            alertDialogBuilder.setPositiveButton("OK", null);
+
+            alertDialogBuilder.setCancelable(false);
+
+            final AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                @Override
+                public void onShow(DialogInterface dialog) {
+
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            if (input.getText().length() == 0) {
+                                Utils.appToast(activity, "enter your ip");
+                            } else if (!Utils.isValidUrl(input.getText().toString())) {
+                                Utils.appToast(activity, "enter valid url");
+                            } else {
+                                dataHandler.onCallBack(input.getText().toString());
+                                alertDialog.dismiss();
+                            }
+                        }
+                    });
+                }
+            });
+            alertDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * This method shows a pop up dialog with Urdu text and Tick/Cross as Positive/Negative Button
+     * It will hide cross button when OnClickListener for negative button is null
+     *
+     * @param context  Calling Context
+     * @param message  Message to display
+     * @param textSize Size of message textview (to use defualt text size i.e 22sdp pass 0)
+     * @param negative OnClickListener for callback when Negative button is pressed
+     * @param positive OnClickListener for callback when Positive button is pressed
+     */
+    public void showAlertDialogUrduWithTickCross(Context context, String message, float textSize,
+                                                 View.OnClickListener negative, View.OnClickListener positive) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+        mDialog.setContentView(R.layout.dialog_alert_tick_cross_urdu);
+
+        if (negative == null) {
+            mDialog.setCancelable(true);
+            mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+        } else {
+            mDialog.setCancelable(false);
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(negative);
+        }
+
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(positive);
+        FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
+        messageTv.setText(message);
+        if (textSize > 0f) {
+            messageTv.setTextSize(textSize);
+        }
+        showDialog();
+    }
+
+    /**
+     * This method creates a dialog to show cancel notification
+     *
+     * @param context Calling context
+     * @param message notification message to show
+     * @param onClick Callback to notify that OK/Positive button is clicked
+     */
+    public void showCancelNotification(Context context, String message, final StringCallBack onClick) {
+        if (null == context) return;
+        dismissDialog();
+        final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+        dialog.setContentView(R.layout.dialog_cancel_notification);
+        dialog.setCancelable(false);
+        dialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                onClick.onCallBack(StringUtils.EMPTY);
+            }
+        });
+        ((FontTextView) dialog.findViewById(R.id.messageTv)).setText(message);
+        dialog.show();
+    }
 }

@@ -16,7 +16,7 @@ import com.bykea.pk.partner.models.data.Predictions;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
-import com.google.android.gms.location.places.AutocompletePrediction;
+//import com.google.android.gms.location.places.AutocompletePrediction;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.utils.Utils;
 
@@ -148,11 +148,11 @@ public class PlaceAutocompleteAdapter
             public CharSequence convertResultToString(Object resultValue) {
                 // Override this method to display a readable result in the AutocompleteTextView
                 // when clicked.
-                if (resultValue instanceof AutocompletePrediction) {
-                    return ((AutocompletePrediction) resultValue).getFullText(null);
-                } else {
-                    return super.convertResultToString(resultValue);
-                }
+//                if (resultValue instanceof AutocompletePrediction) {
+//                    return ((AutocompletePrediction) resultValue).getFullText(null);
+//                } else {
+                return super.convertResultToString(resultValue);
+//                }
             }
         };
     }

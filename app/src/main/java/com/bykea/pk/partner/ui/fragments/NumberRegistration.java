@@ -95,6 +95,7 @@ public class NumberRegistration extends Fragment {
         } else {
             initAdapter();
         }
+        phoneNumberEt.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber()));
         phoneNumberEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         cnicEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         Utils.hideSoftKeyboard(this);

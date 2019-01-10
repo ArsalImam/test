@@ -9,10 +9,13 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.NotificationData;
+import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SavedPlaces;
+import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -20,14 +23,9 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
-import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.data.SettingsData;
-import com.bykea.pk.partner.models.response.NormalCallData;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -145,6 +143,7 @@ public class AppPreferences {
     public static String getPhoneNumber() {
         return mSharedPreferences.getString(Keys.PHONE_NUMBER, StringUtils.EMPTY);
     }
+
 
     public static String getDriverEmail() {
         return mSharedPreferences.getString(Keys.EMAIL, StringUtils.EMPTY);
@@ -537,8 +536,8 @@ public class AppPreferences {
 
 
     /*
-    * Sync Server Time with Device Time.
-    * */
+     * Sync Server Time with Device Time.
+     * */
     public static void setServerTimeDifference(long value) {
         Utils.redLog("Time Difference", "" + value);
         mSharedPreferences
@@ -688,7 +687,7 @@ public class AppPreferences {
         currentLatLng.setDate("" + Utils.getIsoDate());
         currentLatLng.setLat("" + lat);
         currentLatLng.setLng("" + lng);
-        if (!Utils.isGpsEnable(DriverApp.getContext())) {
+        if (!Utils.isGpsEnable()) {
             currentLatLng.setGps("0");
         }
         if (StringUtils.isNotBlank(STATUS)) {
@@ -707,7 +706,7 @@ public class AppPreferences {
         currentLatLng.setDate("" + Utils.getIsoDate());
         currentLatLng.setLat("" + lat);
         currentLatLng.setLng("" + lng);
-        if (!Utils.isGpsEnable(DriverApp.getContext())) {
+        if (!Utils.isGpsEnable()) {
             currentLatLng.setGps("0");
         }
         ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip();
@@ -904,6 +903,56 @@ public class AppPreferences {
                 .putInt(Keys.CASH_IN_HANDS, value)
                 .apply();
     }
+
+
+    /**
+     * Sets updated value for location response received count.
+     * when we don't receive location response from socket event we update response counter.
+     * upon certain counts we make driver offline forcefully.
+     * If socket received counter is reset to zero.
+     *
+     * @param responseCounter updated value for response counter.
+     */
+    public static void setLocationSocketNotReceivedCount(int responseCounter) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.LOCATION_RESPONSE_NOT_RECEIVED_COUNT, responseCounter)
+                .apply();
+    }
+
+    /***
+     * Get updated value store against socket response not received.
+     *
+     * @return return int of currently stored socket response not received.
+     */
+    public static int getSocketResponseNotReceivedCount() {
+        return mSharedPreferences
+                .getInt(Keys.LOCATION_RESPONSE_NOT_RECEIVED_COUNT, 0);
+    }
+
+
+    /***
+     * Update value for driver offline forcefully when location response is not received.
+     *
+     * @param driverOffline latest value for driver status offline
+     */
+    public static void setDriverOfflineForcefully(boolean driverOffline) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.DRIVER_OFFLINE_FORCEFULLY, driverOffline)
+                .apply();
+    }
+
+    /***
+     * Validate driver offline forcefully when location socket
+     * event is not returned with response after allowed retry window.
+     *
+     * @return True if response not received after retry windows count, else False;
+     */
+    public static boolean makeDriverOfflineForcefully() {
+        return mSharedPreferences.getBoolean(Keys.DRIVER_OFFLINE_FORCEFULLY, false);
+    }
+
 
     public static int getCashInHands() {
         return mSharedPreferences.getInt(Keys.CASH_IN_HANDS, 0);
@@ -1115,6 +1164,7 @@ public class AppPreferences {
         }
         return object;
     }
+
     public static void setInactiveCheckTime(long value) {
         mSharedPreferences
                 .edit()
@@ -1124,6 +1174,40 @@ public class AppPreferences {
 
     public static long getInactiveCheckTime() {
         return mSharedPreferences.getLong(Keys.INACTIVE_CHECK_TIME, 0);
+    }
+
+    /**
+     * This method gets local server url stored in shared pref.
+     *
+     * @param key shared pref. key for local url
+     * @return Local URL String
+     */
+    public static String getLocalBaseUrl(String key) {
+        return mSharedPreferences.getString(key, BuildConfig.FLAVOR_URL);
+    }
+
+    /**
+     * This method saves base url in shared pref. that we are getting from users on
+     * local flavoured builds via input dialog
+     *
+     * @param value value for local url
+     */
+    public static void setLocalBaseUrl(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.BASE_URL_LOCAL, value)
+                .apply();
+    }
+
+    /***
+     * Clear preference when driver is unauthoried.
+     */
+    public static void clearForUnauthorized() {
+        saveLoginStatus(false);
+        setIncomingCall(false);
+        setCallData(null);
+        setTripStatus("");
+        setPilotData(null);
     }
 
 }

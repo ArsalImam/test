@@ -1,9 +1,9 @@
 package com.bykea.pk.partner.communication.rest;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
@@ -14,57 +14,58 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
-import com.bykea.pk.partner.models.request.SignupAddRequest;
+import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
+import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.ChangePinResponse;
+import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
+import com.bykea.pk.partner.models.response.CommonResponse;
+import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
+import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
+import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.LoginResponse;
+import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
-import com.bykea.pk.partner.models.response.ShahkarResponse;
-import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
-import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
-import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
-import com.bykea.pk.partner.models.response.UploadImageFile;
-import com.bykea.pk.partner.models.response.ZoneAreaResponse;
-import com.bykea.pk.partner.utils.ApiTags;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
-import com.bykea.pk.partner.models.response.ChangePinResponse;
-import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
-import com.bykea.pk.partner.models.response.CommonResponse;
-import com.bykea.pk.partner.models.response.ContactNumbersResponse;
-import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
-import com.bykea.pk.partner.models.response.GeocoderApi;
-import com.bykea.pk.partner.models.response.GetProfileResponse;
-import com.bykea.pk.partner.models.response.LoginResponse;
-import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
+import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
+import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
-import com.bykea.pk.partner.models.response.UploadDocumentFile;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
+import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.squareup.okhttp.ResponseBody;
 
 import org.apache.commons.lang3.StringUtils;
@@ -89,28 +90,147 @@ public class RestRequestHandler {
     private IRestClient mRestClient;
     private IResponseCallback mResponseCallBack;
 
+    private static String TAG = RestRequestHandler.class.getSimpleName();
 
-    public void sendUserLogin(Context context, final IResponseCallback onResponseCallBack, String email, String password,
-                              String deviceType, String userStatus, String regID) {
+
+    /***
+     * Send Driver login request to API Server
+     * @param context Calling context.
+     * @param callback API response callback.
+     * @param phoneNumber Driver phone number
+     * @param deviceType Device type i.e. (Android/iOS)
+     * @param latitude Current Driver latitude.
+     * @param longitude Current driver longitude.
+     * @param OtpType Method type for OTP call i.e (SMS/PHONE)
+     */
+    public void sendDriverLogin(Context context, final IResponseCallback callback,
+                                String phoneNumber,
+                                String deviceType,
+                                double latitude,
+                                double longitude,
+                                String OtpType) {
+
+        mContext = context;
+        this.mResponseCallBack = callback;
+        mRestClient = RestClient.getClient(mContext);
+        Call<VerifyNumberResponse> numberResponseCall = mRestClient.sendDriverOTP(
+                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion(context));
+
+        numberResponseCall.enqueue(new Callback<VerifyNumberResponse>() {
+            @Override
+            public void onResponse(Response<VerifyNumberResponse> response, Retrofit retrofit) {
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        VerifyNumberResponse verifyNumberResponse =
+                                Utils.parseAPIErrorResponse(response,
+                                        retrofit, VerifyNumberResponse.class);
+                        if (verifyNumberResponse != null) {
+                            mResponseCallBack.onResponse(verifyNumberResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
+                } else {
+                    if (response.isSuccess()) {
+                        if (null != mResponseCallBack) {
+                            mResponseCallBack.onResponse(response.body());
+                        }
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(),
+                                response.body().getMessage());
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(0, getErrorMessage(t));
+            }
+        });
+
+
+    }
+
+    /***
+     * Send driver location update request to API server.
+     * @param context Calling context.
+     * @param onResponseCallBack  Response Handler Callback
+     * @param locationRequest driver location update request model
+     */
+    public void sendDriverLocationUpdate(Context context,
+                                         final IResponseCallback onResponseCallBack,
+                                         DriverLocationRequest locationRequest) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getClient(mContext);
+        Call<LocationResponse> restCall = mRestClient.updateDriverLocation(locationRequest);
+        restCall.enqueue(new GenericLocationRetrofitCallBack(onResponseCallBack));
+    }
+
+    /***
+     * Send User login request to API server.
+     * @param context Calling Context.
+     * @param onResponseCallBack Response Handler Callback
+     * @param driverNumber Driver number
+     * @param otpCode OTP code which he received.
+     * @param deviceType Device Type i.e. (Android/iOS)
+     * @param regID FCM user ID
+     */
+    public void sendUserLogin(Context context,
+                              final IResponseCallback onResponseCallBack,
+                              String driverNumber,
+                              String otpCode,
+                              String deviceType,
+                              String regID) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
         Utils.redLog("IMEI NUMBER", Utils.getDeviceId(context));
-        Call<LoginResponse> restCall = mRestClient.login(email, password,
-                deviceType, userStatus, regID, "" + AppPreferences.getLatitude(), "" + AppPreferences.getLongitude(), Utils.getVersion(context),
-                AppPreferences.getOneSignalPlayerId(), AppPreferences.getADID(), Utils.getDeviceId(context));
+        Call<LoginResponse> restCall = mRestClient.login(
+                driverNumber,
+                otpCode,
+                deviceType,
+                regID,
+                "" + AppPreferences.getLatitude(),
+                "" + AppPreferences.getLongitude(),
+                Utils.getVersion(context),
+                AppPreferences.getOneSignalPlayerId(),
+                AppPreferences.getADID(),
+                Utils.getDeviceId(context)
+        );
+
         restCall.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {
-                // Got success from server
-                if (response.isSuccess()) {
-                    if (null != mResponseCallBack) {
-                        mResponseCallBack.onResponse(response.body());
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        LoginResponse loginResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit, LoginResponse.class);
+                        if (loginResponse != null) {
+                            mResponseCallBack.onResponse(loginResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
                     }
                 } else {
-                    mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
+                    if (response.isSuccess()) {
+                        if (null != mResponseCallBack) {
+                            mResponseCallBack.onResponse(response.body());
+                        }
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(),
+                                response.body().getMessage());
+                    }
                 }
-
             }
 
             @Override
@@ -360,7 +480,7 @@ public class RestRequestHandler {
     public void uploadAudioFile(Context context, IResponseCallback responseCallBack, final File file) {
         mContext = context;
         mResponseCallBack = responseCallBack;
-        mRestClient = RestClient.getClient(mContext);
+        mRestClient = RestClient.getChatAudioClient(mContext);
         Call<UploadAudioFile> requestCall = mRestClient.uploadAudioFile(Utils.convertFileToRequestBody(file));
         requestCall.enqueue(new Callback<UploadAudioFile>() {
             @Override
@@ -745,6 +865,53 @@ public class RestRequestHandler {
         restCall.enqueue(new GenericRetrofitCallBack<BankAccountListResponse>(onResponseCallBack));
     }
 
+    /***
+     * Request driver status update to API server
+     * @param context Calling context.
+     * @param statusRequestBody Driver status request body which needs to be send to API Server
+     * @param responseCallback Response callback handler.
+     */
+    public void requestDriverStatusUpdate(Context context,
+                                          DriverAvailabilityRequest statusRequestBody,
+                                          IResponseCallback responseCallback) {
+        mContext = context;
+        this.mResponseCallBack = responseCallback;
+        mRestClient = RestClient.getClient(context);
+        Call<PilotStatusResponse> restCall = mRestClient.updateDriverStatus(statusRequestBody);
+        restCall.enqueue(new Callback<PilotStatusResponse>() {
+            @Override
+            public void onResponse(Response<PilotStatusResponse> response, Retrofit retrofit) {
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        PilotStatusResponse pilotStatusResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit, PilotStatusResponse.class);
+                        if (pilotStatusResponse != null) {
+                            mResponseCallBack.onResponse(pilotStatusResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
+                } else {
+                    if (response.isSuccess()) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(),
+                                response.body().getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
+    }
+
     public void requestBankAccountsDetails(Context context, String bankId, final IResponseCallback onResponseCallBack) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
@@ -869,7 +1036,8 @@ public class RestRequestHandler {
         @Override
         public void onResponse(Response<T> response, Retrofit retrofit) {
             if (response == null || response.body() == null) {
-                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + mContext.getString(R.string.error_try_again) + " ");
+                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                        mContext.getString(R.string.error_try_again) + " ");
                 return;
             }
             if (response.body().isSuccess()) {
@@ -881,6 +1049,74 @@ public class RestRequestHandler {
 
         @Override
         public void onFailure(Throwable t) {
+            mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+        }
+    }
+
+    /***
+     * Generic location handler for driver location update rest event.
+     *
+     */
+    public class GenericLocationRetrofitCallBack implements Callback<LocationResponse> {
+        private IResponseCallback mCallBack;
+
+        public GenericLocationRetrofitCallBack(IResponseCallback callBack) {
+            mCallBack = callBack;
+        }
+
+        @Override
+        public void onResponse(Response<LocationResponse> response, Retrofit retrofit) {
+            if (response == null || response.body() == null) {
+                if (response != null && response.errorBody() != null) {
+                    LocationResponse LocationResponse =
+                            Utils.parseAPIErrorResponse(response, retrofit, LocationResponse.class);
+                    if (LocationResponse != null) {
+                        mResponseCallBack.onResponse(LocationResponse);
+                        /*mResponseCallBack.onError(LocationResponse.getCode(),
+                                LocationResponse.getMessage());*/
+                    } else {
+                        Utils.redLog(TAG, "Location on Failure: " + response.code() + " Internal Server Error");
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
+
+                } else {
+                    Utils.redLog(TAG, "Location on Failure: " + response.code() + " Internal Server Error");
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                            mContext.getString(R.string.error_try_again) + " ");
+                }
+            } else {
+                if (response.isSuccess()) {
+                    if (AppPreferences.isLoggedIn() && response.body().getLocation() != null) {
+                        if (StringUtils.isNotBlank(response.body().getLocation().getLat())
+                                && StringUtils.isNotBlank(response.body().getLocation().getLng())) {
+                            AppPreferences.saveLastUpdatedLocation(
+                                    new LatLng(Double.parseDouble(response.body().getLocation().getLat()),
+                                            Double.parseDouble(response.body().getLocation().getLng())));
+                        }
+                        Utils.saveServerTimeDifference(response.body().getTimeStampServer());
+                    }
+                    if (AppPreferences.isWalletAmountIncreased()) {
+                        AppPreferences.setWalletAmountIncreased(false);
+                        AppPreferences.setAvailableStatus(true);
+                    }
+                    if (AppPreferences.isOutOfFence()) {
+                        AppPreferences.setOutOfFence(false);
+                        AppPreferences.setAvailableStatus(true);
+                    }
+                        mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.body().getCode(),
+                            response.body().getMessage());
+                }
+            }
+
+
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Utils.redLog(TAG, "Location on Failure: " + t.getMessage());
             mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
         }
     }
@@ -1018,13 +1254,16 @@ public class RestRequestHandler {
     private String getErrorMessage(Throwable error) {
         String errorMsg;
         if (error instanceof IOException) {
-            Utils.redLog("Retrofit Error", "TimeOut " + String.valueOf(error.getCause()));
+            Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.TIME_OUT_ERROR + String.valueOf(error.getCause()));
             errorMsg = mContext.getString(R.string.internet_error);
+            //To prompt user to input base url for local builds again in case when URL is not working/wrong url. (BS-1017)
+            /*AppPreferences.setLocalBaseUrl(BuildConfig.FLAVOR_URL);
+            ApiTags.LOCAL_BASE_URL = BuildConfig.FLAVOR_URL;*/
         } else if (error instanceof IllegalStateException) {
-            Utils.redLog("Retrofit Error", "ConversionError " + String.valueOf(error.getCause()));
+            Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.CONVERSION_ERROR + String.valueOf(error.getCause()));
             errorMsg = mContext.getString(R.string.error_try_again);
         } else {
-            Utils.redLog("Retrofit Error", "Other Error " + String.valueOf(error.getLocalizedMessage()));
+            Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.OTHER_ERROR + String.valueOf(error.getLocalizedMessage()));
             errorMsg = mContext.getString(R.string.error_try_again);
         }
         return errorMsg;
@@ -1058,7 +1297,7 @@ public class RestRequestHandler {
     public void downloadAudioFile(Context context, final IResponseCallback onResponseCallBack,
                                   final String url) {
         mContext = context;
-        mRestClient = RestClient.getClient(mContext);
+        mRestClient = RestClient.getChatAudioClient(mContext);
         Call<ResponseBody> restCall = mRestClient.downloadAudioFile(url);
         restCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -1300,4 +1539,13 @@ public class RestRequestHandler {
         });
 
     }
+
+
+    /**
+     * This method clears Singleton instance of Bykea's retrofit client when URL is changed for Local builds
+     */
+    public void clearRetrofitClient() {
+        RestClient.clearBykeaRetrofitClient();
+    }
+
 }

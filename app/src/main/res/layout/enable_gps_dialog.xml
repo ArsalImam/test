@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_250sdp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/country_dialog_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/gpsStartingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/gps_enable_initial_message"
+        android:textColor="@color/grey_hex_5b"
+        android:textSize="@dimen/_26sdp"
+        app:fontName="jameel_noori_nastaleeq.ttf"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/GPSMiddleText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/GPSMiddleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginRight="@dimen/_8sdp"
+        android:text="@string/GPS_middle_message"
+        android:textColor="@color/grey_hex_5b"
+        android:textSize="@dimen/_24sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintBottom_toBottomOf="@+id/gpsStartingText"
+        app:layout_constraintEnd_toStartOf="@+id/gpsStartingText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gpsStartingText" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/gpsEndingText"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:gravity="center"
+        android:text="@string/gps_enable_ending_message"
+        android:textColor="@color/grey_hex_5b"
+        android:textSize="@dimen/_26sdp"
+        app:fontName="jameel_noori_nastaleeq.ttf"
+        app:layout_constraintEnd_toEndOf="@+id/gpsStartingText"
+        app:layout_constraintStart_toStartOf="@+id/GPSMiddleText"
+        app:layout_constraintTop_toBottomOf="@+id/gpsStartingText" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/ivPositive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_toRightOf="@id/ivNegative"
+        android:background="@drawable/button_green"
+        android:padding="@dimen/_12sdp"
+        android:src="@drawable/correct_symbol"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gpsEndingText" />
+
+</android.support.constraint.ConstraintLayout>

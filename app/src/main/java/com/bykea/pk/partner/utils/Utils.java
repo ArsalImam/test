@@ -1,10 +1,9 @@
 package com.bykea.pk.partner.utils;
 
-import android.Manifest;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
@@ -26,15 +25,16 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -43,9 +43,10 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
@@ -63,24 +64,26 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
-import com.bykea.pk.partner.models.response.GeocoderApi;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
-import com.bykea.pk.partner.ui.fragments.HomeFragment;
+import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
+import com.bykea.pk.partner.widgets.FontUtils;
+import com.elvishew.xlog.XLog;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -91,12 +94,12 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.ResponseBody;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -109,6 +112,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -130,13 +134,43 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import retrofit.Converter;
+import retrofit.Response;
+import retrofit.Retrofit;
+
 
 public class Utils {
 
 
+    /**
+     * This method handles error logs for Location Service and maintains files via XLog lib for debug builds
+     *
+     * @param tag     Error tag
+     * @param message Error Message
+     */
+    public static void redLogLocation(String tag, String message) {
+        if (BuildConfig.DEBUG) {
+            XLog.Log.e(tag + " : ", message);
+//            XLog.e(tag, message);
+        }
+    }
+
     public static void redLog(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            Log.e(tag + " : ", message);
+            XLog.Log.e(tag + " : ", message);
+        }
+    }
+
+    /**
+     * This method handles error logs for Location Service and maintains files via XLog lib for debug builds
+     *
+     * @param tag     Error tag
+     * @param message Error Message
+     * @param ex      Exception object
+     */
+    public static void redLog(String tag, String message, Exception ex) {
+        if (BuildConfig.DEBUG) {
+            XLog.Log.e(tag + " : ", message, ex);
         }
     }
 
@@ -149,6 +183,7 @@ public class Utils {
             }
         }
     }
+
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -283,11 +318,16 @@ public class Utils {
     public static void logout(Context context) {
         clearData(context);
         HomeActivity.visibleFragmentNumber = 0;
-        ActivityStackManager.getInstance().startLoginActivity(context);
+        //ActivityStackManager.getInstance().startLoginActivity(context);
+        ActivityStackManager.getInstance().startLandingActivity(context);
         ((Activity) context).finish();
     }
 
-    private static void clearData(Context context) {
+    /***
+     * Clear Data when user is unauthorized.
+     * @param context Calling context.
+     */
+    public static void clearData(Context context) {
 //        Utils.resetMixPanel(context, false);
         FirebaseAnalytics.getInstance(context).resetAnalyticsData();
         String regId = AppPreferences.getRegId();
@@ -472,10 +512,15 @@ public class Utils {
     }
 
     public static void unlockScreen(Context context) {
-        Window window = ((AppCompatActivity) context).getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            ((AppCompatActivity) context).setShowWhenLocked(true);
+            ((AppCompatActivity) context).setTurnScreenOn(true);
+        } else {
+            Window window = ((AppCompatActivity) context).getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        }
     }
 
     public static void setCallIncomingStateWithoutRestartingService() {
@@ -505,6 +550,29 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Check is service running in foreground service.
+     *
+     * @param context      The {@link Context}.
+     * @param serviceClass Service class which needs to be checked for foreground service.
+     */
+    public static boolean serviceIsRunningInForeground(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(
+                Context.ACTIVITY_SERVICE);
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
+                    Integer.MAX_VALUE)) {
+                if (serviceClass.getClass().getName().equals(service.service.getClassName())) {
+                    if (service.foreground) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
     public static void callingIntent(Context context, String number) {
 
         try {
@@ -528,7 +596,7 @@ public class Utils {
         i.putExtra(Intent.EXTRA_TEXT, "");
         try {
             context.startActivity(Intent.createChooser(i, "Send mail..."));
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -542,9 +610,14 @@ public class Utils {
         manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
-    public static void hideSoftKeyboard(android.support.v4.app.Fragment fragment) {
+    /***
+     * Hide keyboard from screen
+     * @param fragment calling fragment where keyboard should be hidden.
+     */
+    public static void hideSoftKeyboard(Fragment fragment) {
         try {
-            final InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            final InputMethodManager imm = (InputMethodManager) fragment.getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null && fragment.getView() != null) {
                 imm.hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
             }
@@ -604,7 +677,7 @@ public class Utils {
         sendIntent.setPackage("com.whatsapp");
         try {
             context.startActivity(sendIntent);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -625,7 +698,7 @@ public class Utils {
         sendIntent.setPackage("com.whatsapp");
         try {
             context.startActivity(sendIntent);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -642,7 +715,7 @@ public class Utils {
 
     public static String getTotalRAM(Context context) {
 
-        int version = android.os.Build.VERSION.SDK_INT;
+        int version = Build.VERSION.SDK_INT;
         if (version >= 16) {
             ActivityManager actManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
@@ -659,7 +732,7 @@ public class Utils {
 
     public static String getAndroidVersion() {
 
-        return "" + android.os.Build.VERSION.SDK_INT;
+        return "" + Build.VERSION.SDK_INT;
 
     }
 
@@ -746,12 +819,14 @@ public class Utils {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-                        @Override
-                        public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                            mCurrentActivity.finish();
-                        }
-                    }, null, "UnAuthorized", "Session Expired. Please Log in again.");
+                                @Override
+                                public void onCallBack(String msg) {
+                                    //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                                    ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
+                                    mCurrentActivity.finish();
+                                }
+                            }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                            mCurrentActivity.getString(R.string.unauthorized_message_session_expired));
                 }
             });
         }
@@ -764,21 +839,25 @@ public class Utils {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
-                        @Override
-                        public void onCallBack(String msg) {
-                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                            mCurrentActivity.finish();
-                        }
-                    }, null, "UnAuthorized", "We strictly discourage usage of Fake GPS, please disable this and login again. Thank you! ");
+                                @Override
+                                public void onCallBack(String msg) {
+                                    //ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                                    ActivityStackManager.getInstance().startLandingActivity(mCurrentActivity);
+                                    mCurrentActivity.finish();
+                                }
+                            }, null, mCurrentActivity.getString(R.string.unauthorized_title),
+                            mCurrentActivity.getString(R.string.unauthorized_message_fake_gps));
                 }
             });
         }
     }
 
-    /*
-    * This will sync Device Time and Server Time. We know that Device time can be changed easily so
-    * we will calculate time difference between server and device
-    * */
+    /***
+     *  This will sync Device Time and Server Time.
+     *  We know that Device time can be changed easily so
+     *  we will calculate time difference between server and device
+     * @param serverTime Latest server time in milliseconds.
+     */
     public static void saveServerTimeDifference(long serverTime) {
         long currentTime = System.currentTimeMillis();
         AppPreferences.setServerTimeDifference(
@@ -884,7 +963,7 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
-    public static String getLocationAddress(String lat, String lng, Activity activity){
+    public static String getLocationAddress(String lat, String lng, Activity activity) {
 
         Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
@@ -964,19 +1043,21 @@ public class Utils {
     }
 
     /*
-    * Returns API key for Google GeoCoder API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+     * Returns API key for Google GeoCoder API if required.
+     * Will return Empty String if there's no error in Last
+     * Request while using API without any Key.
+     * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
 
-    /*
-    * Returns API key for Google Directions API if required.
-    * Will return Empty String if there's no error in Last
-    * Request while using API without any Key.
-    * */
+    /***
+     *  Returns API key for Google Directions API if required.
+     *  Will return Empty String if there's no error in Last
+     *  Request while using API without any Key.
+     * @param context Calling Context.
+     * @return Google place server API key
+     */
     public static String getApiKeyForDirections(Context context) {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
@@ -990,9 +1071,10 @@ public class Utils {
         }
     }
 
-    /*
-    * Returns true if Last API call was more than 1 min ago
-    * */
+    /***
+     * Validate where we should call Direction API on screen.
+     * @return Returns true if Last API call was more than 1 min ago
+     */
     public static boolean isDirectionApiCallRequired() {
         return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
     }
@@ -1028,9 +1110,19 @@ public class Utils {
         return date != null ? date.getTime() : 0;
     }
 
-    public static boolean isGpsEnable(Context context) {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    /***
+     * Check that the GPS is enable or not.
+     *
+     * @return true if gps/location is enable otherwise returns false
+     */
+    public static boolean isGpsEnable() {
+        LocationManager locationManager = (LocationManager) DriverApp.getContext().
+                getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+
+        return false;
     }
 
     public static void loadImgPicasso(Context context, ImageView imageView, int placeHolder, String link) {
@@ -1070,7 +1162,7 @@ public class Utils {
 
     public static boolean isMockLocation(Location location, Context context) {
         boolean isMock;
-        if (android.os.Build.VERSION.SDK_INT >= 18) {
+        if (Build.VERSION.SDK_INT >= 18) {
             isMock = location.isFromMockProvider();
         } else {
             isMock = !Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0")
@@ -1085,8 +1177,8 @@ public class Utils {
 
     public static void phoneCall(Activity activity, String phone) {
 
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-            activity.startActivity(intent);
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+        activity.startActivity(intent);
 
     }
 
@@ -1127,13 +1219,23 @@ public class Utils {
     }
 
 
-    /*
-    * - if same location coordinates then don't consider these lat lng
-    * - if distance is less than 6 meter then don't consider these lat lng to avoid coordinate fluctuation
-    * - Check if its time difference w.r.t last coordinate is
-    * greater than minimum time a bike should take to cover that distance if that bike is traveling
-    * at max 80KM/H to avoid bad/fake coordinates
-    * */
+    /***
+     *  Validate Location latest latitude and longitude with following set of rules.
+     *  <ul>
+     *      <li> if same location coordinates then don't consider these lat lng </li>
+     *      <li> if distance is less than 6 meter then don't consider these
+     *      lat lng to avoid coordinate fluctuation </li>
+     *      <li> Check if its time difference w.r.t last coordinate is greater than minimum
+     *      time a bike should take to cover that distance if that bike is traveling
+     *      at max 80KM/H to avoid bad/fake coordinates </li>
+     *  </ul>
+     * @param newLat Latest latitude fetched.
+     * @param newLon Latest longitude fetched.
+     * @param prevLat Previously stored latitude.
+     * @param prevLon Previously stored longitude.
+     *
+     * @return True if latest fetched latitude and longitude are valid, otherwise return false.
+     */
     public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
@@ -1440,9 +1542,13 @@ public class Utils {
     }
 
 
-    /*
-    *  Flush Mixpanel Event in onDestroy()
-    * */
+    /***
+     * Flush Mixpanel Event in onDestroy()
+     * @param context Calling context.
+     * @param userID User id which is currently logged in.
+     * @param EVENT Event name which needs to be flush.
+     * @param data Json data which needs to be emitted.
+     */
     public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
         MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
         mixpanelAPI.identify(userID);
@@ -1553,13 +1659,11 @@ public class Utils {
     }
 
     public static boolean isSkipDropOff(NormalCallData callData) {
-        if (StringUtils.isNotBlank(callData.getEndAddress())){
+        if (StringUtils.isNotBlank(callData.getEndAddress())) {
             return false;
         }
         return true;
     }
-
-
 
 
     public static class AudioTime implements Serializable {
@@ -1636,8 +1740,13 @@ public class Utils {
         }
     }
 
-
+    /**
+     * This method compares FCM token of SP with token placed with User (PilotData) data model to indicate if we need to update FCM token on our server or not.
+     *
+     * @return boolean true/false
+     */
     public static boolean isFcmIdUpdateRequired(boolean isLoggedIn) {
+        AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken()); //on Android 8, sometimes onNewToken gets called 2 times and 2nd one is not latest(Unexpected behaviour). That's why updating SP with latest FCM Token
         boolean required = false;
         if (isLoggedIn && StringUtils.isNotBlank(AppPreferences.getRegId())
                 && AppPreferences.getPilotData() != null && !AppPreferences.getRegId().equalsIgnoreCase(AppPreferences.getPilotData().getReg_id())) {
@@ -2049,15 +2158,57 @@ public class Utils {
         return size;
     }
 
-    public static String getChannelID() {
-        String chanelId = "FG_NOTI_BYKEA_P";
+    /**
+     * This method creates separate notification channel (On Android O and above) for Trip Cancel
+     * Notification which has different Sound URI.
+     *
+     * @return String of Channel ID
+     */
+    public static String getChannelIDForCancelNotifications() {
+        String chanelId = "bykea_channel_id_for_cancel";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
-            String channelId = "bykea_p_channel_id";
-            CharSequence channelName = "Bykea Partner Notification Channel";
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            CharSequence channelName = "Bykea Partner Notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+
+            Uri soundUri = Uri.parse("android.resource://"
+                    + DriverApp.getContext().getPackageName() + "/"
+                    + R.raw.one);
+
+            AudioAttributes att = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build();
+
+            notificationChannel.setSound(soundUri, att);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            chanelId = notificationChannel.getId();
+        }
+        return chanelId;
+    }
+
+    /**
+     * This method creates Notification Channel for OS version >= Android o
+     *
+     * @return notification chanel id
+     */
+    public static String getChannelID() {
+        String chanelId = "bykea_p_channel_id";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+//            String channelId = "bykea_p_channel_id";
+            CharSequence channelName = "Bykea Notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel notificationChannel = new NotificationChannel(chanelId, channelName, importance);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);
@@ -2068,6 +2219,30 @@ public class Utils {
             chanelId = notificationChannel.getId();
         }
         return chanelId;
+    }
+
+
+    /**
+     * This method creates Separate Notification Channel for Foreground Location Service on devices
+     * with OS version >= Android O
+     *
+     * @param context Calling context
+     * @return notification chanel id
+     */
+    public static String getChannelIDForOnGoingNotification(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel notificationChannel = new NotificationChannel(
+                    Constants.Notification.NOTIFICATION_CHANNEL_ID,
+                    Constants.Notification.NOTIFICATION_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            return notificationChannel.getId();
+        }
+        return Constants.Notification.NOTIFICATION_CHANNEL_ID;
     }
 
     public static void printHashKey(Context pContext) {
@@ -2171,5 +2346,295 @@ public class Utils {
                 AppPreferences.isOutOfFence() || AppPreferences.isOnTrip());
     }
 
+    /**
+     * This method validates URLs
+     *
+     * @return true when url format is correct and false when it is incorrect
+     */
+    public static boolean isValidUrl(String url) {
+        return Patterns.WEB_URL.matcher(url).matches();
+    }
+
+    /**
+     * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
+     *
+     * @param context  calling context
+     * @param activity calling activity
+     * @return True if we are going to ask Battery optimization, else false.
+     * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     */
+    public static boolean disableBatteryOptimization(Context context, AppCompatActivity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = context.getPackageName();
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                if(intent.resolveActivity(context.getPackageManager())!=null){
+                    activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                    return true;
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
+     *
+     * @param context  calling context
+     * @param fragment Calling fragment
+     * @return True if we are going to ask Battery optimization, else false.
+     * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     */
+    public static boolean disableBatteryOptimization(Context context,
+                                                     android.support.v4.app.Fragment fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = context.getPackageName();
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                if(intent.resolveActivity(context.getPackageManager())!=null){
+                    fragment.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                    return true;
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create email intent
+     *
+     * @param toEmail Receiver email address
+     * @param subject Email subject
+     * @param message Email message body
+     * @param uri     attachment file URI
+     * @return {@link Intent} intent object which we will use to invoke action
+     */
+    public static Intent createEmailIntentWithAttachment(final String toEmail,
+                                                         final String subject,
+                                                         final String message,
+                                                         Uri uri) {
+
+        // Nothing resolves send to, so fallback to send...
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        //emailIntent.setType("plain/text");
+        emailIntent.setType("message/rfc822");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL,
+                new String[]{toEmail});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+        if (uri != null) {
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        }
+        emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        return Intent.createChooser(emailIntent, "Send mail");
+
+    }
+
+    /**
+     * Send email to developer using email client on device.
+     *
+     * @param currentActivity Calling activity
+     */
+    public static void sendEmailToDeveloper(AppCompatActivity currentActivity) {
+        File logFileDir = FileUtil.createRootDirectoryForLogs(currentActivity);
+        if (logFileDir != null) {
+
+            String fileName = String.format("%1$s-%2$s-%3$s-%4$s.zip",
+                    BuildConfig.APPLICATION_ID,
+                    BuildConfig.FLAVOR,
+                    BuildConfig.VERSION_CODE,
+                    BuildConfig.VERSION_NAME);
+            boolean zipResult = FileUtil.zipFileAtPath(logFileDir.getAbsolutePath(),
+                    currentActivity.getExternalCacheDir() + File.separator + fileName);
+            if (zipResult) {
+                Uri uri;
+                File file = new File(currentActivity.getExternalCacheDir() + File.separator + fileName);
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                    uri = Uri.fromFile(file);
+                } else {
+                    uri = FileProvider.getUriForFile(currentActivity,
+                            currentActivity.getApplicationContext().getPackageName() + ".fileprovider", file);
+                }
+                Intent emailIntent = Utils.createEmailIntentWithAttachment(
+                        Constants.LogTags.LOG_SEND_DEVELOPER_EMAIL,
+                        Constants.LogTags.LOG_SEND_SUBJECT,
+                        Constants.LogTags.LOG_SEND_MESSAGE_BODY,
+                        uri);
+                // Verify the intent will resolve to at least one activity
+                if (emailIntent.resolveActivity(currentActivity.getPackageManager()) != null) {
+                    Utils.redLogLocation(Constants.LogTags.BYKEA_LOG_TAG, "Email intent set");
+                    currentActivity.startActivity(emailIntent);
+                }
+            }
+        }
+    }
+
+
+    /***
+     * Validate service name in our stored collection if service exist we can safely use provided icon by API.
+     * @param serviceType Service name provided by API server.
+     * @return Returns true if service name matches our collection otherwise return false.
+     */
+    public static boolean useServiceIconProvidedByAPI(String serviceType) {
+        if (!TextUtils.isEmpty(serviceType)) {
+            switch (serviceType) {
+                case Constants.ServiceType.RIDE_NAME:
+                case Constants.ServiceType.SEND_NAME:
+                case Constants.ServiceType.SEND_TITLE:
+                case Constants.ServiceType.BRING_NAME:
+                case Constants.ServiceType.BRING_TITLE:
+                case Constants.ServiceType.TICKETS_NAME:
+                case Constants.ServiceType.TICKETS_TITLE:
+                case Constants.ServiceType.JOBS_NAME:
+                case Constants.ServiceType.CLASSIFIEDS_NAME:
+                case Constants.ServiceType.CARRY_VAN_NAME:
+                case Constants.ServiceType.CARRY_VAN_TITLE:
+                case Constants.ServiceType.ADS_NAME:
+                case Constants.ServiceType.UTILITY_BILL_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_NAME:
+                case Constants.ServiceType.FOOD_DELIVERY_TITLE:
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /****
+     * Generate IMEI not registered error message for user.
+     * @param context Calling context.
+     * @return Spannable String format object
+     */
+    public static SpannableStringBuilder generateImeiRegistrationErrorMessage(Context context) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_one_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_three_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_four_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.imei_report_part_five_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+        return spannableStringBuilder;
+    }
+
+    /***
+     *  Check is provided activity in running task.
+     *
+     * @param context Calling context.
+     * @param activityClass Class name which we need to find in running task.
+     * @return True if class found otherwise return false.
+     */
+    public static boolean isActivityRunning(Context context, Class<?> activityClass) {
+        try {
+            ActivityManager activityManager = (ActivityManager)
+                    context.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks = null;
+            if (activityManager != null) {
+                tasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
+                for (ActivityManager.RunningTaskInfo task : tasks) {
+                    if (activityClass.getName().equalsIgnoreCase(task.baseActivity.getClassName()))
+                        return true;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+
+        return false;
+    }
+
+
+    /**
+     * Get Application Current version from device Package manager.
+     *
+     * @return Application installed version number.
+     */
+    public static String getAppCurrentVersion() {
+        Context context = DriverApp.getApplication();
+        if (context != null) {
+            PackageManager pm = context.getPackageManager();
+            PackageInfo pInfo;
+            try {
+                pInfo = pm.getPackageInfo(context.getPackageName(), 0);
+                return pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    //region API error response Body parsing
+
+    /***
+     * HTTP response body converted to specified {@code type}.
+     * {@code null} if there is no response
+     * @param response response we received from API server.
+     * @param retrofit Retrofit Object
+     * @param type Concrete type class which is use to parse error response.
+     * @return {@link Object } Object class which would be casted to respective class
+     * parsed when we receive error body
+     */
+    public static <T> T parseAPIErrorResponse(Response<?> response, Retrofit retrofit,
+                                              Class<T> type) {
+        try {
+            Converter<ResponseBody, T> converter = retrofit.responseConverter(type,
+                    new Annotation[0]);
+            return converter.convert(response.errorBody());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    //endregion
+
+    /***
+     * Handle business logic location Failure use cases for driver Location API .
+     * <ul>
+     *     <li> Multiple cancellation block. </li>
+     *     <li> Wallet amount exceeds threshold. </li>
+     *     <li> Out of service region area block. </li>
+     *     <li> Account Blocked</li>
+     * </ul>
+     *
+     * @param eventBus {@link EventBus} object
+     * @param locationResponse Latest response received from API Server
+     */
+    public static void handleLocationBusinessLogicErrors(EventBus eventBus,
+                                                         LocationResponse locationResponse) {
+        switch (locationResponse.getSubCode()) {
+            case Constants.ApiError.WALLET_EXCEED_THRESHOLD:
+                if (StringUtils.isNotBlank(locationResponse.getMessage())) {
+                    AppPreferences.setWalletIncreasedError(locationResponse.getMessage());
+                }
+                AppPreferences.setWalletAmountIncreased(true);
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+            case Constants.ApiError.OUT_OF_SERVICE_REGION:
+                AppPreferences.setOutOfFence(true);
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+            case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
+                AppPreferences.setAvailableStatus(false);
+                eventBus.post(Keys.INACTIVE_FENCE);
+                break;
+        }
+    }
 
 }
