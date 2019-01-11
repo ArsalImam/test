@@ -246,11 +246,12 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void drawRouteToPickup() {
         if (StringUtils.isNotBlank(String.valueOf(callDriverData.getPickup().getLat()))
                 && StringUtils.isNotBlank(String.valueOf(callDriverData.getPickup().getLng()))
-                && StringUtils.isNotBlank(String.valueOf(AppPreferences.getLatitude()))
-                && StringUtils.isNotBlank(String.valueOf(AppPreferences.getLongitude()))) {
+                && StringUtils.isNotBlank(String.valueOf(mCurrentLocation.getLatitude()))
+                && StringUtils.isNotBlank(String.valueOf(mCurrentLocation.getLatitude()))
+                && callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
 
-            drawRoute(new LatLng(AppPreferences.getLatitude(),
-                            AppPreferences.getLongitude()),
+            drawRoute(new LatLng(mCurrentLocation.getLatitude(),
+                            mCurrentLocation.getLongitude()),
                     new LatLng(callDriverData.getPickup().getLat(),
                             callDriverData.getPickup().getLng()), Routing.pickupRoute);
 
@@ -565,6 +566,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         valueAnimator.setFloatValues(0, 1); // Ignored.
         valueAnimator.setDuration(3000);
         valueAnimator.start();
+        drawRouteToPickup();
     }
 
     /**

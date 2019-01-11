@@ -175,15 +175,19 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                 tripInfo = response.getTrip();
             }
             if (tripInfo != null) {
-                tvTotalDistance.setText(getString(R.string.distance_covered,
-                        Utils.getDistance(
-                                Float.valueOf(tripInfo.getTripDistance())
-                        )));
-                tvTotalTime.setText(getString(R.string.duration,
-                        Float.valueOf(tripInfo.getTripDuration())
-                ));
-                startAddressTv.setText(tripInfo.getStartAddress());
-                endAddressTv.setText(tripInfo.getEndAddress());
+                try {
+                    tvTotalDistance.setText(getString(R.string.distance_covered,
+                            Utils.getDistance(
+                                    Float.valueOf(tripInfo.getTripDistance())
+                            )));
+                    tvTotalTime.setText(getString(R.string.duration,
+                            Float.valueOf(tripInfo.getTripDuration())
+                    ));
+                    startAddressTv.setText(tripInfo.getStartAddress());
+                    endAddressTv.setText(tripInfo.getEndAddress());
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
             if (invoice != null) {
                 totalAmountTv.setText(String.valueOf(invoice.getTripCharges()));
