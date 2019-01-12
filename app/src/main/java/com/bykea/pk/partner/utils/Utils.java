@@ -2538,11 +2538,11 @@ public class Utils {
     public static String generateGpsHighAccuracyWarningMessage(Context context) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(FontUtils.getStyledTitle(context,
-                R.string.gps_high_accuracy_error_msg_one_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+                R.string.gps_high_accuracy_error_ur_one, Constants.FontNames.JAMEEL_NASTALEEQI));
         spannableStringBuilder.append(FontUtils.getStyledTitle(context,
-                R.string.gps_high_accuracy_error_msg_two_ur, Constants.FontNames.OPEN_SANS_BOLD));
+                R.string.gps_high_accuracy_error_ur_two, Constants.FontNames.OPEN_SANS_BOLD));
         spannableStringBuilder.append(FontUtils.getStyledTitle(context,
-                R.string.gps_high_accuracy_error_msg_three_ur, Constants.FontNames.JAMEEL_NASTALEEQI));
+                R.string.gps_high_accuracy_error_ur_three, Constants.FontNames.JAMEEL_NASTALEEQI));
         return spannableStringBuilder.toString();
     }
 
