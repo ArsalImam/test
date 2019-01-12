@@ -339,8 +339,8 @@ public class LoginActivity extends BaseActivity {
                 break;
             case ApiError.DRIVER_LAT_LNG_ZERO: {
 //                String msg = getString(R.string.gps_high_accuracy_error_ur);
-                //Replaced high accuracy msg to english
-                String msg = getString(R.string.gps_high_accuracy_error_ur_msg1);
+                //Replaced high accuracy msg to english and urdu mixed
+                String msg = Utils.generateGpsHighAccuracyWarningMessage(this);
                 Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
                         msg, 0f, null, new View.OnClickListener() {
                             @Override

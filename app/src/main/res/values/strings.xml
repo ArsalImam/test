@@ -232,7 +232,9 @@
     <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
 
     <!--Added this to show gps high accuracy msg in english.-->
-    <string name="gps_high_accuracy_error_ur_msg1">اپنا جی پي ایس High Accuracy پے آن کریں۔</string>
+    <string name="gps_high_accuracy_error_msg_one_ur">اپنا جی پي ایس </string>
+    <string name="gps_high_accuracy_error_msg_two_ur"> High Accuracy </string>
+    <string name="gps_high_accuracy_error_msg_three_ur"> پے آن کریں۔ </string>
 
     <string name="notification_title_driver_login_location">Logged in fetching location</string>
     <string name="notification_title_driver_logout_location">Fetching location</string>
