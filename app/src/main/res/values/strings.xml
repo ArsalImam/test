@@ -252,4 +252,5 @@
     <string name="retrofit_request_method_type"> Method </string>
     <string name="driver_offline_crone_job_ur">App Offline Hochuke Hain!</string>
 
+    <!--Testing verified commit-->
 </resources>
