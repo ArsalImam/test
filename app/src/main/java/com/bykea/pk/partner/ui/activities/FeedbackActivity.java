@@ -488,9 +488,13 @@ public class FeedbackActivity extends BaseActivity {
         } else if (StringUtils.isBlank(receivedAmountEt.getText().toString())) {
             setEtError("Enter received amount");
             return false;
-        } else if (isDeliveryType /*&& selectedMsgPosition == 0*/ && StringUtils.isBlank(etReceiverName.getText().toString())) {
+        } else if (isDeliveryType && selectedMsgPosition == 0 && StringUtils.isBlank(etReceiverName.getText().toString())) {
             etReceiverName.setError("Required");
             etReceiverName.requestFocus();
+            return false;
+        } else if (isDeliveryType && selectedMsgPosition == 0 && StringUtils.isBlank(etReceiverMobileNo.getText().toString())) {
+            etReceiverMobileNo.setError("Required");
+            etReceiverMobileNo.requestFocus();
             return false;
         } else if ((isDeliveryType || isPurchaseType) && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
                 && !Utils.isValidNumber(mCurrentActivity, etReceiverMobileNo)) {
