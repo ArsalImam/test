@@ -489,11 +489,11 @@ public class FeedbackActivity extends BaseActivity {
             setEtError("Enter received amount");
             return false;
         } else if (isDeliveryType && selectedMsgPosition == Constants.KAMYAB_DELIVERY && StringUtils.isBlank(etReceiverName.getText().toString())) {
-            etReceiverName.setError("Required");
+            etReceiverName.setError(getString(R.string.error_field_empty));
             etReceiverName.requestFocus();
             return false;
         } else if (isDeliveryType && selectedMsgPosition == Constants.KAMYAB_DELIVERY && StringUtils.isBlank(etReceiverMobileNo.getText().toString())) {
-            etReceiverMobileNo.setError("Required");
+            etReceiverMobileNo.setError(getString(R.string.error_field_empty));
             etReceiverMobileNo.requestFocus();
             return false;
         } else if ((isDeliveryType || isPurchaseType) && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
