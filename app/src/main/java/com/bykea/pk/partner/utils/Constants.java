@@ -229,6 +229,13 @@ public class Constants {
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
 
+    /**
+     * Constant for checking delivery status whether is successful or not - Using is FeedbackActivity
+     * 0 is for kamyab
+     * other than 0 is na-kamyab
+     */
+    public final static int KAMYAB_DELIVERY = 0;
+
     public final static String DRIVER_SOCKET_CLIENT_TYPE = "PARTNER_ANDROID";
 
     /**
