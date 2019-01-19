@@ -11,6 +11,9 @@ public class TrackingData {
     private String lng;
     private String date;
 
+    //For Batch
+
+
     public String getLat() {
         return lat;
     }

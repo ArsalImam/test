@@ -212,11 +212,10 @@ public class ActivityStackManager {
      * @param mContext Holding the reference of an activity.
      * @param response The invoice response.
      */
-    public void startMultiDeliveryFeedbackActivity(Context mContext,
-                                                   MultiDeliveryCompleteRideResponse response) {
+    public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID) {
         Intent intent = new Intent(mContext, MultiDeliveryFeedbackActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(Keys.MULTIDELIVERY_COMPLETE_DATA, response);
+        bundle.putString(Keys.MULTIDELIVERY_TRIP_ID, tripID);
         intent.putExtras(bundle);
         mContext.startActivity(intent);
     }

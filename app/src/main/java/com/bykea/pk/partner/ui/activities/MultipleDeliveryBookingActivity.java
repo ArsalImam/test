@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.DropOffMarker;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
@@ -32,6 +33,7 @@ import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
+import com.bykea.pk.partner.ui.helpers.MarkerClusterRenderer;
 import com.bykea.pk.partner.ui.helpers.Spherical;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
@@ -56,11 +58,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.ClusterRenderer;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -96,6 +102,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private static final double METERS_IN_KILOMETER = 1000.0;
     private MultiDeliveryCallDriverData callDriverData;
     private UserRepository repository;
+    private ClusterManager<DropOffMarker> mClusterManager;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
@@ -139,7 +146,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     }
 
     /***
-     * Initialize data i.e activity, register ButterKnife, initialize UserRepository,  etc
+     * Initialize data i.e activity, register ButterKnife, initialize UserRepository,  etc.
      */
     private void initialize() {
         mCurrentActivity = this;
@@ -160,8 +167,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         mCurrentLocation = new Location(StringUtils.EMPTY);
         setCurrentLocation();
         isResume = true;
-        setTripStates();
+        AppPreferences.setIsOnTrip(true);
         checkGps();
+        setTripStates();
         checkConnectivity(mCurrentActivity);
         AppPreferences.setJobActivityOnForeground(true);
     }
@@ -201,6 +209,15 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (callDriverData != null) {
             AppPreferences.setTripStatus(callDriverData.getBatchStatus());
             setAcceptedState();
+            if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                setAcceptedState();
+            } else if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+                setArrivedState();
+            } else if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                setStartedState();
+            } else {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+            }
         }
     }
 
@@ -229,11 +246,12 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void drawRouteToPickup() {
         if (StringUtils.isNotBlank(String.valueOf(callDriverData.getPickup().getLat()))
                 && StringUtils.isNotBlank(String.valueOf(callDriverData.getPickup().getLng()))
-                && StringUtils.isNotBlank(String.valueOf(AppPreferences.getLatitude()))
-                && StringUtils.isNotBlank(String.valueOf(AppPreferences.getLongitude()))) {
+                && StringUtils.isNotBlank(String.valueOf(mCurrentLocation.getLatitude()))
+                && StringUtils.isNotBlank(String.valueOf(mCurrentLocation.getLatitude()))
+                && callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
 
-            drawRoute(new LatLng(AppPreferences.getLatitude(),
-                            AppPreferences.getLongitude()),
+            drawRoute(new LatLng(mCurrentLocation.getLatitude(),
+                            mCurrentLocation.getLongitude()),
                     new LatLng(callDriverData.getPickup().getLat(),
                             callDriverData.getPickup().getLng()), Routing.pickupRoute);
 
@@ -369,12 +387,18 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     mGoogleMap = googleMap;
                     mGoogleMap.clear();
                     Utils.formatMap(mGoogleMap);
+                    //initialize the cluster manager for clustering drop off markers
+                    mClusterManager = new ClusterManager<>(mCurrentActivity, mGoogleMap);
+                    mGoogleMap.setOnCameraIdleListener(mClusterManager);
+
                     com.google.maps.model.LatLng driverLatLng = new com.google.maps.model.LatLng(
                             AppPreferences.getLatitude(),
                             AppPreferences.getLongitude()
                     );
                     getDriverRoadPosition(driverLatLng);
-                    addPickupMarker();
+                    if (!callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP))
+                        addPickupMarker();
+                    setTripStates();
                     updateDropOffMarkers();
                     setPickupBounds();
                 }
@@ -430,10 +454,13 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void setPickupBounds() {
         int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._30sdp);
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), padding);
-        padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
-        mGoogleMap.setPadding(0, padding, 0, padding);
-        mGoogleMap.moveCamera(cu);
+        LatLngBounds latLngBounds = getCurrentLatLngBounds();
+        if (latLngBounds != null) {
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), padding);
+            padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
+            mGoogleMap.setPadding(0, padding, 0, padding);
+            mGoogleMap.moveCamera(cu);
+        }
     }
 
     /***
@@ -456,15 +483,21 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             builder.include(driverMarker.getPosition());
         }
 
+        try {
+            LatLngBounds tmpBounds = builder.build();
+            LatLng center = tmpBounds.getCenter();
+            LatLng northEast = move(center, 709, 709);
+            LatLng southWest = move(center, -709, -709);
 
-        LatLngBounds tmpBounds = builder.build();
-        LatLng center = tmpBounds.getCenter();
-        LatLng northEast = move(center, 709, 709);
-        LatLng southWest = move(center, -709, -709);
-
-        builder.include(southWest);
-        builder.include(northEast);
-        return builder.build();
+            builder.include(southWest);
+            builder.include(northEast);
+            return builder.build();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /***
@@ -533,6 +566,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         valueAnimator.setFloatValues(0, 1); // Ignored.
         valueAnimator.setDuration(3000);
         valueAnimator.start();
+        drawRouteToPickup();
     }
 
     /**
@@ -622,17 +656,39 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 dropOffMarker.remove();
             }
             List<LatLng> latLngList = Utils.getDropDownLatLngList(callDriverData);
+
+            List<DropOffMarker> clustorItems = new ArrayList<>();
             for (int i = 0; i < latLngList.size(); i++) {
-                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
-                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
-                                String.valueOf(i + 1)))
-                        .position(latLngList.get(i)));
+                clustorItems.add(new DropOffMarker(latLngList.get(i), (i+1)));
+
+//                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
+//                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
+//                                String.valueOf(i + 1)))
+//                        .position(latLngList.get(i)));
             }
+            setRenderer();
+            mClusterManager.addItems(clustorItems);
+            mClusterManager.cluster();
+
+
+
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Set the Marker Cluster Renderer for the {@linkplain ClusterManager}
+     */
+    private void setRenderer() {
+        DefaultClusterRenderer<DropOffMarker> renderer = new MarkerClusterRenderer<>(
+                mCurrentActivity,
+                mGoogleMap,
+                mClusterManager
+        );
+        mClusterManager.setRenderer(renderer);
     }
 
     /***
@@ -647,7 +703,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             CameraPosition currentPlace = new CameraPosition.Builder()
                     .target(new LatLng(mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude()))
-                    .zoom(16f)
+                    .zoom(ZOOM_LEVEL)
                     .bearing(bearing)
                     .build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
@@ -805,7 +861,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 @Override
                 public void onClick(View v) {
                     Dialogs.INSTANCE.dismissDialog();
-                    setStartedState();
+                    requestDriverStarted();
                 }
             }, new View.OnClickListener() {
                 @Override
@@ -838,7 +894,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                         public void onClick(View v) {
                             Dialogs.INSTANCE.dismissDialog();
                             //requestArrived();
-                            setArrivedState();
+                            requestDriverArrived();
                         }
                     });
         } else {
@@ -846,7 +902,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 @Override
                 public void onClick(View v) {
                     Dialogs.INSTANCE.dismissDialog();
-                    setArrivedState();
+                    requestDriverArrived();
                     //requestArrived();
                 }
             }, new View.OnClickListener() {
@@ -861,7 +917,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     /***
      * Set the tripInfo arrived state.
      */
-    private void setArrivedState() {
+    private void requestDriverArrived() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         repository.requestMultiDeliveryDriverArrived(handler);
     }
@@ -869,7 +925,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     /***
      * Set the tripInfo started state.
      */
-    private void setStartedState() {
+    private void requestDriverStarted() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         repository.requestMultiDeliveryDriverStarted(mCurrentActivity, handler);
     }
@@ -995,7 +1051,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     protected void onResume() {
         mapView.onResume();
         setInitialData();
-        updateDropOffMarkers();
         super.onResume();
     }
 
@@ -1018,7 +1073,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 public void run() {
                     if (mCurrentActivity != null) {
                         Dialogs.INSTANCE.dismissDialog();
-                        onDriverArrived();
+                        setArrivedState();
                     }
                 }
             });
@@ -1032,7 +1087,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 public void run() {
                     if (mCurrentActivity != null) {
                         Dialogs.INSTANCE.dismissDialog();
-                        onDriverStarted();
+                        setStartedState();
                     }
                 }
             });
@@ -1053,12 +1108,20 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Invoked this method when driver has been started.
      * Change the batch status, remove the poly lines & set the bottom button to "Mukamal"
      */
-    private void onDriverStarted() {
+    private void setStartedState() {
         try {
             cancelBtn.setVisibility(View.GONE);
             if (mapPolylines != null) {
                 mapPolylines.remove();
             }
+            timeTv.setVisibility(View.GONE);
+            timeUnitLabelTv.setVisibility(View.GONE);
+            timeView.setVisibility(View.GONE);
+            if (pickupMarker != null)
+                pickupMarker.remove();
+            pickView.setVisibility(View.GONE);
+            distanceTv.setVisibility(View.GONE);
+            pickUpDistanceUnit.setVisibility(View.GONE);
             callDriverData.setBatchStatus(TripStatus.ON_START_TRIP);
             AppPreferences.setTripStatus(TripStatus.ON_START_TRIP);
             AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
@@ -1077,14 +1140,15 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Invoked this method when driver has been arrived.
      * Change the batch status, remove the poly lines & set the bottom button to "Start"
      */
-    private void onDriverArrived() {
+    private void setArrivedState() {
         try {
             if (mapPolylines != null)
                 mapPolylines.remove();
             timeTv.setVisibility(View.GONE);
             timeUnitLabelTv.setVisibility(View.GONE);
             timeView.setVisibility(View.GONE);
-            pickupMarker.remove();
+            if (pickupMarker != null)
+                pickupMarker.remove();
             pickView.setVisibility(View.GONE);
             distanceTv.setVisibility(View.GONE);
             pickUpDistanceUnit.setVisibility(View.GONE);
@@ -1136,8 +1200,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         super.onDestroy();
 
     }
-
-
 
 
     @Override

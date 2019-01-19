@@ -670,6 +670,12 @@ public class BaseActivity extends AppCompatActivity {
             //MULTI DELIVERY EVENT ERROR HANDLING
             Utils.appToast(mCurrentActivity,
                     mCurrentActivity.getString(R.string.error_try_again));
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
+            Utils.multiDeliveryFreeDriverOnBatchComplete();
+            ActivityStackManager
+                    .getInstance()
+                    .startHomeActivity(true, mCurrentActivity);
+            finish();
         }
     }
 

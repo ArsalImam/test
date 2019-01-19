@@ -16,11 +16,7 @@ class CallDriverAcknowledgeData(
         @SerializedName("trip_id")
         var tripID: String? = StringUtils.EMPTY,
         @SerializedName("is_available")
-        var isAvailable: Boolean,
-        @SerializedName("trip")
-        var tripInfo: MultiDeliveryRideCompleteTripInfo? = null,
-        @SerializedName("invoice")
-        var invoice: MultiDeliveryInvoiceData? = null
+        var isAvailable: Boolean
 ) : Parcelable {
 
     /**
@@ -32,13 +28,7 @@ class CallDriverAcknowledgeData(
             source.readString(),
             source.readString(),
             source.readString(),
-            source.readInt() == 1,
-    source.readParcelable<MultiDeliveryRideCompleteTripInfo>(
-                    MultiDeliveryRideCompleteTripInfo::class.java.classLoader
-            ),
-            source.readParcelable<MultiDeliveryInvoiceData>(
-                    MultiDeliveryInvoiceData::class.java.classLoader
-            )
+            source.readInt() == 1
     )
 
     override fun describeContents() = 0
@@ -49,8 +39,6 @@ class CallDriverAcknowledgeData(
         writeString(driverID)
         writeString(tripID)
         writeInt(if (isAvailable) 1 else 0)
-        writeParcelable(tripInfo, 0)
-        writeParcelable(invoice, 0)
     }
 
     /**

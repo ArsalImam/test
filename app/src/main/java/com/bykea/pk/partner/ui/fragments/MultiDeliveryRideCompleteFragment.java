@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.MultiDeliveryCompleteRideData;
+import com.bykea.pk.partner.models.data.MultiDeliveryRideCompleteTripInfo;
 import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -23,6 +25,9 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCompleteRideAdapter;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.utils.Utils;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -39,6 +44,7 @@ import butterknife.Unbinder;
  */
 public class MultiDeliveryRideCompleteFragment extends Fragment {
 
+    private static final String TAG = MultiDeliveryRideCompleteFragment.class.getSimpleName();
     @BindView(R.id.ride_recycler_view)
     RecyclerView mRecyclerView;
 
@@ -80,7 +86,8 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
                 new MultiDeliveryCompleteRideAdapter.MultiDeliveryCompleteRideListener() {
                     @Override
                     public void onMultiDeliveryCompleteRide(int position) {
-                        requestRideFinish(position);
+                        if (!list.get(position).isCompleted())
+                            requestRideFinish(position);
                     }
                 });
         mRecyclerView.setAdapter(adapter);
@@ -129,40 +136,28 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
      */
     private void populateCompleteRideData(List<DirectionDropOffData> list) {
         List<MultipleDeliveryBookingResponse> bookingResponses = callDriverData.getBookings();
-        if (AppPreferences.getMultiDeliveryTrip() != null)
-            tripIDList = AppPreferences.getMultiDeliveryTrip();
+
         int n = bookingResponses.size();
         for (int i = 0; i < n; i++) {
+            MultipleDeliveryBookingResponse bookingResponse = bookingResponses.get(i);
             MultipleDeliveryBookingResponse multipleDeliveryBookingResponse =
                     bookingResponses.get(i);
             DirectionDropOffData dropOff = new DirectionDropOffData.Builder()
-                    .setmArea("University Road")
+                    .setmArea(bookingResponse.getDropOff().getPickupAddress())
                     .setPassengerName(multipleDeliveryBookingResponse
                             .getPassenger()
                             .getName())
                     .setTripID(multipleDeliveryBookingResponse.getTrip().getId())
                     .setDropOffNumberText(String.valueOf(i + 1))
                     .build();
-
-            setCompletedData(dropOff);
-            list.add(dropOff);
-        }
-    }
-
-    /**
-     * Set Complete data by comparing the completed trip id and mark as completed.
-     * <p>
-     * By ignoring the constants the time complexity or rate of growth of a function is
-     * f(n) = O(n)^2 because it is already executed in a loop.
-     *
-     * @param dropOff The list item data.
-     */
-    private void setCompletedData(DirectionDropOffData dropOff) {
-        for (int i = 0; i < tripIDList.size(); i++) {
-            if (dropOff.getTripID()
-                    .equalsIgnoreCase(tripIDList.get(i))) {
+            if (multipleDeliveryBookingResponse.getTrip().
+                    getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                    multipleDeliveryBookingResponse.getTrip().
+                            getStatus().equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
                 dropOff.setCompleted(true);
             }
+
+            list.add(dropOff);
         }
     }
 
@@ -222,18 +217,26 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
     private void onMultiDeliveryRideFinished(DirectionDropOffData data,
                                              MultiDeliveryCompleteRideResponse response) {
 
-        for (DirectionDropOffData item : list) {
-            if (data.getTripID().equalsIgnoreCase(item.getTripID())) {
-                item.setCompleted(true);
-                tripIDList.add(item.getTripID());
-            }
-        }
-        AppPreferences.setMultiDeliveryTrips(tripIDList);
-        int count = AppPreferences.getMultiDeliveryCompletedTripCounts();
-        AppPreferences.saveMultiDeliveryCompletedTripCounts(++count);
+        MultiDeliveryCompleteRideData multiDeliveryCompleteRideData = response.getData();
+        MultiDeliveryRideCompleteTripInfo tripInfo = multiDeliveryCompleteRideData.getTripInfo();
+
+        MultipleDeliveryBookingResponse bookingResponse = callDriverData.
+                getTripById(tripInfo.getTripID());
+
+        bookingResponse.setInvoice(multiDeliveryCompleteRideData.getInvoice());
+
+        bookingResponse.getTrip().setTripDistance(tripInfo.getTripDistance());
+        bookingResponse.getTrip().setTripDuration(tripInfo.getTripDuration());
+        bookingResponse.getTrip().setStartAddress(tripInfo.getStartAddress());
+        bookingResponse.getTrip().setEndAddress(tripInfo.getEndAddress());
+
+        AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
+        Utils.redLog(TAG, new Gson().toJson(AppPreferences.getMultiDeliveryCallDriverData()));
+
         if (response.getCode() == HttpURLConnection.HTTP_OK) {
             ActivityStackManager.getInstance()
-                    .startMultiDeliveryFeedbackActivity(getActivity(), response);
+                    .startMultiDeliveryFeedbackActivity(getActivity(),
+                            multiDeliveryCompleteRideData.getTripInfo().getTripID());
             getActivity().finish();
         }
     }

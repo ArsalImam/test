@@ -7,6 +7,7 @@ import android.os.Looper;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -116,7 +117,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
             } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase("2")) {
+                ReceivedMessage receivedMessage = gson.fromJson(remoteMessage.getData().
+                        get(Constants.Notification.DATA_TYPE), ReceivedMessage.class);
                 if (AppPreferences.isOnTrip()) {
+                    //Do not open Chat activity when the trip is of Batch i.e Multi Delivery Trip
+                    if (StringUtils.isNotBlank(receivedMessage.getData().getBatchID())) return;
                     Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivityNew.class);
                     chatIntent.putExtra("chat", true);
                     chatIntent.putExtra("fromNotification", true);

@@ -52,10 +52,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -77,6 +75,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.DropOffMarker;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
@@ -667,15 +666,19 @@ public class Utils {
         txt_name.setText(number);
         try {
             MultiDeliveryCallDriverData data = AppPreferences.getMultiDeliveryCallDriverData();
-            List<String> tripIDList = AppPreferences.getMultiDeliveryTrip();
-            int index = Integer.parseInt(number) - 1;
-            String id = data.getBookings().get(index).getTrip().getId();
-            for (String tripID : tripIDList) {
-                if (tripID.equalsIgnoreCase(id)) {
+
+            List<MultipleDeliveryBookingResponse> bookingResponseList = data.getBookings();
+
+                int index = Integer.parseInt(number) - 1;
+                if (bookingResponseList.get(index).getTrip().getStatus().
+                        equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                        bookingResponseList.get(index).getTrip().getStatus().
+                                equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
+
                     ViewCompat.setBackgroundTintList(txt_name, ContextCompat
                             .getColorStateList(context,
                                     R.color.multi_delivery_dropoff_completed));
-                }
+
             }
 
         } catch (NumberFormatException e) {
@@ -2917,7 +2920,7 @@ public class Utils {
     }
 
     /**
-     * Fetch the duration in seconds or minutes
+     * Fetch the duration in minutes
      *
      * <p>If the duration in second is greater than or equal to 60 than convert
      * it into minutes. If duration in seconds is greater than equal to 3600 convert
@@ -2958,9 +2961,10 @@ public class Utils {
         List<LatLng> latLngList = new ArrayList<>();
         for (MultipleDeliveryBookingResponse response : deliveryCallDriverData.getBookings()) {
             latLngList.add(new LatLng(
+
                     response.getDropOff().getLat(),
-                    response.getDropOff().getLng()
-            ));
+                    response.getDropOff().getLng())
+            );
         }
 
         return latLngList;
@@ -2973,8 +2977,6 @@ public class Utils {
         setCallIncomingState();
         AppPreferences.setWalletAmountIncreased(false);
         AppPreferences.setAvailableStatus(true);
-        AppPreferences.setMultiDeliveryTrips(null);
-        AppPreferences.saveMultiDeliveryCompletedTripCounts(0);
     }
 
     //endregion

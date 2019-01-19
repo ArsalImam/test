@@ -36,6 +36,7 @@
         android:layout_marginLeft="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_8sdp"
         android:maxLines="2"
+        android:maxWidth="@dimen/_180sdp"
         android:textColor="@color/black"
         android:textSize="@dimen/_15sdp"
         app:fontName="open_sans_regular.ttf"

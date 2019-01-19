@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.helpers;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -18,7 +17,6 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
-import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -1246,74 +1244,23 @@ public class AppPreferences {
     /**
      * Set the multi delivery status.
      *
-     * @param isMultiDelivery true if multi delivery ride other wise false.
+     * @param type The type of delivery {@linkplain Constants.CallType}
      */
-    public static void setIsMultiDelivery(boolean isMultiDelivery) {
+    public static void setDeliveryType(String type) {
         mSharedPreferences
                 .edit()
-                .putBoolean(Keys.MULTIDELIVERY_IS_MULTI_DELIVERY, isMultiDelivery)
+                .putString(Keys.DELIVERY_TYPE, type)
                 .apply();
     }
 
     /**
-     * Fetch the status of ride i.e Multi Delivery ride or not.
+     * Fetch the status of delivery i.e BATCH & SINGLE.
      *
-     * @return The status true or false indicating the ride is of Multi Delivery or not.
+     * @return The status i.e BATCH & SINGLE.
      */
-    public static Boolean isMultiDelivery() {
+    public static String getDeliveryType() {
         return mSharedPreferences
-                .getBoolean(Keys.MULTIDELIVERY_IS_MULTI_DELIVERY, false);
-    }
-
-    /**
-     * Save Multi Delivery Trip ID's into shared preference.
-     *
-     * @param TripID The trip id collection.
-     */
-    public static void setMultiDeliveryTrips(List<String> TripID) {
-        Set<String> set = new HashSet<String>();
-        if (TripID != null)
-            set.addAll(TripID);
-        mSharedPreferences
-                .edit()
-                .putStringSet(Keys.MULTIDELIVERY_TRIP_ID,
-                        set)
-                .apply();
-    }
-
-    /**
-     * Fetch the Multi Delivery Trip ID Collection.
-     *
-     * @return The collection of trip id.
-     */
-    public static List<String> getMultiDeliveryTrip() {
-        Set<String> set = mSharedPreferences
-                .getStringSet(Keys.MULTIDELIVERY_TRIP_ID, null);
-        if (set==null) return null;
-        List<String> list = new ArrayList<>();
-        list.addAll(set);
-        return list;
-    }
-
-    /**
-     * Save Multi Delivery Complete Trip Counts
-     *
-     * @param count The count of completed trip in the batch.
-     */
-    public static void saveMultiDeliveryCompletedTripCounts(int count) {
-        mSharedPreferences
-                .edit()
-                .putInt(Keys.MULTIDELIVERY_COMPLETED_COUNT, count)
-                .apply();
-    }
-
-    /**
-     * Fetch the multi delivery completed trip count.
-     *
-     * @return The count of multi delivery completed trip count.
-     */
-    public static int getMultiDeliveryCompletedTripCounts() {
-        return mSharedPreferences.getInt(Keys.MULTIDELIVERY_COMPLETED_COUNT, 0);
+                .getString(Keys.DELIVERY_TYPE, StringUtils.EMPTY);
     }
 
     //endregion

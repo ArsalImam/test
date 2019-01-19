@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -10,38 +9,38 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Keys;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.bykea.pk.partner.DriverApp;
-import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
-import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -312,25 +311,7 @@ public class SplashActivity extends BaseActivity {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
-                                    AppPreferences.setStartTripTime(
-                                            AppPreferences.getServerTimeDifference() +
-                                                    Utils.getTimeInMiles(response.getData().getStarted_at()));
-                                }
-                                AppPreferences.setCallData(response.getData());
-                                AppPreferences.setTripStatus(response.getData().getStatus());
-                                if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                                    WebIORequestHandler.getInstance().registerChatListener();
-                                    ActivityStackManager.getInstance()
-                                            .startJobActivity(mCurrentActivity);
-                                    //ActivityStackManager.
-                                      //      getInstance().
-                                        //    startMultiDeliveryBookingActivity(mCurrentActivity);
-                                } else {
-                                    ActivityStackManager.getInstance()
-                                            .startFeedbackFromResume(mCurrentActivity);
-                                }
-                                finish();
+                                checkTripType(response);
                             } catch (NullPointerException e) {
                                 //If there is no pending tripInfo free all states for new tripInfo..
                                 Utils.setCallIncomingState();
@@ -352,37 +333,130 @@ public class SplashActivity extends BaseActivity {
         }
 
         @Override
-        public void onError(final int errorCode, final String errorMessage) {
+        public void onError(int errorCode, String errorMessage) {
             if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                            AppPreferences.saveLoginStatus(false);
-                            AppPreferences.setIncomingCall(false);
-                            AppPreferences.setCallData(null);
-                            AppPreferences.setTripStatus("");
-                            AppPreferences.saveLoginStatus(false);
-                            AppPreferences.setPilotData(null);
-                            HomeActivity.visibleFragmentNumber = 0;
-                            Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Dialogs.INSTANCE.dismissDialog();
-                                            ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                                            finish();
-                                        }
-                                    }, null, getString(R.string.unauthorized_title),
-                                    getString(R.string.unauthorized_message));
-                        } else {
-                            splashTimer.onFinish();
-                        }
-                    }
-                });
+                switch (errorCode) {
+                    case HttpURLConnection.HTTP_UNAUTHORIZED:
+                        AppPreferences.saveLoginStatus(false);
+                        AppPreferences.setIncomingCall(false);
+                        AppPreferences.setCallData(null);
+                        AppPreferences.setTripStatus("");
+                        AppPreferences.saveLoginStatus(false);
+                        AppPreferences.setPilotData(null);
+                        HomeActivity.visibleFragmentNumber = 0;
+                        EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                        break;
+                    case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                        EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                        splashTimer.onFinish();
+                        break;
+                }
             }
 
         }
     };
+
+    /**
+     * Check the Type of request is it batch request or single
+     *
+     * <p>
+     *
+     * Check if the type is single parse the single trip object i.e {@link NormalCallData}
+     * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
+     *
+     * Check also for unfinished trips if there is unfinished trip remaining land
+     * to "Feedback Screen" other wise booking screen according to the type
+     *
+     * <ul>
+     *     <li>Check if trip is null thats mean there is no active trip</li>
+     *     <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     *     <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * </ul>
+     *
+     * </p>
+     *
+     * @param response The object of {@linkplain CheckDriverStatusResponse}
+     */
+    private void checkTripType(CheckDriverStatusResponse response) {
+
+        if (response.getData().getTrip() == null) {
+            Utils.setCallIncomingState();
+            startHomeActivity();
+            return;
+        }
+
+
+        Gson gson = new Gson();
+        if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
+
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
+
+            NormalCallData callData = gson.fromJson(trip, type);
+            if (StringUtils.isNotBlank(callData.getStarted_at())) {
+                AppPreferences.setStartTripTime(
+                        AppPreferences.getServerTimeDifference() +
+                                Utils.getTimeInMiles(
+                                        callData.getStarted_at())
+                );
+            }
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+
+            if (!callData.getStatus().equalsIgnoreCase(
+                    TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler.
+                        getInstance().
+                        registerChatListener();
+                ActivityStackManager.
+                        getInstance().
+                        startJobActivity(mCurrentActivity);
+
+            } else {
+                ActivityStackManager.getInstance()
+                        .startFeedbackFromResume(mCurrentActivity);
+            }
+        } else {
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
+            AppPreferences.setDeliveryType(Constants.CallType.BATCH);
+            MultiDeliveryCallDriverData deliveryCallDriverData = gson.fromJson(trip, type);
+            AppPreferences.setMultiDeliveryCallDriverData(deliveryCallDriverData);
+            // check for unfinished ride later
+            List<MultipleDeliveryBookingResponse> bookingResponseList =
+                    deliveryCallDriverData.getBookings();
+
+            boolean isFinishedStateFound = false;
+
+            for (MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+                // get trip instance
+                MultiDeliveryTrip tripData = bookingResponse.getTrip();
+
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startMultiDeliveryFeedbackActivity(mCurrentActivity,
+                                    tripData.getId());
+                    break;
+                }
+            }
+
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startMultiDeliveryBookingActivity(mCurrentActivity);
+
+
+        }
+        finish();
+    }
 
 
     //region Life Cycle Methods

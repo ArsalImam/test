@@ -75,6 +75,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -85,6 +87,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -1813,21 +1817,38 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     @Override
                     public void run() {
                         try {
-                            if (response.getMessage().equalsIgnoreCase("Trip Not Found")) {
-                                cancelByPassenger(false);
-                            } else {
-                                if (shouldUpdateTripData(response.getData().getStatus())) {
-                                    AppPreferences.setCallData(response.getData());
-                                    AppPreferences.setTripStatus(response.getData().getStatus());
-                                    callData = response.getData();
-                                    updateDropOff();
-                                }
-                            }
-                        } catch (NullPointerException ignored) {
+                            Gson gson = new Gson();
+                            String trip = gson.toJson(response.getData().getTrip());
+                            Type type = new TypeToken<NormalCallData>(){}.getType();
+                            NormalCallData normalCallData = gson.fromJson(trip, type);
 
+                            if (shouldUpdateTripData(normalCallData.getStatus())) {
+                                AppPreferences.setCallData(normalCallData);
+                                AppPreferences.setTripStatus(normalCallData.getStatus());
+                                callData = normalCallData;
+                                updateDropOff();
+                            }
+
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
+            }
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            switch (errorCode) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    cancelByPassenger(false);
+                    break;
+                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                    EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                    break;
             }
         }
     };

@@ -10,7 +10,10 @@ import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
 import com.bykea.pk.partner.models.data.PilotData;
+import com.bykea.pk.partner.models.data.PlacesList;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -51,6 +54,7 @@ import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
+import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -63,8 +67,12 @@ import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
+import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
@@ -86,10 +94,20 @@ import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
+import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesRepository;
+import com.bykea.pk.partner.tracking.AbstractRouting;
+import com.bykea.pk.partner.tracking.Route;
+import com.bykea.pk.partner.tracking.RouteException;
+import com.bykea.pk.partner.tracking.Routing;
+import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
@@ -98,10 +116,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class UserRepository {
 
+    private static final String TAG = UserRepository.class.getSimpleName();
     private Context mContext;
     private IUserDataHandler mUserCallback;
     private WebIORequestHandler mWebIORequestHandler;
@@ -320,29 +340,127 @@ public class UserRepository {
         locationRequest.setLongitude(lon + "");
         String tripStatus = StringUtils.EMPTY;
         if (AppPreferences.isOnTrip()) {
-            tripStatus = AppPreferences.getCallData() != null
-                    && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
-                    ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
-            locationRequest.setEta(AppPreferences.getEta());
-            locationRequest.setDistance(AppPreferences.getEstimatedDistance());
-            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
-            ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
-            if (trackingData.size() == 0) {
-                TrackingData data = new TrackingData();
-                data.setLat(lat + "");
-                data.setLng(lon + "");
-                trackingData.add(data);
+            if (AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.SINGLE)) {
+                tripStatus = AppPreferences.getCallData() != null
+                        && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
+                        ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
+                locationRequest.setEta(AppPreferences.getEta());
+                locationRequest.setDistance(AppPreferences.getEstimatedDistance());
+                locationRequest.setTripID(AppPreferences.getCallData().getTripId());
+                ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
+                if (trackingData.size() == 0) {
+                    TrackingData data = new TrackingData();
+                    data.setLat(lat + "");
+                    data.setLng(lon + "");
+                    trackingData.add(data);
+                }
+                locationRequest.setTrackingData(trackingData);
+                AppPreferences.clearTrackingData();
+                if (StringUtils.isBlank(tripStatus)) {
+                    tripStatus = AppPreferences.getTripStatus();
+                }
+                locationRequest.setAvailableStatus(tripStatus);
+                locationRequest.setUuid(UUID.randomUUID().toString());
+                mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                        mDataCallback, locationRequest);
+            } else {
+                //In Batch Trip
+                if (StringUtils.isBlank(tripStatus)) {
+                    tripStatus = AppPreferences.getTripStatus();
+                }
+                locationRequest.setAvailableStatus(tripStatus);
+                locationRequest.setUuid(UUID.randomUUID().toString());
+
+                calculateDistanceFromDirectionAPI(locationRequest);
+
             }
-            locationRequest.setTrackingData(trackingData);
-            AppPreferences.clearTrackingData();
+        } else {
+            if (StringUtils.isBlank(tripStatus)) {
+                tripStatus = AppPreferences.getTripStatus();
+            }
+            locationRequest.setAvailableStatus(tripStatus);
+            locationRequest.setUuid(UUID.randomUUID().toString());
+            mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                    mDataCallback, locationRequest);
         }
-        if (StringUtils.isBlank(tripStatus)) {
-            tripStatus = AppPreferences.getTripStatus();
-        }
-        locationRequest.setAvailableStatus(tripStatus);
-        locationRequest.setUuid(UUID.randomUUID().toString());
-        mRestRequestHandler.sendDriverLocationUpdate(context, mDataCallback, locationRequest);
+
+
     }
+
+    /**
+     *
+     * Fetch Tracking Data List
+     *
+     * <p>Calculate the distance & duration between driver location to each drop off location</p>
+     *
+     * @param locationRequest The {@linkplain DriverLocationRequest} object.
+     */
+    private synchronized void calculateDistanceFromDirectionAPI(final DriverLocationRequest
+                                                                        locationRequest) {
+        String driverLatLng =
+                AppPreferences.getLatitude() + "," + AppPreferences.getLongitude();
+        String dropLatLng = StringUtils.EMPTY;
+        final MultiDeliveryCallDriverData callDriverData = AppPreferences.
+                getMultiDeliveryCallDriverData();
+
+        if (!callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                    mDataCallback, locationRequest);
+            return;
+        }
+
+        final ArrayList<MultipleDeliveryRemainingETA> trackingDataList = new ArrayList<>();
+        final List<MultipleDeliveryBookingResponse> bookingResponseList =
+                callDriverData.getBookings();
+
+        final int bookingSize = bookingResponseList.size();
+        final int[] counter = {0};
+        for (final MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+            counter[0]++;
+            MultipleDeliveryDropOff dropOff =bookingResponse.getDropOff();
+            dropLatLng = dropLatLng.concat(dropOff.getLat() + "," +
+                    dropOff.getLng());
+            Log.d(TAG, bookingResponse.getTrip().getId());
+            if (counter[0] != bookingSize)
+                dropLatLng = dropLatLng.concat("|");
+        }
+
+        new PlacesRepository().getDistanceMatrix(
+                driverLatLng,
+                dropLatLng,
+                mContext,
+                new PlacesDataHandler() {
+                    @Override
+                    public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
+
+                        counter[0] = 0;
+                        GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
+                        for (GoogleDistanceMatrixApi.Elements element : elements) {
+                            String tripID = bookingResponseList.get(counter[0]).getTrip().getId();
+                            Log.d(TAG, tripID);
+                            int distance = element.getDistance().getValueInt();
+                            int duration = element.getDuration().getValueInt();
+                            MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
+                            remainingETA.setTripID(tripID);
+                            remainingETA.setRemainingDistance(distance);
+                            remainingETA.setRemainingTime(duration);
+                            trackingDataList.add(remainingETA);
+                            counter[0]++;
+                        }
+                        locationRequest.setBatchBookings(trackingDataList);
+                        mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                                mDataCallback, locationRequest);
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.d(TAG, error);
+                    }
+                });
+
+    }
+
 
     public void freeDriverStatus(Context context, IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
@@ -496,23 +614,23 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
+            NormalCallData callData = AppPreferences.getCallData();
             String startLat = AppPreferences.getLatitude() + "";
             String startLng = AppPreferences.getLongitude() + "";
             jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-            jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("tid", callData.getTripId());
+            jsonObject.put("trip_id", callData.getTripId());
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("did", AppPreferences.getDriverId());
             jsonObject.put("startlatitude", startLat);
             jsonObject.put("startlongitude", startLng);
-            jsonObject.put("start_address", AppPreferences.getCallData().getStartAddress());
-            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
+            jsonObject.put("start_address", callData.getStartAddress());
+            jsonObject.put("pid", callData.getPassId());
             jsonObject.put("endlatitude", endLat);
             jsonObject.put("endlongitude", endLng);
             jsonObject.put("end_address", endAddress);
 
             //To update start latlng on App Side.
-            NormalCallData callData = AppPreferences.getCallData();
             callData.setStartLat(startLat);
             callData.setStartLng(startLng);
             AppPreferences.setCallData(callData);
@@ -794,6 +912,7 @@ public class UserRepository {
             jsonObject.put("route", new Gson()
                     .toJson(AppPreferences.getLocCoordinatesInTrip()));
             directionDropOffData = data;
+            AppPreferences.clearTripDistanceData();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1560,6 +1679,8 @@ public class UserRepository {
         }
 
     };
+
+
 
 
 }

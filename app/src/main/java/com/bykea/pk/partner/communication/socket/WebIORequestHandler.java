@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
+import android.nfc.Tag;
 
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
@@ -67,6 +68,7 @@ import io.socket.emitter.Emitter;
 public class WebIORequestHandler {
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
     private static ChatMessageListener chatMessageListener = new ChatMessageListener();
+    public static final String TAG = WebIORequestHandler.class.getSimpleName();
 //    private static Context mContext;
 
     public static WebIORequestHandler getInstance() {
@@ -577,6 +579,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
+            Utils.redLog(TAG, serverResponse);
             Gson gson = new Gson();
             try {
                 MultipleDeliveryCallDriverResponse response = gson.fromJson(
@@ -602,7 +605,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("MultiDeliveryTripMissedListener", serverResponse);
+            Utils.redLog(TAG, serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
         }
     }
@@ -615,7 +618,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("MultiDeliveryTripBatchCompletedListener", serverResponse);
+            Utils.redLog(TAG, serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_BATCH_COMPLETED);
         }
     }

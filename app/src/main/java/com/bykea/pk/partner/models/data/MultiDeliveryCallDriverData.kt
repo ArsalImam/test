@@ -2,7 +2,11 @@ package com.bykea.pk.partner.models.data
 
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse
 import com.bykea.pk.partner.models.response.MultipleDeliveryPickupResponse
+import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.TripStatus
 import com.google.android.gms.common.util.CollectionUtils.mutableListOf
+import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
 
@@ -38,5 +42,46 @@ data class MultiDeliveryCallDriverData(
         var estCashCollection: Int? = 0,
         var acceptTime: Long
 ) {
-        fun getAcceptedTime(): Long = if (acceptTime > 0) acceptTime else System.currentTimeMillis()
+    fun getAcceptedTime(): Long = if (acceptTime > 0) acceptTime else System.currentTimeMillis()
+
+    /**
+     * Get trip by trip id
+     *
+     * @param The [MultipleDeliveryBookingResponse] object.
+     *
+     * @return The booking object according to their trip ID.
+     *
+     */
+    fun getTripById(tripID: String): MultipleDeliveryBookingResponse? {
+        bookings?.let {
+            for (booking in it) {
+                if (tripID.contentEquals(booking.trip?.id!!)) {
+                    return booking
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * Check for unfinished trip
+     *
+     * @param response The [MultiDeliveryCallDriverData] object.
+     *
+     * @return True if the trip status is not [TripStatus.ON_COMPLETED_TRIP] &
+     * not [TripStatus.ON_FEEDBACK_TRIP] other wise its mean that there
+     * is not trip available return false
+     */
+    fun isUnfinishedTripRemaining(response: MultiDeliveryCallDriverData): Boolean {
+        val bookingResponseList = response.bookings
+        for (response in bookingResponseList!!) {
+            if (!response.trip!!.status!!.equals(TripStatus.ON_COMPLETED_TRIP,
+                            ignoreCase = true) && !response.trip!!.status!!.
+                            equals(TripStatus.ON_FEEDBACK_TRIP, ignoreCase = true)) {
+                return true
+            }
+        }
+
+        return false
+    }
 }
