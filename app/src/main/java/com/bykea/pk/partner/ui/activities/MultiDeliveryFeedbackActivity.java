@@ -138,6 +138,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     private int tripCounts;
     private MultiDeliveryInvoiceData invoice;
     private String TAG = MultiDeliveryFeedbackResponse.class.getSimpleName();
+    private boolean isComingFromOnGoingRide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +166,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         Bundle bundle = getIntent().getExtras();
         String tripID = StringUtils.EMPTY;
         if (bundle != null) {
+            isComingFromOnGoingRide = bundle.getBoolean(Keys.MULTIDELIVERY_FEEDBACK_SCREEN, false);
             tripID = bundle.getString(Keys.MULTIDELIVERY_TRIP_ID, StringUtils.EMPTY);
         }
         if (callDriverData != null) {
@@ -430,5 +432,17 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    /**
+     * overrided because user must complete feedback without going back
+     * user cannot go back to previous screen
+     * if Feedback screen is not coming from ongoing complete ride screen then this will behave normally.
+     *
+     */
+    @Override
+    public void onBackPressed() {
+        if(!isComingFromOnGoingRide)
+            super.onBackPressed();
     }
 }

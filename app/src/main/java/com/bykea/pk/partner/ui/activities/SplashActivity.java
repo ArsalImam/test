@@ -442,7 +442,7 @@ public class SplashActivity extends BaseActivity {
                     isFinishedStateFound = true;
                     ActivityStackManager.getInstance()
                             .startMultiDeliveryFeedbackActivity(mCurrentActivity,
-                                    tripData.getId());
+                                    tripData.getId(), false);
                     break;
                 }
             }

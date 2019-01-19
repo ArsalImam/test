@@ -236,7 +236,7 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
         if (response.getCode() == HttpURLConnection.HTTP_OK) {
             ActivityStackManager.getInstance()
                     .startMultiDeliveryFeedbackActivity(getActivity(),
-                            multiDeliveryCompleteRideData.getTripInfo().getTripID());
+                            multiDeliveryCompleteRideData.getTripInfo().getTripID(), true);
             getActivity().finish();
         }
     }

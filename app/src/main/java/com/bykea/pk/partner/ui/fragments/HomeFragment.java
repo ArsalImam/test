@@ -1005,7 +1005,7 @@ public class HomeFragment extends Fragment {
                     isFinishedStateFound = true;
                     ActivityStackManager.getInstance()
                             .startMultiDeliveryFeedbackActivity(mCurrentActivity,
-                                    tripData.getId());
+                                    tripData.getId(), false);
                     break;
                 }
             }
