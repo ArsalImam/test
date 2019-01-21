@@ -79,6 +79,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/streetAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/streetAddress"
-        app:srcCompat="@drawable/ic_call_icon" />
+        app:srcCompat="@drawable/ic_call" />
 
 </android.support.constraint.ConstraintLayout>
