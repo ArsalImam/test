@@ -185,6 +185,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                     ));
                     startAddressTv.setText(tripInfo.getStartAddress());
                     endAddressTv.setText(tripInfo.getEndAddress());
+                    tvTripId.setText(tripInfo.getTripNo());
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
