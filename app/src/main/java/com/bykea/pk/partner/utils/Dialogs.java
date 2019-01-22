@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -244,6 +245,32 @@ public enum Dialogs {
         showDialog();
     }
 
+    /***
+     * Shows battery dialog
+     * @param context Calling context
+     * @param title  Title which needs to be displayed.
+     * @param message Message which needs to be displayed.
+     * @param onClick Click listener
+     */
+    public void showAlertDialogForBattery(Context context,
+                                          String title,
+                                          String message,
+                                          View.OnClickListener onClick){
+
+        if (null == context) return;
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_alert);
+        mDialog.setCancelable(false);
+        mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(onClick);
+        ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(message);
+        ((FontTextView) mDialog.findViewById(R.id.titleTv)).setText(title);
+
+        showDialog();
+
+    }
 
     public void showAlertDialog(Context context, String title, String message, View.OnClickListener onClick) {
         dismissDialog();
@@ -546,6 +573,31 @@ public enum Dialogs {
         showDialog();
     }
 
+    /***
+     * Show IMEI not registered error message which takes user to report submit screen.
+     * @param context Calling Context
+     * @param msg Message which needs to be displayed.
+     * @param positive report submit click listener.
+     */
+    public void showImeiRegistrationErrorDialog(final Context context,
+                                                final SpannableStringBuilder msg,
+                                                final View.OnClickListener positive) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_imei_not_registerd);
+        if (StringUtils.isNotBlank(msg)) {
+            ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
+        }
+        mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+                positive.onClick(v);
+            }
+        });
+        showDialog();
+    }
+
 
     public void showTopUpDialog(final Context context, final boolean isCourierType, final StringCallBack callBack) {
         if (null == context) return;
@@ -811,7 +863,6 @@ public enum Dialogs {
 
         showDialog();
     }
-
 
     /**
      * This methods shows a pop up dialog when partner has successfully signed up

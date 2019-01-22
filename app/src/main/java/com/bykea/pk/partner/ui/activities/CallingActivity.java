@@ -113,6 +113,8 @@ public class CallingActivity extends BaseActivity {
 
     private boolean isFreeDriverApiCalled = false;
 
+    public String TAG = CallingActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -419,12 +421,8 @@ public class CallingActivity extends BaseActivity {
 
     private void setInitialData() {
         NormalCallData callData = AppPreferences.getCallData();
-        Log.d("callData", new Gson().toJson(callData));
+        Utils.redLog(TAG, "Call Data: "+new Gson().toJson(callData));
         logMixpanelEvent(callData, false);
-//        callerNameTv.setText(callData.getPassName());
-//        startAddressTv.setText(callData.getStartAddress());
-//        timeTv.setText(callData.getArivalTime() + " min");
-//        distanceTv.setText(callData.getDistance() + " km");
         counterTv.setText("20");
 
         String icon = StringUtils.EMPTY;
@@ -495,6 +493,7 @@ public class CallingActivity extends BaseActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Utils.redLog(TAG, e.getMessage(), e);
         }
     }
 

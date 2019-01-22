@@ -197,14 +197,14 @@ public class WebIORequestHandler {
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
                         }
-                        Utils.redLog("Request at " + socket + " (onConnect)", json.toString());
+                        Utils.redLogLocation("Request at " + socket + " (onConnect)", json.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
         } else {
-            Utils.redLog("Request at " + socket, json.toString());
+            Utils.redLogLocation("Request at " + socket, json.toString());
         }
     }
 
@@ -279,7 +279,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("Response at " + mSocketName, serverResponse);
+            Utils.redLogLocation("Response at " + mSocketName, serverResponse);
 
             Gson gson = new Gson();
             try {
@@ -287,14 +287,14 @@ public class WebIORequestHandler {
 //                if (null == mContext) {
 //                    mContext = DriverApp.getContext();
 //                }
-                if (AppPreferences.isLoggedIn() && locationResponse.getData() != null) {
-                    if (StringUtils.isNotBlank(locationResponse.getData().getLat())
-                            && StringUtils.isNotBlank(locationResponse.getData().getLng())) {
+                if (AppPreferences.isLoggedIn() && locationResponse.getLocation() != null) {
+                    if (StringUtils.isNotBlank(locationResponse.getLocation().getLat())
+                            && StringUtils.isNotBlank(locationResponse.getLocation().getLng())) {
                         AppPreferences.saveLastUpdatedLocation(
-                                new LatLng(Double.parseDouble(locationResponse.getData().getLat()),
-                                        Double.parseDouble(locationResponse.getData().getLng())));
+                                new LatLng(Double.parseDouble(locationResponse.getLocation().getLat()),
+                                        Double.parseDouble(locationResponse.getLocation().getLng())));
                     }
-                    Utils.saveServerTimeDifference(locationResponse.getTimestampserver());
+                    Utils.saveServerTimeDifference(locationResponse.getTimeStampServer());
                 }
                 if (locationResponse.isSuccess()) {
                     if (AppPreferences.isWalletAmountIncreased()) {
