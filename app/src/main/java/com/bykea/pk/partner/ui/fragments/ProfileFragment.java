@@ -208,6 +208,7 @@ public class ProfileFragment extends Fragment {
                         if (response.isSuccess()) {
                             enableViews(true);
                             mPersonalInfo = response.getData();
+                            AppPreferences.setAppVersion(mPersonalInfo.getAppVersion());
                             PilotData data = AppPreferences.getPilotData();
                             data.setFullName(mPersonalInfo.getFullName());
                             data.setPilotImage(mPersonalInfo.getImgId());

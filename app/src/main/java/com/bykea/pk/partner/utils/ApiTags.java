@@ -78,6 +78,7 @@ public class ApiTags {
     public static final String GET_CITIES = "/api/v1/admin/cities";
     public static final String SET_DRIVER_DROP_OFF = "/api/v1/driver/setDropoff";
     public static final String SET_DRIVER_LOCATION = "/api/v1/driver/update/location";
+    public static final String UPDATE_APP_VERSION = "/api/v1/driver/update/version";
 
 
     public static final String LOGOUT_API = "/api/v1/driver/logout";

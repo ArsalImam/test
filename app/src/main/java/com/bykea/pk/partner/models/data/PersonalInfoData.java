@@ -82,6 +82,9 @@ public class PersonalInfoData implements Parcelable {
     @SerializedName("current_lng")
     private String homeLng;
 
+    @SerializedName("app_version")
+    private String appVersion;
+
 
     public PersonalInfoData() {
     }
@@ -119,6 +122,7 @@ public class PersonalInfoData implements Parcelable {
         dest.writeString(this.cnic);
         dest.writeString(this.homeLat);
         dest.writeString(this.homeLng);
+        dest.writeString(this.appVersion);
     }
 
 
@@ -148,6 +152,7 @@ public class PersonalInfoData implements Parcelable {
         this.cnic = in.readString();
         this.homeLat = in.readString();
         this.homeLng = in.readString();
+        this.appVersion = in.readString();
     }
 
     public static final Creator<PersonalInfoData> CREATOR = new Creator<PersonalInfoData>() {
@@ -276,6 +281,8 @@ public class PersonalInfoData implements Parcelable {
     public String getHomeLng() {
         return homeLng;
     }
+
+    public String getAppVersion() { return appVersion; }
     //endregion
 }
 

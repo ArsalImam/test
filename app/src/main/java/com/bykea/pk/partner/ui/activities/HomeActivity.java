@@ -13,10 +13,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.PilotData;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
@@ -43,6 +47,7 @@ public class HomeActivity extends BaseActivity {
     public static int visibleFragmentNumber = 1;
     private EventBus mBus = EventBus.getDefault();
     private PilotData pilotData;
+    private UserRepository mUserRepository;
 
     @BindView(R.id.toolbarLine)
     View toolbarLine;
@@ -61,6 +66,7 @@ public class HomeActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
         ButterKnife.bind(this);
+        mUserRepository = new UserRepository();
         pilotData = AppPreferences.getPilotData();
         setToolbarLogo();
         initViews();
@@ -83,6 +89,7 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
+        updateAppVersionIfRequired();
     }
 
     @Override
@@ -176,7 +183,7 @@ public class HomeActivity extends BaseActivity {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             isSettingsApiFirstTimeCalled = true;
         }
-        new UserRepository().requestSettings(mCurrentActivity, new UserDataHandler() {
+        mUserRepository.requestSettings(mCurrentActivity, new UserDataHandler() {
             @Override
             public void onGetSettingsResponse(boolean isUpdated) {
                 if (isSettingsApiFirstTimeCalled) {
@@ -275,6 +282,22 @@ public class HomeActivity extends BaseActivity {
         super.onNewIntent(intent);
         if (intent != null && intent.getBooleanExtra(Constants.Extras.NAVIGATE_TO_HOME_SCREEN, false)) {
             showHomeFragment();
+        }
+    }
+    /**
+     * This method compares App Version in user model with App version on User's Device and updates
+     * App version on server via API if required.
+     */
+    private void updateAppVersionIfRequired() {
+        if(!Utils.getVersion(this).equalsIgnoreCase(AppPreferences.getAppVersion())){
+            mUserRepository.updateAppVersion(new UserDataHandler(){
+                @Override
+                public void onUpdateAppVersionResponse(UpdateAppVersionResponse response) {
+                    if(response.isSuccess()){
+                        AppPreferences.setAppVersion(Utils.getVersion(DriverApp.getContext()));
+                    }
+                }
+            });
         }
     }
 }

@@ -3,6 +3,7 @@ package com.bykea.pk.partner.communication.rest;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.RankingResponse;
@@ -51,6 +52,7 @@ import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
@@ -1548,4 +1550,17 @@ public class RestRequestHandler {
         RestClient.clearBykeaRetrofitClient();
     }
 
+    /**
+     * This method will call Update App Version API
+     *
+     * @param onResponseCallBack to handle call back
+     */
+    public void updateAppVersion(IResponseCallback onResponseCallBack) {
+        mRestClient = RestClient.getClient(DriverApp.getContext());
+        Call<UpdateAppVersionResponse> restCall = mRestClient.updateAppVersion(
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                Double.parseDouble(Utils.getVersion(DriverApp.getContext())));
+        restCall.enqueue(new GenericRetrofitCallBack<UpdateAppVersionResponse>(onResponseCallBack));
+    }
 }
