@@ -32,7 +32,7 @@
     <!--                ERROR STRINGS HERE                  -->
     <string name="error_internet_connectivity">Please check your internet connection.</string>
     <string name="error_phone_number_1">Please enter correct mobile number</string>
-    <string name="error_field_empty">required</string>
+    <string name="error_field_empty">Required</string>
     <string name="error_picture_not_selected">Picture not selected.</string>
     <string name="error_try_again">Something went wrong. Please try again later.</string>
 
