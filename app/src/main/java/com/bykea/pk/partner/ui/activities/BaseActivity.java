@@ -548,6 +548,16 @@ public class BaseActivity extends AppCompatActivity {
         demandBtn.setVisibility(View.GONE);
     }
 
+    /***
+     * Make Demand button invisible on UI just to take space on our Toolbar to make Title Align
+     */
+    public void makeDemandSpaceAvailableOnUI() {
+        demandBtn = mToolbar.findViewById(R.id.demandBtn);
+        if (demandBtn != null) {
+            demandBtn.setVisibility(View.INVISIBLE);
+        }
+    }
+
     public void hideToolbarBackNav() {
         getToolbar().setNavigationIcon(null);
         getToolbar().setNavigationOnClickListener(null);
@@ -805,8 +815,8 @@ public class BaseActivity extends AppCompatActivity {
 
 
     public void setTitleCustomToolbarWithUrdu(String title, String name_urdu) {
-        final FontTextView ivTitle = (FontTextView) findViewById(R.id.tvTitle);
-        final FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
+        final FontTextView ivTitle = findViewById(R.id.tvTitle);
+        final FontTextView tvTitleUrdu = findViewById(R.id.tvTitleUrdu);
         tvTitleUrdu.setVisibility(View.VISIBLE);
         ivTitle.setText(title);
         tvTitleUrdu.setVisibility(View.GONE);

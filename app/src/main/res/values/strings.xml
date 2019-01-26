@@ -182,6 +182,8 @@
     <string name="invalid_phone">Invalid phone</string>
     <string name="invalid_code_error_message">Invalid Code</string>
     <string name="current_week">Current Week</string>
+    <string name="google_maps_missing_error">Please install Google Maps</string>
+    <string name="lord_board_order_distance">%f km</string>
     <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
     <string name="license_title">License</string>
     <string name="license_title_ur">لائسنس</string>
@@ -194,6 +196,7 @@
     <string name="motor_bike_title">Motorbike</string>
     <string name="motor_bike_title_ur">موٹر سائیکل</string>
     <string name="splash_welcome_message">حرکت میں برکت</string>
+    <string name="driver_demand_offline_error_ur">آپ آف لائن ہیں ایکٹو ہوکے بکنگ حاصل کریں۔</string>
     <string name="register_with_mobile">موبائل نمبر درج کریں</string>
     <string name="unauthorized_title">UnAuthorized</string>
     <string name="unauthorized_message">Your account is logged in to another device. You are not login here anymore</string>

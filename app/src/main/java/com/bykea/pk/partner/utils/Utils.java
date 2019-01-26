@@ -1042,10 +1042,11 @@ public class Utils {
                 .replace(", Sindh", "").replace(", Islamabad Capital Territory", "").replace(", Islamic Republic of Pakistan", "") : StringUtils.EMPTY;
     }
 
-    /*
+    /**
      * Returns API key for Google GeoCoder API if required.
      * Will return Empty String if there's no error in Last
      * Request while using API without any Key.
+     * @return Google place server API key
      * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
@@ -1172,14 +1173,6 @@ public class Utils {
             isMock = false;
         }
         return isMock;
-    }
-
-
-    public static void phoneCall(Activity activity, String phone) {
-
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-        activity.startActivity(intent);
-
     }
 
     public static boolean areThereMockPermissionApps(Context context) {
@@ -1523,7 +1516,7 @@ public class Utils {
             MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
             if (StringUtils.isBlank(mixpanel.getDistinctId())
                     || !mixpanel.getDistinctId().equalsIgnoreCase(AppPreferences.getPilotData().getId())) {
-//                mixpanel.alias(AppPreferences.getUser().get_id(), null);
+//                mixpanel.alias(AppPreferences.getUser().getId(), null);
                 mixpanel.identify(AppPreferences.getPilotData().getId());
                 mixpanel.getPeople().identify(AppPreferences.getPilotData().getId());
                 mixpanel.getPeople().initPushHandling(Constants.GCM_PROJECT_NO);
@@ -2651,6 +2644,26 @@ public class Utils {
                 eventBus.post(Keys.INACTIVE_FENCE);
                 break;
         }
+    }
+
+
+    /**
+     * This method starts Google Map API to show navigation
+     *
+     * @param context  Calling context
+     * @param endPoint String end point lat lng coordinates
+     */
+    public static void startGoogleDirectionsApp(Context context, String endPoint) {
+
+        try {
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + endPoint + "&mode=d");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            context.startActivity(mapIntent);
+        } catch (Exception ex) {
+            Utils.appToast(context, context.getString(R.string.google_maps_missing_error));
+        }
+
     }
 
 }

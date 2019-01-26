@@ -9,6 +9,7 @@ import android.os.Build;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -26,6 +27,7 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
@@ -341,9 +343,15 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startDeliveryScheduleDetailActivity(Context mContext, int pos) {
+    /**
+     * This method will start details activity for Scheduled Delivery Service
+     *
+     * @param mContext             Calling context
+     * @param deliveryScheduleData DeliveryScheduleModel Selected delivery trip
+     */
+    public void startDeliveryScheduleDetailActivity(Context mContext, DeliveryScheduleModel deliveryScheduleData) {
         Intent intent = new Intent(mContext, DeliveryScheduleDetailActivity.class);
-        intent.putExtra(Constants.Extras.POSITION_DELIVERY_SCHEDULE, pos);
+        intent.putExtra(Constants.Extras.SELECTED_ITEM, deliveryScheduleData);
         mContext.startActivity(intent);
     }
 

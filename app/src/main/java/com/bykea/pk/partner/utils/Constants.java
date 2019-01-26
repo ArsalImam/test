@@ -264,6 +264,13 @@ public class Constants {
 
 
     /**
+     * This inner class will contain Constants for Time Formats
+     */
+    public static class TimeFormat {
+        public final static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    }
+
+    /**
      * List of supported services name and title by our eco system.
      */
     public static class ServiceType {

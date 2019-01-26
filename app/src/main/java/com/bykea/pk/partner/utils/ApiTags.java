@@ -136,4 +136,5 @@ public class ApiTags {
     public static final String SOCKET_UPDATE_STATUS = "update-driver-status";
     public static final String UPDATE_DROP_OFF = "trip-endaddress";
     public static final String PLACES_DISTANCEMATRIX_EXT_URL = "maps/api/distancematrix/json";
+    public static final String SOCKET_ACCEPT_SCHEDULED_TRIP = "assign-driver";
 }
