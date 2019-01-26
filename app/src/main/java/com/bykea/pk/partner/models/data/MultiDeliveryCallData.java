@@ -10,10 +10,15 @@ public class MultiDeliveryCallData {
     MultiDeliveryPickup pickupData;
     List<MultiDeliveryDropOff> dropOffList;
 
+    /*Added this ride status to handle making calls to drop off location's person
+     * Call option can only be enabled when ride has started or arrived*/
+    private String rideStatus;
+
     public MultiDeliveryCallData(MultiDeliveryPickup pickupData,
-                                 List<MultiDeliveryDropOff> dropOffList) {
+                                 List<MultiDeliveryDropOff> dropOffList, String rideStatus) {
         this.pickupData = pickupData;
         this.dropOffList = dropOffList;
+        this.rideStatus = rideStatus;
     }
 
     public MultiDeliveryPickup getPickupData() {
@@ -30,5 +35,9 @@ public class MultiDeliveryCallData {
 
     public void setDropOffList(List<MultiDeliveryDropOff> dropOffList) {
         this.dropOffList = dropOffList;
+    }
+
+    public String getRideStatus() {
+        return rideStatus;
     }
 }

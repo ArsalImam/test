@@ -71,7 +71,7 @@ public class MultiDeliveryCallFragment extends Fragment {
         final List<MultiDeliveryDropOff> list = new ArrayList<>();
         addDropOffData(list);
 
-        final MultiDeliveryCallData data = new MultiDeliveryCallData(pickup, list);
+        final MultiDeliveryCallData data = new MultiDeliveryCallData(pickup, list, callDriverData.getBatchStatus());
 
         MultiDeliveryCallAdapter adapter = new MultiDeliveryCallAdapter(
                 data,

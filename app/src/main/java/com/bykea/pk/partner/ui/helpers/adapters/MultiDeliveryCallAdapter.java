@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallData;
 import com.bykea.pk.partner.models.data.MultiDeliveryDropOff;
+import com.bykea.pk.partner.utils.Constants;
 
 /***
  * Multi Delivery Call Adapter an adaptet class is used to collect child view to represent a parent view.
@@ -61,7 +64,7 @@ public class MultiDeliveryCallAdapter extends RecyclerView.Adapter<MultiDelivery
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         if (data == null) return;
         try {
             if (getItemViewType(position) == TYPE_ITEM) {
@@ -75,6 +78,20 @@ public class MultiDeliveryCallAdapter extends RecyclerView.Adapter<MultiDelivery
                 holder.numberTv.setText(dropOff.getDropOffNumberText());
                 holder.areaTv.setText(dropOff.getmArea());
                 holder.streetAddressTv.setText(dropOff.getStreetAddress());
+
+                //Enable/Disable drop off location's call option
+                if(data.getRideStatus().equals(Constants.RIDE_STARTED) || data.getRideStatus().equals(Constants.RIDE_ARRIVED)){
+                    holder.callIv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            callClickListener.onCallClick(position);
+                        }
+                    });
+                    holder.callIv.setImageResource(R.drawable.contact_call_icon);
+                } else {
+                    holder.callIv.setOnClickListener(null);
+                    holder.callIv.setImageResource(R.drawable.ic_call);
+                }
             } else {
 
                 //Set header data i.e pickup data
