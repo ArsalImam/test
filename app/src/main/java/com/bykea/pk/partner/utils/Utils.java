@@ -2530,6 +2530,22 @@ public class Utils {
         return spannableStringBuilder;
     }
 
+    /****
+     * Generate GPS High Accuracy warning message for user.
+     * @param context Calling context.
+     * @return String object
+     */
+    public static String generateGpsHighAccuracyWarningMessage(Context context) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_one, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_three, Constants.FontNames.JAMEEL_NASTALEEQI));
+        return spannableStringBuilder.toString();
+    }
+
     /***
      *  Check is provided activity in running task.
      *

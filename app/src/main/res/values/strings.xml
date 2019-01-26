@@ -227,7 +227,9 @@
     <string name="gps_enable_initial_message"> برائے مہربانی اپنا</string>
     <string name="GPS_middle_message">GPS</string>
     <string name="gps_enable_ending_message"> آن کریں </string>
-    <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
+    <string name="gps_high_accuracy_error_ur_one">اپنا جی پي ایس </string>
+    <string name="gps_high_accuracy_error_ur_two">\nHigh Accuracy\n</string>
+    <string name="gps_high_accuracy_error_ur_three"> پے آن کریں۔</string>
     <string name="notification_title_driver_login_location">Logged in fetching location</string>
     <string name="notification_title_driver_logout_location">Fetching location</string>
     <string name="notification_title_driver_status">Your Status: %1$s</string>
@@ -248,4 +250,5 @@
     <string name="retrofit_request_method_type"> Method </string>
     <string name="driver_offline_crone_job_ur">App Offline Hochuke Hain!</string>
 
+    <!--Testing verified commit-->
 </resources>
