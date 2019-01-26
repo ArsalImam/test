@@ -161,6 +161,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void setInitialData() {
         setProgressDialog();
+
+        //call once on resume app to display last saved time and distance
+        setTimeDistanceOnResume();
         callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
         ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
         mLocBearing = (float) AppPreferences.getBearing();
@@ -235,8 +238,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                         )
                 )
         );
-        setTimeDistance(duration,
-                callDriverData.getPickup().getDistance());
+
+        //commented out because it continuously showing value 0 as the duration and getDistance() is 0
+//        setTimeDistance(duration, callDriverData.getPickup().getDistance());
         drawRouteToPickup();
     }
 
@@ -321,6 +325,14 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         distanceTv.setText(Utils.getDistance(distance));
         AppPreferences.setEta(String.valueOf(time));
         AppPreferences.setEstimatedDistance(Utils.getDistance(distance));
+    }
+
+    /**
+     * show last saved time and distance on resume app
+     */
+    private void setTimeDistanceOnResume() {
+        timeTv.setText(AppPreferences.getEta());
+        distanceTv.setText(String.valueOf(AppPreferences.getEstimatedDistance()));
     }
 
     /***
