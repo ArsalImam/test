@@ -30,8 +30,10 @@ public class Constants {
 
     /*Added these ride statuses to handle making calls to drop off location's person
     * Call option can only be enabled when ride has started or arrived*/
-    public static final String RIDE_STARTED = "Started";
-    public static final String RIDE_ARRIVED = "Arrived";
+    public static final String BATCH_STARTED = "Started";
+    public static final String BATCH_ARRIVED = "Arrived";
+    /*added this for making individual's dropOff call enable/disable*/
+    public static final String RIDE_FEEDBACK = "feedback";
 
     public static final int RIDE_ACCEPTANCE_TIMEOUT = 20800;
     public static final float TIME_IN_MILLISECONDS_PERCENTAGE = 5f;

@@ -64,7 +64,7 @@ public class MultiDeliveryCallAdapter extends RecyclerView.Adapter<MultiDelivery
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         if (data == null) return;
         try {
             if (getItemViewType(position) == TYPE_ITEM) {
@@ -80,14 +80,20 @@ public class MultiDeliveryCallAdapter extends RecyclerView.Adapter<MultiDelivery
                 holder.streetAddressTv.setText(dropOff.getStreetAddress());
 
                 //Enable/Disable drop off location's call option
-                if(data.getRideStatus().equals(Constants.RIDE_STARTED) || data.getRideStatus().equals(Constants.RIDE_ARRIVED)){
-                    holder.callIv.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            callClickListener.onCallClick(position);
-                        }
-                    });
-                    holder.callIv.setImageResource(R.drawable.contact_call_icon);
+                if(data.getBatchStatus().equals(Constants.BATCH_STARTED) || data.getBatchStatus().equals(Constants.BATCH_ARRIVED)){
+                    //disable making call of individual's completed delivery
+                    if(dropOff.getRideStatus().equals(Constants.RIDE_FEEDBACK)){
+                        holder.callIv.setOnClickListener(null);
+                        holder.callIv.setImageResource(R.drawable.ic_call);
+                    } else {
+                        holder.callIv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                callClickListener.onCallClick(position);
+                            }
+                        });
+                        holder.callIv.setImageResource(R.drawable.contact_call_icon);
+                    }
                 } else {
                     holder.callIv.setOnClickListener(null);
                     holder.callIv.setImageResource(R.drawable.ic_call);

@@ -11,6 +11,9 @@ public class MultiDeliveryDropOff {
     String dropOffNumberText;
     String contactNumer;
 
+    /*set ride status for individual customer so that making call can be enable/disable*/
+    String rideStatus;
+
     public MultiDeliveryDropOff(String mArea, String streetAddress, String dropOffNumberText) {
         this.mArea = mArea;
         this.streetAddress = streetAddress;
@@ -55,5 +58,13 @@ public class MultiDeliveryDropOff {
 
     public void setContactNumer(String contactNumer) {
         this.contactNumer = contactNumer;
+    }
+
+    public String getRideStatus() {
+        return rideStatus;
+    }
+
+    public void setRideStatus(String rideStatus) {
+        this.rideStatus = rideStatus;
     }
 }

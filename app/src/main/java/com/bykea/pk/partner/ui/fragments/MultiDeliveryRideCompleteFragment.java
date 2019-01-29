@@ -85,9 +85,9 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
                 list,
                 new MultiDeliveryCompleteRideAdapter.MultiDeliveryCompleteRideListener() {
                     @Override
-                    public void onMultiDeliveryCompleteRide(int position) {
+                    public void onMultiDeliveryCompleteRide(int position, String whichDelivery) {
                         if (!list.get(position).isCompleted())
-                            requestRideFinish(position);
+                            requestRideFinish(position, whichDelivery);
                     }
                 });
         mRecyclerView.setAdapter(adapter);
@@ -98,7 +98,11 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
      *
      * @param position The position of the view that has been clicked.
      */
-    private void requestRideFinish(int position) {
+    private void requestRideFinish(int position, String whichDelivery) {
+        String title =
+                getContext().getString(R.string.multidelivery_complete_msg_one) +
+                        " " + whichDelivery+ " "+
+                getContext().getString(R.string.multidelivery_complete_msg_two) ;
         Dialogs.INSTANCE.showLoader(getActivity());
         final DirectionDropOffData data = list.get(position);
         Dialogs.INSTANCE.showRideStatusDialog(getActivity(), new View.OnClickListener() {
@@ -113,7 +117,7 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
             public void onClick(View v) {
                 Dialogs.INSTANCE.dismissDialog();
             }
-        }, " مکمل؟");
+        }, title);
     }
 
     /**
