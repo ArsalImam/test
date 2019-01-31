@@ -78,6 +78,8 @@ public class Constants {
     public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
     public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
 
+    /*moving camera to current location animation delay*/
+    public static final int ANIMATION_DELAY_FOR_CURRENT_POSITION = 500;
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.

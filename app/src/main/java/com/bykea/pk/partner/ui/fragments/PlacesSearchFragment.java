@@ -8,20 +8,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NearByResults;
@@ -40,6 +38,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.CustomMapView;
@@ -50,10 +49,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -74,6 +71,10 @@ public class PlacesSearchFragment extends Fragment {
     private LatLng prevNearByLatLng;
     private String mAddressName = "";
     Bundle bundle;
+
+    //moving camera to current location's zoom and animation control values
+    private int previousZoomLevel;
+    private boolean isAnimating;
 
     @BindView(R.id.tvFromName)
     AutoFitFontTextView addressTv;
@@ -98,7 +99,7 @@ public class PlacesSearchFragment extends Fragment {
     ProgressBar loader;
 
     @BindView(R.id.rlFrom)
-    RelativeLayout rlFrom;
+    LinearLayout rlFrom;
     @BindView(R.id.rlDropDown)
     RelativeLayout rlDropDown;
 
@@ -107,6 +108,10 @@ public class PlacesSearchFragment extends Fragment {
 
     @BindView(R.id.ivStar)
     ImageView ivStar;
+
+    //current location view
+    @BindView(R.id.currentLocationIv)
+    CardView currentLocationIv;
 
     private ArrayList<PlacesResult> cities;
     private String primaryText;
@@ -458,7 +463,7 @@ public class PlacesSearchFragment extends Fragment {
     };
 
 
-    @OnClick({R.id.confirmBtn, R.id.autocomplete_places, R.id.pickUpLl, R.id.ivStar})
+    @OnClick({R.id.confirmBtn, R.id.autocomplete_places, R.id.pickUpLl, R.id.ivStar, R.id.currentLocationIv})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.confirmBtn:
@@ -534,6 +539,10 @@ public class PlacesSearchFragment extends Fragment {
                         ActivityStackManager.getInstance().startSavePlaceActivity(mCurrentActivity, placesResult);
                     }
                 }
+                break;
+
+            case R.id.currentLocationIv:
+                goToCurrentLocation();
                 break;
         }
 
@@ -615,6 +624,48 @@ public class PlacesSearchFragment extends Fragment {
 
         }
     }
+    /***
+     * moving camera to current location latitude & longitude.
+     */
+    private void goToCurrentLocation() {
+        if(Utils.isGpsEnable()){
+            double lat = AppPreferences.getLatitude();
+            double lng = AppPreferences.getLongitude();
+            if (lat != 0.0 && lng != 0.0) {
+                previousZoomLevel = 16;
+                isAnimating = false;
+                animateCameraTo(lat, lng);
+            }
+        } else {
+            Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
+        }
+    }
+    
+    /***
+     * Animate marker to current location.
+     * @param lat a latitude of current location.
+     * @param lng a longitude of current location.
+     */
+    private void animateCameraTo(final double lat, final double lng) {
+        if (mGoogleMap != null && !isAnimating) {
+            isAnimating = true;
+            mGoogleMap.getUiSettings().setScrollGesturesEnabled(false);
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.
+                            fromLatLngZoom(new LatLng(lat, lng), previousZoomLevel)),
+                    Constants.ANIMATION_DELAY_FOR_CURRENT_POSITION,
+                    new GoogleMap.CancelableCallback() {
+                        @Override
+                        public void onFinish() {
+                            mGoogleMap.getUiSettings().setScrollGesturesEnabled(true);
+                            isAnimating = false;
+                        }
 
-
+                        @Override
+                        public void onCancel() {
+                            mGoogleMap.getUiSettings().setAllGesturesEnabled(true);
+                            isAnimating = false;
+                        }
+                    });
+        }
+    }
 }
