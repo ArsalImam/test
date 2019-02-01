@@ -13,7 +13,7 @@
         android:weightSum="5">
 
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/ivRight"
             android:layout_weight="1"
             android:layout_width="@dimen/_16sdp"
@@ -22,7 +22,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
             android:rotation="180"
-            android:src="@drawable/right_arrow_history" />
+            app:srcCompat="@drawable/right_arrow_history" />
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/tv_problem_item"
