@@ -1,11 +1,14 @@
 package com.bykea.pk.partner.ui.fragments;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -82,8 +85,6 @@ public class PlacesSearchFragment extends Fragment {
     FontTextView tvPlaceName;
     @BindView(R.id.tvPlaceAddress)
     FontTextView tvPlaceAddress;
-    @BindView(R.id.tvFromAddress)
-    FontTextView tvFromAddress;
 
     @BindView(R.id.confirmBtn)
     FrameLayout confirmBtn;
@@ -193,7 +194,6 @@ public class PlacesSearchFragment extends Fragment {
                 return;
             }
             mGoogleMap = googleMap;
-
             Utils.formatMap(mGoogleMap);
             mapView.init(mGoogleMap);
             mGoogleMap.setPadding(0, 0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen.map_padding_bottom));
@@ -218,6 +218,14 @@ public class PlacesSearchFragment extends Fragment {
             } else {
                 moveToCurrentLocation();
             }
+
+            if (ActivityCompat.checkSelfPermission(mCurrentActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mGoogleMap.setMyLocationEnabled(true);
         }
 
 
@@ -247,11 +255,9 @@ public class PlacesSearchFragment extends Fragment {
                 addressTv.setText(result.substring(0, lastIndex));
                 tvPlaceName.setText(result.substring(0, lastIndex));
                 tvPlaceAddress.setText(result.substring(lastIndex + 1).trim());
-                tvFromAddress.setText(result.substring(lastIndex + 1).trim());
             } else {
                 addressTv.setText(result);
                 tvPlaceName.setText(result);
-                tvFromAddress.setText(result);
                 tvPlaceAddress.setText(result);
             }
         }
@@ -399,13 +405,14 @@ public class PlacesSearchFragment extends Fragment {
                 public void run() {
                     Utils.hideSoftKeyboard(mCurrentActivity, mAutocompleteView);
                     isSearchedLoc = true;
-                    clearAutoComplete();
                     setAddress(placesResult.name, placesResult.latitude, placesResult.longitude);
                     mGoogleMap.getUiSettings().setScrollGesturesEnabled(false);
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(placesResult.latitude, placesResult.longitude), 14.0f), 1000, new GoogleMap.CancelableCallback() {
                         @Override
                         public void onFinish() {
                             mGoogleMap.getUiSettings().setScrollGesturesEnabled(true);
+                            callNearByCallIfRequired();
+                            clearAutoComplete();
                         }
 
                         @Override
@@ -414,7 +421,6 @@ public class PlacesSearchFragment extends Fragment {
 
                         }
                     });
-                    callNearByCallIfRequired();
                 }
             });
         }
@@ -463,7 +469,7 @@ public class PlacesSearchFragment extends Fragment {
     };
 
 
-    @OnClick({R.id.confirmBtn, R.id.autocomplete_places, R.id.pickUpLl, R.id.ivStar, R.id.currentLocationIv})
+    @OnClick({R.id.confirmBtn, R.id.autocomplete_places, R.id.ivStar, R.id.currentLocationIv})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.confirmBtn:
@@ -551,9 +557,6 @@ public class PlacesSearchFragment extends Fragment {
     @NonNull
     private String getAddress() {
         String address = addressTv.getText().toString();
-        if (!address.equalsIgnoreCase(tvFromAddress.getText().toString())) {
-            address = addressTv.getText().toString() + ", " + tvFromAddress.getText().toString();
-        }
         return address;
     }
 
@@ -640,7 +643,7 @@ public class PlacesSearchFragment extends Fragment {
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
         }
     }
-    
+
     /***
      * Animate marker to current location.
      * @param lat a latitude of current location.

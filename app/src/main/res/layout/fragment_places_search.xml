@@ -192,31 +192,20 @@
             android:orientation="vertical">
 
             <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="260dp"
+                android:layout_height="@dimen/_38sdp"
                 app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@color/white"
                 app:cardElevation="3dp"
                 app:cardCornerRadius="0dp"
                 app:cardPreventCornerOverlap="false">
 
-                <LinearLayout
-                    android:id="@+id/pickUpLl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp">
 
                     <com.bykea.pk.partner.widgets.AutoFitFontTextView
                         android:id="@+id/tvFromName"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginTop="@dimen/_1sdp"
                         android:ellipsize="end"
                         android:gravity="center"
                         android:maxLines="1"
@@ -224,24 +213,9 @@
                         android:paddingRight="@dimen/_5sdp"
                         android:text="@string/set_pickup_location"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="@dimen/textsize.body3"
+                        android:textSize="@dimen/_14sdp"
                         app:fontName="roboto_regular.ttf" />
 
-                    <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/tvFromAddress"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:paddingBottom="@dimen/_4sdp"
-                        tools:text="Islamabad"
-                        android:textColor="@color/textColorSecondary"
-                        android:textSize="11sp"
-                        app:fontName="roboto_light.ttf" />
-
-                </LinearLayout>
             </android.support.v7.widget.CardView>
 
             <View
@@ -251,11 +225,6 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@color/black" />
 
-            <View
-                android:layout_width="@dimen/_13sdp"
-                android:layout_height="@dimen/_13sdp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/blue_location_pointer" />
         </LinearLayout>
 
         <android.support.v7.widget.CardView
