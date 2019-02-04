@@ -565,10 +565,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         for (LatLng pos : latLngList) {
             builder.include(pos);
         }
-        if (mCurrentLocation != null) {
-            LatLng driverCurrentLocation =
-                    new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            builder.include(driverCurrentLocation);
+        if (pickupMarker != null) {
+            builder.include(pickupMarker.getPosition());
+        }
+        if (driverMarker != null) {
+            builder.include(driverMarker.getPosition());
         }
         LatLngBounds bounds = builder.build();
         int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._30sdp);
