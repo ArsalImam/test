@@ -193,7 +193,7 @@
 
             <android.support.v7.widget.CardView
                 android:layout_width="260dp"
-                android:layout_height="@dimen/_38sdp"
+                android:layout_height="@dimen/_40sdp"
                 app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@color/white"
                 app:cardElevation="3dp"
@@ -208,12 +208,14 @@
                         android:layout_gravity="center_vertical"
                         android:ellipsize="end"
                         android:gravity="center"
-                        android:maxLines="1"
+                        android:maxLines="2"
+                        android:paddingTop="@dimen/_2sdp"
+                        android:paddingBottom="@dimen/_2sdp"
                         android:paddingLeft="@dimen/_5sdp"
                         android:paddingRight="@dimen/_5sdp"
-                        android:text="@string/set_pickup_location"
+                        android:text=" fhkhjf  kjhf khf jhgjhgf jhgf jhgf jyf jhgf jjgf jh gf"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="@dimen/_14sdp"
+                        android:textSize="@dimen/_11sdp"
                         app:fontName="roboto_regular.ttf" />
 
             </android.support.v7.widget.CardView>
