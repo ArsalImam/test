@@ -16,8 +16,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- To start location service on mobile restart -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -43,6 +41,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:node="merge">
+
+        <!-- OTP SMS Listener-->
+        <receiver
+            android:name=".ui.helpers.SmsBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".ui.activities.LoginActivity"
             android:theme="@style/NewTheme" />
