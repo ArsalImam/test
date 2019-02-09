@@ -48,7 +48,8 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                                 break;
                             case CommonStatusCodes.TIMEOUT:
                                 // Waiting for SMS timed out (5 minutes)
-                                otpReceiveListener.onOTPTimeOut();
+                                if (otpReceiveListener != null)
+                                    otpReceiveListener.onOTPTimeOut();
                                 break;
                         }
                     }

@@ -361,7 +361,7 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
     private void registerSMSReceiver() {
         IntentFilter filter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
         if (mCurrentActivity != null) {
-            mCurrentActivity.registerReceiver(mSmsReceiver, filter);
+            mCurrentActivity.registerReceiver(smsBroadcastReceiver, filter);
         }
     }
 
@@ -371,7 +371,7 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
     private void unRegisterSMSReceiver() {
         try {
             if (mCurrentActivity != null) {
-                mCurrentActivity.unregisterReceiver(mSmsReceiver);
+                mCurrentActivity.unregisterReceiver(smsBroadcastReceiver);
             }
         } catch (Exception ex) {
             Utils.redLog("CodeVerificationFragment",
@@ -398,10 +398,14 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
 
     @Override
     public void onPause() {
-        unRegisterSMSReceiver();
         super.onPause();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unRegisterSMSReceiver();
+    }
 
     //endregion
 
