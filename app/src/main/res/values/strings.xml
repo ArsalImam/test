@@ -236,7 +236,7 @@
     <string name="notification_title_driver_login_location">Logged in fetching location</string>
     <string name="notification_title_driver_logout_location">Fetching location</string>
     <string name="notification_title_driver_status">Your Status: %1$s</string>
-    <string name="notification_title_driver_trip">TRIP# %1$s is in %2$s state</string>
+    <string name="notification_title_driver_trip">Booking# %1$s is in %2$s state</string>
     <string name="battery_optimize_error_title">Battery Optimize Error</string>
     <string name="battery_optimize_error_message">Provide Battery Optimize permission for making you online</string>
     <string name="imei_report_part_one_ur">اس موبائل کا </string>
