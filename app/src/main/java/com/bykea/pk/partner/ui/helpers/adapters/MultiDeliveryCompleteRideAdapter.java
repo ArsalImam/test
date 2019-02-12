@@ -36,7 +36,7 @@ public class MultiDeliveryCompleteRideAdapter extends
          *
          * @param position The postion of the view that has been clicked.
          */
-        void onMultiDeliveryCompleteRide(int position);
+        void onMultiDeliveryCompleteRide(int position, String whichDelivery);
     }
 
     /***
@@ -129,7 +129,8 @@ public class MultiDeliveryCompleteRideAdapter extends
 
         @Override
         public void onClick(View v) {
-            listener.onMultiDeliveryCompleteRide(getAdapterPosition());
+            //added individual ride number to show on complete confirmation dialog.
+            listener.onMultiDeliveryCompleteRide(getAdapterPosition(),list.get(getAdapterPosition()).getDropOffNumberText());
         }
     }
 }

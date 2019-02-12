@@ -286,4 +286,9 @@
     <string name="cancelation_message"> پہنچنے کے %s منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی </string>
     <string name="cancel_batch">Cancel Multi Delivery Batch</string>
 
+
+    <string name="multidelivery_complete_msg_one">نمبر</string>
+    <string name="multidelivery_complete_msg_two">مکمل؟</string>
+
+
 </resources>
