@@ -413,6 +413,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     setTripStates();
                     updateDropOffMarkers();
                     setPickupBounds();
+                    setMarkersBound();
                 }
             });
         }
@@ -555,6 +556,27 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         return Math.toDegrees(rad);
     }
 
+    /**
+     * fit All dropOff locations and driver's current location to the screen - bound markers within screen
+     */
+    private void setMarkersBound(){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        List<LatLng> latLngList = Utils.getDropDownLatLngList(callDriverData);
+        for (LatLng pos : latLngList) {
+            builder.include(pos);
+        }
+        if (pickupMarker != null) {
+            builder.include(pickupMarker.getPosition());
+        }
+        if (driverMarker != null) {
+            builder.include(driverMarker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._30sdp);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        mGoogleMap.moveCamera(cu);
+    }
+
     /***
      * Animate marker when gps points change location.
      *
@@ -611,7 +633,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             if (animationStart) {
                 // Update camera rotation according to marker direction
                 if (null != mCurrentLocation) {
-                    updateCamera(mLocBearing);
                     // Animate driver marker to the target location.
                     if (isLastAnimationComplete) {
                         if (Utils.calculateDistance(driverMarker.getPosition().latitude,
@@ -703,24 +724,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         mClusterManager.setRenderer(renderer);
     }
 
-    /***
-     * Update the google map  camera according to the current lat lng
-     *
-     * @param bearing The camera bearing is the direction in which a vertical line on the map
-     *                points, measured in degrees clockwise from north. Someone driving a car often
-     *                turns a road map to align it with their direction of travel
-     */
-    public void updateCamera(final float bearing) {
-        if (mGoogleMap != null) {
-            CameraPosition currentPlace = new CameraPosition.Builder()
-                    .target(new LatLng(mCurrentLocation.getLatitude(),
-                            mCurrentLocation.getLongitude()))
-                    .zoom(ZOOM_LEVEL)
-                    .bearing(bearing)
-                    .build();
-            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
-        }
-    }
 
     /***
      * OnClick listener for an activity.
