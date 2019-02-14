@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_70sdp"
+    android:gravity="center_vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:clickable="true"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/_8sdp"
+    android:paddingEnd="@dimen/_8sdp">
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_weight="1"
+        android:background="@drawable/gray_bordered_bg"
+        android:gravity="center"
+        android:textColor="@color/dark_blue3179c5"
+        android:text="@string/received_code_ur"
+        android:textSize="@dimen/_14sdp"
+        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:src="@drawable/back_arrow"
+        android:layout_gravity="center_vertical"/>
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_weight="1"
+        android:background="@drawable/gray_bordered_bg"
+        android:gravity="center"
+        android:text="@string/received_code_ur"
+        android:textSize="@dimen/_14sdp"
+        android:textColor="@color/dark_gray656565"
+        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_weight="0.65"
+        android:gravity="center"
+        android:text="W123"
+        android:textColor="@color/dark_grayRedish"
+        android:textSize="@dimen/_14sdp"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:src="@mipmap/icon_forks"/>
+
+</LinearLayout>
