@@ -253,5 +253,12 @@
     <string name="retrofit_request_method_type"> Method </string>
     <string name="driver_offline_crone_job_ur">App Offline Hochuke Hain!</string>
 
+    <string name="pick_ur">پک</string>
+    <string name="drop_ur">ڈراپ</string>
+    <string name="dha_ur">ڈی ایچ اے</string>
+    <string name="nazimabad_ur">نارتھ ناظم آباد</string>
+    <string name="selected_amount_ur">منتخب رقم Rs. %1$d</string>
+
+
     <!--Testing verified commit-->
 </resources>

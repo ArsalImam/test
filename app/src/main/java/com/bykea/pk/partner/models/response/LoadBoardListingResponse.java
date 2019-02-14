@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.models.response;
 
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
+import com.bykea.pk.partner.models.data.LoadBoardListingData;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -9,16 +10,11 @@ import java.util.List;
 /**
  * Data Model Class for Load Board API Response
  */
-public class LoadBoardResponse extends CommonResponse {
+public class LoadBoardListingResponse extends CommonResponse {
 
-    @SerializedName("data")
-    private ArrayList<DeliveryScheduleModel> loadBoardBody;
+    private ArrayList<LoadBoardListingData> data;
 
-    public ArrayList<DeliveryScheduleModel> getLoadBoardBody() {
-        return loadBoardBody;
-    }
-
-    public void setLoadBoardBody(ArrayList<DeliveryScheduleModel> loadBoardBody) {
-        this.loadBoardBody = loadBoardBody;
+    public ArrayList<LoadBoardListingData> getData() {
+        return data;
     }
 }

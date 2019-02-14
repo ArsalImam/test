@@ -154,6 +154,11 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     .replace(R.id.containerView, fragment)
                     .commit();
             HomeActivity.visibleFragmentNumber = pos;
+            if(pos == 1){
+                ((HomeActivity)context).toggleAchaConnection(View.VISIBLE);
+            } else {
+                ((HomeActivity)context).toggleAchaConnection(View.GONE);
+            }
         }
     }
 

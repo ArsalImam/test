@@ -137,7 +137,7 @@
 
         </FrameLayout>
 
-        <com.bykea.pk.partner.widgets.FontTextView
+        <!--<com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/demandBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -149,10 +149,41 @@
             android:text="ڈیمانڈ"
             android:textColor="@color/Color_DarkRed"
             android:textSize="@dimen/_20sdp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:clickable="true"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />-->
 
+        <RelativeLayout
+            android:id="@+id/achaconnectionRL"
+            android:visibility="visible"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/achaconnectionTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="اچھا کنکشن"
+                android:textColor="@color/black_3a3a3a"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            <ImageView
+                android:id="@+id/connectionStatusIv"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_4sdp"
+                android:layout_toRightOf="@+id/achaconnectionTv"
+                android:src="@drawable/wifi_connection_signal_symbol"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp" />
+
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/statusLayout"

@@ -3,32 +3,46 @@ package com.bykea.pk.partner.ui.activities;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.LoadBoardListingData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.adapters.ActiveHomeLoadBoardListAdapter;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
+import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,14 +58,53 @@ public class HomeActivity extends BaseActivity {
     private EventBus mBus = EventBus.getDefault();
     private PilotData pilotData;
 
+    private ActiveHomeLoadBoardListAdapter mloadBoardListAdapter;
+    private ArrayList<LoadBoardListingData> mlist = new ArrayList<>();
+
+
     @BindView(R.id.toolbarLine)
     View toolbarLine;
     @BindView(R.id.containerView)
     FrameLayout containerView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.activeHomeLoadBoardList)
+    RecyclerView activeHomeLoadBoardList;
     @BindView(R.id.drawerMainActivity)
     public DrawerLayout drawerLayout;
+
+    @BindView(R.id.bottomSheetToolbarDivider)
+    public View bottomSheetToolbarDivider;
+    @BindView(R.id.bottomSheetToolbarLayout)
+    public FrameLayout bottomSheetToolbarLayout;
+    @BindView(R.id.bottomSheetPickDropDivider)
+    public View bottomSheetPickDropDivider;
+    @BindView(R.id.bottomSheetPickDropLayout)
+    public LinearLayout bottomSheetPickDropLayout;
+    @BindView(R.id.bottomSheetRefreshIV)
+    public AppCompatImageView bottomSheetRefreshIV;
+    @BindView(R.id.bottomSheetBackIV)
+    public AppCompatImageView bottomSheetBackIV;
+    @BindView(R.id.bottomSheetDropTV)
+    public FontTextView bottomSheetDropTV;
+    @BindView(R.id.bottomSheetPickTV)
+    public FontTextView bottomSheetPickTV;
+    @BindView(R.id.bottomSheet)
+    public AppBarLayout bottomSheet;
+
+    @BindView(R.id.achaconnectionTv)
+    TextView achaconnectionTv;
+
+    @BindView(R.id.connectionStatusIv)
+    ImageView connectionStatusIv;
+
+    /*@BindView(R.id.achaconnectionTv1)
+    TextView achaconnectionTv1;
+
+    @BindView(R.id.connectionStatusIv1)
+    ImageView connectionStatusIv1;*/
+    private BottomSheetBehavior bottomSheetBehavior;
+
     private boolean isDialogShown, isSettingsApiFirstTimeCalled;
 
     @Override
@@ -83,6 +136,7 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
+
     }
 
     @Override
@@ -192,6 +246,8 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });
+
+        setupBottomSheet();
     }
 
     public void hideToolbar() {
@@ -276,5 +332,174 @@ public class HomeActivity extends BaseActivity {
         if (intent != null && intent.getBooleanExtra(Constants.Extras.NAVIGATE_TO_HOME_SCREEN, false)) {
             showHomeFragment();
         }
+    }
+
+    public void setupBottomSheet(){
+        mloadBoardListAdapter = new ActiveHomeLoadBoardListAdapter(this, mlist, new ActiveHomeLoadBoardListAdapter.ItemClickListener() {
+            @Override
+            public void onClick(LoadBoardListingData item) {
+                if(bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED){
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                } else {
+                    Utils.appToast(mCurrentActivity, item.getPickup_zone().getUrduName());
+                }
+            }
+        });
+        activeHomeLoadBoardList.setLayoutManager(new LinearLayoutManager(this));
+        activeHomeLoadBoardList.setHasFixedSize(true);
+        activeHomeLoadBoardList.setAdapter(mloadBoardListAdapter);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState){
+                    case BottomSheetBehavior.PEEK_HEIGHT_AUTO:
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                toggleBottomSheetToolbar(slideOffset);
+            }
+        });
+        bottomSheetRefreshIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.appToast(v.getContext(), "Refresh");
+            }
+        });
+        bottomSheetBackIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(bottomSheetBehavior != null)
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
+        bottomSheetPickTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.appToast(v.getContext(), "Pick");
+            }
+        });
+        bottomSheetDropTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.appToast(v.getContext(), "Drop");
+            }
+        });
+        hideLoadBoardBottomSheet();
+    }
+
+    public void showLoadBoardBottomSheet(ArrayList<LoadBoardListingData> list){
+        if(bottomSheet != null){
+            bottomSheet.setVisibility(View.VISIBLE);
+            updateList(list);
+        }
+    }
+    public void hideLoadBoardBottomSheet(){
+        if(bottomSheet != null){
+            bottomSheet.setVisibility(View.GONE);
+            if(mlist != null)
+                mlist.clear();
+        }
+    }
+    public void updateList(ArrayList<LoadBoardListingData> list){
+        if(mloadBoardListAdapter != null && mlist != null){
+            mlist.clear();
+            mlist.addAll(list);
+            mloadBoardListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void toggleBottomSheetToolbar(float alpha){
+        if(alpha > 0.7f){
+            bottomSheetToolbarLayout.setVisibility(View.VISIBLE);
+            bottomSheetPickDropLayout.setVisibility(View.VISIBLE);
+            bottomSheetToolbarDivider.setVisibility(View.VISIBLE);
+            bottomSheetPickDropDivider.setVisibility(View.VISIBLE);
+            bottomSheetPickDropDivider.setAlpha(alpha);
+            bottomSheetPickDropLayout.setAlpha(alpha);
+            bottomSheetToolbarDivider.setAlpha(alpha);
+            bottomSheetToolbarLayout.setAlpha(alpha);
+        } else {
+            bottomSheetToolbarLayout.setVisibility(View.GONE);
+            bottomSheetPickDropLayout.setVisibility(View.GONE);
+            bottomSheetToolbarDivider.setVisibility(View.GONE);
+            bottomSheetPickDropDivider.setVisibility(View.GONE);
+            bottomSheetPickDropDivider.setAlpha(alpha);
+            bottomSheetPickDropLayout.setAlpha(alpha);
+            bottomSheetToolbarDivider.setAlpha(alpha);
+            bottomSheetToolbarLayout.setAlpha(alpha);
+        }
+    }
+
+    public void toggleAchaConnection(int visibility){
+        achaconnectionTv.setVisibility(visibility);
+        connectionStatusIv.setVisibility(visibility);
+    }
+    /*
+     * Update Connection Status according to Signal Strength
+     * */
+    public void setConnectionStatus() {
+        String connectionStatus = Connectivity.getConnectionStatus(mCurrentActivity);
+
+        //achaconnectionTv.setText(connectionStatus);
+        //achaconnectionTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable._good_sattelite, 0, 0, 0);
+        switch (connectionStatus) {
+            case "Unknown Status":
+                //tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
+                break;
+            case "Battery Low":
+                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
+                achaconnectionTv.setText("لو بیٹری");
+                connectionStatusIv.setImageResource(R.drawable.empty_battery);
+
+//                achaconnectionTv1.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
+//                achaconnectionTv1.setText("لو بیٹری");
+//                connectionStatusIv1.setImageResource(R.drawable.empty_battery);
+                break;
+            case "Poor Connection":
+            case "Fair Connection":
+            case "No Connection":
+
+                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.black_3a3a3a));
+                achaconnectionTv.setText("برا کنکشن");
+//                achaconnectionTv1.setText("برا کنکشن");
+                //tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
+                break;
+            case "Good Connection":
+                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.black_3a3a3a));
+                achaconnectionTv.setText("اچھا کنکشن");
+//                achaconnectionTv1.setText("اچھا کنکشن");
+                connectionStatusIv.setImageResource(R.drawable.wifi_connection_signal_symbol);
+//                connectionStatusIv1.setImageResource(R.drawable.wifi_connection_signal_symbol);
+                break;
+        }
+
+//        if (connectionStatus.equalsIgnoreCase("Unknown Status")) {
+//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
+//        } else if (connectionStatus.equalsIgnoreCase("Battery Low")) {
+//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
+//            tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.low_battery_icon, 0, 0, 0);
+//        } else if (connectionStatus.equalsIgnoreCase("Poor Connection") ||
+//                connectionStatus.equalsIgnoreCase("Fair Connection") ||
+//                connectionStatus.equalsIgnoreCase("No Connection")) {
+//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
+//        } else if (connectionStatus.equalsIgnoreCase("Good Connection")) {
+//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
+//        }
+
     }
 }

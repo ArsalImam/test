@@ -7,8 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.LoadBoardListingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.widgets.FontTextView;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -16,13 +19,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class ZoneAdapter extends RecyclerView.Adapter<ZoneAdapter.ViewHolder> {
+public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveHomeLoadBoardListAdapter.ViewHolder> {
 
-    private ArrayList<ZoneData> mItems;
+    private ArrayList<LoadBoardListingData> mItems;
     private ItemClickListener itemClickListener;
     private Context mContext;
 
-    public ZoneAdapter(Context context, ArrayList<ZoneData> items, ItemClickListener itemClickListener) {
+    public ActiveHomeLoadBoardListAdapter(Context context, ArrayList<LoadBoardListingData> items, ItemClickListener itemClickListener) {
         this.mContext = context;
         this.mItems = items;
         this.itemClickListener = itemClickListener;
@@ -30,16 +33,21 @@ public class ZoneAdapter extends RecyclerView.Adapter<ZoneAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_area,
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.li_active_home_loadboard,
                 parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ZoneData item = mItems.get(position);
-        holder.tvEnglishItem.setText(item.getEnglishName());
-        holder.tvUrduItem.setText(item.getUrduName());
+        final LoadBoardListingData item = mItems.get(position);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemClickListener.onClick(item);
+            }
+        });
     }
 
     @Override
@@ -49,26 +57,23 @@ public class ZoneAdapter extends RecyclerView.Adapter<ZoneAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tvEnglishItem)
-        FontTextView tvEnglishItem;
-
-        @BindView(R.id.tvUrduItem)
-        FontTextView tvUrduItem;
+//        @BindView(R.id.tvEnglishItem)
+//        FontTextView tvEnglishItem;
 
         public ViewHolder(final View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    itemClickListener.onClick(mItems.get(getAdapterPosition()));
-                }
-            });
+//            ButterKnife.bind(this, itemView);
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    itemClickListener.onClick(mItems.get(getAdapterPosition()));
+//                }
+//            });
         }
     }
 
     public interface ItemClickListener {
-        void onClick(ZoneData item);
+        void onClick(LoadBoardListingData item);
     }
 }
 

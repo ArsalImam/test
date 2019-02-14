@@ -29,6 +29,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
@@ -404,6 +405,14 @@ interface IRestClient {
     @PUT(ApiTags.SET_DRIVER_LOCATION)
     Call<LocationResponse> updateDriverLocation(@Body DriverLocationRequest driverLocation);
 
+    @GET(ApiTags.GET_LOAD_BOARD_LISTING)
+    Call<LoadBoardListingResponse> requestLoadBoardListing(@Query("_id") String driver_id,
+                                                           @Query("token_id") String token_id,
+                                                           @Query("lat") String lat,
+                                                           @Query("lng") String lng,
+                                                           @Query("limit") String limit,
+                                                           @Query("pickup_zone") String pickup_zone /*id*/,
+                                                           @Query("dropoff_zone") String dropoff_zone /*id*/);
 
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(

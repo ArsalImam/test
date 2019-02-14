@@ -35,6 +35,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
@@ -381,6 +382,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onBiometricApiResponse(BiometricApiResponse response) {
+
+    }
+
+    @Override
+    public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
 
     }
 
