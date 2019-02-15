@@ -78,6 +78,8 @@ public class Constants {
     public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
     public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
 
+    public static final float BOTTOM_SHEET_ALPHA_VALUE = 0.7f;
+
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.

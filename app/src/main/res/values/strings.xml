@@ -257,7 +257,11 @@
     <string name="drop_ur">ڈراپ</string>
     <string name="dha_ur">ڈی ایچ اے</string>
     <string name="nazimabad_ur">نارتھ ناظم آباد</string>
-    <string name="selected_amount_ur">منتخب رقم Rs. %1$d</string>
+    <string name="selected_amount_ur"> منتخب رقم </string>
+    <string name="seleted_amount_rs"> Rs.%1$d </string>
+    <string name="acha_connection_ur">اچھا کنکشن</string>
+    <string name="bura_connection_ur">برا کنکشن</string>
+    <string name="low_battery_ur">لو بیٹری</string>
 
 
     <!--Testing verified commit-->

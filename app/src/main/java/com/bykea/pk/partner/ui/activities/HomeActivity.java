@@ -93,16 +93,11 @@ public class HomeActivity extends BaseActivity {
     public AppBarLayout bottomSheet;
 
     @BindView(R.id.achaconnectionTv)
-    TextView achaconnectionTv;
+    FontTextView achaconnectionTv;
 
     @BindView(R.id.connectionStatusIv)
-    ImageView connectionStatusIv;
+    AppCompatImageView connectionStatusIv;
 
-    /*@BindView(R.id.achaconnectionTv1)
-    TextView achaconnectionTv1;
-
-    @BindView(R.id.connectionStatusIv1)
-    ImageView connectionStatusIv1;*/
     private BottomSheetBehavior bottomSheetBehavior;
 
     private boolean isDialogShown, isSettingsApiFirstTimeCalled;
@@ -341,7 +336,7 @@ public class HomeActivity extends BaseActivity {
                 if(bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED){
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 } else {
-                    Utils.appToast(mCurrentActivity, item.getPickup_zone().getUrduName());
+                    Utils.appToast(mCurrentActivity, item.getPickupZone().getUrduName());
                 }
             }
         });
@@ -402,8 +397,12 @@ public class HomeActivity extends BaseActivity {
         hideLoadBoardBottomSheet();
     }
 
+    public void toggleBottomSheetOnNavigationMenuSelection(int visibility){
+        if(bottomSheet != null && mlist != null && mlist.size() > 0)
+            bottomSheet.setVisibility(visibility);
+    }
     public void showLoadBoardBottomSheet(ArrayList<LoadBoardListingData> list){
-        if(bottomSheet != null){
+        if(bottomSheet != null && list != null && list.size() > 0){
             bottomSheet.setVisibility(View.VISIBLE);
             updateList(list);
         }
@@ -424,7 +423,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void toggleBottomSheetToolbar(float alpha){
-        if(alpha > 0.7f){
+        if(alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE){
             bottomSheetToolbarLayout.setVisibility(View.VISIBLE);
             bottomSheetPickDropLayout.setVisibility(View.VISIBLE);
             bottomSheetToolbarDivider.setVisibility(View.VISIBLE);
@@ -454,52 +453,26 @@ public class HomeActivity extends BaseActivity {
      * */
     public void setConnectionStatus() {
         String connectionStatus = Connectivity.getConnectionStatus(mCurrentActivity);
-
-        //achaconnectionTv.setText(connectionStatus);
-        //achaconnectionTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable._good_sattelite, 0, 0, 0);
         switch (connectionStatus) {
-            case "Unknown Status":
-                //tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
+            case Constants.ConnectionSignalStatus.UNKNOWN_STATUS:
                 break;
-            case "Battery Low":
+            case Constants.ConnectionSignalStatus.BATTERY_LOW:
                 achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-                achaconnectionTv.setText("لو بیٹری");
+                achaconnectionTv.setText(getString(R.string.low_battery_ur));
                 connectionStatusIv.setImageResource(R.drawable.empty_battery);
-
-//                achaconnectionTv1.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-//                achaconnectionTv1.setText("لو بیٹری");
-//                connectionStatusIv1.setImageResource(R.drawable.empty_battery);
                 break;
-            case "Poor Connection":
-            case "Fair Connection":
-            case "No Connection":
+            case Constants.ConnectionSignalStatus.POOR_STRENGTH:
+            case Constants.ConnectionSignalStatus.FAIR_STRENGTH:
+            case Constants.ConnectionSignalStatus.NO_CONNECTIVITY:
 
                 achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.black_3a3a3a));
-                achaconnectionTv.setText("برا کنکشن");
-//                achaconnectionTv1.setText("برا کنکشن");
-                //tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
+                achaconnectionTv.setText(getString(R.string.bura_connection_ur));
                 break;
-            case "Good Connection":
+            case Constants.ConnectionSignalStatus.GOOD_STRENGTH:
                 achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.black_3a3a3a));
-                achaconnectionTv.setText("اچھا کنکشن");
-//                achaconnectionTv1.setText("اچھا کنکشن");
+                achaconnectionTv.setText(getString(R.string.acha_connection_ur));
                 connectionStatusIv.setImageResource(R.drawable.wifi_connection_signal_symbol);
-//                connectionStatusIv1.setImageResource(R.drawable.wifi_connection_signal_symbol);
                 break;
         }
-
-//        if (connectionStatus.equalsIgnoreCase("Unknown Status")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
-//        } else if (connectionStatus.equalsIgnoreCase("Battery Low")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-//            tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.low_battery_icon, 0, 0, 0);
-//        } else if (connectionStatus.equalsIgnoreCase("Poor Connection") ||
-//                connectionStatus.equalsIgnoreCase("Fair Connection") ||
-//                connectionStatus.equalsIgnoreCase("No Connection")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
-//        } else if (connectionStatus.equalsIgnoreCase("Good Connection")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
-//        }
-
     }
 }

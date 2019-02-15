@@ -48,13 +48,13 @@
 
     </FrameLayout>
 
-
-    <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/selectedAmountTV"
+    <LinearLayout
+        android:id="@+id/selectedAmountRL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:visibility="gone"
         android:elevation="@dimen/_3sdp"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_32sdp"
         android:layout_marginStart="@dimen/_9sdp"
         android:layout_marginLeft="@dimen/_9sdp"
         android:layout_alignParentBottom="true"
@@ -62,11 +62,28 @@
         android:paddingStart="@dimen/_8sdp"
         android:paddingEnd="@dimen/_8sdp"
         android:background="@drawable/bg_white_round"
-        android:gravity="center"
-        android:text="@string/selected_amount_ur"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12sdp"
-        app:fontName="jameel_noori_nastaleeq.ttf" />
+        android:gravity="center">
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/selectedAmountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_32sdp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="open_sans_regular.ttf"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/selectedAmountUrduTV"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_32sdp"
+            android:gravity="center"
+            android:text="@string/selected_amount_ur"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"/>
+    </LinearLayout>
 
 
     <LinearLayout

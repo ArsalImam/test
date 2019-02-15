@@ -18,7 +18,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -138,6 +137,9 @@ public class HomeFragment extends Fragment {
 
     @BindView(R.id.selectedAmountTV)
     FontTextView selectedAmountTV;
+
+    @BindView(R.id.selectedAmountRL)
+    LinearLayout selectedAmountRL;
 
     @BindView(R.id.homeMapFragment)
     MapView mapView;
@@ -384,11 +386,13 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void callLoadBoardListingAPI(){
-        Toast.makeText(getContext(),"Loadboard API called", Toast.LENGTH_SHORT).show();
-        if (Connectivity.isConnectedFast(mCurrentActivity))
+    private void callLoadBoardListingAPI() {
+        if (Connectivity.isConnectedFast(mCurrentActivity)){
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
             repository.requestLoadBoardListingAPI(mCurrentActivity, handler);
+        }
     }
+
     /***
      * Handle UI logic and API status call for driver availability according to
      * ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS check if user allowed it.
@@ -523,8 +527,8 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-        if(Connectivity.isConnectedFast(mCurrentActivity)){
-            if(AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
+        if (Connectivity.isConnectedFast(mCurrentActivity)) {
+            if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
                 callLoadBoardListingAPI();
         }
     }
@@ -542,7 +546,7 @@ public class HomeFragment extends Fragment {
             myRangeBarTopLine.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);
             mapPinIv.setVisibility(View.GONE);
-            selectedAmountTV.setVisibility(View.GONE);
+            selectedAmountRL.setVisibility(View.GONE);
             mapView.setVisibility(View.GONE);
             headerTopActiveLayout.setVisibility(View.GONE);
             headerTopUnActiveLayout.setVisibility(View.VISIBLE);
@@ -570,8 +574,8 @@ public class HomeFragment extends Fragment {
             mCurrentActivity.showKhudaHafiz();
             mapView.setVisibility(View.VISIBLE);
             mapPinIv.setVisibility(View.VISIBLE);
-            selectedAmountTV.setVisibility(View.VISIBLE);
-            selectedAmountTV.setText(getString(R.string.selected_amount_ur, AppPreferences.getCashInHands()));
+            selectedAmountRL.setVisibility(View.VISIBLE);
+            selectedAmountTV.setText(getString(R.string.seleted_amount_rs,AppPreferences.getCashInHands()));
             headerTopActiveLayout.setVisibility(View.VISIBLE);
             headerTopUnActiveLayout.setVisibility(View.GONE);
             layoutUpper.setVisibility(View.GONE);
@@ -824,12 +828,12 @@ public class HomeFragment extends Fragment {
                                     AppPreferences.setOutOfFence(false);
                                 }
                                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
-                                //Amir
-                                if(AppPreferences.getIsCash()){
+                                if (AppPreferences.getIsCash()) {
                                     callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
-                                    resetMapPinAndSelectedCashViewToBottom();
+                                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                                            (int) getResources().getDimension(R.dimen._50sdp));
                                 }
                             } else {
                                 AppPreferences.setDriverDestination(null);
@@ -849,11 +853,11 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
-            Log.d("TAG", ""+response);
-            Utils.appToast(DriverApp.getContext(), "Success Loadboard");
-            if(response != null && response.getData() != null && response.getData().size() > 0){
+            Dialogs.INSTANCE.dismissDialog();
+            if (response != null && response.getData() != null && response.getData().size() > 0) {
                 mCurrentActivity.showLoadBoardBottomSheet(response.getData());
-                setMapPinAndSelectedCashViewAboveBottomSheet();
+                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                        (int) getResources().getDimension(R.dimen._110sdp));
             }
         }
 
@@ -1062,19 +1066,10 @@ public class HomeFragment extends Fragment {
 
             showCancelDialogIfRequired();
 //            if(AppPreferences.getIsCash()){
-                resetMapPinAndSelectedCashViewToBottom();
-                setDriverLocation();
+                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                                        (int) getResources().getDimension(R.dimen._50sdp));
+                    setDriverLocation();
 //            }
-//            ArrayList<HeatMapUpdatedResponse> data = new Gson().fromJson(getString(R.string.heat_map_data), new TypeToken<ArrayList<HeatMapUpdatedResponse>>() {
-//            }.getType());
-//            updateHeatMapUI(data);
-
-
-            //Heat map overlay
-            //addHeatMap();
-
-            //Heat map polyline
-            //addHeatMapPolyline();
         }
     };
 
@@ -1425,32 +1420,17 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void setMapPinAndSelectedCashViewAboveBottomSheet(){
-        RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
-        p.bottomMargin = (int) getResources().getDimension(R.dimen._79sdp);
-        mapPinIv.setLayoutParams(p);
+    private void resetPositionOfMapPinAndSelectedCashView(int locationPointerBottomMargin, int googleMapLogoBottomPadding) {
+        RelativeLayout.LayoutParams myLocationPointerParams = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
+        myLocationPointerParams.bottomMargin = locationPointerBottomMargin;
+        mapPinIv.setLayoutParams(myLocationPointerParams);
 
-        RelativeLayout.LayoutParams p1 = (RelativeLayout.LayoutParams) selectedAmountTV.getLayoutParams();
-        p1.bottomMargin = (int) getResources().getDimension(R.dimen._79sdp);
-        selectedAmountTV.setLayoutParams(p1);
+        RelativeLayout.LayoutParams selectedAmountTVLayoutParams = (RelativeLayout.LayoutParams) selectedAmountRL.getLayoutParams();
+        selectedAmountTVLayoutParams.bottomMargin = locationPointerBottomMargin;
+        selectedAmountRL.setLayoutParams(selectedAmountTVLayoutParams);
 
-        if(mGoogleMap != null){
-            mGoogleMap.setPadding(0,0,0,(int)getResources().getDimension(R.dimen._110sdp));
-        }
-
-    }
-
-    private void resetMapPinAndSelectedCashViewToBottom(){
-        RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
-        p.bottomMargin = (int) getResources().getDimension(R.dimen._19sdp);
-        mapPinIv.setLayoutParams(p);
-
-        RelativeLayout.LayoutParams p1 = (RelativeLayout.LayoutParams) selectedAmountTV.getLayoutParams();
-        p1.bottomMargin = (int) getResources().getDimension(R.dimen._19sdp);
-        selectedAmountTV.setLayoutParams(p1);
-
-        if(mGoogleMap != null){
-            mGoogleMap.setPadding(0,0,0,(int)getResources().getDimension(R.dimen._50sdp));
+        if (mGoogleMap != null) {
+            mGoogleMap.setPadding(0, 0, 0, googleMapLogoBottomPadding);
         }
 
     }

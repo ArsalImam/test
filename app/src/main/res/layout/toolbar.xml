@@ -168,17 +168,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="اچھا کنکشن"
+                android:text="@string/acha_connection_ur"
                 android:textColor="@color/black_3a3a3a"
                 android:textSize="@dimen/_12sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/connectionStatusIv"
                 android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_4sdp"
                 android:layout_marginLeft="@dimen/_4sdp"
+                android:layout_toEndOf="@+id/achaconnectionTv"
                 android:layout_toRightOf="@+id/achaconnectionTv"
-                android:src="@drawable/wifi_connection_signal_symbol"
+                app:srcCompat="@drawable/wifi_connection_signal_symbol"
                 android:layout_width="@dimen/_14sdp"
                 android:layout_height="@dimen/_14sdp" />
 
