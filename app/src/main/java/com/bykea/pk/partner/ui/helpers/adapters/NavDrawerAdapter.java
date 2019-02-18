@@ -154,6 +154,13 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     .replace(R.id.containerView, fragment)
                     .commit();
             HomeActivity.visibleFragmentNumber = pos;
+            if(pos == 1){
+                ((HomeActivity)context).toggleAchaConnection(View.VISIBLE);
+                //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
+            } else {
+                ((HomeActivity)context).toggleAchaConnection(View.GONE);
+                ((HomeActivity)context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
+            }
         }
     }
 

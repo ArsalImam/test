@@ -904,6 +904,17 @@ public class AppPreferences {
                 .apply();
     }
 
+    public static boolean getIsCash() {
+        return mSharedPreferences.getBoolean(Keys.CASH, false);
+    }
+
+    public static void setCash(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.CASH, value)
+                .apply();
+    }
+
 
     /**
      * Sets updated value for location response received count.

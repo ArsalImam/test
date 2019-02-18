@@ -35,6 +35,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
@@ -201,6 +202,8 @@ public interface IUserDataHandler {
     void onSignupCompleteResponse(SignUpCompleteResponse response);
 
     void onBiometricApiResponse(BiometricApiResponse response);
+
+    void onLoadboardListingApiResponse(LoadBoardListingResponse response);
 
     void onError(int errorCode, String errorMessage);
 }

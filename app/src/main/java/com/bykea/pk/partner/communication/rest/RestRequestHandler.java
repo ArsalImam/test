@@ -36,6 +36,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
@@ -1246,6 +1247,21 @@ public class RestRequestHandler {
         Call<TopUpPassWalletResponse> requestCall = mRestClient.topUpPassengerWallet(AppPreferences.getPilotData().getId(),
                 AppPreferences.getPilotData().getAccessToken(), callData.getTripNo(), amount, callData.getPassId());
         requestCall.enqueue(new GenericRetrofitCallBack<TopUpPassWalletResponse>(onResponseCallback));
+
+    }
+
+    public void loadboardListing(Context context,final IResponseCallback onResponseCallback) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+
+        Call<LoadBoardListingResponse> requestCall = mRestClient.requestLoadBoardListing(
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                /*String.valueOf(AppPreferences.getLatitude())*/"24.7984714",
+                /*String.valueOf(AppPreferences.getLongitude())*/"67.0326814",
+                "10", "5a9ea423010bc20e1b5fab96", null);
+        requestCall.enqueue(new GenericRetrofitCallBack<LoadBoardListingResponse>(onResponseCallback));
 
     }
 

@@ -81,7 +81,11 @@
     <color name="last_item_color">#f2f2f2</color>
 
     <color name="dark_gray">#6c6c6c</color>
+    <color name="dark_grayRedish">#6b5d5d</color>
+    <color name="dark_gray656565">#656565</color>
+    <color name="dark_blue3179c5">#3179c5</color>
     <color name="Color_DarkRed">#d80027</color>
+    <color name="color_manzil_bg">#8eb2fd</color>
 
     <color name="shadow_gray">#59000000</color>
 

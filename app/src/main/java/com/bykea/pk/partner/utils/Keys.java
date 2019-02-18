@@ -148,6 +148,7 @@ public class Keys {
     public static final String CASH_IN_HANDS_RANGE = "CASH_IN_HANDS_RANGE";
     public static final String CASH_IN_HANDS_INDEX = "CASH_IN_HANDS_INDEX";
     public static final String TRIP_DELAY = "TRIP_DELAY";
+    public static final String CASH = "CASH";
 
     /***********************************************************************************************
      * Driver drop off tags
