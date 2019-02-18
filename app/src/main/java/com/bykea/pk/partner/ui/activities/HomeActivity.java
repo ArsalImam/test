@@ -289,12 +289,12 @@ public class HomeActivity extends BaseActivity {
      * App version on server via API if required.
      */
     private void updateAppVersionIfRequired() {
-        if(!Utils.getVersion(this).equalsIgnoreCase(AppPreferences.getAppVersion())){
+        if(!Utils.getVersion().equalsIgnoreCase(AppPreferences.getAppVersion())){
             mUserRepository.updateAppVersion(new UserDataHandler(){
                 @Override
                 public void onUpdateAppVersionResponse(UpdateAppVersionResponse response) {
                     if(response.isSuccess()){
-                        AppPreferences.setAppVersion(Utils.getVersion(DriverApp.getContext()));
+                        AppPreferences.setAppVersion(Utils.getVersion());
                     }
                 }
             });

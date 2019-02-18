@@ -116,7 +116,7 @@ public class RestRequestHandler {
         this.mResponseCallBack = callback;
         mRestClient = RestClient.getClient(mContext);
         Call<VerifyNumberResponse> numberResponseCall = mRestClient.sendDriverOTP(
-                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion(context));
+                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion());
 
         numberResponseCall.enqueue(new Callback<VerifyNumberResponse>() {
             @Override
@@ -200,7 +200,7 @@ public class RestRequestHandler {
                 regID,
                 "" + AppPreferences.getLatitude(),
                 "" + AppPreferences.getLongitude(),
-                Utils.getVersion(context),
+                Utils.getVersion(),
                 AppPreferences.getOneSignalPlayerId(),
                 AppPreferences.getADID(),
                 Utils.getDeviceId(context)
@@ -1106,7 +1106,7 @@ public class RestRequestHandler {
                         AppPreferences.setOutOfFence(false);
                         AppPreferences.setAvailableStatus(true);
                     }
-                        mResponseCallBack.onResponse(response.body());
+                    mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body().getCode(),
                             response.body().getMessage());
@@ -1555,12 +1555,12 @@ public class RestRequestHandler {
      *
      * @param onResponseCallBack to handle call back
      */
-    public void updateAppVersion(IResponseCallback onResponseCallBack) {
+    public void updateAppVersion(final IResponseCallback onResponseCallBack) {
         mRestClient = RestClient.getClient(DriverApp.getContext());
         Call<UpdateAppVersionResponse> restCall = mRestClient.updateAppVersion(
                 AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken(),
-                Double.parseDouble(Utils.getVersion(DriverApp.getContext())));
+                Double.parseDouble(Utils.getVersion()));
         restCall.enqueue(new GenericRetrofitCallBack<UpdateAppVersionResponse>(onResponseCallBack));
     }
 }

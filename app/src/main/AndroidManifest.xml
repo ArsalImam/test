@@ -211,6 +211,12 @@
         <activity android:name=".ui.activities.NumberVerificationActivity"
             android:theme="@style/NewTheme"/>
         <activity android:name=".ui.activities.LandingActivity" />
+
+        <receiver android:name="ui.helpers.UpdateAppVersion">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

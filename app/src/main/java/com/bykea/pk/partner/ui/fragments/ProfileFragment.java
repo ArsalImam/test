@@ -121,7 +121,7 @@ public class ProfileFragment extends Fragment {
             Utils.loadImgPicasso(mCurrentActivity, driverImage, R.drawable.profile_pic,
                     Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
         }
-        String appVersion = "v " + Utils.getVersion(mCurrentActivity);
+        String appVersion = "v " + Utils.getVersion();
         if (BuildConfig.DEBUG) {
             tvEmailLogFiles.setVisibility(View.VISIBLE);
             if (ApiTags.BASE_SERVER_URL.contains("staging")) {
