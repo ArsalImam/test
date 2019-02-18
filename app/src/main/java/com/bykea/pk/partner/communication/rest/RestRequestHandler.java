@@ -1257,6 +1257,8 @@ public class RestRequestHandler {
         String errorMsg;
         if (error instanceof IOException) {
             Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.TIME_OUT_ERROR + String.valueOf(error.getCause()));
+            if (mContext == null)
+                mContext = DriverApp.getContext();
             errorMsg = mContext.getString(R.string.internet_error);
             //To prompt user to input base url for local builds again in case when URL is not working/wrong url. (BS-1017)
             /*AppPreferences.setLocalBaseUrl(BuildConfig.FLAVOR_URL);

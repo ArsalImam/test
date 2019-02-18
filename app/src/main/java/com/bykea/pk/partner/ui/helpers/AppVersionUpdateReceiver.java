@@ -23,6 +23,7 @@ public class AppVersionUpdateReceiver extends BroadcastReceiver {
         if (Intent.ACTION_MY_PACKAGE_REPLACED.equalsIgnoreCase(intent.getAction())
                 && AppPreferences.isLoggedIn()
                 && !Utils.getVersion().equalsIgnoreCase(AppPreferences.getAppVersion())) {
+            Utils.redLog(TAG, "Calling API for App version update");
             new UserRepository().updateAppVersion(new UserDataHandler() {
                 @Override
                 public void onUpdateAppVersionResponse(UpdateAppVersionResponse response) {

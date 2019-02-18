@@ -89,7 +89,6 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
-        updateAppVersionIfRequired();
     }
 
     @Override
@@ -113,6 +112,9 @@ public class HomeActivity extends BaseActivity {
 //        LocationService.setContext(HomeActivity.this);
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         AppPreferences.setProfileUpdated(true);
+
+        //we need to validate app version on every visit on home screen.
+        updateAppVersionIfRequired();
     }
 
     @Override
