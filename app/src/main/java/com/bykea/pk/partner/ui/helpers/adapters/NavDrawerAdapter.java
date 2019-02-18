@@ -18,7 +18,6 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
-import com.bykea.pk.partner.ui.fragments.PerformanceFragment;
 import com.bykea.pk.partner.ui.fragments.ProfileFragment;
 import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
@@ -120,21 +119,16 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
                 case 4:
                     if (HomeActivity.visibleFragmentNumber != 4) {
-                        updateCurrentFragment(new PerformanceFragment(), 4);
+                        updateCurrentFragment(new HowItWorksFragment(), 4);
                     }
                     break;
                 case 5:
                     if (HomeActivity.visibleFragmentNumber != 5) {
-                        updateCurrentFragment(new HowItWorksFragment(), 5);
-                    }
-                    break;
-                case 6:
-                    if (HomeActivity.visibleFragmentNumber != 6) {
-                        updateCurrentFragment(new ContactUsFragment(), 6);
+                        updateCurrentFragment(new ContactUsFragment(), 5);
                     }
                     break;
 
-                case 7://this case is for logout footer part click.
+                case 6://this case is for logout footer part click.
                     Dialogs.INSTANCE.showNegativeAlertDialog(context, context.getString(R.string.logout_text_ur), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

@@ -1026,6 +1026,12 @@ public class HomeFragment extends Fragment {
                         getString(R.string.region_out_support_helpline),
                         getString(R.string.account_blocked_message_ur));
                 break;
+            case Constants.ApiError.APP_FORCE_UPDATE:
+                Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
+                        getString(R.string.force_app_update_title),
+                        getString(R.string.force_app_update_message_local_ur),
+                        getString(R.string.force_app_update_link));
+                break;
             case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
             default:
                 Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
