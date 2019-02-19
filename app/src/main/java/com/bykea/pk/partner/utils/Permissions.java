@@ -35,7 +35,7 @@ public class Permissions {
 
 
     public static boolean hasLocationPermissions(Context context) {
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String permission1 = "android.permission.ACCESS_FINE_LOCATION";
 //            String permission2 = "android.permission.ACCESS_COARSE_LOCATION";
             int res1 = context.checkCallingOrSelfPermission(permission1);
@@ -47,7 +47,7 @@ public class Permissions {
     }
 
     public static boolean hasCallPermissions(Context context) {
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String permission1 = "android.permission.CALL_PHONE";
 //            String permission2 = "android.permission.ACCESS_COARSE_LOCATION";
             int res1 = context.checkCallingOrSelfPermission(permission1);
