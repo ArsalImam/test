@@ -33,20 +33,7 @@ public class Permissions {
         ((Activity) context).requestPermissions(permissions, CAMERA_PERMISSION);
     }
 
-    /***
-     * Checks do we have SMS permission.
-     *
-     * @param context Calling context.
-     * @return True if we have permission otherwise return false.
-     */
-    public static boolean hasSMSPermissions(Context context) {
-        //String permission = Manifest.permission.READ_SMS;
-        String permission = Manifest.permission.RECEIVE_SMS;
-        int res = context.checkCallingOrSelfPermission(permission);
-        return (res == PackageManager.PERMISSION_GRANTED);
-    }
-
-
+    
     public static boolean hasLocationPermissions(Context context) {
         if (Build.VERSION.SDK_INT >= 23) {
             String permission1 = "android.permission.ACCESS_FINE_LOCATION";
@@ -138,13 +125,5 @@ public class Permissions {
 
     public static boolean hasPermission(Context context, String permission) {
         return PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(context, permission);
-    }
-    /***
-     * Get Sms Permission from device
-     * @param context Calling Context.
-     */
-    public static void getSMSPermissions(Context context) {
-        String[] permissions = {Manifest.permission.RECEIVE_SMS};
-        ((AppCompatActivity) context).requestPermissions(permissions, 18);
     }
 }
