@@ -33,7 +33,7 @@ public class Permissions {
         ((Activity) context).requestPermissions(permissions, CAMERA_PERMISSION);
     }
 
-    
+
     public static boolean hasLocationPermissions(Context context) {
         if (Build.VERSION.SDK_INT >= 23) {
             String permission1 = "android.permission.ACCESS_FINE_LOCATION";
