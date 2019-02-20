@@ -78,6 +78,8 @@ public class Constants {
     public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
     public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
 
+    public static final int MINUTE_DIVISIBLE_VALUE = 60;
+    public static final int KILOMETER_DIVISIBLE_VALUE = 1000;
     public static final float BOTTOM_SHEET_ALPHA_VALUE = 0.7f;
     public static final String LOADBOARD_JOBS_LIMIT = "10";
 

@@ -15,11 +15,17 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+/**
+ * Selected booking's ordered items adapter that displays in loadboard booking detail screen
+ */
 public class LoadBoardOrdersAdapter extends RecyclerView.Adapter<LoadBoardOrdersAdapter.ViewHolder> {
 
     private ArrayList<LoadboardBookingOrderData> mItems;
 
+    /**
+     * Constructor call with booking's items list
+     * @param items orders list items
+     */
     public LoadBoardOrdersAdapter( ArrayList<LoadboardBookingOrderData> items) {
         this.mItems = items;
     }
@@ -47,6 +53,9 @@ public class LoadBoardOrdersAdapter extends RecyclerView.Adapter<LoadBoardOrders
         return mItems.size();
     }
 
+    /**
+     * Viewholder to display individual items in list in loadboard details screen
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.orderNameTV)

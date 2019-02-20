@@ -15,16 +15,32 @@ import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.loadboard.LoadboardBookingDetailData;
+import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.LoadboardBookingDetailActivity;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.LoadBoardOrdersAdapter;
+import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Loadboard booking fragment which contain all detail information related to current booking
+ */
 public class LoadboardBookingDetailFragment extends Fragment {
 
     private LoadboardBookingDetailActivity mCurrentActivity;
@@ -58,12 +74,18 @@ public class LoadboardBookingDetailFragment extends Fragment {
     FontTextView bd_estimatedDistanceTV;
     @BindView(R.id.bd_dropOffPhoneIV)
     AppCompatImageView bd_dropOffPhoneIV;
+    @BindView(R.id.acceptBookingBtn)
+    AppCompatImageView acceptBookingBtn;
 
     @BindView(R.id.bd_OrdersRV)
     RecyclerView bd_OrdersRV;
 
 
-
+    /**
+     * fragment instance that accept booking detail data to be displayed
+     * @param data booking detail data
+     * @return current fragment
+     */
     public static LoadboardBookingDetailFragment newInstance(LoadboardBookingDetailData data){
         LoadboardBookingDetailFragment fragment = new LoadboardBookingDetailFragment();
         fragment.data = data;
@@ -101,6 +123,9 @@ public class LoadboardBookingDetailFragment extends Fragment {
         initViews();
     }
 
+    /**
+     * initialize views and set datails data and attach click listener
+     */
     private void initViews(){
         bd_FareTV.setText("Rs. "+data.getFareEstimation());
 
@@ -108,12 +133,12 @@ public class LoadboardBookingDetailFragment extends Fragment {
         bd_pickUpAddressTV.setText(data.getPickupAddress());
         bd_pickUpTimeTV.setText(data.getDeliveryTimings());
         bd_pickUpZoneTV.setText(data.getPickupZone().getUrduName());
-        int etaInMinute = data.getPickupEta() / 60;
+        int etaInMinute = data.getPickupEta() / Constants.MINUTE_DIVISIBLE_VALUE;
         bd_estimatedTimeTV.setText(String.valueOf(etaInMinute));
 
         bd_dropOffAddressTV.setText(data.getDropoffAddress());
         bd_dropOffZoneTV.setText(data.getDropoffZone().getUrduName());
-        float estimatedDistance = data.getDropoffDistance() / 1000;
+        float estimatedDistance = data.getDropoffDistance() / Constants.KILOMETER_DIVISIBLE_VALUE;
         bd_estimatedDistanceTV.setText(String.format("%.1f", estimatedDistance));
 
         bd_pickUpPhoneIV.setOnClickListener(new View.OnClickListener() {
@@ -134,13 +159,61 @@ public class LoadboardBookingDetailFragment extends Fragment {
                 startGoogleDirectionsApp();
             }
         });
+        acceptBookingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Connectivity.isConnectedFast(mCurrentActivity)){
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                    new UserRepository().acceptLoadboardBooking(mCurrentActivity, data.getId(), new UserDataHandler(){
+                        @Override
+                        public void onAcceptLoadboardBookingResponse(AcceptLoadboardBookingResponse response) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            if(response != null){
+                                if (response.isSuccess()) {
+                                    AppPreferences.clearTripDistanceData();
+                                    AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
 
+                                    NormalCallData callData = AppPreferences.getCallData();
+                                    callData.setStatus(TripStatus.ON_ACCEPT_CALL);
+                                    AppPreferences.setCallData(callData);
+                                    logMixpanelEvent(callData, true);
+
+                                    AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
+                                    AppPreferences.setIsOnTrip(true);
+                                    ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
+                                    mCurrentActivity.finish();
+                                } else {
+                                    Utils.setCallIncomingState();
+                                    Dialogs.INSTANCE.showToast(mCurrentActivity
+                                            , response.getMessage());
+
+                                }
+                            } else{
+                                Dialogs.INSTANCE.showTempToast(mCurrentActivity, "Response is null");
+                            }
+                        }
+
+                        @Override
+                        public void onError(int errorCode, String errorMessage) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            Dialogs.INSTANCE.showTempToast(mCurrentActivity, errorMessage);
+                        }
+                    });
+                } else {
+                    Utils.appToast(mCurrentActivity, getString(R.string.internet_error));
+                }
+            }
+        });
         bd_OrdersRV.setLayoutManager(new LinearLayoutManager(mCurrentActivity));
         bd_OrdersRV.setHasFixedSize(true);
         bd_OrdersRV.setAdapter(new LoadBoardOrdersAdapter(data.getOrders()));
     }
 
 
+    /**
+     * open Google's default Map application to draw route and enable direction call
+     */
     private void startGoogleDirectionsApp() {
         try {
             if (data != null) {
@@ -162,4 +235,37 @@ public class LoadboardBookingDetailFragment extends Fragment {
         }
     }
 
+    private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
+        try {
+
+            JSONObject data = new JSONObject();
+            data.put("PassengerID", callData.getPassId());
+            data.put("DriverID", AppPreferences.getPilotData().getId());
+            data.put("TripID", callData.getTripId());
+            data.put("TripNo", callData.getTripNo());
+            data.put("PickUpLocation", callData.getStartLat() + "," + callData.getStartLng());
+            data.put("timestamp", Utils.getIsoDate());
+            if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
+                data.put("DropOffLocation", callData.getEndLat() + "," + callData.getEndLng());
+            }
+            data.put("ETA", Utils.formatETA(callData.getArivalTime()));
+            data.put("EstimatedDistance", AppPreferences.getEstimatedDistance());
+            data.put("CurrentLocation", Utils.getCurrentLocation());
+            data.put("PassengerName", callData.getPassName());
+            data.put("DriverName", AppPreferences.getPilotData().getFullName());
+            data.put("type", callData.getCallType());
+            data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
+
+            if (isOnAccept) {
+                data.put("AcceptSeconds", "0");
+                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+            } else {
+                Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

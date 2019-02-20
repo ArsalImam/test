@@ -387,6 +387,11 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
+    /**
+     * open loadboard booking screen
+     * @param context Context
+     * @param bookingId selected booking id
+     */
     public void startLoadboardBookingDetailActiivty(Context context, String bookingId) {
         Intent intent = new Intent(context, LoadboardBookingDetailActivity.class);
         intent.putExtra(LoadboardBookingDetailActivity.BOOKING_ID, bookingId);

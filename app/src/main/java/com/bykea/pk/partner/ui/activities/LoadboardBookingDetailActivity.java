@@ -13,9 +13,16 @@ import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Loadboard booking detail screen ACTIVITY - opening from homeScreen's loadboard listing items
+ * this activity will hold booking detail fragment
+ */
 public class LoadboardBookingDetailActivity extends BaseActivity {
 
     private LoadboardBookingDetailActivity mCurrentActivity;
@@ -44,6 +51,9 @@ public class LoadboardBookingDetailActivity extends BaseActivity {
         initListeners();
     }
 
+    /**
+     * initialize views and objects related to this screen
+     */
     private void initViews(){
         mRepository = new UserRepository();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -64,6 +74,10 @@ public class LoadboardBookingDetailActivity extends BaseActivity {
             }
         });
     }
+
+    /**
+     * initialize click listeners for this screen's button or widgets
+     */
     private void initListeners(){
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
