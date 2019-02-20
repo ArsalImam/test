@@ -99,4 +99,10 @@
 
     <color name="color_128c7e">#128c7e</color>
     <color name="color_red">#de0200</color>
+
+    <color name="color_grayf8f8f8">#f8f8f8</color>
+    <color name="color_grayd3d3d3">#d3d3d3</color>
+    <color name="color_gray373737">#373737</color>
+    <color name="color_gray636363">#636363</color>
+    <color name="color_grayf3f3f3">#f3f3f3</color>
 </resources>

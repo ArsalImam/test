@@ -16,6 +16,7 @@ import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
+import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
@@ -38,6 +39,7 @@ import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -1265,6 +1267,36 @@ public class RestRequestHandler {
 
     }
 
+
+    public void acceptLoadboardBooking(Context context,String bookingId, final IResponseCallback onResponseCallback) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+
+        Call<AcceptLoadboardBookingResponse> requestCall = mRestClient.acceptLoadboardBooking(
+                bookingId,
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                String.valueOf(AppPreferences.getLatitude()),
+                String.valueOf(AppPreferences.getLongitude()));
+        requestCall.enqueue(new GenericRetrofitCallBack<AcceptLoadboardBookingResponse>(onResponseCallback));
+
+    }
+
+    public void loadboardBookingDetail(Context context,String bookingId, final IResponseCallback onResponseCallback) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+
+        Call<LoadboardBookingDetailResponse> requestCall = mRestClient.requestLoadBoardBookingDetail(
+                bookingId,
+                AppPreferences.getDriverId(),
+                String.valueOf(AppPreferences.getLatitude()),
+                String.valueOf(AppPreferences.getLongitude()),
+                AppPreferences.getAccessToken());
+        requestCall.enqueue(new GenericRetrofitCallBack<LoadboardBookingDetailResponse>(onResponseCallback));
+
+    }
 
     @NonNull
     private String getErrorMessage(Throwable error) {

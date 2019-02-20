@@ -219,6 +219,7 @@
         <activity android:name=".ui.activities.NumberVerificationActivity"
             android:theme="@style/NewTheme"/>
         <activity android:name=".ui.activities.LandingActivity" />
+        <activity android:name=".ui.activities.LoadboardBookingDetailActivity" />
     </application>
 
 </manifest>

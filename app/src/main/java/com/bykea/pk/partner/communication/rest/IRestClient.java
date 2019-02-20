@@ -11,6 +11,7 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
+import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
@@ -31,6 +32,7 @@ import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -71,6 +73,7 @@ import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Part;
+import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.Url;
 
@@ -413,6 +416,21 @@ interface IRestClient {
                                                            @Query("limit") String limit,
                                                            @Query("pickup_zone") String pickup_zone /*id*/,
                                                            @Query("dropoff_zone") String dropoff_zone /*id*/);
+
+    @FormUrlEncoded
+    @POST(ApiTags.ACCEPT_LOAD_BOARD_BOOKING)
+    Call<AcceptLoadboardBookingResponse> acceptLoadboardBooking(@Path("id") String bookingId,
+                                                                @Field("_id") String driver_id,
+                                                                @Field("token_id") String token_id,
+                                                                @Field("lat") String lat, /*driver current location*/
+                                                                @Field("lng") String lng); /*driver current location*/
+
+    @GET(ApiTags.GET_LOAD_BOARD_BOOKING_DETAIL)
+    Call<LoadboardBookingDetailResponse> requestLoadBoardBookingDetail(@Path("id") String bookingId,
+                                                                       @Query("_id") String driver_id,
+                                                                       @Query("lat") String lat,
+                                                                       @Query("lng") String lng,
+                                                                       @Query("token_id") String token_id);
 
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(

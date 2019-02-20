@@ -8,6 +8,8 @@ public class LoadBoardListingData {
     private String id;
     @SerializedName("trip_type")
     private String tripType;
+    @SerializedName("order_no")
+    private String orderNo;
     @SerializedName("pickup_zone")
     private LoadBoardListingZoneData pickupZone;
     @SerializedName("dropoff_zone")
@@ -19,6 +21,10 @@ public class LoadBoardListingData {
 
     public String getTripType() {
         return tripType;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
     }
 
     public LoadBoardListingZoneData getPickupZone() {

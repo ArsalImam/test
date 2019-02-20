@@ -42,12 +42,17 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
     public void onBindViewHolder(ViewHolder holder, int position) {
         final LoadBoardListingData item = mItems.get(position);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                itemClickListener.onClick(item);
-            }
-        });
+        if(item != null){
+            holder.li_LoadboardPickUpTV.setText(item.getPickupZone().getUrduName());
+            holder.li_LoadboardDropOffTV.setText(item.getDropoffZone().getUrduName());
+            holder.li_LoadboardBookingIdTV.setText(item.getOrderNo());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onClick(item);
+                }
+            });
+        }
     }
 
     @Override
@@ -57,12 +62,16 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-//        @BindView(R.id.tvEnglishItem)
-//        FontTextView tvEnglishItem;
+        @BindView(R.id.li_LoadboardPickUpTV)
+        FontTextView li_LoadboardPickUpTV;
+        @BindView(R.id.li_LoadboardDropOffTV)
+        FontTextView li_LoadboardDropOffTV;
+        @BindView(R.id.li_LoadboardBookingIdTV)
+        FontTextView li_LoadboardBookingIdTV;
 
         public ViewHolder(final View itemView) {
             super(itemView);
-//            ButterKnife.bind(this, itemView);
+            ButterKnife.bind(this, itemView);
 //            itemView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {
