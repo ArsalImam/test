@@ -386,10 +386,13 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * making loadboard jobs listing api call when driver's status is cash
+     */
     private void callLoadBoardListingAPI() {
         if (Connectivity.isConnectedFast(mCurrentActivity)){
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            repository.requestLoadBoardListingAPI(mCurrentActivity, handler);
+            repository.requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT, null, null, handler);
         }
     }
 
@@ -594,8 +597,6 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             }
-            /*if(AppPreferences.getIsCash())
-                resetMapPinAndSelectedCashViewToBottom();*/
         }
 
         if (AppPreferences.isWalletAmountIncreased()) {
@@ -1420,6 +1421,11 @@ public class HomeFragment extends Fragment {
 
     }
 
+    /**
+     * Reposition my location icon and google logo when loadboard visible/gone
+     * @param locationPointerBottomMargin my location bottom margin
+     * @param googleMapLogoBottomPadding google logo padding from bottom
+     */
     private void resetPositionOfMapPinAndSelectedCashView(int locationPointerBottomMargin, int googleMapLogoBottomPadding) {
         RelativeLayout.LayoutParams myLocationPointerParams = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
         myLocationPointerParams.bottomMargin = locationPointerBottomMargin;

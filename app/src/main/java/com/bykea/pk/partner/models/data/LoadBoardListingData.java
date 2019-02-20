@@ -2,6 +2,9 @@ package com.bykea.pk.partner.models.data;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Data Model class for loadboard individuals jobs
+ */
 public class LoadBoardListingData {
 
     @SerializedName("_id")

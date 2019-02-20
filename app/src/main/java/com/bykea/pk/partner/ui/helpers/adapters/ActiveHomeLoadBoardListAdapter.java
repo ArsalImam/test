@@ -19,6 +19,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
+/**
+ * Home screen's bottom sheet loadboard jobs listing adapter
+ */
 public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveHomeLoadBoardListAdapter.ViewHolder> {
 
     private ArrayList<LoadBoardListingData> mItems;

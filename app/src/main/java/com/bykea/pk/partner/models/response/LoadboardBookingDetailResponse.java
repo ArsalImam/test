@@ -5,7 +5,7 @@ import com.bykea.pk.partner.models.data.loadboard.LoadboardBookingDetailData;
 import java.util.List;
 
 /**
- * Data Model class for Accept Call APIs
+ * Data Model class for Selected booking detail for loadboard
  */
 
 public class LoadboardBookingDetailResponse extends CommonResponse {

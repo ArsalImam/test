@@ -6,6 +6,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data model class for loadboard booking details
+ */
 public class LoadboardBookingDetailData {
 
     @SerializedName("_id")

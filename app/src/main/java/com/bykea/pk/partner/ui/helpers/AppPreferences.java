@@ -904,10 +904,18 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * getting driver's cash/non-cash status
+     * @return
+     */
     public static boolean getIsCash() {
         return mSharedPreferences.getBoolean(Keys.CASH, false);
     }
 
+    /**
+     * saving driver's cash/non-cash status to local storage
+     * @param value true/false
+     */
     public static void setCash(boolean value) {
         mSharedPreferences
                 .edit()

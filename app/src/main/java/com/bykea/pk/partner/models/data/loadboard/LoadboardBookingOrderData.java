@@ -2,6 +2,9 @@ package com.bykea.pk.partner.models.data.loadboard;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * data model class for loadboard ordered items of selected booking
+ */
 public class LoadboardBookingOrderData {
 
     @SerializedName("name")

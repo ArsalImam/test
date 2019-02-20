@@ -408,6 +408,17 @@ interface IRestClient {
     @PUT(ApiTags.SET_DRIVER_LOCATION)
     Call<LocationResponse> updateDriverLocation(@Body DriverLocationRequest driverLocation);
 
+    /**
+     * Getting loadboard list in home screen when partener is active.
+     * @param driver_id Driver id
+     * @param token_id Driver access token
+     * @param lat Driver current lat
+     * @param lng Driver current lng
+     * @param limit jobs limit - OPTIONAL
+     * @param pickup_zone driver's selected pickup zone - OPTIONAL
+     * @param dropoff_zone driver's selected dropoff zone - OPTIONAL
+     * @return Loadboard jobs list
+     */
     @GET(ApiTags.GET_LOAD_BOARD_LISTING)
     Call<LoadBoardListingResponse> requestLoadBoardListing(@Query("_id") String driver_id,
                                                            @Query("token_id") String token_id,
@@ -417,14 +428,32 @@ interface IRestClient {
                                                            @Query("pickup_zone") String pickup_zone /*id*/,
                                                            @Query("dropoff_zone") String dropoff_zone /*id*/);
 
+    /**
+     * Accept a booking
+     * @param bookingId selected booking Id
+     * @param driver_id driver's id
+     * @param token_id driver's access token
+     * @param lat driver's current lat
+     * @param lng driver's current lng
+     * @return Booking accept response
+     */
     @FormUrlEncoded
     @POST(ApiTags.ACCEPT_LOAD_BOARD_BOOKING)
     Call<AcceptLoadboardBookingResponse> acceptLoadboardBooking(@Path("id") String bookingId,
                                                                 @Field("_id") String driver_id,
                                                                 @Field("token_id") String token_id,
-                                                                @Field("lat") String lat, /*driver current location*/
-                                                                @Field("lng") String lng); /*driver current location*/
+                                                                @Field("lat") String lat,
+                                                                @Field("lng") String lng);
 
+    /**
+     * Getting selected booking's detail
+     * @param bookingId selected booking id
+     * @param driver_id driver's id
+     * @param lat driver's current lat
+     * @param lng driver's current lng
+     * @param token_id driver's access token
+     * @return booking detail response
+     */
     @GET(ApiTags.GET_LOAD_BOARD_BOOKING_DETAIL)
     Call<LoadboardBookingDetailResponse> requestLoadBoardBookingDetail(@Path("id") String bookingId,
                                                                        @Query("_id") String driver_id,

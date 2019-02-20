@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+/**
+ * data model class for loadboard booking's locations
+ */
 public class LoadboardBookingLocationData {
     @SerializedName("lat")
     private double latitude;

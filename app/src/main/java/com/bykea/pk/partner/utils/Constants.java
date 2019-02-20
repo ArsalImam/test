@@ -79,6 +79,7 @@ public class Constants {
     public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
 
     public static final float BOTTOM_SHEET_ALPHA_VALUE = 0.7f;
+    public static final String LOADBOARD_JOBS_LIMIT = "10";
 
 
     /**

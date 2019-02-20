@@ -59,6 +59,9 @@ public class HomeActivity extends BaseActivity {
     private EventBus mBus = EventBus.getDefault();
     private PilotData pilotData;
 
+    /**
+     * loadboard jobs adapter and list to show on main screen
+     */
     private ActiveHomeLoadBoardListAdapter mloadBoardListAdapter;
     private ArrayList<LoadBoardListingData> mlist = new ArrayList<>();
 
@@ -99,6 +102,9 @@ public class HomeActivity extends BaseActivity {
     @BindView(R.id.connectionStatusIv)
     AppCompatImageView connectionStatusIv;
 
+    /**
+     * loadboard bottom sheet in main screen when driver is active and cash user
+     */
     private BottomSheetBehavior bottomSheetBehavior;
 
     private boolean isDialogShown, isSettingsApiFirstTimeCalled;
@@ -330,6 +336,9 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * initialize loadboard listing with empty data and bottom sheet with behavior
+     */
     public void setupBottomSheet(){
         mloadBoardListAdapter = new ActiveHomeLoadBoardListAdapter(this, mlist, new ActiveHomeLoadBoardListAdapter.ItemClickListener() {
             @Override
@@ -373,7 +382,6 @@ public class HomeActivity extends BaseActivity {
         bottomSheetRefreshIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.appToast(v.getContext(), "Refresh");
             }
         });
         bottomSheetBackIV.setOnClickListener(new View.OnClickListener() {
@@ -386,28 +394,39 @@ public class HomeActivity extends BaseActivity {
         bottomSheetPickTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.appToast(v.getContext(), "Pick");
             }
         });
         bottomSheetDropTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.appToast(v.getContext(), "Drop");
             }
         });
         hideLoadBoardBottomSheet();
     }
 
+    /**
+     * Visible on main screen when active and cash user and GONE for other screens navigate from side menu
+     * @param visibility VISIBLE/GONE
+     */
     public void toggleBottomSheetOnNavigationMenuSelection(int visibility){
         if(bottomSheet != null && mlist != null && mlist.size() > 0)
             bottomSheet.setVisibility(visibility);
     }
+
+    /**
+     * visible loadboard
+     * @param list loadboard jobs data
+     */
     public void showLoadBoardBottomSheet(ArrayList<LoadBoardListingData> list){
         if(bottomSheet != null && list != null && list.size() > 0){
             bottomSheet.setVisibility(View.VISIBLE);
             updateList(list);
         }
     }
+
+    /**
+     * GONE loadboard bottom sheet
+     */
     public void hideLoadBoardBottomSheet(){
         if(bottomSheet != null){
             bottomSheet.setVisibility(View.GONE);
@@ -415,6 +434,11 @@ public class HomeActivity extends BaseActivity {
                 mlist.clear();
         }
     }
+
+    /**
+     * updating loadboard jobs list when api returns jobs
+     * @param list jobs list
+     */
     public void updateList(ArrayList<LoadBoardListingData> list){
         if(mloadBoardListAdapter != null && mlist != null){
             mlist.clear();
@@ -423,6 +447,10 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * VISIBLE/GONE bottom sheet toolbar when expanding or collapsing
+     * @param alpha
+     */
     private void toggleBottomSheetToolbar(float alpha){
         if(alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE){
             bottomSheetToolbarLayout.setVisibility(View.VISIBLE);
@@ -445,6 +473,10 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * VISIBLE/GONE connections status on main screen's toolbar
+     * @param visibility VISIBLE/GONE
+     */
     public void toggleAchaConnection(int visibility){
         achaconnectionTv.setVisibility(visibility);
         connectionStatusIv.setVisibility(visibility);

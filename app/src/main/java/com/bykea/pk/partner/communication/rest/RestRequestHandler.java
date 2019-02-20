@@ -1252,7 +1252,15 @@ public class RestRequestHandler {
 
     }
 
-    public void loadboardListing(Context context,final IResponseCallback onResponseCallback) {
+    /**
+     * request for loadboard jobs list
+     * @param context Context
+     * @param limit jobs limit - OPTIONAL
+     * @param pickupZoneId jobs pickup zone id - OPTIONAL
+     * @param dropoffZoneId - jons dropoff zone id - OPTIONAL
+     * @param onResponseCallback callback
+     */
+    public void loadboardListing(Context context, String limit, String pickupZoneId, String dropoffZoneId, final IResponseCallback onResponseCallback) {
         mContext = context;
         this.mResponseCallBack = onResponseCallback;
         mRestClient = RestClient.getClient(mContext);
@@ -1260,14 +1268,19 @@ public class RestRequestHandler {
         Call<LoadBoardListingResponse> requestCall = mRestClient.requestLoadBoardListing(
                 AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken(),
-                /*String.valueOf(AppPreferences.getLatitude())*/"24.7984714",
-                /*String.valueOf(AppPreferences.getLongitude())*/"67.0326814",
-                "10", "5a9ea423010bc20e1b5fab96", null);
+                String.valueOf(AppPreferences.getLatitude())/*"24.7984714" DHA lat*/,
+                String.valueOf(AppPreferences.getLongitude())/*"67.0326814" DHA lng*/,
+                limit, pickupZoneId, dropoffZoneId);
         requestCall.enqueue(new GenericRetrofitCallBack<LoadBoardListingResponse>(onResponseCallback));
 
     }
 
-
+    /**
+     * accept request for specific booking
+     * @param context Context
+     * @param bookingId selected booking id
+     * @param onResponseCallback callback
+     */
     public void acceptLoadboardBooking(Context context,String bookingId, final IResponseCallback onResponseCallback) {
         mContext = context;
         this.mResponseCallBack = onResponseCallback;
@@ -1283,6 +1296,12 @@ public class RestRequestHandler {
 
     }
 
+    /**
+     * request for details of selected booking
+     * @param context Context
+     * @param bookingId selected booking id
+     * @param onResponseCallback callback
+     */
     public void loadboardBookingDetail(Context context,String bookingId, final IResponseCallback onResponseCallback) {
         mContext = context;
         this.mResponseCallBack = onResponseCallback;

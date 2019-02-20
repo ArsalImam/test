@@ -205,10 +205,22 @@ public interface IUserDataHandler {
 
     void onBiometricApiResponse(BiometricApiResponse response);
 
+    /**
+     * callback for loadboard listing api call
+     * @param response loadborad jobs listing response
+     */
     void onLoadboardListingApiResponse(LoadBoardListingResponse response);
 
+    /**
+     * callback for loadboard booking detail api call
+     * @param response loadborad specific booking details response
+     */
     void onLoadboardBookingDetailResponse(LoadboardBookingDetailResponse response);
 
+    /**
+     * callback for loadboard accept api call
+     * @param response loadboard specific booking acceptance response
+     */
     void onAcceptLoadboardBookingResponse(AcceptLoadboardBookingResponse response);
 
     void onError(int errorCode, String errorMessage);
