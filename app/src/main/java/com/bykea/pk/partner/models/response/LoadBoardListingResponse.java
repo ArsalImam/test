@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Data Model Class for Load Board API Response
+ * Data Model class for loadboard jobs listing
  */
 public class LoadBoardListingResponse extends CommonResponse {
 

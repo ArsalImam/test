@@ -8,10 +8,7 @@ import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LoadBoardListingData;
-import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.widgets.FontTextView;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -19,6 +16,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
+/**
+ * Home screen's bottom sheet loadboard jobs listing adapter
+ */
 public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveHomeLoadBoardListAdapter.ViewHolder> {
 
     private ArrayList<LoadBoardListingData> mItems;
@@ -42,12 +42,17 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
     public void onBindViewHolder(ViewHolder holder, int position) {
         final LoadBoardListingData item = mItems.get(position);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                itemClickListener.onClick(item);
-            }
-        });
+        if(item != null){
+            holder.li_LoadboardPickUpTV.setText(mContext.getString(R.string.pick_drop_name_ur,item.getPickupZone().getUrduName()));
+            holder.li_LoadboardDropOffTV.setText(mContext.getString(R.string.pick_drop_name_ur,item.getDropoffZone().getUrduName()));
+            holder.li_LoadboardBookingIdTV.setText(item.getOrderNo());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onClick(item);
+                }
+            });
+        }
     }
 
     @Override
@@ -57,12 +62,16 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-//        @BindView(R.id.tvEnglishItem)
-//        FontTextView tvEnglishItem;
+        @BindView(R.id.li_LoadboardPickUpTV)
+        FontTextView li_LoadboardPickUpTV;
+        @BindView(R.id.li_LoadboardDropOffTV)
+        FontTextView li_LoadboardDropOffTV;
+        @BindView(R.id.li_LoadboardBookingIdTV)
+        FontTextView li_LoadboardBookingIdTV;
 
         public ViewHolder(final View itemView) {
             super(itemView);
-//            ButterKnife.bind(this, itemView);
+            ButterKnife.bind(this, itemView);
 //            itemView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {

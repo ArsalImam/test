@@ -36,6 +36,9 @@ public class PilotData {
     @SerializedName("cih")
     private String cashInHand;
 
+    /**
+     * Added cash field for loadboard working - non-cash drivers will not be able to see/call loadboard jobs
+     */
     private boolean cash;
 
     public String getRating() {

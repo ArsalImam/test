@@ -11,6 +11,7 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
+import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
@@ -31,6 +32,7 @@ import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -71,6 +73,7 @@ import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Part;
+import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.Url;
 
@@ -405,6 +408,17 @@ interface IRestClient {
     @PUT(ApiTags.SET_DRIVER_LOCATION)
     Call<LocationResponse> updateDriverLocation(@Body DriverLocationRequest driverLocation);
 
+    /**
+     * Getting loadboard list in home screen when partener is active.
+     * @param driver_id Driver id
+     * @param token_id Driver access token
+     * @param lat Driver current lat
+     * @param lng Driver current lng
+     * @param limit jobs limit - OPTIONAL
+     * @param pickup_zone driver's selected pickup zone - OPTIONAL
+     * @param dropoff_zone driver's selected dropoff zone - OPTIONAL
+     * @return Loadboard jobs list
+     */
     @GET(ApiTags.GET_LOAD_BOARD_LISTING)
     Call<LoadBoardListingResponse> requestLoadBoardListing(@Query("_id") String driver_id,
                                                            @Query("token_id") String token_id,
@@ -413,6 +427,39 @@ interface IRestClient {
                                                            @Query("limit") String limit,
                                                            @Query("pickup_zone") String pickup_zone /*id*/,
                                                            @Query("dropoff_zone") String dropoff_zone /*id*/);
+
+    /**
+     * Accept a booking
+     * @param bookingId selected booking Id
+     * @param driver_id driver's id
+     * @param token_id driver's access token
+     * @param lat driver's current lat
+     * @param lng driver's current lng
+     * @return Booking accept response
+     */
+    @FormUrlEncoded
+    @POST(ApiTags.ACCEPT_LOAD_BOARD_BOOKING)
+    Call<AcceptLoadboardBookingResponse> acceptLoadboardBooking(@Path("id") String bookingId,
+                                                                @Field("_id") String driver_id,
+                                                                @Field("token_id") String token_id,
+                                                                @Field("lat") String lat,
+                                                                @Field("lng") String lng);
+
+    /**
+     * Getting selected booking's detail
+     * @param bookingId selected booking id
+     * @param driver_id driver's id
+     * @param lat driver's current lat
+     * @param lng driver's current lng
+     * @param token_id driver's access token
+     * @return booking detail response
+     */
+    @GET(ApiTags.GET_LOAD_BOARD_BOOKING_DETAIL)
+    Call<LoadboardBookingDetailResponse> requestLoadBoardBookingDetail(@Path("id") String bookingId,
+                                                                       @Query("_id") String driver_id,
+                                                                       @Query("lat") String lat,
+                                                                       @Query("lng") String lng,
+                                                                       @Query("token_id") String token_id);
 
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(

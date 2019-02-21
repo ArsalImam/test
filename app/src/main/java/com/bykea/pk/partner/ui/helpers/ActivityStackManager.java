@@ -28,6 +28,7 @@ import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
+import com.bykea.pk.partner.ui.activities.LoadboardBookingDetailActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
@@ -383,6 +384,17 @@ public class ActivityStackManager {
     public void startRegisterationActiivty(Context context) {
         Intent intent = new Intent(context, RegistrationActivity.class);
 //        Intent intent = new Intent(context, JsBankFingerSelectionActivity.class);
+        context.startActivity(intent);
+    }
+
+    /**
+     * open loadboard booking screen
+     * @param context Context
+     * @param bookingId selected booking id
+     */
+    public void startLoadboardBookingDetailActiivty(Context context, String bookingId) {
+        Intent intent = new Intent(context, LoadboardBookingDetailActivity.class);
+        intent.putExtra(LoadboardBookingDetailActivity.BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
 

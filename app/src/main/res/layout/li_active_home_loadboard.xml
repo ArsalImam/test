@@ -11,24 +11,25 @@
     android:paddingEnd="@dimen/_8sdp">
 
     <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/li_LoadboardPickUpTV"
         android:layout_width="0dp"
         android:layout_height="@dimen/_38sdp"
         android:layout_weight="1"
         android:background="@drawable/gray_bordered_bg"
         android:gravity="start|center_vertical"
         android:textColor="@color/dark_blue3179c5"
-        android:text="@string/nazimabad_ur"
         android:paddingEnd="@dimen/_8sdp"
         android:paddingRight="@dimen/_8sdp"
         android:textSize="@dimen/_14sdp"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
     <android.support.v7.widget.AppCompatImageView
-        android:layout_width="@dimen/_40sdp"
+        android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_15sdp"
         android:src="@mipmap/icon_backarrow_gray"
         android:layout_gravity="center_vertical"/>
     <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/li_LoadboardDropOffTV"
         android:layout_width="0dp"
         android:layout_height="@dimen/_38sdp"
         android:layout_weight="1"
@@ -36,22 +37,21 @@
         android:gravity="start|center_vertical"
         android:paddingEnd="@dimen/_8sdp"
         android:paddingRight="@dimen/_8sdp"
-        android:text="@string/dha_ur"
         android:textSize="@dimen/_14sdp"
         android:textColor="@color/dark_gray656565"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
     <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/li_LoadboardBookingIdTV"
         android:layout_width="0dp"
         android:layout_height="@dimen/_38sdp"
-        android:layout_weight="0.60"
+        android:layout_weight="0.90"
         android:gravity="center"
-        android:text="W123"
         android:textColor="@color/dark_grayRedish"
-        android:textSize="@dimen/_14sdp"/>
+        android:textSize="@dimen/_13sdp"/>
 
     <android.support.v7.widget.AppCompatImageView
-        android:layout_width="@dimen/_35sdp"
+        android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_38sdp"
         android:src="@mipmap/icon_forks"/>
 

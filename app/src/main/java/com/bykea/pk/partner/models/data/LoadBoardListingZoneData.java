@@ -2,6 +2,9 @@ package com.bykea.pk.partner.models.data;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Data model class for loadboard jobs - zone data
+ */
 public class LoadBoardListingZoneData {
 
     @SerializedName("zone")
