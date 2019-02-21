@@ -577,8 +577,6 @@ public class HomeFragment extends Fragment {
             mCurrentActivity.showKhudaHafiz();
             mapView.setVisibility(View.VISIBLE);
             mapPinIv.setVisibility(View.VISIBLE);
-            selectedAmountRL.setVisibility(View.VISIBLE);
-            selectedAmountTV.setText(getString(R.string.seleted_amount_rs,AppPreferences.getCashInHands()));
             headerTopActiveLayout.setVisibility(View.VISIBLE);
             headerTopUnActiveLayout.setVisibility(View.GONE);
             layoutUpper.setVisibility(View.GONE);
@@ -596,6 +594,16 @@ public class HomeFragment extends Fragment {
                 muntakhibTvUrdu.setText(getResources().getString(R.string.muntakhib_manzil_krey_urdu));
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
+            }
+            if(AppPreferences.getIsCash()){
+            	//Cash in hand visibility VISIBLE
+                selectedAmountRL.setVisibility(View.VISIBLE);
+                selectedAmountTV.setText(getString(R.string.seleted_amount_rs,AppPreferences.getCashInHands()));
+            } else {
+            	//Cash in hand visibility GONE and reposition google logo to bottom
+                selectedAmountRL.setVisibility(View.GONE);
+                if(mGoogleMap != null)
+                    mGoogleMap.setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen._16sdp));
             }
         }
 
