@@ -856,9 +856,11 @@ public class HomeFragment extends Fragment {
         public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
             Dialogs.INSTANCE.dismissDialog();
             if (response != null && response.getData() != null && response.getData().size() > 0) {
-                mCurrentActivity.showLoadBoardBottomSheet(response.getData());
-                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
-                        (int) getResources().getDimension(R.dimen._110sdp));
+                if(mCurrentActivity != null){
+                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
+                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                            (int) getResources().getDimension(R.dimen._110sdp));
+                }
             }
         }
 
