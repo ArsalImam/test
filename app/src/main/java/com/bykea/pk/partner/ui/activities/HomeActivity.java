@@ -461,9 +461,9 @@ public class HomeActivity extends BaseActivity {
     private void toggleBottomSheetToolbar(float alpha){
         if(alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE){
             bottomSheetToolbarLayout.setVisibility(View.VISIBLE);
-            bottomSheetPickDropLayout.setVisibility(View.VISIBLE);
+            bottomSheetPickDropLayout.setVisibility(View.GONE);
             bottomSheetToolbarDivider.setVisibility(View.VISIBLE);
-            bottomSheetPickDropDivider.setVisibility(View.VISIBLE);
+            bottomSheetPickDropDivider.setVisibility(View.GONE);
             bottomSheetPickDropDivider.setAlpha(alpha);
             bottomSheetPickDropLayout.setAlpha(alpha);
             bottomSheetToolbarDivider.setAlpha(alpha);
