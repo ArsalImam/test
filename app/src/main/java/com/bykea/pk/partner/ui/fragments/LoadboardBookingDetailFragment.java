@@ -31,7 +31,6 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -127,17 +126,17 @@ public class LoadboardBookingDetailFragment extends Fragment {
      * initialize views and set datails data and attach click listener
      */
     private void initViews(){
-        bd_FareTV.setText("Rs. "+data.getFareEstimation());
+        bd_FareTV.setText(getString(R.string.seleted_amount_rs,data.getFareEstimation()));
 
         bd_pickUpNameTV.setText(data.getPickupName());
         bd_pickUpAddressTV.setText(data.getPickupAddress());
         bd_pickUpTimeTV.setText(data.getDeliveryTimings());
-        bd_pickUpZoneTV.setText(data.getPickupZone().getUrduName());
+        bd_pickUpZoneTV.setText(getString(R.string.pick_drop_name_ur,data.getPickupZone().getUrduName()));
         int etaInMinute = data.getPickupEta() / Constants.MINUTE_DIVISIBLE_VALUE;
         bd_estimatedTimeTV.setText(String.valueOf(etaInMinute));
 
         bd_dropOffAddressTV.setText(data.getDropoffAddress());
-        bd_dropOffZoneTV.setText(data.getDropoffZone().getUrduName());
+        bd_dropOffZoneTV.setText(getString(R.string.pick_drop_name_ur,data.getDropoffZone().getUrduName()));
         float estimatedDistance = data.getDropoffDistance() / Constants.KILOMETER_DIVISIBLE_VALUE;
         bd_estimatedDistanceTV.setText(String.format("%.1f", estimatedDistance));
 
@@ -173,7 +172,7 @@ public class LoadboardBookingDetailFragment extends Fragment {
                                     AppPreferences.clearTripDistanceData();
                                     AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
 
-                                    NormalCallData callData = AppPreferences.getCallData();
+                                    NormalCallData callData = response.getData();
                                     callData.setStatus(TripStatus.ON_ACCEPT_CALL);
                                     AppPreferences.setCallData(callData);
                                     logMixpanelEvent(callData, true);
@@ -221,7 +220,7 @@ public class LoadboardBookingDetailFragment extends Fragment {
                 String destination =data.getEndLoc().getLatitude()+","+data.getEndLoc().getLongitude();
 
                 try {
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + start + "&daddr=" + destination + "&mode=b");
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + start + "&daddr=" + destination + "&mode=motorcycle");
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
@@ -235,6 +234,11 @@ public class LoadboardBookingDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * logging accepted response for tracking data
+     * @param callData response data
+     * @param isOnAccept trip state
+     */
     private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
         try {
 

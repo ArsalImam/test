@@ -8,10 +8,7 @@ import android.view.ViewGroup;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LoadBoardListingData;
-import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.widgets.FontTextView;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -46,8 +43,8 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
         final LoadBoardListingData item = mItems.get(position);
 
         if(item != null){
-            holder.li_LoadboardPickUpTV.setText(item.getPickupZone().getUrduName());
-            holder.li_LoadboardDropOffTV.setText(item.getDropoffZone().getUrduName());
+            holder.li_LoadboardPickUpTV.setText(mContext.getString(R.string.pick_drop_name_ur,item.getPickupZone().getUrduName()));
+            holder.li_LoadboardDropOffTV.setText(mContext.getString(R.string.pick_drop_name_ur,item.getDropoffZone().getUrduName()));
             holder.li_LoadboardBookingIdTV.setText(item.getOrderNo());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
