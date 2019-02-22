@@ -218,7 +218,14 @@
         <activity android:name=".ui.activities.RankingActivity" />
         <activity android:name=".ui.activities.NumberVerificationActivity"
             android:theme="@style/NewTheme"/>
-        <activity android:name=".ui.activities.LandingActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.LandingActivity"
+            android:screenOrientation="portrait"/>
+
+        <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

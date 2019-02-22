@@ -798,13 +798,17 @@ public class Utils {
     }
 
 
-    public static String getVersion(Context context) {
-
+    /**
+     * Get application installed version from package manager.
+     *
+     * @return Installed App version using {@link PackageManager}
+     */
+    public static String getVersion() {
         String currentVersion = StringUtils.EMPTY;
-        PackageManager pm = context.getPackageManager();
-        PackageInfo pInfo = null;
+        PackageManager pm = DriverApp.getContext().getPackageManager();
+        PackageInfo pInfo;
         try {
-            pInfo = pm.getPackageInfo(context.getPackageName(), 0);
+            pInfo = pm.getPackageInfo(DriverApp.getContext().getPackageName(), 0);
             currentVersion = pInfo.versionName;
         } catch (PackageManager.NameNotFoundException e1) {
             e1.printStackTrace();
@@ -2364,7 +2368,7 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                if(intent.resolveActivity(context.getPackageManager())!=null){
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
                     activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
                     return true;
                 }
@@ -2391,7 +2395,7 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                if(intent.resolveActivity(context.getPackageManager())!=null){
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
                     fragment.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
                     return true;
                 }
