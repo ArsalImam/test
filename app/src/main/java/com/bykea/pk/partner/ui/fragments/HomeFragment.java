@@ -1437,13 +1437,18 @@ public class HomeFragment extends Fragment {
      * @param googleMapLogoBottomPadding google logo padding from bottom
      */
     private void resetPositionOfMapPinAndSelectedCashView(int locationPointerBottomMargin, int googleMapLogoBottomPadding) {
-        RelativeLayout.LayoutParams myLocationPointerParams = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
-        myLocationPointerParams.bottomMargin = locationPointerBottomMargin;
-        mapPinIv.setLayoutParams(myLocationPointerParams);
+        if(mapPinIv != null){
+            RelativeLayout.LayoutParams myLocationPointerParams = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
+            myLocationPointerParams.bottomMargin = locationPointerBottomMargin;
+            mapPinIv.setLayoutParams(myLocationPointerParams);
+        }
 
-        RelativeLayout.LayoutParams selectedAmountTVLayoutParams = (RelativeLayout.LayoutParams) selectedAmountRL.getLayoutParams();
-        selectedAmountTVLayoutParams.bottomMargin = locationPointerBottomMargin;
-        selectedAmountRL.setLayoutParams(selectedAmountTVLayoutParams);
+        if(selectedAmountRL != null){
+            RelativeLayout.LayoutParams selectedAmountTVLayoutParams = (RelativeLayout.LayoutParams) selectedAmountRL.getLayoutParams();
+            selectedAmountTVLayoutParams.bottomMargin = locationPointerBottomMargin;
+            selectedAmountRL.setLayoutParams(selectedAmountTVLayoutParams);
+        }
+
 
         if (mGoogleMap != null) {
             mGoogleMap.setPadding(0, 0, 0, googleMapLogoBottomPadding);
