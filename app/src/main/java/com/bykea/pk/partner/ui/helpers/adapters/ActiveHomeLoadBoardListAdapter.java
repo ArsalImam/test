@@ -1,11 +1,13 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LoadBoardListingData;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -52,6 +54,11 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
                     itemClickListener.onClick(item);
                 }
             });
+            if(position % 2 == 0){
+                holder.itemView.setBackgroundColor(ContextCompat.getColor(DriverApp.getContext(),R.color.white));
+            } else {
+                holder.itemView.setBackgroundColor(ContextCompat.getColor(DriverApp.getContext(),R.color.color_grayf8f8f8));
+            }
         }
     }
 

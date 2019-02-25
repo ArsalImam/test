@@ -27,6 +27,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LoadBoardListingData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
@@ -183,6 +184,10 @@ public class HomeActivity extends BaseActivity {
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(Gravity.START); //CLOSE Nav Drawer!
+        }
+		//close bottom sheet if is in expanded state
+        else if(bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             if (visibleFragmentNumber == 1) {
                 super.onBackPressed();
@@ -382,6 +387,8 @@ public class HomeActivity extends BaseActivity {
         bottomSheetRefreshIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            	//refresh loadboard list
+                refreshLoadBoardListingAPI();
             }
         });
         bottomSheetBackIV.setOnClickListener(new View.OnClickListener() {
@@ -454,9 +461,9 @@ public class HomeActivity extends BaseActivity {
     private void toggleBottomSheetToolbar(float alpha){
         if(alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE){
             bottomSheetToolbarLayout.setVisibility(View.VISIBLE);
-            bottomSheetPickDropLayout.setVisibility(View.VISIBLE);
+            bottomSheetPickDropLayout.setVisibility(View.GONE);
             bottomSheetToolbarDivider.setVisibility(View.VISIBLE);
-            bottomSheetPickDropDivider.setVisibility(View.VISIBLE);
+            bottomSheetPickDropDivider.setVisibility(View.GONE);
             bottomSheetPickDropDivider.setAlpha(alpha);
             bottomSheetPickDropLayout.setAlpha(alpha);
             bottomSheetToolbarDivider.setAlpha(alpha);
@@ -506,6 +513,35 @@ public class HomeActivity extends BaseActivity {
                 achaconnectionTv.setText(getString(R.string.acha_connection_ur));
                 connectionStatusIv.setImageResource(R.drawable.wifi_connection_signal_symbol);
                 break;
+        }
+    }
+    /**
+     * making refresh call of loadboard jobs listing api when driver's status is cash
+     */
+    private void refreshLoadBoardListingAPI() {
+        if (Connectivity.isConnectedFast(mCurrentActivity)){
+            if(AppPreferences.getIsCash()){
+                Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                new UserRepository().requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT, null, null, new UserDataHandler(){
+                    @Override
+                    public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        if (response != null && response.getData() != null && response.getData().size() > 0) {
+                            if(mCurrentActivity != null){
+                                updateList(response.getData());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(int errorCode, String errorMessage) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        Utils.appToast(mCurrentActivity,errorMessage);
+                    }
+                });
+            }
+        } else {
+            Utils.appToast(this,getString(R.string.internet_error));
         }
     }
 }

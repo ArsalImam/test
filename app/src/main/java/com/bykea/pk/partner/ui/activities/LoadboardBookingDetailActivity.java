@@ -64,7 +64,8 @@ public class LoadboardBookingDetailActivity extends BaseActivity {
                 bookingNoTV.setText(response.getData().getOrderNo());
 //                bookingTypeIV.setImageResource();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.bookingDetailContainerFL, LoadboardBookingDetailFragment.newInstance(response.getData())).commit();
+                        .replace(R.id.bookingDetailContainerFL, LoadboardBookingDetailFragment.newInstance(response.getData()))
+                        .commitAllowingStateLoss();
             }
 
             @Override
