@@ -591,6 +591,9 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * making loadboard jobs request
+     */
     private void callLoadboardListingAPI() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
@@ -616,12 +619,19 @@ public class HomeActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * display/inflate zone selection screen
+     * @param fragment
+     */
     private void showLoadboardZoneScreen(LoadboardZoneFragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.drawerMainActivity, fragment, fragment.getClass().getName())
                 .addToBackStack(null).commitAllowingStateLoss();
     }
 
+    /**
+     * set previously selected pickup and drop off zone
+     */
     private void showSelectedPickAndDropZoneToBottomSheet() {
         ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
         ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
@@ -631,17 +641,27 @@ public class HomeActivity extends BaseActivity {
             bottomSheetDropTV.setText(getString(R.string.pick_drop_name_ur, dropoffZone.getUrduName()));
     }
 
+    /**
+     * show progress loader while loadboard jobs listing api is being requested
+     */
     private void showBottomSheetLoader() {
         bottomSheetLoader.setVisibility(View.VISIBLE);
         bottomSheetNoJobsAvailableTV.setVisibility(View.GONE);
         activeHomeLoadBoardList.setVisibility(View.GONE);
     }
 
+    /**
+     * show No Jobs Available as hint to the user that selected zone does not have job yet.
+     */
     private void showBottomSheetNoJobsAvailableHint() {
         bottomSheetLoader.setVisibility(View.GONE);
         bottomSheetNoJobsAvailableTV.setVisibility(View.VISIBLE);
         activeHomeLoadBoardList.setVisibility(View.GONE);
     }
+
+    /**
+     * show loadboard jobs list when jobs are available
+     */
     private void showBottomSheetJobsList() {
         bottomSheetLoader.setVisibility(View.GONE);
         bottomSheetNoJobsAvailableTV.setVisibility(View.GONE);
