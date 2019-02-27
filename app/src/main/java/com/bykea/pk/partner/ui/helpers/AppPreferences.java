@@ -14,6 +14,7 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.TrackingData;
+import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
@@ -1229,4 +1230,29 @@ public class AppPreferences {
         setPilotData(null);
     }
 
+    /**
+     * save selected zone data for loadboard to local storage
+     * @param key Pickup/Dropoff key
+     * @param zoneData selected zone data
+     */
+    public static void setSelectedLoadboardZoneData(String key, ZoneData zoneData) {
+        mSharedPreferences
+                .edit()
+                .putString(key, new Gson().toJson(zoneData))
+                .apply();
+    }
+
+    /**
+     * get selected zone data for loadboard to local storage
+     * @param key Pickup/Dropoff ket
+     * @return ZoneData
+     */
+    public static ZoneData getSelectedLoadboardZoneData(String key) {
+        String data = mSharedPreferences.getString(key, StringUtils.EMPTY);
+        ZoneData zoneData = null;
+        if (StringUtils.isNotBlank(data)) {
+            zoneData = new Gson().fromJson(data, ZoneData.class);
+        }
+        return zoneData;
+    }
 }

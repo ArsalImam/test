@@ -165,4 +165,11 @@ public class Keys {
     public static final String INACTIVE_CHECK_TIME = "INACTIVE_CHECK_TIME";
 
     public static final String BASE_URL_LOCAL = "BASE_URL_LOCAL";
+
+
+    /**
+     * Loadboard Pickup and Dropoff Zone data preferences tags
+     */
+    public static final String LOADBOARD_SELECTED_PICKUP_ZONE = "LOADBOARD_SELECTED_PICKUP_ZONE";
+    public static final String LOADBOARD_SELECTED_DROPOFF_ZONE = "LOADBOARD_SELECTED_DROPOFF_ZONE";
 }
