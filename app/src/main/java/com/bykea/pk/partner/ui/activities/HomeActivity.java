@@ -621,7 +621,7 @@ public class HomeActivity extends BaseActivity {
 
     /**
      * display/inflate zone selection screen
-     * @param fragment
+     * @param fragment loadboard zone screen/fragment reference
      */
     private void showLoadboardZoneScreen(LoadboardZoneFragment fragment) {
         getSupportFragmentManager().beginTransaction()
