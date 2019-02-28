@@ -23,6 +23,7 @@ import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -98,33 +99,33 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
             switch (getLayoutPosition()) {
                 case 0:// This case is for driver header part click.
-                    if (HomeActivity.visibleFragmentNumber != 0) {
-                        updateCurrentFragment(new ProfileFragment(), 0);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.PROFILE_SCREEN) {
+                        updateCurrentFragment(new ProfileFragment(), Constants.ScreenRedirections.PROFILE_SCREEN);
                     }
                     break;
                 case 1:
-                    if (HomeActivity.visibleFragmentNumber != 1) {
-                        updateCurrentFragment(new HomeFragment(), 1);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOME_SCREEN) {
+                        updateCurrentFragment(new HomeFragment(), Constants.ScreenRedirections.HOME_SCREEN);
                     }
                     break;
                 case 2:
-                    if (HomeActivity.visibleFragmentNumber != 2) {
-                        updateCurrentFragment(new TripHistoryFragment(), 2);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.TRIP_HISTORY_SCREEN) {
+                        updateCurrentFragment(new TripHistoryFragment(), Constants.ScreenRedirections.TRIP_HISTORY_SCREEN);
                     }
                     break;
                 case 3:
-                    if (HomeActivity.visibleFragmentNumber != 3) {
-                        updateCurrentFragment(new WalletFragment(), 3);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.WALLET_SCREEN) {
+                        updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN);
                     }
                     break;
                 case 4:
-                    if (HomeActivity.visibleFragmentNumber != 4) {
-                        updateCurrentFragment(new HowItWorksFragment(), 4);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN) {
+                        updateCurrentFragment(new HowItWorksFragment(), Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN);
                     }
                     break;
                 case 5:
-                    if (HomeActivity.visibleFragmentNumber != 5) {
-                        updateCurrentFragment(new ContactUsFragment(), 5);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.CONTACT_US_SCREEN) {
+                        updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN);
                     }
                     break;
 

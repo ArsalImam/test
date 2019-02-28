@@ -480,7 +480,7 @@ public class HomeFragment extends Fragment {
         if (mCurrentActivity != null) {
 
             if (response.getData() != null) {
-                if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
+                if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage()) && driverImageView != null) {
                     Utils.loadImgPicasso(mCurrentActivity, driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 }
@@ -1257,7 +1257,8 @@ public class HomeFragment extends Fragment {
     }
 
 
-    @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn, R.id.mapPinIv})
+    @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn,
+            R.id.mapPinIv, R.id.walletRL})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -1307,6 +1308,11 @@ public class HomeFragment extends Fragment {
                 setHomeLocation();
                 break;
             }
+
+            //open wallet screen
+            case R.id.walletRL:
+                showWalletFragment();
+                break;
         }
     }
 
@@ -1480,5 +1486,15 @@ public class HomeFragment extends Fragment {
 
     }
 
-
+    /**
+     * Open wallet fragment from In-Active home wallet icon's tap
+     */
+    private void showWalletFragment() {
+        mCurrentActivity.getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.containerView, new WalletFragment())
+                .commit();
+        HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
+    }
 }
