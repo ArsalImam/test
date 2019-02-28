@@ -65,6 +65,7 @@ public class ContactUsFragment extends Fragment {
         mCurrentActivity.hideToolbarLogo();
 
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.findViewById(R.id.statusLayout).setVisibility(View.VISIBLE);
         mCurrentActivity.hideStatusCompletely();
         UserRepository repository = new UserRepository();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
