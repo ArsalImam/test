@@ -18,7 +18,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,14 +28,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
@@ -390,9 +388,14 @@ public class HomeFragment extends Fragment {
      * making loadboard jobs listing api call when driver's status is cash
      */
     private void callLoadBoardListingAPI() {
-        if (Connectivity.isConnectedFast(mCurrentActivity)){
+        if (Connectivity.isConnectedFast(mCurrentActivity)) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            repository.requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT, null, null, handler);
+            //get selected pickup and dropoff zone data from local storage
+            ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
+            ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
+            repository.requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
+                    pickupZone == null ? null : pickupZone.get_id(),
+                    dropoffZone == null ? null : dropoffZone.get_id(), handler);
         }
     }
 
@@ -530,10 +533,8 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-        if (Connectivity.isConnectedFast(mCurrentActivity)) {
-            if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
-                callLoadBoardListingAPI();
-        }
+        if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
+            callLoadBoardListingAPI();
     }
 
     public synchronized void setStatusBtn() {
@@ -595,14 +596,14 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             }
-            if(AppPreferences.getIsCash()){
-            	//Cash in hand visibility VISIBLE
+            if (AppPreferences.getIsCash()) {
+                //Cash in hand visibility VISIBLE
                 selectedAmountRL.setVisibility(View.VISIBLE);
-                selectedAmountTV.setText(getString(R.string.seleted_amount_rs,AppPreferences.getCashInHands()));
+                selectedAmountTV.setText(getString(R.string.seleted_amount_rs, AppPreferences.getCashInHands()));
             } else {
-            	//Cash in hand visibility GONE and reposition google logo to bottom
+                //Cash in hand visibility GONE and reposition google logo to bottom
                 selectedAmountRL.setVisibility(View.GONE);
-                if(mGoogleMap != null)
+                if (mGoogleMap != null)
                     mGoogleMap.setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen._16sdp));
             }
         }
@@ -863,11 +864,11 @@ public class HomeFragment extends Fragment {
         @Override
         public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
             Dialogs.INSTANCE.dismissDialog();
-            if (response != null && response.getData() != null && response.getData().size() > 0) {
-                if(mCurrentActivity != null){
+            if (response != null && response.getData() != null) {
+                if (mCurrentActivity != null) {
                     mCurrentActivity.showLoadBoardBottomSheet(response.getData());
-                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
-                            (int) getResources().getDimension(R.dimen._110sdp));
+                    resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
+                            (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
                 }
             }
         }
@@ -1076,11 +1077,14 @@ public class HomeFragment extends Fragment {
                         , 12.0f));
 
             showCancelDialogIfRequired();
-//            if(AppPreferences.getIsCash()){
-                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
-                                        (int) getResources().getDimension(R.dimen._50sdp));
-                    setDriverLocation();
-//            }
+            if (AppPreferences.getIsCash()) {
+                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                        (int) getResources().getDimension(R.dimen._110sdp));
+                setDriverLocation();
+            } else {
+                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                        (int) getResources().getDimension(R.dimen._19sdp));
+            }
         }
     };
 
@@ -1434,16 +1438,16 @@ public class HomeFragment extends Fragment {
     /**
      * Reposition my location icon and google logo when loadboard visible/gone
      * @param locationPointerBottomMargin my location bottom margin
-     * @param googleMapLogoBottomPadding google logo padding from bottom
+     * @param googleMapLogoBottomPadding  google logo padding from bottom
      */
     private void resetPositionOfMapPinAndSelectedCashView(int locationPointerBottomMargin, int googleMapLogoBottomPadding) {
-        if(mapPinIv != null){
+        if (mapPinIv != null) {
             RelativeLayout.LayoutParams myLocationPointerParams = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
             myLocationPointerParams.bottomMargin = locationPointerBottomMargin;
             mapPinIv.setLayoutParams(myLocationPointerParams);
         }
 
-        if(selectedAmountRL != null){
+        if (selectedAmountRL != null) {
             RelativeLayout.LayoutParams selectedAmountTVLayoutParams = (RelativeLayout.LayoutParams) selectedAmountRL.getLayoutParams();
             selectedAmountTVLayoutParams.bottomMargin = locationPointerBottomMargin;
             selectedAmountRL.setLayoutParams(selectedAmountTVLayoutParams);
