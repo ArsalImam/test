@@ -126,19 +126,28 @@ public class LoadboardBookingDetailFragment extends Fragment {
      * initialize views and set datails data and attach click listener
      */
     private void initViews(){
-        bd_FareTV.setText(getString(R.string.seleted_amount_rs,data.getFareEstimation()));
+        if(data != null){
+            bd_FareTV.setText(getString(R.string.seleted_amount_rs,data.getFareEstimation()));
+            bd_pickUpNameTV.setText(data.getPickupName());
+            bd_pickUpAddressTV.setText(data.getPickupAddress());
+            bd_pickUpTimeTV.setText(data.getDeliveryTimings());
+            if(data.getPickupZone() != null)
+                bd_pickUpZoneTV.setText(getString(R.string.pick_drop_name_ur,data.getPickupZone().getUrduName()));
+            else
+                bd_pickUpZoneTV.setText(getString(R.string.not_selected_ur));
 
-        bd_pickUpNameTV.setText(data.getPickupName());
-        bd_pickUpAddressTV.setText(data.getPickupAddress());
-        bd_pickUpTimeTV.setText(data.getDeliveryTimings());
-        bd_pickUpZoneTV.setText(getString(R.string.pick_drop_name_ur,data.getPickupZone().getUrduName()));
-        int etaInMinute = data.getPickupEta() / Constants.MINUTE_DIVISIBLE_VALUE;
-        bd_estimatedTimeTV.setText(String.valueOf(etaInMinute));
+            int etaInMinute = data.getPickupEta() / Constants.MINUTE_DIVISIBLE_VALUE;
+            bd_estimatedTimeTV.setText(String.valueOf(etaInMinute));
+            bd_dropOffAddressTV.setText(data.getDropoffAddress());
 
-        bd_dropOffAddressTV.setText(data.getDropoffAddress());
-        bd_dropOffZoneTV.setText(getString(R.string.pick_drop_name_ur,data.getDropoffZone().getUrduName()));
-        float estimatedDistance = data.getDropoffDistance() / Constants.KILOMETER_DIVISIBLE_VALUE;
-        bd_estimatedDistanceTV.setText(String.format("%.1f", estimatedDistance));
+            if(data.getDropoffZone() != null)
+                bd_dropOffZoneTV.setText(getString(R.string.pick_drop_name_ur,data.getDropoffZone().getUrduName()));
+            else
+                bd_dropOffZoneTV.setText(getString(R.string.not_selected_ur));
+
+            float estimatedDistance = data.getDropoffDistance() / Constants.KILOMETER_DIVISIBLE_VALUE;
+            bd_estimatedDistanceTV.setText(String.format("%.1f", estimatedDistance));
+        }
 
         bd_pickUpPhoneIV.setOnClickListener(new View.OnClickListener() {
             @Override

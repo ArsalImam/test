@@ -45,8 +45,17 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
         final LoadBoardListingData item = mItems.get(position);
 
         if(item != null){
-            holder.li_LoadboardPickUpTV.setText(mContext.getString(R.string.pick_drop_name_ur,item.getPickupZone().getUrduName()));
-            holder.li_LoadboardDropOffTV.setText(mContext.getString(R.string.pick_drop_name_ur,item.getDropoffZone().getUrduName()));
+            if(item.getPickupZone() != null){
+                holder.li_LoadboardPickUpTV.setText(mContext.getString(R.string.pick_drop_name_ur,item.getPickupZone().getUrduName()));
+            } else {
+                holder.li_LoadboardPickUpTV.setText(mContext.getString(R.string.not_selected_ur));
+            }
+
+            if (item.getDropoffZone() != null) {
+                holder.li_LoadboardDropOffTV.setText(mContext.getString(R.string.pick_drop_name_ur,item.getDropoffZone().getUrduName()));
+            } else {
+                holder.li_LoadboardDropOffTV.setText(mContext.getString(R.string.not_selected_ur));
+            }
             holder.li_LoadboardBookingIdTV.setText(item.getOrderNo());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

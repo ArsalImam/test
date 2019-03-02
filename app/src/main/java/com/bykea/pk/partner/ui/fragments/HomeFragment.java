@@ -389,7 +389,6 @@ public class HomeFragment extends Fragment {
      */
     private void callLoadBoardListingAPI() {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
             //get selected pickup and dropoff zone data from local storage
             ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
             ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
