@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.DileveryScheduleModel;
+import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 
 import java.util.List;
 
@@ -18,11 +18,11 @@ import butterknife.ButterKnife;
 
 public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliveryScheduleAdapter.ViewHoder> {
 
-    private List<DileveryScheduleModel> list;
+    private List<DeliveryScheduleModel> list;
 
     private onClickListener onClickListener;
 
-    public DeliveryScheduleAdapter(List<DileveryScheduleModel> list) {
+    public DeliveryScheduleAdapter(List<DeliveryScheduleModel> list) {
         this.list = list;
     }
 
@@ -81,13 +81,13 @@ public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliverySchedu
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.directionBtn:
-                    onClickListener.directionClick(getAdapterPosition());
+                    onClickListener.directionClick(list.get(getAdapterPosition()));
                     break;
                 case R.id.callbtn:
-                    onClickListener.callClick(getAdapterPosition());
+                    onClickListener.callClick(list.get(getAdapterPosition()));
                     break;
                 case R.id.assignBtn:
-                    onClickListener.assignClick(getAdapterPosition());
+                    onClickListener.assignClick(list.get(getAdapterPosition()));
                     break;
             }
         }
@@ -98,10 +98,10 @@ public class DeliveryScheduleAdapter extends RecyclerView.Adapter<DeliverySchedu
     }
 
     public interface onClickListener {
-        void directionClick(int pos);
+        void directionClick(DeliveryScheduleModel item);
 
-        void callClick(int pos);
+        void callClick(DeliveryScheduleModel item);
 
-        void assignClick(int pos);
+        void assignClick(DeliveryScheduleModel item);
     }
 }

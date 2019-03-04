@@ -133,7 +133,7 @@ public class PlaceAutocompleteAdapter
                     }
                 } else if (mResultList != null) {
                     autocompleteHandler.removeMessages(0);
-                    mResultList.clear();
+//                    mResultList.clear();
                 }
                 return results;
             }

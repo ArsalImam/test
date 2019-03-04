@@ -798,13 +798,17 @@ public class Utils {
     }
 
 
-    public static String getVersion(Context context) {
-
+    /**
+     * Get application installed version from package manager.
+     *
+     * @return Installed App version using {@link PackageManager}
+     */
+    public static String getVersion() {
         String currentVersion = StringUtils.EMPTY;
-        PackageManager pm = context.getPackageManager();
-        PackageInfo pInfo = null;
+        PackageManager pm = DriverApp.getContext().getPackageManager();
+        PackageInfo pInfo;
         try {
-            pInfo = pm.getPackageInfo(context.getPackageName(), 0);
+            pInfo = pm.getPackageInfo(DriverApp.getContext().getPackageName(), 0);
             currentVersion = pInfo.versionName;
         } catch (PackageManager.NameNotFoundException e1) {
             e1.printStackTrace();
@@ -1042,10 +1046,11 @@ public class Utils {
                 .replace(", Sindh", "").replace(", Islamabad Capital Territory", "").replace(", Islamic Republic of Pakistan", "") : StringUtils.EMPTY;
     }
 
-    /*
+    /**
      * Returns API key for Google GeoCoder API if required.
      * Will return Empty String if there's no error in Last
      * Request while using API without any Key.
+     * @return Google place server API key
      * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
@@ -1172,14 +1177,6 @@ public class Utils {
             isMock = false;
         }
         return isMock;
-    }
-
-
-    public static void phoneCall(Activity activity, String phone) {
-
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-        activity.startActivity(intent);
-
     }
 
     public static boolean areThereMockPermissionApps(Context context) {
@@ -1523,7 +1520,7 @@ public class Utils {
             MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
             if (StringUtils.isBlank(mixpanel.getDistinctId())
                     || !mixpanel.getDistinctId().equalsIgnoreCase(AppPreferences.getPilotData().getId())) {
-//                mixpanel.alias(AppPreferences.getUser().get_id(), null);
+//                mixpanel.alias(AppPreferences.getUser().getId(), null);
                 mixpanel.identify(AppPreferences.getPilotData().getId());
                 mixpanel.getPeople().identify(AppPreferences.getPilotData().getId());
                 mixpanel.getPeople().initPushHandling(Constants.GCM_PROJECT_NO);
@@ -2371,7 +2368,7 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                if(intent.resolveActivity(context.getPackageManager())!=null){
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
                     activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
                     return true;
                 }
@@ -2398,7 +2395,7 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                if(intent.resolveActivity(context.getPackageManager())!=null){
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
                     fragment.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
                     return true;
                 }
@@ -2530,6 +2527,22 @@ public class Utils {
         return spannableStringBuilder;
     }
 
+    /****
+     * Generate GPS High Accuracy warning message for user.
+     * @param context Calling context.
+     * @return String object
+     */
+    public static String generateGpsHighAccuracyWarningMessage(Context context) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_one, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_three, Constants.FontNames.JAMEEL_NASTALEEQI));
+        return spannableStringBuilder.toString();
+    }
+
     /***
      *  Check is provided activity in running task.
      *
@@ -2635,6 +2648,26 @@ public class Utils {
                 eventBus.post(Keys.INACTIVE_FENCE);
                 break;
         }
+    }
+
+
+    /**
+     * This method starts Google Map API to show navigation
+     *
+     * @param context  Calling context
+     * @param endPoint String end point lat lng coordinates
+     */
+    public static void startGoogleDirectionsApp(Context context, String endPoint) {
+
+        try {
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + endPoint + "&mode=d");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            context.startActivity(mapIntent);
+        } catch (Exception ex) {
+            Utils.appToast(context, context.getString(R.string.google_maps_missing_error));
+        }
+
     }
 
 }

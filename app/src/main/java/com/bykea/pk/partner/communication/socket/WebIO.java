@@ -184,12 +184,17 @@ public class WebIO {
     private Emitter.Listener onTimeOutError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            if (args != null && args.length > 0) {
-                Exception err = (Exception) args[0];
-                //Utils.redLogLocation("onError", err.getMessage());
-                //Utils.redLogLocation("onError", args[0].toString());
-                Utils.redLog(TAG, "Socket Timeout onError: " + err.toString(), err);
+            try {
+                if (args != null && args.length > 0) {
+                    Exception err = (Exception) args[0];
+                    //Utils.redLogLocation("onError", err.getMessage());
+                    //Utils.redLogLocation("onError", args[0].toString());
+                    Utils.redLog(TAG, "Socket Timeout onError: " + err.toString(), err);
+                    clearConnectionData();
+                }
+            } catch (Exception e){
                 clearConnectionData();
+                e.printStackTrace();
             }
         }
     };

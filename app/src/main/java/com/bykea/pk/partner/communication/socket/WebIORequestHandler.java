@@ -93,6 +93,18 @@ public class WebIORequestHandler {
                 responseCallBack), acceptCallData);
     }
 
+    /***
+     *  Accept scheduled call which was requested by passenger for scheduled delivery.
+     *
+     * @param acceptCallData Json data which would be send to API server.
+     * @param responseCallBack Response callback handler.
+     */
+    public void acceptScheduledCall(JSONObject acceptCallData, IResponseCallback responseCallBack) {
+        emitWithJObject(ApiTags.SOCKET_ACCEPT_SCHEDULED_TRIP,
+                new MyGenericListener(ApiTags.SOCKET_ACCEPT_SCHEDULED_TRIP, AcceptCallResponse.class,
+                        responseCallBack), acceptCallData);
+    }
+
     public void ackCall(JSONObject acceptCallData, IResponseCallback responseCallBack) {
         emitWithJObject(ApiTags.ACK_CALL, new MyGenericListener(ApiTags.ACK_CALL, AckCallResponse.class,
                 responseCallBack), acceptCallData);
