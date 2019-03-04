@@ -479,13 +479,16 @@ public class HomeFragment extends Fragment {
     private void onApiResponse(DriverPerformanceResponse response) {
         if (mCurrentActivity != null) {
 
-            if (response.getData() != null) {
+            if (response != null && response.getData() != null) {
                 if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
                     Utils.loadImgPicasso(mCurrentActivity, driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 }
-                weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
-                weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
+                if(weeklyBookingTv != null)
+                    weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
+
+                if(weeklyMukamalBookingTv != null)
+                    weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
                     String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
@@ -495,15 +498,22 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
+                if(weeklyTimeTv != null)
+                    weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-                weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
-                weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
-                weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
-                weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
+                if(weeklyCancelTv != null)
+                    weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
+                if(weeklyTakmeelTv != null)
+                    weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
+                if(weeklyQaboliatTv != null)
+                    weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
+                if(weeklyratingTv != null)
+                    weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
-                if (response.getData().getScore() != null) {
+                if(totalBalanceTv != null)
+                    totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
+
+                if (response.getData().getScore() != null && totalScoreTv != null) {
                     if (response.getData().getScore().contains(getString(R.string.minus_sign))) {
                         totalScoreTv.setText(response.getData().getScore());
                     } else {
