@@ -3,6 +3,7 @@ package com.bykea.pk.partner.communication.rest;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.RankingResponse;
@@ -54,6 +55,7 @@ import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
@@ -117,7 +119,7 @@ public class RestRequestHandler {
         this.mResponseCallBack = callback;
         mRestClient = RestClient.getClient(mContext);
         Call<VerifyNumberResponse> numberResponseCall = mRestClient.sendDriverOTP(
-                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion(context));
+                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion());
 
         numberResponseCall.enqueue(new Callback<VerifyNumberResponse>() {
             @Override
@@ -201,7 +203,7 @@ public class RestRequestHandler {
                 regID,
                 "" + AppPreferences.getLatitude(),
                 "" + AppPreferences.getLongitude(),
-                Utils.getVersion(context),
+                Utils.getVersion(),
                 AppPreferences.getOneSignalPlayerId(),
                 AppPreferences.getADID(),
                 Utils.getDeviceId(context)
@@ -1107,7 +1109,7 @@ public class RestRequestHandler {
                         AppPreferences.setOutOfFence(false);
                         AppPreferences.setAvailableStatus(true);
                     }
-                        mResponseCallBack.onResponse(response.body());
+                    mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body().getCode(),
                             response.body().getMessage());
@@ -1322,6 +1324,8 @@ public class RestRequestHandler {
         String errorMsg;
         if (error instanceof IOException) {
             Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.TIME_OUT_ERROR + String.valueOf(error.getCause()));
+            if (mContext == null)
+                mContext = DriverApp.getContext();
             errorMsg = mContext.getString(R.string.internet_error);
             //To prompt user to input base url for local builds again in case when URL is not working/wrong url. (BS-1017)
             /*AppPreferences.setLocalBaseUrl(BuildConfig.FLAVOR_URL);
@@ -1615,4 +1619,17 @@ public class RestRequestHandler {
         RestClient.clearBykeaRetrofitClient();
     }
 
+    /**
+     * This method will call Update App Version API
+     *
+     * @param onResponseCallBack to handle call back
+     */
+    public void updateAppVersion(final IResponseCallback onResponseCallBack) {
+        mRestClient = RestClient.getClient(DriverApp.getContext());
+        Call<UpdateAppVersionResponse> restCall = mRestClient.updateAppVersion(
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                Double.parseDouble(Utils.getVersion()));
+        restCall.enqueue(new GenericRetrofitCallBack<UpdateAppVersionResponse>(onResponseCallBack));
+    }
 }

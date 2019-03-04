@@ -52,6 +52,7 @@ import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
@@ -404,6 +405,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onError(int errorCode, String errorMessage) {
+
+    }
+
+    @Override
+    public void onUpdateAppVersionResponse(UpdateAppVersionResponse response) {
 
     }
 }

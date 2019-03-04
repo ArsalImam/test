@@ -47,6 +47,7 @@ import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
@@ -408,6 +409,11 @@ interface IRestClient {
     @PUT(ApiTags.SET_DRIVER_LOCATION)
     Call<LocationResponse> updateDriverLocation(@Body DriverLocationRequest driverLocation);
 
+    @FormUrlEncoded
+    @PUT(ApiTags.UPDATE_APP_VERSION)
+    Call<UpdateAppVersionResponse> updateAppVersion(@Field("_id") String id,
+                                                    @Field("token_id") String token,
+                                                    @Field("version") double version);
     /**
      * Getting loadboard list in home screen when partener is active.
      * @param driver_id Driver id

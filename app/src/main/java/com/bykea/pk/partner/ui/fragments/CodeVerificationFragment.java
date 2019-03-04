@@ -137,7 +137,6 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
         initVerificationEditText();
         initDonutProgress();
         animateDonutProgress();
-        checkPermissions();
         titleMsg.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber()));
     }
 
@@ -645,16 +644,6 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
             }
         }
     };
-
-
-    /***
-     * Check Sms Permission from device.
-     */
-    private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Permissions.hasSMSPermissions(mCurrentActivity)) {
-            Permissions.getSMSPermissions(mCurrentActivity);
-        }
-    }
 
 
     //endregion

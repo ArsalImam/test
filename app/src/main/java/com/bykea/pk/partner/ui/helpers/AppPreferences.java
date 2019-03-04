@@ -1218,6 +1218,24 @@ public class AppPreferences {
                 .putString(Keys.BASE_URL_LOCAL, value)
                 .apply();
     }
+    /**
+     * This method gets app version stored in shared pref.
+     * @return App Version String
+     */
+    public static String getAppVersion() {
+        return mSharedPreferences.getString(Keys.APP_VERSION, StringUtils.EMPTY);
+    }
+
+    /**
+     * This method saves app version in shared pref.
+     * @param value value for app version
+     */
+    public static void setAppVersion(String value) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.APP_VERSION, value)
+                .apply();
+    }
 
     /***
      * Clear preference when driver is unauthoried.
