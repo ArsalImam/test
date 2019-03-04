@@ -632,13 +632,26 @@ public class HomeActivity extends BaseActivity {
     /**
      * set previously selected pickup and drop off zone
      */
-    private void showSelectedPickAndDropZoneToBottomSheet() {
+    public void showSelectedPickAndDropZoneToBottomSheet() {
         ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
         ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
-        if (pickupZone != null && pickupZone.getUrduName() != null && bottomSheetPickTV != null)
-            bottomSheetPickTV.setText(getString(R.string.pick_drop_name_ur, pickupZone.getUrduName()));
-        if (dropoffZone != null && dropoffZone.getUrduName() != null && bottomSheetDropTV != null)
-            bottomSheetDropTV.setText(getString(R.string.pick_drop_name_ur, dropoffZone.getUrduName()));
+        //checking zone data and display selected pick up zone or show empty filed with pickup text
+        if(bottomSheetPickTV != null){
+            if(pickupZone != null && pickupZone.getUrduName() != null){
+                bottomSheetPickTV.setText(getString(R.string.pick_drop_name_ur, pickupZone.getUrduName()));
+            } else {
+                bottomSheetPickTV.setText(getString(R.string.pick_ur));
+            }
+        }
+        //checking zone data and display selected drop off zone or show empty filed with drop text
+        if(bottomSheetDropTV != null){
+            if(dropoffZone != null && dropoffZone.getUrduName() != null){
+                bottomSheetDropTV.setText(getString(R.string.pick_drop_name_ur, dropoffZone.getUrduName()));
+            } else {
+                bottomSheetDropTV.setText(getString(R.string.drop_ur));
+            }
+        }
+
     }
 
     /**

@@ -1255,4 +1255,15 @@ public class AppPreferences {
         }
         return zoneData;
     }
+
+    /**
+     * clear only loadboard selected zone data
+     */
+    public static void clearLoadboardSelectedZoneData(){
+        mSharedPreferences
+                .edit()
+                .putString(Keys.LOADBOARD_SELECTED_PICKUP_ZONE, null)
+                .putString(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE, null)
+                .apply();
+    }
 }
