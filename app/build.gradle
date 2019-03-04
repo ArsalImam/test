@@ -27,9 +27,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        /*ndk {
-            abiFilters "armeabi-v7a"
-        }*/
     }
 
     signingConfigs {
@@ -50,7 +47,6 @@ android {
         release {
             //key for live apps
             resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'
-//ASSET
 
             signingConfig signingConfigs.release
             // to remove unused resources. This will reduce APK size.
@@ -60,21 +56,12 @@ android {
             // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
-
-            ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a"
-            }
         }
         debug {
             //key for staging apps
             resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'
             //Latest staging 9 Feb
-
             signingConfig signingConfigs.debug
-//            shrinkResources true // to remove unused resources. This will reduce APK size.
-//            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-//                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
 
         }
 
