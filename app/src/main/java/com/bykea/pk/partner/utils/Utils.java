@@ -317,6 +317,7 @@ public class Utils {
 
     public static void logout(Context context) {
         clearData(context);
+        AppPreferences.clearLoadboardSelectedZoneData();
         HomeActivity.visibleFragmentNumber = 0;
         //ActivityStackManager.getInstance().startLoginActivity(context);
         ActivityStackManager.getInstance().startLandingActivity(context);

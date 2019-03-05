@@ -54,8 +54,8 @@
             android:paddingRight="@dimen/_10sdp">
 
             <android.support.v7.widget.AppCompatImageView
-                android:layout_width="@dimen/_6sdp"
-                android:layout_height="@dimen/_6sdp"
+                android:layout_width="@dimen/_8sdp"
+                android:layout_height="@dimen/_8sdp"
                 android:layout_centerVertical="true"
                 app:srcCompat="@mipmap/icon_dropdown_gray" />
 
@@ -85,8 +85,8 @@
             android:paddingRight="@dimen/_10sdp">
 
             <android.support.v7.widget.AppCompatImageView
-                android:layout_width="@dimen/_6sdp"
-                android:layout_height="@dimen/_6sdp"
+                android:layout_width="@dimen/_8sdp"
+                android:layout_height="@dimen/_8sdp"
                 android:layout_centerVertical="true"
                 app:srcCompat="@mipmap/icon_dropdown_gray" />
 

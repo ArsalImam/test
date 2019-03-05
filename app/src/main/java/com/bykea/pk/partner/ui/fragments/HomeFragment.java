@@ -579,6 +579,10 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
 
             }
+            //reset zone data in local storage
+            AppPreferences.clearLoadboardSelectedZoneData();
+            //display reset zone data
+            mCurrentActivity.showSelectedPickAndDropZoneToBottomSheet();
         } else {        //active state
 
             myRangeBarLayout.setVisibility(View.INVISIBLE);
