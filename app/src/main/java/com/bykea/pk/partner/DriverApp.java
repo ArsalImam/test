@@ -71,11 +71,6 @@ public class DriverApp extends MultiDexApplication {
         if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() || AppPreferences.isOutOfFence()))
             ActivityStackManager.getInstance().startLocationService(mContext);
 
-        new Instabug.Builder(this, BuildConfig.DEBUG ? Constants.INSTA_BUG_BETA_KEY : Constants.INSTA_BUG_LIVE_KEY)
-                .setInvocationEvent(InstabugInvocationEvent.SHAKE)
-                .setShakingThreshold(470)
-                .build();
-
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.InAppAlert)
                 .unsubscribeWhenNotificationsAreDisabled(true)
