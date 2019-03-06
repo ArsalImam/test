@@ -1130,21 +1130,23 @@ public class Utils {
         return false;
     }
 
-    public static void loadImgPicasso(Context context, ImageView imageView, int placeHolder, String link) {
-        Picasso.get().load(link)
-                .fit().centerInside()
-                .placeholder(placeHolder)
-                .into(imageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        redLog("Picasso", "onSuccess");
-                    }
+    public static void loadImgPicasso(ImageView imageView, int placeHolder, String link) {
+        if(imageView != null){
+            Picasso.get().load(link)
+                    .fit().centerInside()
+                    .placeholder(placeHolder)
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            redLog("Picasso", "onSuccess");
+                        }
 
-                    @Override
-                    public void onError(Exception e) {
-                        redLog("Picasso", "onError");
-                    }
-                });
+                        @Override
+                        public void onError(Exception e) {
+                            redLog("Picasso", "onError");
+                        }
+                    });
+        }
     }
 
     public static void loadImgPicasso(Context context, ImageView imageView, String link) {
