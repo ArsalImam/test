@@ -362,6 +362,8 @@ public class Constants {
         public static final int WALLET_EXCEED_THRESHOLD = 1009;
         public static final int OUT_OF_SERVICE_REGION = 1010;
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+        public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
+        public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
 
     }
 

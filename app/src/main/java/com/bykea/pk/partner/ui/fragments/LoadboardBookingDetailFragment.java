@@ -26,6 +26,7 @@ import com.bykea.pk.partner.ui.helpers.adapters.LoadBoardOrdersAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -191,11 +192,14 @@ public class LoadboardBookingDetailFragment extends Fragment {
                                     AppPreferences.setIsOnTrip(true);
                                     ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                                     mCurrentActivity.finish();
+                                } else if (response.getSubCode() == Constants.ApiError.LOADBOARD_BOOKING_ALREADY_TAKEN){
+                                    Utils.appToast(mCurrentActivity, response.getMessage());
+                                    ActivityStackManager.getInstance().startHomeActivity(mCurrentActivity);
+                                } else if (response.getSubCode() == Constants.ApiError.LOADBOARD_ALREADY_IN_TRIP){
+                                    Utils.appToast(mCurrentActivity, response.getMessage());
                                 } else {
                                     Utils.setCallIncomingState();
-                                    Dialogs.INSTANCE.showToast(mCurrentActivity
-                                            , response.getMessage());
-
+                                    Dialogs.INSTANCE.showToast(mCurrentActivity, response.getMessage());
                                 }
                             } else{
                                 Dialogs.INSTANCE.showTempToast(mCurrentActivity, "Response is null");
@@ -205,7 +209,11 @@ public class LoadboardBookingDetailFragment extends Fragment {
                         @Override
                         public void onError(int errorCode, String errorMessage) {
                             Dialogs.INSTANCE.dismissDialog();
-                            Dialogs.INSTANCE.showTempToast(mCurrentActivity, errorMessage);
+                            if (errorCode == HTTPStatus.UNAUTHORIZED) {
+                                Utils.onUnauthorized(mCurrentActivity);
+                            } else {
+                                Dialogs.INSTANCE.showTempToast(mCurrentActivity, errorMessage);
+                            }
                         }
                     });
                 } else {

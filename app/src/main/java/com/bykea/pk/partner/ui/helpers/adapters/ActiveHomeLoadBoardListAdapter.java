@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LoadBoardListingData;
+import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
         @BindView(R.id.li_LoadboardDropOffTV)
         FontTextView li_LoadboardDropOffTV;
         @BindView(R.id.li_LoadboardBookingIdTV)
-        FontTextView li_LoadboardBookingIdTV;
+        AutoFitFontTextView li_LoadboardBookingIdTV;
 
         public ViewHolder(final View itemView) {
             super(itemView);

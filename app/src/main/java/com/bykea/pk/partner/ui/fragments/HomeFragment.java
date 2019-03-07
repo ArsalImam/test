@@ -394,7 +394,33 @@ public class HomeFragment extends Fragment {
             ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
             repository.requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
                     pickupZone == null ? null : pickupZone.get_id(),
-                    dropoffZone == null ? null : dropoffZone.get_id(), handler);
+                    dropoffZone == null ? null : dropoffZone.get_id(), new UserDataHandler() {
+                        @Override
+                        public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            if (response != null && response.getData() != null) {
+                                if (mCurrentActivity != null) {
+                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
+                                    resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
+                                            (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(int errorCode, String errorMessage) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            if (errorCode == HTTPStatus.UNAUTHORIZED) {
+                                Utils.onUnauthorized(mCurrentActivity);
+                            } else {
+                                Utils.appToast(mCurrentActivity, errorMessage);
+                                mCurrentActivity.hideLoadBoardBottomSheet();
+                                resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
+                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
+                            }
+
+                        }
+                    });
         }
     }
 
@@ -462,10 +488,10 @@ public class HomeFragment extends Fragment {
                     Utils.loadImgPicasso(mCurrentActivity, driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 }
-                if(weeklyBookingTv != null)
+                if (weeklyBookingTv != null)
                     weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
 
-                if(weeklyMukamalBookingTv != null)
+                if (weeklyMukamalBookingTv != null)
                     weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
@@ -476,19 +502,19 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                if(weeklyTimeTv != null)
+                if (weeklyTimeTv != null)
                     weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-                if(weeklyCancelTv != null)
+                if (weeklyCancelTv != null)
                     weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
-                if(weeklyTakmeelTv != null)
+                if (weeklyTakmeelTv != null)
                     weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
-                if(weeklyQaboliatTv != null)
+                if (weeklyQaboliatTv != null)
                     weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
-                if(weeklyratingTv != null)
+                if (weeklyratingTv != null)
                     weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                if(totalBalanceTv != null)
+                if (totalBalanceTv != null)
                     totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
 
                 if (response.getData().getScore() != null && totalScoreTv != null) {
@@ -871,18 +897,6 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 });
-            }
-        }
-
-        @Override
-        public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
-            Dialogs.INSTANCE.dismissDialog();
-            if (response != null && response.getData() != null) {
-                if (mCurrentActivity != null) {
-                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
-                    resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
-                            (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
-                }
             }
         }
 
@@ -1459,7 +1473,7 @@ public class HomeFragment extends Fragment {
      * @param locationPointerBottomMargin my location bottom margin
      * @param googleMapLogoBottomPadding  google logo padding from bottom
      */
-    private void resetPositionOfMapPinAndSelectedCashView(int locationPointerBottomMargin, int googleMapLogoBottomPadding) {
+    public void resetPositionOfMapPinAndSelectedCashView(int locationPointerBottomMargin, int googleMapLogoBottomPadding) {
         if (mapPinIv != null) {
             RelativeLayout.LayoutParams myLocationPointerParams = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
             myLocationPointerParams.bottomMargin = locationPointerBottomMargin;
