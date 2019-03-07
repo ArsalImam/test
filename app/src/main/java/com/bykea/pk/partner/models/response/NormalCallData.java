@@ -109,6 +109,14 @@ public class NormalCallData extends CommonResponse {
     private String recName;
     private String order_no;
 
+    //new ride request design is required this field
+    @SerializedName("dropoff_zone_name")
+    private String dropoffZoneName;
+
+    //new ride request design is required this field
+    @SerializedName("dropoff_zone_name_urdu")
+    private String dropoffZoneNameUrdu;
+
 
     public String getDistanceCovered() {
         return distanceCovered;
@@ -521,5 +529,13 @@ public class NormalCallData extends CommonResponse {
 
     public void setCashKiWasooli(int cashKiWasooli) {
         this.cashKiWasooli = cashKiWasooli;
+    }
+
+    public String getDropoffZoneName() {
+        return dropoffZoneName;
+    }
+
+    public String getDropoffZoneNameUrdu() {
+        return dropoffZoneNameUrdu;
     }
 }

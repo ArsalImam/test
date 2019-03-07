@@ -253,5 +253,8 @@
     <string name="retrofit_request_method_type"> Method </string>
     <string name="driver_offline_crone_job_ur">App Offline Hochuke Hain!</string>
 
+
+    <string name="customer_btayega">کسٹمر بتائے گا</string>
+
     <!--Testing verified commit-->
 </resources>
