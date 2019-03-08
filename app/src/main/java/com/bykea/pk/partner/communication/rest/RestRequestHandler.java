@@ -2,6 +2,7 @@ package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -1294,7 +1295,37 @@ public class RestRequestHandler {
                 AppPreferences.getAccessToken(),
                 String.valueOf(AppPreferences.getLatitude()),
                 String.valueOf(AppPreferences.getLongitude()));
-        requestCall.enqueue(new GenericRetrofitCallBack<AcceptLoadboardBookingResponse>(onResponseCallback));
+        requestCall.enqueue(new Callback<AcceptLoadboardBookingResponse>() {
+            @Override
+            public void onResponse(Response<AcceptLoadboardBookingResponse> response, Retrofit retrofit) {
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        AcceptLoadboardBookingResponse acceptLoadboardBookingResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit, AcceptLoadboardBookingResponse.class);
+                        if (acceptLoadboardBookingResponse != null) {
+                            mResponseCallBack.onResponse(acceptLoadboardBookingResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
+                } else {
+                    if (response.isSuccess()) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
 
     }
 

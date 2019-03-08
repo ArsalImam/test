@@ -41,11 +41,12 @@
         android:textColor="@color/dark_gray656565"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
-    <com.bykea.pk.partner.widgets.FontTextView
+    <com.bykea.pk.partner.widgets.AutoFitFontTextView
         android:id="@+id/li_LoadboardBookingIdTV"
         android:layout_width="0dp"
         android:layout_height="@dimen/_38sdp"
         android:layout_weight="0.90"
+        android:maxLines="1"
         android:gravity="center"
         android:textColor="@color/dark_grayRedish"
         android:textSize="@dimen/_13sdp"/>

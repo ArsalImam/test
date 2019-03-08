@@ -43,6 +43,7 @@ import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
@@ -639,7 +640,18 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void onError(int errorCode, String errorMessage) {
                         Dialogs.INSTANCE.dismissDialog();
-                        Utils.appToast(mCurrentActivity, errorMessage);
+                        if (errorCode == HTTPStatus.UNAUTHORIZED) {
+                            Utils.onUnauthorized(mCurrentActivity);
+                        } else {
+                            Utils.appToast(mCurrentActivity, errorMessage);
+                            hideLoadBoardBottomSheet();
+                            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
+                            if(currentFragment instanceof HomeFragment){
+                                ((HomeFragment)currentFragment).resetPositionOfMapPinAndSelectedCashView(
+                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
+                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
+                            }
+                        }
                     }
                 });
     }

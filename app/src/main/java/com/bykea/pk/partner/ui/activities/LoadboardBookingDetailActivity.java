@@ -10,6 +10,7 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.LoadboardBookingDetailFragment;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -71,7 +72,11 @@ public class LoadboardBookingDetailActivity extends BaseActivity {
             @Override
             public void onError(int errorCode, String errorMessage) {
                 Dialogs.INSTANCE.dismissDialog();
-                Utils.appToast(mCurrentActivity, errorMessage);
+                if (errorCode == HTTPStatus.UNAUTHORIZED) {
+                    Utils.onUnauthorized(mCurrentActivity);
+                } else {
+                    Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                }
             }
         });
     }
