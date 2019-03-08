@@ -42,9 +42,6 @@ public class Constants {
     public static final long MILISEC_IN_DAY = 86400000;
     public static final long MILISEC_IN_HALF_DAY = 43200000;
     public static final String REG_EX_DIGIT = "\\d+";
-    // Partner Phase 2
-    public static final String INSTA_BUG_BETA_KEY = "1a22f9efd3017c87f9fa8ad33645cafb";
-    public static final String INSTA_BUG_LIVE_KEY = "36070216421223afd484f7b67802c146";
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
     public static final int CONFIRM_DROPOFF_REQUEST_CODE = 101;

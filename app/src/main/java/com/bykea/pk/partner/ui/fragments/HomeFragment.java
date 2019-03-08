@@ -485,7 +485,7 @@ public class HomeFragment extends Fragment {
 
             if (response != null && response.getData() != null) {
                 if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
-                    Utils.loadImgPicasso(mCurrentActivity, driverImageView, R.drawable.profile_pic,
+                    Utils.loadImgPicasso(driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 }
                 if (weeklyBookingTv != null)
@@ -495,9 +495,11 @@ public class HomeFragment extends Fragment {
                     weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
-                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
-                            response.getData().getWeeklyBalance();
-                    weeklyKamaiTv.setText(weeklyBalance);
+                    if(weeklyKamaiTv != null){
+                        String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
+                                response.getData().getWeeklyBalance();
+                        weeklyKamaiTv.setText(weeklyBalance);
+                    }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }

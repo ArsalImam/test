@@ -225,7 +225,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             }
             if (AppPreferences.isProfileUpdated()
                     && StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
-                Utils.loadImgPicasso(context, holder.driverImage, R.drawable.profile_pic,
+                Utils.loadImgPicasso(holder.driverImage, R.drawable.profile_pic,
                         Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 AppPreferences.setProfileUpdated(false);
             }

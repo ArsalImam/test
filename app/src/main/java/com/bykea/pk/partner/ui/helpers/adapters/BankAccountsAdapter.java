@@ -13,8 +13,6 @@ import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
-import org.jcodec.common.StringUtils;
-
 import java.util.ArrayList;
 
 import butterknife.BindView;
