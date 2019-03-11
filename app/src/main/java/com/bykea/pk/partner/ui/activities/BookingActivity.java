@@ -1110,19 +1110,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void updatePickupMarker(String latitude, String longitude) {
         if (null == mGoogleMap) return;
+        if (null == callData) return;
+
         if (pickUpMarker != null) {
             pickUpMarker.remove();
         }
-        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
-                    R.drawable.ic_drop_off_pin_red))
-                    .position(new LatLng(Double.parseDouble(latitude),
-                            Double.parseDouble(longitude))));
-        } else {
-            pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
-                    R.drawable.ic_destination_temp))
-                    .position(new LatLng(Double.parseDouble(latitude),
-                            Double.parseDouble(longitude))));
+        if(latitude != null && !latitude.isEmpty() && longitude != null && !longitude.isEmpty()){
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
+                        R.drawable.ic_drop_off_pin_red))
+                        .position(new LatLng(Double.parseDouble(latitude),
+                                Double.parseDouble(longitude))));
+            } else {
+                pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
+                        R.drawable.ic_destination_temp))
+                        .position(new LatLng(Double.parseDouble(latitude),
+                                Double.parseDouble(longitude))));
+            }
         }
     }
 
