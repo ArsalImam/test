@@ -80,9 +80,9 @@ public class ActiveHomeLoadBoardListAdapter extends RecyclerView.Adapter<ActiveH
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.li_LoadboardPickUpTV)
-        FontTextView li_LoadboardPickUpTV;
+        AutoFitFontTextView li_LoadboardPickUpTV;
         @BindView(R.id.li_LoadboardDropOffTV)
-        FontTextView li_LoadboardDropOffTV;
+        AutoFitFontTextView li_LoadboardDropOffTV;
         @BindView(R.id.li_LoadboardBookingIdTV)
         AutoFitFontTextView li_LoadboardBookingIdTV;
 
