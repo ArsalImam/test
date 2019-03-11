@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_45sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_vertical"
+    android:clickable="true"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/_8sdp"
+    android:paddingEnd="@dimen/_8sdp">
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/orderNameTV"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_11sdp"
+        android:textColor="@color/color_gray373737"
+        app:fontName="open_sans_regular.ttf"/>
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/orderQtyTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_11sdp"
+        android:textColor="@color/color_gray373737"
+        app:fontName="open_sans_regular.ttf"/>
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/orderPriceTV"
+        android:layout_width="0dp"
+        android:layout_weight="0.7"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_11sdp"
+        android:textColor="@color/color_gray373737"
+        android:gravity="end"
+        app:fontName="open_sans_regular.ttf"/>
+
+
+
+</LinearLayout>

@@ -253,6 +253,22 @@
     <string name="retrofit_request_method_type"> Method </string>
     <string name="driver_offline_crone_job_ur">App Offline Hochuke Hain!</string>
 
+    <string name="pick_ur">پک</string>
+    <string name="drop_ur">ڈراپ</string>
+    <string name="dha_ur">ڈی ایچ اے</string>
+    <string name="nazimabad_ur">نارتھ ناظم آباد</string>
+    <string name="selected_amount_ur"> منتخب رقم </string>
+    <string name="seleted_amount_rs"> Rs.%1$d&#160;</string>
+    <string name="acha_connection_ur">اچھا کنکشن</string>
+    <string name="bura_connection_ur">برا کنکشن</string>
+    <string name="low_battery_ur">لو بیٹری</string>
+    <string name="karaya_ur">\u0020کرایہ</string>
+    <string name="minute_ur">منٹ</string>
+    <string name="kilometer_ur">کلومیٹر</string>
+    <string name="pick_drop_name_ur">\u0020%1$s\u0020</string>
+    <string name="muqam_muqarrar_karein_ur">مقام مقرر کریں</string>
+    <string name="not_selected_ur"> منتخب نہیں ہے </string>
+
 
     <string name="customer_btayega">کسٹمر بتائے گا</string>
 

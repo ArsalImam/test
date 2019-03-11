@@ -486,6 +486,7 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
         AppPreferences.setPilotData(loginResponse.getUser());
         AppPreferences.setAvailableStatus(loginResponse.getUser().isAvailable());
         AppPreferences.setCashInHands(loginResponse.getUser().getCashInHand());
+        AppPreferences.setCash(loginResponse.getUser().isCash()); //saving driver's cash/non-cash status to local storage
         /*AppPreferences.setCashInHandsRange(mCurrentActivity, loginResponse.getUser().getCashInHandRange());
         AppPreferences.setVerifiedStatus(mCurrentActivity, loginResponse.getUser().isVerified());*/
         AppPreferences.saveLoginStatus(true);

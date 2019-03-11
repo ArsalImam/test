@@ -79,6 +79,11 @@ public class Constants {
 
     /*moving camera to current location animation delay*/
     public static final int ANIMATION_DELAY_FOR_CURRENT_POSITION = 500;
+    public static final int MINUTE_DIVISIBLE_VALUE = 60;
+    public static final int KILOMETER_DIVISIBLE_VALUE = 1000;
+    public static final float BOTTOM_SHEET_ALPHA_VALUE = 0.7f;
+    public static final String LOADBOARD_JOBS_LIMIT = "10";
+
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -354,6 +359,8 @@ public class Constants {
         public static final int WALLET_EXCEED_THRESHOLD = 1009;
         public static final int OUT_OF_SERVICE_REGION = 1010;
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+        public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
+        public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
 
     }
 

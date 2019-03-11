@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <!--<RelativeLayout
         android:gravity="center"
         android:layout_marginBottom="@dimen/_4sdp"
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             android:layout_height="@dimen/_20sdp" />
 
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <View
         android:background="@color/grey"
@@ -47,7 +47,7 @@
     <RelativeLayout
         android:id="@+id/editBtn"
         android:layout_gravity="center"
-        android:background="@color/yellow_fcfcc3"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_35sdp">
 
@@ -90,7 +90,7 @@
             android:paddingRight="@dimen/_8sdp"
             android:layout_centerVertical="true"
             android:gravity="center"
-            android:background="@color/Color_DarkRed"
+            android:background="@color/color_manzil_bg"
             android:layout_alignParentRight="true"
             android:textColor="@color/white"
             android:textSize="@dimen/_16sdp"
