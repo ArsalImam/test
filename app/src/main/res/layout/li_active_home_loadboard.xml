@@ -10,11 +10,12 @@
     android:paddingStart="@dimen/_8sdp"
     android:paddingEnd="@dimen/_8sdp">
 
-    <com.bykea.pk.partner.widgets.FontTextView
+    <com.bykea.pk.partner.widgets.AutoFitFontTextView
         android:id="@+id/li_LoadboardDropOffTV"
         android:layout_width="0dp"
         android:layout_height="@dimen/_38sdp"
         android:layout_weight="1"
+        android:maxLines="1"
         android:background="@drawable/gray_bordered_bg"
         android:gravity="start|center_vertical"
         android:textColor="@color/dark_blue3179c5"
@@ -28,11 +29,12 @@
         android:layout_height="@dimen/_15sdp"
         android:src="@mipmap/icon_backarrow_gray"
         android:layout_gravity="center_vertical"/>
-    <com.bykea.pk.partner.widgets.FontTextView
+    <com.bykea.pk.partner.widgets.AutoFitFontTextView
         android:id="@+id/li_LoadboardPickUpTV"
         android:layout_width="0dp"
         android:layout_height="@dimen/_38sdp"
         android:layout_weight="1"
+        android:maxLines="1"
         android:background="@drawable/gray_bordered_bg"
         android:gravity="start|center_vertical"
         android:paddingEnd="@dimen/_8sdp"
