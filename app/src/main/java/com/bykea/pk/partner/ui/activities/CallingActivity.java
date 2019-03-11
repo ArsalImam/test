@@ -395,7 +395,7 @@ public class CallingActivity extends BaseActivity {
                     && (callData.getEndAddress() == null || callData.getEndAddress().isEmpty()))
                 estDistanceTV.setText("?");
             else
-                estDistanceTV.setText(String.valueOf(callData.getEstimatedDistance()));
+                estDistanceTV.setText(String.valueOf((int)(Math.ceil(callData.getEstimatedDistance()))));
         }
 
         if (dropZoneNameTV != null){
@@ -407,8 +407,12 @@ public class CallingActivity extends BaseActivity {
                 dropZoneNameTV.setText(getString(R.string.customer_btayega));
         }
 
-        if (StringUtils.isNotBlank(callData.getArivalTime()))
-            estArrivalTimeTV.setText(callData.getArivalTime());
+        if (StringUtils.isNotBlank(callData.getArivalTime())){
+            if(Integer.parseInt(callData.getArivalTime()) <= 0)
+                estArrivalTimeTV.setText("1");
+            else
+                estArrivalTimeTV.setText(callData.getArivalTime());
+        }
     }
 
 

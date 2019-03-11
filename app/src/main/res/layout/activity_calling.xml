@@ -25,14 +25,20 @@
             app:cardCornerRadius="@dimen/_5sdp"
             app:cardUseCompatPadding="true"
             app:cardPreventCornerOverlap="true"
-            android:layout_margin="@dimen/_5sdp">
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_margin="@dimen/_10sdp">
+                android:layout_margin="@dimen/_7sdp">
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/estArrivalTimeTV"
@@ -69,14 +75,19 @@
             app:cardCornerRadius="@dimen/_5sdp"
             app:cardUseCompatPadding="true"
             app:cardPreventCornerOverlap="true"
-            android:layout_margin="@dimen/_5sdp">
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_4sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_margin="@dimen/_10sdp">
+                android:layout_margin="@dimen/_7sdp">
 
                 <com.bykea.pk.partner.widgets.AutoFitFontTextView
                     android:id="@+id/dropZoneNameTV"
@@ -84,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:maxLines="1"
-                    android:textSize="@dimen/_30sdp"
+                    android:textSize="@dimen/_27sdp"
                     android:textColor="@color/color_blue3179c5"
                     android:gravity="center"
                     app:fontName="jameel_noori_nastaleeq.ttf"/>
@@ -134,7 +145,7 @@
             app:srcCompat="@drawable/tick_icon"
             android:tint="@color/kelly_green"
             android:layout_centerInParent="true"
-            android:layout_margin="@dimen/_15sdp"/>
+            android:layout_margin="@dimen/_12sdp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
