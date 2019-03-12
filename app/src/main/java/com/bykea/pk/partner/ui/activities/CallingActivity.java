@@ -394,8 +394,11 @@ public class CallingActivity extends BaseActivity {
             if((callData.getDropoffZoneNameUrdu() == null || callData.getDropoffZoneNameUrdu().isEmpty())
                     && (callData.getEndAddress() == null || callData.getEndAddress().isEmpty()))
                 estDistanceTV.setText("?");
+            else if(callData.getEstimatedDistance() == 0)
+                estDistanceTV.setText("1");
             else
-                estDistanceTV.setText(String.valueOf((int)(Math.ceil(callData.getEstimatedDistance()))));
+                estDistanceTV.setText(String.valueOf(Double.valueOf(Math.ceil(callData.getEstimatedDistance())).intValue()));
+
         }
 
         if (dropZoneNameTV != null){
