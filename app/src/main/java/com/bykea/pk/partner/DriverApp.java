@@ -134,6 +134,9 @@ public class DriverApp extends MultiDexApplication {
         public void call(Object... args) {
             WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
             Utils.redLog(Constants.APP_NAME + "  ########################    ", "Socket Connection Established....");
+            Utils.redLog(Constants.APP_NAME + "  ########################    ",
+                    "Socket ID taken during EVENT_CONNECT : " +
+                            WebIO.getInstance().getSocket().id());
             attachListenersOnSocketConnected();
 
         }
