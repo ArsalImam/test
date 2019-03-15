@@ -2,11 +2,7 @@ package com.bykea.pk.partner.models.data
 
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse
 import com.bykea.pk.partner.models.response.MultipleDeliveryPickupResponse
-import com.bykea.pk.partner.ui.helpers.AppPreferences
-import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.TripStatus
-import com.google.android.gms.common.util.CollectionUtils.mutableListOf
-import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
 
@@ -76,8 +72,7 @@ data class MultiDeliveryCallDriverData(
         val bookingResponseList = response.bookings
         for (response in bookingResponseList!!) {
             if (!response.trip!!.status!!.equals(TripStatus.ON_COMPLETED_TRIP,
-                            ignoreCase = true) && !response.trip!!.status!!.
-                            equals(TripStatus.ON_FEEDBACK_TRIP, ignoreCase = true)) {
+                            ignoreCase = true) && !response.trip!!.status!!.equals(TripStatus.ON_FEEDBACK_TRIP, ignoreCase = true)) {
                 return true
             }
         }

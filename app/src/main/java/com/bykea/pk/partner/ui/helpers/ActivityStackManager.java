@@ -12,6 +12,7 @@ import android.os.Looper;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -31,7 +32,6 @@ import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
-import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
@@ -40,6 +40,7 @@ import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
 import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
+import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.ProblemActivity;
@@ -210,7 +211,8 @@ public class ActivityStackManager {
      * Start multi delivery feedback activity.
      *
      * @param mContext Holding the reference of an activity.
-     * @param response The invoice response.
+     * @param isComingFromOnGoingRide Is user coming from on going ride.
+     * @param tripID Current Trip id.
      */
     public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID,boolean isComingFromOnGoingRide) {
         Intent intent = new Intent(mContext, MultiDeliveryFeedbackActivity.class);
@@ -310,7 +312,7 @@ public class ActivityStackManager {
             callIntent.setAction(Intent.ACTION_MAIN);
             callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             if (isFromGcm) {
-                callIntent.putExtra(Constants.IS_FROM_GCM, true);
+                callIntent.putExtra("isGcm", true);
                 Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
             }
             mContext.startActivity(callIntent);
@@ -359,6 +361,7 @@ public class ActivityStackManager {
             mContext.startActivity(callIntent);
         }
     }
+
 
     public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {
         Utils.redLog(Constants.APP_NAME + " CONVERSATION ID = ", refId);
@@ -432,9 +435,15 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startDeliveryScheduleDetailActivity(Context mContext, int pos) {
+    /**
+     * This method will start details activity for Scheduled Delivery Service
+     *
+     * @param mContext             Calling context
+     * @param deliveryScheduleData DeliveryScheduleModel Selected delivery trip
+     */
+    public void startDeliveryScheduleDetailActivity(Context mContext, DeliveryScheduleModel deliveryScheduleData) {
         Intent intent = new Intent(mContext, DeliveryScheduleDetailActivity.class);
-        intent.putExtra(Constants.Extras.POSITION_DELIVERY_SCHEDULE, pos);
+        intent.putExtra(Constants.Extras.SELECTED_ITEM, deliveryScheduleData);
         mContext.startActivity(intent);
     }
 

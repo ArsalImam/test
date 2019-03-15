@@ -326,8 +326,8 @@ public class HomeFragment extends Fragment {
                     } else {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             // TODO call battery optimization
-                            boolean calledOptimize = Utils.disableBatteryOptimization(
-                                    DriverApp.getContext(), mCurrentActivity);
+                            boolean calledOptimize = Utils.disableBatteryOptimization(mCurrentActivity,
+                                    HomeFragment.this);
                             if (!calledOptimize) {
                                 handleActivationStatusForBattery(true);
                             }
@@ -377,7 +377,7 @@ public class HomeFragment extends Fragment {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 // TODO call battery optimization
                                 boolean calledOptimize = Utils.disableBatteryOptimization(
-                                        DriverApp.getContext(), mCurrentActivity);
+                                        mCurrentActivity, HomeFragment.this);
                                 if (!calledOptimize) {
                                     handleActivationStatusForBattery(false);
                                 }
@@ -487,13 +487,16 @@ public class HomeFragment extends Fragment {
     private void onApiResponse(DriverPerformanceResponse response) {
         if (mCurrentActivity != null) {
 
-            if (response.getData() != null) {
+            if (response != null && response.getData() != null) {
                 if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
                     Utils.loadImgPicasso(mCurrentActivity, driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 }
-                weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
-                weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
+                if(weeklyBookingTv != null)
+                    weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
+
+                if(weeklyMukamalBookingTv != null)
+                    weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
                     String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
@@ -503,15 +506,22 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
+                if(weeklyTimeTv != null)
+                    weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-                weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
-                weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
-                weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
-                weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
+                if(weeklyCancelTv != null)
+                    weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
+                if(weeklyTakmeelTv != null)
+                    weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
+                if(weeklyQaboliatTv != null)
+                    weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
+                if(weeklyratingTv != null)
+                    weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
-                if (response.getData().getScore() != null) {
+                if(totalBalanceTv != null)
+                    totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
+
+                if (response.getData().getScore() != null && totalScoreTv != null) {
                     if (response.getData().getScore().contains(getString(R.string.minus_sign))) {
                         totalScoreTv.setText(response.getData().getScore());
                     } else {
@@ -934,92 +944,6 @@ public class HomeFragment extends Fragment {
         }
     };
 
-    /**
-     * Check the Type of request is it batch request or single
-     *
-     * <p>
-     *
-     * Check if the type is single parse the single trip object i.e {@link NormalCallData}
-     * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
-     *
-     * Check also for unfinished trips if there is unfinished trip remaining land
-     * to "Feedback Screen" other wise booking screen according to the type
-     *
-     * <ul>
-     *     <li>Check if trip is null thats mean there is no active trip</li>
-     *     <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
-     *     <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
-     * </ul>
-     *
-     * </p>
-     *
-     * @param response The object of {@linkplain CheckDriverStatusResponse}
-     */
-    private void checkTripType(CheckDriverStatusResponse response) {
-        Gson gson = new Gson();
-        if (response.getData().getType()
-                .equalsIgnoreCase(Constants.CallType.SINGLE)) {
-            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
-            String trip = gson.toJson(response.getData().getTrip());
-            Type type = new TypeToken<NormalCallData>() {
-            }.getType();
-            NormalCallData callData = gson.fromJson(trip, type);
-            AppPreferences.setCallData(callData);
-            AppPreferences.setTripStatus(callData.getStatus());
-            if (!callData.getStatus().
-                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                WebIORequestHandler
-                        .getInstance()
-                        .registerChatListener();
-                ActivityStackManager
-                        .getInstance()
-                        .startJobActivity(mCurrentActivity);
-            } else {
-                ActivityStackManager
-                        .getInstance()
-                        .startFeedbackFromResume(mCurrentActivity);
-            }
-        } else {
-            AppPreferences.setDeliveryType(Constants.CallType.BATCH);
-            String trip = gson.toJson(response.getData().getTrip());
-            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
-            }.getType();
-            MultiDeliveryCallDriverData multiDeliveryCallDriverData = gson.fromJson(trip, type);
-            AppPreferences.
-                    setMultiDeliveryCallDriverData(
-                            multiDeliveryCallDriverData
-                    );
-
-            List<MultipleDeliveryBookingResponse> bookingResponseList =
-                    multiDeliveryCallDriverData.getBookings();
-
-            boolean isFinishedStateFound = false;
-
-            for (MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
-                // get trip instance
-                MultiDeliveryTrip tripData = bookingResponse.getTrip();
-
-                // if trip status if "finished", open invoice screen
-                if (tripData.getStatus().
-                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                    isFinishedStateFound = true;
-                    ActivityStackManager.getInstance()
-                            .startMultiDeliveryFeedbackActivity(mCurrentActivity,
-                                    tripData.getId(), false);
-                    break;
-                }
-            }
-
-            //Navigate to booking screen if no pending invoices found
-            if (!isFinishedStateFound)
-                ActivityStackManager.
-                        getInstance().
-                        startMultiDeliveryBookingActivity(mCurrentActivity);
-    }
-        mCurrentActivity.finish();
-
-}
-
     //region Handle Error cases for Driver Status API
 
     /***
@@ -1103,6 +1027,12 @@ public class HomeFragment extends Fragment {
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
                         getString(R.string.region_out_support_helpline),
                         getString(R.string.account_blocked_message_ur));
+                break;
+            case Constants.ApiError.APP_FORCE_UPDATE:
+                Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
+                        getString(R.string.force_app_update_title),
+                        getString(R.string.force_app_update_message_local_ur),
+                        getString(R.string.force_app_update_link));
                 break;
             case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
             default:
@@ -1549,6 +1479,92 @@ public class HomeFragment extends Fragment {
             });
 
         }
+
+    }
+
+    /**
+     * Check the Type of request is it batch request or single
+     *
+     * <p>
+     *
+     * Check if the type is single parse the single trip object i.e {@link NormalCallData}
+     * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
+     *
+     * Check also for unfinished trips if there is unfinished trip remaining land
+     * to "Feedback Screen" other wise booking screen according to the type
+     *
+     * <ul>
+     *     <li>Check if trip is null thats mean there is no active trip</li>
+     *     <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     *     <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * </ul>
+     *
+     * </p>
+     *
+     * @param response The object of {@linkplain CheckDriverStatusResponse}
+     */
+    private void checkTripType(CheckDriverStatusResponse response) {
+        Gson gson = new Gson();
+        if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
+            NormalCallData callData = gson.fromJson(trip, type);
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+            if (!callData.getStatus().
+                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler
+                        .getInstance()
+                        .registerChatListener();
+                ActivityStackManager
+                        .getInstance()
+                        .startJobActivity(mCurrentActivity);
+            } else {
+                ActivityStackManager
+                        .getInstance()
+                        .startFeedbackFromResume(mCurrentActivity);
+            }
+        } else {
+            AppPreferences.setDeliveryType(Constants.CallType.BATCH);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
+            MultiDeliveryCallDriverData multiDeliveryCallDriverData = gson.fromJson(trip, type);
+            AppPreferences.
+                    setMultiDeliveryCallDriverData(
+                            multiDeliveryCallDriverData
+                    );
+
+            List<MultipleDeliveryBookingResponse> bookingResponseList =
+                    multiDeliveryCallDriverData.getBookings();
+
+            boolean isFinishedStateFound = false;
+
+            for (MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+                // get trip instance
+                MultiDeliveryTrip tripData = bookingResponse.getTrip();
+
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startMultiDeliveryFeedbackActivity(mCurrentActivity,
+                                    tripData.getId(), false);
+                    break;
+                }
+            }
+
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startMultiDeliveryBookingActivity(mCurrentActivity);
+        }
+        mCurrentActivity.finish();
 
     }
 

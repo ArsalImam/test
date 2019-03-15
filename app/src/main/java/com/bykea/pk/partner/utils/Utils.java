@@ -85,6 +85,7 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -97,6 +98,8 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.FontUtils;
+import com.elvishew.xlog.XLog;
 import com.bykea.pk.partner.widgets.FontUtils;
 import com.elvishew.xlog.XLog;
 import com.facebook.appevents.AppEventsLogger;
@@ -151,6 +154,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+
+import retrofit.Converter;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 import retrofit.Converter;
 import retrofit.Response;
@@ -1055,13 +1062,17 @@ public class Utils {
     }
 
 
-    public static String getVersion(Context context) {
-
+    /**
+     * Get application installed version from package manager.
+     *
+     * @return Installed App version using {@link PackageManager}
+     */
+    public static String getVersion() {
         String currentVersion = StringUtils.EMPTY;
-        PackageManager pm = context.getPackageManager();
-        PackageInfo pInfo = null;
+        PackageManager pm = DriverApp.getContext().getPackageManager();
+        PackageInfo pInfo;
         try {
-            pInfo = pm.getPackageInfo(context.getPackageName(), 0);
+            pInfo = pm.getPackageInfo(DriverApp.getContext().getPackageName(), 0);
             currentVersion = pInfo.versionName;
         } catch (PackageManager.NameNotFoundException e1) {
             e1.printStackTrace();
@@ -1318,7 +1329,7 @@ public class Utils {
      * Returns API key for Google GeoCoder API if required.
      * Will return Empty String if there's no error in Last
      * Request while using API without any Key.
-     *      * @return Google place server API key
+     * @return Google place server API key
      * */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
@@ -1445,14 +1456,6 @@ public class Utils {
             isMock = false;
         }
         return isMock;
-    }
-
-
-    public static void phoneCall(Activity activity, String phone) {
-
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-        activity.startActivity(intent);
-
     }
 
     public static boolean areThereMockPermissionApps(Context context) {
@@ -1796,7 +1799,7 @@ public class Utils {
             MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
             if (StringUtils.isBlank(mixpanel.getDistinctId())
                     || !mixpanel.getDistinctId().equalsIgnoreCase(AppPreferences.getPilotData().getId())) {
-//                mixpanel.alias(AppPreferences.getUser().get_id(), null);
+//                mixpanel.alias(AppPreferences.getUser().getId(), null);
                 mixpanel.identify(AppPreferences.getPilotData().getId());
                 mixpanel.getPeople().identify(AppPreferences.getPilotData().getId());
                 mixpanel.getPeople().initPushHandling(Constants.GCM_PROJECT_NO);
@@ -2668,8 +2671,38 @@ public class Utils {
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
-                activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
-                return true;
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    activity.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                    return true;
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method disables battery optimization/doze mode for devices with OS version 6.0 or higher.
+     *
+     * @param context  calling context
+     * @param fragment Calling fragment
+     * @return True if we are going to ask Battery optimization, else false.
+     * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     */
+    public static boolean disableBatteryOptimization(Context context,
+                                                     android.support.v4.app.Fragment fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = context.getPackageName();
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    fragment.startActivityForResult(intent, Constants.BATTERY_OPTIMIZATION_RESULT);
+                    return true;
+                }
+                return false;
             }
         }
         return false;
@@ -2797,6 +2830,22 @@ public class Utils {
         return spannableStringBuilder;
     }
 
+    /****
+     * Generate GPS High Accuracy warning message for user.
+     * @param context Calling context.
+     * @return String object
+     */
+    public static String generateGpsHighAccuracyWarningMessage(Context context) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_one, Constants.FontNames.JAMEEL_NASTALEEQI));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_two, Constants.FontNames.OPEN_SANS_BOLD));
+        spannableStringBuilder.append(FontUtils.getStyledTitle(context,
+                R.string.gps_high_accuracy_error_ur_three, Constants.FontNames.JAMEEL_NASTALEEQI));
+        return spannableStringBuilder.toString();
+    }
+
     /***
      *  Check is provided activity in running task.
      *
@@ -2902,6 +2951,25 @@ public class Utils {
                 eventBus.post(Keys.INACTIVE_FENCE);
                 break;
         }
+    }
+
+
+    /**
+     * This method starts Google Map API to show navigation
+     *
+     * @param context  Calling context
+     * @param endPoint String end point lat lng coordinates
+     */
+    public static void startGoogleDirectionsApp(Context context, String endPoint) {
+
+        try {
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + endPoint + "&mode=d");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            context.startActivity(mapIntent);
+        } catch (Exception ex) {
+            Utils.appToast(context, context.getString(R.string.google_maps_missing_error));
+        }
 
     }
 
@@ -2984,4 +3052,5 @@ public class Utils {
     }
 
     //endregion
+
 }

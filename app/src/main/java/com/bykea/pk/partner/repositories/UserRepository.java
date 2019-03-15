@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -83,6 +84,7 @@ import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
@@ -301,8 +303,8 @@ public class UserRepository {
                     jsonObject.put("service_type", AppPreferences.getPilotData().getService_type());
                 }
                 if (AppPreferences.getPilotData().getCity() != null &&
-                        StringUtils.isNotBlank(AppPreferences.getPilotData().getCity().get_id()))
-                    jsonObject.put("city", AppPreferences.getPilotData().getCity().get_id());
+                        StringUtils.isNotBlank(AppPreferences.getPilotData().getCity().getId()))
+                    jsonObject.put("city", AppPreferences.getPilotData().getCity().getId());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -975,6 +977,32 @@ public class UserRepository {
     //endregion
 
 
+    /***
+     * Send request to API server using socket connection which Assigns scheduled request
+     * send by passenger
+     *
+     * @param context Calling context
+     * @param bookingId Booking ID of the request
+     * @param handler Response handler callback
+     */
+    public void requestAcceptScheduledCall(Context context,
+                                           String bookingId,
+                                           IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        mContext = context;
+        try {
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("bId", bookingId);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        mWebIORequestHandler.acceptScheduledCall(jsonObject, mDataCallback);
+
+    }
+
+
     public void requestReverseGeocoding(Context context, IUserDataHandler handler,
                                         String latLng, String key) {
         mUserCallback = handler;
@@ -1226,7 +1254,7 @@ public class UserRepository {
         try {
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("app_version", Utils.getVersion(mContext));
+            jsonObject.put("app_version", Utils.getVersion());
             if (isHome) {
                 jsonObject.put("home", true);
             }
@@ -1386,6 +1414,13 @@ public class UserRepository {
         mRestRequestHandler.topUpPassengerWallet(mContext, data, amount, mDataCallback);
     }
 
+    /**
+     * This method is responsible for updating App version on server
+     */
+    public void updateAppVersion(UserDataHandler handler) {
+        mUserCallback = handler;
+        mRestRequestHandler.updateAppVersion(mDataCallback);
+    }
 
     public void setCallback(IUserDataHandler handler) {
         mUserCallback = handler;
@@ -1616,6 +1651,9 @@ public class UserRepository {
                         break;
                     case "LoadBoardResponse":
                         mUserCallback.onLoadBoardResponse((LoadBoardResponse) object);
+                        break;
+                    case "UpdateAppVersionResponse":
+                        mUserCallback.onUpdateAppVersionResponse((UpdateAppVersionResponse) object);
                         break;
                     case "MultiDeliveryCallDriverAcknowledgeResponse":
                         mUserCallback.onDriverAcknowledgeResponse(

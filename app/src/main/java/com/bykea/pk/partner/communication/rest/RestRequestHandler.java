@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
@@ -42,6 +44,9 @@ import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.LoginResponse;
+import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -49,6 +54,17 @@ import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
+import com.bykea.pk.partner.models.response.ServiceTypeResponse;
+import com.bykea.pk.partner.models.response.SettingsResponse;
+import com.bykea.pk.partner.models.response.ShahkarResponse;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
+import com.bykea.pk.partner.models.response.TripHistoryResponse;
+import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
+import com.bykea.pk.partner.models.response.UpdateProfileResponse;
+import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
+import com.bykea.pk.partner.models.response.UploadAudioFile;
+import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
 import com.bykea.pk.partner.models.response.ShahkarResponse;
@@ -121,7 +137,7 @@ public class RestRequestHandler {
         this.mResponseCallBack = callback;
         mRestClient = RestClient.getClient(mContext);
         Call<VerifyNumberResponse> numberResponseCall = mRestClient.sendDriverOTP(
-                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion(context));
+                phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion());
 
         numberResponseCall.enqueue(new Callback<VerifyNumberResponse>() {
             @Override
@@ -205,7 +221,7 @@ public class RestRequestHandler {
                 regID,
                 "" + AppPreferences.getLatitude(),
                 "" + AppPreferences.getLongitude(),
-                Utils.getVersion(context),
+                Utils.getVersion(),
                 AppPreferences.getOneSignalPlayerId(),
                 AppPreferences.getADID(),
                 Utils.getDeviceId(context)
@@ -491,7 +507,7 @@ public class RestRequestHandler {
     public void uploadAudioFile(Context context, IResponseCallback responseCallBack, final File file) {
         mContext = context;
         mResponseCallBack = responseCallBack;
-        mRestClient = RestClient.getClient(mContext);
+        mRestClient = RestClient.getChatAudioClient(mContext);
         Call<UploadAudioFile> requestCall = mRestClient.uploadAudioFile(Utils.convertFileToRequestBody(file));
         requestCall.enqueue(new Callback<UploadAudioFile>() {
             @Override
@@ -1115,7 +1131,7 @@ public class RestRequestHandler {
                         AppPreferences.setOutOfFence(false);
                         AppPreferences.setAvailableStatus(true);
                     }
-                        mResponseCallBack.onResponse(response.body());
+                    mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body().getCode(),
                             response.body().getMessage());
@@ -1266,6 +1282,8 @@ public class RestRequestHandler {
         String errorMsg;
         if (error instanceof IOException) {
             Utils.redLog(Constants.LogTags.RETROFIT_ERROR, Constants.LogTags.TIME_OUT_ERROR + String.valueOf(error.getCause()));
+            if (mContext == null)
+                mContext = DriverApp.getContext();
             errorMsg = mContext.getString(R.string.internet_error);
             //To prompt user to input base url for local builds again in case when URL is not working/wrong url. (BS-1017)
             /*AppPreferences.setLocalBaseUrl(BuildConfig.FLAVOR_URL);
@@ -1308,7 +1326,7 @@ public class RestRequestHandler {
     public void downloadAudioFile(Context context, final IResponseCallback onResponseCallBack,
                                   final String url) {
         mContext = context;
-        mRestClient = RestClient.getClient(mContext);
+        mRestClient = RestClient.getChatAudioClient(mContext);
         Call<ResponseBody> restCall = mRestClient.downloadAudioFile(url);
         restCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -1559,4 +1577,17 @@ public class RestRequestHandler {
         RestClient.clearBykeaRetrofitClient();
     }
 
+    /**
+     * This method will call Update App Version API
+     *
+     * @param onResponseCallBack to handle call back
+     */
+    public void updateAppVersion(final IResponseCallback onResponseCallBack) {
+        mRestClient = RestClient.getClient(DriverApp.getContext());
+        Call<UpdateAppVersionResponse> restCall = mRestClient.updateAppVersion(
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                Double.parseDouble(Utils.getVersion()));
+        restCall.enqueue(new GenericRetrofitCallBack<UpdateAppVersionResponse>(onResponseCallBack));
+    }
 }

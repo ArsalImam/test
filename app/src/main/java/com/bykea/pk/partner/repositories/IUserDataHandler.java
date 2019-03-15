@@ -57,6 +57,7 @@ import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.response.UpdateConversationStatusResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
@@ -212,7 +213,7 @@ public interface IUserDataHandler {
 
     void onError(int errorCode, String errorMessage);
 
-    //region MultiDelivery Sockets Response Listener
+    //#region MultiDelivery Sockets Response Listener
 
     /**
      * This method will be invoked when driver acknowledge response received.
@@ -279,4 +280,6 @@ public interface IUserDataHandler {
     void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response);
 
     //end region
+
+    void onUpdateAppVersionResponse(UpdateAppVersionResponse response);
 }

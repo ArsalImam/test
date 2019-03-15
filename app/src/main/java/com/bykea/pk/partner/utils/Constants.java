@@ -18,6 +18,8 @@ public class Constants {
     public static final int ESTIMATION_SPEED = 30;
 
 
+    public static final int MINIMUM_VOICE_RECORDING = 1000;
+
     public static final String BYKEA = "BYKEA";
     public static final String BYKEA_URL = "BYKEA URL";
     public static final String BYKEA_ERROR = "BYKEA ERROR";
@@ -75,7 +77,9 @@ public class Constants {
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";//Staging Server Key of Passenger
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
-    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG = "AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4";
+    //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
+    //we have replaced the passenger's app debug autocomplete key
+    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG = "AIzaSyALb6BDq-cw_kWWCaiNw50eIthPzI9wISA";
     private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
 
 
@@ -155,6 +159,10 @@ public class Constants {
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
     }
+
+
+    /*moving camera to current location animation delay*/
+    public static final int ANIMATION_DELAY_FOR_CURRENT_POSITION = 500;
 
 
     public static class Extras {
@@ -270,6 +278,12 @@ public class Constants {
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
     public final static String DRIVER_SOCKET_CLIENT_TYPE = "PARTNER_ANDROID";
 
+    /**
+     * Constant for checking delivery status whether is successful or not - Using is FeedbackActivity
+     * 0 is for kamyab
+     * other than 0 is na-kamyab
+     */
+    public final static int KAMYAB_DELIVERY = 0;
 
     /**
      * This inner class will contain Constants for Log Tags and Error Log Messages
@@ -302,6 +316,13 @@ public class Constants {
         public static String STATUS_INACTIVE = "INACTIVE";
     }
 
+
+    /**
+     * This inner class will contain Constants for Time Formats
+     */
+    public static class TimeFormat {
+        public final static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    }
 
     /**
      * List of supported services name and title by our eco system.
@@ -394,6 +415,7 @@ public class Constants {
         public static final String BATCH_TYPE = "batch";
 
     }
+
 
     /**
      * Inner class for Font Names

@@ -181,79 +181,73 @@
                 android:src="@drawable/green_down_arrow" />
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/rlFrom"
             android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="40dp"
             android:paddingBottom="@dimen/map.padding.bottom"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:orientation="vertical">
 
-            <View
-                android:id="@+id/bg"
-                android:layout_width="265dp"
-                android:layout_height="53dp"
-                android:background="@drawable/current_location_dialog_bg" />
+            <android.support.v7.widget.CardView
+                android:layout_width="260dp"
+                android:layout_height="@dimen/_40sdp"
+                app:cardUseCompatPadding="true"
+                app:cardBackgroundColor="@color/white"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="0dp"
+                app:cardPreventCornerOverlap="false">
 
-            <LinearLayout
-                android:id="@+id/chooseDropoff"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingRight="8dp">
-
-
-                <LinearLayout
-                    android:id="@+id/pickUpLl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingLeft="8dp">
 
                     <com.bykea.pk.partner.widgets.AutoFitFontTextView
                         android:id="@+id/tvFromName"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginTop="@dimen/_1sdp"
                         android:ellipsize="end"
                         android:gravity="center"
-                        android:maxLines="1"
+                        android:maxLines="2"
+                        android:paddingTop="@dimen/_2sdp"
+                        android:paddingBottom="@dimen/_2sdp"
                         android:paddingLeft="@dimen/_5sdp"
                         android:paddingRight="@dimen/_5sdp"
                         android:text="@string/set_pickup_location"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="@dimen/textsize.body3"
+                        android:textSize="@dimen/_11sdp"
                         app:fontName="roboto_regular.ttf" />
 
-                    <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/tvFromAddress"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:paddingBottom="@dimen/_4sdp"
-                        tools:text="Islamabad"
-                        android:textColor="@color/textColorSecondary"
-                        android:textSize="11sp"
-                        app:fontName="roboto_light.ttf" />
+            </android.support.v7.widget.CardView>
 
-                </LinearLayout>
+            <View
+                android:layout_width="@dimen/_3sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginTop="-3dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/black" />
 
-            </LinearLayout>
+        </LinearLayout>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/currentLocationIv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_56sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/_4sdp"
+            app:cardElevation="@dimen/_6sdp"
+            android:layout_gravity="end|bottom">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="30dp"
-                android:layout_below="@+id/bg"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/map_pin" />
-        </RelativeLayout>
+                android:layout_width="@dimen/_29sdp"
+                android:layout_height="@dimen/_29sdp"
+                android:padding="@dimen/_4sdp"
+                android:src="@drawable/location_icon" />
+        </android.support.v7.widget.CardView>
 
         <FrameLayout
             android:id="@+id/confirmBtn"

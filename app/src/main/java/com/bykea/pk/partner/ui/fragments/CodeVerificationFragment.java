@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Telephony;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +35,8 @@ import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.OTPReceiveListener;
+import com.bykea.pk.partner.ui.helpers.SmsBroadcastReceiver;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -44,6 +47,13 @@ import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.instabug.library.Instabug;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +66,8 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 
-public class CodeVerificationFragment extends Fragment {
+public class CodeVerificationFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, OTPReceiveListener {
 
 
     @BindView(R.id.verificationCodeEt_1)
@@ -86,6 +97,11 @@ public class CodeVerificationFragment extends Fragment {
     private int totalTime = (int) (Constants.VERIFICATION_WAIT_MAX_TIME / 1000);
     private Unbinder unbinder;
 
+    private SmsRetrieverClient smsRetrieverClient;
+    private final String TAG = CodeVerificationFragment.class.getSimpleName();
+    private SmsBroadcastReceiver smsBroadcastReceiver;
+
+
     public CodeVerificationFragment() {
         // Required empty public constructor
     }
@@ -105,7 +121,8 @@ public class CodeVerificationFragment extends Fragment {
 
         mCurrentActivity = (NumberVerificationActivity) getActivity();
         mStackManager = ActivityStackManager.getInstance();
-
+        setupSmsReceiverClient();
+        setupSMSBroadcast();
         return v;
 
     }
@@ -120,7 +137,6 @@ public class CodeVerificationFragment extends Fragment {
         initVerificationEditText();
         initDonutProgress();
         animateDonutProgress();
-        checkPermissions();
         titleMsg.setText(Utils.phoneNumberToShow(AppPreferences.getPhoneNumber()));
     }
 
@@ -301,13 +317,50 @@ public class CodeVerificationFragment extends Fragment {
     }
 
 
+    //endregion
+
+    //region Helper method for Auto SMS
+
+    /**
+     * {@link SmsRetriever} client setup which will allow use to read sms without permission
+     */
+    private void setupSmsReceiverClient() {
+        smsRetrieverClient = SmsRetriever.getClient(mCurrentActivity);
+        Task<Void> task = smsRetrieverClient.startSmsRetriever();
+        task.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Utils.redLog(TAG, "Waiting for OTP");
+            }
+        });
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Utils.redLog(TAG, e.getMessage());
+            }
+        });
+    }
+    //endregion
+
+
+    //region Helper methods for SMS broadcast receivers
+
+    /**
+     * Setup SMS OTP receiver
+     */
+    private void setupSMSBroadcast() {
+        smsBroadcastReceiver = new SmsBroadcastReceiver();
+        smsBroadcastReceiver.setOtpCallback(this);
+    }
+
+
     /***
      * Register SMS receiver broadcast intent.
      */
     private void registerSMSReceiver() {
-        IntentFilter filter = new IntentFilter(Constants.SMS_RECEIVER_TAG);
+        IntentFilter filter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
         if (mCurrentActivity != null) {
-            mCurrentActivity.registerReceiver(mSmsReceiver, filter);
+            mCurrentActivity.registerReceiver(smsBroadcastReceiver, filter);
         }
     }
 
@@ -315,11 +368,16 @@ public class CodeVerificationFragment extends Fragment {
      * Un Register SMS Receiver broadcast intent
      */
     private void unRegisterSMSReceiver() {
-        if (mCurrentActivity != null) {
-            mCurrentActivity.unregisterReceiver(mSmsReceiver);
+        try {
+            if (mCurrentActivity != null) {
+                mCurrentActivity.unregisterReceiver(smsBroadcastReceiver);
+            }
+        } catch (Exception ex) {
+            Utils.redLog("CodeVerificationFragment",
+                    "UnregisterReceiverException" + " " + ex.toString());
         }
-    }
 
+    }
     //endregion
 
     //region Life cycle methods
@@ -339,10 +397,14 @@ public class CodeVerificationFragment extends Fragment {
 
     @Override
     public void onPause() {
-        unRegisterSMSReceiver();
         super.onPause();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unRegisterSMSReceiver();
+    }
 
     //endregion
 
@@ -583,16 +645,42 @@ public class CodeVerificationFragment extends Fragment {
     };
 
 
-    /***
-     * Check Sms Permission from device.
-     */
-    private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Permissions.hasSMSPermissions(mCurrentActivity)) {
-            Permissions.getSMSPermissions(mCurrentActivity);
+    //endregion
+
+    //region Google Play Service Client Callbacks events
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Utils.redLog(TAG, "Connected");
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Utils.redLog(TAG, "GoogleApiClient is suspended with cause code: " + cause);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Utils.redLog(TAG, "GoogleApiClient failed to connect: " + connectionResult);
+    }
+
+    //endregion
+
+    //region SMS OTP receive callbacks
+    @Override
+    public void onOTPReceived(String otpCode) {
+        //unregisterReceiver();
+        Utils.redLog(TAG, "OTP code: " + otpCode);
+        Constants.VERIFICATION_CODE_RECEIVED = otpCode;
+        if (!Constants.VERIFICATION_CODE_RECEIVED.isEmpty()) {
+            verificationCodeEt.setText(Constants.VERIFICATION_CODE_RECEIVED);
         }
     }
 
-
+    @Override
+    public void onOTPTimeOut() {
+        Utils.redLog(TAG, "OTP Timeout");
+    }
     //endregion
+
 
 }

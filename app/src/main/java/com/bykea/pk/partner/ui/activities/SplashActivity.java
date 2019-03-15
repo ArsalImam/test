@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -9,6 +10,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
@@ -25,8 +27,12 @@ import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -34,6 +40,9 @@ import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -41,6 +50,11 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -333,24 +347,39 @@ public class SplashActivity extends BaseActivity {
         }
 
         @Override
-        public void onError(int errorCode, String errorMessage) {
+        public void onError(final int errorCode, String errorMessage) {
             if (mCurrentActivity != null) {
-                switch (errorCode) {
-                    case HttpURLConnection.HTTP_UNAUTHORIZED:
-                        AppPreferences.saveLoginStatus(false);
-                        AppPreferences.setIncomingCall(false);
-                        AppPreferences.setCallData(null);
-                        AppPreferences.setTripStatus("");
-                        AppPreferences.saveLoginStatus(false);
-                        AppPreferences.setPilotData(null);
-                        HomeActivity.visibleFragmentNumber = 0;
-                        EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
-                        break;
-                    case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                        EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
-                        splashTimer.onFinish();
-                        break;
-                }
+                mCurrentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        switch (errorCode) {
+                            case HttpURLConnection.HTTP_UNAUTHORIZED:
+                                AppPreferences.saveLoginStatus(false);
+                                AppPreferences.setIncomingCall(false);
+                                AppPreferences.setCallData(null);
+                                AppPreferences.setTripStatus("");
+                                AppPreferences.saveLoginStatus(false);
+                                AppPreferences.setPilotData(null);
+                                HomeActivity.visibleFragmentNumber = 0;
+                                Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Dialogs.INSTANCE.dismissDialog();
+                                                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                                                finish();
+                                            }
+                                        }, null, getString(R.string.unauthorized_title),
+                                        getString(R.string.unauthorized_message));
+                                break;
+                            case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                                splashTimer.onFinish();
+                                break;
+                                default:
+                                    splashTimer.onFinish();
+                        }
+                    }
+                });
             }
 
         }
@@ -457,6 +486,7 @@ public class SplashActivity extends BaseActivity {
         }
         finish();
     }
+
 
 
     //region Life Cycle Methods

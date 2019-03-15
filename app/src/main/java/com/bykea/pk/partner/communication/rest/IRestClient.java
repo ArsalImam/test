@@ -9,6 +9,8 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
+import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
+import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
@@ -45,6 +47,7 @@ import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.models.response.TripMissedHistoryResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.response.UpdateProfileResponse;
 import com.bykea.pk.partner.models.response.UpdateRegIDResponse;
 import com.bykea.pk.partner.models.response.UploadAudioFile;
@@ -401,9 +404,15 @@ interface IRestClient {
     Call<LoadBoardResponse> requestLoadBoard(@Query("_id") String id, @Query("token_id") String accessToken,
                                              @Query("lat") String lat, @Query("lng") String lng);
 
+
     @PUT(ApiTags.SET_DRIVER_LOCATION)
     Call<LocationResponse> updateDriverLocation(@Body DriverLocationRequest driverLocation);
 
+    @FormUrlEncoded
+    @PUT(ApiTags.UPDATE_APP_VERSION)
+    Call<UpdateAppVersionResponse> updateAppVersion(@Field("_id") String id,
+                                                    @Field("token_id") String token,
+                                                    @Field("version") double version);
 
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(

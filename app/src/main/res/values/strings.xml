@@ -33,7 +33,7 @@
     <!--                ERROR STRINGS HERE                  -->
     <string name="error_internet_connectivity">Please check your internet connection.</string>
     <string name="error_phone_number_1">Please enter correct mobile number</string>
-    <string name="error_field_empty">required</string>
+    <string name="error_field_empty">Required</string>
     <string name="error_picture_not_selected">Picture not selected.</string>
     <string name="error_try_again">Something went wrong. Please try again later.</string>
 
@@ -51,7 +51,6 @@
         <item>Home</item>
         <item>Booking History</item>
         <item>Wallet</item>
-        <item>Performance</item>
         <item>How it works</item>
         <item>Contact Us</item>
     </string-array>
@@ -62,7 +61,6 @@
         <item>ہوم</item>
         <item>تفصیل‎</item>
         <item>بٹوا‎</item>
-        <item>کارکردگی</item>
         <item>طریقہ کار</item>
         <item>رابطہ‎</item>
         <item>ٹیسٹنگ</item>
@@ -185,6 +183,8 @@
     <string name="invalid_phone">Invalid phone</string>
     <string name="invalid_code_error_message">Invalid Code</string>
     <string name="current_week">Current Week</string>
+    <string name="google_maps_missing_error">Please install Google Maps</string>
+    <string name="lord_board_order_distance">%f km</string>
     <string name="pick_multi_delivery_label">پک</string>
     <string name="delivery_multi_delivery_label">ڈیلیوریاں</string>
     <string name="drop_multi_delivery_label">ڈراپ</string>
@@ -192,39 +192,6 @@
     <string name="time_multi_delivery_label">وقت</string>
     <string name="TimeUnit">MINS</string>
     <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
-    <string name="notification_title_driver_login_location">Logged in fetching location</string>
-    <string name="notification_title_driver_logout_location">Fetching location</string>
-    <string name="notification_title_driver_status">Your Status: %1$s</string>
-    <string name="notification_title_driver_trip">TRIP# %1$s is in %2$s state</string>
-    <string name="battery_optimize_error_title">Battery Optimize Error</string>
-    <string name="battery_optimize_error_message">Provide Battery Optimize permission for making you online</string>
-    <string name="imei_report_part_one_ur">اس موبائل کا </string>
-    <string name="imei_report_part_two"> IMEI</string>
-    <string name="imei_report_part_three_ur">نمبر ہمارے ریکارڈ میں موجود نہیں ہے۔</string>
-    <string name="imei_report_part_four_ur">\n نئے </string>
-    <string name="imei_report_part_five_ur">کے اندراج کے لئے نیچے دیئے گئے بٹن پر کلک کریں۔</string>
-    <string name="imei_report_submit_ur">مسئلہ درج کریں</string>
-    <string name="frequent_booking_cancel_error_ur">مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے</string>
-    <string name="wallet_amount_exceed_error_ur">مزید بوکنگز لینے کے لیے پیسے جمع کروائے۔</string>
-    <string name="account_inactive_message_error_ur">آپکا اکاؤنٹ بند ہے ، کال بائيکیا</string>
-    <string name="retrofit_logging_request">Sending request %s on %s%n%s%s</string>
-    <string name="retrofit_logging_response">Received response for %s in %.1fms%n%s</string>
-    <string name="retrofit_request_method_type"> Method </string>
-    <string name="driver_offline_crone_job_ur">App Offline Hochuke Hain!</string>
-    <string name="krai_ki_kami_label">کرائے کی کمائی</string>
-    <string name="cash_ki_wasooli_label">کیش کی وصولی</string>
-    <string name="kharidari_ki_raqam_label">خریداری کی رقم</string>
-    <string name="places_label">PLACES</string>
-    <string name="bhejneyWalaTv">بھیجنے والا</string>
-    <string name="wasoolKrneyWalaTv">وصول کرنے والا</string>
-    <string name="cash_value_zero">0</string>
-    <string name="ask_arrived_text"> پہنچ گئے؟ </string>
-    <string name="ask_started_text"> اسٹارٹ؟ </string>
-    <string name="ask_finish_text"> مکمل؟ </string>
-    <string name="code_value">COD Rs. %d</string>
-    <string name="tafseel_text">تفصیل</string>
-    <string name="call_text">کال</string>
-    <string name="booking_multidelivery_complete_title"> کون سی بکنگ مکمل کرنا چاہتے ہیں؟ </string>
     <string name="license_title">License</string>
     <string name="license_title_ur">لائسنس</string>
     <string name="personal_detail_title">Personal Details</string>
@@ -236,6 +203,7 @@
     <string name="motor_bike_title">Motorbike</string>
     <string name="motor_bike_title_ur">موٹر سائیکل</string>
     <string name="splash_welcome_message">حرکت میں برکت</string>
+    <string name="driver_demand_offline_error_ur">آپ آف لائن ہیں ایکٹو ہوکے بکنگ حاصل کریں۔</string>
     <string name="register_with_mobile">موبائل نمبر درج کریں</string>
     <string name="unauthorized_title">UnAuthorized</string>
     <string name="unauthorized_message">Your account is logged in to another device. You are not login here anymore</string>
@@ -269,10 +237,45 @@
     <string name="gps_enable_initial_message"> برائے مہربانی اپنا</string>
     <string name="GPS_middle_message">GPS</string>
     <string name="gps_enable_ending_message"> آن کریں </string>
-    <string name="gps_high_accuracy_error_ur">اپنا جی پي ایس ہائی ایکیوریسی پے آن کریں۔</string>
+    <string name="gps_high_accuracy_error_ur_one">اپنا جی پي ایس </string>
+    <string name="gps_high_accuracy_error_ur_two">\nHigh Accuracy\n</string>
+    <string name="gps_high_accuracy_error_ur_three"> پے آن کریں۔</string>
+    <string name="notification_title_driver_login_location">Logged in fetching location</string>
+    <string name="notification_title_driver_logout_location">Fetching location</string>
+    <string name="notification_title_driver_status">Your Status: %1$s</string>
+    <string name="notification_title_driver_trip">Booking# %1$s is in %2$s state</string>
+    <string name="battery_optimize_error_title">Battery Optimize Error</string>
+    <string name="battery_optimize_error_message">Provide Battery Optimize permission for making you online</string>
+    <string name="imei_report_part_one_ur">اس موبائل کا </string>
+    <string name="imei_report_part_two"> IMEI</string>
+    <string name="imei_report_part_three_ur">نمبر ہمارے ریکارڈ میں موجود نہیں ہے۔</string>
+    <string name="imei_report_part_four_ur">\n نئے </string>
+    <string name="imei_report_part_five_ur">کے اندراج کے لئے نیچے دیئے گئے بٹن پر کلک کریں۔</string>
+    <string name="imei_report_submit_ur">مسئلہ درج کریں</string>
+    <string name="frequent_booking_cancel_error_ur">مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے</string>
+    <string name="wallet_amount_exceed_error_ur">مزید بوکنگز لینے کے لیے پیسے جمع کروائیں۔</string>
+    <string name="account_inactive_message_error_ur">آپکا اکاؤنٹ بند ہے ، کال بائيکیا</string>
+    <string name="retrofit_logging_request">Sending request %s on %s%n%s%s</string>
+    <string name="retrofit_logging_response">Received response for %s in %.1fms%n%s</string>
+    <string name="retrofit_request_method_type"> Method </string>
+    <string name="driver_offline_crone_job_ur">App Offline Hochuke Hain!</string>
 
     <!--Multi Delivery Labels-->
 
+    <string name="krai_ki_kami_label">کرائے کی کمائی</string>
+    <string name="cash_ki_wasooli_label">کیش کی وصولی</string>
+    <string name="kharidari_ki_raqam_label">خریداری کی رقم</string>
+    <string name="places_label">PLACES</string>
+    <string name="bhejneyWalaTv">بھیجنے والا</string>
+    <string name="wasoolKrneyWalaTv">وصول کرنے والا</string>
+    <string name="cash_value_zero">0</string>
+    <string name="ask_arrived_text"> پہنچ گئے؟ </string>
+    <string name="ask_started_text"> اسٹارٹ؟ </string>
+    <string name="ask_finish_text"> مکمل؟ </string>
+    <string name="code_value">COD Rs. %d</string>
+    <string name="tafseel_text">تفصیل</string>
+    <string name="call_text">کال</string>
+    <string name="booking_multidelivery_complete_title"> کون سی بکنگ مکمل کرنا چاہتے ہیں؟ </string>
     <string name="muntakhib_nahi_ki_gayi_label">منتخب نہیں کی گئی</string>
     <string name="decimal_format_one_digit">%.1f</string>
     <string name="distance_covered">( %s km, </string>
@@ -290,5 +293,5 @@
     <string name="multidelivery_complete_msg_one">نمبر</string>
     <string name="multidelivery_complete_msg_two">مکمل؟</string>
 
-
+    <!--Testing verified commit-->
 </resources>

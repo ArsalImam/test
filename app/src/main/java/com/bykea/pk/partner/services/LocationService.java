@@ -24,9 +24,9 @@ import android.support.v4.app.NotificationCompat;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
-import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -65,7 +65,6 @@ import java.util.List;
 
 
 public class LocationService extends Service {
-
     private String STATUS = StringUtils.EMPTY;
     private Context mContext;
     private UserRepository mUserRepository;
@@ -326,7 +325,6 @@ public class LocationService extends Service {
                     i++;
                 }
             }
-
             notificationBodyMessage = getResources().getString(R.string.notification_title_driver_trip,
                     tripNo,
                     StringUtils.capitalize(status));
