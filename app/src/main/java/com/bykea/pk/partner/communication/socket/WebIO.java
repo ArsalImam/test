@@ -275,6 +275,8 @@ public class WebIO {
                     if (args != null && args.length > 0) {
                         String serverResponse = args[0].toString();
                         Utils.redLogLocation(TAG, "Server response from AUTH_SUCCESS : " + serverResponse);
+                        Utils.redLogLocation(TAG, "Socket ID taken during SOCKEY_AUTH_SUCCESS : " +
+                                WebIO.getInstance().getSocket().id());
                     }
                 }
             });

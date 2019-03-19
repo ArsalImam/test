@@ -255,7 +255,8 @@ public class Constants {
         // Log file Max file size before it creates a new file for logs
         public static final long LOG_FILE_MAX_SIZE = 1024 * 1024;
         //Developer email address which is used for sending logs.
-        public static final String LOG_SEND_DEVELOPER_EMAIL = "raheel@mobinspire.com";
+        public static final String[] LOG_SEND_DEVELOPERS_EMAIL = new String[]{"adil.baig@bykea.com",
+                "abdul.mannan@bykea.com", "amir.raza@bykea.com", "aftab.sikander@bykea.com"};
         public static final String LOG_SEND_SUBJECT = "Log Files";
         public static final String LOG_SEND_MESSAGE_BODY = "Latest logs attached";
         public static final String BYKEA_LOG_TAG = "BYKEA_LOG_TAG";
