@@ -222,19 +222,19 @@
         <activity
             android:name=".ui.activities.DeliveryScheduleDetailActivity"
             android:exported="true" />
+        <activity android:name=".ui.activities.MapDetailsActivity" />
         <activity android:name=".ui.activities.ShahkarActivity" />
         <activity android:name=".ui.activities.RankingActivity" />
-        <activity
-            android:name=".ui.activities.NumberVerificationActivity"
+        <activity android:name=".ui.activities.NumberVerificationActivity"
             android:theme="@style/NewTheme" />
         <activity android:name=".ui.activities.LandingActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.activities.MultipleDeliveryBookingActivity"
             android:launchMode="singleTask"/>
-        <activity android:name=".ui.activities.MapDetailsActivity" />
-
         <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.LoadboardBookingDetailActivity"
+            android:screenOrientation="portrait" />
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />

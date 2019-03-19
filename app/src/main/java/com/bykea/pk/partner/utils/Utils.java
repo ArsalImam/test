@@ -89,6 +89,7 @@ import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -97,6 +98,8 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
+import com.bykea.pk.partner.widgets.FontUtils;
+import com.elvishew.xlog.XLog;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
 import com.elvishew.xlog.XLog;
@@ -356,6 +359,7 @@ public class Utils {
 
     public static void logout(Context context) {
         clearData(context);
+        AppPreferences.clearLoadboardSelectedZoneData();
         HomeActivity.visibleFragmentNumber = 0;
         //ActivityStackManager.getInstance().startLoginActivity(context);
         ActivityStackManager.getInstance().startLandingActivity(context);
@@ -1409,21 +1413,23 @@ public class Utils {
         return false;
     }
 
-    public static void loadImgPicasso(Context context, ImageView imageView, int placeHolder, String link) {
-        Picasso.get().load(link)
-                .fit().centerInside()
-                .placeholder(placeHolder)
-                .into(imageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        redLog("Picasso", "onSuccess");
-                    }
+    public static void loadImgPicasso(ImageView imageView, int placeHolder, String link) {
+        if(imageView != null){
+            Picasso.get().load(link)
+                    .fit().centerInside()
+                    .placeholder(placeHolder)
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            redLog("Picasso", "onSuccess");
+                        }
 
-                    @Override
-                    public void onError(Exception e) {
-                        redLog("Picasso", "onError");
-                    }
-                });
+                        @Override
+                        public void onError(Exception e) {
+                            redLog("Picasso", "onError");
+                        }
+                    });
+        }
     }
 
     public static void loadImgPicasso(Context context, ImageView imageView, String link) {
@@ -2216,19 +2222,23 @@ public class Utils {
      */
     public static void loadMultipleDeliveryImageURL(ImageView imageView, String link,
                                                     int placeHolder) {
-        Picasso.get().load(link)
-                .placeholder(placeHolder)
-                .into(imageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
 
-                    }
+        if(imageView!=null){
+            Picasso.get().load(link)
+                    .placeholder(placeHolder)
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
 
-                    @Override
-                    public void onError(Exception e) {
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
+        }
+
     }
 
 

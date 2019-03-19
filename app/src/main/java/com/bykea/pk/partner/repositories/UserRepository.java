@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -14,7 +13,6 @@ import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
 import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.data.PlacesList;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -27,6 +25,7 @@ import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
+import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
@@ -57,7 +56,9 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -72,8 +73,6 @@ import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
-import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
-import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
@@ -96,20 +95,13 @@ import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
-import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
-import com.bykea.pk.partner.tracking.AbstractRouting;
-import com.bykea.pk.partner.tracking.Route;
-import com.bykea.pk.partner.tracking.RouteException;
-import com.bykea.pk.partner.tracking.Routing;
-import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
@@ -390,7 +382,6 @@ public class UserRepository {
     }
 
     /**
-     *
      * Fetch Tracking Data List
      *
      * <p>Calculate the distance & duration between driver location to each drop off location</p>
@@ -404,6 +395,11 @@ public class UserRepository {
         String dropLatLng = StringUtils.EMPTY;
         final MultiDeliveryCallDriverData callDriverData = AppPreferences.
                 getMultiDeliveryCallDriverData();
+
+        //TODO temp fix until we figure it out how to handle tip notification socket for single trips.
+        if (callDriverData == null) {
+            return;
+        }
 
         if (!callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
             mRestRequestHandler.sendDriverLocationUpdate(mContext,
@@ -419,7 +415,7 @@ public class UserRepository {
         final int[] counter = {0};
         for (final MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
             counter[0]++;
-            MultipleDeliveryDropOff dropOff =bookingResponse.getDropOff();
+            MultipleDeliveryDropOff dropOff = bookingResponse.getDropOff();
             dropLatLng = dropLatLng.concat(dropOff.getLat() + "," +
                     dropOff.getLng());
             Log.d(TAG, bookingResponse.getTrip().getId());
@@ -783,7 +779,6 @@ public class UserRepository {
      * Set Driver Acknowledge Data in Json Object.
      *
      * @param jsonObject The json object.
-     *
      * @throws JSONException if something went wrong with json object it will throw an exception.
      */
     private void setMultiDeliveryData(JSONObject jsonObject) throws JSONException {
@@ -801,7 +796,6 @@ public class UserRepository {
      * Emit request Driver Acknowledge Response.
      *
      * @param handler The Callback that will be invoked when response received.
-     *
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
@@ -820,9 +814,9 @@ public class UserRepository {
     /**
      * Emit request MuliDelivery Accept Call event
      *
-     * @param context Holding the reference of an activity.
+     * @param context        Holding the reference of an activity.
      * @param acceptedSecond The timer interval at which driver accept the call.
-     * @param handler The Callback that will be invoked when response received.
+     * @param handler        The Callback that will be invoked when response received.
      */
     public void requestMultiDeliveryAcceptCall(Context context, String acceptedSecond,
                                                IUserDataHandler handler) {
@@ -856,7 +850,6 @@ public class UserRepository {
      * Emit Driver Arrived data.
      *
      * @param handler The Callback that will be invoked when driver arrived response received.
-     *
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
@@ -876,7 +869,6 @@ public class UserRepository {
      * Emit Driver Started data.
      *
      * @param handler The Callback that will be invoked when driver started response received.
-     *
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
@@ -900,7 +892,6 @@ public class UserRepository {
      * Emit Driver Finished data.
      *
      * @param handler The Callback that will be invoked when driver finish event response received.
-     *
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
@@ -926,12 +917,11 @@ public class UserRepository {
      * Emit Driver Finished data.
      *
      * @param handler The Callback that will be invoked when driver finish event response received.
-     *
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
     public void requestMultiDeliveryDriverFeedback(String tripID, int receivedAmount, float rating,
-                                                     IUserDataHandler handler) {
+                                                   IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         try {
@@ -953,8 +943,7 @@ public class UserRepository {
      * Emit driver cancel batch request.
      *
      * @param cancelReason The cancellation reason.
-     * @param handler The Callback that will be invoked when driver arrived response received.
-     *
+     * @param handler      The Callback that will be invoked when driver arrived response received.
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
@@ -1422,6 +1411,63 @@ public class UserRepository {
         mRestRequestHandler.updateAppVersion(mDataCallback);
     }
 
+    /**
+     * request for loadboard jobs list
+     *
+     * @param context       Context
+     * @param limit         jobs limit - OPTIONAL
+     * @param pickupZoneId  jobs pickup zone id - OPTIONAL
+     * @param dropoffZoneId - jons dropoff zone id - OPTIONAL
+     * @param handler       callback
+     */
+    public void requestLoadBoardListingAPI(Context context, String limit, String pickupZoneId, String dropoffZoneId, final IUserDataHandler handler) {
+        mContext = context;
+        mRestRequestHandler.loadboardListing(mContext, limit, pickupZoneId, dropoffZoneId, new IResponseCallback() {
+            @Override
+            public void onResponse(Object object) {
+                handler.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
+            }
+
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError(int errorCode, String error) {
+                handler.onError(errorCode, error);
+            }
+        });
+    }
+
+    /**
+     * accept request for specific booking
+     *
+     * @param context   Context
+     * @param bookingId selected booking id
+     * @param handler   callback
+     */
+    public void acceptLoadboardBooking(Context context, String bookingId, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.acceptLoadboardBooking(mContext, bookingId, mDataCallback);
+
+    }
+
+    /**
+     * request for details of selected booking
+     *
+     * @param context   Context
+     * @param bookingId selected booking id
+     * @param handler   callback
+     */
+    public void loadboardBookingDetail(Context context, String bookingId, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.loadboardBookingDetail(mContext, bookingId, mDataCallback);
+
+    }
+
     public void setCallback(IUserDataHandler handler) {
         mUserCallback = handler;
     }
@@ -1655,6 +1701,16 @@ public class UserRepository {
                     case "UpdateAppVersionResponse":
                         mUserCallback.onUpdateAppVersionResponse((UpdateAppVersionResponse) object);
                         break;
+                    case "LoadBoardListingResponse":
+                        mUserCallback.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
+                        break;
+                    case "LoadboardBookingDetailResponse":
+                        mUserCallback.onLoadboardBookingDetailResponse((LoadboardBookingDetailResponse) object);
+                        break;
+                    case "AcceptLoadboardBookingResponse":
+                        WebIORequestHandler.getInstance().registerChatListener();
+                        mUserCallback.onAcceptLoadboardBookingResponse((AcceptLoadboardBookingResponse) object);
+                        break;
                     case "MultiDeliveryCallDriverAcknowledgeResponse":
                         mUserCallback.onDriverAcknowledgeResponse(
                                 (MultiDeliveryCallDriverAcknowledgeResponse) object
@@ -1717,8 +1773,6 @@ public class UserRepository {
         }
 
     };
-
-
 
 
 }

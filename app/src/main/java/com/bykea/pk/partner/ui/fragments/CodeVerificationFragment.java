@@ -54,7 +54,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.instabug.library.Instabug;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -487,12 +486,10 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
         AppPreferences.setPilotData(loginResponse.getUser());
         AppPreferences.setAvailableStatus(loginResponse.getUser().isAvailable());
         AppPreferences.setCashInHands(loginResponse.getUser().getCashInHand());
+        AppPreferences.setCash(loginResponse.getUser().isCash()); //saving driver's cash/non-cash status to local storage
         /*AppPreferences.setCashInHandsRange(mCurrentActivity, loginResponse.getUser().getCashInHandRange());
         AppPreferences.setVerifiedStatus(mCurrentActivity, loginResponse.getUser().isVerified());*/
         AppPreferences.saveLoginStatus(true);
-        Instabug.setUserData(loginResponse.getUser().getFullName() + " " + loginResponse.getUser().getPhoneNo());
-        Instabug.setUserEmail(loginResponse.getUser().getPhoneNo());
-        Instabug.setUsername(loginResponse.getUser().getFullName());
         Utils.setOneSignalTag("city", loginResponse.getUser().getCity().getName().toLowerCase());
         Utils.setOneSignalTag("type", loginResponse.getUser().is_vendor() ? "vendor" : "normal");
         Utils.setOneSignalTag("tag", "driver");

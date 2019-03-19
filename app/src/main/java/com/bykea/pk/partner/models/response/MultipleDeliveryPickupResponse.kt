@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.models.response
 
 import com.google.gson.annotations.SerializedName
-import com.instabug.library.util.StringUtility
 import org.apache.commons.lang3.StringUtils
 
 /**

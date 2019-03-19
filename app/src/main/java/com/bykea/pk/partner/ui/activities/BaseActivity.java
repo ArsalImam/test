@@ -73,7 +73,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 1010;
     public static final String GPS_ENABLE_EVENT = "GPS_ENABLE_EVENT";
     private Toolbar mToolbar;
-    private FontTextView mTitleTv, status, demandBtn;
+    private FontTextView mTitleTv, status/*, demandBtn*/;
     private ImageView mLogo, rightIv;
     private FrameLayout frameLayout_bismilla;
     private FrameLayout frameLayout_khudaHafiz;
@@ -423,7 +423,7 @@ public class BaseActivity extends AppCompatActivity {
         frameLayout_khudaHafiz = mToolbar.findViewById(R.id.logo_khudaHafiz);
         mTitleTv = (FontTextView) mToolbar.findViewById(R.id.title);
         status = (FontTextView) mToolbar.findViewById(R.id.status);
-        demandBtn = (FontTextView) mToolbar.findViewById(R.id.demandBtn);
+//        demandBtn = (FontTextView) mToolbar.findViewById(R.id.demandBtn);
         statusLayout = (RelativeLayout) mToolbar.findViewById(R.id.statusLayout);
         rightIv = (ImageView) mToolbar.findViewById(R.id.rightIv);
     }
@@ -460,10 +460,10 @@ public class BaseActivity extends AppCompatActivity {
     public void setDemandButtonForBismilla(String title, View.OnClickListener listener) {
         if (null == mToolbar) getToolbar();
         statusLayout.setVisibility(View.GONE);
-        demandBtn.setVisibility(View.VISIBLE);
-        demandBtn.setText(title);
-
-        demandBtn.setOnClickListener(listener);
+//        demandBtn.setVisibility(View.VISIBLE);
+//        demandBtn.setText(title);
+//
+//        demandBtn.setOnClickListener(listener);
 
 
     }
@@ -524,17 +524,17 @@ public class BaseActivity extends AppCompatActivity {
 
     public void hideStatusCompletely() {
         status.setVisibility(View.GONE);
-        demandBtn.setVisibility(View.GONE);
+//        demandBtn.setVisibility(View.GONE);
     }
 
     /***
      * Make Demand button invisible on UI just to take space on our Toolbar to make Title Align
      */
     public void makeDemandSpaceAvailableOnUI() {
-        demandBtn = mToolbar.findViewById(R.id.demandBtn);
-        if (demandBtn != null) {
-            demandBtn.setVisibility(View.INVISIBLE);
-        }
+//        demandBtn = mToolbar.findViewById(R.id.demandBtn);
+//        if (demandBtn != null) {
+//            demandBtn.setVisibility(View.INVISIBLE);
+//        }
     }
 
     public void hideToolbarBackNav() {

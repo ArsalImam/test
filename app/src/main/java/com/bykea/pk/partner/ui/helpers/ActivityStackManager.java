@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
@@ -32,7 +30,9 @@ import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
+import com.bykea.pk.partner.ui.activities.LoadboardBookingDetailActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MultiDeliveryFeedbackActivity;
@@ -329,24 +329,6 @@ public class ActivityStackManager {
     public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverData response,
                                                   boolean isFromGcm,
                                                   Context mContext) {
-        /*if (AppPreferences.getAvailableStatus()
-                && !AppPreferences.isAvailableStatusAPICalling()
-                && Utils.isGpsEnable(mContext)
-                && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)
-                && Utils.isNotDelayed(callData.getData().getSentTime())) {
-
-            AppPreferences.setCallData(callData.getData());
-            Intent callIntent = new Intent(DriverApp.getContext(),
-                    MultiDeliveryCallingActivity.class);
-            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            callIntent.setAction(Intent.ACTION_MAIN);
-            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-            if (isFromGcm) {
-                callIntent.putExtra("isGcm", true);
-                Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
-            }
-            mContext.startActivity(callIntent);
-        }*/
 
         if (AppPreferences.getAvailableStatus() && Utils.isGpsEnable()) {
             AppPreferences.setMultiDeliveryCallDriverData(response);
@@ -361,6 +343,7 @@ public class ActivityStackManager {
             mContext.startActivity(callIntent);
         }
     }
+
 
 
     public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {
@@ -475,6 +458,17 @@ public class ActivityStackManager {
     public void startRegisterationActiivty(Context context) {
         Intent intent = new Intent(context, RegistrationActivity.class);
 //        Intent intent = new Intent(context, JsBankFingerSelectionActivity.class);
+        context.startActivity(intent);
+    }
+
+    /**
+     * open loadboard booking screen
+     * @param context Context
+     * @param bookingId selected booking id
+     */
+    public void startLoadboardBookingDetailActiivty(Context context, String bookingId) {
+        Intent intent = new Intent(context, LoadboardBookingDetailActivity.class);
+        intent.putExtra(LoadboardBookingDetailActivity.BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
 

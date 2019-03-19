@@ -17,7 +17,6 @@ public class Constants {
     public static final String USER_TYPE = "d";
     public static final int ESTIMATION_SPEED = 30;
 
-
     public static final int MINIMUM_VOICE_RECORDING = 1000;
 
     public static final String BYKEA = "BYKEA";
@@ -58,9 +57,6 @@ public class Constants {
     public static final long MILISEC_IN_DAY = 86400000;
     public static final long MILISEC_IN_HALF_DAY = 43200000;
     public static final String REG_EX_DIGIT = "\\d+";
-    // Partner Phase 2
-    public static final String INSTA_BUG_BETA_KEY = "1a22f9efd3017c87f9fa8ad33645cafb";
-    public static final String INSTA_BUG_LIVE_KEY = "36070216421223afd484f7b67802c146";
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
     public static final int CONFIRM_DROPOFF_REQUEST_CODE = 101;
@@ -90,39 +86,12 @@ public class Constants {
 
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
-    public static final String IS_FROM_GCM = "isGcm";
-
-    public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
-    public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
-
-    public static final String BUILD_VARIANT_LOCAL_FLAVOR = "local";
-
-    public static final String OTP_SMS = "sms";
-    public static final String OTP_CALL = "call";
-
-    public static final long VERIFICATION_WAIT_MAX_TIME = 25000;
-    public static final long VERIFICATION_WAIT_COUNT_DOWN = 100;
-
-    public static final String DRIVER_STATUS_CODE = "2";
-
-
-    public static final int RESET_CASH_TO_DEFAULT_POSITION = 1;
-    public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
-    public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
-
-    public final static String ACTION = "action";
-
-    public static final int IN_ACTIVE_MUSIC_SOUND = 5000;
-
-    public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
-    public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";
-
-    public static final String MOBILE_IMEI_ERROR = "IMEI";
-
-    public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
-    public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
-
-
+    /*moving camera to current location animation delay*/
+    public static final int ANIMATION_DELAY_FOR_CURRENT_POSITION = 500;
+    public static final int MINUTE_DIVISIBLE_VALUE = 60;
+    public static final int KILOMETER_DIVISIBLE_VALUE = 1000;
+    public static final float BOTTOM_SHEET_ALPHA_VALUE = 0.7f;
+    public static final String LOADBOARD_JOBS_LIMIT = "10";
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
@@ -160,9 +129,35 @@ public class Constants {
         public static final String DATA_TYPE = "data";
     }
 
+    public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
+    public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
 
-    /*moving camera to current location animation delay*/
-    public static final int ANIMATION_DELAY_FOR_CURRENT_POSITION = 500;
+    public static final String BUILD_VARIANT_LOCAL_FLAVOR = "local";
+
+    public static final String OTP_SMS = "sms";
+    public static final String OTP_CALL = "call";
+
+    public static final long VERIFICATION_WAIT_MAX_TIME = 25000;
+    public static final long VERIFICATION_WAIT_COUNT_DOWN = 100;
+
+    public static final String DRIVER_STATUS_CODE = "2";
+
+
+    public static final int RESET_CASH_TO_DEFAULT_POSITION = 1;
+    public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
+    public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
+
+    public final static String ACTION = "action";
+    public static final int IN_ACTIVE_MUSIC_SOUND = 5000;
+
+
+    public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
+    public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";
+
+    public static final String IS_FROM_GCM = "isGcm";
+    public static final String MOBILE_IMEI_ERROR = "IMEI";
+    public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
+    public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
 
 
     public static class Extras {
@@ -275,8 +270,8 @@ public class Constants {
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
     public final static int LOCATION_API_WAIT_ON_INACTIVE_PUSH = 15000;
+
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
-    public final static String DRIVER_SOCKET_CLIENT_TYPE = "PARTNER_ANDROID";
 
     /**
      * Constant for checking delivery status whether is successful or not - Using is FeedbackActivity
@@ -284,6 +279,8 @@ public class Constants {
      * other than 0 is na-kamyab
      */
     public final static int KAMYAB_DELIVERY = 0;
+
+    public final static String DRIVER_SOCKET_CLIENT_TYPE = "PARTNER_ANDROID";
 
     /**
      * This inner class will contain Constants for Log Tags and Error Log Messages
@@ -442,6 +439,8 @@ public class Constants {
         public static final int WALLET_EXCEED_THRESHOLD = 1009;
         public static final int OUT_OF_SERVICE_REGION = 1010;
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+        public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
+        public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
 
     }
 

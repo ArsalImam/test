@@ -94,6 +94,55 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BeginRideResponse;
+import com.bykea.pk.partner.models.response.CancelRideResponse;
+import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
+import com.bykea.pk.partner.models.response.EndRideResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
+import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.tracking.AbstractRouting;
+import com.bykea.pk.partner.tracking.Route;
+import com.bykea.pk.partner.tracking.RouteException;
+import com.bykea.pk.partner.tracking.Routing;
+import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
+import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.NetworkChangeListener;
+import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.AutoFitFontTextView;
+import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -1133,19 +1182,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void updatePickupMarker(String latitude, String longitude) {
         if (null == mGoogleMap) return;
+        if (null == callData) return;
+
         if (pickUpMarker != null) {
             pickUpMarker.remove();
         }
-        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
-                    R.drawable.ic_drop_off_pin_red))
-                    .position(new LatLng(Double.parseDouble(latitude),
-                            Double.parseDouble(longitude))));
-        } else {
-            pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
-                    R.drawable.ic_destination_temp))
-                    .position(new LatLng(Double.parseDouble(latitude),
-                            Double.parseDouble(longitude))));
+        if(latitude != null && !latitude.isEmpty() && longitude != null && !longitude.isEmpty()){
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
+                        R.drawable.ic_drop_off_pin_red))
+                        .position(new LatLng(Double.parseDouble(latitude),
+                                Double.parseDouble(longitude))));
+            } else {
+                pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
+                        R.drawable.ic_destination_temp))
+                        .position(new LatLng(Double.parseDouble(latitude),
+                                Double.parseDouble(longitude))));
+            }
         }
     }
 

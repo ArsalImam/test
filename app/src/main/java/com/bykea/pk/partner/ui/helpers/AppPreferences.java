@@ -14,7 +14,9 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.TrackingData;
+import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
@@ -908,6 +910,25 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * getting driver's cash/non-cash status
+     * @return
+     */
+    public static boolean getIsCash() {
+        return mSharedPreferences.getBoolean(Keys.CASH, false);
+    }
+
+    /**
+     * saving driver's cash/non-cash status to local storage
+     * @param value true/false
+     */
+    public static void setCash(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.CASH, value)
+                .apply();
+    }
+
 
     /**
      * Sets updated value for location response received count.
@@ -1232,6 +1253,43 @@ public class AppPreferences {
         setPilotData(null);
     }
 
+    /**
+     * save selected zone data for loadboard to local storage
+     * @param key Pickup/Dropoff key
+     * @param zoneData selected zone data
+     */
+    public static void setSelectedLoadboardZoneData(String key, ZoneData zoneData) {
+        mSharedPreferences
+                .edit()
+                .putString(key, new Gson().toJson(zoneData))
+                .apply();
+    }
+
+    /**
+     * get selected zone data for loadboard to local storage
+     * @param key Pickup/Dropoff ket
+     * @return ZoneData
+     */
+    public static ZoneData getSelectedLoadboardZoneData(String key) {
+        String data = mSharedPreferences.getString(key, StringUtils.EMPTY);
+        ZoneData zoneData = null;
+        if (StringUtils.isNotBlank(data)) {
+            zoneData = new Gson().fromJson(data, ZoneData.class);
+        }
+        return zoneData;
+    }
+
+    /**
+     * clear only loadboard selected zone data
+     */
+    public static void clearLoadboardSelectedZoneData(){
+        mSharedPreferences
+                .edit()
+                .putString(Keys.LOADBOARD_SELECTED_PICKUP_ZONE, null)
+                .putString(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE, null)
+                .apply();
+    }
+
     //region MultiDelivery Shared Preference
 
     /**
@@ -1254,8 +1312,8 @@ public class AppPreferences {
     public static MultiDeliveryCallDriverData getMultiDeliveryCallDriverData() {
         Gson gson = new Gson();
         return gson.fromJson(mSharedPreferences.getString(
-                        Keys.MULTIDELIVERY_CALLDRIVER_OBJECT,
-                        StringUtils.EMPTY
+                Keys.MULTIDELIVERY_CALLDRIVER_OBJECT,
+                StringUtils.EMPTY
                 ),
                 MultiDeliveryCallDriverData.class);
     }
@@ -1279,9 +1337,8 @@ public class AppPreferences {
      */
     public static String getDeliveryType() {
         return mSharedPreferences
-                .getString(Keys.DELIVERY_TYPE, StringUtils.EMPTY);
+                .getString(Keys.DELIVERY_TYPE, Constants.CallType.SINGLE);
     }
 
     //endregion
-
 }

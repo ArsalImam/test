@@ -81,7 +81,11 @@
     <color name="last_item_color">#f2f2f2</color>
 
     <color name="dark_gray">#6c6c6c</color>
+    <color name="dark_grayRedish">#6b5d5d</color>
+    <color name="dark_gray656565">#656565</color>
+    <color name="dark_blue3179c5">#3179c5</color>
     <color name="Color_DarkRed">#d80027</color>
+    <color name="color_manzil_bg">#8eb2fd</color>
 
     <color name="shadow_gray">#59000000</color>
 
@@ -95,6 +99,15 @@
 
     <color name="color_128c7e">#128c7e</color>
     <color name="color_red">#de0200</color>
+
+    <color name="color_grayf8f8f8">#f8f8f8</color>
+    <color name="color_grayd3d3d3">#d3d3d3</color>
+    <color name="color_gray373737">#373737</color>
+    <color name="color_gray636363">#636363</color>
+    <color name="color_grayf3f3f3">#f3f3f3</color>
+
+    <color name="color_blue3179c5">#3179c5</color>
+    <color name="color_blue5b8fcd">#5b8fcd</color>
 
     <!--Multi Delivery Colors-->
     <color name="color_fdfdfd">#fdfdfd</color>
@@ -140,7 +153,7 @@
     <color name="color_FDFEFF">#FDFEFF</color>
     <color name="color_374752">#374752</color>
     <color name="color_3F9FDD">#3F9FDD</color>
-    
-    
+
+
 
 </resources>

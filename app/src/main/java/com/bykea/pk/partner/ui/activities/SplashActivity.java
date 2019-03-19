@@ -46,6 +46,11 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -225,8 +230,8 @@ public class SplashActivity extends BaseActivity {
 
     /***
      * Validate Login flow for the user.
-     * If user is already login we connect socket with server and check if there are some running tripInfo.
-     * If we find there are some running tripInfo for the login user to redirect him to ride screen.
+     * If user is already login we connect socket with server and check if there are some running trip.
+     * If we find there are some running trip for the login user to redirect him to ride screen.
      * Otherwise, we redirect him to dashboard screen.
      *
      * If the user not logged In we hide splash view and show welcome screen view

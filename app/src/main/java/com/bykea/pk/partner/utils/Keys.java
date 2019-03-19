@@ -165,6 +165,7 @@ public class Keys {
     public static final String CASH_IN_HANDS_RANGE = "CASH_IN_HANDS_RANGE";
     public static final String CASH_IN_HANDS_INDEX = "CASH_IN_HANDS_INDEX";
     public static final String TRIP_DELAY = "TRIP_DELAY";
+    public static final String CASH = "CASH";
 
     /***********************************************************************************************
      * Driver drop off tags
@@ -183,4 +184,11 @@ public class Keys {
     public static final String FRAGMENT_TYPE_NAME = "Type";
 
     public static final String BASE_URL_LOCAL = "BASE_URL_LOCAL";
+
+
+    /**
+     * Loadboard Pickup and Dropoff Zone data preferences tags
+     */
+    public static final String LOADBOARD_SELECTED_PICKUP_ZONE = "LOADBOARD_SELECTED_PICKUP_ZONE";
+    public static final String LOADBOARD_SELECTED_DROPOFF_ZONE = "LOADBOARD_SELECTED_DROPOFF_ZONE";
 }

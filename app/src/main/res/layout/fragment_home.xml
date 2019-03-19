@@ -33,7 +33,6 @@
                 android:layout_height="match_parent" />
 
             <ImageView
-                android:id="@+id/mapPinIv"
                 android:layout_width="@dimen/width.xlarge"
                 android:layout_height="@dimen/height.xlarge"
                 android:layout_alignParentBottom="true"

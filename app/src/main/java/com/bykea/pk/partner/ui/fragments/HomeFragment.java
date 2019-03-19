@@ -6,7 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -18,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +42,7 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
@@ -45,6 +51,10 @@ import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -131,20 +141,20 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.myRangeBar)
     MyRangeBarRupay myRangeBar;
 
-    @BindView(R.id.achaconnectionTv)
-    TextView achaconnectionTv;
+    @BindView(R.id.llBottom)
+    FrameLayout myRangeBarLayout;
 
-    @BindView(R.id.connectionStatusIv)
-    ImageView connectionStatusIv;
-
-    @BindView(R.id.achaconnectionTv1)
-    TextView achaconnectionTv1;
-
-    @BindView(R.id.connectionStatusIv1)
-    ImageView connectionStatusIv1;
+    @BindView(R.id.line)
+    View myRangeBarTopLine;
 
     @BindView(R.id.mapPinIv)
     FrameLayout mapPinIv;
+
+    @BindView(R.id.selectedAmountTV)
+    FontTextView selectedAmountTV;
+
+    @BindView(R.id.selectedAmountRL)
+    LinearLayout selectedAmountRL;
 
     @BindView(R.id.homeMapFragment)
     MapView mapView;
@@ -313,14 +323,6 @@ public class HomeFragment extends Fragment {
                                 getDriverPerformanceData();
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
-                                mCurrentActivity.showBismillah();
-                                mapView.setVisibility(View.GONE);
-                                headerTopActiveLayout.setVisibility(View.GONE);
-                                mapPinIv.setVisibility(View.GONE);
-                                headerTopUnActiveLayout.setVisibility(View.VISIBLE);
-                                layoutUpper.setVisibility(View.VISIBLE);
-                                layoutDuration.setVisibility(View.VISIBLE);
-                                driverStatsLayout.setVisibility(View.VISIBLE);
                             }
                         });
                     } else {
@@ -362,15 +364,6 @@ public class HomeFragment extends Fragment {
                                 public void onClick(View v) {
                                     Dialogs.INSTANCE.dismissDialog();
                                     callAvailableStatusAPI(false);
-                                    mCurrentActivity.showKhudaHafiz();
-                                    mapView.setVisibility(View.VISIBLE);
-                                    headerTopActiveLayout.setVisibility(View.VISIBLE);
-                                    mapPinIv.setVisibility(View.VISIBLE);
-                                    headerTopUnActiveLayout.setVisibility(View.GONE);
-                                    layoutUpper.setVisibility(View.GONE);
-                                    layoutDuration.setVisibility(View.GONE);
-                                    driverStatsLayout.setVisibility(View.GONE);
-
                                 }
                             });
                         } else {
@@ -408,6 +401,46 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * making loadboard jobs listing api call when driver's status is cash
+     */
+    private void callLoadBoardListingAPI() {
+        if (Connectivity.isConnectedFast(mCurrentActivity)) {
+            //get selected pickup and dropoff zone data from local storage
+            ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
+            ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
+            repository.requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
+                    pickupZone == null ? null : pickupZone.get_id(),
+                    dropoffZone == null ? null : dropoffZone.get_id(), new UserDataHandler() {
+                        @Override
+                        public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            if (response != null && response.getData() != null) {
+                                if (mCurrentActivity != null) {
+                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
+                                    resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
+                                            (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(int errorCode, String errorMessage) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            if (errorCode == HTTPStatus.UNAUTHORIZED) {
+                                Utils.onUnauthorized(mCurrentActivity);
+                            } else {
+                                Utils.appToast(mCurrentActivity, errorMessage);
+                                mCurrentActivity.hideLoadBoardBottomSheet();
+                                resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
+                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
+                            }
+
+                        }
+                    });
+        }
+    }
+
     /***
      * Handle UI logic and API status call for driver availability according to
      * ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS check if user allowed it.
@@ -417,27 +450,7 @@ public class HomeFragment extends Fragment {
      * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
      */
     private void handleActivationStatusForBattery(boolean handleForInactive) {
-        if (handleForInactive) {
-            callAvailableStatusAPI(true);
-            mCurrentActivity.showBismillah();
-            mapView.setVisibility(View.GONE);
-            mapPinIv.setVisibility(View.GONE);
-            headerTopActiveLayout.setVisibility(View.GONE);
-            headerTopUnActiveLayout.setVisibility(View.VISIBLE);
-            layoutUpper.setVisibility(View.VISIBLE);
-            layoutDuration.setVisibility(View.VISIBLE);
-            driverStatsLayout.setVisibility(View.VISIBLE);
-        } else {
-            callAvailableStatusAPI(true);
-            mCurrentActivity.showKhudaHafiz();
-            mapView.setVisibility(View.VISIBLE);
-            headerTopActiveLayout.setVisibility(View.VISIBLE);
-            mapPinIv.setVisibility(View.VISIBLE);
-            headerTopUnActiveLayout.setVisibility(View.GONE);
-            layoutUpper.setVisibility(View.GONE);
-            layoutDuration.setVisibility(View.GONE);
-            driverStatsLayout.setVisibility(View.GONE);
-        }
+        callAvailableStatusAPI(true);
     }
 
     @Override
@@ -489,36 +502,38 @@ public class HomeFragment extends Fragment {
 
             if (response != null && response.getData() != null) {
                 if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
-                    Utils.loadImgPicasso(mCurrentActivity, driverImageView, R.drawable.profile_pic,
+                    Utils.loadImgPicasso(driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 }
-                if(weeklyBookingTv != null)
+                if (weeklyBookingTv != null)
                     weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
 
-                if(weeklyMukamalBookingTv != null)
+                if (weeklyMukamalBookingTv != null)
                     weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
-                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
-                            response.getData().getWeeklyBalance();
-                    weeklyKamaiTv.setText(weeklyBalance);
+                    if(weeklyKamaiTv != null){
+                        String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
+                                response.getData().getWeeklyBalance();
+                        weeklyKamaiTv.setText(weeklyBalance);
+                    }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
 
-                if(weeklyTimeTv != null)
+                if (weeklyTimeTv != null)
                     weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-                if(weeklyCancelTv != null)
+                if (weeklyCancelTv != null)
                     weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
-                if(weeklyTakmeelTv != null)
+                if (weeklyTakmeelTv != null)
                     weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
-                if(weeklyQaboliatTv != null)
+                if (weeklyQaboliatTv != null)
                     weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
-                if(weeklyratingTv != null)
+                if (weeklyratingTv != null)
                     weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                if(totalBalanceTv != null)
+                if (totalBalanceTv != null)
                     totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
 
                 if (response.getData().getScore() != null && totalScoreTv != null) {
@@ -563,7 +578,7 @@ public class HomeFragment extends Fragment {
         }
 
         setStatusBtn();
-        setConnectionStatus();
+        mCurrentActivity.setConnectionStatus();
         myRangeBar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -572,59 +587,8 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-    }
-
-    /*
-     * Update Connection Status according to Signal Strength
-     * */
-    private void setConnectionStatus() {
-        String connectionStatus = Connectivity.getConnectionStatus(mCurrentActivity);
-
-        //achaconnectionTv.setText(connectionStatus);
-        //achaconnectionTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable._good_sattelite, 0, 0, 0);
-        switch (connectionStatus) {
-            case "Unknown Status":
-                //tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
-                break;
-            case "Battery Low":
-                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-                achaconnectionTv.setText("لو بیٹری");
-                connectionStatusIv.setImageResource(R.drawable.empty_battery);
-
-                achaconnectionTv1.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-                achaconnectionTv1.setText("لو بیٹری");
-                connectionStatusIv1.setImageResource(R.drawable.empty_battery);
-                break;
-            case "Poor Connection":
-            case "Fair Connection":
-            case "No Connection":
-
-                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.black_3a3a3a));
-                achaconnectionTv.setText("برا کنکشن");
-                achaconnectionTv1.setText("برا کنکشن");
-                //tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
-                break;
-            case "Good Connection":
-                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.black_3a3a3a));
-                achaconnectionTv.setText("اچھا کنکشن");
-                achaconnectionTv1.setText("اچھا کنکشن");
-                connectionStatusIv.setImageResource(R.drawable.wifi_connection_signal_symbol);
-                connectionStatusIv1.setImageResource(R.drawable.wifi_connection_signal_symbol);
-                break;
-        }
-//        if (connectionStatus.equalsIgnoreCase("Unknown Status")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
-//        } else if (connectionStatus.equalsIgnoreCase("Battery Low")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-//            tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.low_battery_icon, 0, 0, 0);
-//        } else if (connectionStatus.equalsIgnoreCase("Poor Connection") ||
-//                connectionStatus.equalsIgnoreCase("Fair Connection") ||
-//                connectionStatus.equalsIgnoreCase("No Connection")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
-//        } else if (connectionStatus.equalsIgnoreCase("Good Connection")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
-//        }
-
+        if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
+            callLoadBoardListingAPI();
     }
 
     public synchronized void setStatusBtn() {
@@ -636,8 +600,11 @@ public class HomeFragment extends Fragment {
             //inactive state
             getDriverPerformanceData();
 
+            myRangeBarLayout.setVisibility(View.VISIBLE);
+            myRangeBarTopLine.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);
             mapPinIv.setVisibility(View.GONE);
+            selectedAmountRL.setVisibility(View.GONE);
             mapView.setVisibility(View.GONE);
             headerTopActiveLayout.setVisibility(View.GONE);
             headerTopUnActiveLayout.setVisibility(View.VISIBLE);
@@ -657,8 +624,14 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
 
             }
+            //reset zone data in local storage
+            AppPreferences.clearLoadboardSelectedZoneData();
+            //display reset zone data
+            mCurrentActivity.showSelectedPickAndDropZoneToBottomSheet();
         } else {        //active state
 
+            myRangeBarLayout.setVisibility(View.INVISIBLE);
+            myRangeBarTopLine.setVisibility(View.INVISIBLE);
             myRangeBar.setEnabled(false);
             mCurrentActivity.showKhudaHafiz();
             mapView.setVisibility(View.VISIBLE);
@@ -681,6 +654,16 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             }
+            if (AppPreferences.getIsCash()) {
+                //Cash in hand visibility VISIBLE
+                selectedAmountRL.setVisibility(View.VISIBLE);
+                selectedAmountTV.setText(getString(R.string.seleted_amount_rs, AppPreferences.getCashInHands()));
+            } else {
+                //Cash in hand visibility GONE and reposition google logo to bottom
+                selectedAmountRL.setVisibility(View.GONE);
+                if (mGoogleMap != null)
+                    mGoogleMap.setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen._16sdp));
+            }
         }
 
         if (AppPreferences.isWalletAmountIncreased()) {
@@ -689,15 +672,16 @@ public class HomeFragment extends Fragment {
             setFenceError("Non Service Area");
         } else {
             tvFenceError.setVisibility(View.GONE);
-            achaconnectionTv.setVisibility(View.VISIBLE);
+            mCurrentActivity.toggleAchaConnection(View.VISIBLE);
         }
+
         makeDriverOffline = false;
     }
 
     private void setFenceError(String errorMessage) {
         tvFenceError.setText(errorMessage);
         tvFenceError.setVisibility(View.VISIBLE);
-        achaconnectionTv.setVisibility(View.GONE);
+        mCurrentActivity.toggleAchaConnection(View.GONE);
     }
 
     @Override
@@ -800,7 +784,7 @@ public class HomeFragment extends Fragment {
             myRangeBar.setCurrentIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
             myRangeBar.setInitialIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
         }
-
+        myRangeBarLayout.setVisibility(View.VISIBLE);
     }
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -896,11 +880,19 @@ public class HomeFragment extends Fragment {
                                     AppPreferences.setOutOfFence(false);
                                 }
                                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+                                if (AppPreferences.getIsCash()) {
+                                    callLoadBoardListingAPI();
+                                } else {
+                                    mCurrentActivity.hideLoadBoardBottomSheet();
+                                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                                            (int) getResources().getDimension(R.dimen._50sdp));
+                                }
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
                                 //todo reset slider to 1000 amount when CIH amount is less then 1000
                                 resetCashSliderToDefault();
+                                mCurrentActivity.hideLoadBoardBottomSheet();
                             }
                             setStatusBtn();
                         } else {
@@ -1121,17 +1113,14 @@ public class HomeFragment extends Fragment {
                         , 12.0f));
 
             showCancelDialogIfRequired();
-
-//            ArrayList<HeatMapUpdatedResponse> data = new Gson().fromJson(getString(R.string.heat_map_data), new TypeToken<ArrayList<HeatMapUpdatedResponse>>() {
-//            }.getType());
-//            updateHeatMapUI(data);
-
-
-            //Heat map overlay
-            //addHeatMap();
-
-            //Heat map polyline
-            //addHeatMapPolyline();
+            if (AppPreferences.getIsCash()) {
+                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                        (int) getResources().getDimension(R.dimen._110sdp));
+                setDriverLocation();
+            } else {
+                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                        (int) getResources().getDimension(R.dimen._19sdp));
+            }
         }
     };
 
@@ -1462,7 +1451,7 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void run() {
                     if (action.equalsIgnoreCase(Keys.CONNECTION_BROADCAST)) {
-                        setConnectionStatus();
+                        mCurrentActivity.setConnectionStatus();
                     } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) ||
                             action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
                         AppPreferences.setDriverDestination(null);
@@ -1568,5 +1557,30 @@ public class HomeFragment extends Fragment {
 
     }
 
+
+    /**
+     * Reposition my location icon and google logo when loadboard visible/gone
+     * @param locationPointerBottomMargin my location bottom margin
+     * @param googleMapLogoBottomPadding  google logo padding from bottom
+     */
+    public void resetPositionOfMapPinAndSelectedCashView(int locationPointerBottomMargin, int googleMapLogoBottomPadding) {
+        if (mapPinIv != null) {
+            RelativeLayout.LayoutParams myLocationPointerParams = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
+            myLocationPointerParams.bottomMargin = locationPointerBottomMargin;
+            mapPinIv.setLayoutParams(myLocationPointerParams);
+        }
+
+        if (selectedAmountRL != null) {
+            RelativeLayout.LayoutParams selectedAmountTVLayoutParams = (RelativeLayout.LayoutParams) selectedAmountRL.getLayoutParams();
+            selectedAmountTVLayoutParams.bottomMargin = locationPointerBottomMargin;
+            selectedAmountRL.setLayoutParams(selectedAmountTVLayoutParams);
+        }
+
+
+        if (mGoogleMap != null) {
+            mGoogleMap.setPadding(0, 0, 0, googleMapLogoBottomPadding);
+        }
+
+    }
 
 }
