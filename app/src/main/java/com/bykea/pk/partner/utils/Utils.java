@@ -3,7 +3,6 @@ package com.bykea.pk.partner.utils;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
@@ -41,7 +40,6 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -49,7 +47,6 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.SpannableStringBuilder;
@@ -71,14 +68,11 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
-
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.DropOffMarker;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
@@ -87,9 +81,7 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
-import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
-import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -101,10 +93,6 @@ import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontUtils;
 import com.elvishew.xlog.XLog;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.bykea.pk.partner.widgets.FontUtils;
-import com.elvishew.xlog.XLog;
-import com.bykea.pk.partner.widgets.FontUtils;
-import com.elvishew.xlog.XLog;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -149,7 +137,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -161,12 +148,6 @@ import javax.net.ssl.TrustManagerFactory;
 import retrofit.Converter;
 import retrofit.Response;
 import retrofit.Retrofit;
-
-import retrofit.Converter;
-import retrofit.Response;
-import retrofit.Retrofit;
-
-import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 
 public class Utils {
@@ -2727,17 +2708,18 @@ public class Utils {
      * @param uri     attachment file URI
      * @return {@link Intent} intent object which we will use to invoke action
      */
-    public static Intent createEmailIntentWithAttachment(final String toEmail,
-                                                         final String subject,
+    public static Intent createEmailIntentWithAttachment(final String subject,
                                                          final String message,
-                                                         Uri uri) {
+                                                         Uri uri,
+                                                         final String... toEmail) {
 
         // Nothing resolves send to, so fallback to send...
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         //emailIntent.setType("plain/text");
         emailIntent.setType("message/rfc822");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL,
-                new String[]{toEmail});
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, toEmail);
+        /*emailIntent.putExtra(Intent.EXTRA_EMAIL,
+                new String[]{toEmail});*/
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         emailIntent.putExtra(Intent.EXTRA_TEXT, message);
         if (uri != null) {
@@ -2775,10 +2757,10 @@ public class Utils {
                             currentActivity.getApplicationContext().getPackageName() + ".fileprovider", file);
                 }
                 Intent emailIntent = Utils.createEmailIntentWithAttachment(
-                        Constants.LogTags.LOG_SEND_DEVELOPER_EMAIL,
                         Constants.LogTags.LOG_SEND_SUBJECT,
                         Constants.LogTags.LOG_SEND_MESSAGE_BODY,
-                        uri);
+                        uri,
+                        Constants.LogTags.LOG_SEND_DEVELOPERS_EMAIL);
                 // Verify the intent will resolve to at least one activity
                 if (emailIntent.resolveActivity(currentActivity.getPackageManager()) != null) {
                     Utils.redLogLocation(Constants.LogTags.BYKEA_LOG_TAG, "Email intent set");

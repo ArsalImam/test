@@ -67,8 +67,7 @@ import butterknife.ButterKnife;
 
 public class SplashActivity extends BaseActivity {
 
-    public final String TAG = SplashActivity.class.getSimpleName();
-
+    private static final int REQUEST_CODE = 123;
     private SplashActivity mCurrentActivity;
     private UserRepository repository;
     private CountDownTimer splashTimer;

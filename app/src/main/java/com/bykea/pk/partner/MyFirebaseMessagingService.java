@@ -8,8 +8,6 @@ import android.os.Looper;
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.ReceivedMessage;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.LocationResponse;
