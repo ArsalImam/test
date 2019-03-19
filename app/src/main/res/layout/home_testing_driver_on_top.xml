@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <!--<RelativeLayout
             android:gravity="center"
             android:layout_marginBottom="@dimen/_4sdp"
             android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                 android:layout_height="@dimen/_18sdp" />
 
 
-        </RelativeLayout>
+        </RelativeLayout>-->
 
         <View
             android:background="@color/grey_hex_98"

@@ -317,6 +317,7 @@ public class Utils {
 
     public static void logout(Context context) {
         clearData(context);
+        AppPreferences.clearLoadboardSelectedZoneData();
         HomeActivity.visibleFragmentNumber = 0;
         //ActivityStackManager.getInstance().startLoginActivity(context);
         ActivityStackManager.getInstance().startLandingActivity(context);
@@ -1130,21 +1131,23 @@ public class Utils {
         return false;
     }
 
-    public static void loadImgPicasso(Context context, ImageView imageView, int placeHolder, String link) {
-        Picasso.get().load(link)
-                .fit().centerInside()
-                .placeholder(placeHolder)
-                .into(imageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        redLog("Picasso", "onSuccess");
-                    }
+    public static void loadImgPicasso(ImageView imageView, int placeHolder, String link) {
+        if(imageView != null){
+            Picasso.get().load(link)
+                    .fit().centerInside()
+                    .placeholder(placeHolder)
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            redLog("Picasso", "onSuccess");
+                        }
 
-                    @Override
-                    public void onError(Exception e) {
-                        redLog("Picasso", "onError");
-                    }
-                });
+                        @Override
+                        public void onError(Exception e) {
+                            redLog("Picasso", "onError");
+                        }
+                    });
+        }
     }
 
     public static void loadImgPicasso(Context context, ImageView imageView, String link) {
@@ -2414,17 +2417,18 @@ public class Utils {
      * @param uri     attachment file URI
      * @return {@link Intent} intent object which we will use to invoke action
      */
-    public static Intent createEmailIntentWithAttachment(final String toEmail,
-                                                         final String subject,
+    public static Intent createEmailIntentWithAttachment(final String subject,
                                                          final String message,
-                                                         Uri uri) {
+                                                         Uri uri,
+                                                         final String... toEmail) {
 
         // Nothing resolves send to, so fallback to send...
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         //emailIntent.setType("plain/text");
         emailIntent.setType("message/rfc822");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL,
-                new String[]{toEmail});
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, toEmail);
+        /*emailIntent.putExtra(Intent.EXTRA_EMAIL,
+                new String[]{toEmail});*/
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         emailIntent.putExtra(Intent.EXTRA_TEXT, message);
         if (uri != null) {
@@ -2462,10 +2466,10 @@ public class Utils {
                             currentActivity.getApplicationContext().getPackageName() + ".fileprovider", file);
                 }
                 Intent emailIntent = Utils.createEmailIntentWithAttachment(
-                        Constants.LogTags.LOG_SEND_DEVELOPER_EMAIL,
                         Constants.LogTags.LOG_SEND_SUBJECT,
                         Constants.LogTags.LOG_SEND_MESSAGE_BODY,
-                        uri);
+                        uri,
+                        Constants.LogTags.LOG_SEND_DEVELOPERS_EMAIL);
                 // Verify the intent will resolve to at least one activity
                 if (emailIntent.resolveActivity(currentActivity.getPackageManager()) != null) {
                     Utils.redLogLocation(Constants.LogTags.BYKEA_LOG_TAG, "Email intent set");

@@ -26,7 +26,6 @@
 -keep class org.jsoup.** { *; }
 -keep class com.github.jd.** { *; }
 -keep class com.bykea.pk.partner.models.** { *; }
--keep class com.instabug.** { *; }
 -keep class top.oply.opuslib.** { *; }
 -keep class java.io.** { *; }
 -keep class id.zelory.** { *; }
@@ -39,7 +38,6 @@
 -keep class org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -keep interface android.support.** { *; }
 -dontwarn butterknife.internal.**
--dontwarn com.instabug.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
 -dontwarn org.opencv.R

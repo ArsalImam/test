@@ -36,6 +36,11 @@ public class PilotData {
     @SerializedName("cih")
     private String cashInHand;
 
+    /**
+     * Added cash field for loadboard working - non-cash drivers will not be able to see/call loadboard jobs
+     */
+    private boolean cash;
+
     public String getRating() {
         return rating;
     }
@@ -160,6 +165,14 @@ public class PilotData {
 
     public void setService_type(String service_type) {
         this.service_type = service_type;
+    }
+
+    public boolean isCash() {
+        return cash;
+    }
+
+    public void setCash(boolean cash) {
+        this.cash = cash;
     }
 
     public class City {

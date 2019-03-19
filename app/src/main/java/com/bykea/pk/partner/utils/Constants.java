@@ -42,9 +42,6 @@ public class Constants {
     public static final long MILISEC_IN_DAY = 86400000;
     public static final long MILISEC_IN_HALF_DAY = 43200000;
     public static final String REG_EX_DIGIT = "\\d+";
-    // Partner Phase 2
-    public static final String INSTA_BUG_BETA_KEY = "1a22f9efd3017c87f9fa8ad33645cafb";
-    public static final String INSTA_BUG_LIVE_KEY = "36070216421223afd484f7b67802c146";
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
     public static final int CONFIRM_DROPOFF_REQUEST_CODE = 101;
@@ -82,6 +79,11 @@ public class Constants {
 
     /*moving camera to current location animation delay*/
     public static final int ANIMATION_DELAY_FOR_CURRENT_POSITION = 500;
+    public static final int MINUTE_DIVISIBLE_VALUE = 60;
+    public static final int KILOMETER_DIVISIBLE_VALUE = 1000;
+    public static final float BOTTOM_SHEET_ALPHA_VALUE = 0.7f;
+    public static final String LOADBOARD_JOBS_LIMIT = "10";
+
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -253,7 +255,8 @@ public class Constants {
         // Log file Max file size before it creates a new file for logs
         public static final long LOG_FILE_MAX_SIZE = 1024 * 1024;
         //Developer email address which is used for sending logs.
-        public static final String LOG_SEND_DEVELOPER_EMAIL = "raheel@mobinspire.com";
+        public static final String[] LOG_SEND_DEVELOPERS_EMAIL = new String[]{"adil.baig@bykea.com",
+                "abdul.mannan@bykea.com", "amir.raza@bykea.com", "aftab.sikander@bykea.com"};
         public static final String LOG_SEND_SUBJECT = "Log Files";
         public static final String LOG_SEND_MESSAGE_BODY = "Latest logs attached";
         public static final String BYKEA_LOG_TAG = "BYKEA_LOG_TAG";
@@ -357,6 +360,8 @@ public class Constants {
         public static final int WALLET_EXCEED_THRESHOLD = 1009;
         public static final int OUT_OF_SERVICE_REGION = 1010;
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+        public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
+        public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
 
     }
 
