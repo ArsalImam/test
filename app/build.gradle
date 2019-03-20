@@ -70,7 +70,7 @@ android {
         productFlavors {
             local {
                 dimension "driver"
-                buildConfigField "String", "FLAVOR_URL", "\"http://115.42.64.197:8888\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
             }
             staging {
                 dimension "driver"
