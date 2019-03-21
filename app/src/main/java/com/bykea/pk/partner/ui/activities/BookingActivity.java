@@ -107,9 +107,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @BindView(R.id.tvCodAmount)
     AutoFitFontTextView tvCodAmount;
 
+    @BindView(R.id.tvFareAmount)
+    AutoFitFontTextView tvFareAmount;
+
     @BindView(R.id.tvPWalletAmount)
     AutoFitFontTextView tvPWalletAmount;
 
+    @BindView(R.id.llTopMiddle)
+    RelativeLayout llTopMiddle;
     @BindView(R.id.llTopRight)
     RelativeLayout llTopRight;
     @BindView(R.id.callbtn)
@@ -931,18 +936,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             ivTopUp.setVisibility(View.INVISIBLE);
         }
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
-            llTopRight.setVisibility(View.VISIBLE);
+            llTopMiddle.setVisibility(View.VISIBLE);
             tvCodAmount.setText("Rs." + callData.getCodAmount());
             if (Utils.isPurchaseService(callData.getCallType())) {
                 tvCashWasooliLabel.setText("خریداری کی رقم");
             }
         } else {
-            llTopRight.setVisibility(View.INVISIBLE);
+            llTopMiddle.setVisibility(View.INVISIBLE);
         }
 
         if (Utils.isDeliveryService(callData.getCallType())) {
             if (!callData.isCod()) {
-                llTopRight.setVisibility(View.INVISIBLE);
+                llTopMiddle.setVisibility(View.INVISIBLE);
             }
             if (checkIfDetailsAdded()) {
                 llDetails.setVisibility(View.VISIBLE);
@@ -961,6 +966,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 llDetails.setVisibility(View.GONE);
             }
         }
+
+//        if (callData.getKraiKiKamai()) {
+            llTopRight.setVisibility(View.VISIBLE);
+            tvFareAmount.setText("Rs." + callData.getKraiKiKamai());
+//        } else {
+//            llTopRight.setVisibility(View.INVISIBLE);
+//        }
     }
 
     private void setOnArrivedData() {
