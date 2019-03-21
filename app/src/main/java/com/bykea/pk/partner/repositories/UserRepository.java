@@ -913,14 +913,27 @@ public class UserRepository {
         mWebIORequestHandler.requestMultiDriverFinishRide(jsonObject, mDataCallback);
     }
 
-    /**
-     * Emit Driver Finished data.
-     *
-     * @param handler The Callback that will be invoked when driver finish event response received.
+    /** Emit Driver Finished data.
+     * @param tripID finishing trip id
+     * @param receivedAmount amount that is received by partner
+     * @param rating feedback rating
+     * @param isDeliveryFeedback check whether finishing of multiple delivery ride or multiple delivery simple ride
+     * @param deliveryStatus delivery success or fail
+     * @param deliveryMsg delivery success or fail msg
+     * @param receiverName receiver name
+     * @param receiverPhone receiver phone number
+     * @param handler handler The Callback that will be invoked when driver finish event response received.
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
-    public void requestMultiDeliveryDriverFeedback(String tripID, int receivedAmount, float rating,
+    public void requestMultiDeliveryDriverFeedback(String tripID,
+                                                   int receivedAmount,
+                                                   float rating,
+                                                   boolean isDeliveryFeedback,
+                                                   boolean deliveryStatus,
+                                                   String deliveryMsg,
+                                                   String receiverName,
+                                                   String receiverPhone,
                                                    IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
@@ -932,7 +945,12 @@ public class UserRepository {
             jsonObject.put("rate", rating);
             jsonObject.put("feedback", "nice");
             jsonObject.put("received_amount", receivedAmount);
-
+            if(isDeliveryFeedback){
+                jsonObject.put("delivery_status", deliveryStatus);
+                jsonObject.put("delivery_message", deliveryMsg);
+                jsonObject.put("received_by_name", receiverName);
+                jsonObject.put("received_by_phone", receiverPhone);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

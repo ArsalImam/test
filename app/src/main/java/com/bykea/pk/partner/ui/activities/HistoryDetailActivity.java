@@ -138,7 +138,7 @@ public class HistoryDetailActivity extends BaseActivity {
                             CURRENT_DATE_FORMAT,
                             REQUIRED_DATE_FORMAT));
                     serviceTypeTv.setText(StringUtils.capitalize(data.getTrip_type()));
-                    totalDistanceTv.setText(data.getInvoice().getKm() + "  کلومیٹر  ");
+                    totalDistanceTv.setText(Math.round(Double.parseDouble(data.getInvoice().getKm())) + "  کلومیٹر  ");
                     float totalTime = Float.parseFloat(data.getInvoice().getMinutes());
                     float pricePerMin = Float.parseFloat(data.getInvoice().getPricePerMin());
                     float pricePerKm = Float.parseFloat(data.getInvoice().getPricePerKm());

@@ -114,6 +114,9 @@ public class Constants {
     public static final String RETROFIT_METHOD_POST = "post";
     public static final String RETROFIT_METHOD_GET = "get";
 
+    public static final int TRIP_STATUS_CODE_DELIVERY = 10;
+    public static final int TRIP_STATUS_CODE_RIDE = 7;
+
     public static class CallType {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";

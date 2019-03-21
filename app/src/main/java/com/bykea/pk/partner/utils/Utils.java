@@ -3044,6 +3044,20 @@ public class Utils {
         AppPreferences.setAvailableStatus(true);
     }
 
+    /**
+     * multi delivery success or fail messages
+     * @return list of messages
+     */
+    public static ArrayList<String> getDeliveryMsgsList() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("کامیاب ڈیلیوری");
+        list.add("ناكام - وصول کرنے والا رابطے میں نہیں");
+        list.add("ناكام - وصول کرنے والا موجود نہیں ہے");
+        list.add("ناكام - پارسل وصول کرنے سے انکار");
+        list.add("ناكام - پتہ نہیں ملا");
+        return list;
+    }
+
     //endregion
 
 }

@@ -308,5 +308,7 @@
     <string name="multidelivery_complete_msg_one">نمبر</string>
     <string name="multidelivery_complete_msg_two">مکمل؟</string>
 
+    <string name="receiver_name">Please enter receiver name.</string>
+    <string name="receiver_number">Please enter receiver number.</string>
 
 </resources>

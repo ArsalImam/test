@@ -15,6 +15,7 @@ import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
 import com.bykea.pk.partner.models.data.MultiDeliveryPickup;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.DirectionAdapter;
@@ -62,21 +63,35 @@ public class MultiDeliveryDirectionFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        MultiDeliveryPickup pickup = new MultiDeliveryPickup("University Road",
+        MultiDeliveryPickup pickup = new MultiDeliveryPickup(
+                callData.getPickup().getZoneName(),
                 callData.getPickup().getFeederName(),
                 callData.getPickup().getPickupAddress());
 
         List<DirectionDropOffData> list = new ArrayList<>();
         for (int i = 0; i < callData.getBookings().size(); i++) {
-            DirectionDropOffData dropOff = new DirectionDropOffData(
-                    "University Road",
-                    callData.getBookings().get(i).getTrip().getTripNo(),
-                    callData.getBookings().get(i).getPassenger().getName(),
-                    500,
-                    callData.getBookings().get(i).getDropOff().getPickupAddress(),
-                    String.valueOf(i + 1));
+            MultipleDeliveryBookingResponse booking = callData.getBookings().get(i);
+            if(booking != null){
+                String tripNo = "", passengerName = "",pickupAddress = "", zoneName = "";
+                int cashOnDeliveryAmount = -1;
+                if(booking.getTrip() != null){
+                    tripNo = booking.getTrip().getTripNo();
+                    if(booking.getTrip().getDeliveryInfo() != null && booking.getTrip().getDeliveryInfo().isCashOnDelivery())
+                        cashOnDeliveryAmount = booking.getTrip().getDeliveryInfo().getAmount();
+                }
+                if(booking.getPassenger() != null)
+                    passengerName = booking.getPassenger().getName();
 
-            list.add(dropOff);
+                if(booking.getDropOff() != null){
+                    zoneName = booking.getDropOff().getZoneName();
+                    pickupAddress = booking.getDropOff().getPickupAddress();
+                }
+
+                DirectionDropOffData dropOff = new DirectionDropOffData(
+                        zoneName, tripNo, passengerName, cashOnDeliveryAmount, pickupAddress, String.valueOf(i + 1));
+
+                list.add(dropOff);
+            }
         }
 
         MultiDeliveryDirectionDetails data = new MultiDeliveryDirectionDetails(pickup, list);

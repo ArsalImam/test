@@ -17,4 +17,9 @@ open class MultipleDeliveryPickupResponse {
     var feederName: String? = StringUtils.EMPTY
     @SerializedName("contact_number")
     var contactNumer: String? = StringUtils.EMPTY
+
+    @SerializedName("zone")
+    var zoneName: String = StringUtils.EMPTY
+
+
 }

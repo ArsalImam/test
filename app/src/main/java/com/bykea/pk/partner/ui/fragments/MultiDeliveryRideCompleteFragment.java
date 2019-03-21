@@ -231,7 +231,7 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
 
         bookingResponse.getTrip().setTripDistance(tripInfo.getTripDistance());
         bookingResponse.getTrip().setTripDuration(tripInfo.getTripDuration());
-        bookingResponse.getTrip().setStartAddress(tripInfo.getStartAddress());
+//        bookingResponse.getTrip().setStartAddress(tripInfo.getStartAddress());
         bookingResponse.getTrip().setEndAddress(tripInfo.getEndAddress());
 
         AppPreferences.setMultiDeliveryCallDriverData(callDriverData);

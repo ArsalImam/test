@@ -76,9 +76,13 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.View
                 holder.streetAddressTv.setText(dropOff.getStreetAddress());
                 holder.tripNumberTv.setText(dropOff.getTripNumber());
                 holder.driverNameTv.setText(dropOff.getPassengerName());
-                holder.codValueTv.setText(holder.codValueTv.getContext().
-                        getString(R.string.code_value,
-                                dropOff.getCodValue()));
+                if(dropOff.getCodValue() != -1){
+                    holder.codValueTv.setVisibility(View.VISIBLE);
+                    holder.codValueTv.setText(holder.codValueTv.getContext().
+                            getString(R.string.code_value, dropOff.getCodValue()));
+                } else {
+                    holder.codValueTv.setVisibility(View.GONE);
+                }
             } else {
 
                 //Set header data i.e pickup data
