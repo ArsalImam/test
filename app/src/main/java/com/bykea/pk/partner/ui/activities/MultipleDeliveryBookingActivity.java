@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -131,6 +132,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     @BindView(R.id.tafseelLayout)
     FrameLayout tafseelLayout;
 
+    @BindView(R.id.serviceImageView)
+    AppCompatImageView serviceImageView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,6 +179,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         setTripStates();
         checkConnectivity(mCurrentActivity);
         AppPreferences.setJobActivityOnForeground(true);
+        Utils.loadImgURL(serviceImageView, callDriverData.getImageURL());
     }
 
     /***
