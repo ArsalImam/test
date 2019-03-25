@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -152,6 +153,18 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
+
+        if (!Connectivity.isBackgroundDataAccessAvailable(mCurrentActivity)) {
+
+            Toast.makeText(mCurrentActivity, "Dialog will be shown", Toast.LENGTH_SHORT).show();
+
+            //TODO: Show Dialog of Background Data Access Available
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setComponent(new ComponentName("com.android.settings",
+                    "com.android.settings.Settings$DataUsageSummaryActivity"));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
 
     }
 
