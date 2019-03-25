@@ -147,6 +147,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         AppPreferences.setStatsApiCallRequired(true);
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
+        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
     }
 
     /***
@@ -1094,10 +1095,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     if (mCurrentActivity != null) {
                         Dialogs.INSTANCE.dismissDialog();
                         setArrivedState();
+                        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
                     }
                 }
             });
-            EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
         }
 
         @Override
@@ -1108,6 +1109,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     if (mCurrentActivity != null) {
                         Dialogs.INSTANCE.dismissDialog();
                         setStartedState();
+                        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
                     }
                 }
             });
