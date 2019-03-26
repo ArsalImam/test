@@ -316,7 +316,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                         callerRb.getRating(),
                         true,
                         selectedMsgPosition == 0,
-                        Utils.getDeliveryMsgsList().get(selectedMsgPosition),
+                        Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
                         etReceiverName.getText().toString(),
                         etReceiverMobileNo.getText().toString(),
                         handler);
@@ -503,14 +503,14 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         llReceiverInfo.setVisibility(View.VISIBLE);
 
         rlDeliveryStatus.setVisibility(View.VISIBLE);
-        tvAmountToGetLable.setText(" ٹوٹل");
+        tvAmountToGetLable.setText(getString(R.string.total_urdu));
         ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
         initAdapter(tripInfo);
 
         if(tripInfo.getDeliveryInfo() != null){
             if (tripInfo.getDeliveryInfo().isCashOnDelivery()) {
                 cashOnDeliveryRL.setVisibility(View.VISIBLE);
-                cashOnDeliveryTV.setText(""+tripInfo.getDeliveryInfo().getAmount());
+                cashOnDeliveryTV.setText(getString(R.string.display_integer_value,tripInfo.getDeliveryInfo().getAmount()));
             } else {
                 cashOnDeliveryRL.setVisibility(View.GONE);
             }
@@ -526,7 +526,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      */
     private void initAdapter(final MultiDeliveryTrip tripInfo) {
 
-        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, Utils.getDeliveryMsgsList());
+        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, Utils.getDeliveryMsgsList(mCurrentActivity));
 
 
         spDeliveryStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
