@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -19,21 +18,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.LoadBoardListingData;
 import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.fragments.DataSaverDialogFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.LoadboardZoneFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -58,6 +55,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends BaseActivity {
+
+    private static final String TAG = HomeActivity.class.getSimpleName();
 
     private HomeActivity mCurrentActivity;
     public String navTitles[];
@@ -153,19 +152,6 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
-
-        if (!Connectivity.isBackgroundDataAccessAvailable(mCurrentActivity)) {
-
-            Toast.makeText(mCurrentActivity, "Dialog will be shown", Toast.LENGTH_SHORT).show();
-
-            //TODO: Show Dialog of Background Data Access Available
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.setComponent(new ComponentName("com.android.settings",
-                    "com.android.settings.Settings$DataUsageSummaryActivity"));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }
-
     }
 
     @Override
@@ -192,6 +178,8 @@ public class HomeActivity extends BaseActivity {
 
         //we need to validate app version on every visit on home screen.
         updateAppVersionIfRequired();
+
+        checkIfBackgroundDataAccessible();
     }
 
     @Override
@@ -389,6 +377,17 @@ public class HomeActivity extends BaseActivity {
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Check the availability of cellular data access in background.
+     */
+    private void checkIfBackgroundDataAccessible(){
+        if (!Connectivity.isBackgroundDataAccessAvailable(mCurrentActivity)) {
+            DataSaverDialogFragment dialogFragment = new DataSaverDialogFragment();
+            dialogFragment.setCancelable(false);
+            dialogFragment.show(getSupportFragmentManager(), TAG);
         }
     }
 
