@@ -337,12 +337,12 @@ public class Utils {
         SettingsData settingsData = AppPreferences.getSettings();
         SignUpSettingsResponse signUpSettingsResponse = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
 
-        AppPreferences.clear();
+        if (!AppPreferences.getIsAlreadyCleared()) AppPreferences.clear();
 
         if (signUpSettingsResponse != null) {
             AppPreferences.setObjectToSharedPref(signUpSettingsResponse);
         }
-        if (settingsData != null) {
+        if (settingsData != null && settingsData.getSettings() != null) {
             settingsData.getSettings().setPartner_signup_url(StringUtils.EMPTY);
             AppPreferences.saveSettingsData(settingsData);
             if (settingsData.getSettings().getCih_range() != null) {

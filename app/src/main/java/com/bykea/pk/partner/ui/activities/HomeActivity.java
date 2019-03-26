@@ -1,6 +1,9 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,22 +18,20 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.LoadBoardListingData;
 import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
@@ -57,6 +58,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends BaseActivity {
+
+    private static final String TAG = HomeActivity.class.getSimpleName();
 
     private HomeActivity mCurrentActivity;
     public String navTitles[];
@@ -152,6 +155,8 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
+
+        clearSharedPrefIfDirty();
 
     }
 
@@ -718,5 +723,33 @@ public class HomeActivity extends BaseActivity {
         activeHomeLoadBoardList.setVisibility(View.VISIBLE);
     }
 
+
+    /**
+     * Clears the Local Shared Pref in case of dirt
+     */
+    private void clearSharedPrefIfDirty() {
+        int savedVersionCode = AppPreferences.getAppVersionCode();
+        Context context = getApplicationContext();
+        PackageManager manager = context.getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+            int currentVersionCode = info.versionCode;
+            Log.d(TAG, "Saved version code: " + savedVersionCode + " Current version code: " + currentVersionCode);
+            if (savedVersionCode == 0 || currentVersionCode > savedVersionCode) {
+                AppPreferences.clear();
+                AppPreferences.setIsAlreadyCleared(true);
+                AppPreferences.setAppVersionCode(currentVersionCode);
+
+
+                Log.d(TAG, "App Preference cleared");
+                int savedVersionCodeNew = AppPreferences.getAppVersionCode();
+                Log.d(TAG, "New Saved version code: " + savedVersionCodeNew + " Current version code: " + currentVersionCode);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            AppPreferences.clear();
+            Log.d(TAG, "App Preference cleared");
+        }
+    }
 
 }
