@@ -67,6 +67,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
@@ -2684,6 +2685,7 @@ public class Utils {
         int currentVersionCode = BuildConfig.VERSION_CODE;
         if (savedVersionCode == 0 || currentVersionCode > savedVersionCode) {
             AppPreferences.clear();
+            WebIO.getInstance().clearConnectionData();
             AppPreferences.setIsAlreadyCleared(true);
             AppPreferences.setAppVersionCode(currentVersionCode);
         }
