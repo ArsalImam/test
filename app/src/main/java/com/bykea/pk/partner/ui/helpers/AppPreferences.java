@@ -1256,6 +1256,10 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * This method saves a flag when shared pref is recently clear in case of dirty shared pref.
+     * @param value isAlreadyCleared
+     */
     public static void setIsAlreadyCleared(boolean value) {
         mSharedPreferences
                 .edit()
@@ -1263,6 +1267,9 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * @return This method returns a flag when shared pref is recently clear in case of dirty shared pref.
+     */
     public static boolean getIsAlreadyCleared() {
         return mSharedPreferences.getBoolean(Keys.IS_ALREADY_CLEAR, false);
     }
