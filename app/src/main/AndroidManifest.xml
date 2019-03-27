@@ -40,7 +40,8 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:node="merge">
+        tools:node="merge"
+        tools:replace="android:allowBackup">
 
         <!-- OTP SMS Listener-->
         <receiver
