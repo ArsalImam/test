@@ -1051,8 +1051,9 @@ public class Utils {
      * Returns API key for Google GeoCoder API if required.
      * Will return Empty String if there's no error in Last
      * Request while using API without any Key.
+     *
      * @return Google place server API key
-     * */
+     */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
@@ -1132,7 +1133,7 @@ public class Utils {
     }
 
     public static void loadImgPicasso(ImageView imageView, int placeHolder, String link) {
-        if(imageView != null){
+        if (imageView != null) {
             Picasso.get().load(link)
                     .fit().centerInside()
                     .placeholder(placeHolder)
@@ -2674,4 +2675,17 @@ public class Utils {
 
     }
 
+
+    /**
+     * Clears the Local Shared Pref in case of dirt
+     */
+    public static void clearSharedPrefIfDirty() {
+        int savedVersionCode = AppPreferences.getAppVersionCode();
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+        if (savedVersionCode == 0 || currentVersionCode > savedVersionCode) {
+            AppPreferences.clear();
+            AppPreferences.setIsAlreadyCleared(true);
+            AppPreferences.setAppVersionCode(currentVersionCode);
+        }
+    }
 }
