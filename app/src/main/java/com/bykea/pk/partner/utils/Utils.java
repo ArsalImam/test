@@ -355,6 +355,7 @@ public class Utils {
         AppPreferences.setRegId(regId);
         AppPreferences.saveLocation(currentLat, currentLng);
         WebIO.getInstance().clearConnectionData();
+        ActivityStackManager.getInstance().stopLocationService(context);
     }
 
     public static String formatDecimalPlaces(String value) {
