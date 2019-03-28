@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
@@ -45,6 +46,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class WebIORequestHandler {
+    private static final String TAG = WebIORequestHandler.class.getSimpleName();
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
     private static ChatMessageListener chatMessageListener = new ChatMessageListener();
 //    private static Context mContext;
@@ -106,6 +108,8 @@ public class WebIORequestHandler {
     }
 
     public void ackCall(JSONObject acceptCallData, IResponseCallback responseCallBack) {
+
+
         emitWithJObject(ApiTags.ACK_CALL, new MyGenericListener(ApiTags.ACK_CALL, AckCallResponse.class,
                 responseCallBack), acceptCallData);
     }
@@ -210,7 +214,9 @@ public class WebIORequestHandler {
 
     private void emitWithJObject(final String eventName, MyGenericListener myGenericListener, final JSONObject json) {
         WebIO.getInstance().on(eventName, myGenericListener);
+        Log.d(TAG, "WebIO.getInstance().isSocketConnected(): "+WebIO.getInstance().isSocketConnected());
         if (WebIO.getInstance().isSocketConnected()) {
+            Log.d(TAG, "Inside Normal if of connected socket: ");
             if (!WebIO.getInstance().emit(eventName, json)) {
                 WebIO.getInstance().onConnect(new Emitter.Listener() {
                     @Override
@@ -229,9 +235,10 @@ public class WebIORequestHandler {
                     }
                 });
             } else {
-                Utils.redLog("Request at " + eventName, json.toString());
+                Utils.redLog("Request at ----- shouldnot come here" + eventName, json.toString());
             }
         } else {
+            Log.d(TAG, "Reconnection logic new build");
             WebIO.getInstance().onConnect(new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
