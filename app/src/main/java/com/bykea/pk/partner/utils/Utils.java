@@ -338,7 +338,9 @@ public class Utils {
         SettingsData settingsData = AppPreferences.getSettings();
         SignUpSettingsResponse signUpSettingsResponse = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
 
-        if (!AppPreferences.getIsAlreadyCleared()) AppPreferences.clear();
+        int savedAppVersionCode = AppPreferences.getAppVersionCode();
+        AppPreferences.clear();
+        AppPreferences.setAppVersionCode(savedAppVersionCode);
 
         if (signUpSettingsResponse != null) {
             AppPreferences.setObjectToSharedPref(signUpSettingsResponse);
@@ -352,7 +354,7 @@ public class Utils {
         }
         AppPreferences.setRegId(regId);
         AppPreferences.saveLocation(currentLat, currentLng);
-//        WebIO.getInstance().clearConnectionData();
+        WebIO.getInstance().clearConnectionData();
     }
 
     public static String formatDecimalPlaces(String value) {
@@ -2679,14 +2681,13 @@ public class Utils {
 
     /**
      * Clears the Local Shared Pref in case of dirt
+     * @param context
      */
-    public static void clearSharedPrefIfDirty() {
+    public static void clearSharedPrefIfDirty(Context context) {
         int savedVersionCode = AppPreferences.getAppVersionCode();
         int currentVersionCode = BuildConfig.VERSION_CODE;
-        if (savedVersionCode == 0 || currentVersionCode > savedVersionCode) {
-            AppPreferences.clear();
-            WebIO.getInstance().clearConnectionData();
-            AppPreferences.setIsAlreadyCleared(true);
+        if (savedVersionCode < currentVersionCode) {
+            Utils.clearData(context);
             AppPreferences.setAppVersionCode(currentVersionCode);
         }
     }

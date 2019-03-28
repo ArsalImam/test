@@ -151,7 +151,7 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
-        Utils.clearSharedPrefIfDirty();
+        Utils.clearSharedPrefIfDirty(mCurrentActivity);
     }
 
     @Override
