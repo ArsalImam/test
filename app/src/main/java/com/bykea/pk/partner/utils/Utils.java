@@ -67,6 +67,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
@@ -337,12 +338,14 @@ public class Utils {
         SettingsData settingsData = AppPreferences.getSettings();
         SignUpSettingsResponse signUpSettingsResponse = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
 
+        int savedAppVersionCode = AppPreferences.getAppVersionCode();
         AppPreferences.clear();
+        AppPreferences.setAppVersionCode(savedAppVersionCode);
 
         if (signUpSettingsResponse != null) {
             AppPreferences.setObjectToSharedPref(signUpSettingsResponse);
         }
-        if (settingsData != null) {
+        if (settingsData != null && settingsData.getSettings() != null) {
             settingsData.getSettings().setPartner_signup_url(StringUtils.EMPTY);
             AppPreferences.saveSettingsData(settingsData);
             if (settingsData.getSettings().getCih_range() != null) {
@@ -351,7 +354,8 @@ public class Utils {
         }
         AppPreferences.setRegId(regId);
         AppPreferences.saveLocation(currentLat, currentLng);
-//        WebIO.getInstance().clearConnectionData();
+        WebIO.getInstance().clearConnectionData();
+        ActivityStackManager.getInstance().stopLocationService(context);
     }
 
     public static String formatDecimalPlaces(String value) {
@@ -1051,8 +1055,9 @@ public class Utils {
      * Returns API key for Google GeoCoder API if required.
      * Will return Empty String if there's no error in Last
      * Request while using API without any Key.
+     *
      * @return Google place server API key
-     * */
+     */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
@@ -1132,7 +1137,7 @@ public class Utils {
     }
 
     public static void loadImgPicasso(ImageView imageView, int placeHolder, String link) {
-        if(imageView != null){
+        if (imageView != null) {
             Picasso.get().load(link)
                     .fit().centerInside()
                     .placeholder(placeHolder)
@@ -2674,4 +2679,17 @@ public class Utils {
 
     }
 
+
+    /**
+     * Clears the Local Shared Pref in case of dirt
+     * @param context calling activity context
+     */
+    public static void clearSharedPrefIfDirty(Context context) {
+        int savedVersionCode = AppPreferences.getAppVersionCode();
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+        if (savedVersionCode < currentVersionCode) {
+            Utils.clearData(context);
+            AppPreferences.setAppVersionCode(currentVersionCode);
+        }
+    }
 }
