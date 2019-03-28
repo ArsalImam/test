@@ -30,6 +30,7 @@ import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.fragments.DataSaverDialogFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.LoadboardZoneFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -178,6 +179,8 @@ public class HomeActivity extends BaseActivity {
 
         //we need to validate app version on every visit on home screen.
         updateAppVersionIfRequired();
+
+        checkIfBackgroundDataAccessible();
     }
 
     @Override
@@ -375,6 +378,17 @@ public class HomeActivity extends BaseActivity {
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Check the availability of cellular data access in background.
+     */
+    private void checkIfBackgroundDataAccessible(){
+        if (!Connectivity.isBackgroundDataAccessAvailable(mCurrentActivity)) {
+            DataSaverDialogFragment dialogFragment = new DataSaverDialogFragment();
+            dialogFragment.setCancelable(false);
+            dialogFragment.show(getSupportFragmentManager(), TAG);
         }
     }
 
