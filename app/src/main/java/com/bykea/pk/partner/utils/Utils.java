@@ -2681,7 +2681,7 @@ public class Utils {
 
     /**
      * Clears the Local Shared Pref in case of dirt
-     * @param context
+     * @param context calling activity context
      */
     public static void clearSharedPrefIfDirty(Context context) {
         int savedVersionCode = AppPreferences.getAppVersionCode();
