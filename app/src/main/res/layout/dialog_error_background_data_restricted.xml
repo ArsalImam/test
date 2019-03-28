@@ -9,7 +9,7 @@
         android:layout_margin="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text='Go to "Data Usage" in App Settings' />
+        android:text="@string/dialog_error_go_to_data_usage_in_app_settings" />
 
     <ImageView
         android:src="@drawable/right_arrow_2"
@@ -21,7 +21,7 @@
         android:layout_margin="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text='Enable "Background data"' />
+        android:text="@string/dialog_error_enable_background_data" />
 
 
 </LinearLayout>
