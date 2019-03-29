@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -108,6 +109,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             }
                         }
                     } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING)) {
+
+                        Log.d(TAG, "Push Notification Received: With Status: " + callData.getStatus());
+
                         Utils.redLog(TAG,"On Call FCM");
                         ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
                     } else {
