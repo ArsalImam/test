@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -41,6 +42,7 @@ import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -872,13 +874,16 @@ public class HomeFragment extends Fragment {
                             }
                             AppPreferences.setAvailableAPICalling(false);
                             if (AppPreferences.getAvailableStatus()) {
+                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+                                //Todo Need to update Server Time difference when status API returns Timestamp for now Calling location API to force update timestamp
+                                //Utils.saveServerTimeDifference(response.body().getTimeStampServer());
+                                forceUpdatedLocationOnDriverStatus();
                                 if (AppPreferences.isWalletAmountIncreased()) {
                                     AppPreferences.setWalletAmountIncreased(false);
                                 }
                                 if (AppPreferences.isOutOfFence()) {
                                     AppPreferences.setOutOfFence(false);
                                 }
-                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                                 if (AppPreferences.getIsCash()) {
                                     callLoadBoardListingAPI();
                                 } else {
@@ -1493,6 +1498,25 @@ public class HomeFragment extends Fragment {
             mGoogleMap.setPadding(0, 0, 0, googleMapLogoBottomPadding);
         }
 
+    }
+
+
+    /**
+     * Forcefully sending Location Update API on Server for Updating
+     * {@link AppPreferences#setServerTimeDifference} against Time stamp provided by Server.
+     */
+    private void forceUpdatedLocationOnDriverStatus(){
+        new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
+
+            @Override
+            public void onLocationUpdate(LocationResponse response) {
+
+            }
+
+            @Override
+            public void onError(int errorCode, String errorMessage) {
+            }
+        }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
     }
 
 }
