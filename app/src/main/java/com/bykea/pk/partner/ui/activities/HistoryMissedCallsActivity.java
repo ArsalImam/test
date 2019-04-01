@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.bykea.pk.partner.ui.helpers.adapters.HistoryMissedCallsAdapter;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
@@ -29,6 +31,10 @@ public class HistoryMissedCallsActivity extends BaseActivity {
     ImageView noDataIv;
     @BindView(R.id.loader)
     ProgressBar loader;
+    @BindView(R.id.achaconnectionTv)
+    FontTextView achaconnectionTv;
+    @BindView(R.id.connectionStatusIv)
+    AppCompatImageView connectionStatusIv;
 
     private UserRepository repository;
     private HistoryMissedCallsAdapter mHistoryAdapter;
@@ -56,6 +62,7 @@ public class HistoryMissedCallsActivity extends BaseActivity {
         setBackNavigation();
         setToolbarTitle("Missed Jobs");
         hideToolbarLogo();
+        toggleAchaConnection(View.GONE);
         initViews();
     }
 
@@ -168,6 +175,16 @@ public class HistoryMissedCallsActivity extends BaseActivity {
     private void showNoTripData() {
         noDataIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.no_data));
         noDataIv.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * VISIBLE/GONE connections status on main screen's toolbar
+     *
+     * @param visibility VISIBLE/GONE
+     */
+    public void toggleAchaConnection(int visibility) {
+        achaconnectionTv.setVisibility(visibility);
+        connectionStatusIv.setVisibility(visibility);
     }
 }
 
