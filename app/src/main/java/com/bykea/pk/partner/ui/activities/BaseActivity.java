@@ -105,6 +105,7 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.setMessage(getString(R.string.internet_error));
         checkPermissions(false);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        Utils.keepScreenOn(mCurrentActivity);
     }
 
     @Override
