@@ -366,7 +366,8 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             e.printStackTrace();
         }
         //require receiver name and phone number if feedback screen is for delivery ride
-        if(tripInfo != null && tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY && llReceiverInfo.getVisibility() == View.VISIBLE){
+        if(tripInfo != null && tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY &&
+                selectedMsgPosition == Constants.KAMYAB_DELIVERY && llReceiverInfo.getVisibility() == View.VISIBLE){
             if(StringUtils.isBlank(etReceiverName.getText().toString())){
                 setEtError(etReceiverName,getString(R.string.receiver_name));
                 return false;
