@@ -58,7 +58,7 @@ class MultiDeliveryInvoiceData() : Parcelable {
     var minutes: Float? = 0f
 
     @SerializedName("total")
-    var total: Long? = 0
+    var total: Long = 0
 
     @SerializedName("start_balance")
     var startBalance: Int? = 0
@@ -91,7 +91,7 @@ class MultiDeliveryInvoiceData() : Parcelable {
         walletCreditValue = parcel.readValue(Int::class.java.classLoader) as? Int
         waitMins = parcel.readValue(Int::class.java.classLoader) as? Int
         minutes = parcel.readValue(Float::class.java.classLoader) as? Float
-        total = parcel.readValue(Int::class.java.classLoader) as? Long
+        total = parcel.readValue(Int::class.java.classLoader) as Long
         startBalance = parcel.readValue(Int::class.java.classLoader) as? Int
         createdAt = parcel.readString()
         mongoDbVersion = parcel.readValue(Int::class.java.classLoader) as? Int

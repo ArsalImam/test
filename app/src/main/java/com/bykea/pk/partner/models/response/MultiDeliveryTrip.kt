@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.models.response
 
+import com.bykea.pk.partner.models.data.multidelivery.MultiDeliveryInfo
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
 
@@ -15,7 +16,7 @@ class MultiDeliveryTrip {
     var type: String? = StringUtils.EMPTY
 
     @SerializedName("trip_status_code")
-    var tripStatusCode: Int? = 0
+    var tripStatusCode: Int = 0
 
     var status: String? = StringUtils.EMPTY
 
@@ -31,4 +32,7 @@ class MultiDeliveryTrip {
     @SerializedName("trip_distance")
     var tripDistance: String? = StringUtils.EMPTY
 
+    //current trip info object
+    @SerializedName("delivery_info")
+    var deliveryInfo: MultiDeliveryInfo? = null
 }

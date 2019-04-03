@@ -308,5 +308,19 @@
     <string name="multidelivery_complete_msg_one">نمبر</string>
     <string name="multidelivery_complete_msg_two">مکمل؟</string>
 
+    <string name="receiver_name">Please enter receiver name.</string>
+    <string name="receiver_number">Please enter receiver number.</string>
 
+    <string name="minute_with_amount_ur"> %d منٹ </string>
+    <string name="kilometer_with_amount_ur"> %d کلومیٹر </string>
+    <string name="display_integer_value"> %d </string>
+    <string name="display_string_value"> %s </string>
+
+    <string-array name="delivery_messages">
+        <item>کامیاب ڈیلیوری</item>
+        <item>ناكام - وصول کرنے والا رابطے میں نہیں</item>
+        <item>ناكام - وصول کرنے والا موجود نہیں ہے</item>
+        <item>ناكام - پارسل وصول کرنے سے انکار</item>
+        <item>ناكام - پتہ نہیں ملا</item>
+    </string-array>
 </resources>

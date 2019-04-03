@@ -3044,6 +3044,14 @@ public class Utils {
         AppPreferences.setAvailableStatus(true);
     }
 
+    /**
+     * multi delivery success or fail messages
+     * @return list of messages
+     */
+    public static String[] getDeliveryMsgsList(Context context) {
+        return context.getResources().getStringArray(R.array.delivery_messages);
+    }
+
     //endregion
 
 }

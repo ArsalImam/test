@@ -194,6 +194,7 @@ public class ActivityStackManager {
      */
     public void startMultiDeliveryBookingActivity(Context mContext) {
         Intent intent = new Intent(mContext, MultipleDeliveryBookingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(intent);
     }
 

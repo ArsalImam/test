@@ -322,8 +322,9 @@ public class LocationService extends Service {
                 int i = 0;
                 while (i < n) {
                     tripNo += bookingResponseList.get(i).getTrip().getTripNo();
-                    tripNo += "\n";
                     i++;
+                    if(i != n)
+                        tripNo += ", ";
                 }
             }
             notificationBodyMessage = getResources().getString(R.string.notification_title_driver_trip,

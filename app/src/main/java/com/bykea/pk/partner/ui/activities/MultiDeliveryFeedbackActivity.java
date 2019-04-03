@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.graphics.Paint;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,11 +10,14 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.CallDriverAcknowledgeData;
@@ -29,6 +33,7 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.adapters.DeliveryMsgsSpinnerAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
@@ -43,6 +48,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -106,8 +112,8 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     @BindView(R.id.tvPromoDeduction)
     FontTextView tvPromoDeduction;
 
-    @BindView(R.id.tvCOD)
-    FontTextView tvCOD;
+    @BindView(R.id.cashOnDeliveryTV)
+    FontTextView cashOnDeliveryTV;
 
     @BindView(R.id.tvAmountToGetLable)
     FontTextView tvAmountToGetLable;
@@ -115,8 +121,8 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     @BindView(R.id.totalAmountTvLable)
     FontTextView totalAmountTvLable;
 
-    @BindView(R.id.rlCOD)
-    RelativeLayout rlCOD;
+    @BindView(R.id.cashOnDeliveryRL)
+    RelativeLayout cashOnDeliveryRL;
 
     @BindView(R.id.rlDropOffDiscount)
     RelativeLayout rlDropOffDiscount;
@@ -126,6 +132,19 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
     @BindView(R.id.scrollView)
     ScrollView scrollView;
+
+    @BindView(R.id.llReceiverInfo)
+    LinearLayout llReceiverInfo;
+    @BindView(R.id.rlDeliveryStatus)
+    RelativeLayout rlDeliveryStatus;
+    @BindView(R.id.spDeliveryStatus)
+    Spinner spDeliveryStatus;
+    @BindView(R.id.ivRight0)
+    ImageView ivRight0;
+    @BindView(R.id.etReceiverName)
+    FontEditText etReceiverName;
+    @BindView(R.id.etReceiverMobileNo)
+    FontEditText etReceiverMobileNo;
 
     private long totalCharges;
     private int TOP_UP_LIMIT;
@@ -139,6 +158,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     private MultiDeliveryInvoiceData invoice;
     private String TAG = MultiDeliveryFeedbackResponse.class.getSimpleName();
     private boolean isComingFromOnGoingRide;
+    private int selectedMsgPosition = 0; //delivery status message selection position from drop down
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +208,8 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                     startAddressTv.setText(tripInfo.getStartAddress());
                     endAddressTv.setText(tripInfo.getEndAddress());
                     tvTripId.setText(tripInfo.getTripNo());
+                    if(tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY)
+                        updateUIICODelivery();
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -215,7 +237,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             }
         });
 
-        //etReceiverName.requestFocus();
+        etReceiverName.requestFocus();
     }
 
     /**
@@ -248,11 +270,9 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
                 if (Integer.parseInt(editable.toString()) >
                         (totalCharges) + TOP_UP_LIMIT) {
-                    setEtError(getString(R.string.amount_error,
-                            (totalCharges) + TOP_UP_LIMIT));
+                    setEtError(receivedAmountEt,getString(R.string.amount_error, (totalCharges) + TOP_UP_LIMIT));
                 } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
-                    setEtError(getString(R.string.amount_error,
-                            AMOUNT_LIMIT));
+                    setEtError(receivedAmountEt,getString(R.string.amount_error, AMOUNT_LIMIT));
                 }
             } else {
                 Utils.appToast(mCurrentActivity, getString(R.string.invalid_amout));
@@ -279,19 +299,37 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      * Request feed back for a passenger against the completed tripInfo.
      */
     private void requestFeedback() {
-        Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        int receivedAmount = 0;
-        try {
-            receivedAmount = Integer.parseInt(receivedAmountEt.getText().toString());
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
+        if(tripInfo != null){
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            int receivedAmount = 0;
+            try {
+                receivedAmount = Integer.parseInt(receivedAmountEt.getText().toString());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+
+            //submit delivery feedback
+            if (tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY) {
+                repository.requestMultiDeliveryDriverFeedback(
+                        tripInfo.getId(),
+                        receivedAmount,
+                        callerRb.getRating(),
+                        true,
+                        selectedMsgPosition == 0,
+                        Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                        etReceiverName.getText().toString(),
+                        etReceiverMobileNo.getText().toString(),
+                        handler);
+            }
+            //submit ride feedback
+            else {
+                repository.requestMultiDeliveryDriverFeedback(
+                        tripInfo.getId(),
+                        receivedAmount,
+                        callerRb.getRating(),
+                        false, false, null, null, null, handler);
+            }
         }
-        repository.requestMultiDeliveryDriverFeedback(
-                tripInfo.getId(),
-                receivedAmount,
-                callerRb.getRating(),
-                handler
-        );
     }
 
 
@@ -300,9 +338,9 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      *
      * @param error The error message.
      */
-    private void setEtError(String error) {
-        receivedAmountEt.setError(error);
-        receivedAmountEt.requestFocus();
+    private void setEtError(EditText editText, String error) {
+        editText.setError(error);
+        editText.requestFocus();
     }
 
     /**
@@ -327,21 +365,32 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
+        //require receiver name and phone number if feedback screen is for delivery ride
+        if(tripInfo != null && tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY && llReceiverInfo.getVisibility() == View.VISIBLE){
+            if(StringUtils.isBlank(etReceiverName.getText().toString())){
+                setEtError(etReceiverName,getString(R.string.receiver_name));
+                return false;
+            }
+            if(StringUtils.isBlank(etReceiverMobileNo.getText().toString())){
+                setEtError(etReceiverMobileNo,getString(R.string.receiver_number));
+                return false;
+            }
+
+        }
         if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
-            setEtError(getString(R.string.error_invalid_amount));
+            setEtError(receivedAmountEt,getString(R.string.error_invalid_amount));
             return false;
         } else if (charges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) < totalCharges) {
-            setEtError(getString(R.string.error_amount_greater_than_total));
+            setEtError(receivedAmountEt,getString(R.string.error_amount_greater_than_total));
             return false;
         } else if (charges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) >
                 (totalCharges + TOP_UP_LIMIT)) {
-            setEtError(getString(R.string.amount_error,
-                    (totalCharges + TOP_UP_LIMIT)));
+            setEtError(receivedAmountEt,getString(R.string.amount_error, (totalCharges + TOP_UP_LIMIT)));
             return false;
         } else if (Integer.parseInt(receivedAmountEt.getText().toString()) > AMOUNT_LIMIT) {
-            setEtError(getString(R.string.amount_error, AMOUNT_LIMIT));
+            setEtError(receivedAmountEt,getString(R.string.amount_error, AMOUNT_LIMIT));
             return false;
         } else if (callerRb.getRating() <= 0.0) {
             Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn,
@@ -351,11 +400,11 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             try {
                 int receivedPrice = Integer.parseInt(receivedAmountEt.getText().toString());
                 if (receivedPrice < 0) {
-                    setEtError(getString(R.string.amount_not_acceptable));
+                    setEtError(receivedAmountEt,getString(R.string.amount_not_acceptable));
                     return false;
                 }
             } catch (Exception e) {
-                setEtError(getString(R.string.amount_not_acceptable));
+                setEtError(receivedAmountEt,getString(R.string.amount_not_acceptable));
                 return false;
             }
         }
@@ -445,5 +494,81 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     public void onBackPressed() {
         if(!isComingFromOnGoingRide)
             super.onBackPressed();
+    }
+
+    /**
+     * update UI according to delivery feedback
+     */
+    private void updateUIICODelivery() {
+        llReceiverInfo.setVisibility(View.VISIBLE);
+
+        rlDeliveryStatus.setVisibility(View.VISIBLE);
+        tvAmountToGetLable.setText(getString(R.string.total_urdu));
+        ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
+        initAdapter(tripInfo);
+
+        if(tripInfo.getDeliveryInfo() != null){
+            if (tripInfo.getDeliveryInfo().isCashOnDelivery()) {
+                cashOnDeliveryRL.setVisibility(View.VISIBLE);
+                cashOnDeliveryTV.setText(getString(R.string.display_integer_value,tripInfo.getDeliveryInfo().getAmount()));
+            } else {
+                cashOnDeliveryRL.setVisibility(View.GONE);
+            }
+        }
+
+        receivedAmountEt.clearFocus();
+        etReceiverName.requestFocus();
+    }
+
+    /**
+     * initialize delivery feedback message in dropdown list
+     * @param tripInfo current trip info
+     */
+    private void initAdapter(final MultiDeliveryTrip tripInfo) {
+
+        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, Utils.getDeliveryMsgsList(mCurrentActivity));
+
+
+        spDeliveryStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, final View view, final int position, long id) {
+
+                if (view != null) {
+                    view.findViewById(R.id.tvItem).setPadding(0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen._34sdp), 0);
+                } else {
+                    final ViewTreeObserver layoutObserver = spDeliveryStatus.getViewTreeObserver();
+                    layoutObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            View selectedView = spDeliveryStatus.getSelectedView();
+                            if (selectedView != null) {
+                                selectedView.findViewById(R.id.tvItem).setPadding(0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen._34sdp), 0);
+                            }
+                            spDeliveryStatus.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    });
+                }
+                selectedMsgPosition = position;
+                if (tripInfo.getDeliveryInfo() != null && tripInfo.getDeliveryInfo().isCashOnDelivery()) {
+                    if (position == 0) {
+                        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + tripInfo.getDeliveryInfo().getAmount();
+                        cashOnDeliveryTV.setPaintFlags(cashOnDeliveryTV.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                        totalCharges = (invoice.getTotal() + tripInfo.getDeliveryInfo().getAmount());
+                    } else {
+                        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
+                        cashOnDeliveryTV.setPaintFlags(cashOnDeliveryTV.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        totalCharges = invoice.getTotal();
+                    }
+                    tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        spDeliveryStatus.setAdapter(adapter);
+        spDeliveryStatus.setSelection(0);
     }
 }
