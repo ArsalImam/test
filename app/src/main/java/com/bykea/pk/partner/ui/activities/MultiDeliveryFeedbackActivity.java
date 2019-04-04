@@ -395,6 +395,11 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             }
 
         }
+        if(selectedMsgPosition != Constants.KAMYAB_DELIVERY && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
+                && !Utils.isValidNumber(etReceiverMobileNo)){
+            setEtError(etReceiverMobileNo,getString(R.string.error_phone_number_1));
+            return false;
+        }
         if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
             setEtError(receivedAmountEt,getString(R.string.error_invalid_amount));
             return false;
