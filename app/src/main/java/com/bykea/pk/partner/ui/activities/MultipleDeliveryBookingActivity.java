@@ -18,9 +18,8 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.DropOffMarker;
-import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
@@ -34,7 +33,6 @@ import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.LatLngInterpolator;
-import com.bykea.pk.partner.ui.helpers.MarkerClusterRenderer;
 import com.bykea.pk.partner.ui.helpers.Spherical;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
@@ -52,22 +50,17 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.view.ClusterRenderer;
-import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -103,7 +96,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private static final double METERS_IN_KILOMETER = 1000.0;
     private MultiDeliveryCallDriverData callDriverData;
     private UserRepository repository;
-    private ClusterManager<DropOffMarker> mClusterManager;
 
     @BindView(R.id.timeTv)
     TextView timeTv;
@@ -405,9 +397,6 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     mGoogleMap = googleMap;
                     mGoogleMap.clear();
                     Utils.formatMap(mGoogleMap);
-                    //initialize the cluster manager for clustering drop off markers
-                    mClusterManager = new ClusterManager<>(mCurrentActivity, mGoogleMap);
-                    mGoogleMap.setOnCameraIdleListener(mClusterManager);
 
                     com.google.maps.model.LatLng driverLatLng = new com.google.maps.model.LatLng(
                             AppPreferences.getLatitude(),
@@ -565,7 +554,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     /**
      * fit All dropOff locations and driver's current location to the screen - bound markers within screen
      */
-    private void setMarkersBound(){
+    private void setMarkersBound() {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         List<LatLng> latLngList = Utils.getDropDownLatLngList(callDriverData);
         for (LatLng pos : latLngList) {
@@ -696,38 +685,19 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             }
             List<LatLng> latLngList = Utils.getDropDownLatLngList(callDriverData);
 
-            List<DropOffMarker> clustorItems = new ArrayList<>();
             for (int i = 0; i < latLngList.size(); i++) {
-                clustorItems.add(new DropOffMarker(latLngList.get(i), (i+1)));
 
-//                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
-//                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
-//                                String.valueOf(i + 1)))
-//                        .position(latLngList.get(i)));
+                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
+                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
+                                String.valueOf(i + 1)))
+                        .position(latLngList.get(i)));
             }
-            setRenderer();
-            mClusterManager.addItems(clustorItems);
-            mClusterManager.cluster();
-
-
 
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
 
-    }
-
-    /**
-     * Set the Marker Cluster Renderer for the {@linkplain ClusterManager}
-     */
-    private void setRenderer() {
-        DefaultClusterRenderer<DropOffMarker> renderer = new MarkerClusterRenderer<>(
-                mCurrentActivity,
-                mGoogleMap,
-                mClusterManager
-        );
-        mClusterManager.setRenderer(renderer);
     }
 
 
