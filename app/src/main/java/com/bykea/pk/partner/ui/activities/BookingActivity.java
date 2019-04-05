@@ -282,16 +282,19 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     getDriverRoadPosition(mCurrentActivity,
                             new com.google.maps.model.LatLng(AppPreferences.getLatitude(),
                                     AppPreferences.getLongitude()));
+
                     if (callData != null) {
-                        if (/*callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
-                                ||*/ callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                            updatePickupMarker(callData.getStartLat(), callData.getStartLng(), callData.getEndLat(), callData.getEndLng());
+                            setPickupBounds();
+                        } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                             if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
                                 updatePickupMarker(callData.getEndLat(), callData.getEndLng());
                             }
                             setPickupBounds();
                         } else {
                             if (StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
-                                updatePickupMarker(callData.getStartLat(), callData.getStartLng());
+                                updatePickupMarker(callData.getStartLat(), callData.getStartLng(), callData.getEndLat(), callData.getEndLng());
                             }
                             setPickupBounds();
                         }
@@ -1077,7 +1080,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     if (StringUtils.isBlank(mLocBearing)) {
                         mLocBearing = "0.0";
                     }
-                    updateCamera(mLocBearing);
+//                    updateCamera(mLocBearing);
                     // ANIMATE DRIVER MARKER TO THE TARGET LOCATION.
                     if (isLastAnimationComplete) {
                         if (Utils.calculateDistance(driverMarker.getPosition().latitude,
@@ -1139,6 +1142,27 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         .position(new LatLng(Double.parseDouble(latitude),
                                 Double.parseDouble(longitude))));
             }
+        }
+    }
+
+    private void updatePickupMarker(String startLat, String startLng, String endLat, String endLng) {
+
+        if (null == mGoogleMap) return;
+        if (null == callData) return;
+        if (pickUpMarker != null) pickUpMarker.remove();
+        if (dropOffMarker != null) dropOffMarker.remove();
+
+        if (startLat != null && !startLat.isEmpty() && startLng != null && !startLng.isEmpty() && endLat != null && !endLat.isEmpty() && endLng != null && !endLng.isEmpty()) {
+
+            pickUpMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
+                    R.drawable.ic_destination_temp))
+                    .position(new LatLng(Double.parseDouble(startLat),
+                            Double.parseDouble(startLng))));
+
+            dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
+                    R.drawable.ic_drop_off_pin_red))
+                    .position(new LatLng(Double.parseDouble(endLat),
+                            Double.parseDouble(endLng))));
         }
     }
 
@@ -1371,10 +1395,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private LatLngBounds getCurrentLatLngBounds() {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        if (pickUpMarker != null) {
-            builder.include(pickUpMarker.getPosition());
-        }
-        builder.include(driverMarker.getPosition());
+        if (pickUpMarker != null) builder.include(pickUpMarker.getPosition());
+        if (dropOffMarker != null) builder.include(dropOffMarker.getPosition());
+        if (driverMarker != null) builder.include(driverMarker.getPosition());
 
 
         LatLngBounds tmpBounds = builder.build();
