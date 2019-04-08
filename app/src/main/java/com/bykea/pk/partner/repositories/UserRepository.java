@@ -368,7 +368,8 @@ public class UserRepository {
     private void setupLocationRequestUpdate(double lat, double lon, DriverLocationRequest locationRequest, String tripStatus) {
         locationRequest.setEta(AppPreferences.getEta());
         locationRequest.setDistance(AppPreferences.getEstimatedDistance());
-        locationRequest.setTripID(AppPreferences.getCallData().getTripId());
+        if(AppPreferences.getCallData() != null && AppPreferences.getCallData().getTripId() != null)
+            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
         ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
         if (trackingData.size() == 0) {
             TrackingData data = new TrackingData();
