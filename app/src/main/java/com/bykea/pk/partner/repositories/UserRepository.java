@@ -863,6 +863,15 @@ public class UserRepository {
         mUserCallback = handler;
         try {
             setMultiDeliveryData(jsonObject);
+            LocCoordinatesInTrip arrivedLatLng = new LocCoordinatesInTrip();
+            arrivedLatLng.setLat(String.valueOf(AppPreferences.getLatitude()));
+            arrivedLatLng.setLng(String.valueOf(AppPreferences.getLongitude()));
+            arrivedLatLng.setDate(Utils.getIsoDate());
+            ArrayList<LocCoordinatesInTrip> prevLatLngList = AppPreferences.getLocCoordinatesInTrip();
+            prevLatLngList.add(arrivedLatLng);
+            jsonObject.put("route", new Gson().toJson(prevLatLngList));
+
+            AppPreferences.clearTripDistanceData();
         } catch (Exception e) {
             e.printStackTrace();
         }
