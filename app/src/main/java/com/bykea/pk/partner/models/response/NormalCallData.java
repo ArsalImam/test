@@ -109,6 +109,24 @@ public class NormalCallData extends CommonResponse {
     private String recName;
     private String order_no;
 
+    @SerializedName("driver_passenger_eta")
+    private String driverToPassengerEta;
+
+    @SerializedName("trip_eta")
+    private String tripEta;
+
+    @SerializedName("distance")
+    private String driverToPassengerDistance;
+
+    @SerializedName("trip_distance")
+    private String tripDistance;
+
+    @SerializedName("zone_pickup_name_urdu")
+    private String zoneNamePickupUrdu;
+
+    @SerializedName("zone_dropoff_name_urdu")
+    private String zoneNameDropOffUrdu;
+
     //new ride request design is required this field
     @SerializedName("dropoff_zone_name")
     private String dropoffZoneName;
@@ -537,5 +555,61 @@ public class NormalCallData extends CommonResponse {
 
     public String getDropoffZoneNameUrdu() {
         return dropoffZoneNameUrdu;
+    }
+
+    public String getDriverToPassengerEta() {
+        return driverToPassengerEta;
+    }
+
+    public void setDriverToPassengerEta(String driverToPassengerEta) {
+        this.driverToPassengerEta = driverToPassengerEta;
+    }
+
+    public String getTripEta() {
+        return tripEta;
+    }
+
+    public void setTripEta(String tripEta) {
+        this.tripEta = tripEta;
+    }
+
+    public String getDriverToPassengerDistance() {
+        return driverToPassengerDistance;
+    }
+
+    public void setDriverToPassengerDistance(String driverToPassengerDistance) {
+        this.driverToPassengerDistance = driverToPassengerDistance;
+    }
+
+    public String getTripDistance() {
+        return tripDistance;
+    }
+
+    public void setTripDistance(String tripDistance) {
+        this.tripDistance = tripDistance;
+    }
+
+    public String getZoneNamePickupUrdu() {
+        return zoneNamePickupUrdu;
+    }
+
+    public void setZoneNamePickupUrdu(String zoneNamePickupUrdu) {
+        this.zoneNamePickupUrdu = zoneNamePickupUrdu;
+    }
+
+    public String getZoneNameDropOffUrdu() {
+        return zoneNameDropOffUrdu;
+    }
+
+    public void setZoneNameDropOffUrdu(String zoneNameDropOffUrdu) {
+        this.zoneNameDropOffUrdu = zoneNameDropOffUrdu;
+    }
+
+    public void setDropoffZoneName(String dropoffZoneName) {
+        this.dropoffZoneName = dropoffZoneName;
+    }
+
+    public void setDropoffZoneNameUrdu(String dropoffZoneNameUrdu) {
+        this.dropoffZoneNameUrdu = dropoffZoneNameUrdu;
     }
 }
