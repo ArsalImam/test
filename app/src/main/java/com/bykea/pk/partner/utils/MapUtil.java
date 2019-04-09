@@ -42,12 +42,12 @@ public class MapUtil {
     }
 
     public static View getPickupMarkerLayout(Context context, boolean showOnLeft) {
-        int layoutId = showOnLeft ? R.layout.custom_marker_left : R.layout.custom_marker_right;
+        int layoutId = showOnLeft ? R.layout.info_window_pickup_left : R.layout.info_window_pickup_right;
         return ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(layoutId, null);
     }
 
     public static View getDropOffMarkerLayout(Context context, boolean showOnLeft) {
-        int layoutId = showOnLeft ? R.layout.custom_marker_left_drop : R.layout.custom_marker_right_drop;
+        int layoutId = showOnLeft ? R.layout.info_window_drop_left : R.layout.info_window_drop_right;
         return ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(layoutId, null);
     }
 
