@@ -365,4 +365,11 @@ public class Constants {
 
     }
 
+
+    public static final int MARKER_INCREMENT_FACTOR_DEFAULT = 20;
+    public static final int MARKER_INCREMENT_FACTOR_TEN_KM = 10000;
+    public static final int MARKER_INCREMENT_FACTOR_SIX_KM = 6000;
+    public static final int MARKER_INCREMENT_FACTOR_FOUR_KM = 4000;
+    public static final int MARKER_INCREMENT_FACTOR_TWO_KM = 2000;
+
 }
