@@ -62,4 +62,30 @@
     <dimen name="feedback_height">@dimen/_35sdp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+
+    <!--new pick up marker-->
+    <dimen name="box_width">@dimen/_190sdp</dimen>
+    <dimen name="box_width_small">@dimen/_140sdp</dimen>
+    <dimen name="box_margin_bottom">@dimen/_42sdp
+    </dimen> <!--box_bottom_pole_height + (2*box_margin_top)-->
+    <dimen name="box_margin_bottom_for_purchase">@dimen/_72sdp
+    </dimen> <!--(2*box_bottom_pole_height) + (2*box_margin_top)-->
+    <dimen name="map_padding_top">@dimen/_62sdp
+    </dimen> <!--box_drop_off_pin_size + box_height + box_margin_top-->
+    <dimen name="box_height">@dimen/_38sdp</dimen>
+    <dimen name="box_margin_left">@dimen/_6sdp</dimen>
+    <dimen name="box_margin_right">@dimen/_6sdp</dimen>
+    <dimen name="box_margin_top">@dimen/_6sdp</dimen>
+    <!--box_height/2-->
+    <dimen name="box_card_elevation">@dimen/_6sdp</dimen>
+    <dimen name="box_eta_padding">@dimen/_4sdp</dimen>
+    <dimen name="box_eta_text_size">@dimen/_11sdp</dimen>
+    <dimen name="box_pick_up_tv_padding">@dimen/_4sdp</dimen>
+    <dimen name="box_bottom_pole_height">@dimen/_30sdp</dimen>
+    <dimen name="box_bottom_pole_width">@dimen/_3sdp</dimen>
+    <dimen name="box_pick_up_text_size">@dimen/_10sdp</dimen>
+    <dimen name="box_drop_off_pin_size">@dimen/_18sdp</dimen>
+    <dimen name="booking_card_bottom_padding">@dimen/_100sdp</dimen>
+    <dimen name="delivery_details_item_height">@dimen/_40sdp</dimen>
+
 </resources>
