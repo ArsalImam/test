@@ -53,6 +53,7 @@ public class Keys {
     public static final String MULTIDELIVERY_COMPLETE_DATA = "MULTIDELIVERY_COMPLETE_DATA";
     public static final String MULTIDELIVERY_TRIP_ID = "MULTIDELIVERY_TRIP_ID";
     public static final String MULTIDELIVERY_COMPLETED_COUNT = "MULTIDELIVERY_COMPLETED_COUNT";
+    public static final String MULTIDELIVERY_CANCELLED_BY_ADMIN = "MULTIDELIVERY_CANCELLED_BY_ADMIN";
 
     /*Added this to control feedback screen to go back or not*/
     public static final String MULTIDELIVERY_FEEDBACK_SCREEN = "MULTIDELIVERY_FEEDBACK_SCREEN";

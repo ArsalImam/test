@@ -159,6 +159,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("10"))) {
+                //TODO handling call for multideliver
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase("11"))) {
+                mBus.post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
             }
         }
     }
