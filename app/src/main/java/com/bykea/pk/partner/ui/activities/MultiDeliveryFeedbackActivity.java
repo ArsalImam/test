@@ -6,6 +6,7 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -222,6 +223,22 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             }
             tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
         }
+        etReceiverMobileNo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Utils.isValidNumber(mCurrentActivity, etReceiverMobileNo);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     /**
@@ -366,16 +383,22 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             e.printStackTrace();
         }
         //require receiver name and phone number if feedback screen is for delivery ride
-        if(tripInfo != null && tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY && llReceiverInfo.getVisibility() == View.VISIBLE){
+        if(tripInfo != null && tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY &&
+                selectedMsgPosition == Constants.KAMYAB_DELIVERY && llReceiverInfo.getVisibility() == View.VISIBLE){
             if(StringUtils.isBlank(etReceiverName.getText().toString())){
                 setEtError(etReceiverName,getString(R.string.receiver_name));
                 return false;
             }
-            if(StringUtils.isBlank(etReceiverMobileNo.getText().toString())){
-                setEtError(etReceiverMobileNo,getString(R.string.receiver_number));
+            if(!Utils.isValidNumber(etReceiverMobileNo)){
+                setEtError(etReceiverMobileNo,getString(R.string.error_phone_number_1));
                 return false;
             }
 
+        }
+        if(selectedMsgPosition != Constants.KAMYAB_DELIVERY && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
+                && !Utils.isValidNumber(etReceiverMobileNo)){
+            setEtError(etReceiverMobileNo,getString(R.string.error_phone_number_1));
+            return false;
         }
         if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
             setEtError(receivedAmountEt,getString(R.string.error_invalid_amount));
