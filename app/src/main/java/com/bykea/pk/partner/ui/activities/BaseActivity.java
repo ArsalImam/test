@@ -665,11 +665,9 @@ public class BaseActivity extends AppCompatActivity {
                     .startHomeActivity(true, mCurrentActivity);
             finish();
         } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN )) {
-        	//TODO show dialog
-            Utils.appToast(mCurrentActivity, "Batch cancelled by admin");
             Utils.setCallIncomingState();
             AppPreferences.setAvailableStatus(true);
-            ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(true, mCurrentActivity);
             finish();
         }
     }

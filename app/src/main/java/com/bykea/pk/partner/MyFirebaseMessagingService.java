@@ -8,9 +8,11 @@ import android.os.Looper;
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.ReceivedMessage;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -160,10 +162,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
-                    .equalsIgnoreCase("10"))) {
-                //TODO handling call for multideliver
+                    .equalsIgnoreCase("10"))) { //Multi delivery call
+                MultipleDeliveryCallDriverResponse response = gson.fromJson(
+                        remoteMessage.getData().get(Constants.Notification.DATA_TYPE),
+                        MultipleDeliveryCallDriverResponse.class);
+
+                MultiDeliveryCallDriverData data = response.getData();
+                if (data != null) {
+                    AppPreferences.setMultiDeliveryCallDriverData(data);
+                    ActivityStackManager.getInstance().startMultiDeliveryCallingActivity(
+                                    AppPreferences.getMultiDeliveryCallDriverData(), true, DriverApp.getContext());
+                }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
-                    .equalsIgnoreCase("11"))) {
+                    .equalsIgnoreCase("11"))) { //Multi delivery cancel by admin
                 mBus.post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
             }
         }
