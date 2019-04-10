@@ -698,13 +698,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             if (TripStatus.ON_FINISH_TRIP.equalsIgnoreCase(status)) {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_COMPLETE.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             } else if (TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(status)) {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ARRIVED.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(status)) {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_START.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1676,7 +1676,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             data.put("CancelReason", cancelReason);
                             data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
 
-                            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data);
+                            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data, true);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

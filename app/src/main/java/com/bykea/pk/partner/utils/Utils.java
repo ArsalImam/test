@@ -1548,12 +1548,15 @@ public class Utils {
      * @param userID User id which is currently logged in.
      * @param EVENT Event name which needs to be flush.
      * @param data Json data which needs to be emitted.
+     * @param shouldLogToMixpanel whether the log event is triggered for mixpanel or not
      */
-    public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
-        MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
-        mixpanelAPI.identify(userID);
-        mixpanelAPI.getPeople().identify(userID);
-        mixpanelAPI.track(EVENT, data);
+    public static void logEvent(Context context, String userID, String EVENT, JSONObject data, boolean shouldLogToMixpanel) {
+        if(shouldLogToMixpanel){
+            MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
+            mixpanelAPI.identify(userID);
+            mixpanelAPI.getPeople().identify(userID);
+            mixpanelAPI.track(EVENT, data);
+        }
 
         logFireBaseEvent(context, userID, EVENT, data);
     }
