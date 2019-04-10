@@ -338,35 +338,13 @@ public class UserRepository {
                 tripStatus = AppPreferences.getCallData() != null
                         && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
                         ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
-                locationRequest.setEta(AppPreferences.getEta());
-                locationRequest.setDistance(AppPreferences.getEstimatedDistance());
-                locationRequest.setTripID(AppPreferences.getCallData().getTripId());
-                ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
-                if (trackingData.size() == 0) {
-                    TrackingData data = new TrackingData();
-                    data.setLat(lat + "");
-                    data.setLng(lon + "");
-                    trackingData.add(data);
-                }
-                locationRequest.setTrackingData(trackingData);
-                AppPreferences.clearTrackingData();
-                if (StringUtils.isBlank(tripStatus)) {
-                    tripStatus = AppPreferences.getTripStatus();
-                }
-                locationRequest.setAvailableStatus(tripStatus);
-                locationRequest.setUuid(UUID.randomUUID().toString());
+                setupLocationRequestUpdate(lat, lon, locationRequest, tripStatus);
                 mRestRequestHandler.sendDriverLocationUpdate(mContext,
                         mDataCallback, locationRequest);
             } else {
                 //In Batch Trip
-                if (StringUtils.isBlank(tripStatus)) {
-                    tripStatus = AppPreferences.getTripStatus();
-                }
-                locationRequest.setAvailableStatus(tripStatus);
-                locationRequest.setUuid(UUID.randomUUID().toString());
-
+                setupLocationRequestUpdate(lat, lon, locationRequest, tripStatus);
                 calculateDistanceFromDirectionAPI(locationRequest);
-
             }
         } else {
             if (StringUtils.isBlank(tripStatus)) {
@@ -377,8 +355,35 @@ public class UserRepository {
             mRestRequestHandler.sendDriverLocationUpdate(mContext,
                     mDataCallback, locationRequest);
         }
+    }
 
-
+    /**
+     * Prepare data for location update when partner's on trip.
+     *
+     * @param lat             current lat
+     * @param lon             current lng
+     * @param locationRequest request data object
+     * @param tripStatus      current status of running trip
+     */
+    private void setupLocationRequestUpdate(double lat, double lon, DriverLocationRequest locationRequest, String tripStatus) {
+        locationRequest.setEta(AppPreferences.getEta());
+        locationRequest.setDistance(AppPreferences.getEstimatedDistance());
+        if(AppPreferences.getCallData() != null && AppPreferences.getCallData().getTripId() != null)
+            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
+        ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
+        if (trackingData.size() == 0) {
+            TrackingData data = new TrackingData();
+            data.setLat(lat + "");
+            data.setLng(lon + "");
+            trackingData.add(data);
+        }
+        locationRequest.setTrackingData(trackingData);
+        AppPreferences.clearTrackingData();
+        if (StringUtils.isBlank(tripStatus)) {
+            tripStatus = AppPreferences.getTripStatus();
+        }
+        locationRequest.setAvailableStatus(tripStatus);
+        locationRequest.setUuid(UUID.randomUUID().toString());
     }
 
     /**
@@ -858,6 +863,15 @@ public class UserRepository {
         mUserCallback = handler;
         try {
             setMultiDeliveryData(jsonObject);
+            LocCoordinatesInTrip arrivedLatLng = new LocCoordinatesInTrip();
+            arrivedLatLng.setLat(String.valueOf(AppPreferences.getLatitude()));
+            arrivedLatLng.setLng(String.valueOf(AppPreferences.getLongitude()));
+            arrivedLatLng.setDate(Utils.getIsoDate());
+            ArrayList<LocCoordinatesInTrip> prevLatLngList = AppPreferences.getLocCoordinatesInTrip();
+            prevLatLngList.add(arrivedLatLng);
+            jsonObject.put("route", new Gson().toJson(prevLatLngList));
+
+            AppPreferences.clearTripDistanceData();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -913,16 +927,18 @@ public class UserRepository {
         mWebIORequestHandler.requestMultiDriverFinishRide(jsonObject, mDataCallback);
     }
 
-    /** Emit Driver Finished data.
-     * @param tripID finishing trip id
-     * @param receivedAmount amount that is received by partner
-     * @param rating feedback rating
+    /**
+     * Emit Driver Finished data.
+     *
+     * @param tripID             finishing trip id
+     * @param receivedAmount     amount that is received by partner
+     * @param rating             feedback rating
      * @param isDeliveryFeedback check whether finishing of multiple delivery ride or multiple delivery simple ride
-     * @param deliveryStatus delivery success or fail
-     * @param deliveryMsg delivery success or fail msg
-     * @param receiverName receiver name
-     * @param receiverPhone receiver phone number
-     * @param handler handler The Callback that will be invoked when driver finish event response received.
+     * @param deliveryStatus     delivery success or fail
+     * @param deliveryMsg        delivery success or fail msg
+     * @param receiverName       receiver name
+     * @param receiverPhone      receiver phone number
+     * @param handler            handler The Callback that will be invoked when driver finish event response received.
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
@@ -945,7 +961,7 @@ public class UserRepository {
             jsonObject.put("rate", rating);
             jsonObject.put("feedback", "nice");
             jsonObject.put("received_amount", receivedAmount);
-            if(isDeliveryFeedback){
+            if (isDeliveryFeedback) {
                 jsonObject.put("delivery_status", deliveryStatus);
                 jsonObject.put("delivery_message", deliveryMsg);
                 jsonObject.put("received_by_name", receiverName);
