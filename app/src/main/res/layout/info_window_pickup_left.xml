@@ -76,7 +76,7 @@
                         android:layout_weight="1"
                         android:gravity="right|center"
                         android:padding="@dimen/box_pick_up_tv_padding"
-                        android:text="علاقہ..."
+                        android:text="@string/pick_ur"
                         android:textColor="#383737"
                         android:textSize="@dimen/box_pick_up_text_size"
                         app:fontName="open_sans_semi_bold.ttf" />
