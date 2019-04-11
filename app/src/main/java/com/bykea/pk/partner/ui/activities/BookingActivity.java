@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -151,7 +153,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @BindView(R.id.ivTopUp)
     ImageView ivTopUp;
     @BindView(R.id.llDetails)
-    RelativeLayout llDetails;
+    LinearLayout llDetails;
     @BindView(R.id.tvDetailsNotEntered)
     FontTextView tvDetailsNotEntered;
     @BindView(R.id.tvCustomerName)
@@ -160,6 +162,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView tvCustomerPhone;
     @BindView(R.id.tvDetailsAddress)
     FontTextView tvDetailsAddress;
+    @BindView(R.id.tvCountDown)
+    TextView tvCountDown;
 
     private String canceOption = "Didn't show up";
 
@@ -858,6 +862,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //        setCallData();
             tvTripId.setText(callData.getTripNo());
 
+            startCountDown(callData.getDriverToPassengerEta());
+
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
             } else {
@@ -900,6 +906,21 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
 
         }
+    }
+
+    private void startCountDown(Long driverToPassengerEta) {
+        long milli = driverToPassengerEta * 60 * 1000;
+
+        new CountDownTimer(milli, 1000) {
+            public void onTick(long millisUntilFinished) {
+                tvCountDown.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                tvCountDown.setText("done!");
+            }
+        };
+//        .start();
     }
 
     private void setTimeDistance(String time, String distance) {
@@ -1005,13 +1026,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             ivTopUp.setVisibility(View.INVISIBLE);
         }
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
-            llTopMiddle.setVisibility(View.VISIBLE);
             tvCodAmount.setText("Rs." + callData.getCodAmount());
             if (Utils.isPurchaseService(callData.getCallType())) {
                 tvCashWasooliLabel.setText("خریداری کی رقم");
             }
         } else {
-            llTopMiddle.setVisibility(View.INVISIBLE);
+            tvCodAmount.setText("-");
         }
 
         if (Utils.isDeliveryService(callData.getCallType())) {
@@ -1036,12 +1056,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
 
-//        if (callData.getKraiKiKamai()) {
-        llTopRight.setVisibility(View.VISIBLE);
-        tvFareAmount.setText("Rs." + callData.getKraiKiKamai());
-//        } else {
-//            llTopRight.setVisibility(View.INVISIBLE);
-//        }
+        if (callData.getKraiKiKamai() != 0) {
+            tvFareAmount.setText("Rs." + callData.getKraiKiKamai());
+        } else {
+            tvFareAmount.setText("-");
+        }
     }
 
 

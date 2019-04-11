@@ -110,7 +110,7 @@ public class NormalCallData extends CommonResponse {
     private String order_no;
 
     @SerializedName("driver_passenger_eta")
-    private String driverToPassengerEta;
+    private Long driverToPassengerEta;
 
     @SerializedName("trip_eta")
     private String tripEta;
@@ -557,11 +557,11 @@ public class NormalCallData extends CommonResponse {
         return dropoffZoneNameUrdu;
     }
 
-    public String getDriverToPassengerEta() {
+    public Long getDriverToPassengerEta() {
         return driverToPassengerEta;
     }
 
-    public void setDriverToPassengerEta(String driverToPassengerEta) {
+    public void setDriverToPassengerEta(Long driverToPassengerEta) {
         this.driverToPassengerEta = driverToPassengerEta;
     }
 
