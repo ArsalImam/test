@@ -132,6 +132,11 @@ public class Constants {
         public static final String DATA_TYPE = "data";
     }
 
+    public static class FCMEvents {
+        public static final String MULTIDELIVER_INCOMING_CALL = "10";
+        public static final String MULTIDELIVER_CANCEL_BY_ADMIN = "11";
+    }
+
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
     public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
 

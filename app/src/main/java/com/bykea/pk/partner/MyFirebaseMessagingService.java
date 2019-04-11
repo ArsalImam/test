@@ -162,7 +162,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
-                    .equalsIgnoreCase("10"))) { //Multi delivery call
+                    .equalsIgnoreCase(Constants.FCMEvents.MULTIDELIVER_INCOMING_CALL))) { //Multi delivery call
                 MultipleDeliveryCallDriverResponse response = gson.fromJson(
                         remoteMessage.getData().get(Constants.Notification.DATA_TYPE),
                         MultipleDeliveryCallDriverResponse.class);
@@ -174,7 +174,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                     AppPreferences.getMultiDeliveryCallDriverData(), true, DriverApp.getContext());
                 }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
-                    .equalsIgnoreCase("11"))) { //Multi delivery cancel by admin
+                    .equalsIgnoreCase(Constants.FCMEvents.MULTIDELIVER_CANCEL_BY_ADMIN))) { //Multi delivery cancel by admin
                 mBus.post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
             }
         }
