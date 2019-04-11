@@ -327,26 +327,27 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1sp"
+            android:layout_height="1dp"
             android:layout_marginTop="@dimen/_6sdp"
             android:background="@color/grey_light" />
 
         <LinearLayout
+            android:id="@+id/llStartAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:padding="@dimen/_8sdp">
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_destination_temp" />
 
             <com.bykea.pk.partner.widgets.AutoFitFontTextView
                 android:id="@+id/startAddressTv"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_28sdp"
-                android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:maxLines="1"
