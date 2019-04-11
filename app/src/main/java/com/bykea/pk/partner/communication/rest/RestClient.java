@@ -7,7 +7,6 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.LoggingInterceptor;
 import com.bykea.pk.partner.utils.Utils;
-import com.squareup.okhttp.OkHttpClient;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 class RestClient {
     private static IRestClient retrofitCalls;

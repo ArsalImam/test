@@ -134,9 +134,9 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import retrofit.Converter;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Converter;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 public class Utils {

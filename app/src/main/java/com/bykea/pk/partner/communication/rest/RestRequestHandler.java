@@ -84,11 +84,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
-
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RestRequestHandler {
 
@@ -123,8 +122,9 @@ public class RestRequestHandler {
                 phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion());
 
         numberResponseCall.enqueue(new Callback<VerifyNumberResponse>() {
+
             @Override
-            public void onResponse(Response<VerifyNumberResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<VerifyNumberResponse> call, Response<VerifyNumberResponse> response) {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
                         VerifyNumberResponse verifyNumberResponse =
@@ -154,7 +154,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<VerifyNumberResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -212,7 +212,8 @@ public class RestRequestHandler {
 
         restCall.enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
                         LoginResponse loginResponse =
@@ -240,7 +241,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
