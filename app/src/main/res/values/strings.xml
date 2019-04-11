@@ -271,6 +271,7 @@
 
 
     <string name="customer_btayega">کسٹمر بتائے گا</string>
+    <string name="clock_zero">00:00</string>
 
     <!--Testing verified commit-->
 </resources>

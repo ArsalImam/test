@@ -909,18 +909,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void startCountDown(Long driverToPassengerEta) {
-        long milli = driverToPassengerEta * 60 * 1000;
 
-        new CountDownTimer(milli, 1000) {
+        new CountDownTimer(driverToPassengerEta * 60 * 1000, 60 * 1000) {
             public void onTick(long millisUntilFinished) {
-                tvCountDown.setText(String.valueOf(millisUntilFinished / 1000));
+                tvCountDown.setText("00:" + Math.floor(millisUntilFinished / 1000 / 60));
             }
 
             public void onFinish() {
-                tvCountDown.setText("done!");
+                tvCountDown.setText(R.string.clock_zero);
             }
-        };
-//        .start();
+        }.start();
     }
 
     private void setTimeDistance(String time, String distance) {
