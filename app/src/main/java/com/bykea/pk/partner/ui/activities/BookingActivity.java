@@ -908,19 +908,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    private void startCountDown(Long driverToPassengerEta) {
-        final long etaInMilli = driverToPassengerEta * 60 * 1000;
-        new CountDownTimer(etaInMilli, 1000) {
-            public void onTick(long millisUntilFinished) {
-                tvCountDown.setText(Utils.formatTimeForTimer(millisUntilFinished));
-            }
-
-            public void onFinish() {
-                tvCountDown.setText(R.string.clock_zero);
-            }
-        }.start();
-    }
-
     private void setTimeDistance(String time, String distance) {
         timeTv.setText(time);
         distanceTv.setText(distance);
@@ -2055,6 +2042,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             isAdded = false;
         }
         return isAdded;
+    }
+
+    /**
+     * Starts count down timer for ETA
+     * @param eta ETA to initiate count down timer with
+     */
+    private void startCountDown(Long eta) {
+        final long etaInMilli = eta * 60 * 1000;
+        new CountDownTimer(etaInMilli, 1000) {
+            public void onTick(long millisUntilFinished) {
+                tvCountDown.setText(Utils.formatTimeForTimer(millisUntilFinished));
+            }
+
+            public void onFinish() {
+                tvCountDown.setText(R.string.clock_zero);
+            }
+        }.start();
     }
 
 }
