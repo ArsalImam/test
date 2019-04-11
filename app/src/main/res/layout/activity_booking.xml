@@ -327,7 +327,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="2sp"
+            android:layout_height="1sp"
             android:layout_marginTop="@dimen/_6sdp"
             android:background="@color/grey_light" />
 

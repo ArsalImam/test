@@ -119,6 +119,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.sql.Timestamp;
+import java.text.Format;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -2672,6 +2674,19 @@ public class Utils {
             Utils.appToast(context, context.getString(R.string.google_maps_missing_error));
         }
 
+    }
+
+    /**
+     * Format duration in millisecond in clock like timestemp
+     *
+     * @param time in millisecond
+     * @return
+     */
+    public static String formatTimeForTimer(long time){
+        Date date = new Date(time);
+        Timestamp ts = new Timestamp(date.getTime());
+        Format format = new SimpleDateFormat("mm:ss");
+        return format.format(ts);
     }
 
 }
