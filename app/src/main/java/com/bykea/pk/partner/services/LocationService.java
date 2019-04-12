@@ -856,7 +856,7 @@ public class LocationService extends Service {
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                             Utils.redLogLocation(TAG, "onSocketConnected");
-                            mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+//                            mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                         }
                     }
                 }
