@@ -94,7 +94,7 @@ public enum Dialogs {
 
     private void showDialog() {
         try {
-            if (null != mDialog) {
+            if (!isShowing()) {
                 mDialog.show();
             }
         } catch (IllegalArgumentException e) {
