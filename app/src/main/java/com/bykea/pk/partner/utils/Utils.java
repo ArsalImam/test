@@ -1726,7 +1726,7 @@ public class Utils {
             case "purchase":
                 return R.drawable.lay_ao;
             case "ride":
-                return R.drawable.ride;
+                return R.drawable.ride_right;
             case "top-up":
                 return R.drawable.top_up;
             case "utilitybill":
@@ -1738,7 +1738,7 @@ public class Utils {
             case "courier":
                 return R.drawable.courier;
             default:
-                return R.drawable.ride;
+                return R.drawable.ride_right;
         }
     }
 

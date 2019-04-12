@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/_8sdp"
-                android:paddingTop="@dimen/_8sdp"
+                android:paddingTop="@dimen/_3sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:visibility="visible">
 
@@ -210,7 +210,7 @@
                     android:layout_height="@dimen/_36sdp"
                     android:layout_marginRight="@dimen/_8sdp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ride" />
+                    android:src="@drawable/ride_right" />
 
                 <LinearLayout
                     android:layout_width="@dimen/_60sdp"
@@ -342,7 +342,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_destination_temp" />
+                android:src="@drawable/ic_drop_off_green" />
 
             <com.bykea.pk.partner.widgets.AutoFitFontTextView
                 android:id="@+id/startAddressTv"

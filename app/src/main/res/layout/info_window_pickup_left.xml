@@ -122,7 +122,7 @@
             android:layout_below="@+id/flBox"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:src="@drawable/ic_destination_temp"
+            android:src="@drawable/ic_drop_off_green"
             android:visibility="visible"
             tools:visibility="visible" />
 

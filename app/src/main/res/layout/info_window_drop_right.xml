@@ -124,7 +124,7 @@
             android:layout_below="@+id/flBox"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:src="@drawable/ic_drop_off_pin_red"
+            android:src="@drawable/ic_drop_off_blue"
             android:visibility="visible"
             tools:visibility="visible" />
 

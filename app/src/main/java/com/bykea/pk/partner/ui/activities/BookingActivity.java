@@ -906,7 +906,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             } else if (StringUtils.isNotBlank(callData.getCallType())) {
                 ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, Utils.getServiceIcon(callData)));
             } else {
-                ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
+                ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride_right));
             }
             if (callData.getDriverToPassengerEta() != null)
                 startCountDown(callData.getDriverToPassengerEta());
