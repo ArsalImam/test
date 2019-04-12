@@ -1721,10 +1721,10 @@ public class Utils {
             case "parcel":
             case "send":
             case "delivery":
-                return R.drawable.bhejdo;
+                return R.drawable.bhejdo_no_caption;
             case "bring":
             case "purchase":
-                return R.drawable.lay_ao;
+                return R.drawable.lay_ao_no_caption;
             case "ride":
                 return R.drawable.ride_right;
             case "top-up":
@@ -1736,7 +1736,7 @@ public class Utils {
             case "carryvan":
                 return R.drawable.carry_van;
             case "courier":
-                return R.drawable.courier;
+                return R.drawable.courier_no_caption;
             default:
                 return R.drawable.ride_right;
         }
