@@ -276,6 +276,10 @@
     <string name="muqam_muqarrar_karein_ur">مقام مقرر کریں</string>
     <string name="not_selected_ur"> منتخب نہیں ہے </string>
     <string name="customer_btayega">کسٹمر بتائے گا</string>
+    <string name="dialog_title_bg_data_off">App Background Data is off</string>
+    <string name="go_to_settings">Go to Settings</string>
+    <string name="dialog_error_go_to_data_usage_in_app_settings">Go to Data Usagein App Settings</string>
+    <string name="dialog_error_enable_background_data">Enable Background data</string>
 
     <!--Multi Delivery Labels-->
 

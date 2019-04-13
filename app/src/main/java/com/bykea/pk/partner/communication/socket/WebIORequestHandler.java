@@ -2,6 +2,7 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
 import android.nfc.Tag;
+import android.util.Log;
 
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
@@ -385,7 +386,31 @@ public class WebIORequestHandler {
 
     private void emitWithJObject(final String eventName, MyGenericListener myGenericListener, final JSONObject json) {
         WebIO.getInstance().on(eventName, myGenericListener);
-        if (!WebIO.getInstance().emit(eventName, json)) {
+        Log.d(TAG, "WebIO.getInstance().isSocketConnected(): "+WebIO.getInstance().isSocketConnected());
+        if (WebIO.getInstance().isSocketConnected()) {
+            Log.d(TAG, "Inside Normal if of connected socket: ");
+            if (!WebIO.getInstance().emit(eventName, json)) {
+                WebIO.getInstance().onConnect(new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        try {
+                            WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
+                            DriverApp.getApplication().attachListenersOnSocketConnected();
+                            //To avoid previous calls with wrong token_id
+                            if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
+                                WebIO.getInstance().emit(eventName, json);
+                            }
+                            Utils.redLog("Request at " + eventName + " (onConnect)", json.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            } else {
+                Utils.redLog("Request at ----- shouldnot come here" + eventName, json.toString());
+            }
+        } else {
+            Log.d(TAG, "Reconnection logic new build");
             WebIO.getInstance().onConnect(new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
@@ -396,14 +421,12 @@ public class WebIORequestHandler {
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emit(eventName, json);
                         }
-                        Utils.redLog("Request at " + eventName + " (onConnect)", json.toString());
+                        Utils.redLog("Socket connection restored with event: " + eventName + " (onConnect)", json.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
-        } else {
-            Utils.redLog("Request at " + eventName, json.toString());
         }
     }
 
