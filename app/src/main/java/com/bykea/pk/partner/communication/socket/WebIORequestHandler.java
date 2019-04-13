@@ -623,6 +623,19 @@ public class WebIORequestHandler {
     }
 
     /**
+     * Multi Delivery Trip Batch Cancelled by admin Listener
+     */
+    public static class MultiDeliveryBatchCancelledByAdminListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog(TAG, serverResponse);
+            EventBus.getDefault().post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
+        }
+    }
+
+    /**
      * Multi Delivery Trip Batch Completed Listener
      */
     public static class MultiDeliveryTripBatchCompletedListener implements Emitter.Listener {

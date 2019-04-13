@@ -664,6 +664,11 @@ public class BaseActivity extends AppCompatActivity {
                     .getInstance()
                     .startHomeActivity(true, mCurrentActivity);
             finish();
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN )) {
+            Utils.setCallIncomingState();
+            AppPreferences.setAvailableStatus(true);
+            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(true, mCurrentActivity);
+            finish();
         }
     }
 
