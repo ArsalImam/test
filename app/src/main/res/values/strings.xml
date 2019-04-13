@@ -21,6 +21,7 @@
     <!--Drop off for driver -->
 
     <string name="set_pickup_location">YOUR LOCATION</string>
+    <string name="location_text">location</string>
 
 
     <!--                TEXTVIEWS STRINGS HERE                 -->
@@ -184,6 +185,12 @@
     <string name="current_week">Current Week</string>
     <string name="google_maps_missing_error">Please install Google Maps</string>
     <string name="lord_board_order_distance">%f km</string>
+    <string name="pick_multi_delivery_label">پک</string>
+    <string name="delivery_multi_delivery_label">ڈیلیوریاں</string>
+    <string name="drop_multi_delivery_label">ڈراپ</string>
+    <string name="distanceUnit">KM</string>
+    <string name="time_multi_delivery_label">وقت</string>
+    <string name="TimeUnit">MINS</string>
     <string name="forgot_password_success_msg">آپ کا خوفیہ نمبر آپ کو SMS کیا گیا ہے</string>
     <string name="license_title">License</string>
     <string name="license_title_ur">لائسنس</string>
@@ -268,9 +275,52 @@
     <string name="pick_drop_name_ur">\u0020%1$s\u0020</string>
     <string name="muqam_muqarrar_karein_ur">مقام مقرر کریں</string>
     <string name="not_selected_ur"> منتخب نہیں ہے </string>
-
-
     <string name="customer_btayega">کسٹمر بتائے گا</string>
 
-    <!--Testing verified commit-->
+    <!--Multi Delivery Labels-->
+
+    <string name="krai_ki_kami_label">کرائے کی کمائی</string>
+    <string name="cash_ki_wasooli_label">کیش کی وصولی</string>
+    <string name="kharidari_ki_raqam_label">خریداری کی رقم</string>
+    <string name="places_label">PLACES</string>
+    <string name="bhejneyWalaTv">بھیجنے والا</string>
+    <string name="wasoolKrneyWalaTv">وصول کرنے والا</string>
+    <string name="cash_value_zero">0</string>
+    <string name="ask_arrived_text"> پہنچ گئے؟ </string>
+    <string name="ask_started_text"> اسٹارٹ؟ </string>
+    <string name="ask_finish_text"> مکمل؟ </string>
+    <string name="code_value">COD Rs. %d</string>
+    <string name="tafseel_text">تفصیل</string>
+    <string name="call_text">کال</string>
+    <string name="booking_multidelivery_complete_title"> کون سی بکنگ مکمل کرنا چاہتے ہیں؟ </string>
+    <string name="muntakhib_nahi_ki_gayi_label">منتخب نہیں کی گئی</string>
+    <string name="decimal_format_one_digit">%.1f</string>
+    <string name="distance_covered">( %s km, </string>
+    <string name="duration">%.1f mins)</string>
+    <string name="amount_error">Amount can\'t be more than %d</string>
+    <string name="invalid_amout">Please enter valid amount.</string>
+    <string name="error_invalid_amount">Invalid amount</string>
+    <string name="error_amount_greater_than_total">Amount can\'t be less than Total Charges</string>
+    <string name="passenger_rating">Please Rate Passenger.</string>
+    <string name="amount_not_acceptable">Amount is not acceptable</string>
+    <string name="cancelation_message"> پہنچنے کے %s منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی </string>
+    <string name="cancel_batch">Cancel Multi Delivery Batch</string>
+    <string name="multidelivery_complete_msg_one">نمبر</string>
+    <string name="multidelivery_complete_msg_two">مکمل؟</string>
+
+    <string name="receiver_name">Please enter receiver name.</string>
+    <string name="receiver_number">Please enter receiver number.</string>
+
+    <string name="minute_with_amount_ur"> %d منٹ </string>
+    <string name="kilometer_with_amount_ur"> %d کلومیٹر </string>
+    <string name="display_integer_value"> %d </string>
+    <string name="display_string_value"> %s </string>
+
+    <string-array name="delivery_messages">
+        <item>کامیاب ڈیلیوری</item>
+        <item>ناكام - وصول کرنے والا رابطے میں نہیں</item>
+        <item>ناكام - وصول کرنے والا موجود نہیں ہے</item>
+        <item>ناكام - پارسل وصول کرنے سے انکار</item>
+        <item>ناكام - پتہ نہیں ملا</item>
+    </string-array>
 </resources>

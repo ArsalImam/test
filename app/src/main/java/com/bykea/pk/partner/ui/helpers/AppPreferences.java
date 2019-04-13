@@ -17,6 +17,8 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -29,7 +31,10 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class AppPreferences {
 
@@ -1284,4 +1289,56 @@ public class AppPreferences {
                 .putString(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE, null)
                 .apply();
     }
+
+    //region MultiDelivery Shared Preference
+
+    /**
+     * Save Multi Delivery Call Driver Data in shared preference.
+     *
+     * @param response The {@link MultiDeliveryCallDriverData} object.
+     */
+    public static void setMultiDeliveryCallDriverData(MultiDeliveryCallDriverData response) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.MULTIDELIVERY_CALLDRIVER_OBJECT, new Gson().toJson(response))
+                .apply();
+    }
+
+    /**
+     * Fetch the Multi Delivery Call Driver Data from shared preference.
+     *
+     * @return The {@link MultiDeliveryCallDriverData} object.
+     */
+    public static MultiDeliveryCallDriverData getMultiDeliveryCallDriverData() {
+        Gson gson = new Gson();
+        return gson.fromJson(mSharedPreferences.getString(
+                Keys.MULTIDELIVERY_CALLDRIVER_OBJECT,
+                StringUtils.EMPTY
+                ),
+                MultiDeliveryCallDriverData.class);
+    }
+
+    /**
+     * Set the multi delivery status.
+     *
+     * @param type The type of delivery {@linkplain Constants.CallType}
+     */
+    public static void setDeliveryType(String type) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.DELIVERY_TYPE, type)
+                .apply();
+    }
+
+    /**
+     * Fetch the status of delivery i.e BATCH & SINGLE.
+     *
+     * @return The status i.e BATCH & SINGLE.
+     */
+    public static String getDeliveryType() {
+        return mSharedPreferences
+                .getString(Keys.DELIVERY_TYPE, Constants.CallType.SINGLE);
+    }
+
+    //endregion
 }

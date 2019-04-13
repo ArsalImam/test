@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
+
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/serviceImageView"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginLeft="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_delivery" />
+
+    <View
+        android:id="@+id/pickView"
+        android:layout_width="@dimen/_45sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:background="@drawable/circle_multi_delivery_orange"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/TimeView"
+        app:layout_constraintStart_toEndOf="@+id/serviceImageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/distanceTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="0.2"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_16sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintEnd_toEndOf="@+id/pickView"
+        app:layout_constraintStart_toStartOf="@+id/pickView"
+        app:layout_constraintTop_toTopOf="@+id/pickView"
+        tools:text="0.2" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/pickUpDistanceUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KM"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_6sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintEnd_toEndOf="@+id/distanceTv"
+        app:layout_constraintStart_toStartOf="@+id/distanceTv"
+        app:layout_constraintTop_toBottomOf="@+id/distanceTv"
+        tools:text="KM" />
+
+
+    <!--Time Circle-->
+
+    <View
+        android:id="@+id/TimeView"
+        android:layout_width="@dimen/_45sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:background="@drawable/circle_multi_delivery_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/callBtn"
+        app:layout_constraintStart_toEndOf="@+id/pickView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/timeTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="65"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_16sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintEnd_toStartOf="@+id/TimeView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/TimeView"
+        app:layout_constraintTop_toTopOf="@+id/TimeView"
+        tools:text="65" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/TimeUnitLabelTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/TimeUnit"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_6sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintEnd_toEndOf="@+id/timeTv"
+        app:layout_constraintStart_toStartOf="@+id/timeTv"
+        app:layout_constraintTop_toBottomOf="@+id/timeTv" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/callBtn"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginRight="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/contact_call_icon" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/color_0ca950"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

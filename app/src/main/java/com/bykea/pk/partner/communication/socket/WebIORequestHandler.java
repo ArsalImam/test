@@ -1,7 +1,26 @@
 package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
+import android.nfc.Tag;
 
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.CommonResponse;
+import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
+import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
+import com.bykea.pk.partner.repositories.IUserDataHandler;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.utils.HTTPStatus;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.communication.IResponseCallback;
@@ -41,12 +60,15 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
+
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class WebIORequestHandler {
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
     private static ChatMessageListener chatMessageListener = new ChatMessageListener();
+    public static final String TAG = WebIORequestHandler.class.getSimpleName();
 //    private static Context mContext;
 
     public static WebIORequestHandler getInstance() {
@@ -139,9 +161,162 @@ public class WebIORequestHandler {
 
     public void feedback(JSONObject feedbackData, IResponseCallback responseCallBack) {
 //        Utils.redLog(Constants.APP_NAME + " FinishRideEmit ", feedbackData.toString());
-        emitWithJObject(ApiTags.SOCKET_DRIVER_FEEDBACK, new MyGenericListener(ApiTags.SOCKET_DRIVER_FEEDBACK, FeedbackResponse.class, responseCallBack),
+        emitWithJObject(ApiTags.SOCKET_DRIVER_FEEDBACK,
+                new MyGenericListener(ApiTags.SOCKET_DRIVER_FEEDBACK,
+                        FeedbackResponse.class, responseCallBack),
                 feedbackData);
     }
+
+    //region Multi Delivery Sockets Emitter
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE} and attach the
+     * generic listener to listen the event.
+     *
+     * @param callDriverData   The json object that will be emit on the event.
+     * @param responseCallBack The callback that will be invoked when event response received.
+     */
+    public void sendCallDriverAcknowledge(JSONObject callDriverData,
+                                          IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE,
+                        MultiDeliveryCallDriverAcknowledgeResponse.class,
+                        responseCallBack
+                ),
+                callDriverData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_ACCEPT_CALL} and attach the
+     * generic listener to listen the event.
+     *
+     * @param acceptCallData   The json object that will be emit on the accept event.
+     * @param responseCallBack The callback that will be invoked when event response received.
+     */
+    public void acceptMultiDeliveryRequest(JSONObject acceptCallData,
+                                           IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_ACCEPT_CALL,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_ACCEPT_CALL,
+                        MultiDeliveryAcceptCallResponse.class,
+                        responseCallBack
+                ),
+                acceptCallData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverArrivedData The json object that will be emit on the driver arrived event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultideliveryDriverArrived(JSONObject driverArrivedData,
+                                                  IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED,
+                        MultiDeliveryDriverArrivedResponse.class,
+                        responseCallBack
+                ),
+                driverArrivedData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverStartData The json object that will be emit on the driver arrived event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultiDriverStartedRide(JSONObject driverStartData,
+                                                   IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_STARTED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_STARTED,
+                        MultiDeliveryDriverStartedResponse.class,
+                        responseCallBack
+                ),
+                driverStartData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverFinishData The json object that will be emit on the driver finished event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultiDriverFinishRide(JSONObject driverFinishData,
+                                             IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FINISHED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FINISHED,
+                        MultiDeliveryCompleteRideResponse.class,
+                        responseCallBack
+                ),
+                driverFinishData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverFeedbackData The json object that will be emit on the driver feedback event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultiDeliveryDriverFeedback(JSONObject driverFeedbackData,
+                                                   IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER,
+                        MultiDeliveryFeedbackResponse.class,
+                        responseCallBack
+                ),
+                driverFeedbackData
+        );
+    }
+
+    /**
+     * Emit the json object on the event
+     * {@link ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED} and attach the
+     * generic listener to listen the event.
+     *
+     * @param driverCancelData The json object that will be emit on the driver cancel batch event.
+     * @param responseCallBack  The callback that will be invoked when event response received.
+     */
+    public void requestMultideliveryCancelBatch(JSONObject driverCancelData,
+                                                  IResponseCallback responseCallBack) {
+        emitWithJObject(
+                ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
+                new MyGenericListener(
+                        ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
+                        MultiDeliveryCancelBatchResponse.class,
+                        responseCallBack
+                ),
+                driverCancelData
+        );
+    }
+
+    //endregion
 
 
     public void getConversationChat(final IResponseCallback mResponseCallBack,
@@ -253,10 +428,12 @@ public class WebIORequestHandler {
                 Object serverResponse = gson.fromJson(serverResponseJsonString, dataModelClass);
                 if (serverResponse instanceof CommonResponse) {
                     CommonResponse commonResponse = (CommonResponse) serverResponse;
-                    if (commonResponse.isSuccess() || serverResponse instanceof PilotStatusResponse) {
+                    if (commonResponse.getCode() == HttpURLConnection.HTTP_OK ||
+                            serverResponse instanceof PilotStatusResponse) {
                         mOnResponseCallBack.onResponse(serverResponse);
                     } else {
-                        mOnResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        mOnResponseCallBack.onError(commonResponse.getCode(),
+                                commonResponse.getMessage());
                     }
                     WebIO.getInstance().off(mSocketName, MyGenericListener.this);
                 }
@@ -405,6 +582,97 @@ public class WebIORequestHandler {
         }
 
     }
+
+    /**
+     * Call Driver listener for listening multiple delivery request
+     */
+    public static class CallDriverListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog(TAG, serverResponse);
+            Gson gson = new Gson();
+            try {
+                MultipleDeliveryCallDriverResponse response = gson.fromJson(
+                        serverResponse,
+                        MultipleDeliveryCallDriverResponse.class);
+                MultiDeliveryCallDriverData data = response.getData();
+                if (data != null) {
+                    AppPreferences.setMultiDeliveryCallDriverData(data);
+                    new UserRepository().requestDriverAcknowledged(handler);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    /**
+     * Multi Delivery Trip Missed Listener
+     */
+    public static class MultiDeliveryTripMissedListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog(TAG, serverResponse);
+            EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+        }
+    }
+
+    /**
+     * Multi Delivery Trip Batch Cancelled by admin Listener
+     */
+    public static class MultiDeliveryBatchCancelledByAdminListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog(TAG, serverResponse);
+            EventBus.getDefault().post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
+        }
+    }
+
+    /**
+     * Multi Delivery Trip Batch Completed Listener
+     */
+    public static class MultiDeliveryTripBatchCompletedListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog(TAG, serverResponse);
+            EventBus.getDefault().post(Keys.MULTIDELIVERY_BATCH_COMPLETED);
+        }
+    }
+
+    private static IUserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse
+                                                        response) {
+            if (response != null) {
+                ActivityStackManager
+                        .getInstance()
+                        .startMultiDeliveryCallingActivity(
+                                AppPreferences.getMultiDeliveryCallDriverData(),
+                                false,
+                                DriverApp.getContext()
+                        );
+            }
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+            } else {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                Utils.redLog("Error:", errorMessage);
+            }
+        }
+    };
 
 
 }
