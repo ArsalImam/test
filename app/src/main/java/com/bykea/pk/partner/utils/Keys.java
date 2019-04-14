@@ -18,6 +18,8 @@ public class Keys {
     public static final String LOGIN_STATUS = "LOGIN_STATUS";
     public static final String SIGN_UP_API_CALL_CHECK = "SIGN_UP_API_CALL_CHECK";
     public static final String APP_VERSION = "APP_VERSION";
+    public static final String APP_VERSION_CODE = "APP_VERSION_CODE";
+    public static final String IS_ALREADY_CLEAR = "IS_ALREADY_CLEAR";
 
 
     public static final String FULL_NAME = "full_name";

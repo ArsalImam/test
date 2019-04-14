@@ -1242,6 +1242,43 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * This method gets app version code stored in shared pref.
+     * @return App Version Code
+     */
+    public static int getAppVersionCode() {
+        return mSharedPreferences.getInt(Keys.APP_VERSION_CODE, 0);
+    }
+
+    /**
+     * This method saves app Version Code in shared pref.
+     * @param value value for app Version Code
+     */
+    public static void setAppVersionCode(int value) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.APP_VERSION_CODE, value)
+                .apply();
+    }
+
+    /**
+     * This method saves a flag when shared pref is recently clear in case of dirty shared pref.
+     * @param value isAlreadyCleared
+     */
+    public static void setIsAlreadyCleared(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.IS_ALREADY_CLEAR, value)
+                .apply();
+    }
+
+    /**
+     * @return This method returns a flag when shared pref is recently clear in case of dirty shared pref.
+     */
+    public static boolean getIsAlreadyCleared() {
+        return mSharedPreferences.getBoolean(Keys.IS_ALREADY_CLEAR, false);
+    }
+
     /***
      * Clear preference when driver is unauthoried.
      */

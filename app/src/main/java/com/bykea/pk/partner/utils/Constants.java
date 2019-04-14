@@ -76,7 +76,7 @@ public class Constants {
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
     //we have replaced the passenger's app debug autocomplete key
     private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG = "AIzaSyALb6BDq-cw_kWWCaiNw50eIthPzI9wISA";
-    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
+    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAafW-AwnS0kYt1F5VLVkeBQjWPlM6LDQA";
 
 
     public static final String GOOGLE_PLACE_SERVER_API_KEY = BuildConfig.DEBUG ? GOOGLE_PLACE_SERVER_API_KEY_DEBUG : GOOGLE_PLACE_SERVER_API_KEY_LIVE;
