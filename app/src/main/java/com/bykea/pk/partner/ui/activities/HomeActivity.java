@@ -344,9 +344,14 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onEvent(String action) {
         super.onEvent(action);
-        Fragment currentFragment = mCurrentActivity.getSupportFragmentManager().findFragmentById(R.id.containerView);
-        if (currentFragment instanceof HomeFragment) {
-            ((HomeFragment) currentFragment).onEvent(action);
+        if(getSupportFragmentManager()!=null){
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
+            if(currentFragment!=null){
+                if (currentFragment instanceof HomeFragment) {
+                    ((HomeFragment) currentFragment).onEvent(action);
+                }
+            }
+
         }
     }
 

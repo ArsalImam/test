@@ -380,6 +380,7 @@ public class Utils {
         AppPreferences.saveLocation(currentLat, currentLng);
         WebIO.getInstance().clearConnectionData();
         ActivityStackManager.getInstance().stopLocationService(context);
+        //ActivityStackManager.getInstance().startLandingActivity(context);
     }
 
     public static String formatDecimalPlaces(String value) {
@@ -3068,8 +3069,9 @@ public class Utils {
         int savedVersionCode = AppPreferences.getAppVersionCode();
         int currentVersionCode = BuildConfig.VERSION_CODE;
         if (savedVersionCode < currentVersionCode) {
-            Utils.clearData(context);
             AppPreferences.setAppVersionCode(currentVersionCode);
+            Utils.clearData(context);
+
         }
     }
 }
