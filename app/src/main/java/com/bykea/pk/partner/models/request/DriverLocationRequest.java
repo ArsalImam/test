@@ -1,9 +1,11 @@
 package com.bykea.pk.partner.models.request;
 
+import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
 import com.bykea.pk.partner.models.data.TrackingData;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /***
  *  Driver Location Request Body model which would be used to send Request Parameters to API Server
@@ -36,6 +38,9 @@ public class DriverLocationRequest {
 
     @SerializedName("track")
     private ArrayList<TrackingData> trackingData;
+
+    @SerializedName(("bookings"))
+    private List<MultipleDeliveryRemainingETA> batchBookings;
 
     @SerializedName("uuid")
     private String uuid;
@@ -122,6 +127,13 @@ public class DriverLocationRequest {
         this.uuid = uuid;
     }
 
+    public List<MultipleDeliveryRemainingETA> getBatchBookings() {
+        return batchBookings;
+    }
+
+    public void setBatchBookings(List<MultipleDeliveryRemainingETA> batchBookings) {
+        this.batchBookings = batchBookings;
+    }
 
     //endregion
 }

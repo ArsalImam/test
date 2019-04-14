@@ -2,7 +2,7 @@ package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
+
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -81,6 +81,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -461,14 +462,18 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
-        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(AppPreferences.getDriverId(),
+        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(
+                AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken());
         restCall.enqueue(new Callback<CheckDriverStatusResponse>() {
             @Override
             public void onResponse(Response<CheckDriverStatusResponse> response, Retrofit retrofit) {
                 // Got success from server
-                if (null != response.body()) {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
                     mResponseCallBack.onResponse(response.body());
+                    Utils.redLog(TAG, new Gson().toJson(response.body().getData()));
+                } else {
+                    mResponseCallBack.onError(response.code(), response.message());
                 }
             }
 

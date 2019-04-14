@@ -78,6 +78,14 @@
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.Base" />
 
+        <activity
+            android:name=".ui.activities.MultiDeliveryCallingActivity"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.Base" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_api_client_key" />
@@ -215,11 +223,16 @@
         <activity
             android:name=".ui.activities.DeliveryScheduleDetailActivity"
             android:exported="true" />
+        <activity android:name=".ui.activities.MapDetailsActivity" />
         <activity android:name=".ui.activities.ShahkarActivity" />
         <activity android:name=".ui.activities.RankingActivity" />
         <activity android:name=".ui.activities.NumberVerificationActivity"
-            android:theme="@style/NewTheme"/>
+            android:theme="@style/NewTheme" />
         <activity android:name=".ui.activities.LandingActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.MultipleDeliveryBookingActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.activities.LoadboardBookingDetailActivity"
             android:screenOrientation="portrait" />
@@ -228,7 +241,6 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

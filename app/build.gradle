@@ -9,6 +9,7 @@ buildscript {
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -69,7 +70,7 @@ android {
         productFlavors {
             local {
                 dimension "driver"
-                buildConfigField "String", "FLAVOR_URL", "\"http://115.42.64.197:8888\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
             }
             staging {
                 dimension "driver"
@@ -207,7 +208,10 @@ dependencies {
 
     implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.elvishew:xlog:1.4.1'
+
+    implementation deps.markerClustering
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'de.felixschulze.gradle.hockeyapp'

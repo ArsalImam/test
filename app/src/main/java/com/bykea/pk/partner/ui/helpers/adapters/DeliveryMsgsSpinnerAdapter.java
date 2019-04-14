@@ -14,11 +14,11 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import java.util.ArrayList;
 
 public class DeliveryMsgsSpinnerAdapter extends BaseAdapter {
-    private ArrayList<String> mDataList;
+    private String[] mDataList;
     private LayoutInflater inflter;
     private Context mContext;
 
-    public DeliveryMsgsSpinnerAdapter(Context applicationContext, ArrayList<String> list) {
+    public DeliveryMsgsSpinnerAdapter(Context applicationContext, String[] list) {
         mDataList = list;
         mContext = applicationContext;
         inflter = (LayoutInflater.from(applicationContext));
@@ -27,12 +27,12 @@ public class DeliveryMsgsSpinnerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mDataList.size();
+        return mDataList.length;
     }
 
     @Override
     public Object getItem(int i) {
-        return mDataList.get(i);
+        return mDataList[i];
     }
 
     @Override
@@ -44,7 +44,7 @@ public class DeliveryMsgsSpinnerAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = inflter.inflate(R.layout.simple_text_view, null);
         FontTextView name = (FontTextView) view.findViewById(R.id.tvItem);
-        name.setText(mDataList.get(i));
+        name.setText(mDataList[i]);
         name.setTextColor(ContextCompat.getColor(mContext, i == 0 ? R.color.blue_dark : R.color.color_error));
         return view;
     }

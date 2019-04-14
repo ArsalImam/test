@@ -62,4 +62,9 @@
     <dimen name="feedback_height">@dimen/_35sdp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!--Driver marker bitmap width & height-->
+    <!--reduce bike marker icon size-->
+    <dimen name="driver_marker_width">@dimen/_30sdp</dimen>
+    <dimen name="driver_marker_height">@dimen/_30sdp</dimen>
+
 </resources>

@@ -106,7 +106,7 @@ public class HomeActivity extends BaseActivity {
     public FontTextView bottomSheetNoJobsAvailableTV;
     @BindView(R.id.bottomSheetLoader)
     public ProgressBar bottomSheetLoader;
-    @BindView(R.id.bottomSheet)
+    @BindView(R.id.appBottomBarLayout)
     public AppBarLayout bottomSheet;
 
     @BindView(R.id.achaconnectionTv)
@@ -364,16 +364,17 @@ public class HomeActivity extends BaseActivity {
             showHomeFragment();
         }
     }
+
     /**
      * This method compares App Version in user model with App version on User's Device and updates
      * App version on server via API if required.
      */
     private void updateAppVersionIfRequired() {
-        if(!Utils.getVersion().equalsIgnoreCase(AppPreferences.getAppVersion())){
-            mUserRepository.updateAppVersion(new UserDataHandler(){
+        if (!Utils.getVersion().equalsIgnoreCase(AppPreferences.getAppVersion())) {
+            mUserRepository.updateAppVersion(new UserDataHandler() {
                 @Override
                 public void onUpdateAppVersionResponse(UpdateAppVersionResponse response) {
-                    if(response.isSuccess()){
+                    if (response.isSuccess()) {
                         AppPreferences.setAppVersion(Utils.getVersion());
                     }
                 }
@@ -659,8 +660,8 @@ public class HomeActivity extends BaseActivity {
                             Utils.appToast(mCurrentActivity, errorMessage);
                             hideLoadBoardBottomSheet();
                             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
-                            if(currentFragment instanceof HomeFragment){
-                                ((HomeFragment)currentFragment).resetPositionOfMapPinAndSelectedCashView(
+                            if (currentFragment instanceof HomeFragment) {
+                                ((HomeFragment) currentFragment).resetPositionOfMapPinAndSelectedCashView(
                                         (int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
                                         (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
                             }
@@ -671,6 +672,7 @@ public class HomeActivity extends BaseActivity {
 
     /**
      * display/inflate zone selection screen
+     *
      * @param fragment loadboard zone screen/fragment reference
      */
     private void showLoadboardZoneScreen(LoadboardZoneFragment fragment) {
@@ -686,16 +688,16 @@ public class HomeActivity extends BaseActivity {
         ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
         ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
         //checking zone data and display selected pick up zone or show empty filed with pickup text
-        if(bottomSheetPickTV != null){
-            if(pickupZone != null && pickupZone.getUrduName() != null){
+        if (bottomSheetPickTV != null) {
+            if (pickupZone != null && pickupZone.getUrduName() != null) {
                 bottomSheetPickTV.setText(getString(R.string.pick_drop_name_ur, pickupZone.getUrduName()));
             } else {
                 bottomSheetPickTV.setText(getString(R.string.pick_ur));
             }
         }
         //checking zone data and display selected drop off zone or show empty filed with drop text
-        if(bottomSheetDropTV != null){
-            if(dropoffZone != null && dropoffZone.getUrduName() != null){
+        if (bottomSheetDropTV != null) {
+            if (dropoffZone != null && dropoffZone.getUrduName() != null) {
                 bottomSheetDropTV.setText(getString(R.string.pick_drop_name_ur, dropoffZone.getUrduName()));
             } else {
                 bottomSheetDropTV.setText(getString(R.string.drop_ur));
