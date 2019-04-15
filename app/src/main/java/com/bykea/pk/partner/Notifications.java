@@ -234,6 +234,10 @@ public class Notifications {
 
     public static void createChatNotification(Context context, ReceivedMessage receivedMessage) {
 
+        //Check for Multiple Delivery if the chat send by multi delivery
+        // passenger do not create notification
+        if (StringUtils.isNotBlank(receivedMessage.getData().getBatchID())) return;
+
         if (receivedMessage.getData().getMessage().contains(".wav")) {
             receivedMessage.getData().setMessage("Voice Message");
         }

@@ -5,7 +5,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.widget.Toast;
+
+import static android.support.v4.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_DISABLED;
+import static android.support.v4.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED;
+import static android.support.v4.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_WHITELISTED;
 
 public class Connectivity {
 
@@ -220,4 +226,61 @@ public class Connectivity {
             return 0;
         }
     }
+
+    /**
+     * Return the availability of cellular data access in background.
+     *
+     * @param context Application or Activity context.
+     *
+     * @return Availability of cellular data access in background.
+     */
+    public static boolean isBackgroundDataAccessAvailable(Context context) {
+
+        boolean isBackgroundDataAccessAvailable = true;
+
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connMgr != null) {
+            // Checks if the device is on a metered network
+            if (connMgr.isActiveNetworkMetered()) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+                    // Checks user’s Data Saver settings.
+                    switch (connMgr.getRestrictBackgroundStatus()) {
+
+                        case RESTRICT_BACKGROUND_STATUS_DISABLED:
+                            // Data Saver is disabled. Since the device is connected to a
+                            // metered network, the app should use less data wherever possible.
+                            isBackgroundDataAccessAvailable = true;
+                            break;
+
+                        case RESTRICT_BACKGROUND_STATUS_WHITELISTED:
+                            // The app is whitelisted. Wherever possible,
+                            // the app should use less data in the foreground and background.
+                            isBackgroundDataAccessAvailable = true;
+                            break;
+
+                        case RESTRICT_BACKGROUND_STATUS_ENABLED:
+                            // Background data usage is blocked for this app. Wherever possible,
+                            // the app should also use less data in the foreground.
+                            isBackgroundDataAccessAvailable = false;
+                            break;
+                    }
+                } else {
+                    NetworkInfo.State state = connMgr.getActiveNetworkInfo().getState();
+                    isBackgroundDataAccessAvailable = state != NetworkInfo.State.DISCONNECTED;
+                }
+
+            } else {
+                // The device is not on a metered network.
+                // Use data as required to perform syncs, downloads, and updates.
+                isBackgroundDataAccessAvailable = true;
+            }
+        } else {
+            isBackgroundDataAccessAvailable = true;
+        }
+
+        return isBackgroundDataAccessAvailable;
+    }
+
 }

@@ -6,7 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -29,9 +35,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.ZoneData;
@@ -40,6 +48,12 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -49,6 +63,7 @@ import com.bykea.pk.partner.ui.activities.SelectPlaceActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.DrawPolygonAsync;
+import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -77,11 +92,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -808,31 +826,15 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                /*if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
-                                    AppPreferences.setStartTripTime(
-                                            AppPreferences.getServerTimeDifference() +
-                                                    Utils.getTimeInMiles(response.getData().getStarted_at()));
-                                }*/
-                                AppPreferences.setCallData(response.getData());
-                                AppPreferences.setTripStatus(response.getData().getStatus());
-                                if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                                    WebIORequestHandler.getInstance().registerChatListener();
-                                    ActivityStackManager.getInstance()
-                                            .startJobActivity(mCurrentActivity);
-                                } else {
-                                    ActivityStackManager.getInstance()
-                                            .startFeedbackFromResume(mCurrentActivity);
+                                if (response.getData().getTrip() == null) {
+                                    Utils.setCallIncomingState();
+                                    return;
                                 }
-                                mCurrentActivity.finish();
+
+                                checkTripType(response);
+
                             } catch (NullPointerException ignored) {
 
-                            }
-                        } else {
-                            if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
-                                Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                //If there is no pending trip free all states for new trip..
-                                Utils.setCallIncomingState();
                             }
                         }
                     }
@@ -1469,6 +1471,93 @@ public class HomeFragment extends Fragment {
         }
 
     }
+
+    /**
+     * Check the Type of request is it batch request or single
+     *
+     * <p>
+     *
+     * Check if the type is single parse the single trip object i.e {@link NormalCallData}
+     * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
+     *
+     * Check also for unfinished trips if there is unfinished trip remaining land
+     * to "Feedback Screen" other wise booking screen according to the type
+     *
+     * <ul>
+     *     <li>Check if trip is null thats mean there is no active trip</li>
+     *     <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     *     <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * </ul>
+     *
+     * </p>
+     *
+     * @param response The object of {@linkplain CheckDriverStatusResponse}
+     */
+    private void checkTripType(CheckDriverStatusResponse response) {
+        Gson gson = new Gson();
+        if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
+            NormalCallData callData = gson.fromJson(trip, type);
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+            if (!callData.getStatus().
+                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler
+                        .getInstance()
+                        .registerChatListener();
+                ActivityStackManager
+                        .getInstance()
+                        .startJobActivity(mCurrentActivity);
+            } else {
+                ActivityStackManager
+                        .getInstance()
+                        .startFeedbackFromResume(mCurrentActivity);
+            }
+        } else {
+            AppPreferences.setDeliveryType(Constants.CallType.BATCH);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
+            MultiDeliveryCallDriverData multiDeliveryCallDriverData = gson.fromJson(trip, type);
+            AppPreferences.
+                    setMultiDeliveryCallDriverData(
+                            multiDeliveryCallDriverData
+                    );
+
+            List<MultipleDeliveryBookingResponse> bookingResponseList =
+                    multiDeliveryCallDriverData.getBookings();
+
+            boolean isFinishedStateFound = false;
+
+            for (MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+                // get trip instance
+                MultiDeliveryTrip tripData = bookingResponse.getTrip();
+
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startMultiDeliveryFeedbackActivity(mCurrentActivity,
+                                    tripData.getId(), false);
+                    break;
+                }
+            }
+
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startMultiDeliveryBookingActivity(mCurrentActivity);
+        }
+        mCurrentActivity.finish();
+
+    }
+
 
     /**
      * Reposition my location icon and google logo when loadboard visible/gone

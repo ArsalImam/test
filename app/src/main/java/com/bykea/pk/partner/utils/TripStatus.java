@@ -12,4 +12,5 @@ public class TripStatus {
     public final static String ON_CANCEL_TRIP = "Cancelled";
     public final static String ON_IN_PROGRESS = "inprogress";
     public final static String ON_COMPLETED_TRIP = "completed";
+    public final static String ON_FEEDBACK_TRIP = "feedback";
 }
