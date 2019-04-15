@@ -294,8 +294,8 @@ public class ActivityStackManager {
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
 
         Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +
-                "PS status: " + Utils.isGpsEnable() + "Trip Status: " + AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE) +
-                "Not Delayed: " + Utils.isNotDelayed(callData.getData().getSentTime()));
+                "GPS status: " + Utils.isGpsEnable() + " Trip Status (Free): " + AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE) +
+                " Should display screen (if request difference is not delayed): " + Utils.isNotDelayed(callData.getData().getSentTime()));
         if (AppPreferences.getAvailableStatus()
                 //&& !AppPreferences.isAvailableStatusAPICalling()
                 && Utils.isGpsEnable()
