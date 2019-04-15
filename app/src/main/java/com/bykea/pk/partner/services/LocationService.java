@@ -24,8 +24,11 @@ import android.support.v4.app.NotificationCompat;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -300,10 +303,33 @@ public class LocationService extends Service {
         if (!isDriverLogin && !driverStatusAvailable) {
             notificationBodyMessage = getResources().getString(R.string.notification_title_driver_logout_location);
         } else if (isDriverLogin && driverOnTrip) {
-            NormalCallData callData = AppPreferences.getCallData();
+            String tripNo = StringUtils.EMPTY;
+            String status = StringUtils.EMPTY;
+            if (StringUtils.isBlank(AppPreferences.getDeliveryType())) return StringUtils.EMPTY;
+            if(AppPreferences.getDeliveryType().
+                    equalsIgnoreCase(Constants.CallType.SINGLE)) {
+                NormalCallData callData = AppPreferences.getCallData();
+                tripNo = callData.getTripNo();
+                status = callData.getStatus();
+            } else {
+                MultiDeliveryCallDriverData callDriverData = AppPreferences.
+                        getMultiDeliveryCallDriverData();
+                status = callDriverData.getBatchStatus();
+                List<MultipleDeliveryBookingResponse> bookingResponseList =
+                        callDriverData.getBookings();
+                int n = bookingResponseList.size();
+
+                int i = 0;
+                while (i < n) {
+                    tripNo += bookingResponseList.get(i).getTrip().getTripNo();
+                    i++;
+                    if(i != n)
+                        tripNo += ", ";
+                }
+            }
             notificationBodyMessage = getResources().getString(R.string.notification_title_driver_trip,
-                    callData.getTripNo(),
-                    StringUtils.capitalize(callData.getStatus()));
+                    tripNo,
+                    StringUtils.capitalize(status));
         } else if (isDriverLogin && driverStatusAvailable) {
             notificationBodyMessage = getResources().getString(R.string.notification_title_driver_status,
                     Constants.Driver.STATUS_ACTIVE);

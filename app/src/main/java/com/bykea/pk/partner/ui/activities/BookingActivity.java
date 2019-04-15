@@ -79,6 +79,50 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BeginRideResponse;
+import com.bykea.pk.partner.models.response.CancelRideResponse;
+import com.bykea.pk.partner.models.response.EndRideResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.tracking.AbstractRouting;
+import com.bykea.pk.partner.tracking.Route;
+import com.bykea.pk.partner.tracking.RouteException;
+import com.bykea.pk.partner.tracking.Routing;
+import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.NetworkChangeListener;
+import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.maps.android.PolyUtil;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -89,6 +133,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -134,7 +180,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     CircularImageView callerIv;*/
     @BindView(R.id.callerNameTv)
     FontTextView callerNameTv;
-    @BindView(R.id.TimeTv)
+    @BindView(R.id.timeTv)
     FontTextView timeTv;
     @BindView(R.id.distanceTv)
     FontTextView distanceTv;
@@ -432,8 +478,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.cancelBtn:
-                if (Utils.isCancelAfter5Min()) {
-                    String msg = "پہنچنے کے " + AppPreferences.getSettings().getSettings().getCancel_time() + " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
+                if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
+                    String msg = "پہنچنے کے " + AppPreferences.getSettings()
+                            .getSettings().getCancel_time() +
+                            " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
                     Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1986,21 +2034,38 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     @Override
                     public void run() {
                         try {
-                            if (response.getMessage().equalsIgnoreCase("Trip Not Found")) {
-                                cancelByPassenger(false);
-                            } else {
-                                if (shouldUpdateTripData(response.getData().getStatus())) {
-                                    AppPreferences.setCallData(response.getData());
-                                    AppPreferences.setTripStatus(response.getData().getStatus());
-                                    callData = response.getData();
-                                    updateDropOff();
-                                }
-                            }
-                        } catch (NullPointerException ignored) {
+                            Gson gson = new Gson();
+                            String trip = gson.toJson(response.getData().getTrip());
+                            Type type = new TypeToken<NormalCallData>(){}.getType();
+                            NormalCallData normalCallData = gson.fromJson(trip, type);
 
+                            if (shouldUpdateTripData(normalCallData.getStatus())) {
+                                AppPreferences.setCallData(normalCallData);
+                                AppPreferences.setTripStatus(normalCallData.getStatus());
+                                callData = normalCallData;
+                                updateDropOff();
+                            }
+
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
+            }
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            switch (errorCode) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    cancelByPassenger(false);
+                    break;
+                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                    EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                    break;
             }
         }
     };

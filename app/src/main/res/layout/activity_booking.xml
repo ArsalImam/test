@@ -301,7 +301,7 @@
                             app:fontName="roboto_bold.ttf" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
-                            android:id="@+id/TimeTv"
+                            android:id="@+id/timeTv"
                             android:layout_width="@dimen/_20sdp"
                             android:layout_height="wrap_content"
                             android:gravity="right"

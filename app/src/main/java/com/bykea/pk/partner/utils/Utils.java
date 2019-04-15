@@ -18,9 +18,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -32,6 +36,8 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -39,6 +45,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,6 +56,7 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -63,10 +71,10 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
-
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
@@ -74,6 +82,8 @@ import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -84,10 +94,13 @@ import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontUtils;
 import com.elvishew.xlog.XLog;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -198,10 +211,22 @@ public class Utils {
         return linearLayoutManager;
     }
 
-    public static void appToast(Context context, String message) {
+    /**
+     * Show application toast
+     *
+     * @param context Holding the reference of an activity.
+     * @param message The message that will display in toast.
+     */
+    public static void appToast(final Context context, final String message) {
         try {
             if (StringUtils.isNotBlank(message)) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -339,12 +364,14 @@ public class Utils {
         SettingsData settingsData = AppPreferences.getSettings();
         SignUpSettingsResponse signUpSettingsResponse = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
 
+        int savedAppVersionCode = AppPreferences.getAppVersionCode();
         AppPreferences.clear();
+        AppPreferences.setAppVersionCode(savedAppVersionCode);
 
         if (signUpSettingsResponse != null) {
             AppPreferences.setObjectToSharedPref(signUpSettingsResponse);
         }
-        if (settingsData != null) {
+        if (settingsData != null && settingsData.getSettings() != null) {
             settingsData.getSettings().setPartner_signup_url(StringUtils.EMPTY);
             AppPreferences.saveSettingsData(settingsData);
             if (settingsData.getSettings().getCih_range() != null) {
@@ -353,7 +380,8 @@ public class Utils {
         }
         AppPreferences.setRegId(regId);
         AppPreferences.saveLocation(currentLat, currentLng);
-//        WebIO.getInstance().clearConnectionData();
+        WebIO.getInstance().clearConnectionData();
+        ActivityStackManager.getInstance().stopLocationService(context);
     }
 
     public static String formatDecimalPlaces(String value) {
@@ -385,6 +413,102 @@ public class Utils {
             return "0";
         else {
             return String.format(Locale.ENGLISH, decimalPlace, Double.parseDouble(value));
+        }
+    }
+
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param mCallData NormalCallData object to fetch the lat lng.
+     */
+    public static void navigateToGoogleMap(Context context,
+                                           NormalCallData mCallData) {
+        try {
+            if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                String startAddr = StringUtils.EMPTY;
+                String endAddr = StringUtils.EMPTY;
+                if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                    startAddr = getCurrentLocation();
+                    endAddr = mCallData.getStartLat() + "," + mCallData.getStartLng();
+                }
+                String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                        Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                        Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(intent);
+                }
+            } else {
+                Uri gmmIntentUri = Uri.parse("geo:" + getCurrentLocation());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage(Constants.GoogleMap.GOOGLE_MAP_PACKAGE);
+                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(mapIntent);
+                }
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param mCallData MultiDeliveryCallDriverData object to fetch the lat lng.
+     */
+    public static void navigateToGoogleMap(Context context,
+                                           MultiDeliveryCallDriverData mCallData) {
+        try {
+                String startAddr = getCurrentLocation();
+                String endAddr = mCallData.getPickup().getLat() + "," +
+                        mCallData.getPickup().getLng();
+                String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                        Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                        Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(intent);
+                }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param latLng the drop off lat lng.
+     */
+    public static void navigateDropDownToGoogleMap(Context context,
+                                           LatLng latLng) {
+        try {
+            String startAddr = getCurrentLocation();
+            String endAddr = latLng.latitude + "," +
+                    latLng.longitude;
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -484,6 +608,135 @@ public class Utils {
                     return R.drawable.map_pin_without_passenger;
                 }
         }
+    }
+
+
+    /***
+     * Convert the drawable id into BitmapDescriptor.
+     *
+     * @param context holds the reference of an activity.
+     *
+     * @return The BitmapDescriptor.
+     */
+    public static BitmapDescriptor getBitmapDiscriptor(Context context) {
+        int drawableId = R.drawable.ic_pickupmarker;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            VectorDrawable vectorDrawable = (VectorDrawable) context.getDrawable(drawableId);
+
+            int h = (int) (vectorDrawable.getIntrinsicHeight()/1.3);
+            int w = (int) (vectorDrawable.getIntrinsicWidth()/1.3);
+
+            vectorDrawable.setBounds(0, 0, w, h);
+
+            Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bm);
+            vectorDrawable.draw(canvas);
+
+            return BitmapDescriptorFactory.fromBitmap(bm);
+
+        } else {
+            Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+
+            Bitmap bmp = Bitmap.createBitmap(
+                    drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+            Canvas canvas = new Canvas(bmp);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return BitmapDescriptorFactory.fromBitmap(bmp);
+        }
+    }
+
+    /**
+     * Create drop off marker.
+     *
+     * @param context Holding the reference of an activity.
+     * @param number The number of drop off.
+     *
+     * By ignoring the constant, Time complexity of this function is O(n)^2
+     *               because this function execute in a loop.
+     * @return The bitmap for dropoff marker.
+     */
+    public static Bitmap createDropOffMarker(Context context, String number) {
+
+        View marker = ((LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.drop_off_marker_layout, null);
+
+        FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
+        txt_name.setText(number);
+        try {
+            MultiDeliveryCallDriverData data = AppPreferences.getMultiDeliveryCallDriverData();
+
+            List<MultipleDeliveryBookingResponse> bookingResponseList = data.getBookings();
+
+                int index = Integer.parseInt(number) - 1;
+                if (bookingResponseList.get(index).getTrip().getStatus().
+                        equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                        bookingResponseList.get(index).getTrip().getStatus().
+                                equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
+
+                    ViewCompat.setBackgroundTintList(txt_name, ContextCompat
+                            .getColorStateList(context,
+                                    R.color.multi_delivery_dropoff_completed));
+
+            }
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(
+                40,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(
+                marker.getMeasuredWidth(),
+                marker.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
+    }
+
+    public static BitmapDescriptor getDropOffBitmapDiscriptor(Context context, String number) {
+        Bitmap bmp = createDropOffMarker(context, number);
+        return BitmapDescriptorFactory.fromBitmap(bmp);
+    }
+
+    /***
+     * Fetch the bitmap from drawable resource id.
+     *
+     * @param context is holding a reference of an activity.
+     * @param resourceID is a drawable id.
+     *
+     * @return the Bitmap generated from drawable id.
+     */
+    public static Bitmap getBitmap(Context context, int resourceID) {
+        try {
+            float height = context.getResources().getDimension(R.dimen.driver_marker_height);
+            float width = context.getResources().getDimension(R.dimen.driver_marker_width);
+            BitmapDrawable bitmapdraw = (BitmapDrawable) context.getResources().
+                    getDrawable(resourceID);
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, (int) width, (int) height, false);
+            return smallMarker;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static boolean isValidEmail(String email) {
@@ -881,8 +1134,23 @@ public class Utils {
         return diff <= 6000;
     }
 
-    public static boolean isCancelAfter5Min() {
-        long diff = (System.currentTimeMillis() - (AppPreferences.getServerTimeDifference() + AppPreferences.getCallData().getSentTime()));
+    /**
+     * Invoked this method to check that the customer is
+     * canceling the ride after 5 minutes of its acceptance
+     *
+     * <p>Calculate the difference of current time in millisecond, server time that keep on
+     * updating from location update & the acceptance time.</p>
+     *
+     * @see AppPreferences#getSettings()
+     *
+     * @param acceptedTime The accepted time in millisecond.
+     *
+     * @return true if calculated difference is greater than equal to
+     * cancellation time otherwise false
+     */
+    public static boolean isCancelAfter5Min(long acceptedTime) {
+        long diff = (System.currentTimeMillis() -
+                (AppPreferences.getServerTimeDifference() + acceptedTime));
         Utils.redLog("Time Diff Call", "" + diff);
         long cancel_time = 5;
         if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
@@ -1053,8 +1321,9 @@ public class Utils {
      * Returns API key for Google GeoCoder API if required.
      * Will return Empty String if there's no error in Last
      * Request while using API without any Key.
+     *
      * @return Google place server API key
-     * */
+     */
     public static String getApiKeyForGeoCoder() {
         return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
     }
@@ -1134,7 +1403,7 @@ public class Utils {
     }
 
     public static void loadImgPicasso(ImageView imageView, int placeHolder, String link) {
-        if(imageView != null){
+        if (imageView != null) {
             Picasso.get().load(link)
                     .fit().centerInside()
                     .placeholder(placeHolder)
@@ -1933,6 +2202,34 @@ public class Utils {
         }
     }
 
+    /**
+     * Load multiple delivery image URL using {@link Picasso}
+     *
+     * @param imageView The image container.
+     * @param link The image URL.
+     * @param placeHolder The place holder image.
+     */
+    public static void loadMultipleDeliveryImageURL(ImageView imageView, String link,
+                                                    int placeHolder) {
+
+        if(imageView!=null){
+            Picasso.get().load(link)
+                    .placeholder(placeHolder)
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
+        }
+
+    }
+
 
     public static void fadeOutAndHideImage(final ImageView img) {
         Animation fadeOut = new AlphaAnimation(1, 0);
@@ -2676,6 +2973,107 @@ public class Utils {
 
     }
 
+    //region MultiDelivery Helper Methods
+
+    /**
+     * Fetch the distance in meter or kilo meter.
+     *
+     * <p>If the distance in meter is greater than equals to 1000 return the
+     * distance in kilometer otherwise return the distance in meter</p>
+     *
+     * @param distanceInMeter The distance in meter.
+     * @return The distance in meter or kilometer
+     */
+    public static String getDistance(float distanceInMeter) {
+        return String.format(DriverApp.
+                        getContext().
+                        getString(R.string.decimal_format_one_digit),
+                distanceInMeter / 1000);
+    }
+
+    /**
+     * Fetch the duration in minutes
+     *
+     * <p>If the duration in second is greater than or equal to 60 than convert
+     * it into minutes. If duration in seconds is greater than equal to 3600 convert
+     * duration to hour other wise keep it in seconds</p>
+     *
+     * @param durationInSeconds The duration in seconds
+     * @return The duration in Seconds or minutes & hours
+     */
+    public static int getDuration(int durationInSeconds) {
+        int SECONDS_IN_MINUTES = 60;
+        return durationInSeconds / SECONDS_IN_MINUTES;
+    }
+
+    /**
+     * Fetch Time in MilliSeconds
+     *
+     * @param timeInSeconds The time in seconds.
+     *
+     * @return The time in milliseconds
+     */
+    public static int getTimeInMilliseconds(int timeInSeconds) {
+        return timeInSeconds * 1000;
+    }
+
+    public static int getTimeInPercentage(int timeInMilliSeconds, float percentage) {
+        return (int) ((percentage / 100f) * timeInMilliSeconds);
+    }
+
+    /**
+     * Fetch drop down lat lng list.
+     *
+     * @param deliveryCallDriverData The {@link MultiDeliveryCallDriverData} object.
+     *
+     * @return The collection of drop down lat lng.
+     */
+    public static List<LatLng> getDropDownLatLngList(MultiDeliveryCallDriverData
+                                                             deliveryCallDriverData) {
+        List<LatLng> latLngList = new ArrayList<>();
+        for (MultipleDeliveryBookingResponse response : deliveryCallDriverData.getBookings()) {
+            latLngList.add(new LatLng(
+
+                    response.getDropOff().getLat(),
+                    response.getDropOff().getLng())
+            );
+        }
+
+        return latLngList;
+    }
+
+    /**
+     * Multi Delivery Free Driver on Batch Complete.
+     */
+    public static void multiDeliveryFreeDriverOnBatchComplete() {
+        setCallIncomingState();
+        AppPreferences.setWalletAmountIncreased(false);
+        AppPreferences.setAvailableStatus(true);
+    }
+
+    /**
+     * multi delivery success or fail messages
+     * @return list of messages
+     */
+    public static String[] getDeliveryMsgsList(Context context) {
+        return context.getResources().getStringArray(R.array.delivery_messages);
+    }
+
+    //endregion
+
+
+    /**
+     * Clears the Local Shared Pref in case of dirt
+     * @param context calling activity context
+     */
+    public static void clearSharedPrefIfDirty(Context context) {
+        int savedVersionCode = AppPreferences.getAppVersionCode();
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+        if (savedVersionCode < currentVersionCode) {
+            Utils.clearData(context);
+            AppPreferences.setAppVersionCode(currentVersionCode);
+        }
+    }
     /**
      * Format duration in millisecond in clock like timestemp
      *
