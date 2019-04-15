@@ -380,7 +380,6 @@ public class Utils {
         AppPreferences.saveLocation(currentLat, currentLng);
         WebIO.getInstance().clearConnectionData();
         ActivityStackManager.getInstance().stopLocationService(context);
-        //ActivityStackManager.getInstance().startLandingActivity(context);
     }
 
     public static String formatDecimalPlaces(String value) {
