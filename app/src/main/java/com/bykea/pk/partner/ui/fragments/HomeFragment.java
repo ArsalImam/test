@@ -6,13 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -35,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -48,6 +41,7 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -55,6 +49,7 @@ import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -63,7 +58,6 @@ import com.bykea.pk.partner.ui.activities.SelectPlaceActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.DrawPolygonAsync;
-import com.bykea.pk.partner.ui.helpers.IViewTouchEvents;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -100,6 +94,7 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -513,7 +508,7 @@ public class HomeFragment extends Fragment {
                     weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
-                    if(weeklyKamaiTv != null){
+                    if (weeklyKamaiTv != null) {
                         String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
                                 response.getData().getWeeklyBalance();
                         weeklyKamaiTv.setText(weeklyBalance);
@@ -836,6 +831,12 @@ public class HomeFragment extends Fragment {
                             } catch (NullPointerException ignored) {
 
                             }
+                        } else {
+                            //TODO need to remove this when backend properly send unauthorized HTTP code
+                            if (response.getCode() == HttpURLConnection.HTTP_BAD_REQUEST
+                                    && response.getMessage().contentEquals(Constants.UNAUTH_MESSAGE)) {
+                                Utils.onUnauthorized(mCurrentActivity);
+                            }
                         }
                     }
                 });
@@ -874,13 +875,16 @@ public class HomeFragment extends Fragment {
                             }
                             AppPreferences.setAvailableAPICalling(false);
                             if (AppPreferences.getAvailableStatus()) {
+                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+                                //Todo Need to update Server Time difference when status API returns Timestamp for now Calling location API to force update timestamp
+                                //Utils.saveServerTimeDifference(response.body().getTimeStampServer());
+                                forceUpdatedLocationOnDriverStatus();
                                 if (AppPreferences.isWalletAmountIncreased()) {
                                     AppPreferences.setWalletAmountIncreased(false);
                                 }
                                 if (AppPreferences.isOutOfFence()) {
                                     AppPreferences.setOutOfFence(false);
                                 }
-                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                                 if (AppPreferences.getIsCash()) {
                                     callLoadBoardListingAPI();
                                 } else {
@@ -1476,17 +1480,17 @@ public class HomeFragment extends Fragment {
      * Check the Type of request is it batch request or single
      *
      * <p>
-     *
+     * <p>
      * Check if the type is single parse the single trip object i.e {@link NormalCallData}
      * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
-     *
+     * <p>
      * Check also for unfinished trips if there is unfinished trip remaining land
      * to "Feedback Screen" other wise booking screen according to the type
      *
      * <ul>
-     *     <li>Check if trip is null thats mean there is no active trip</li>
-     *     <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
-     *     <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * <li>Check if trip is null thats mean there is no active trip</li>
+     * <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     * <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
      * </ul>
      *
      * </p>
@@ -1561,6 +1565,7 @@ public class HomeFragment extends Fragment {
 
     /**
      * Reposition my location icon and google logo when loadboard visible/gone
+     *
      * @param locationPointerBottomMargin my location bottom margin
      * @param googleMapLogoBottomPadding  google logo padding from bottom
      */
@@ -1582,6 +1587,25 @@ public class HomeFragment extends Fragment {
             mGoogleMap.setPadding(0, 0, 0, googleMapLogoBottomPadding);
         }
 
+    }
+
+
+    /**
+     * Forcefully sending Location Update API on Server for Updating
+     * {@link AppPreferences#setServerTimeDifference} against Time stamp provided by Server.
+     */
+    private void forceUpdatedLocationOnDriverStatus(){
+        new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
+
+            @Override
+            public void onLocationUpdate(LocationResponse response) {
+
+            }
+
+            @Override
+            public void onError(int errorCode, String errorMessage) {
+            }
+        }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
     }
 
 }
