@@ -435,25 +435,25 @@ public class UserRepository {
                 new PlacesDataHandler() {
                     @Override
                     public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
-
-                        counter[0] = 0;
-                        GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
-                        for (GoogleDistanceMatrixApi.Elements element : elements) {
-                            String tripID = bookingResponseList.get(counter[0]).getTrip().getId();
-                            Log.d(TAG, tripID);
-                            int distance = element.getDistance().getValueInt();
-                            int duration = element.getDuration().getValueInt();
-                            MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
-                            remainingETA.setTripID(tripID);
-                            remainingETA.setRemainingDistance(distance);
-                            remainingETA.setRemainingTime(duration);
-                            trackingDataList.add(remainingETA);
-                            counter[0]++;
+                        if(response != null && response.getRows() != null && response.getRows().length > 0){
+                            counter[0] = 0;
+                            GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
+                            for (GoogleDistanceMatrixApi.Elements element : elements) {
+                                String tripID = bookingResponseList.get(counter[0]).getTrip().getId();
+                                Log.d(TAG, tripID);
+                                int distance = element.getDistance().getValueInt();
+                                int duration = element.getDuration().getValueInt();
+                                MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
+                                remainingETA.setTripID(tripID);
+                                remainingETA.setRemainingDistance(distance);
+                                remainingETA.setRemainingTime(duration);
+                                trackingDataList.add(remainingETA);
+                                counter[0]++;
+                            }
+                            locationRequest.setBatchBookings(trackingDataList);
+                            mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                                    mDataCallback, locationRequest);
                         }
-                        locationRequest.setBatchBookings(trackingDataList);
-                        mRestRequestHandler.sendDriverLocationUpdate(mContext,
-                                mDataCallback, locationRequest);
-
                     }
 
                     @Override
