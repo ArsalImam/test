@@ -998,22 +998,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!callData.isCod()) {
                 llTopMiddle.setVisibility(View.INVISIBLE);
             }
-            if (checkIfDetailsAdded()) {
-                llDetails.setVisibility(View.VISIBLE);
-                tvDetailsNotEntered.setVisibility(View.GONE);
-
-                tvCustomerName.setText(callData.getRecName());
-                tvCustomerPhone.setText(callData.getRec_no());
-                if (StringUtils.isNotBlank(callData.getComplete_address())) {
-                    tvDetailsAddress.setVisibility(View.VISIBLE);
-                    tvDetailsAddress.setText(callData.getComplete_address());
-                } else {
-                    tvDetailsAddress.setVisibility(View.GONE);
-                }
-            } else {
-                tvDetailsNotEntered.setVisibility(View.VISIBLE);
-                llDetails.setVisibility(View.GONE);
-            }
         }
         if (callData.getKraiKiKamai() != 0) {
             tvFareAmount.setText("Rs." + callData.getKraiKiKamai());
@@ -1022,8 +1006,28 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
+    private void showDropOffPersonInfo(){
+        if (checkIfDetailsAdded()) {
+            llDetails.setVisibility(View.VISIBLE);
+            tvDetailsNotEntered.setVisibility(View.GONE);
+
+            tvCustomerName.setText(callData.getRecName());
+            tvCustomerPhone.setText(callData.getRec_no());
+            if (StringUtils.isNotBlank(callData.getComplete_address())) {
+                tvDetailsAddress.setVisibility(View.VISIBLE);
+                tvDetailsAddress.setText(callData.getComplete_address());
+            } else {
+                tvDetailsAddress.setVisibility(View.GONE);
+            }
+        } else {
+            tvDetailsNotEntered.setVisibility(View.VISIBLE);
+            llDetails.setVisibility(View.GONE);
+        }
+    }
+
     private void setOnArrivedData() {
         showWalletAmount();
+        showDropOffPersonInfo();
         if (mapPolylines != null) {
             mapPolylines.remove();
         }
@@ -1058,6 +1062,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setOnStartData() {
         showWalletAmount();
+        showDropOffPersonInfo();
         hideButtonOnArrived();
         lastApiCallLatLng = null;
         AppPreferences.setLastDirectionsApiCallTime(0);
