@@ -1296,13 +1296,13 @@ public class UserRepository {
         PilotData user = AppPreferences.getPilotData();
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(UpdateDropOff.END_ADDRESS, end_address);
-            jsonObject.put(UpdateDropOff.TOKEN_ID, user.getAccessToken());
-            jsonObject.put(UpdateDropOff.TRIP_ID, tid);
-            jsonObject.put(UpdateDropOff.ID, user.getId());
-            jsonObject.put(UpdateDropOff.END_LAT, "" + lat);
-            jsonObject.put(UpdateDropOff.END_LNG, "" + lng);
-            jsonObject.put(UpdateDropOff.TYPE, "" + "p");
+            jsonObject.put(UserRepository.UpdateDropOff.END_ADDRESS, end_address);
+            jsonObject.put(UserRepository.UpdateDropOff.TOKEN_ID, user.getAccessToken());
+            jsonObject.put(UserRepository.UpdateDropOff.TRIP_ID, tid);
+            jsonObject.put(UserRepository.UpdateDropOff.ID, user.getId());
+            jsonObject.put(UserRepository.UpdateDropOff.END_LAT, "" + lat);
+            jsonObject.put(UserRepository.UpdateDropOff.END_LNG, "" + lng);
+            jsonObject.put(UserRepository.UpdateDropOff.TYPE, "" + "p");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1455,11 +1455,11 @@ public class UserRepository {
      * @param handler       callback
      */
     public void requestLoadBoardListingAPI(Context context, String limit, String pickupZoneId, String dropoffZoneId, final IUserDataHandler handler) {
-        mContext = context;
-        mRestRequestHandler.loadboardListing(mContext, limit, pickupZoneId, dropoffZoneId, new IResponseCallback() {
+        mRestRequestHandler.loadboardListing(context, limit, pickupZoneId, dropoffZoneId, new IResponseCallback() {
             @Override
             public void onResponse(Object object) {
-                handler.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
+                if (object instanceof LoadBoardListingResponse)
+                    handler.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
             }
 
             @Override
@@ -1807,6 +1807,5 @@ public class UserRepository {
         }
 
     };
-
 
 }
