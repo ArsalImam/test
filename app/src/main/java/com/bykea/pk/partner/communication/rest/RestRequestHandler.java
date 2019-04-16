@@ -1257,10 +1257,11 @@ public class RestRequestHandler {
 
     /**
      * request for loadboard jobs list
-     * @param context Context
-     * @param limit jobs limit - OPTIONAL
-     * @param pickupZoneId jobs pickup zone id - OPTIONAL
-     * @param dropoffZoneId - jons dropoff zone id - OPTIONAL
+     *
+     * @param context            Context
+     * @param limit              jobs limit - OPTIONAL
+     * @param pickupZoneId       jobs pickup zone id - OPTIONAL
+     * @param dropoffZoneId      - jons dropoff zone id - OPTIONAL
      * @param onResponseCallback callback
      */
     public void loadboardListing(final Context context, String limit, String pickupZoneId, String dropoffZoneId, final IResponseCallback onResponseCallback) {
@@ -1295,11 +1296,12 @@ public class RestRequestHandler {
 
     /**
      * accept request for specific booking
-     * @param context Context
-     * @param bookingId selected booking id
+     *
+     * @param context            Context
+     * @param bookingId          selected booking id
      * @param onResponseCallback callback
      */
-    public void acceptLoadboardBooking(Context context,String bookingId, final IResponseCallback onResponseCallback) {
+    public void acceptLoadboardBooking(Context context, String bookingId, final IResponseCallback onResponseCallback) {
         mContext = context;
         this.mResponseCallBack = onResponseCallback;
         mRestClient = RestClient.getClient(mContext);
@@ -1346,11 +1348,12 @@ public class RestRequestHandler {
 
     /**
      * request for details of selected booking
-     * @param context Context
-     * @param bookingId selected booking id
+     *
+     * @param context            Context
+     * @param bookingId          selected booking id
      * @param onResponseCallback callback
      */
-    public void loadboardBookingDetail(Context context,String bookingId, final IResponseCallback onResponseCallback) {
+    public void loadboardBookingDetail(Context context, String bookingId, final IResponseCallback onResponseCallback) {
         mContext = context;
         this.mResponseCallBack = onResponseCallback;
         mRestClient = RestClient.getClient(mContext);
