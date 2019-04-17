@@ -285,6 +285,7 @@
 
     <string name="krai_ki_kami_label">کرائے کی کمائی</string>
     <string name="cash_ki_wasooli_label">کیش کی وصولی</string>
+    <string name="kharidari_label">خریداری</string>
     <string name="kharidari_ki_raqam_label">خریداری کی رقم</string>
     <string name="places_label">PLACES</string>
     <string name="bhejneyWalaTv">بھیجنے والا</string>
