@@ -3070,8 +3070,9 @@ public class Utils {
         int savedVersionCode = AppPreferences.getAppVersionCode();
         int currentVersionCode = BuildConfig.VERSION_CODE;
         if (savedVersionCode < currentVersionCode) {
-            Utils.clearData(context);
             AppPreferences.setAppVersionCode(currentVersionCode);
+            Utils.clearData(context);
+
         }
     }
     /**

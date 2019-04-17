@@ -3,10 +3,6 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
-import java.net.HttpURLConnection;
-
-import javax.net.ssl.HttpsURLConnection;
-
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
@@ -15,6 +11,7 @@ public class Constants {
 
     public static final String DEVICE_TYPE = "android";
     public static final String USER_TYPE = "d";
+    public static final String UNAUTH_MESSAGE = "unAuthrozied User";
     public static final int ESTIMATION_SPEED = 30;
 
     public static final int MINIMUM_VOICE_RECORDING = 1000;
@@ -30,7 +27,7 @@ public class Constants {
     public static final String TAG_GOOGLE_MAP = "GOOGLE MAP TRACKING";
 
     /*Added these ride statuses to handle making calls to drop off location's person
-    * Call option can only be enabled when ride has started or arrived*/
+     * Call option can only be enabled when ride has started or arrived*/
     public static final String BATCH_STARTED = "Started";
     public static final String BATCH_ARRIVED = "Arrived";
     /*added this for making individual's dropOff call enable/disable*/
@@ -70,7 +67,7 @@ public class Constants {
 
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
-    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";//Staging Server Key of Passenger
+    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
@@ -230,6 +227,7 @@ public class Constants {
     public static class TimeFormats {
         public final static String LICNENSE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     }
+
     public static class GoogleMap {
         public final static String GOOGLE_NAVIGATE_ENDPOINT = "http://maps.google.com/maps?saddr=";
         public final static String GOOGLE_DESTINATION_ENDPOINT = "&daddr=";

@@ -389,47 +389,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 callData.getEndAddress(), callData.getEndLat() + "", callData.getEndLng() + "");
     }
 
-    private BroadcastReceiver locationReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (null != intent && Keys.LOCATION_UPDATE_BROADCAST.equalsIgnoreCase(intent.getAction()) && AppPreferences.isLoggedIn()) {
-                /*UPDATING DRIVER CURRENT AND PREVIOUS LOCATION
-                    FOR TRACKING AND UPDATING DRIVER MARKERS*/
-
-                if (null == mPreviousLocation || null == mCurrentLocation) {
-                    mCurrentLocation = intent.getParcelableExtra("location");
-                    mPreviousLocation = mCurrentLocation;
-                } else {
-                    mPreviousLocation = mCurrentLocation;
-                    mCurrentLocation = intent.getParcelableExtra("location");
+    private void updateDropOff() {
+        if (StringUtils.isNotBlank(callData.getEndAddress())
+                && StringUtils.isNotBlank(callData.getEndLat())
+                && StringUtils.isNotBlank(callData.getEndLng())) {
+            endAddressTv.setText(callData.getEndAddress());
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                lastApiCallLatLng = null;
+                AppPreferences.setLastDirectionsApiCallTime(0);
+                if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
+                    mRouteLatLng.clear();
                 }
-
-                if (null != mCurrentLocation) {
-                    getDriverRoadPosition(mCurrentActivity,
-                            new com.google.maps.model.LatLng(mCurrentLocation.getLatitude(),
-                                    mCurrentLocation.getLongitude()));
-                }
-
-
-                mLocBearing = intent.getStringExtra("bearing");
-
-
-                //THIS CHECK IS TO SHOW DROP OFF ICON WHEN DRIVER PRESS ARRIVED BUTTON
-                if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                    if (StringUtils.isNotBlank(callData.getEndLat()) &&
-                            StringUtils.isNotBlank(callData.getEndLng())) {
-                        updateMarkers();
-                    } else if (pickUpMarker != null) {
-                        pickUpMarker.remove();
-                        pickUpMarker = null;
-                    }
-                } else {
-                    updateMarkers();
-                }
-                showEstimatedDistTime();
+                drawRouteToDropOff();
+                updateMarkers();
+//                updatePickupMarker(callData.getEndLat(), callData.getEndLng());
             }
         }
-    };
+    }
 
     private void hideButtonOnArrived() {
 //        callbtn.setVisibility(View.GONE);
@@ -1001,26 +977,57 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     }
 
-    private void updateDropOff() {
-        if (StringUtils.isNotBlank(callData.getEndAddress())
-                && StringUtils.isNotBlank(callData.getEndLat())
-                && StringUtils.isNotBlank(callData.getEndLng())) {
-            endAddressTv.setText(callData.getEndAddress());
-            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                lastApiCallLatLng = null;
-                AppPreferences.setLastDirectionsApiCallTime(0);
-                if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
-                    mRouteLatLng.clear();
-                }
-                drawRouteToDropOff();
-                updateMarkers();
-//                updatePickupMarker(callData.getEndLat(), callData.getEndLng());
+    private void showWalletAmount() {
+        tvPWalletAmount.setText("Rs." + callData.getPassWallet());
+        if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
+                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
+            ivTopUp.setVisibility(View.VISIBLE);
+        } else {
+            ivTopUp.setVisibility(View.INVISIBLE);
+        }
+        if (StringUtils.isNotBlank(callData.getCodAmount())) {
+            tvCodAmount.setText("Rs." + callData.getCodAmount());
+            if (Utils.isPurchaseService(callData.getCallType())) {
+                tvCashWasooliLabel.setText("خریداری کی رقم");
             }
+        } else {
+            tvCodAmount.setText("-");
+        }
+
+        if (Utils.isDeliveryService(callData.getCallType())) {
+            if (!callData.isCod()) {
+                llTopMiddle.setVisibility(View.INVISIBLE);
+            }
+        }
+        if (callData.getKraiKiKamai() != 0) {
+            tvFareAmount.setText("Rs." + callData.getKraiKiKamai());
+        } else {
+            tvFareAmount.setText("-");
+        }
+    }
+
+    private void showDropOffPersonInfo(){
+        if (checkIfDetailsAdded()) {
+            llDetails.setVisibility(View.VISIBLE);
+            tvDetailsNotEntered.setVisibility(View.GONE);
+
+            tvCustomerName.setText(callData.getRecName());
+            tvCustomerPhone.setText(callData.getRec_no());
+            if (StringUtils.isNotBlank(callData.getComplete_address())) {
+                tvDetailsAddress.setVisibility(View.VISIBLE);
+                tvDetailsAddress.setText(callData.getComplete_address());
+            } else {
+                tvDetailsAddress.setVisibility(View.GONE);
+            }
+        } else {
+            tvDetailsNotEntered.setVisibility(View.VISIBLE);
+            llDetails.setVisibility(View.GONE);
         }
     }
 
     private void setOnArrivedData() {
         showWalletAmount();
+        showDropOffPersonInfo();
         if (mapPolylines != null) {
             mapPolylines.remove();
         }
@@ -1053,50 +1060,39 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         AppPreferences.setCallData(callData);
     }
 
-    private void showWalletAmount() {
-        tvPWalletAmount.setText("Rs." + callData.getPassWallet());
-        if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
-                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
-            ivTopUp.setVisibility(View.VISIBLE);
-        } else {
-            ivTopUp.setVisibility(View.INVISIBLE);
+    private void setOnStartData() {
+        showWalletAmount();
+        showDropOffPersonInfo();
+        hideButtonOnArrived();
+        lastApiCallLatLng = null;
+        AppPreferences.setLastDirectionsApiCallTime(0);
+        if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
+            mRouteLatLng.clear();
         }
-        if (StringUtils.isNotBlank(callData.getCodAmount())) {
-            tvCodAmount.setText("Rs." + callData.getCodAmount());
-            if (Utils.isPurchaseService(callData.getCallType())) {
-                tvCashWasooliLabel.setText("خریداری کی رقم");
-            }
-        } else {
-            tvCodAmount.setText("-");
+        if (isResume) {
+            drawRouteToDropOff();
+            callerNameTv.setText(callData.getPassName());
         }
 
-        if (Utils.isDeliveryService(callData.getCallType())) {
-            if (!callData.isCod()) {
-                llTopMiddle.setVisibility(View.INVISIBLE);
-            }
-            if (checkIfDetailsAdded()) {
-                llDetails.setVisibility(View.VISIBLE);
-                tvDetailsNotEntered.setVisibility(View.GONE);
-
-                tvCustomerName.setText(callData.getRecName());
-                tvCustomerPhone.setText(callData.getRec_no());
-                if (StringUtils.isNotBlank(callData.getComplete_address())) {
-                    tvDetailsAddress.setVisibility(View.VISIBLE);
-                    tvDetailsAddress.setText(callData.getComplete_address());
-                } else {
-                    tvDetailsAddress.setVisibility(View.GONE);
-                }
-            } else {
-                tvDetailsNotEntered.setVisibility(View.VISIBLE);
-                llDetails.setVisibility(View.GONE);
-            }
+        if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            startAddressTv.setText(callData.getStartAddress());
         }
 
-        if (callData.getKraiKiKamai() != 0) {
-            tvFareAmount.setText("Rs." + callData.getKraiKiKamai());
+        if (StringUtils.isBlank(callData.getEndAddress())) {
+            endAddressTv.setText(getString(R.string.destination_not_selected_msg));
+            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.Color_Red));
         } else {
-            tvFareAmount.setText("-");
+            endAddressTv.setText(callData.getEndAddress());
+            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
         }
+        if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
+            updateMarkers();
+        } else if (pickUpMarker != null) {
+            pickUpMarker.remove();
+            pickUpMarker = null;
+        }
+
+
     }
 
 
@@ -1164,53 +1160,35 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         });
     }
 
-    private void setOnStartData() {
-        showWalletAmount();
-        hideButtonOnArrived();
-        lastApiCallLatLng = null;
-        AppPreferences.setLastDirectionsApiCallTime(0);
-        if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
-            mRouteLatLng.clear();
-        }
-        if (isResume) {
-            drawRouteToDropOff();
-            callerNameTv.setText(callData.getPassName());
-        }
-
-        if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            startAddressTv.setText(callData.getStartAddress());
-        }
-
-        if (StringUtils.isBlank(callData.getEndAddress())) {
-            endAddressTv.setText(getString(R.string.destination_not_selected_msg));
-            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.Color_Red));
-        } else {
-            endAddressTv.setText(callData.getEndAddress());
-            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
-        }
-        if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
-            updateMarkers();
-        } else if (pickUpMarker != null) {
-            pickUpMarker.remove();
-            pickUpMarker = null;
-        }
-
-
-    }
-
     /**
-     * This method updates the trip pickup and drop off markers on basis of trip's current status
+     * Updates the trip's drop off marker
      */
-    private synchronized void updateMarkers() {
-        if (null == mGoogleMap || null == callData) return;
-        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-            updatePickupMarker();
-            updateDropOffMarker();
+    private synchronized void updateDropOffMarker() {
+
+        boolean showOnLeft;
+        double proposedDistance = 30;
+
+        LatLng latLng = new LatLng(Double.valueOf(callData.getEndLat()), Double.valueOf(callData.getEndLng()));
+        boolean isLeftAreaVisible = MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(latLng, proposedDistance, 270));
+
+        if (!isLeftAreaVisible) {
+            showOnLeft = false;
         } else {
-            if (pickUpMarker != null) pickUpMarker.remove();
-            updateDropOffMarker();
+            boolean isRightAreaVisible = MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(latLng, proposedDistance, 90));
+            if (!isRightAreaVisible) {
+                showOnLeft = true;
+            } else {
+                showOnLeft = isLeftAreaGreater(latLng);
+            }
         }
-        setPickupBounds();
+        if (dropOffMarker != null) { // && StringUtils.isNotBlank(lastPickUpFlagOnLeft)) {
+            if (!lastDropOffFlagOnLeft == showOnLeft) { // || !lastEtaInFlag.equalsIgnoreCase(eta)) {
+                dropOffMarker.remove();
+                dropOffMarker = mGoogleMap.addMarker(getDropOffMarker(latLng, showOnLeft));
+            }
+        } else {
+            dropOffMarker = mGoogleMap.addMarker(getDropOffMarker(latLng, showOnLeft));
+        }
     }
 
     /**
@@ -1246,34 +1224,29 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     /**
-     * Updates the trip's drop off marker
+     * This method creates Custom UI for drop off marker
+     *
+     * @param latLng     drop off point
+     * @param showOnLeft true if we need to show Pick up flag on left side
+     * @return MarkerOptions MarkerOptions to add marker
      */
-    private synchronized void updateDropOffMarker() {
+    private MarkerOptions getDropOffMarker(LatLng latLng, boolean showOnLeft) {
+        lastDropOffFlagOnLeft = showOnLeft;
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        View mCustomMarkerView = MapUtil.getDropOffMarkerLayout(mCurrentActivity, showOnLeft);
 
-        boolean showOnLeft;
-        double proposedDistance = 30;
+        TextView tvDistance = mCustomMarkerView.findViewById(R.id.tvDistance);
+        TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
+        TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        LatLng latLng = new LatLng(Double.valueOf(callData.getEndLat()), Double.valueOf(callData.getEndLng()));
-        boolean isLeftAreaVisible = MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(latLng, proposedDistance, 270));
+        tvDistance.setText(callData.getTripDistance());
+        tvDuration.setText(callData.getTripEta());
+        if (callData.getZoneNameDropOffUrdu() != null && !callData.getZoneNameDropOffUrdu().isEmpty())
+            tvRegionName.setText(callData.getZoneNameDropOffUrdu());
 
-        if (!isLeftAreaVisible) {
-            showOnLeft = false;
-        } else {
-            boolean isRightAreaVisible = MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(latLng, proposedDistance, 90));
-            if (!isRightAreaVisible) {
-                showOnLeft = true;
-            } else {
-                showOnLeft = isLeftAreaGreater(latLng);
-            }
-        }
-        if (dropOffMarker != null) { // && StringUtils.isNotBlank(lastPickUpFlagOnLeft)) {
-            if (!lastDropOffFlagOnLeft == showOnLeft) { // || !lastEtaInFlag.equalsIgnoreCase(eta)) {
-                dropOffMarker.remove();
-                dropOffMarker = mGoogleMap.addMarker(getDropOffMarker(latLng, showOnLeft));
-            }
-        } else {
-            dropOffMarker = mGoogleMap.addMarker(getDropOffMarker(latLng, showOnLeft));
-        }
+        markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
+        return markerOptions;
     }
 
     /**
@@ -1305,29 +1278,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     /**
-     * This method creates Custom UI for drop off marker
-     *
-     * @param latLng     drop off point
-     * @param showOnLeft true if we need to show Pick up flag on left side
-     * @return MarkerOptions MarkerOptions to add marker
+     * This method updates the trip pickup and drop off markers on basis of trip's current status
      */
-    private MarkerOptions getDropOffMarker(LatLng latLng, boolean showOnLeft) {
-        lastDropOffFlagOnLeft = showOnLeft;
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        View mCustomMarkerView = MapUtil.getDropOffMarkerLayout(mCurrentActivity, showOnLeft);
-
-        TextView tvDistance = mCustomMarkerView.findViewById(R.id.tvDistance);
-        TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
-        TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
-
-        tvDistance.setText(callData.getTripDistance());
-        tvDuration.setText(callData.getTripEta());
-        if (callData.getZoneNameDropOffUrdu() != null && !callData.getZoneNameDropOffUrdu().isEmpty())
-            tvRegionName.setText(callData.getZoneNameDropOffUrdu());
-
-        markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
-        return markerOptions;
+    private synchronized void updateMarkers() {
+        if (null == mGoogleMap || null == callData) return;
+        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+            updatePickupMarker();
+            updateDropOffMarker();
+        } else {
+            if (pickUpMarker != null) pickUpMarker.remove();
+            updateDropOffMarker();
+        }
+        setPickupBounds();
     }
 
     private boolean isLastAnimationComplete = true;
@@ -1587,6 +1549,27 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //        mGoogleMap.setPadding(0, 0, 0, 0);
     }
 
+    private LatLngBounds getCurrentLatLngBounds() {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        if (pickUpMarker != null) builder.include(pickUpMarker.getPosition());
+        if (dropOffMarker != null) builder.include(dropOffMarker.getPosition());
+        if (driverMarker != null) builder.include(driverMarker.getPosition());
+
+
+        LatLngBounds tmpBounds = builder.build();
+        /* Add 2 points 1000m northEast and southWest of the center.
+         * They increase the bounds only, if they are not already larger
+         * than this.
+         * 1000m on the diagonal translates into about 709m to each direction. */
+        LatLng center = tmpBounds.getCenter();
+        LatLng northEast = MapUtil.move(center, 709, 709);
+        LatLng southWest = MapUtil.move(center, -709, -709);
+
+        builder.include(southWest);
+        builder.include(northEast);
+        return builder.build();
+    }
+
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
@@ -1788,26 +1771,47 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 Toast.LENGTH_SHORT).show();
     }
 
-    private LatLngBounds getCurrentLatLngBounds() {
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        if (pickUpMarker != null) builder.include(pickUpMarker.getPosition());
-        if (dropOffMarker != null) builder.include(dropOffMarker.getPosition());
-        if (driverMarker != null) builder.include(driverMarker.getPosition());
+    private BroadcastReceiver locationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (null != intent && Keys.LOCATION_UPDATE_BROADCAST.equalsIgnoreCase(intent.getAction()) && AppPreferences.isLoggedIn()) {
+                /*UPDATING DRIVER CURRENT AND PREVIOUS LOCATION
+                    FOR TRACKING AND UPDATING DRIVER MARKERS*/
+
+                if (null == mPreviousLocation || null == mCurrentLocation) {
+                    mCurrentLocation = intent.getParcelableExtra("location");
+                    mPreviousLocation = mCurrentLocation;
+                } else {
+                    mPreviousLocation = mCurrentLocation;
+                    mCurrentLocation = intent.getParcelableExtra("location");
+                }
+
+                if (null != mCurrentLocation) {
+                    getDriverRoadPosition(mCurrentActivity,
+                            new com.google.maps.model.LatLng(mCurrentLocation.getLatitude(),
+                                    mCurrentLocation.getLongitude()));
+                }
 
 
-        LatLngBounds tmpBounds = builder.build();
-        /* Add 2 points 1000m northEast and southWest of the center.
-         * They increase the bounds only, if they are not already larger
-         * than this.
-         * 1000m on the diagonal translates into about 709m to each direction. */
-        LatLng center = tmpBounds.getCenter();
-        LatLng northEast = MapUtil.move(center, 709, 709);
-        LatLng southWest = MapUtil.move(center, -709, -709);
+                mLocBearing = intent.getStringExtra("bearing");
 
-        builder.include(southWest);
-        builder.include(northEast);
-        return builder.build();
-    }
+
+                //THIS CHECK IS TO SHOW DROP OFF ICON WHEN DRIVER PRESS ARRIVED BUTTON
+                if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                    if (StringUtils.isNotBlank(callData.getEndLat()) &&
+                            StringUtils.isNotBlank(callData.getEndLng())) {
+                        updateMarkers();
+                    } else if (pickUpMarker != null) {
+                        pickUpMarker.remove();
+                        pickUpMarker = null;
+                    }
+                } else {
+                    updateMarkers();
+                }
+                showEstimatedDistTime();
+            }
+        }
+    };
 
 
     private void cancelByPassenger(boolean isCanceledByAdmin) {
