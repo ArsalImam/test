@@ -67,7 +67,7 @@ public class Constants {
 
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
-    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";//Staging Server Key of Passenger
+    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
