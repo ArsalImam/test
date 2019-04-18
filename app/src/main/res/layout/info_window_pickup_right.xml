@@ -61,7 +61,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/kilometer_ur"
                             android:textSize="@dimen/box_eta_text_size"
-                            app:fontName="open_sans_semi_bold.ttf" />
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     </LinearLayout>
 
@@ -80,7 +80,7 @@
                         android:text="@string/pick_ur"
                         android:textColor="#383737"
                         android:textSize="@dimen/box_pick_up_text_size"
-                        app:fontName="open_sans_semi_bold.ttf" />
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     <LinearLayout
                         android:layout_width="@dimen/box_height"
@@ -104,7 +104,7 @@
                             android:text="@string/minute_ur"
                             android:textColor="@color/white"
                             android:textSize="@dimen/box_eta_text_size"
-                            app:fontName="open_sans_semi_bold.ttf" />
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
                     </LinearLayout>
