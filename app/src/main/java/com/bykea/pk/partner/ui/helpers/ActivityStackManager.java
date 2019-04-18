@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.models.data.BankData;
-import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -27,9 +29,12 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
-import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.LoadboardBookingDetailActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
+import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
+import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
+import com.bykea.pk.partner.ui.activities.MultiDeliveryFeedbackActivity;
+import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
@@ -171,8 +176,46 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /***
+     * Start Map Details Activity.
+     *
+     * @param mContext an activity context holding the reference of an activity.
+     * @param type a type of a fragment you want to open in an activity.
+     */
+    public void startMapDetailsActivity(Context mContext, String type) {
+        Intent intent = new Intent(mContext, MapDetailsActivity.class);
+        intent.putExtra(Keys.FRAGMENT_TYPE_NAME, type);
+        mContext.startActivity(intent);
+    }
+
+    /***
+     * Start MultiDelivery Booking activity using activity context
+     * @param mContext hold the reference of an activity.
+     */
+    public void startMultiDeliveryBookingActivity(Context mContext) {
+        Intent intent = new Intent(mContext, MultipleDeliveryBookingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mContext.startActivity(intent);
+    }
+
     public void startFeedbackActivity(Context mContext) {
         Intent intent = new Intent(mContext, FeedbackActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * Start multi delivery feedback activity.
+     *
+     * @param mContext Holding the reference of an activity.
+     * @param isComingFromOnGoingRide Is user coming from on going ride.
+     * @param tripID Current Trip id.
+     */
+    public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID,boolean isComingFromOnGoingRide) {
+        Intent intent = new Intent(mContext, MultiDeliveryFeedbackActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Keys.MULTIDELIVERY_TRIP_ID, tripID);
+        bundle.putBoolean(Keys.MULTIDELIVERY_FEEDBACK_SCREEN, isComingFromOnGoingRide);
+        intent.putExtras(bundle);
         mContext.startActivity(intent);
     }
 
@@ -251,8 +294,8 @@ public class ActivityStackManager {
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
 
         Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +
-                "PS status: " + Utils.isGpsEnable() + "Trip Status: " + AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE) +
-                "Not Delayed: " + Utils.isNotDelayed(callData.getData().getSentTime()));
+                "GPS status: " + Utils.isGpsEnable() + " Trip Status (Free): " + AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE) +
+                " Should display screen (if request difference is not delayed): " + Utils.isNotDelayed(callData.getData().getSentTime()));
         if (AppPreferences.getAvailableStatus()
                 //&& !AppPreferences.isAvailableStatusAPICalling()
                 && Utils.isGpsEnable()
@@ -271,6 +314,33 @@ public class ActivityStackManager {
             mContext.startActivity(callIntent);
         }
     }
+
+    /**
+     * Start multi delivery calling activity.
+     *
+     * @param response The {@link MultiDeliveryCallDriverData} object.
+     * @param isFromGcm boolean indicating that start activity from GCM or not.
+     * @param mContext Holding the reference of an activity.
+     */
+    public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverData response,
+                                                  boolean isFromGcm,
+                                                  Context mContext) {
+
+        if (AppPreferences.getAvailableStatus() && Utils.isGpsEnable()) {
+            AppPreferences.setMultiDeliveryCallDriverData(response);
+            Intent callIntent = new Intent(DriverApp.getContext(),
+                    MultiDeliveryCallingActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            if (isFromGcm) {
+                callIntent.putExtra(Constants.IS_FROM_GCM, true);
+            }
+            mContext.startActivity(callIntent);
+        }
+    }
+
+
 
     public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {
         Utils.redLog(Constants.APP_NAME + " CONVERSATION ID = ", refId);

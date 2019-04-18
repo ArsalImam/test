@@ -33,6 +33,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NotificationData;
@@ -105,6 +106,7 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.setMessage(getString(R.string.internet_error));
         checkPermissions(false);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        Utils.keepScreenOn(mCurrentActivity);
     }
 
     @Override
@@ -653,6 +655,21 @@ public class BaseActivity extends AppCompatActivity {
             Utils.onUnauthorized(mCurrentActivity);
         } else if (Keys.MOCK_LOCATION.equalsIgnoreCase(action)) {
             Utils.onUnauthorizedMockLocation(mCurrentActivity);
+        } else if (Keys.MULTIDELIVERY_ERROR_BORADCAST.equalsIgnoreCase(action)) {
+            //MULTI DELIVERY EVENT ERROR HANDLING
+            Utils.appToast(mCurrentActivity,
+                    mCurrentActivity.getString(R.string.error_try_again));
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
+            Utils.multiDeliveryFreeDriverOnBatchComplete();
+            ActivityStackManager
+                    .getInstance()
+                    .startHomeActivity(true, mCurrentActivity);
+            finish();
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN )) {
+            Utils.setCallIncomingState();
+            AppPreferences.setAvailableStatus(true);
+            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(true, mCurrentActivity);
+            finish();
         }
     }
 

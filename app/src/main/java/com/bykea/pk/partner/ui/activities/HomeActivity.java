@@ -18,21 +18,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.LoadBoardListingData;
 import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.fragments.DataSaverDialogFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.LoadboardZoneFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -57,6 +55,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends BaseActivity {
+
+    private static final String TAG = HomeActivity.class.getSimpleName();
 
     private HomeActivity mCurrentActivity;
     public String navTitles[];
@@ -106,7 +106,7 @@ public class HomeActivity extends BaseActivity {
     public FontTextView bottomSheetNoJobsAvailableTV;
     @BindView(R.id.bottomSheetLoader)
     public ProgressBar bottomSheetLoader;
-    @BindView(R.id.bottomSheet)
+    @BindView(R.id.appBottomBarLayout)
     public AppBarLayout bottomSheet;
 
     @BindView(R.id.achaconnectionTv)
@@ -152,7 +152,7 @@ public class HomeActivity extends BaseActivity {
         Notifications.clearNotifications(mCurrentActivity);
 //        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
-
+        Utils.clearSharedPrefIfDirty(mCurrentActivity);
     }
 
     @Override
@@ -179,6 +179,8 @@ public class HomeActivity extends BaseActivity {
 
         //we need to validate app version on every visit on home screen.
         updateAppVersionIfRequired();
+
+        checkIfBackgroundDataAccessible();
     }
 
     @Override
@@ -342,9 +344,14 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onEvent(String action) {
         super.onEvent(action);
-        Fragment currentFragment = mCurrentActivity.getSupportFragmentManager().findFragmentById(R.id.containerView);
-        if (currentFragment instanceof HomeFragment) {
-            ((HomeFragment) currentFragment).onEvent(action);
+        if(getSupportFragmentManager()!=null){
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
+            if(currentFragment!=null){
+                if (currentFragment instanceof HomeFragment) {
+                    ((HomeFragment) currentFragment).onEvent(action);
+                }
+            }
+
         }
     }
 
@@ -362,20 +369,32 @@ public class HomeActivity extends BaseActivity {
             showHomeFragment();
         }
     }
+
     /**
      * This method compares App Version in user model with App version on User's Device and updates
      * App version on server via API if required.
      */
     private void updateAppVersionIfRequired() {
-        if(!Utils.getVersion().equalsIgnoreCase(AppPreferences.getAppVersion())){
-            mUserRepository.updateAppVersion(new UserDataHandler(){
+        if (!Utils.getVersion().equalsIgnoreCase(AppPreferences.getAppVersion())) {
+            mUserRepository.updateAppVersion(new UserDataHandler() {
                 @Override
                 public void onUpdateAppVersionResponse(UpdateAppVersionResponse response) {
-                    if(response.isSuccess()){
+                    if (response.isSuccess()) {
                         AppPreferences.setAppVersion(Utils.getVersion());
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Check the availability of cellular data access in background.
+     */
+    private void checkIfBackgroundDataAccessible(){
+        if (!Connectivity.isBackgroundDataAccessAvailable(mCurrentActivity)) {
+            DataSaverDialogFragment dialogFragment = new DataSaverDialogFragment();
+            dialogFragment.setCancelable(false);
+            dialogFragment.show(getSupportFragmentManager(), TAG);
         }
     }
 
@@ -646,8 +665,8 @@ public class HomeActivity extends BaseActivity {
                             Utils.appToast(mCurrentActivity, errorMessage);
                             hideLoadBoardBottomSheet();
                             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
-                            if(currentFragment instanceof HomeFragment){
-                                ((HomeFragment)currentFragment).resetPositionOfMapPinAndSelectedCashView(
+                            if (currentFragment instanceof HomeFragment) {
+                                ((HomeFragment) currentFragment).resetPositionOfMapPinAndSelectedCashView(
                                         (int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
                                         (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
                             }
@@ -658,6 +677,7 @@ public class HomeActivity extends BaseActivity {
 
     /**
      * display/inflate zone selection screen
+     *
      * @param fragment loadboard zone screen/fragment reference
      */
     private void showLoadboardZoneScreen(LoadboardZoneFragment fragment) {
@@ -673,16 +693,16 @@ public class HomeActivity extends BaseActivity {
         ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
         ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
         //checking zone data and display selected pick up zone or show empty filed with pickup text
-        if(bottomSheetPickTV != null){
-            if(pickupZone != null && pickupZone.getUrduName() != null){
+        if (bottomSheetPickTV != null) {
+            if (pickupZone != null && pickupZone.getUrduName() != null) {
                 bottomSheetPickTV.setText(getString(R.string.pick_drop_name_ur, pickupZone.getUrduName()));
             } else {
                 bottomSheetPickTV.setText(getString(R.string.pick_ur));
             }
         }
         //checking zone data and display selected drop off zone or show empty filed with drop text
-        if(bottomSheetDropTV != null){
-            if(dropoffZone != null && dropoffZone.getUrduName() != null){
+        if (bottomSheetDropTV != null) {
+            if (dropoffZone != null && dropoffZone.getUrduName() != null) {
                 bottomSheetDropTV.setText(getString(R.string.pick_drop_name_ur, dropoffZone.getUrduName()));
             } else {
                 bottomSheetDropTV.setText(getString(R.string.drop_ur));
@@ -717,6 +737,5 @@ public class HomeActivity extends BaseActivity {
         bottomSheetNoJobsAvailableTV.setVisibility(View.GONE);
         activeHomeLoadBoardList.setVisibility(View.VISIBLE);
     }
-
 
 }

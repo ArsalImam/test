@@ -2,7 +2,7 @@ package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
+
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -80,6 +80,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -458,14 +459,18 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
-        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(AppPreferences.getDriverId(),
+        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(
+                AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken());
         restCall.enqueue(new Callback<CheckDriverStatusResponse>() {
             @Override
             public void onResponse(Call<CheckDriverStatusResponse> call, Response<CheckDriverStatusResponse> response) {
                 // Got success from server
-                if (null != response.body()) {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
                     mResponseCallBack.onResponse(response.body());
+                    Utils.redLog(TAG, new Gson().toJson(response.body().getData()));
+                } else {
+                    mResponseCallBack.onError(response.code(), response.message());
                 }
             }
 
@@ -1228,34 +1233,50 @@ public class RestRequestHandler {
 
     /**
      * request for loadboard jobs list
-     * @param context Context
-     * @param limit jobs limit - OPTIONAL
-     * @param pickupZoneId jobs pickup zone id - OPTIONAL
-     * @param dropoffZoneId - jons dropoff zone id - OPTIONAL
+     *
+     * @param context            Context
+     * @param limit              jobs limit - OPTIONAL
+     * @param pickupZoneId       jobs pickup zone id - OPTIONAL
+     * @param dropoffZoneId      - jons dropoff zone id - OPTIONAL
      * @param onResponseCallback callback
      */
-    public void loadboardListing(Context context, String limit, String pickupZoneId, String dropoffZoneId, final IResponseCallback onResponseCallback) {
-        mContext = context;
-        this.mResponseCallBack = onResponseCallback;
-        mRestClient = RestClient.getClient(mContext);
-
-        Call<LoadBoardListingResponse> requestCall = mRestClient.requestLoadBoardListing(
+    public void loadboardListing(final Context context, String limit, String pickupZoneId, String dropoffZoneId, final IResponseCallback onResponseCallback) {
+        Call<LoadBoardListingResponse> requestCall = RestClient.getClient(context).requestLoadBoardListing(
                 AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken(),
                 String.valueOf(AppPreferences.getLatitude())/*"24.7984714" DHA lat*/,
                 String.valueOf(AppPreferences.getLongitude())/*"67.0326814" DHA lng*/,
                 limit, pickupZoneId, dropoffZoneId);
-        requestCall.enqueue(new GenericRetrofitCallBack<LoadBoardListingResponse>(onResponseCallback));
+        requestCall.enqueue(new Callback<LoadBoardListingResponse>() {
+            @Override
+            public void onResponse(Call<LoadBoardListingResponse> call, Response<LoadBoardListingResponse> response) {
+                if (response == null || response.body() == null) {
+                    onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, context.getString(R.string.error_try_again));
+                    return;
+                }
+                if (response.body().isSuccess()) {
+                    onResponseCallback.onResponse(response.body());
+                } else {
+                    onResponseCallback.onError(response.body().getCode(), response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoadBoardListingResponse> call, Throwable t) {
+                onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
 
     }
 
     /**
      * accept request for specific booking
-     * @param context Context
-     * @param bookingId selected booking id
+     *
+     * @param context            Context
+     * @param bookingId          selected booking id
      * @param onResponseCallback callback
      */
-    public void acceptLoadboardBooking(Context context,String bookingId, final IResponseCallback onResponseCallback) {
+    public void acceptLoadboardBooking(Context context, String bookingId, final IResponseCallback onResponseCallback) {
         mContext = context;
         this.mResponseCallBack = onResponseCallback;
         mRestClient = RestClient.getClient(mContext);
@@ -1302,11 +1323,12 @@ public class RestRequestHandler {
 
     /**
      * request for details of selected booking
-     * @param context Context
-     * @param bookingId selected booking id
+     *
+     * @param context            Context
+     * @param bookingId          selected booking id
      * @param onResponseCallback callback
      */
-    public void loadboardBookingDetail(Context context,String bookingId, final IResponseCallback onResponseCallback) {
+    public void loadboardBookingDetail(Context context, String bookingId, final IResponseCallback onResponseCallback) {
         mContext = context;
         this.mResponseCallBack = onResponseCallback;
         mRestClient = RestClient.getClient(mContext);
