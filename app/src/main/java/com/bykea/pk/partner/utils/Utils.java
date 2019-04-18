@@ -95,11 +95,9 @@ import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.ResponseBody;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -134,6 +132,9 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -2595,22 +2596,17 @@ public class Utils {
     }
 
     //region API error response Body parsing
-
     /***
      * HTTP response body converted to specified {@code type}.
      * {@code null} if there is no response
      * @param response response we received from API server.
-     * @param retrofit Retrofit Object
      * @param type Concrete type class which is use to parse error response.
      * @return {@link Object } Object class which would be casted to respective class
      * parsed when we receive error body
      */
-    public static <T> T parseAPIErrorResponse(Response<?> response, Retrofit retrofit,
-                                              Class<T> type) {
+    public static <T> T parseAPIErrorResponse(Response<?> response, Class<T> type) {
         try {
-            Converter<ResponseBody, T> converter = retrofit.responseConverter(type,
-                    new Annotation[0]);
-            return converter.convert(response.errorBody());
+            return new Gson().fromJson(response.errorBody().string(), type);
         } catch (IOException e) {
             e.printStackTrace();
         }
