@@ -912,13 +912,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
-        showDropOff();
+        showDropOffAddress();
         llStartAddress.setVisibility(View.GONE);
         cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
     }
 
-    private void showDropOff() {
+    private void showDropOffAddress() {
         if (Utils.isCourierService(callData.getCallType())) {
             endAddressTv.setVisibility(View.GONE);
         } else {
@@ -928,7 +928,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setStartedState() {
         llStartAddress.setVisibility(View.GONE);
-        showDropOff();
+        showDropOffAddress();
         cvDirections.setVisibility(View.VISIBLE);
         jobBtn.setText(getString(R.string.button_text_finish));
         setOnStartData();
@@ -1244,7 +1244,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
             if (callData.getStartLat() != null && !callData.getStartLat().isEmpty() && callData.getStartLng() != null && !callData.getStartLng().isEmpty())
                 updatePickupMarker();
-            if (callData.getEndLat() != null && !callData.getEndLat().isEmpty()  && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+            if (callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
         } else {
             if (pickUpMarker != null) pickUpMarker.remove();
@@ -1554,9 +1554,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Routing.pickupRoute);
             }
         } else {
-            if (mapPolylines != null) {
-                mapPolylines.remove();
-            }
+            if (mapPolylines != null) mapPolylines.remove();
+            if (mapPolylinesSecond != null) mapPolylinesSecond.remove();
         }
     }
 
@@ -1711,7 +1710,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             updateDriverMarker(mCurrentLocation.getLatitude() + "",
                     mCurrentLocation.getLongitude() + "");
 
-            drawRoutes();
+            if (isDirectionApiCallRequired(new LatLng(latitude, longitude))) {
+                if (mapPolylines != null) {
+                    mapPolylines.remove();
+                }
+                drawRoutes();
+            }
+
             /*            if (*//*AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
                     ||*//* AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng()))
@@ -1843,7 +1848,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData = AppPreferences.getCallData();
                         callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
                         AppPreferences.setCallData(callData);
-                        showDropOff();
+                        showDropOffAddress();
                         llStartAddress.setVisibility(View.GONE);
                         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
                         setOnArrivedData();
