@@ -946,7 +946,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
             tvCodAmount.setText("Rs." + callData.getCodAmount());
             if (Utils.isPurchaseService(callData.getCallType())) {
-                tvCashWasooliLabel.setText("خریداری کی رقم");
+                tvCashWasooliLabel.setText(R.string.kharidari_label);
             }
         } else {
             tvCodAmount.setText("-");
