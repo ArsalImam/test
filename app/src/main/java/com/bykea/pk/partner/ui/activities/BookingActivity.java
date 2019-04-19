@@ -42,7 +42,7 @@ import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.tracking.parser.AbstractRouter;
+import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
@@ -81,48 +81,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.response.ArrivedResponse;
-import com.bykea.pk.partner.models.response.BeginRideResponse;
-import com.bykea.pk.partner.models.response.CancelRideResponse;
-import com.bykea.pk.partner.models.response.EndRideResponse;
-import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.tracking.AbstractRouting;
-import com.bykea.pk.partner.tracking.Route;
-import com.bykea.pk.partner.tracking.RouteException;
-import com.bykea.pk.partner.tracking.Routing;
-import com.bykea.pk.partner.tracking.RoutingListener;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Keys;
-import com.bykea.pk.partner.utils.NetworkChangeListener;
-import com.bykea.pk.partner.utils.Permissions;
-import com.bykea.pk.partner.utils.TripStatus;
-import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.maps.android.PolyUtil;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -1006,7 +964,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    private void showDropOffPersonInfo(){
+    private void showDropOffPersonInfo() {
         if (checkIfDetailsAdded()) {
             llDetails.setVisibility(View.VISIBLE);
             tvDetailsNotEntered.setVisibility(View.GONE);
@@ -1267,7 +1225,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
         tvDistance.setText(callData.getDriverToPassengerDistance());
-        if (callData.getDriverToPassengerEta()!= null)
+        if (callData.getDriverToPassengerEta() != null)
             tvDuration.setText(callData.getDriverToPassengerEta().toString());
         if (callData.getZoneNamePickupUrdu() != null && !callData.getZoneNamePickupUrdu().isEmpty())
             tvRegionName.setText(callData.getZoneNamePickupUrdu());
@@ -1282,12 +1240,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private synchronized void updateMarkers() {
         if (null == mGoogleMap || null == callData) return;
+
         if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-            updatePickupMarker();
-            updateDropOffMarker();
+            if (callData.getStartLat() != null && !callData.getStartLat().isEmpty() && callData.getStartLng() != null && !callData.getStartLng().isEmpty())
+                updatePickupMarker();
+            if (callData.getEndLat() != null && !callData.getEndLat().isEmpty()  && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+                updateDropOffMarker();
         } else {
             if (pickUpMarker != null) pickUpMarker.remove();
-            updateDropOffMarker();
+            if (callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+                updateDropOffMarker();
         }
         setPickupBounds();
     }
@@ -1573,13 +1535,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
-        if (
-                StringUtils.isNotBlank(callData.getStartLat())
-                        && StringUtils.isNotBlank(callData.getStartLng())
-                        && StringUtils.isNotBlank(callData.getStartLat())
-                        && StringUtils.isNotBlank(callData.getStartLng())
-                        && StringUtils.isNotBlank(AppPreferences.getLatitude() + "")
-                        && StringUtils.isNotBlank(AppPreferences.getLongitude() + "")) {
+        if (StringUtils.isNotBlank(callData.getStartLat())
+                && StringUtils.isNotBlank(callData.getStartLng())
+                && StringUtils.isNotBlank(callData.getEndLat())
+                && StringUtils.isNotBlank(callData.getEndLng())
+                && StringUtils.isNotBlank(AppPreferences.getLatitude() + "")
+                && StringUtils.isNotBlank(AppPreferences.getLongitude() + "")) {
 
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                 drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
@@ -1679,29 +1640,48 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     updateEtaAndCallData((route.get(0).getDurationValue() / 60) + "",
                             Utils.formatDecimalPlaces((route.get(0).getDistanceValue() / 1000.0) + "", 1));
 
-
-                    if (mapPolylines != null) {
-                        mapPolylines.remove();
-                    }
-                    PolylineOptions polyOptions = new PolylineOptions();
-                    polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                    polyOptions.addAll(route.get(0).getPoints());
+                    if (mapPolylines != null) mapPolylines.remove();
+                    if (mapPolylinesSecond != null) mapPolylinesSecond.remove();
 
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && route.size() > 1) {
+                        Route route2 = route.get(1);
+
+                        PolylineOptions polyOptions = new PolylineOptions();
+                        polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
+                        polyOptions.addAll(route1.getPoints());
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.kelly_green));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
+
                         polyOptions = new PolylineOptions();
                         polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                        polyOptions.addAll(route.get(1).getPoints());
+                        polyOptions.addAll(route2.getPoints());
+                        polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
+                        mapPolylinesSecond = mGoogleMap.addPolyline(polyOptions);
+
+                        mRouteLatLng2 = route2.getPoints();
+                        callData.setDriverToPassengerDistance(String.valueOf(route1.getDistanceValue() / 1000));
+                        callData.setDriverToPassengerEta((long) route1.getDurationValue() / 60);
+                        callData.setTripDistance(String.valueOf(route2.getDistanceValue() / 1000));
+                        callData.setTripEta(String.valueOf(route2.getDurationValue() / 60));
+
+                    } else {
+                        PolylineOptions polyOptions = new PolylineOptions();
+                        polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
+                        polyOptions.addAll(route1.getPoints());
+                        polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
+                        mapPolylines = mGoogleMap.addPolyline(polyOptions);
+
+                        callData.setTripDistance(String.valueOf(route1.getDistanceValue() / 1000));
+                        callData.setTripEta(String.valueOf(route1.getDurationValue() / 60));
                     }
 
-                    polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
-                    mapPolylines = mGoogleMap.addPolyline(polyOptions);
+
+                    updateMarkers();
 
                     if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute) {
                         if (mCurrentActivity != null && mGoogleMap != null) {
                             int padding = 40; // offset from edges of the map in pixels
-                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(route.get(0).getLatLgnBounds(), padding);
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(route1.getLatLgnBounds(), padding);
                             mGoogleMap.moveCamera(cu);
                         }
                     }
@@ -2040,7 +2020,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         try {
                             Gson gson = new Gson();
                             String trip = gson.toJson(response.getData().getTrip());
-                            Type type = new TypeToken<NormalCallData>(){}.getType();
+                            Type type = new TypeToken<NormalCallData>() {
+                            }.getType();
                             NormalCallData normalCallData = gson.fromJson(trip, type);
 
                             if (shouldUpdateTripData(normalCallData.getStatus())) {
@@ -2170,6 +2151,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     /**
      * Starts count down timer for ETA
+     *
      * @param eta ETA to initiate count down timer with
      */
     private void startCountDown(Long eta) {
