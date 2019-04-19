@@ -1636,9 +1636,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mRouteLatLng = route.get(0).getPoints();
-                    updateEtaAndCallData((route.get(0).getDurationValue() / 60) + "",
-                            Utils.formatDecimalPlaces((route.get(0).getDistanceValue() / 1000.0) + "", 1));
+                    Route route1 = route.get(0);
+                    mRouteLatLng = route1.getPoints();
+                    updateEtaAndCallData((route1.getDurationValue() / 60) + "",
+                            Utils.formatDecimalPlaces((route1.getDistanceValue() / 1000.0) + "", 1));
 
                     if (mapPolylines != null) mapPolylines.remove();
                     if (mapPolylinesSecond != null) mapPolylinesSecond.remove();
