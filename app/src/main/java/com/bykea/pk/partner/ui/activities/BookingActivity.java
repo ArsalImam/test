@@ -1045,9 +1045,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
             updateMarkers();
-        } else if (pickUpMarker != null) {
-            pickUpMarker.remove();
-            pickUpMarker = null;
+            if (pickUpMarker != null) {
+                pickUpMarker.remove();
+                pickUpMarker = null;
+            }
         }
 
 
