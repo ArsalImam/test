@@ -190,8 +190,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private String cancelReason = StringUtils.EMPTY;
 
     private Marker driverMarker, dropOffMarker, pickUpMarker/*, passCurrentLocMarker*/;
-    private Polyline mapPolylines;
-    private List<LatLng> mRouteLatLng;
+    private Polyline mapPolylines, mapPolylinesSecond;
+    private List<LatLng> mRouteLatLng, mRouteLatLng2;
 
 
     //LOCATION CHANGE UPDATE DATA MEMBERS
