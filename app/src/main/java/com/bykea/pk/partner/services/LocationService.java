@@ -27,7 +27,6 @@ import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
-import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -129,8 +128,10 @@ public class LocationService extends Service {
         } else {
             Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
         }
+
         requestLocationUpdates();
         cancelTimer();
+
         mCountDownLocationTimer.start();
         //DriverETAService.startDriverETAUpdate(this);
         //DriverLocationUpdateJob.scheduleLocationUpdateJob();
@@ -306,7 +307,7 @@ public class LocationService extends Service {
             String tripNo = StringUtils.EMPTY;
             String status = StringUtils.EMPTY;
             if (StringUtils.isBlank(AppPreferences.getDeliveryType())) return StringUtils.EMPTY;
-            if(AppPreferences.getDeliveryType().
+            if (AppPreferences.getDeliveryType().
                     equalsIgnoreCase(Constants.CallType.SINGLE)) {
                 NormalCallData callData = AppPreferences.getCallData();
                 tripNo = callData.getTripNo();
@@ -323,7 +324,7 @@ public class LocationService extends Service {
                 while (i < n) {
                     tripNo += bookingResponseList.get(i).getTrip().getTripNo();
                     i++;
-                    if(i != n)
+                    if (i != n)
                         tripNo += ", ";
                 }
             }
@@ -801,7 +802,7 @@ public class LocationService extends Service {
                 AppPreferences.setAvailableStatus(false);
                 AppPreferences.setAvailableAPICalling(false);
                 AppPreferences.setDriverDestination(null);
-
+                AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
             } else {
                 AppPreferences.setAvailableStatus(false);
                 AppPreferences.setDriverDestination(null);
@@ -848,7 +849,7 @@ public class LocationService extends Service {
         if (locationResponse != null) {
             switch (locationResponse.getCode()) {
                 case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
-                    Utils.handleLocationBusinessLogicErrors(mBus,locationResponse);
+                    Utils.handleLocationBusinessLogicErrors(mBus, locationResponse);
                     break;
                 }
                 //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
@@ -862,8 +863,6 @@ public class LocationService extends Service {
         }
 
     }
-
-
 
 
     //region Event bus socket
