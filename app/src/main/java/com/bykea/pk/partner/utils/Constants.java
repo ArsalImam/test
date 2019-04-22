@@ -102,8 +102,8 @@ public class Constants {
             UPDATE_INTERVAL_IN_MILLISECONDS / 2; //30 seconds
 
 
-    public static final long ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS = 9 * 1000; //6s
-    public static final long ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS_DEFAULT = 21 * 1000; //20s
+    public static final long ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS = 9 * 1000; //9s
+    public static final long ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS_DEFAULT = 21 * 1000; //21s
     public static final long ON_TRIP_UPDATE_INTERVAL_DIVISIBLE = 3;
 
     public static final float LOCATION_SMALLEST_DISPLACEMENT = 10f;
