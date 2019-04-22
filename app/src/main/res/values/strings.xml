@@ -319,6 +319,7 @@
     <string name="kilometer_with_amount_ur"> %d کلومیٹر </string>
     <string name="display_integer_value"> %d </string>
     <string name="display_string_value"> %s </string>
+    <string name="please_select_city">Please select your city.</string>
 
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
