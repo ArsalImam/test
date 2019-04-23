@@ -2252,6 +2252,12 @@ public class Utils {
 
     public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView ivThumbnail, ImageView ytIcon, YouTubePlayerSupportFragment playerFragment) {
 
+        if(playerFragment == null || playerFragment.getView() == null){
+            //In app player is not ready, open it via intent
+            watchYoutubeVideo(context, VIDEO_ID);
+            return;
+        }
+
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
             //TODO: Remove it when crash is resolved in latest YouTube App
@@ -2313,6 +2319,12 @@ public class Utils {
     }
 
     public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView ivThumbnail, ImageView ytIcon, YouTubePlayerFragment playerFragment) {
+
+        if(playerFragment == null || playerFragment.getView() == null){
+            //In app player is not ready, open it via intent
+            watchYoutubeVideo(context, VIDEO_ID);
+            return;
+        }
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
