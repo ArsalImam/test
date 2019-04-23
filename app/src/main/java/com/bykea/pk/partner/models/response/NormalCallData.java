@@ -39,6 +39,7 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("last_name")
     private String lastName;
 
+    @Deprecated
     @SerializedName("est_distance")
     private String distance;
     @SerializedName("est_time")
@@ -109,29 +110,37 @@ public class NormalCallData extends CommonResponse {
     private String recName;
     private String order_no;
 
+    @Deprecated
     @SerializedName("driver_passenger_eta")
     private Long driverToPassengerEta;
 
+    @Deprecated
     @SerializedName("trip_eta")
     private String tripEta;
 
+    @Deprecated
     @SerializedName("distance")
     private String driverToPassengerDistance;
 
+    @Deprecated
     @SerializedName("trip_distance")
     private String tripDistance;
 
+    @Deprecated
     @SerializedName("zone_pickup_name_urdu")
     private String zoneNamePickupUrdu;
 
+    @Deprecated
     @SerializedName("zone_dropoff_name_urdu")
     private String zoneNameDropOffUrdu;
 
     //new ride request design is required this field
+    @Deprecated
     @SerializedName("dropoff_zone_name")
     private String dropoffZoneName;
 
     //new ride request design is required this field
+    @Deprecated
     @SerializedName("dropoff_zone_name_urdu")
     private String dropoffZoneNameUrdu;
 
