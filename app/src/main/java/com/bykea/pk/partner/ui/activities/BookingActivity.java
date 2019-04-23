@@ -207,7 +207,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private LatLng lastPolyLineLatLng, lastApiCallLatLng;
 
     private boolean lastPickUpFlagOnLeft, lastDropOffFlagOnLeft = false;
-
+    CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -890,8 +890,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             } else {
                 ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride_right));
             }
-            if (callData.getDriverToPassengerEta() != null)
-                startCountDown(callData.getDriverToPassengerEta());
+            configCountDown();
         }
     }
 
@@ -2153,21 +2152,38 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         return isAdded;
     }
 
-
-    CountDownTimer countDownTimer;
+    /**
+     * Sets up Count Down Timer on basis of current ride status
+     */
+    private void configCountDown() {
+        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+            Long pickDuration = callData.getDriverToPassengerEta();
+            long eta = AppPreferences.getTripAcceptTime() + TimeUnit.SECONDS.toMillis(pickDuration);
+            startCountDown(eta);
+        } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+            Long dropDuration = Long.valueOf(callData.getTripEta());
+            long eta = AppPreferences.getStartTripTime() + TimeUnit.SECONDS.toMillis(dropDuration);
+            startCountDown(eta);
+        } else {
+            tvCountDown.setVisibility(View.GONE);
+        }
+    }
 
     /**
      * Starts count down timer for ETA
      *
-     * @param eta ETA to initiate count down timer with
+     * @param etaInMillis ETA to initiate count down timer with
      */
-    private void startCountDown(Long eta) {
+    private void startCountDown(Long etaInMillis) {
         if (countDownTimer != null) countDownTimer.cancel();
-
-        final long etaInMilli = eta * 60 * 1000;
-        countDownTimer = new CountDownTimer(etaInMilli, 1000) {
+        long remainingMillis = etaInMillis - System.currentTimeMillis();
+        countDownTimer = new CountDownTimer(remainingMillis, 1000) {
             public void onTick(long millisUntilFinished) {
-                tvCountDown.setText(Utils.formatTimeForTimer(millisUntilFinished));
+                try {
+                    tvCountDown.setText(Utils.formatTimeForTimer(millisUntilFinished));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
 
             public void onFinish() {
@@ -2176,5 +2192,4 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         };
         countDownTimer.start();
     }
-
 }

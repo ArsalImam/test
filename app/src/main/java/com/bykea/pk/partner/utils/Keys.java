@@ -65,6 +65,7 @@ public class Keys {
 
     //Call Data
     public static final String TRIP_START_TIME = "trip_start_time";
+    public static final String TRIP_ACCEPT_TIME = "trip_accept_time";
     public static final String TRIP_TOTAL_DISTANCE = "trip_total_distance";
     public static final String INCOMING_CALL = "INCOMING_CALL";
     public static final String CALL_TYPE = "call_type";

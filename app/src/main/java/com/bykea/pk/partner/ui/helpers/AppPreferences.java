@@ -406,6 +406,17 @@ public class AppPreferences {
         return mSharedPreferences.getBoolean(Keys.ON_END_TRIP, false);
     }
 
+    public static long getTripAcceptTime() {
+        return mSharedPreferences.getLong(Keys.TRIP_ACCEPT_TIME, 0);
+    }
+
+    public static void setTripAcceptTime(long time) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.TRIP_ACCEPT_TIME, time)
+                .apply();
+    }
+
     public static long getStartTripTime() {
         return mSharedPreferences.getLong(Keys.TRIP_START_TIME, 0);
     }
