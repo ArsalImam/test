@@ -251,7 +251,7 @@ public class SelectPlaceActivity extends BaseActivity {
     public void onBackPressed() {
         if (mViewPager.getCurrentItem() == 0) {
             Fragment fragment = list.get(0);
-            if (fragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
+            if (fragment != null && fragment.isAdded() && fragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
                 fragment.getChildFragmentManager().popBackStack();
             } else {
                 super.onBackPressed();
