@@ -202,7 +202,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                     if(tripInfo.getTripDistance() != null && !tripInfo.getTripDistance().isEmpty())
                         tvTotalDistance.setText(getString(R.string.distance_covered, tripInfo.getTripDistance()));
                     if(tripInfo.getTripDuration() != null && !tripInfo.getTripDuration().isEmpty())
-                        tvTotalTime.setText(getString(R.string.duration, Float.valueOf(tripInfo.getTripDuration())));
+                        tvTotalTime.setText(getString(R.string.duration, tripInfo.getTripDuration()));
                     startAddressTv.setText(tripInfo.getStartAddress());
                     endAddressTv.setText(tripInfo.getEndAddress());
                     tvTripId.setText(tripInfo.getTripNo());
