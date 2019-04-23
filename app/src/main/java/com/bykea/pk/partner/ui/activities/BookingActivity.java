@@ -1201,10 +1201,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(callData.getTripDistance());
-        tvDuration.setText(callData.getTripEta());
-        if (callData.getZoneNameDropOffUrdu() != null && !callData.getZoneNameDropOffUrdu().isEmpty())
-            tvRegionName.setText(callData.getZoneNameDropOffUrdu());
+        tvDistance.setText(callData.getDropoffStop().getDistance() + "");
+        tvDuration.setText(callData.getDropoffStop().getDuration() + "");
+        if (callData.getDropoffStop() != null
+                && callData.getDropoffStop().getZoneNameUr() != null
+                && !callData.getDropoffStop().getZoneNameUr().isEmpty())
+            tvRegionName.setText(callData.getDropoffStop().getZoneNameUr());
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
         return markerOptions;
@@ -1227,11 +1229,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(callData.getDriverToPassengerDistance());
-        if (callData.getDriverToPassengerEta() != null)
-            tvDuration.setText(callData.getDriverToPassengerEta().toString());
-        if (callData.getZoneNamePickupUrdu() != null && !callData.getZoneNamePickupUrdu().isEmpty())
-            tvRegionName.setText(callData.getZoneNamePickupUrdu());
+        tvDistance.setText(callData.getPickupStop().getDistance().toString());
+        if (callData.getPickupStop().getDuration() != null)
+            tvDuration.setText(callData.getPickupStop().getDuration().toString());
+        if (callData.getPickupStop().getZoneNameUr() != null && !callData.getPickupStop().getZoneNameUr().isEmpty())
+            tvRegionName.setText(callData.getPickupStop().getZoneNameUr());
 
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
@@ -1662,10 +1664,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         mapPolylinesSecond = mGoogleMap.addPolyline(polyOptions);
 
                         mRouteLatLng2 = route2.getPoints();
-                        callData.setDriverToPassengerDistance(String.valueOf(route1.getDistanceValue() / 1000));
-                        callData.setDriverToPassengerEta((long) route1.getDurationValue() / 60);
-                        callData.setTripDistance(String.valueOf(route2.getDistanceValue() / 1000));
-                        callData.setTripEta(String.valueOf(route2.getDurationValue() / 60));
+                        callData.getPickupStop().setDistance(route1.getDistanceValue()); //DriverToPassengerDistance(String.valueOf(route1.getDistanceValue() / 1000));
+                        callData.getPickupStop().setDuration(route1.getDurationValue()); //DriverToPassengerEta((long) route1.getDurationValue() / 60);
+                        callData.getDropoffStop().setDistance(route2.getDistanceValue()); //setTripDistance(String.valueOf(route2.getDistanceValue() / 1000));
+                        callData.getDropoffStop().setDuration(route2.getDurationValue()); //setTripEta(String.valueOf(route2.getDurationValue() / 60));
 
                     } else {
                         PolylineOptions polyOptions = new PolylineOptions();
@@ -1674,8 +1676,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
 
-                        callData.setTripDistance(String.valueOf(route1.getDistanceValue() / 1000));
-                        callData.setTripEta(String.valueOf(route1.getDurationValue() / 60));
+                        callData.getDropoffStop().setDistance(route1.getDistanceValue()); //setTripDistance(String.valueOf(route1.getDistanceValue() / 1000));
+                        callData.getDropoffStop().setDuration(route1.getDurationValue()); //setTripEta(String.valueOf(route1.getDurationValue() / 60));
                     }
 
                     shouldRefreshPickupMarker = true;
@@ -2160,12 +2162,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Sets up Count Down Timer on basis of current ride status
      */
     private void configCountDown() {
-        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-            Long pickDuration = callData.getDriverToPassengerEta();
+        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && callData.getPickupStop() != null) {
+            int pickDuration = callData.getPickupStop().getDuration();
             long eta = AppPreferences.getTripAcceptTime() + TimeUnit.SECONDS.toMillis(pickDuration);
             startCountDown(eta);
-        } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            Long dropDuration = Long.valueOf(callData.getTripEta());
+        } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP) && callData.getDropoffStop() != null) {
+            int dropDuration = callData.getDropoffStop().getDuration();
             long eta = AppPreferences.getStartTripTime() + TimeUnit.SECONDS.toMillis(dropDuration);
             startCountDown(eta);
         } else {

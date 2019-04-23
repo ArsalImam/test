@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.models.response;
 
+import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
@@ -144,6 +145,12 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("dropoff_zone_name_urdu")
     private String dropoffZoneNameUrdu;
 
+    @SerializedName("pickup")
+    private Stop pickupStop;
+
+    @SerializedName("dropoff")
+    private Stop dropoffStop;
+
 
     public String getDistanceCovered() {
         return distanceCovered;
@@ -265,6 +272,7 @@ public class NormalCallData extends CommonResponse {
         return "" + (Math.round(Double.parseDouble(distance) * 10.0) / 10.0);
     }
 
+    @Deprecated
     public void setDistance(String distance) {
         this.distance = distance;
     }
@@ -558,67 +566,99 @@ public class NormalCallData extends CommonResponse {
         this.cashKiWasooli = cashKiWasooli;
     }
 
+    @Deprecated
     public String getDropoffZoneName() {
         return dropoffZoneName;
     }
 
+    @Deprecated
     public String getDropoffZoneNameUrdu() {
         return dropoffZoneNameUrdu;
     }
 
+    @Deprecated
     public Long getDriverToPassengerEta() {
         return driverToPassengerEta;
     }
 
+    @Deprecated
     public void setDriverToPassengerEta(Long driverToPassengerEta) {
         this.driverToPassengerEta = driverToPassengerEta;
     }
 
+    @Deprecated
     public String getTripEta() {
         return tripEta;
     }
 
+    @Deprecated
     public void setTripEta(String tripEta) {
         this.tripEta = tripEta;
     }
 
+    @Deprecated
     public String getDriverToPassengerDistance() {
         return driverToPassengerDistance;
     }
 
+    @Deprecated
     public void setDriverToPassengerDistance(String driverToPassengerDistance) {
         this.driverToPassengerDistance = driverToPassengerDistance;
     }
 
+    @Deprecated
     public String getTripDistance() {
         return tripDistance;
     }
 
+    @Deprecated
     public void setTripDistance(String tripDistance) {
         this.tripDistance = tripDistance;
     }
 
+    @Deprecated
     public String getZoneNamePickupUrdu() {
         return zoneNamePickupUrdu;
     }
 
+    @Deprecated
     public void setZoneNamePickupUrdu(String zoneNamePickupUrdu) {
         this.zoneNamePickupUrdu = zoneNamePickupUrdu;
     }
 
+    @Deprecated
     public String getZoneNameDropOffUrdu() {
         return zoneNameDropOffUrdu;
     }
 
+    @Deprecated
     public void setZoneNameDropOffUrdu(String zoneNameDropOffUrdu) {
         this.zoneNameDropOffUrdu = zoneNameDropOffUrdu;
     }
 
+    @Deprecated
     public void setDropoffZoneName(String dropoffZoneName) {
         this.dropoffZoneName = dropoffZoneName;
     }
 
+    @Deprecated
     public void setDropoffZoneNameUrdu(String dropoffZoneNameUrdu) {
         this.dropoffZoneNameUrdu = dropoffZoneNameUrdu;
+    }
+
+    public Stop getPickupStop() {
+        return pickupStop;
+    }
+
+    public void setPickupStop(Stop pickupStop) {
+        this.pickupStop = pickupStop;
+    }
+
+    public Stop getDropoffStop() {
+        return dropoffStop;
+    }
+
+    public void setDropoffStop(Stop dropoffStop) {
+        this.dropoffStop = dropoffStop;
     }
 }
