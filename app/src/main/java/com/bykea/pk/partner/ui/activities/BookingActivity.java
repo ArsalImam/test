@@ -207,6 +207,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private LatLng lastPolyLineLatLng, lastApiCallLatLng;
 
     private boolean lastPickUpFlagOnLeft, lastDropOffFlagOnLeft = false;
+    boolean shouldRefreshPickupMarker = false, shouldRefreshDropOffMarker = false;
     CountDownTimer countDownTimer;
 
     @Override
@@ -1140,7 +1141,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
         if (dropOffMarker != null) { // && StringUtils.isNotBlank(lastPickUpFlagOnLeft)) {
-            if (!lastDropOffFlagOnLeft == showOnLeft) { // || !lastEtaInFlag.equalsIgnoreCase(eta)) {
+            if (!lastDropOffFlagOnLeft == showOnLeft || shouldRefreshDropOffMarker) { // || !lastEtaInFlag.equalsIgnoreCase(eta)) {
+                shouldRefreshDropOffMarker = false;
                 dropOffMarker.remove();
                 dropOffMarker = mGoogleMap.addMarker(getDropOffMarker(latLng, showOnLeft));
             }
@@ -1171,7 +1173,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
         if (pickUpMarker != null) {
-            if (!lastPickUpFlagOnLeft == showOnLeft) {
+            if (!lastPickUpFlagOnLeft == showOnLeft || shouldRefreshPickupMarker) {
+                shouldRefreshPickupMarker = false;
                 pickUpMarker.remove();
                 pickUpMarker = mGoogleMap.addMarker(getPickUpMarker(latLng, showOnLeft));
             }
@@ -1675,7 +1678,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData.setTripEta(String.valueOf(route1.getDurationValue() / 60));
                     }
 
-
+                    shouldRefreshPickupMarker = true;
+                    shouldRefreshDropOffMarker = true;
                     updateMarkers();
 
                     if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute) {
