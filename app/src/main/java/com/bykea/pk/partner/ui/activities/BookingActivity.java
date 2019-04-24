@@ -190,8 +190,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private String cancelReason = StringUtils.EMPTY;
 
     private Marker driverMarker, dropOffMarker, pickUpMarker/*, passCurrentLocMarker*/;
-    private Polyline mapPolylines, mapPolylinesSecond;
-    private List<LatLng> mRouteLatLng, mRouteLatLng2;
+    private Polyline mapPolylines, mapPolylinesSecondary;
+    private List<LatLng> mRouteLatLng, mRouteLatLngSecondary;
 
 
     //LOCATION CHANGE UPDATE DATA MEMBERS
@@ -1563,7 +1563,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         } else {
             if (mapPolylines != null) mapPolylines.remove();
-            if (mapPolylinesSecond != null) mapPolylinesSecond.remove();
+            if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
         }
     }
 
@@ -1649,7 +1649,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             Utils.formatDecimalPlaces((route1.getDistanceValue() / 1000.0) + "", 1));
 
                     if (mapPolylines != null) mapPolylines.remove();
-                    if (mapPolylinesSecond != null) mapPolylinesSecond.remove();
+                    if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
 
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && route.size() > 1) {
                         Route route2 = route.get(1);
@@ -1664,13 +1664,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
                         polyOptions.addAll(route2.getPoints());
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
-                        mapPolylinesSecond = mGoogleMap.addPolyline(polyOptions);
+                        mapPolylinesSecondary = mGoogleMap.addPolyline(polyOptions);
 
-                        mRouteLatLng2 = route2.getPoints();
-                        callData.getPickupStop().setDistance(route1.getDistanceValue()); //DriverToPassengerDistance(String.valueOf(route1.getDistanceValue() / 1000));
-                        callData.getPickupStop().setDuration(route1.getDurationValue()); //DriverToPassengerEta((long) route1.getDurationValue() / 60);
-                        callData.getDropoffStop().setDistance(route2.getDistanceValue()); //setTripDistance(String.valueOf(route2.getDistanceValue() / 1000));
-                        callData.getDropoffStop().setDuration(route2.getDurationValue()); //setTripEta(String.valueOf(route2.getDurationValue() / 60));
+                        mRouteLatLngSecondary = route2.getPoints();
+                        callData.getPickupStop().setDistance(route1.getDistanceValue());
+                        callData.getPickupStop().setDuration(route1.getDurationValue());
+                        callData.getDropoffStop().setDistance(route2.getDistanceValue());
+                        callData.getDropoffStop().setDuration(route2.getDurationValue());
 
                     } else {
                         PolylineOptions polyOptions = new PolylineOptions();
@@ -1679,8 +1679,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
 
-                        callData.getDropoffStop().setDistance(route1.getDistanceValue()); //setTripDistance(String.valueOf(route1.getDistanceValue() / 1000));
-                        callData.getDropoffStop().setDuration(route1.getDurationValue()); //setTripEta(String.valueOf(route1.getDurationValue() / 60));
+                        callData.getDropoffStop().setDistance(route1.getDistanceValue());
+                        callData.getDropoffStop().setDuration(route1.getDurationValue());
                     }
 
                     shouldRefreshPickupMarker = true;
