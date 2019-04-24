@@ -2201,7 +2201,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void startCountDown(Long etaInMillis) {
         if (countDownTimer != null) {
             countDownTimer.cancel();
+            countDownTimer = null;
         }
+
         long remainingMillis = etaInMillis - System.currentTimeMillis();
         countDownTimer = new CountDownTimer(remainingMillis, 1000) {
             public void onTick(long millisUntilFinished) {
@@ -2219,6 +2221,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             public void onFinish() {
                 tvCountDown.setText(R.string.clock_zero);
+                this.cancel();
             }
         };
         countDownTimer.start();
