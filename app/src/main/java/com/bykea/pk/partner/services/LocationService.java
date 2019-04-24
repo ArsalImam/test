@@ -117,6 +117,7 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
         Utils.redLogLocation(TAG, "onCreate");
+        startForeground(NOTIF_ID, createForegroundNotification());
         configureInitialServiceProcess();
     }
 
