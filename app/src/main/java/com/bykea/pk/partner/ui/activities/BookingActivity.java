@@ -1204,8 +1204,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(String.valueOf(callData.getDropoffStop().getDistance()));
-        tvDuration.setText(String.valueOf(callData.getDropoffStop().getDuration()));
+        tvDistance.setText(String.valueOf(callData.getDropoffStop().getDistance()/1000));
+        tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getDropoffStop().getDuration())));
         if (callData.getDropoffStop() != null
                 && callData.getDropoffStop().getZoneNameUr() != null
                 && !callData.getDropoffStop().getZoneNameUr().isEmpty())
@@ -1232,9 +1232,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(String.valueOf(callData.getPickupStop().getDistance()));
+        tvDistance.setText(String.valueOf(callData.getPickupStop().getDistance()/1000));
         if (callData.getPickupStop().getDuration() != null)
-            tvDuration.setText(String.valueOf(callData.getPickupStop().getDuration()));
+            tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getPickupStop().getDuration())));
         if (callData.getPickupStop().getZoneNameUr() != null && !callData.getPickupStop().getZoneNameUr().isEmpty())
             tvRegionName.setText(callData.getPickupStop().getZoneNameUr());
 
