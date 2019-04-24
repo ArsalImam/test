@@ -18,8 +18,10 @@ open class MultipleDeliveryPickupResponse {
     @SerializedName("contact_number")
     var contactNumer: String? = StringUtils.EMPTY
 
-    @SerializedName("zone")
-    var zoneName: String = StringUtils.EMPTY
+    @SerializedName("zone_pickup_name")
+    var zonePickUpName: String = StringUtils.EMPTY
 
+    @SerializedName("zone_pickup_name_urdu")
+    var zonePickUpNameUrdu: String = StringUtils.EMPTY
 
 }

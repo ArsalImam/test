@@ -31,6 +31,12 @@ class MultiDeliveryTrip {
 
     @SerializedName("trip_distance")
     var tripDistance: String? = StringUtils.EMPTY
+    
+    @SerializedName("zone_dropoff_name")
+    var zoneDropOffName: String = StringUtils.EMPTY
+
+    @SerializedName("zone_dropoff_name_urdu")
+    var zoneDropOffNameUrdu: String = StringUtils.EMPTY
 
     //current trip info object
     @SerializedName("delivery_info")
