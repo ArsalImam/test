@@ -2,6 +2,9 @@ package com.bykea.pk.partner.models.data;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Model class to represent pick, drop or any other stop of driver
+ */
 public class Stop {
 
     @SerializedName("duration_est")

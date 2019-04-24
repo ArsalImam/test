@@ -918,6 +918,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         setOnArrivedData();
     }
 
+    /**
+     * Hide and show Drop-off address bar if ride type is courier service.
+     */
     private void showDropOffAddress() {
         if (Utils.isCourierService(callData.getCallType())) {
             endAddressTv.setVisibility(View.GONE);
