@@ -1204,8 +1204,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(callData.getDropoffStop().getDistance() + "");
-        tvDuration.setText(callData.getDropoffStop().getDuration() + "");
+        tvDistance.setText(String.valueOf(callData.getDropoffStop().getDistance()));
+        tvDuration.setText(String.valueOf(callData.getDropoffStop().getDuration()));
         if (callData.getDropoffStop() != null
                 && callData.getDropoffStop().getZoneNameUr() != null
                 && !callData.getDropoffStop().getZoneNameUr().isEmpty())
@@ -1232,9 +1232,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(callData.getPickupStop().getDistance().toString());
+        tvDistance.setText(String.valueOf(callData.getPickupStop().getDistance()));
         if (callData.getPickupStop().getDuration() != null)
-            tvDuration.setText(callData.getPickupStop().getDuration().toString());
+            tvDuration.setText(String.valueOf(callData.getPickupStop().getDuration()));
         if (callData.getPickupStop().getZoneNameUr() != null && !callData.getPickupStop().getZoneNameUr().isEmpty())
             tvRegionName.setText(callData.getPickupStop().getZoneNameUr());
 
@@ -1643,44 +1643,44 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Route route1 = route.get(0);
-                    mRouteLatLng = route1.getPoints();
-                    updateEtaAndCallData((route1.getDurationValue() / 60) + "",
-                            Utils.formatDecimalPlaces((route1.getDistanceValue() / 1000.0) + "", 1));
+                    Route routeFirst = route.get(0);
+                    mRouteLatLng = routeFirst.getPoints();
+                    updateEtaAndCallData((routeFirst.getDurationValue() / 60) + "",
+                            Utils.formatDecimalPlaces((routeFirst.getDistanceValue() / 1000.0) + "", 1));
 
                     if (mapPolylines != null) mapPolylines.remove();
                     if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
 
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && route.size() > 1) {
-                        Route route2 = route.get(1);
+                        Route routeSecondary = route.get(1);
 
                         PolylineOptions polyOptions = new PolylineOptions();
                         polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                        polyOptions.addAll(route1.getPoints());
+                        polyOptions.addAll(routeFirst.getPoints());
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.kelly_green));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
 
                         polyOptions = new PolylineOptions();
                         polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                        polyOptions.addAll(route2.getPoints());
+                        polyOptions.addAll(routeSecondary.getPoints());
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
                         mapPolylinesSecondary = mGoogleMap.addPolyline(polyOptions);
 
-                        mRouteLatLngSecondary = route2.getPoints();
-                        callData.getPickupStop().setDistance(route1.getDistanceValue());
-                        callData.getPickupStop().setDuration(route1.getDurationValue());
-                        callData.getDropoffStop().setDistance(route2.getDistanceValue());
-                        callData.getDropoffStop().setDuration(route2.getDurationValue());
+                        mRouteLatLngSecondary = routeSecondary.getPoints();
+                        callData.getPickupStop().setDistance(routeFirst.getDistanceValue());
+                        callData.getPickupStop().setDuration(routeFirst.getDurationValue());
+                        callData.getDropoffStop().setDistance(routeSecondary.getDistanceValue());
+                        callData.getDropoffStop().setDuration(routeSecondary.getDurationValue());
 
                     } else {
                         PolylineOptions polyOptions = new PolylineOptions();
                         polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                        polyOptions.addAll(route1.getPoints());
+                        polyOptions.addAll(routeFirst.getPoints());
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
 
-                        callData.getDropoffStop().setDistance(route1.getDistanceValue());
-                        callData.getDropoffStop().setDuration(route1.getDurationValue());
+                        callData.getDropoffStop().setDistance(routeFirst.getDistanceValue());
+                        callData.getDropoffStop().setDuration(routeFirst.getDurationValue());
                     }
 
                     shouldRefreshPickupMarker = true;
@@ -1690,7 +1690,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute) {
                         if (mCurrentActivity != null && mGoogleMap != null) {
                             int padding = 40; // offset from edges of the map in pixels
-                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(route1.getLatLgnBounds(), padding);
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(routeFirst.getLatLgnBounds(), padding);
                             mGoogleMap.moveCamera(cu);
                         }
                     }
