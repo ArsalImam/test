@@ -7,9 +7,12 @@ public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
     public static final String APP_NAME = "BYKEA PARTNER";
+    public static final String OS_NAME = "android";
 
     public static final String DEVICE_TYPE = "android";
     public static final String USER_TYPE = "d";
+    public static final String UNAUTH_MESSAGE = "unAuthrozied User";
+    public static final int ESTIMATION_SPEED = 30;
 
     public static final int MINIMUM_VOICE_RECORDING = 1000;
 
@@ -23,7 +26,16 @@ public class Constants {
     public static final String TAG_LOCATION = "LocationUpdate";
     public static final String TAG_GOOGLE_MAP = "GOOGLE MAP TRACKING";
 
+    /*Added these ride statuses to handle making calls to drop off location's person
+     * Call option can only be enabled when ride has started or arrived*/
+    public static final String BATCH_STARTED = "Started";
+    public static final String BATCH_ARRIVED = "Arrived";
+    /*added this for making individual's dropOff call enable/disable*/
+    public static final String RIDE_FEEDBACK = "feedback";
+
     public static final int RIDE_ACCEPTANCE_TIMEOUT = 20800;
+    public static final float TIME_IN_MILLISECONDS_PERCENTAGE = 5f;
+
     public static final String SETTINGS_DATA_EXTRAS = "SETTINGS_DATA_EXTRAS";
 
     public static final String CLOUDINARY_BASE_URL = "http://res.cloudinary.com/bykea/image/upload/";
@@ -42,9 +54,6 @@ public class Constants {
     public static final long MILISEC_IN_DAY = 86400000;
     public static final long MILISEC_IN_HALF_DAY = 43200000;
     public static final String REG_EX_DIGIT = "\\d+";
-    // Partner Phase 2
-    public static final String INSTA_BUG_BETA_KEY = "1a22f9efd3017c87f9fa8ad33645cafb";
-    public static final String INSTA_BUG_LIVE_KEY = "36070216421223afd484f7b67802c146";
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
     public static final int CONFIRM_DROPOFF_REQUEST_CODE = 101;
@@ -58,13 +67,13 @@ public class Constants {
 
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
-    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyBMtLLeM1ubKra2Dyl2B8LGL0bOOk3QwPU";//Staging Server Key of Passenger
+    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
     //we have replaced the passenger's app debug autocomplete key
     private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG = "AIzaSyALb6BDq-cw_kWWCaiNw50eIthPzI9wISA";
-    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAwbBTWK5AScsoHFQ7Z9-JnAWfVu19ilsY";
+    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAafW-AwnS0kYt1F5VLVkeBQjWPlM6LDQA";
 
 
     public static final String GOOGLE_PLACE_SERVER_API_KEY = BuildConfig.DEBUG ? GOOGLE_PLACE_SERVER_API_KEY_DEBUG : GOOGLE_PLACE_SERVER_API_KEY_LIVE;
@@ -74,15 +83,12 @@ public class Constants {
 
     public static final String REPLACE_CITY = "-replace-";
     public static final int PICK_IMAGE_REQUEST = 1001;
-
-    public static final String MOBILE_IMEI_ERROR = "IMEI";
-
-    public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
-    public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
-
     /*moving camera to current location animation delay*/
     public static final int ANIMATION_DELAY_FOR_CURRENT_POSITION = 500;
-
+    public static final int MINUTE_DIVISIBLE_VALUE = 60;
+    public static final int KILOMETER_DIVISIBLE_VALUE = 1000;
+    public static final float BOTTOM_SHEET_ALPHA_VALUE = 0.7f;
+    public static final String LOADBOARD_JOBS_LIMIT = "10";
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
@@ -105,6 +111,14 @@ public class Constants {
     public static final String RETROFIT_METHOD_POST = "post";
     public static final String RETROFIT_METHOD_GET = "get";
 
+    public static final int TRIP_STATUS_CODE_DELIVERY = 10;
+    public static final int TRIP_STATUS_CODE_RIDE = 7;
+
+    public static class CallType {
+        public static final String SINGLE = "single";
+        public static final String BATCH = "batch";
+    }
+
 
     public static class Notification {
         public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
@@ -113,6 +127,11 @@ public class Constants {
 
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
+    }
+
+    public static class FCMEvents {
+        public static final String MULTIDELIVER_INCOMING_CALL = "10";
+        public static final String MULTIDELIVER_CANCEL_BY_ADMIN = "11";
     }
 
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
@@ -133,11 +152,17 @@ public class Constants {
     public static final int RESET_CASH_TO_DEFAULT_AMOUNT = 1000;
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
 
+    public final static String ACTION = "action";
     public static final int IN_ACTIVE_MUSIC_SOUND = 5000;
 
 
     public static String VERIFICATION_CODE_RECEIVED = "VERIFICATION_CODE_RECEIVED";
     public static final String SMS_RECEIVER_TAG = "android.provider.Telephony.SMS_RECEIVED";
+
+    public static final String IS_FROM_GCM = "isGcm";
+    public static final String MOBILE_IMEI_ERROR = "IMEI";
+    public static final String FRIVOLOUS_CANCELLATIONS_ER = "frivolous cancellations";
+    public static final String FRIVILOUS_CANCELLATIONS_UR = "مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے۔";
 
 
     public static class Extras {
@@ -185,6 +210,14 @@ public class Constants {
         public final static String STOPFOREGROUND_ACTION = "STOPFOREGROUND_ACTION";
         public final static String ON_NOTIFICATION_CLICK = "ON_NOTIFICATION_CLICK";
         public final static String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
+        public final static String ON_GPS_ENABLED_CHANGE = "android.location.GPS_ENABLED_CHANGE";
+        public final static String ON_LOCATION_CHANGED = "android.location.PROVIDERS_CHANGED";
+        public final static String ON_CONECTIVITY_CHANGED = "android.net.conn.CONNECTIVITY_CHANGE";
+
+    }
+
+    public static class Category {
+        public final static String ON_CATEGORY_DEFAULT = "android.intent.category.DEFAULT";
     }
 
     public static class RequestCode {
@@ -193,6 +226,19 @@ public class Constants {
 
     public static class TimeFormats {
         public final static String LICNENSE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    }
+
+    public static class GoogleMap {
+        public final static String GOOGLE_NAVIGATE_ENDPOINT = "http://maps.google.com/maps?saddr=";
+        public final static String GOOGLE_DESTINATION_ENDPOINT = "&daddr=";
+        public final static String GOOGLE_MAP_PACKAGE = "com.google.android.apps.maps";
+        public final static String GOOGLE_MAP_ACTIVITY = "com.google.android.maps.MapsActivity";
+    }
+
+    public static class MapDetailsFragmentTypes {
+        public static final String TYPE_CALL = "کال";
+        public static final String TYPE_TAFSEEL = "تفصیل";
+        public static final String TYPE_MUKAMAL = "مکمل";
     }
 
     public static class AnalyticsEvents {
@@ -253,7 +299,8 @@ public class Constants {
         // Log file Max file size before it creates a new file for logs
         public static final long LOG_FILE_MAX_SIZE = 1024 * 1024;
         //Developer email address which is used for sending logs.
-        public static final String LOG_SEND_DEVELOPER_EMAIL = "raheel@mobinspire.com";
+        public static final String[] LOG_SEND_DEVELOPERS_EMAIL = new String[]{"adil.baig@bykea.com",
+                "abdul.mannan@bykea.com", "amir.raza@bykea.com", "aftab.sikander@bykea.com"};
         public static final String LOG_SEND_SUBJECT = "Log Files";
         public static final String LOG_SEND_MESSAGE_BODY = "Latest logs attached";
         public static final String BYKEA_LOG_TAG = "BYKEA_LOG_TAG";
@@ -332,6 +379,48 @@ public class Constants {
 
     }
 
+    /***
+     * This inner class will contain Constants for Trip Types
+     */
+    public static class TripTypes {
+
+        public static final String RIDE_TYPE = "Ride";
+
+        public static final String CLASSIFIED_TYPE = "Classifieds";
+
+        public static final String MOVIETICKET_TYPE = "Movie Ticket";
+
+        public static final String AIRTICKET_TYPE = "Air Ticket";
+
+        public static final String PURCHASE_TYPE = "Purchase";
+        public static final String PURCHASE_NAME = "Bring";
+
+        public static final String DELIVERY_TYPE = "Delivery";
+
+        public static final String DEPOSIT_TYPE = "Deposit";
+
+        public static final String TOPUP_TYPE = "Top-Up";
+
+        public static final String BUSTICKET_TYPE = "Bus Ticket";
+
+        public static final String VAN_TYPE = "Carry Van";
+        public static final String COURIER_TYPE = "Courier";
+
+        public static final String INSURANCE_TYPE = "Bima";
+        public static final String INSURANCE_NAME = "Insurance";
+
+        public static final String JOBS_TYPE = "Jobs";
+
+        public static final String FOOD_TYPE = "Food";
+        public static final String FOOD_BOOKING_TYPE = "MB";
+
+        public static final String BILL_TYPE = "Utility Bill";
+
+        public static final String BATCH_TYPE = "batch";
+
+    }
+
+
     /**
      * Inner class for Font Names
      */
@@ -357,6 +446,8 @@ public class Constants {
         public static final int WALLET_EXCEED_THRESHOLD = 1009;
         public static final int OUT_OF_SERVICE_REGION = 1010;
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
+        public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
+        public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
 
     }
 

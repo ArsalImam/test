@@ -25,6 +25,10 @@ public class ReceivedMessage implements Serializable {
     private String messageId;
     @SerializedName("message")
     private String message;
+
+    @SerializedName("batch_id")
+    private String batchID;
+
     @SerializedName("message_type")
     private String messageType;
     @SerializedName("created_at")
@@ -127,6 +131,11 @@ public class ReceivedMessage implements Serializable {
         this.conversationId = conversationId;
     }
 
+    public String getBatchID() {
+        return batchID;
+    }
 
-
+    public void setBatchID(String batchID) {
+        this.batchID = batchID;
+    }
 }

@@ -14,8 +14,11 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.TrackingData;
+import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -28,7 +31,10 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class AppPreferences {
 
@@ -904,6 +910,25 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * getting driver's cash/non-cash status
+     * @return
+     */
+    public static boolean getIsCash() {
+        return mSharedPreferences.getBoolean(Keys.CASH, false);
+    }
+
+    /**
+     * saving driver's cash/non-cash status to local storage
+     * @param value true/false
+     */
+    public static void setCash(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.CASH, value)
+                .apply();
+    }
+
 
     /**
      * Sets updated value for location response received count.
@@ -1217,6 +1242,43 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * This method gets app version code stored in shared pref.
+     * @return App Version Code
+     */
+    public static int getAppVersionCode() {
+        return mSharedPreferences.getInt(Keys.APP_VERSION_CODE, 0);
+    }
+
+    /**
+     * This method saves app Version Code in shared pref.
+     * @param value value for app Version Code
+     */
+    public static void setAppVersionCode(int value) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.APP_VERSION_CODE, value)
+                .apply();
+    }
+
+    /**
+     * This method saves a flag when shared pref is recently clear in case of dirty shared pref.
+     * @param value isAlreadyCleared
+     */
+    public static void setIsAlreadyCleared(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.IS_ALREADY_CLEAR, value)
+                .apply();
+    }
+
+    /**
+     * @return This method returns a flag when shared pref is recently clear in case of dirty shared pref.
+     */
+    public static boolean getIsAlreadyCleared() {
+        return mSharedPreferences.getBoolean(Keys.IS_ALREADY_CLEAR, false);
+    }
+
     /***
      * Clear preference when driver is unauthoried.
      */
@@ -1228,4 +1290,92 @@ public class AppPreferences {
         setPilotData(null);
     }
 
+    /**
+     * save selected zone data for loadboard to local storage
+     * @param key Pickup/Dropoff key
+     * @param zoneData selected zone data
+     */
+    public static void setSelectedLoadboardZoneData(String key, ZoneData zoneData) {
+        mSharedPreferences
+                .edit()
+                .putString(key, new Gson().toJson(zoneData))
+                .apply();
+    }
+
+    /**
+     * get selected zone data for loadboard to local storage
+     * @param key Pickup/Dropoff ket
+     * @return ZoneData
+     */
+    public static ZoneData getSelectedLoadboardZoneData(String key) {
+        String data = mSharedPreferences.getString(key, StringUtils.EMPTY);
+        ZoneData zoneData = null;
+        if (StringUtils.isNotBlank(data)) {
+            zoneData = new Gson().fromJson(data, ZoneData.class);
+        }
+        return zoneData;
+    }
+
+    /**
+     * clear only loadboard selected zone data
+     */
+    public static void clearLoadboardSelectedZoneData(){
+        mSharedPreferences
+                .edit()
+                .putString(Keys.LOADBOARD_SELECTED_PICKUP_ZONE, null)
+                .putString(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE, null)
+                .apply();
+    }
+
+    //region MultiDelivery Shared Preference
+
+    /**
+     * Save Multi Delivery Call Driver Data in shared preference.
+     *
+     * @param response The {@link MultiDeliveryCallDriverData} object.
+     */
+    public static void setMultiDeliveryCallDriverData(MultiDeliveryCallDriverData response) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.MULTIDELIVERY_CALLDRIVER_OBJECT, new Gson().toJson(response))
+                .apply();
+    }
+
+    /**
+     * Fetch the Multi Delivery Call Driver Data from shared preference.
+     *
+     * @return The {@link MultiDeliveryCallDriverData} object.
+     */
+    public static MultiDeliveryCallDriverData getMultiDeliveryCallDriverData() {
+        Gson gson = new Gson();
+        return gson.fromJson(mSharedPreferences.getString(
+                Keys.MULTIDELIVERY_CALLDRIVER_OBJECT,
+                StringUtils.EMPTY
+                ),
+                MultiDeliveryCallDriverData.class);
+    }
+
+    /**
+     * Set the multi delivery status.
+     *
+     * @param type The type of delivery {@linkplain Constants.CallType}
+     */
+    public static void setDeliveryType(String type) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.DELIVERY_TYPE, type)
+                .apply();
+    }
+
+    /**
+     * Fetch the status of delivery i.e BATCH & SINGLE.
+     *
+     * @return The status i.e BATCH & SINGLE.
+     */
+    public static String getDeliveryType() {
+        return mSharedPreferences
+                .getString(Keys.DELIVERY_TYPE, Constants.CallType.SINGLE);
+    }
+
+    //endregion
 }

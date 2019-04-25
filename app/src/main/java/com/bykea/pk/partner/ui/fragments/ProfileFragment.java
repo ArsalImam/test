@@ -118,7 +118,7 @@ public class ProfileFragment extends Fragment {
                     .fit().centerInside()
                     .placeholder(R.drawable.profile_pic)
                     .into(driverImage);*/
-            Utils.loadImgPicasso(mCurrentActivity, driverImage, R.drawable.profile_pic,
+            Utils.loadImgPicasso(driverImage, R.drawable.profile_pic,
                     Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
         }
         String appVersion = "v " + Utils.getVersion();

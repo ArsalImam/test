@@ -155,6 +155,17 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     .replace(R.id.containerView, fragment)
                     .commit();
             HomeActivity.visibleFragmentNumber = pos;
+            /**
+             * when navigation in on home screen, show bottom sheet and connection status
+             * otherwise hide both
+             */
+            if(pos == 1){
+                ((HomeActivity)context).toggleAchaConnection(View.VISIBLE);
+                //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
+            } else {
+                ((HomeActivity)context).toggleAchaConnection(View.GONE);
+                ((HomeActivity)context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
+            }
         }
     }
 
@@ -215,7 +226,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             }
             if (AppPreferences.isProfileUpdated()
                     && StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
-                Utils.loadImgPicasso(context, holder.driverImage, R.drawable.profile_pic,
+                Utils.loadImgPicasso(holder.driverImage, R.drawable.profile_pic,
                         Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 AppPreferences.setProfileUpdated(false);
             }

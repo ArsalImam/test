@@ -3,6 +3,7 @@ package com.bykea.pk.partner.communication.rest;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
@@ -17,6 +18,7 @@ import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
+import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
@@ -37,7 +39,9 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -77,6 +81,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -457,14 +462,18 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
-        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(AppPreferences.getDriverId(),
+        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(
+                AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken());
         restCall.enqueue(new Callback<CheckDriverStatusResponse>() {
             @Override
             public void onResponse(Response<CheckDriverStatusResponse> response, Retrofit retrofit) {
                 // Got success from server
-                if (null != response.body()) {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
                     mResponseCallBack.onResponse(response.body());
+                    Utils.redLog(TAG, new Gson().toJson(response.body().getData()));
+                } else {
+                    mResponseCallBack.onError(response.code(), response.message());
                 }
             }
 
@@ -1251,6 +1260,118 @@ public class RestRequestHandler {
 
     }
 
+    /**
+     * request for loadboard jobs list
+     *
+     * @param context            Context
+     * @param limit              jobs limit - OPTIONAL
+     * @param pickupZoneId       jobs pickup zone id - OPTIONAL
+     * @param dropoffZoneId      - jons dropoff zone id - OPTIONAL
+     * @param onResponseCallback callback
+     */
+    public void loadboardListing(final Context context, String limit, String pickupZoneId, String dropoffZoneId, final IResponseCallback onResponseCallback) {
+        Call<LoadBoardListingResponse> requestCall = RestClient.getClient(context).requestLoadBoardListing(
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                String.valueOf(AppPreferences.getLatitude())/*"24.7984714" DHA lat*/,
+                String.valueOf(AppPreferences.getLongitude())/*"67.0326814" DHA lng*/,
+                limit, pickupZoneId, dropoffZoneId);
+        requestCall.enqueue(new Callback<LoadBoardListingResponse>() {
+            @Override
+            public void onResponse(Response<LoadBoardListingResponse> response, Retrofit retrofit) {
+                if (response == null || response.body() == null) {
+                    onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, context.getString(R.string.error_try_again));
+                    return;
+                }
+                if (response.body().isSuccess()) {
+                    onResponseCallback.onResponse(response.body());
+                } else {
+                    onResponseCallback.onError(response.body().getCode(), response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+
+            }
+        });
+
+    }
+
+    /**
+     * accept request for specific booking
+     *
+     * @param context            Context
+     * @param bookingId          selected booking id
+     * @param onResponseCallback callback
+     */
+    public void acceptLoadboardBooking(Context context, String bookingId, final IResponseCallback onResponseCallback) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+
+        Call<AcceptLoadboardBookingResponse> requestCall = mRestClient.acceptLoadboardBooking(
+                bookingId,
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                String.valueOf(AppPreferences.getLatitude()),
+                String.valueOf(AppPreferences.getLongitude()));
+        requestCall.enqueue(new Callback<AcceptLoadboardBookingResponse>() {
+            @Override
+            public void onResponse(Response<AcceptLoadboardBookingResponse> response, Retrofit retrofit) {
+                if (response == null || response.body() == null) {
+                    if (response != null && response.errorBody() != null) {
+                        AcceptLoadboardBookingResponse acceptLoadboardBookingResponse =
+                                Utils.parseAPIErrorResponse(response, retrofit, AcceptLoadboardBookingResponse.class);
+                        if (acceptLoadboardBookingResponse != null) {
+                            mResponseCallBack.onResponse(acceptLoadboardBookingResponse);
+                        } else {
+                            mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                    mContext.getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                                mContext.getString(R.string.error_try_again) + " ");
+                    }
+                } else {
+                    if (response.isSuccess()) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+            }
+        });
+
+    }
+
+    /**
+     * request for details of selected booking
+     *
+     * @param context            Context
+     * @param bookingId          selected booking id
+     * @param onResponseCallback callback
+     */
+    public void loadboardBookingDetail(Context context, String bookingId, final IResponseCallback onResponseCallback) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallback;
+        mRestClient = RestClient.getClient(mContext);
+
+        Call<LoadboardBookingDetailResponse> requestCall = mRestClient.requestLoadBoardBookingDetail(
+                bookingId,
+                AppPreferences.getDriverId(),
+                String.valueOf(AppPreferences.getLatitude()),
+                String.valueOf(AppPreferences.getLongitude()),
+                AppPreferences.getAccessToken());
+        requestCall.enqueue(new GenericRetrofitCallBack<LoadboardBookingDetailResponse>(onResponseCallback));
+
+    }
 
     @NonNull
     private String getErrorMessage(Throwable error) {

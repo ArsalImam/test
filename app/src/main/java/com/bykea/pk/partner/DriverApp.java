@@ -25,8 +25,6 @@ import com.elvishew.xlog.printer.file.FilePrinter;
 import com.elvishew.xlog.printer.file.backup.FileSizeBackupStrategy;
 import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator;
 import com.facebook.appevents.AppEventsLogger;
-import com.instabug.library.Instabug;
-import com.instabug.library.invocation.InstabugInvocationEvent;
 import com.onesignal.OSNotification;
 import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
@@ -49,6 +47,13 @@ public class DriverApp extends MultiDexApplication {
      * XLog Printer global object which would be used for writing logs on file.
      */
     public static Printer globalFilePrinter;
+    private Emitter.Listener mCallDriverListener = new WebIORequestHandler.CallDriverListener();
+    private Emitter.Listener mTripMissedListener =
+            new WebIORequestHandler.MultiDeliveryTripMissedListener();
+    private Emitter.Listener mBatachCompletedListener =
+            new WebIORequestHandler.MultiDeliveryTripBatchCompletedListener();
+    private Emitter.Listener mBatachCancelledListener =
+            new WebIORequestHandler.MultiDeliveryBatchCancelledByAdminListener();
 
     @Override
     public void onCreate() {
@@ -70,11 +75,6 @@ public class DriverApp extends MultiDexApplication {
 
         if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() || AppPreferences.isOutOfFence()))
             ActivityStackManager.getInstance().startLocationService(mContext);
-
-        new Instabug.Builder(this, BuildConfig.DEBUG ? Constants.INSTA_BUG_BETA_KEY : Constants.INSTA_BUG_LIVE_KEY)
-                .setInvocationEvent(InstabugInvocationEvent.SHAKE)
-                .setShakingThreshold(470)
-                .build();
 
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.InAppAlert)
@@ -141,14 +141,29 @@ public class DriverApp extends MultiDexApplication {
         public void call(Object... args) {
             WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
             Utils.redLog(Constants.APP_NAME + "  ########################    ", "Socket Connection Established....");
+            Utils.redLog(Constants.APP_NAME + "  ########################    ",
+                    "Socket ID taken during EVENT_CONNECT : " +
+                            WebIO.getInstance().getSocket().id());
             attachListenersOnSocketConnected();
 
         }
     };
 
+    /**
+     * Attach socket listener on socket connected
+     */
     public void attachListenersOnSocketConnected() {
         EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
-        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
+        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL,
+                mJobCallListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER,
+                mCallDriverListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED,
+                mTripMissedListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_COMPLETED,
+                mBatachCompletedListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED,
+                mBatachCancelledListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
         }

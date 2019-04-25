@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <include
         android:id="@+id/llTop"
@@ -13,50 +12,90 @@
         android:layout_height="wrap_content" />
 
     <include
-        android:visibility="gone"
         android:id="@+id/llTopActive"
         layout="@layout/home_testing_driver_on_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <com.google.android.gms.maps.MapView
-        android:visibility="gone"
-        android:layout_below="@+id/llTopActive"
-        android:layout_above="@+id/line"
         android:id="@+id/homeMapFragment"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/llTopActive"
+        android:visibility="visible" />
 
     <FrameLayout
-        android:visibility="gone"
         android:id="@+id/mapPinIv"
-        android:padding="@dimen/_4sdp"
-        android:layout_marginRight="@dimen/_12sdp"
-        android:layout_marginBottom="@dimen/_16sdp"
-        android:layout_above="@+id/line"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/bg_white_round"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/_3sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/_9sdp"
+        android:layout_marginEnd="@dimen/_9sdp"
+        android:layout_marginBottom="@dimen/_19sdp"
+        android:background="@drawable/bg_white_round"
+        android:visibility="gone">
 
         <ImageView
-            android:src="@drawable/current_location_icon"
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp" />
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/current_location_icon" />
 
     </FrameLayout>
 
     <LinearLayout
-        android:visibility="visible"
+        android:id="@+id/selectedAmountRL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:elevation="@dimen/_3sdp"
+        android:layout_marginStart="@dimen/_9sdp"
+        android:layout_marginLeft="@dimen/_9sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/_19sdp"
+        android:paddingStart="@dimen/_8sdp"
+        android:paddingEnd="@dimen/_8sdp"
+        android:background="@drawable/bg_white_round"
+        android:gravity="center">
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/selectedAmountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_32sdp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="open_sans_regular.ttf"/>
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/selectedAmountUrduTV"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_32sdp"
+            android:gravity="center"
+            android:text="@string/selected_amount_ur"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"/>
+    </LinearLayout>
+
+
+    <LinearLayout
         android:id="@+id/layoutupper"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_95sdp"
         android:layout_below="@+id/llTop"
         android:layout_marginLeft="@dimen/_8sdp"
-        android:layout_marginRight="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_8sdp"
-        android:orientation="horizontal">
+        android:layout_marginRight="@dimen/_8sdp"
+        android:orientation="horizontal"
+        android:visibility="visible">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"
@@ -149,16 +188,16 @@
                     android:id="@+id/shahkarBtn"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_50sdp"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
                     android:src="@drawable/shahkar" />
 
                 <RelativeLayout
                     android:id="@+id/walletRL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:layout_below="@+id/shahkarBtn"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginTop="@dimen/_10sdp">
 
                     <ImageView
@@ -169,14 +208,14 @@
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/totalBalanceTv"
-                        android:layout_marginTop="@dimen/_4sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:layout_toRightOf="@+id/walletImg"
                         android:text=""
-                        android:textSize="@dimen/_14sdp"
                         android:textColor="@color/grey_hex_51"
+                        android:textSize="@dimen/_14sdp"
                         app:fontName="open_sans_semi_bold.ttf" />
 
                 </RelativeLayout>
@@ -189,44 +228,44 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:visibility="visible"
         android:id="@+id/layoutDuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layoutupper"
         android:layout_marginLeft="@dimen/_12sdp"
-        android:layout_marginRight="@dimen/_12sdp">
+        android:layout_marginRight="@dimen/_12sdp"
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/previusDurationBtn"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_25sdp"
-            android:paddingTop="@dimen/_6sdp"
-            android:paddingBottom="@dimen/_6sdp"
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginRight="@dimen/_4sdp"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_6sdp"
             app:srcCompat="@drawable/back_arrow" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_toRightOf="@+id/previusDurationBtn"
             android:id="@+id/durationTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/previusDurationBtn"
             android:text="8 Jun - 14 Jun"
             android:textColor="@color/black"
             android:textSize="@dimen/_17sdp"
             app:fontName="open_sans_semi_bold.ttf" />
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/durationBtn"
-            android:paddingTop="@dimen/_6sdp"
-            android:paddingBottom="@dimen/_6sdp"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_25sdp"
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginRight="@dimen/_4sdp"
             android:layout_toRightOf="@+id/durationTv"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            android:visibility="gone"
             app:srcCompat="@drawable/forward_arrow" />
 
         <com.bykea.pk.partner.widgets.FontTextView
@@ -245,21 +284,21 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:weightSum="4"
         android:id="@+id/driverStatsLayout"
-        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/line"
         android:layout_below="@+id/layoutDuration"
         android:layout_marginLeft="@dimen/_12sdp"
         android:layout_marginRight="@dimen/_12sdp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:weightSum="4">
 
         <LinearLayout
-            android:layout_marginTop="@dimen/_4sdp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:layout_weight="2"
             android:orientation="horizontal">
 
@@ -305,12 +344,12 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/mukamalBookingTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_mukamal_booking"
                     android:gravity="center"
                     android:text="?"
-                    android:id="@+id/mukamalBookingTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -339,12 +378,12 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/kamaiTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_kamai"
                     android:gravity="center"
                     android:text="?"
-                    android:id="@+id/kamaiTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -373,12 +412,12 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/wqtTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_wqt"
                     android:gravity="center"
                     android:text="?"
-                    android:id="@+id/wqtTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -410,9 +449,9 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/cancelTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/cancelTv"
                     android:background="@drawable/circle_cancel"
                     android:gravity="center"
                     android:text="?"
@@ -444,12 +483,12 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/takmeelTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_takmeel"
                     android:gravity="center"
                     android:text="?"
-                    android:id="@+id/takmeelTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -478,12 +517,12 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/qboliyatTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_qabooliat"
                     android:gravity="center"
                     android:text="?"
-                    android:id="@+id/qboliyatTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -512,12 +551,12 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/ratingTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_rating"
                     android:gravity="center"
                     android:text="?"
-                    android:id="@+id/ratingTv"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />

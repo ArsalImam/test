@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/windowBackground"
+        android:fitsSystemWindows="true"
+        android:orientation="horizontal"
+        android:theme="@style/toolbarIconColor"
+        app:elevation="@dimen/elevation.toolbar"
+        app:titleTextColor="@color/color_636363">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/back"
+            android:paddingRight="@dimen/_8sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_arrow_back_48px" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/title"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textSize="@dimen/_18sdp"
+            android:text="کال"
+            app:fontName="jameel_noori_nastaleeq.ttf"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@drawable/toolbar_map_dropshadow"/>
+
+</LinearLayout>

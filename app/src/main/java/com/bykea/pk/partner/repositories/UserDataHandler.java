@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -7,6 +8,7 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
+import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -35,10 +37,19 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
@@ -386,6 +397,21 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     @Override
+    public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
+
+    }
+
+    @Override
+    public void onLoadboardBookingDetailResponse(LoadboardBookingDetailResponse response) {
+
+    }
+
+    @Override
+    public void onAcceptLoadboardBookingResponse(AcceptLoadboardBookingResponse response) {
+
+    }
+
+    @Override
     public void onError(int errorCode, String errorMessage) {
 
     }
@@ -394,4 +420,43 @@ public class UserDataHandler implements IUserDataHandler {
     public void onUpdateAppVersionResponse(UpdateAppVersionResponse response) {
 
     }
+
+    //region MULTI DELIVERY CONCRETE METHODS
+
+    @Override
+    public void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse response) {
+
+    }
+
+    @Override
+    public void onMultiDeliveryAcceptCall(MultiDeliveryAcceptCallResponse response) {
+
+    }
+
+    @Override
+    public void onMultiDeliveryDriverArrived(MultiDeliveryDriverArrivedResponse response) {
+
+    }
+
+    @Override
+    public void onMultiDeliveryDriverStarted(MultiDeliveryDriverStartedResponse response) {
+
+    }
+
+    @Override
+    public void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response, DirectionDropOffData data) {
+
+    }
+    @Override
+    public void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response) {
+
+    }
+
+
+    @Override
+    public void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response) {
+
+    }
+
+    //endregion
 }

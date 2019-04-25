@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
@@ -7,6 +8,7 @@ import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
+import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -35,10 +37,19 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
+import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
@@ -203,7 +214,93 @@ public interface IUserDataHandler {
 
     void onBiometricApiResponse(BiometricApiResponse response);
 
+    /**
+     * callback for loadboard listing api call
+     * @param response loadborad jobs listing response
+     */
+    void onLoadboardListingApiResponse(LoadBoardListingResponse response);
+
+    /**
+     * callback for loadboard booking detail api call
+     * @param response loadborad specific booking details response
+     */
+    void onLoadboardBookingDetailResponse(LoadboardBookingDetailResponse response);
+
+    /**
+     * callback for loadboard accept api call
+     * @param response loadboard specific booking acceptance response
+     */
+    void onAcceptLoadboardBookingResponse(AcceptLoadboardBookingResponse response);
+
     void onError(int errorCode, String errorMessage);
+
+    //#region MultiDelivery Sockets Response Listener
+
+    /**
+     * This method will be invoked when driver acknowledge response received.
+     *
+     * @param response The {@link MultiDeliveryCallDriverAcknowledgeResponse} object.
+     */
+    void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse response);
+
+    /**
+     * This method will be invoked when multi delivery accept call response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_ACCEPT_CALL
+     *
+     * @param response The {@link MultiDeliveryAcceptCallResponse} object.
+     */
+    void onMultiDeliveryAcceptCall(MultiDeliveryAcceptCallResponse response);
+
+    /**
+     * This method will be invoked when multi delivery arrived response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED
+     *
+     * @param response The {@link MultiDeliveryDriverArrivedResponse} object.
+     */
+    void onMultiDeliveryDriverArrived(MultiDeliveryDriverArrivedResponse response);
+
+    /**
+     * This method will be invoked when multi delivery started response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED
+     *
+     * @param response The {@link MultiDeliveryDriverStartedResponse} object.
+     */
+    void onMultiDeliveryDriverStarted(MultiDeliveryDriverStartedResponse response);
+
+    /**
+     * This method will be invoked when multi delivery finished response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED
+     *
+     * @param response The {@link MultiDeliveryCompleteRideResponse} object.
+     * @param data The {@linkplain DirectionDropOffData} object.
+     */
+    void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response,
+                                         DirectionDropOffData data);
+
+    /**
+     * This method will be invoked when multi delivery feedback response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER
+     *
+     * @param response The {@link MultiDeliveryFeedbackResponse} object.
+     *
+     */
+    void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response);
+
+    /**
+     * This method will be invoked when multi delivery batch request canceled response received
+     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED
+     *
+     * @param response The {@link MultiDeliveryCancelBatchResponse} object.
+     */
+    void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response);
+
+    //end region
 
     void onUpdateAppVersionResponse(UpdateAppVersionResponse response);
 }

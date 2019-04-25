@@ -18,7 +18,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,16 +29,28 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -76,11 +87,15 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -123,20 +138,20 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.myRangeBar)
     MyRangeBarRupay myRangeBar;
 
-    @BindView(R.id.achaconnectionTv)
-    TextView achaconnectionTv;
+    @BindView(R.id.llBottom)
+    FrameLayout myRangeBarLayout;
 
-    @BindView(R.id.connectionStatusIv)
-    ImageView connectionStatusIv;
-
-    @BindView(R.id.achaconnectionTv1)
-    TextView achaconnectionTv1;
-
-    @BindView(R.id.connectionStatusIv1)
-    ImageView connectionStatusIv1;
+    @BindView(R.id.line)
+    View myRangeBarTopLine;
 
     @BindView(R.id.mapPinIv)
     FrameLayout mapPinIv;
+
+    @BindView(R.id.selectedAmountTV)
+    FontTextView selectedAmountTV;
+
+    @BindView(R.id.selectedAmountRL)
+    LinearLayout selectedAmountRL;
 
     @BindView(R.id.homeMapFragment)
     MapView mapView;
@@ -305,14 +320,6 @@ public class HomeFragment extends Fragment {
                                 getDriverPerformanceData();
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
-                                mCurrentActivity.showBismillah();
-                                mapView.setVisibility(View.GONE);
-                                headerTopActiveLayout.setVisibility(View.GONE);
-                                mapPinIv.setVisibility(View.GONE);
-                                headerTopUnActiveLayout.setVisibility(View.VISIBLE);
-                                layoutUpper.setVisibility(View.VISIBLE);
-                                layoutDuration.setVisibility(View.VISIBLE);
-                                driverStatsLayout.setVisibility(View.VISIBLE);
                             }
                         });
                     } else {
@@ -354,15 +361,6 @@ public class HomeFragment extends Fragment {
                                 public void onClick(View v) {
                                     Dialogs.INSTANCE.dismissDialog();
                                     callAvailableStatusAPI(false);
-                                    mCurrentActivity.showKhudaHafiz();
-                                    mapView.setVisibility(View.VISIBLE);
-                                    headerTopActiveLayout.setVisibility(View.VISIBLE);
-                                    mapPinIv.setVisibility(View.VISIBLE);
-                                    headerTopUnActiveLayout.setVisibility(View.GONE);
-                                    layoutUpper.setVisibility(View.GONE);
-                                    layoutDuration.setVisibility(View.GONE);
-                                    driverStatsLayout.setVisibility(View.GONE);
-
                                 }
                             });
                         } else {
@@ -400,6 +398,46 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * making loadboard jobs listing api call when driver's status is cash
+     */
+    private void callLoadBoardListingAPI() {
+        if (Connectivity.isConnectedFast(mCurrentActivity)) {
+            //get selected pickup and dropoff zone data from local storage
+            ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
+            ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
+            repository.requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
+                    pickupZone == null ? null : pickupZone.get_id(),
+                    dropoffZone == null ? null : dropoffZone.get_id(), new UserDataHandler() {
+                        @Override
+                        public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            if (response != null && response.getData() != null) {
+                                if (mCurrentActivity != null) {
+                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
+                                    resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
+                                            (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(int errorCode, String errorMessage) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            if (errorCode == HTTPStatus.UNAUTHORIZED) {
+                                Utils.onUnauthorized(mCurrentActivity);
+                            } else {
+                                Utils.appToast(mCurrentActivity, errorMessage);
+                                mCurrentActivity.hideLoadBoardBottomSheet();
+                                resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
+                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
+                            }
+
+                        }
+                    });
+        }
+    }
+
     /***
      * Handle UI logic and API status call for driver availability according to
      * ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS check if user allowed it.
@@ -409,27 +447,7 @@ public class HomeFragment extends Fragment {
      * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
      */
     private void handleActivationStatusForBattery(boolean handleForInactive) {
-        if (handleForInactive) {
-            callAvailableStatusAPI(true);
-            mCurrentActivity.showBismillah();
-            mapView.setVisibility(View.GONE);
-            mapPinIv.setVisibility(View.GONE);
-            headerTopActiveLayout.setVisibility(View.GONE);
-            headerTopUnActiveLayout.setVisibility(View.VISIBLE);
-            layoutUpper.setVisibility(View.VISIBLE);
-            layoutDuration.setVisibility(View.VISIBLE);
-            driverStatsLayout.setVisibility(View.VISIBLE);
-        } else {
-            callAvailableStatusAPI(true);
-            mCurrentActivity.showKhudaHafiz();
-            mapView.setVisibility(View.VISIBLE);
-            headerTopActiveLayout.setVisibility(View.VISIBLE);
-            mapPinIv.setVisibility(View.VISIBLE);
-            headerTopUnActiveLayout.setVisibility(View.GONE);
-            layoutUpper.setVisibility(View.GONE);
-            layoutDuration.setVisibility(View.GONE);
-            driverStatsLayout.setVisibility(View.GONE);
-        }
+        callAvailableStatusAPI(true);
     }
 
     @Override
@@ -479,31 +497,43 @@ public class HomeFragment extends Fragment {
     private void onApiResponse(DriverPerformanceResponse response) {
         if (mCurrentActivity != null) {
 
-            if (response.getData() != null) {
-                if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage()) && driverImageView != null) {
-                    Utils.loadImgPicasso(mCurrentActivity, driverImageView, R.drawable.profile_pic,
+            if (response != null && response.getData() != null) {
+                if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
+                    Utils.loadImgPicasso(driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 }
-                weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
-                weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
+                if (weeklyBookingTv != null)
+                    weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
+
+                if (weeklyMukamalBookingTv != null)
+                    weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
-                    String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
-                            response.getData().getWeeklyBalance();
-                    weeklyKamaiTv.setText(weeklyBalance);
+                    if (weeklyKamaiTv != null) {
+                        String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
+                                response.getData().getWeeklyBalance();
+                        weeklyKamaiTv.setText(weeklyBalance);
+                    }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
 
-                weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
+                if (weeklyTimeTv != null)
+                    weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-                weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
-                weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
-                weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
-                weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
+                if (weeklyCancelTv != null)
+                    weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
+                if (weeklyTakmeelTv != null)
+                    weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
+                if (weeklyQaboliatTv != null)
+                    weeklyQaboliatTv.setText(response.getData().getAcceptancePercentage() + getString(R.string.percentage_sign));
+                if (weeklyratingTv != null)
+                    weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
-                if (response.getData().getScore() != null) {
+                if (totalBalanceTv != null)
+                    totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
+
+                if (response.getData().getScore() != null && totalScoreTv != null) {
                     if (response.getData().getScore().contains(getString(R.string.minus_sign))) {
                         totalScoreTv.setText(response.getData().getScore());
                     } else {
@@ -545,7 +575,7 @@ public class HomeFragment extends Fragment {
         }
 
         setStatusBtn();
-        setConnectionStatus();
+        mCurrentActivity.setConnectionStatus();
         myRangeBar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -554,59 +584,8 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-    }
-
-    /*
-     * Update Connection Status according to Signal Strength
-     * */
-    private void setConnectionStatus() {
-        String connectionStatus = Connectivity.getConnectionStatus(mCurrentActivity);
-
-        //achaconnectionTv.setText(connectionStatus);
-        //achaconnectionTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable._good_sattelite, 0, 0, 0);
-        switch (connectionStatus) {
-            case "Unknown Status":
-                //tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
-                break;
-            case "Battery Low":
-                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-                achaconnectionTv.setText("لو بیٹری");
-                connectionStatusIv.setImageResource(R.drawable.empty_battery);
-
-                achaconnectionTv1.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-                achaconnectionTv1.setText("لو بیٹری");
-                connectionStatusIv1.setImageResource(R.drawable.empty_battery);
-                break;
-            case "Poor Connection":
-            case "Fair Connection":
-            case "No Connection":
-
-                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.black_3a3a3a));
-                achaconnectionTv.setText("برا کنکشن");
-                achaconnectionTv1.setText("برا کنکشن");
-                //tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
-                break;
-            case "Good Connection":
-                achaconnectionTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.black_3a3a3a));
-                achaconnectionTv.setText("اچھا کنکشن");
-                achaconnectionTv1.setText("اچھا کنکشن");
-                connectionStatusIv.setImageResource(R.drawable.wifi_connection_signal_symbol);
-                connectionStatusIv1.setImageResource(R.drawable.wifi_connection_signal_symbol);
-                break;
-        }
-//        if (connectionStatus.equalsIgnoreCase("Unknown Status")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorSecondary));
-//        } else if (connectionStatus.equalsIgnoreCase("Battery Low")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_error));
-//            tvConnectionStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.low_battery_icon, 0, 0, 0);
-//        } else if (connectionStatus.equalsIgnoreCase("Poor Connection") ||
-//                connectionStatus.equalsIgnoreCase("Fair Connection") ||
-//                connectionStatus.equalsIgnoreCase("No Connection")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_fair_connection));
-//        } else if (connectionStatus.equalsIgnoreCase("Good Connection")) {
-//            tvConnectionStatus.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.colorPrimary));
-//        }
-
+        if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
+            callLoadBoardListingAPI();
     }
 
     public synchronized void setStatusBtn() {
@@ -618,8 +597,11 @@ public class HomeFragment extends Fragment {
             //inactive state
             getDriverPerformanceData();
 
+            myRangeBarLayout.setVisibility(View.VISIBLE);
+            myRangeBarTopLine.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);
             mapPinIv.setVisibility(View.GONE);
+            selectedAmountRL.setVisibility(View.GONE);
             mapView.setVisibility(View.GONE);
             headerTopActiveLayout.setVisibility(View.GONE);
             headerTopUnActiveLayout.setVisibility(View.VISIBLE);
@@ -639,8 +621,14 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
 
             }
+            //reset zone data in local storage
+            AppPreferences.clearLoadboardSelectedZoneData();
+            //display reset zone data
+            mCurrentActivity.showSelectedPickAndDropZoneToBottomSheet();
         } else {        //active state
 
+            myRangeBarLayout.setVisibility(View.INVISIBLE);
+            myRangeBarTopLine.setVisibility(View.INVISIBLE);
             myRangeBar.setEnabled(false);
             mCurrentActivity.showKhudaHafiz();
             mapView.setVisibility(View.VISIBLE);
@@ -663,6 +651,16 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             }
+            if (AppPreferences.getIsCash()) {
+                //Cash in hand visibility VISIBLE
+                selectedAmountRL.setVisibility(View.VISIBLE);
+                selectedAmountTV.setText(getString(R.string.seleted_amount_rs, AppPreferences.getCashInHands()));
+            } else {
+                //Cash in hand visibility GONE and reposition google logo to bottom
+                selectedAmountRL.setVisibility(View.GONE);
+                if (mGoogleMap != null)
+                    mGoogleMap.setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen._16sdp));
+            }
         }
 
         if (AppPreferences.isWalletAmountIncreased()) {
@@ -671,15 +669,16 @@ public class HomeFragment extends Fragment {
             setFenceError("Non Service Area");
         } else {
             tvFenceError.setVisibility(View.GONE);
-            achaconnectionTv.setVisibility(View.VISIBLE);
+            mCurrentActivity.toggleAchaConnection(View.VISIBLE);
         }
+
         makeDriverOffline = false;
     }
 
     private void setFenceError(String errorMessage) {
         tvFenceError.setText(errorMessage);
         tvFenceError.setVisibility(View.VISIBLE);
-        achaconnectionTv.setVisibility(View.GONE);
+        mCurrentActivity.toggleAchaConnection(View.GONE);
     }
 
     @Override
@@ -782,7 +781,7 @@ public class HomeFragment extends Fragment {
             myRangeBar.setCurrentIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
             myRangeBar.setInitialIndex(Constants.RESET_CASH_TO_DEFAULT_POSITION);
         }
-
+        myRangeBarLayout.setVisibility(View.VISIBLE);
     }
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -823,31 +822,21 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                /*if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
-                                    AppPreferences.setStartTripTime(
-                                            AppPreferences.getServerTimeDifference() +
-                                                    Utils.getTimeInMiles(response.getData().getStarted_at()));
-                                }*/
-                                AppPreferences.setCallData(response.getData());
-                                AppPreferences.setTripStatus(response.getData().getStatus());
-                                if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                                    WebIORequestHandler.getInstance().registerChatListener();
-                                    ActivityStackManager.getInstance()
-                                            .startJobActivity(mCurrentActivity);
-                                } else {
-                                    ActivityStackManager.getInstance()
-                                            .startFeedbackFromResume(mCurrentActivity);
+                                if (response.getData().getTrip() == null) {
+                                    Utils.setCallIncomingState();
+                                    return;
                                 }
-                                mCurrentActivity.finish();
+
+                                checkTripType(response);
+
                             } catch (NullPointerException ignored) {
 
                             }
                         } else {
-                            if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
+                            //TODO need to remove this when backend properly send unauthorized HTTP code
+                            if (response.getCode() == HttpURLConnection.HTTP_BAD_REQUEST
+                                    && response.getMessage().contentEquals(Constants.UNAUTH_MESSAGE)) {
                                 Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                //If there is no pending trip free all states for new trip..
-                                Utils.setCallIncomingState();
                             }
                         }
                     }
@@ -887,18 +876,29 @@ public class HomeFragment extends Fragment {
                             }
                             AppPreferences.setAvailableAPICalling(false);
                             if (AppPreferences.getAvailableStatus()) {
+                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+                                //Todo Need to update Server Time difference when status API returns Timestamp for now Calling location API to force update timestamp
+                                //Utils.saveServerTimeDifference(response.body().getTimeStampServer());
+                                forceUpdatedLocationOnDriverStatus();
                                 if (AppPreferences.isWalletAmountIncreased()) {
                                     AppPreferences.setWalletAmountIncreased(false);
                                 }
                                 if (AppPreferences.isOutOfFence()) {
                                     AppPreferences.setOutOfFence(false);
                                 }
-                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+                                if (AppPreferences.getIsCash()) {
+                                    callLoadBoardListingAPI();
+                                } else {
+                                    mCurrentActivity.hideLoadBoardBottomSheet();
+                                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                                            (int) getResources().getDimension(R.dimen._50sdp));
+                                }
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
                                 //todo reset slider to 1000 amount when CIH amount is less then 1000
                                 resetCashSliderToDefault();
+                                mCurrentActivity.hideLoadBoardBottomSheet();
                             }
                             setStatusBtn();
                         } else {
@@ -1119,17 +1119,14 @@ public class HomeFragment extends Fragment {
                         , 12.0f));
 
             showCancelDialogIfRequired();
-
-//            ArrayList<HeatMapUpdatedResponse> data = new Gson().fromJson(getString(R.string.heat_map_data), new TypeToken<ArrayList<HeatMapUpdatedResponse>>() {
-//            }.getType());
-//            updateHeatMapUI(data);
-
-
-            //Heat map overlay
-            //addHeatMap();
-
-            //Heat map polyline
-            //addHeatMapPolyline();
+            if (AppPreferences.getIsCash()) {
+                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                        (int) getResources().getDimension(R.dimen._110sdp));
+                setDriverLocation();
+            } else {
+                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                        (int) getResources().getDimension(R.dimen._19sdp));
+            }
         }
     };
 
@@ -1466,7 +1463,7 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void run() {
                     if (action.equalsIgnoreCase(Keys.CONNECTION_BROADCAST)) {
-                        setConnectionStatus();
+                        mCurrentActivity.setConnectionStatus();
                     } else if (action.equalsIgnoreCase(Keys.INACTIVE_PUSH) ||
                             action.equalsIgnoreCase(Keys.INACTIVE_FENCE)) {
                         AppPreferences.setDriverDestination(null);
@@ -1497,4 +1494,136 @@ public class HomeFragment extends Fragment {
                 .commit();
         HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
     }
+    
+     /** Check the Type of request is it batch request or single
+     *
+     * <p>
+     * <p>
+     * Check if the type is single parse the single trip object i.e {@link NormalCallData}
+     * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
+     * <p>
+     * Check also for unfinished trips if there is unfinished trip remaining land
+     * to "Feedback Screen" other wise booking screen according to the type
+     *
+     * <ul>
+     * <li>Check if trip is null thats mean there is no active trip</li>
+     * <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     * <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * </ul>
+     *
+     * </p>
+     *
+     * @param response The object of {@linkplain CheckDriverStatusResponse}
+     */
+    private void checkTripType(CheckDriverStatusResponse response) {
+        Gson gson = new Gson();
+        if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
+            NormalCallData callData = gson.fromJson(trip, type);
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+            if (!callData.getStatus().
+                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler
+                        .getInstance()
+                        .registerChatListener();
+                ActivityStackManager
+                        .getInstance()
+                        .startJobActivity(mCurrentActivity);
+            } else {
+                ActivityStackManager
+                        .getInstance()
+                        .startFeedbackFromResume(mCurrentActivity);
+            }
+        } else {
+            AppPreferences.setDeliveryType(Constants.CallType.BATCH);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
+            MultiDeliveryCallDriverData multiDeliveryCallDriverData = gson.fromJson(trip, type);
+            AppPreferences.
+                    setMultiDeliveryCallDriverData(
+                            multiDeliveryCallDriverData
+                    );
+
+            List<MultipleDeliveryBookingResponse> bookingResponseList =
+                    multiDeliveryCallDriverData.getBookings();
+
+            boolean isFinishedStateFound = false;
+
+            for (MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+                // get trip instance
+                MultiDeliveryTrip tripData = bookingResponse.getTrip();
+
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startMultiDeliveryFeedbackActivity(mCurrentActivity,
+                                    tripData.getId(), false);
+                    break;
+                }
+            }
+
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startMultiDeliveryBookingActivity(mCurrentActivity);
+        }
+        mCurrentActivity.finish();
+
+    }
+
+
+    /**
+     * Reposition my location icon and google logo when loadboard visible/gone
+     *
+     * @param locationPointerBottomMargin my location bottom margin
+     * @param googleMapLogoBottomPadding  google logo padding from bottom
+     */
+    public void resetPositionOfMapPinAndSelectedCashView(int locationPointerBottomMargin, int googleMapLogoBottomPadding) {
+        if (mapPinIv != null) {
+            RelativeLayout.LayoutParams myLocationPointerParams = (RelativeLayout.LayoutParams) mapPinIv.getLayoutParams();
+            myLocationPointerParams.bottomMargin = locationPointerBottomMargin;
+            mapPinIv.setLayoutParams(myLocationPointerParams);
+        }
+
+        if (selectedAmountRL != null) {
+            RelativeLayout.LayoutParams selectedAmountTVLayoutParams = (RelativeLayout.LayoutParams) selectedAmountRL.getLayoutParams();
+            selectedAmountTVLayoutParams.bottomMargin = locationPointerBottomMargin;
+            selectedAmountRL.setLayoutParams(selectedAmountTVLayoutParams);
+        }
+
+
+        if (mGoogleMap != null) {
+            mGoogleMap.setPadding(0, 0, 0, googleMapLogoBottomPadding);
+        }
+
+    }
+
+
+    /**
+     * Forcefully sending Location Update API on Server for Updating
+     * {@link AppPreferences#setServerTimeDifference} against Time stamp provided by Server.
+     */
+    private void forceUpdatedLocationOnDriverStatus(){
+        new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
+
+            @Override
+            public void onLocationUpdate(LocationResponse response) {
+
+            }
+
+            @Override
+            public void onError(int errorCode, String errorMessage) {
+            }
+        }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+    }
+
 }

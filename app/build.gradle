@@ -9,6 +9,7 @@ buildscript {
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -21,15 +22,12 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 27
-        versionName "5.0"
+        versionCode 33
+        versionName "5.3"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        /*ndk {
-            abiFilters "armeabi-v7a"
-        }*/
     }
 
     signingConfigs {
@@ -50,7 +48,6 @@ android {
         release {
             //key for live apps
             resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'
-//ASSET
 
             signingConfig signingConfigs.release
             // to remove unused resources. This will reduce APK size.
@@ -60,21 +57,12 @@ android {
             // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
-
-            ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a"
-            }
         }
         debug {
             //key for staging apps
             resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'
             //Latest staging 9 Feb
-
             signingConfig signingConfigs.debug
-//            shrinkResources true // to remove unused resources. This will reduce APK size.
-//            minifyEnabled true //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-//                    'proguard-rules.pro' // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
 
         }
 
@@ -82,7 +70,7 @@ android {
         productFlavors {
             local {
                 dimension "driver"
-                buildConfigField "String", "FLAVOR_URL", "\"http://115.42.64.197:8888\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
             }
             staging {
                 dimension "driver"
@@ -164,9 +152,6 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }*/
 
-    implementation('com.instabug.library:instabug:4.15.2') {
-        exclude group: 'com.google.android.gms'
-    }
     //    implementation 'com.google.android.gms:play-services-gcm:9.4.0'
     //    implementation 'com.devbrackets.android:exomedia:3.1.0'
     /*implementation('com.afollestad:easyvideoplayer:0.3.0') {
@@ -223,7 +208,10 @@ dependencies {
 
     implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.elvishew:xlog:1.4.1'
+
+    implementation deps.markerClustering
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'de.felixschulze.gradle.hockeyapp'
