@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -106,11 +107,21 @@ import butterknife.OnClick;
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
 
-    @BindView(R.id.startAddressTv)
-    AutoFitFontTextView startAddressTv;
-
     @BindView(R.id.llStartAddress)
     LinearLayout llStartAddress;
+    @BindView(R.id.startAddressTv)
+    AutoFitFontTextView startAddressTv;
+    @BindView(R.id.tvCountDown)
+    TextView tvCountDown;
+
+    @BindView(R.id.llEndAddress)
+    LinearLayout llEndAddress;
+    @BindView(R.id.endAddressTv)
+    AutoFitFontTextView endAddressTv;
+    @BindView(R.id.ivAddressEdit)
+    AppCompatImageView ivAddressEdit;
+    @BindView(R.id.tvCountDownEnd)
+    FontTextView tvCountDownEnd;
 
     @BindView(R.id.tvTripId)
     FontTextView tvTripId;
@@ -142,8 +153,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView timeTv;
     @BindView(R.id.distanceTv)
     FontTextView distanceTv;
-    @BindView(R.id.endAddressTv)
-    AutoFitFontTextView endAddressTv;
     @BindView(R.id.tvEstimation)
     FontTextView tvEstimation;
     @BindView(R.id.jobBtn)
@@ -169,8 +178,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView tvCustomerPhone;
     @BindView(R.id.tvDetailsAddress)
     FontTextView tvDetailsAddress;
-    @BindView(R.id.tvCountDown)
-    TextView tvCountDown;
 
     private String canceOption = "Didn't show up";
 
@@ -374,7 +381,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
 
     @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
-            R.id.endAddressTv, R.id.ivTopUp, R.id.tvCustomerPhone})
+            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -386,7 +393,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
                 }
                 break;
-            case R.id.endAddressTv:
+            case R.id.ivAddressEdit:
                 Intent intent1 = new Intent(mCurrentActivity, SelectPlaceActivity.class);
                 if (StringUtils.isNotBlank(callData.getEndLat()) &&
                         StringUtils.isNotBlank(callData.getEndLng()) &&
@@ -497,6 +504,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }
                         }, " مکمل؟");
                     }
+                    configCountDown();
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
                 }
@@ -923,9 +931,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void showDropOffAddress() {
         if (Utils.isCourierService(callData.getCallType())) {
-            endAddressTv.setVisibility(View.GONE);
+            llEndAddress.setVisibility(View.GONE);
         } else {
-            endAddressTv.setVisibility(View.VISIBLE);
+            llEndAddress.setVisibility(View.VISIBLE);
         }
     }
 
@@ -1051,6 +1059,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (pickUpMarker != null) {
                 pickUpMarker.remove();
                 pickUpMarker = null;
+                mapPolylines.remove();
+                mapPolylinesSecondary.remove();
             }
         }
 
@@ -2168,13 +2178,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && callData.getPickupStop() != null) {
             int pickDuration = callData.getPickupStop().getDuration();
             long eta = AppPreferences.getTripAcceptTime() + TimeUnit.SECONDS.toMillis(pickDuration);
+            tvCountDown.setVisibility(View.VISIBLE);
             startCountDown(eta);
         } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP) && callData.getDropoffStop() != null) {
             int dropDuration = callData.getDropoffStop().getDuration();
             long eta = AppPreferences.getStartTripTime() + TimeUnit.SECONDS.toMillis(dropDuration);
+            tvCountDownEnd.setVisibility(View.VISIBLE);
             startCountDown(eta);
-        } else {
-            tvCountDown.setVisibility(View.GONE);
         }
     }
 
@@ -2184,12 +2194,21 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @param etaInMillis ETA to initiate count down timer with
      */
     private void startCountDown(Long etaInMillis) {
-        if (countDownTimer != null) countDownTimer.cancel();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+
         long remainingMillis = etaInMillis - System.currentTimeMillis();
         countDownTimer = new CountDownTimer(remainingMillis, 1000) {
             public void onTick(long millisUntilFinished) {
                 try {
-                    tvCountDown.setText(Utils.formatTimeForTimer(millisUntilFinished));
+                    String time = Utils.formatTimeForTimer(millisUntilFinished);
+                    if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                        tvCountDown.setText(time);
+                    } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                        tvCountDownEnd.setText(time);
+                    }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -2197,6 +2216,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             public void onFinish() {
                 tvCountDown.setText(R.string.clock_zero);
+                this.cancel();
             }
         };
         countDownTimer.start();

@@ -335,8 +335,8 @@
             android:id="@+id/llStartAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:padding="@dimen/_8sdp">
 
             <ImageView
@@ -376,8 +376,65 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/llEndAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/_8sdp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_drop_off_blue" />
+
+            <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                android:id="@+id/endAddressTv"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:maxLines="1"
+                android:text="Street Address"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/textsize.small.medium"
+                app:fontName="roboto_light.ttf" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivAddressEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="33dp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:src="@drawable/ic_pencil_icon" />
+
+            <View
+                android:id="@+id/separator"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@color/grey_light" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tvCountDownEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="00:00"
+                android:textColor="@color/Color_Red"
+                android:textSize="@dimen/_14sdp" />
+
+        </LinearLayout>
+
         <com.bykea.pk.partner.widgets.AutoFitFontTextView
-            android:id="@+id/endAddressTv"
+            android:id="@+id/endAddressTvOld"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_28sdp"
             android:layout_gravity="center_horizontal"
