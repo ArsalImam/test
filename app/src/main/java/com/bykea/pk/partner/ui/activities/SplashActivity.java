@@ -255,7 +255,7 @@ public class SplashActivity extends BaseActivity {
      * Display no internet dialog when we detect internet connect is offline.
      */
     private void displayNoInternetDialog() {
-        if (!Dialogs.INSTANCE.isShowing()) {
+        if (!Dialogs.INSTANCE.isShowing() && mCurrentActivity != null && !mCurrentActivity.isFinishing()) {
             Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
                     getString(R.string.no_internet_msg_ur),
                     getResources().getDimension(R.dimen._5sdp),

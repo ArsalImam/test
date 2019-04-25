@@ -328,4 +328,10 @@
         <item>ناكام - پارسل وصول کرنے سے انکار</item>
         <item>ناكام - پتہ نہیں ملا</item>
     </string-array>
+    <string name="cancel_reason">Please select cancellation reason.</string>
+    <string name="amount_cannot_greater">Amount can not be more than %1$s</string>
+    <string name="aap_abhi_door_hain_kiya_pohnch_gye">آپ ابھی بھی کچھ دورہیں، کیا واقعی پہنچ گئے؟</string>
+    <string name="aap_abhi_door_hain">آپ ابھی بھی کچھ دورہیں</string>
+
+    <!--Testing verified commit-->
 </resources>
