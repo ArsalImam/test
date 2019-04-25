@@ -253,7 +253,7 @@
     <string name="imei_report_part_five_ur">کے اندراج کے لئے نیچے دیئے گئے بٹن پر کلک کریں۔</string>
     <string name="imei_report_submit_ur">مسئلہ درج کریں</string>
     <string name="frequent_booking_cancel_error_ur">مسلسل کینسل کرنے کی وجہ سے آپکو کچھ دیر کے لیے بلاک کردیا گیا ہے</string>
-    <string name="wallet_amount_exceed_error_ur">مزید بوکنگز لینے کے لیے پیسے جمع کروائیں۔</string>
+    <string name="wallet_amount_exceed_error_ur">مزید بکنگز لینے کے لیے پیسے جمع کروائیں۔</string>
     <string name="account_inactive_message_error_ur">آپکا اکاؤنٹ بند ہے ، کال بائيکیا</string>
     <string name="retrofit_logging_request">Sending request %s on %s%n%s%s</string>
     <string name="retrofit_logging_response">Received response for %s in %.1fms%n%s</string>
