@@ -47,6 +47,13 @@ public class DriverApp extends MultiDexApplication {
      * XLog Printer global object which would be used for writing logs on file.
      */
     public static Printer globalFilePrinter;
+    private Emitter.Listener mCallDriverListener = new WebIORequestHandler.CallDriverListener();
+    private Emitter.Listener mTripMissedListener =
+            new WebIORequestHandler.MultiDeliveryTripMissedListener();
+    private Emitter.Listener mBatachCompletedListener =
+            new WebIORequestHandler.MultiDeliveryTripBatchCompletedListener();
+    private Emitter.Listener mBatachCancelledListener =
+            new WebIORequestHandler.MultiDeliveryBatchCancelledByAdminListener();
 
     @Override
     public void onCreate() {
@@ -142,9 +149,21 @@ public class DriverApp extends MultiDexApplication {
         }
     };
 
+    /**
+     * Attach socket listener on socket connected
+     */
     public void attachListenersOnSocketConnected() {
         EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
-        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
+        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL,
+                mJobCallListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER,
+                mCallDriverListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED,
+                mTripMissedListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_COMPLETED,
+                mBatachCompletedListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED,
+                mBatachCancelledListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
         }

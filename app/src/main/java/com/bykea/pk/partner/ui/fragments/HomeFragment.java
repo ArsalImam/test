@@ -29,9 +29,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.ZoneData;
@@ -41,6 +43,14 @@ import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.PilotStatusResponse;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -77,11 +87,15 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -495,7 +509,7 @@ public class HomeFragment extends Fragment {
                     weeklyMukamalBookingTv.setText(String.valueOf(response.getData().getCompletedBooking()));
 
                 try {
-                    if(weeklyKamaiTv != null){
+                    if (weeklyKamaiTv != null) {
                         String weeklyBalance = Integer.valueOf(response.getData().getWeeklyBalance()) < 0 ? "0" :
                                 response.getData().getWeeklyBalance();
                         weeklyKamaiTv.setText(weeklyBalance);
@@ -808,31 +822,21 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         if (response.isSuccess()) {
                             try {
-                                /*if (StringUtils.isNotBlank(response.getData().getStarted_at())) {
-                                    AppPreferences.setStartTripTime(
-                                            AppPreferences.getServerTimeDifference() +
-                                                    Utils.getTimeInMiles(response.getData().getStarted_at()));
-                                }*/
-                                AppPreferences.setCallData(response.getData());
-                                AppPreferences.setTripStatus(response.getData().getStatus());
-                                if (!response.getData().getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                                    WebIORequestHandler.getInstance().registerChatListener();
-                                    ActivityStackManager.getInstance()
-                                            .startJobActivity(mCurrentActivity);
-                                } else {
-                                    ActivityStackManager.getInstance()
-                                            .startFeedbackFromResume(mCurrentActivity);
+                                if (response.getData().getTrip() == null) {
+                                    Utils.setCallIncomingState();
+                                    return;
                                 }
-                                mCurrentActivity.finish();
+
+                                checkTripType(response);
+
                             } catch (NullPointerException ignored) {
 
                             }
                         } else {
-                            if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
+                            //TODO need to remove this when backend properly send unauthorized HTTP code
+                            if (response.getCode() == HttpURLConnection.HTTP_BAD_REQUEST
+                                    && response.getMessage().contentEquals(Constants.UNAUTH_MESSAGE)) {
                                 Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                //If there is no pending trip free all states for new trip..
-                                Utils.setCallIncomingState();
                             }
                         }
                     }
@@ -872,13 +876,16 @@ public class HomeFragment extends Fragment {
                             }
                             AppPreferences.setAvailableAPICalling(false);
                             if (AppPreferences.getAvailableStatus()) {
+                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+                                //Todo Need to update Server Time difference when status API returns Timestamp for now Calling location API to force update timestamp
+                                //Utils.saveServerTimeDifference(response.body().getTimeStampServer());
+                                forceUpdatedLocationOnDriverStatus();
                                 if (AppPreferences.isWalletAmountIncreased()) {
                                     AppPreferences.setWalletAmountIncreased(false);
                                 }
                                 if (AppPreferences.isOutOfFence()) {
                                     AppPreferences.setOutOfFence(false);
                                 }
-                                ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                                 if (AppPreferences.getIsCash()) {
                                     callLoadBoardListingAPI();
                                 } else {
@@ -1471,7 +1478,95 @@ public class HomeFragment extends Fragment {
     }
 
     /**
+     * Check the Type of request is it batch request or single
+     *
+     * <p>
+     * <p>
+     * Check if the type is single parse the single trip object i.e {@link NormalCallData}
+     * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
+     * <p>
+     * Check also for unfinished trips if there is unfinished trip remaining land
+     * to "Feedback Screen" other wise booking screen according to the type
+     *
+     * <ul>
+     * <li>Check if trip is null thats mean there is no active trip</li>
+     * <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     * <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * </ul>
+     *
+     * </p>
+     *
+     * @param response The object of {@linkplain CheckDriverStatusResponse}
+     */
+    private void checkTripType(CheckDriverStatusResponse response) {
+        Gson gson = new Gson();
+        if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
+            NormalCallData callData = gson.fromJson(trip, type);
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+            if (!callData.getStatus().
+                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler
+                        .getInstance()
+                        .registerChatListener();
+                ActivityStackManager
+                        .getInstance()
+                        .startJobActivity(mCurrentActivity);
+            } else {
+                ActivityStackManager
+                        .getInstance()
+                        .startFeedbackFromResume(mCurrentActivity);
+            }
+        } else {
+            AppPreferences.setDeliveryType(Constants.CallType.BATCH);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
+            MultiDeliveryCallDriverData multiDeliveryCallDriverData = gson.fromJson(trip, type);
+            AppPreferences.
+                    setMultiDeliveryCallDriverData(
+                            multiDeliveryCallDriverData
+                    );
+
+            List<MultipleDeliveryBookingResponse> bookingResponseList =
+                    multiDeliveryCallDriverData.getBookings();
+
+            boolean isFinishedStateFound = false;
+
+            for (MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+                // get trip instance
+                MultiDeliveryTrip tripData = bookingResponse.getTrip();
+
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startMultiDeliveryFeedbackActivity(mCurrentActivity,
+                                    tripData.getId(), false);
+                    break;
+                }
+            }
+
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startMultiDeliveryBookingActivity(mCurrentActivity);
+        }
+        mCurrentActivity.finish();
+
+    }
+
+
+    /**
      * Reposition my location icon and google logo when loadboard visible/gone
+     *
      * @param locationPointerBottomMargin my location bottom margin
      * @param googleMapLogoBottomPadding  google logo padding from bottom
      */
@@ -1493,6 +1588,25 @@ public class HomeFragment extends Fragment {
             mGoogleMap.setPadding(0, 0, 0, googleMapLogoBottomPadding);
         }
 
+    }
+
+
+    /**
+     * Forcefully sending Location Update API on Server for Updating
+     * {@link AppPreferences#setServerTimeDifference} against Time stamp provided by Server.
+     */
+    private void forceUpdatedLocationOnDriverStatus(){
+        new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
+
+            @Override
+            public void onLocationUpdate(LocationResponse response) {
+
+            }
+
+            @Override
+            public void onError(int errorCode, String errorMessage) {
+            }
+        }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
     }
 
 }

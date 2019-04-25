@@ -63,7 +63,7 @@ public class ApiTags {
     public static final String CODE_VERIFICATION_API = "/api/v1/users/verfiyPincode";
     public static final String FORGOT_PASSWORD_API = "/api/v1/driver/forgotPassword";
     public static final String REGISTER_USER_API = "/api/v1/driver/register";
-    public static final String CHECK_RUNNING_TRIP = "/api/v1/getdriverrunningtrip";
+    public static final String CHECK_RUNNING_TRIP = "/api/v1/driver/activeTrip";
     public static final String UPDATE_PROFILE_API = "/api/v1/driver/updateDriverProfile";
     public static final String GET_PROFILE_API = "/api/v1/driver/getProfile";
     public static final String GET_WALLET_LIST = "/api/v1/users/getWallets";
@@ -131,6 +131,22 @@ public class ApiTags {
     public static final String SOCKET_ARRIVED = "i-am-arrived";
     public static final String SOCKET_BEGIN_TRIP = "start-trip";
     public static final String SOCKET_END_TRIP = "finish-trip";
+
+    //region MULTI DELIVERY SOCKET EVENTS
+    public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER = "CALL_DRIVER";
+    public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER_ACKNOWLEDGE = "CALL_DRIVER_ACKNOWLEDGE";
+    public static final String MULTI_DELIVERY_SOCKET_ACCEPT_CALL = "DRIVER_ACCEPTED";
+    public static final String MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED = "DRIVER_ARRIVED";
+    public static final String MULTI_DELIVERY_SOCKET_DRIVER_STARTED = "DRIVER_STARTED";
+    public static final String MULTI_DELIVERY_SOCKET_TRIP_FINISHED = "TRIP_FINISHED";
+    public static final String MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER = "TRIP_FEEDBACK_DRIVER";
+    public static final String MULTI_DELIVERY_SOCKET_TRIP_MISSED = "TRIP_MISSED";
+    public static final String MULTI_DELIVERY_SOCKET_BATCH_CANCELED = "TRIP_CANCELLED";
+    public static final String MULTI_DELIVERY_SOCKET_BATCH_COMPLETED= "BATCH_TRIP_COMPLETED";
+    public static final String MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED = "ADMIN_CANCELLED";
+
+    //endregion
+
     /*CHAT APIS*/
     public static final String SOCKET_SEND_CHAT_MESSAGE = "send-message";
     public static final String SOCKET_GET_DRIVER_STATS = "driver:trip-status";
