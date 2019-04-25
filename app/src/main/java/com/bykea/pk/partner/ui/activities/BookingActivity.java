@@ -2162,7 +2162,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     /**
-     * Sets up Count Down Timer on basis of current ride status
+     * Sets up Countdown timer for ETA on ride Pickup and ride Drop-off stops
      */
     private void configCountDown() {
         if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && callData.getPickupStop() != null) {
