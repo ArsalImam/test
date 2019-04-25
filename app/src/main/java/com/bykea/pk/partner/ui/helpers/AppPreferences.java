@@ -406,6 +406,25 @@ public class AppPreferences {
         return mSharedPreferences.getBoolean(Keys.ON_END_TRIP, false);
     }
 
+    /**
+     * Fetch TRIP_ACCEPT_TIME from App Shared Pref
+     * @return TRIP_ACCEPT_TIME
+     */
+    public static long getTripAcceptTime() {
+        return mSharedPreferences.getLong(Keys.TRIP_ACCEPT_TIME, 0);
+    }
+
+    /**
+     * Put TRIP_ACCEPT_TIME to App Shared Pref
+     * @param time TRIP_ACCEPT_TIME
+     */
+    public static void setTripAcceptTime(long time) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.TRIP_ACCEPT_TIME, time)
+                .apply();
+    }
+
     public static long getStartTripTime() {
         return mSharedPreferences.getLong(Keys.TRIP_START_TIME, 0);
     }

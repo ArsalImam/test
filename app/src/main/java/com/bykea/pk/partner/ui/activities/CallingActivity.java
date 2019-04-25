@@ -197,6 +197,7 @@ public class CallingActivity extends BaseActivity {
                             NormalCallData callData = AppPreferences.getCallData();
                             callData.setStatus(TripStatus.ON_ACCEPT_CALL);
                             AppPreferences.setCallData(callData);
+                            AppPreferences.setTripAcceptTime(System.currentTimeMillis());
                             logMixpanelEvent(callData, true);
 
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());

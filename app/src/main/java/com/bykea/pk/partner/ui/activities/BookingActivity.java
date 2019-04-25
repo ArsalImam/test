@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -81,48 +82,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.response.ArrivedResponse;
-import com.bykea.pk.partner.models.response.BeginRideResponse;
-import com.bykea.pk.partner.models.response.CancelRideResponse;
-import com.bykea.pk.partner.models.response.EndRideResponse;
-import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.tracking.AbstractRouting;
-import com.bykea.pk.partner.tracking.Route;
-import com.bykea.pk.partner.tracking.RouteException;
-import com.bykea.pk.partner.tracking.Routing;
-import com.bykea.pk.partner.tracking.RoutingListener;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Connectivity;
-import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Keys;
-import com.bykea.pk.partner.utils.NetworkChangeListener;
-import com.bykea.pk.partner.utils.Permissions;
-import com.bykea.pk.partner.utils.TripStatus;
-import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.maps.android.PolyUtil;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -148,11 +107,21 @@ import butterknife.OnClick;
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
 
-    @BindView(R.id.startAddressTv)
-    AutoFitFontTextView startAddressTv;
-
     @BindView(R.id.llStartAddress)
     LinearLayout llStartAddress;
+    @BindView(R.id.startAddressTv)
+    AutoFitFontTextView startAddressTv;
+    @BindView(R.id.tvCountDown)
+    TextView tvCountDown;
+
+    @BindView(R.id.llEndAddress)
+    LinearLayout llEndAddress;
+    @BindView(R.id.endAddressTv)
+    AutoFitFontTextView endAddressTv;
+    @BindView(R.id.ivAddressEdit)
+    AppCompatImageView ivAddressEdit;
+    @BindView(R.id.tvCountDownEnd)
+    FontTextView tvCountDownEnd;
 
     @BindView(R.id.tvTripId)
     FontTextView tvTripId;
@@ -184,8 +153,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView timeTv;
     @BindView(R.id.distanceTv)
     FontTextView distanceTv;
-    @BindView(R.id.endAddressTv)
-    AutoFitFontTextView endAddressTv;
     @BindView(R.id.tvEstimation)
     FontTextView tvEstimation;
     @BindView(R.id.jobBtn)
@@ -211,8 +178,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView tvCustomerPhone;
     @BindView(R.id.tvDetailsAddress)
     FontTextView tvDetailsAddress;
-    @BindView(R.id.tvCountDown)
-    TextView tvCountDown;
 
     private String canceOption = "Didn't show up";
 
@@ -232,8 +197,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private String cancelReason = StringUtils.EMPTY;
 
     private Marker driverMarker, dropOffMarker, pickUpMarker/*, passCurrentLocMarker*/;
-    private Polyline mapPolylines;
-    private List<LatLng> mRouteLatLng;
+    private Polyline mapPolylines, mapPolylinesSecondary;
+    private List<LatLng> mRouteLatLng, mRouteLatLngSecondary;
 
 
     //LOCATION CHANGE UPDATE DATA MEMBERS
@@ -249,7 +214,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private LatLng lastPolyLineLatLng, lastApiCallLatLng;
 
     private boolean lastPickUpFlagOnLeft, lastDropOffFlagOnLeft = false;
-
+    boolean shouldRefreshPickupMarker = false, shouldRefreshDropOffMarker = false;
+    CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -415,7 +381,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
 
     @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
-            R.id.endAddressTv, R.id.ivTopUp, R.id.tvCustomerPhone})
+            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -427,7 +393,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
                 }
                 break;
-            case R.id.endAddressTv:
+            case R.id.ivAddressEdit:
                 Intent intent1 = new Intent(mCurrentActivity, SelectPlaceActivity.class);
                 if (StringUtils.isNotBlank(callData.getEndLat()) &&
                         StringUtils.isNotBlank(callData.getEndLng()) &&
@@ -538,6 +504,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }
                         }, " مکمل؟");
                     }
+                    configCountDown();
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
                 }
@@ -932,8 +899,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             } else {
                 ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride_right));
             }
-            if (callData.getDriverToPassengerEta() != null)
-                startCountDown(callData.getDriverToPassengerEta());
+            configCountDown();
         }
     }
 
@@ -954,23 +920,26 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
-        showDropOff();
+        showDropOffAddress();
         llStartAddress.setVisibility(View.GONE);
         cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
     }
 
-    private void showDropOff() {
+    /**
+     * Hide and show Drop-off address bar if ride type is courier service.
+     */
+    private void showDropOffAddress() {
         if (Utils.isCourierService(callData.getCallType())) {
-            endAddressTv.setVisibility(View.GONE);
+            llEndAddress.setVisibility(View.GONE);
         } else {
-            endAddressTv.setVisibility(View.VISIBLE);
+            llEndAddress.setVisibility(View.VISIBLE);
         }
     }
 
     private void setStartedState() {
         llStartAddress.setVisibility(View.GONE);
-        showDropOff();
+        showDropOffAddress();
         cvDirections.setVisibility(View.VISIBLE);
         jobBtn.setText(getString(R.string.button_text_finish));
         setOnStartData();
@@ -1006,7 +975,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    private void showDropOffPersonInfo(){
+    private void showDropOffPersonInfo() {
         if (checkIfDetailsAdded()) {
             llDetails.setVisibility(View.VISIBLE);
             tvDetailsNotEntered.setVisibility(View.GONE);
@@ -1087,9 +1056,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
             updateMarkers();
-        } else if (pickUpMarker != null) {
-            pickUpMarker.remove();
-            pickUpMarker = null;
+            if (pickUpMarker != null) {
+                pickUpMarker.remove();
+                pickUpMarker = null;
+                mapPolylines.remove();
+                mapPolylinesSecondary.remove();
+            }
         }
 
 
@@ -1182,7 +1154,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
         if (dropOffMarker != null) { // && StringUtils.isNotBlank(lastPickUpFlagOnLeft)) {
-            if (!lastDropOffFlagOnLeft == showOnLeft) { // || !lastEtaInFlag.equalsIgnoreCase(eta)) {
+            if (!lastDropOffFlagOnLeft == showOnLeft || shouldRefreshDropOffMarker) { // || !lastEtaInFlag.equalsIgnoreCase(eta)) {
+                shouldRefreshDropOffMarker = false;
                 dropOffMarker.remove();
                 dropOffMarker = mGoogleMap.addMarker(getDropOffMarker(latLng, showOnLeft));
             }
@@ -1213,7 +1186,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
         if (pickUpMarker != null) {
-            if (!lastPickUpFlagOnLeft == showOnLeft) {
+            if (!lastPickUpFlagOnLeft == showOnLeft || shouldRefreshPickupMarker) {
+                shouldRefreshPickupMarker = false;
                 pickUpMarker.remove();
                 pickUpMarker = mGoogleMap.addMarker(getPickUpMarker(latLng, showOnLeft));
             }
@@ -1240,10 +1214,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(callData.getTripDistance());
-        tvDuration.setText(callData.getTripEta());
-        if (callData.getZoneNameDropOffUrdu() != null && !callData.getZoneNameDropOffUrdu().isEmpty())
-            tvRegionName.setText(callData.getZoneNameDropOffUrdu());
+        tvDistance.setText(String.valueOf(callData.getDropoffStop().getDistance()/1000));
+        tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getDropoffStop().getDuration())));
+        if (callData.getDropoffStop() != null
+                && callData.getDropoffStop().getZoneNameUr() != null
+                && !callData.getDropoffStop().getZoneNameUr().isEmpty())
+            tvRegionName.setText(callData.getDropoffStop().getZoneNameUr());
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
         return markerOptions;
@@ -1266,11 +1242,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(callData.getDriverToPassengerDistance());
-        if (callData.getDriverToPassengerEta()!= null)
-            tvDuration.setText(callData.getDriverToPassengerEta().toString());
-        if (callData.getZoneNamePickupUrdu() != null && !callData.getZoneNamePickupUrdu().isEmpty())
-            tvRegionName.setText(callData.getZoneNamePickupUrdu());
+        tvDistance.setText(String.valueOf(callData.getPickupStop().getDistance()/1000));
+        if (callData.getPickupStop().getDuration() != null)
+            tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getPickupStop().getDuration())));
+        if (callData.getPickupStop().getZoneNameUr() != null && !callData.getPickupStop().getZoneNameUr().isEmpty())
+            tvRegionName.setText(callData.getPickupStop().getZoneNameUr());
 
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
@@ -1282,12 +1258,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private synchronized void updateMarkers() {
         if (null == mGoogleMap || null == callData) return;
+
         if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-            updatePickupMarker();
-            updateDropOffMarker();
+            if (callData.getStartLat() != null && !callData.getStartLat().isEmpty() && callData.getStartLng() != null && !callData.getStartLng().isEmpty())
+                updatePickupMarker();
+            if (callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+                updateDropOffMarker();
         } else {
             if (pickUpMarker != null) pickUpMarker.remove();
-            updateDropOffMarker();
+            if (callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+                updateDropOffMarker();
         }
         setPickupBounds();
     }
@@ -1573,13 +1553,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
-        if (
-                StringUtils.isNotBlank(callData.getStartLat())
-                        && StringUtils.isNotBlank(callData.getStartLng())
-                        && StringUtils.isNotBlank(callData.getStartLat())
-                        && StringUtils.isNotBlank(callData.getStartLng())
-                        && StringUtils.isNotBlank(AppPreferences.getLatitude() + "")
-                        && StringUtils.isNotBlank(AppPreferences.getLongitude() + "")) {
+        if (StringUtils.isNotBlank(callData.getStartLat())
+                && StringUtils.isNotBlank(callData.getStartLng())
+                && StringUtils.isNotBlank(callData.getEndLat())
+                && StringUtils.isNotBlank(callData.getEndLng())
+                && StringUtils.isNotBlank(AppPreferences.getLatitude() + "")
+                && StringUtils.isNotBlank(AppPreferences.getLongitude() + "")) {
 
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                 drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
@@ -1593,9 +1572,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Routing.pickupRoute);
             }
         } else {
-            if (mapPolylines != null) {
-                mapPolylines.remove();
-            }
+            if (mapPolylines != null) mapPolylines.remove();
+            if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
         }
     }
 
@@ -1675,33 +1653,54 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mRouteLatLng = route.get(0).getPoints();
-                    updateEtaAndCallData((route.get(0).getDurationValue() / 60) + "",
-                            Utils.formatDecimalPlaces((route.get(0).getDistanceValue() / 1000.0) + "", 1));
+                    Route routeFirst = route.get(0);
+                    mRouteLatLng = routeFirst.getPoints();
+                    updateEtaAndCallData((routeFirst.getDurationValue() / 60) + "",
+                            Utils.formatDecimalPlaces((routeFirst.getDistanceValue() / 1000.0) + "", 1));
 
-
-                    if (mapPolylines != null) {
-                        mapPolylines.remove();
-                    }
-                    PolylineOptions polyOptions = new PolylineOptions();
-                    polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                    polyOptions.addAll(route.get(0).getPoints());
+                    if (mapPolylines != null) mapPolylines.remove();
+                    if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
 
                     if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && route.size() > 1) {
+                        Route routeSecondary = route.get(1);
+
+                        PolylineOptions polyOptions = new PolylineOptions();
+                        polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
+                        polyOptions.addAll(routeFirst.getPoints());
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.kelly_green));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
+
                         polyOptions = new PolylineOptions();
                         polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                        polyOptions.addAll(route.get(1).getPoints());
+                        polyOptions.addAll(routeSecondary.getPoints());
+                        polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
+                        mapPolylinesSecondary = mGoogleMap.addPolyline(polyOptions);
+
+                        mRouteLatLngSecondary = routeSecondary.getPoints();
+                        callData.getPickupStop().setDistance(routeFirst.getDistanceValue());
+                        callData.getPickupStop().setDuration(routeFirst.getDurationValue());
+                        callData.getDropoffStop().setDistance(routeSecondary.getDistanceValue());
+                        callData.getDropoffStop().setDuration(routeSecondary.getDurationValue());
+
+                    } else {
+                        PolylineOptions polyOptions = new PolylineOptions();
+                        polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
+                        polyOptions.addAll(routeFirst.getPoints());
+                        polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
+                        mapPolylines = mGoogleMap.addPolyline(polyOptions);
+
+                        callData.getDropoffStop().setDistance(routeFirst.getDistanceValue());
+                        callData.getDropoffStop().setDuration(routeFirst.getDurationValue());
                     }
 
-                    polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
-                    mapPolylines = mGoogleMap.addPolyline(polyOptions);
+                    shouldRefreshPickupMarker = true;
+                    shouldRefreshDropOffMarker = true;
+                    updateMarkers();
 
                     if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute) {
                         if (mCurrentActivity != null && mGoogleMap != null) {
                             int padding = 40; // offset from edges of the map in pixels
-                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(route.get(0).getLatLgnBounds(), padding);
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(routeFirst.getLatLgnBounds(), padding);
                             mGoogleMap.moveCamera(cu);
                         }
                     }
@@ -1730,7 +1729,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             updateDriverMarker(mCurrentLocation.getLatitude() + "",
                     mCurrentLocation.getLongitude() + "");
 
-            drawRoutes();
+            if (isDirectionApiCallRequired(new LatLng(latitude, longitude))) {
+                if (mapPolylines != null) {
+                    mapPolylines.remove();
+                }
+                drawRoutes();
+            }
+
             /*            if (*//*AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
                     ||*//* AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng()))
@@ -1862,7 +1867,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData = AppPreferences.getCallData();
                         callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
                         AppPreferences.setCallData(callData);
-                        showDropOff();
+                        showDropOffAddress();
                         llStartAddress.setVisibility(View.GONE);
                         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
                         setOnArrivedData();
@@ -2040,7 +2045,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         try {
                             Gson gson = new Gson();
                             String trip = gson.toJson(response.getData().getTrip());
-                            Type type = new TypeToken<NormalCallData>(){}.getType();
+                            Type type = new TypeToken<NormalCallData>() {
+                            }.getType();
                             NormalCallData normalCallData = gson.fromJson(trip, type);
 
                             if (shouldUpdateTripData(normalCallData.getStatus())) {
@@ -2165,27 +2171,54 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         return isAdded;
     }
 
-
-    CountDownTimer countDownTimer;
+    /**
+     * Sets up Countdown timer for ETA on ride Pickup and ride Drop-off stops
+     */
+    private void configCountDown() {
+        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && callData.getPickupStop() != null) {
+            int pickDuration = callData.getPickupStop().getDuration();
+            long eta = AppPreferences.getTripAcceptTime() + TimeUnit.SECONDS.toMillis(pickDuration);
+            tvCountDown.setVisibility(View.VISIBLE);
+            startCountDown(eta);
+        } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP) && callData.getDropoffStop() != null) {
+            int dropDuration = callData.getDropoffStop().getDuration();
+            long eta = AppPreferences.getStartTripTime() + TimeUnit.SECONDS.toMillis(dropDuration);
+            tvCountDownEnd.setVisibility(View.VISIBLE);
+            startCountDown(eta);
+        }
+    }
 
     /**
      * Starts count down timer for ETA
-     * @param eta ETA to initiate count down timer with
+     *
+     * @param etaInMillis ETA to initiate count down timer with
      */
-    private void startCountDown(Long eta) {
-        if (countDownTimer != null) countDownTimer.cancel();
+    private void startCountDown(Long etaInMillis) {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
 
-        final long etaInMilli = eta * 60 * 1000;
-        countDownTimer = new CountDownTimer(etaInMilli, 1000) {
+        long remainingMillis = etaInMillis - System.currentTimeMillis();
+        countDownTimer = new CountDownTimer(remainingMillis, 1000) {
             public void onTick(long millisUntilFinished) {
-                tvCountDown.setText(Utils.formatTimeForTimer(millisUntilFinished));
+                try {
+                    String time = Utils.formatTimeForTimer(millisUntilFinished);
+                    if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                        tvCountDown.setText(time);
+                    } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                        tvCountDownEnd.setText(time);
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
 
             public void onFinish() {
                 tvCountDown.setText(R.string.clock_zero);
+                this.cancel();
             }
         };
         countDownTimer.start();
     }
-
 }
