@@ -504,7 +504,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }
                         }, " مکمل؟");
                     }
-                    configCountDown();
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
                 }
@@ -1852,6 +1851,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
                         Utils.appToast(mCurrentActivity, data.getMessage());
+                        configCountDown();
                     }
                 });
             }
@@ -1874,6 +1874,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
                         changeDriverMarker();
                         updateEtaAndCallData("0", "0");
+                        configCountDown();
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, arrivedResponse.getMessage());
                     }
@@ -1990,6 +1991,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         changeDriverMarker();
                         showEstimatedDistTime();
                         updateDropOff();
+                        configCountDown();
                     } else {
                         Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, beginRideResponse.getMessage());
                     }
@@ -2185,6 +2187,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             long eta = AppPreferences.getStartTripTime() + TimeUnit.SECONDS.toMillis(dropDuration);
             tvCountDownEnd.setVisibility(View.VISIBLE);
             startCountDown(eta);
+        } else {
+            tvCountDown.setText(R.string.clock_zero);
+            tvCountDownEnd.setText(R.string.clock_zero);
         }
     }
 
@@ -2216,6 +2221,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             public void onFinish() {
                 tvCountDown.setText(R.string.clock_zero);
+                tvCountDownEnd.setText(R.string.clock_zero);
                 this.cancel();
             }
         };
