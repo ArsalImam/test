@@ -57,8 +57,8 @@ public class GoogleParser extends XMLParser implements Parser {
 
             JSONObject jsonRoute = json.getJSONArray("routes").getJSONObject(0);
             JSONArray legs = jsonRoute.getJSONArray("legs");
-
-            for (int i = 0; i < legs.length(); i++) {
+            int numOfLegs = legs.length();
+            for (int i = 0; i < numOfLegs; i++) {
                 Route route = new Route();
                 //Create an empty segment
                 Segment segment = new Segment();
