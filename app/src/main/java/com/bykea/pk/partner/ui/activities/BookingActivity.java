@@ -2186,11 +2186,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             tvCountDownEnd.setVisibility(View.VISIBLE);
             startCountDown(eta);
         }
-
-//        else {
-//            tvCountDown.setVisibility(View.GONE);
-//            tvCountDownEnd.setVisibility(View.GONE);
-//        }
     }
 
     /**
