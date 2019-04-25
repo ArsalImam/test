@@ -64,7 +64,7 @@ public class MultiDeliveryCallFragment extends Fragment {
         //Todo 1: Mock Data for testing need to be change when backend team provide an API
 
         MultiDeliveryPickup pickup = new MultiDeliveryPickup(
-                callDriverData.getPickup().getZonePickUpName(),
+                callDriverData.getPickup().getZoneNameEn(),
                 callDriverData.getPickup().getFeederName(),
                 callDriverData.getPickup().getPickupAddress(),
                 callDriverData.getPickup().getContactNumer());

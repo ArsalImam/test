@@ -64,7 +64,7 @@ public class MultiDeliveryDirectionFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         MultiDeliveryPickup pickup = new MultiDeliveryPickup(
-                callData.getPickup().getZonePickUpName(),
+                callData.getPickup().getZoneNameEn(),
                 callData.getPickup().getFeederName(),
                 callData.getPickup().getPickupAddress());
 
@@ -76,7 +76,6 @@ public class MultiDeliveryDirectionFragment extends Fragment {
                 int cashOnDeliveryAmount = -1;
                 if(booking.getTrip() != null){
                     tripNo = booking.getTrip().getTripNo();
-                    zoneName = booking.getTrip().getZoneDropOffName();
                     if(booking.getTrip().getDeliveryInfo() != null && booking.getTrip().getDeliveryInfo().isCashOnDelivery())
                         cashOnDeliveryAmount = booking.getTrip().getDeliveryInfo().getAmount();
                 }
@@ -84,6 +83,7 @@ public class MultiDeliveryDirectionFragment extends Fragment {
                     passengerName = booking.getPassenger().getName();
 
                 if(booking.getDropOff() != null){
+                    zoneName = (booking.getDropOff().getZoneNameEn() != null ? booking.getDropOff().getZoneNameEn() : "");
                     pickupAddress = booking.getDropOff().getPickupAddress();
                 }
 
