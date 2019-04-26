@@ -180,11 +180,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:maxLines="1"
-                        android:paddingStart="@dimen/_8sdp"
-                        android:paddingLeft="@dimen/_8sdp"
-                        android:paddingEnd="@dimen/_8sdp"
-                        android:paddingRight="@dimen/_8sdp"
-                        android:text="کرایہ"
+                        android:text="@string/karaya_ur"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
