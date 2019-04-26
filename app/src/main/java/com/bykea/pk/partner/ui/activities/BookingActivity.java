@@ -1213,7 +1213,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(String.valueOf(callData.getDropoffStop().getDistance()/1000));
+        tvDistance.setText(String.format("%.01f", callData.getDropoffStop().getDistance()/1000F));
         tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getDropoffStop().getDuration())));
         if (callData.getDropoffStop() != null
                 && callData.getDropoffStop().getZoneNameUr() != null
@@ -1241,7 +1241,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(String.valueOf(callData.getPickupStop().getDistance()/1000));
+        tvDistance.setText(String.format("%.01f", callData.getPickupStop().getDistance()/1000F));
         if (callData.getPickupStop().getDuration() != null)
             tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getPickupStop().getDuration())));
         if (callData.getPickupStop().getZoneNameUr() != null && !callData.getPickupStop().getZoneNameUr().isEmpty())
