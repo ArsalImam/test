@@ -1213,7 +1213,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(String.format("%.01f", callData.getDropoffStop().getDistance()/1000F));
+        tvDistance.setText(Utils.formatDecimalPlaces((callData.getDropoffStop().getDistance()/1000F) + "", 1));
         tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getDropoffStop().getDuration())));
         if (callData.getDropoffStop() != null
                 && callData.getDropoffStop().getZoneNameUr() != null
