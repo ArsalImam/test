@@ -357,7 +357,7 @@
                 app:fontName="roboto_light.ttf" />
 
             <View
-                android:layout_width="2dp"
+                android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
@@ -415,7 +415,7 @@
 
             <View
                 android:id="@+id/separator"
-                android:layout_width="2dp"
+                android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:background="@color/grey_light" />
