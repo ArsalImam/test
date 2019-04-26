@@ -946,7 +946,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showWalletAmount() {
-        tvPWalletAmount.setText("Rs." + callData.getPassWallet());
+        tvPWalletAmount.setText("Rs. " + callData.getPassWallet());
         if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
                 && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
             ivTopUp.setVisibility(View.VISIBLE);
@@ -954,7 +954,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             ivTopUp.setVisibility(View.INVISIBLE);
         }
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
-            tvCodAmount.setText("Rs." + callData.getCodAmount());
+            tvCodAmount.setText("Rs. " + callData.getCodAmount());
             if (Utils.isPurchaseService(callData.getCallType())) {
                 tvCashWasooliLabel.setText(R.string.kharidari_label);
             }
@@ -968,7 +968,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
         if (callData.getKraiKiKamai() != 0) {
-            tvFareAmount.setText("Rs." + callData.getKraiKiKamai());
+            tvFareAmount.setText("Rs. " + callData.getKraiKiKamai());
         } else {
             tvFareAmount.setText("-");
         }
