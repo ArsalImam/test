@@ -53,6 +53,7 @@
                             android:id="@+id/tvDistance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="-6dp"
                             android:textColor="@color/white"
                             android:textSize="@dimen/box_eta_text_size"
                             app:fontName="open_sans_semi_bold.ttf"
@@ -96,6 +97,7 @@
                             android:id="@+id/tvDuration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="-6dp"
                             android:textSize="@dimen/box_eta_text_size"
                             app:fontName="open_sans_semi_bold.ttf"
                             tools:text="5" />

@@ -55,6 +55,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
                             android:textSize="@dimen/box_eta_text_size"
+                            android:layout_marginBottom="-6dp"
                             app:fontName="open_sans_semi_bold.ttf"
                             tools:text="0.8" />
 
@@ -97,6 +98,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/box_eta_text_size"
+                            android:layout_marginBottom="-6dp"
                             app:fontName="open_sans_semi_bold.ttf"
                             tools:text="5" />
 
