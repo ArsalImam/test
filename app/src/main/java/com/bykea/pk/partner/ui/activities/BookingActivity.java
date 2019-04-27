@@ -306,10 +306,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             new com.google.maps.model.LatLng(AppPreferences.getLatitude(),
                                     AppPreferences.getLongitude()));
 
-                    if (callData != null) {
-                        updateMarkers();
-                        drawRoutes();
-                    }
+//                    if (callData != null) {
+//                        updateMarkers();
+//                        drawRoutes();
+//                    }
                 }
             });
         }
@@ -366,7 +366,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
                     mRouteLatLng.clear();
                 }
-                drawRoutes();
+//                drawRoutes();
                 updateMarkers();
 //                updatePickupMarker(callData.getEndLat(), callData.getEndLng());
 //            }
@@ -1529,7 +1529,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
         int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
         mGoogleMap.setPadding(0, padding, 0, padding);
-        mGoogleMap.animateCamera(cu);
+        mGoogleMap.animateCamera(cu, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                drawRoutes();
+            }
+
+            @Override
+            public void onCancel() {
+                drawRoutes();
+            }
+        });
 //        mGoogleMap.setPadding(0, 0, 0, 0);
     }
 
@@ -1742,7 +1752,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (mapPolylines != null) {
                     mapPolylines.remove();
                 }
-                drawRoutes();
+//                drawRoutes();
+//                updateMarkers();
             }
 
             /*            if (*//*AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
@@ -1822,6 +1833,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 } else {
                     updateMarkers();
                 }
+//                drawRoutes();
                 showEstimatedDistTime();
             }
         }
