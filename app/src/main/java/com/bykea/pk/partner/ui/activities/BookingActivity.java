@@ -996,7 +996,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setOnArrivedData() {
         showWalletAmount();
-        showDropOffPersonInfo();
+        if (Utils.isDeliveryService(callData.getCallType())) showDropOffPersonInfo();
         if (mapPolylines != null) {
             mapPolylines.remove();
         }
@@ -1031,7 +1031,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setOnStartData() {
         showWalletAmount();
-        showDropOffPersonInfo();
+        if (Utils.isDeliveryService(callData.getCallType())) showDropOffPersonInfo();
         hideButtonOnArrived();
         lastApiCallLatLng = null;
         AppPreferences.setLastDirectionsApiCallTime(0);
