@@ -970,6 +970,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         if (callData.getKraiKiKamai() != 0) {
             tvFareAmount.setText(String.format(getString(R.string.amount_rs_int), callData.getKraiKiKamai()));
+        } else if (AppPreferences.getEstimatedFare() != 0) {
+            tvFareAmount.setText(String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare()));
         } else {
             tvFareAmount.setText("-");
         }
