@@ -1683,9 +1683,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         mRouteLatLngSecondary = routeSecondary.getPoints();
                         callData.getPickupStop().setDistance(routeFirst.getDistanceValue());
                         callData.getPickupStop().setDuration(routeFirst.getDurationValue());
+//TODO: Update zone name of re-render
+// callData.getPickupStop().setZoneNameUr(routeFirst.getEndAddressText());
                         callData.getDropoffStop().setDistance(routeSecondary.getDistanceValue());
                         callData.getDropoffStop().setDuration(routeSecondary.getDurationValue());
-
+//TODO: Update zone name of re-render
+// callData.getDropoffStop().setZoneNameUr(routeSecondary.getEndAddressText());
                     } else {
                         PolylineOptions polyOptions = new PolylineOptions();
                         polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
@@ -1695,6 +1698,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                         callData.getDropoffStop().setDistance(routeFirst.getDistanceValue());
                         callData.getDropoffStop().setDuration(routeFirst.getDurationValue());
+//TODO: Update zone name of re-render
+//                        callData.getDropoffStop().setZoneNameUr(routeFirst.getEndAddressText());
                     }
 
                     shouldRefreshPickupMarker = true;
