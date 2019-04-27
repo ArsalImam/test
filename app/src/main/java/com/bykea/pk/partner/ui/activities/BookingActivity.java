@@ -360,16 +360,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 && StringUtils.isNotBlank(callData.getEndLat())
                 && StringUtils.isNotBlank(callData.getEndLng())) {
             endAddressTv.setText(callData.getEndAddress());
-            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+//            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 lastApiCallLatLng = null;
                 AppPreferences.setLastDirectionsApiCallTime(0);
                 if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
                     mRouteLatLng.clear();
                 }
-                drawRouteToDropOff();
+                drawRoutes();
                 updateMarkers();
 //                updatePickupMarker(callData.getEndLat(), callData.getEndLng());
-            }
+//            }
         }
     }
 
@@ -2129,13 +2129,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
 //                        callData = AppPreferences.getCallData();
                         new UserRepository().requestRunningTrip(mCurrentActivity, handler);
-                        updateDropOff();
+//                        updateDropOff();
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
                         playNotificationSound();
                         Utils.appToast(mCurrentActivity, "Trip Details has been Added by Passenger.");
                         callData = AppPreferences.getCallData();
-                        updateDropOff();
+//                        updateDropOff();
                         showWalletAmount();
                     }
                 }
