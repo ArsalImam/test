@@ -878,7 +878,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (Utils.useServiceIconProvidedByAPI(callData.getCallType())) {
                 icon = callData.getIcon();
             }
-            if (StringUtils.isNotBlank(icon)) {
+            //TODO: Rendering service icon sent from server in disabled, until icons get updated on server
+            if (false && StringUtils.isNotBlank(icon)) {
                 Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
                 Picasso.get().load(Utils.getCloudinaryLink(icon))
                         .placeholder(Utils.getServiceIcon(callData))
