@@ -1218,10 +1218,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         tvDistance.setText(Utils.formatDecimalPlaces((callData.getDropoffStop().getDistance()/1000F) + "", 1));
         tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getDropoffStop().getDuration())));
-        if (callData.getDropoffStop() != null
-                && callData.getDropoffStop().getZoneNameUr() != null
-                && !callData.getDropoffStop().getZoneNameUr().isEmpty())
+        if (callData.getDropoffStop() != null && callData.getDropoffStop().getZoneNameUr() != null && !callData.getDropoffStop().getZoneNameUr().isEmpty())
             tvRegionName.setText(callData.getDropoffStop().getZoneNameUr());
+        else
+            tvRegionName.setText(getString(R.string.drop_ur));
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
         return markerOptions;
@@ -1249,6 +1249,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getPickupStop().getDuration())));
         if (callData.getPickupStop().getZoneNameUr() != null && !callData.getPickupStop().getZoneNameUr().isEmpty())
             tvRegionName.setText(callData.getPickupStop().getZoneNameUr());
+        else
+            tvRegionName.setText(getString(R.string.pick_ur));
 
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
