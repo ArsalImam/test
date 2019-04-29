@@ -46,14 +46,15 @@
                         android:layout_width="@dimen/box_height"
                         android:layout_height="@dimen/box_height"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingTop="2dp">
 
                         <com.bykea.pk.partner.ui.helpers.FontTextView
                             android:id="@+id/tvDistance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/box_eta_text_size"
                             android:layout_marginBottom="-6dp"
+                            android:textSize="@dimen/box_eta_text_size"
                             app:fontName="open_sans_semi_bold.ttf"
                             tools:text="0.8" />
 
@@ -88,14 +89,15 @@
                         android:layout_height="@dimen/box_height"
                         android:background="@color/colorAccent"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingTop="2dp">
 
                         <com.bykea.pk.partner.ui.helpers.FontTextView
                             android:id="@+id/tvDuration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/white"
                             android:layout_marginBottom="-6dp"
+                            android:textColor="@color/white"
                             android:textSize="@dimen/box_eta_text_size"
                             app:fontName="open_sans_semi_bold.ttf"
                             tools:text="5" />

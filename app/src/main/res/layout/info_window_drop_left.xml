@@ -47,7 +47,8 @@
                         android:layout_height="@dimen/box_height"
                         android:background="@color/color_blue1f81a6"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingTop="2dp">
 
                         <com.bykea.pk.partner.ui.helpers.FontTextView
                             android:id="@+id/tvDistance"
@@ -91,7 +92,8 @@
                         android:layout_width="@dimen/box_height"
                         android:layout_height="@dimen/box_height"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingTop="2dp">
 
                         <com.bykea.pk.partner.ui.helpers.FontTextView
                             android:id="@+id/tvDuration"

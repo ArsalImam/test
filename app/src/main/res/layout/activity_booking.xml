@@ -361,8 +361,8 @@
                 android:id="@+id/tvCountDown"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_2sdp"
                 android:gravity="center"
                 android:text="00:00"
                 android:textColor="@color/Color_Red"
@@ -412,14 +412,15 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
                 android:background="@color/grey_light" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/tvCountDownEnd"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_2sdp"
                 android:gravity="center"
                 android:text="00:00"
                 android:textColor="@color/Color_Red"
