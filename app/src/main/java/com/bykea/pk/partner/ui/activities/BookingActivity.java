@@ -2153,6 +2153,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Utils.appToast(mCurrentActivity, "Trip Details has been Added by Passenger.");
                         callData = AppPreferences.getCallData();
 //                        updateDropOff();
+                        if (Utils.isDeliveryService(callData.getCallType())) showDropOffPersonInfo();
                         showWalletAmount();
                     }
                 }
