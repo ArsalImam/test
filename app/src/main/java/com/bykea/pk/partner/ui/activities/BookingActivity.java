@@ -356,7 +356,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void updateDropOff() {
-        if (StringUtils.isNotBlank(callData.getEndAddress())
+        if (callData.getDropoffStop() != null
+                && StringUtils.isNotBlank(callData.getEndAddress())
                 && StringUtils.isNotBlank(callData.getEndLat())
                 && StringUtils.isNotBlank(callData.getEndLng())) {
             endAddressTv.setText(callData.getEndAddress());
@@ -1264,13 +1265,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (null == mGoogleMap || null == callData) return;
 
         if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-            if (callData.getStartLat() != null && !callData.getStartLat().isEmpty() && callData.getStartLng() != null && !callData.getStartLng().isEmpty())
+            if (callData.getPickupStop() != null && callData.getStartLat() != null && !callData.getStartLat().isEmpty() && callData.getStartLng() != null && !callData.getStartLng().isEmpty())
                 updatePickupMarker();
-            if (callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+            if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
         } else {
             if (pickUpMarker != null) pickUpMarker.remove();
-            if (callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+            if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
         }
         setPickupBounds();
