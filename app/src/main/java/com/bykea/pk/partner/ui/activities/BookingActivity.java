@@ -33,6 +33,7 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
@@ -1217,12 +1218,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(Utils.formatDecimalPlaces((callData.getDropoffStop().getDistance()/1000F) + "", 1));
-        tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getDropoffStop().getDuration())));
-        if (callData.getDropoffStop() != null && callData.getDropoffStop().getZoneNameUr() != null && !callData.getDropoffStop().getZoneNameUr().isEmpty())
-            tvRegionName.setText(callData.getDropoffStop().getZoneNameUr());
-        else
-            tvRegionName.setText(getString(R.string.drop_ur));
+        Stop dropOffStop = callData.getDropoffStop();
+        if (dropOffStop.getDistance() != null) tvDistance.setText(Utils.formatDecimalPlaces((dropOffStop.getDistance()/1000F) + "", 1));
+        else tvDistance.setText(R.string.dash);
+        if (dropOffStop.getDuration() != null) tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(dropOffStop.getDuration())));
+        else tvDuration.setText(R.string.dash);
+        if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty()) tvRegionName.setText(dropOffStop.getZoneNameUr());
+        else tvRegionName.setText(getString(R.string.drop_ur));
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
         return markerOptions;
@@ -1245,14 +1247,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        tvDistance.setText(String.format("%.01f", callData.getPickupStop().getDistance()/1000F));
-        if (callData.getPickupStop().getDuration() != null)
-            tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(callData.getPickupStop().getDuration())));
-        if (callData.getPickupStop().getZoneNameUr() != null && !callData.getPickupStop().getZoneNameUr().isEmpty())
-            tvRegionName.setText(callData.getPickupStop().getZoneNameUr());
-        else
-            tvRegionName.setText(getString(R.string.pick_ur));
-
+        Stop pickupStop = callData.getPickupStop();
+        if (pickupStop.getDistance() != null) tvDistance.setText(Utils.formatDecimalPlaces((pickupStop.getDistance()/1000F) + "", 1));
+        else tvDistance.setText(R.string.dash);
+        if (pickupStop.getDuration() != null) tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(pickupStop.getDuration())));
+        else tvDuration.setText("-");
+        if (pickupStop.getZoneNameUr() != null && !pickupStop.getZoneNameUr().isEmpty()) tvRegionName.setText(pickupStop.getZoneNameUr());
+        else tvRegionName.setText(getString(R.string.pick_ur));
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
         return markerOptions;

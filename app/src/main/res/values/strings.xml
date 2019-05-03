@@ -324,6 +324,7 @@
     <string name="trip_details">تفصیلات</string>
     <string name="amount_rs">Rs. %s</string>
     <string name="amount_rs_int">Rs. %d</string>
+    <string name="dash">-</string>
 
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
