@@ -962,7 +962,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 tvCashWasooliLabel.setText(R.string.kharidari_label);
             }
         } else {
-            tvCodAmount.setText("-");
+            tvCodAmount.setText(R.string.dash);
         }
 
         if (Utils.isDeliveryService(callData.getCallType())) {
@@ -975,7 +975,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else if (AppPreferences.getEstimatedFare() != 0) {
             tvFareAmount.setText(String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare()));
         } else {
-            tvFareAmount.setText("-");
+            tvFareAmount.setText(R.string.dash);
         }
     }
 
@@ -1251,7 +1251,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (pickupStop.getDistance() != null) tvDistance.setText(Utils.formatDecimalPlaces((pickupStop.getDistance()/1000F) + "", 1));
         else tvDistance.setText(R.string.dash);
         if (pickupStop.getDuration() != null) tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(pickupStop.getDuration())));
-        else tvDuration.setText("-");
+        else tvDuration.setText(R.string.dash);
         if (pickupStop.getZoneNameUr() != null && !pickupStop.getZoneNameUr().isEmpty()) tvRegionName.setText(pickupStop.getZoneNameUr());
         else tvRegionName.setText(getString(R.string.pick_ur));
 
