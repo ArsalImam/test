@@ -108,6 +108,8 @@ import butterknife.OnClick;
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
 
+    private final String TAG = BookingActivity.class.getSimpleName();
+
     @BindView(R.id.llStartAddress)
     LinearLayout llStartAddress;
     @BindView(R.id.startAddressTv)
@@ -216,6 +218,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private boolean lastPickUpFlagOnLeft, lastDropOffFlagOnLeft = false;
     boolean shouldRefreshPickupMarker = false, shouldRefreshDropOffMarker = false;
+    private boolean allowTripStatusCall = true;
     CountDownTimer countDownTimer;
 
     @Override
@@ -337,6 +340,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 callData.setEndLng("" + mDropOff.longitude);
                 callData.setEndAddress(mDropOff.address);
                 AppPreferences.setCallData(callData);
+                allowTripStatusCall = false;
+                Utils.redLog(TAG,"onActivityResult called: "+ allowTripStatusCall);
                 updateDropOffToServer();
             }
         } else if (requestCode == Permissions.LOCATION_PERMISSION) {
@@ -768,6 +773,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     protected void onResume() {
+        Utils.redLog(TAG,"onResume called: "+ allowTripStatusCall);
         mapView.onResume();
         setInitialData();
         IntentFilter intentFilter = new IntentFilter();
@@ -1877,6 +1883,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Dialogs.INSTANCE.dismissDialog();
                         Utils.appToast(mCurrentActivity, data.getMessage());
                         configCountDown();
+                        allowTripStatusCall=true;
+                        Utils.redLog(TAG,"driversDataHandler called: "+ allowTripStatusCall);
+                        new UserRepository().requestRunningTrip(mCurrentActivity, handler);
                     }
                 });
             }
@@ -2051,7 +2060,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (Connectivity.isConnectedFast(context)) {
                     if (null != progressDialogJobActivity && !isFirstTime) {
                         progressDialogJobActivity.dismiss();
-                        new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                        if(allowTripStatusCall)
+                            new UserRepository().requestRunningTrip(mCurrentActivity, handler);
                     } else {
                         isFirstTime = false;
                     }
