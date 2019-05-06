@@ -1396,5 +1396,27 @@ public class AppPreferences {
                 .getString(Keys.DELIVERY_TYPE, Constants.CallType.SINGLE);
     }
 
+    /**
+     * Set the ride estimated fare
+     *
+     * @param estimatedFare estimated fare
+     */
+    public static void setEstimatedFare(int estimatedFare) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.EST_FARE, estimatedFare)
+                .apply();
+    }
+
+    /**
+     * Get Ride estimated fare
+     *
+     * @return Ride estimated fare
+     */
+    public static int getEstimatedFare() {
+        return mSharedPreferences
+                .getInt(Keys.EST_FARE, 0);
+    }
+
     //endregion
 }

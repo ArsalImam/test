@@ -20,6 +20,7 @@ public class Keys {
     public static final String APP_VERSION = "APP_VERSION";
     public static final String APP_VERSION_CODE = "APP_VERSION_CODE";
     public static final String IS_ALREADY_CLEAR = "IS_ALREADY_CLEAR";
+    public static final String EST_FARE = "EST_FARE";
 
 
     public static final String FULL_NAME = "full_name";

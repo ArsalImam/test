@@ -84,7 +84,7 @@
     <!--box_height/2-->
     <dimen name="box_card_elevation">@dimen/_6sdp</dimen>
     <dimen name="box_eta_padding">@dimen/_4sdp</dimen>
-    <dimen name="box_eta_text_size">@dimen/_11sdp</dimen>
+    <dimen name="box_eta_text_size">@dimen/_12sdp</dimen>
     <dimen name="box_pick_up_tv_padding">@dimen/_4sdp</dimen>
     <dimen name="box_bottom_pole_height">@dimen/_30sdp</dimen>
     <dimen name="box_bottom_pole_width">@dimen/_3sdp</dimen>

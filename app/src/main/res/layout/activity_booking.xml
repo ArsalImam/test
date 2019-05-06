@@ -180,11 +180,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:maxLines="1"
-                        android:paddingStart="@dimen/_8sdp"
-                        android:paddingLeft="@dimen/_8sdp"
-                        android:paddingEnd="@dimen/_8sdp"
-                        android:paddingRight="@dimen/_8sdp"
-                        android:text="کرایہ"
+                        android:text="@string/karaya_ur"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -208,15 +204,13 @@
                     android:id="@+id/ivServiceIcon"
                     android:layout_width="@dimen/_36sdp"
                     android:layout_height="@dimen/_36sdp"
-                    android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_6sdp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ride_right" />
 
                 <LinearLayout
                     android:layout_width="@dimen/_60sdp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginLeft="@dimen/_5sdp"
                     android:orientation="vertical">
 
                     <com.bykea.pk.partner.widgets.FontTextView
@@ -264,13 +258,13 @@
                     android:id="@+id/callbtn"
                     android:layout_width="@dimen/_36sdp"
                     android:layout_height="@dimen/_36sdp"
+                    android:layout_marginRight="@dimen/_2sdp"
                     android:padding="@dimen/_4sdp"
                     app:srcCompat="@drawable/ic_call_icon" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -357,7 +351,7 @@
                 app:fontName="roboto_light.ttf" />
 
             <View
-                android:layout_width="2dp"
+                android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
@@ -367,8 +361,8 @@
                 android:id="@+id/tvCountDown"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_2sdp"
                 android:gravity="center"
                 android:text="00:00"
                 android:textColor="@color/Color_Red"
@@ -415,17 +409,18 @@
 
             <View
                 android:id="@+id/separator"
-                android:layout_width="2dp"
+                android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
                 android:background="@color/grey_light" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/tvCountDownEnd"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_2sdp"
                 android:gravity="center"
                 android:text="00:00"
                 android:textColor="@color/Color_Red"
