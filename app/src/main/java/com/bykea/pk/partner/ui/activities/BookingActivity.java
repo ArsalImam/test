@@ -974,6 +974,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isDeliveryService(callData.getCallType())) {
             if (!callData.isCod()) {
                 llTopMiddle.setVisibility(View.INVISIBLE);
+            } else {
+                llTopMiddle.setVisibility(View.VISIBLE);
             }
         }
         if (callData.getKraiKiKamai() != 0) {

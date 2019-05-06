@@ -22,9 +22,9 @@
                 android:id="@+id/rlWallet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_8sdp"
+                android:paddingStart="@dimen/_3sdp"
                 android:paddingTop="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_3sdp"
                 android:visibility="visible">
 
                 <FrameLayout
@@ -89,15 +89,10 @@
                         android:src="@drawable/circle_plus" />
                 </FrameLayout>
 
-
-                <View
-                    android:layout_width="@dimen/_4sdp"
-                    android:layout_height="match_parent" />
-
                 <RelativeLayout
                     android:id="@+id/llTopMiddle"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_weight="1"
                     android:background="@color/yellow"
@@ -139,10 +134,6 @@
                         app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 </RelativeLayout>
-
-                <View
-                    android:layout_width="@dimen/_4sdp"
-                    android:layout_height="match_parent" />
 
                 <RelativeLayout
                     android:id="@+id/llTopRight"
@@ -188,7 +179,6 @@
                         app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 </RelativeLayout>
-
 
             </LinearLayout>
 
