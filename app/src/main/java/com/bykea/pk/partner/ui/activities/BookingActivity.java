@@ -1887,7 +1887,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         configCountDown();
                         allowTripStatusCall=true;
                         Utils.redLog(TAG,"driversDataHandler called: "+ allowTripStatusCall);
-                        new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     }
                 });
             }
@@ -2063,7 +2063,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     if (null != progressDialogJobActivity && !isFirstTime) {
                         progressDialogJobActivity.dismiss();
                         if(allowTripStatusCall)
-                            new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                            dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     } else {
                         isFirstTime = false;
                     }
@@ -2160,7 +2160,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         playNotificationSound();
                         Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
 //                        callData = AppPreferences.getCallData();
-                        new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
