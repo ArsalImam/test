@@ -22,9 +22,9 @@
                 android:id="@+id/rlWallet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_8sdp"
+                android:paddingStart="@dimen/_3sdp"
                 android:paddingTop="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_3sdp"
                 android:visibility="visible">
 
                 <FrameLayout
@@ -39,6 +39,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_6sdp"
                         android:layout_marginRight="@dimen/_8sdp"
+                        android:layout_marginLeft="@dimen/_5sdp"
                         android:background="@color/blue_light"
                         android:paddingLeft="@dimen/_5sdp"
                         android:paddingTop="@dimen/_5sdp"
@@ -83,20 +84,15 @@
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:layout_gravity="left"
-                        android:paddingLeft="@dimen/_4sdp"
+                        android:paddingLeft="-5dp"
                         android:paddingBottom="@dimen/_4sdp"
                         android:src="@drawable/circle_plus" />
                 </FrameLayout>
 
-
-                <View
-                    android:layout_width="@dimen/_4sdp"
-                    android:layout_height="match_parent" />
-
                 <RelativeLayout
                     android:id="@+id/llTopMiddle"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_weight="1"
                     android:background="@color/yellow"
@@ -109,18 +105,18 @@
 
                     <com.bykea.pk.partner.widgets.AutoFitFontTextView
                         android:id="@+id/tvCodAmount"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:maxWidth="@dimen/_60sdp"
                         android:maxLines="1"
+                        android:gravity="center_vertical"
                         android:textAllCaps="false"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="@dimen/_12sdp"
                         android:visibility="visible"
-                        tools:text="Rs. 590" />
+                        tools:text="Rs. 35000" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/tvCashWasooliLabel"
@@ -139,16 +135,13 @@
 
                 </RelativeLayout>
 
-                <View
-                    android:layout_width="@dimen/_4sdp"
-                    android:layout_height="match_parent" />
-
                 <RelativeLayout
                     android:id="@+id/llTopRight"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
                     android:layout_weight="1"
                     android:background="@color/color_grayf3f3f3"
                     android:gravity="center_vertical|end"
@@ -186,7 +179,6 @@
                         app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 </RelativeLayout>
-
 
             </LinearLayout>
 

@@ -108,6 +108,8 @@ import butterknife.OnClick;
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
 
+    private final String TAG = BookingActivity.class.getSimpleName();
+
     @BindView(R.id.llStartAddress)
     LinearLayout llStartAddress;
     @BindView(R.id.startAddressTv)
@@ -216,6 +218,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private boolean lastPickUpFlagOnLeft, lastDropOffFlagOnLeft = false;
     boolean shouldRefreshPickupMarker = false, shouldRefreshDropOffMarker = false;
+    private boolean allowTripStatusCall = true;
     CountDownTimer countDownTimer;
 
     @Override
@@ -338,6 +341,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 callData.setEndLng("" + mDropOff.longitude);
                 callData.setEndAddress(mDropOff.address);
                 AppPreferences.setCallData(callData);
+                allowTripStatusCall = false;
+                Utils.redLog(TAG,"onActivityResult called: "+ allowTripStatusCall);
                 updateDropOffToServer();
             }
         } else if (requestCode == Permissions.LOCATION_PERMISSION) {
@@ -769,6 +774,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     protected void onResume() {
+        Utils.redLog(TAG,"onResume called: "+ allowTripStatusCall);
         mapView.onResume();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
@@ -968,6 +974,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isDeliveryService(callData.getCallType())) {
             if (!callData.isCod()) {
                 llTopMiddle.setVisibility(View.INVISIBLE);
+            } else {
+                llTopMiddle.setVisibility(View.VISIBLE);
             }
         }
         if (callData.getKraiKiKamai() != 0) {
@@ -1064,7 +1072,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 pickUpMarker.remove();
                 pickUpMarker = null;
                 mapPolylines.remove();
-                mapPolylinesSecondary.remove();
+                if(mapPolylinesSecondary!=null)
+                    mapPolylinesSecondary.remove();
             }
         }
 
@@ -1868,6 +1877,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Dialogs.INSTANCE.dismissDialog();
                         Utils.appToast(mCurrentActivity, data.getMessage());
                         configCountDown();
+                        allowTripStatusCall=true;
+                        Utils.redLog(TAG,"driversDataHandler called: "+ allowTripStatusCall);
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     }
                 });
             }
@@ -2042,7 +2054,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (Connectivity.isConnectedFast(context)) {
                     if (null != progressDialogJobActivity && !isFirstTime) {
                         progressDialogJobActivity.dismiss();
-                        new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                        if(allowTripStatusCall)
+                            dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     } else {
                         isFirstTime = false;
                     }
@@ -2139,7 +2152,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         playNotificationSound();
                         Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
 //                        callData = AppPreferences.getCallData();
-                        new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
