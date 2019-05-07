@@ -110,13 +110,12 @@
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:maxWidth="@dimen/_60sdp"
                         android:maxLines="1"
                         android:textAllCaps="false"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="@dimen/_12sdp"
                         android:visibility="visible"
-                        tools:text="Rs. 590" />
+                        tools:text="Rs. 35000" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/tvCashWasooliLabel"
