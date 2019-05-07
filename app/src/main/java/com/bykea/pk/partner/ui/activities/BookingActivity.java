@@ -1759,14 +1759,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             updateDriverMarker(mCurrentLocation.getLatitude() + "",
                     mCurrentLocation.getLongitude() + "");
 
-            if (isDirectionApiCallRequired(new LatLng(latitude, longitude))) {
-                if (mapPolylines != null) {
-                    mapPolylines.remove();
-                }
-//                drawRoutes();
-//                updateMarkers();
-            }
-
             /*            if (*//*AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)
                     ||*//* AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng()))
