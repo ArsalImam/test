@@ -2159,6 +2159,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         playNotificationSound();
                         Utils.appToast(mCurrentActivity, "Trip Details has been Added by Passenger.");
                         callData = AppPreferences.getCallData();
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
                         if (Utils.isDeliveryService(callData.getCallType())) showDropOffPersonInfo();
                         showWalletAmount();
