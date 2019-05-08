@@ -78,6 +78,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="right|center"
+                        android:maxLines="1"
                         android:padding="@dimen/box_pick_up_tv_padding"
                         android:text="@string/pick_ur"
                         android:textColor="#383737"

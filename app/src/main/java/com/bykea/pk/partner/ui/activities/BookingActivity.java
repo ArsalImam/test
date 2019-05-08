@@ -1232,7 +1232,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         else tvDistance.setText(R.string.dash);
         if (dropOffStop.getDuration() != null) tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(dropOffStop.getDuration())));
         else tvDuration.setText(R.string.dash);
-        if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty()) tvRegionName.setText(dropOffStop.getZoneNameUr());
+        if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty()) tvRegionName.setText(getString(R.string.pick_drop_name_ur, dropOffStop.getZoneNameUr()));
         else tvRegionName.setText(getString(R.string.drop_ur));
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
@@ -1261,7 +1261,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         else tvDistance.setText(R.string.dash);
         if (pickupStop.getDuration() != null) tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(pickupStop.getDuration())));
         else tvDuration.setText(R.string.dash);
-        if (pickupStop.getZoneNameUr() != null && !pickupStop.getZoneNameUr().isEmpty()) tvRegionName.setText(pickupStop.getZoneNameUr());
+        if (pickupStop.getZoneNameUr() != null && !pickupStop.getZoneNameUr().isEmpty()) tvRegionName.setText(getString(R.string.pick_drop_name_ur, pickupStop.getZoneNameUr()));
         else tvRegionName.setText(getString(R.string.pick_ur));
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
