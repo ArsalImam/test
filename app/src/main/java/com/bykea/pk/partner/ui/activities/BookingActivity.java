@@ -311,10 +311,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             new com.google.maps.model.LatLng(AppPreferences.getLatitude(),
                                     AppPreferences.getLongitude()));
 
-//                    if (callData != null) {
-//                        updateMarkers();
-//                        drawRoutes();
-//                    }
+                    if (callData != null) {
+                        updateMarkers(true);
+                    }
                 }
             });
         }
@@ -1541,18 +1540,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
         int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
         mGoogleMap.setPadding(0, padding, 0, padding);
-        mGoogleMap.animateCamera(cu, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                drawRoutes();
-            }
-
-            @Override
-            public void onCancel() {
-                drawRoutes();
-            }
-        });
-//        mGoogleMap.setPadding(0, 0, 0, 0);
+        mGoogleMap.moveCamera(cu);
+        drawRoutes();
     }
 
     private LatLngBounds getCurrentLatLngBounds() {
