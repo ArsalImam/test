@@ -88,7 +88,7 @@
     <dimen name="box_pick_up_tv_padding">@dimen/_4sdp</dimen>
     <dimen name="box_bottom_pole_height">@dimen/_30sdp</dimen>
     <dimen name="box_bottom_pole_width">@dimen/_3sdp</dimen>
-    <dimen name="box_pick_up_text_size">@dimen/_11sdp</dimen>
+    <dimen name="box_pick_up_text_size">@dimen/_12sdp</dimen>
     <dimen name="box_drop_off_pin_size">@dimen/_18sdp</dimen>
     <dimen name="booking_card_bottom_padding">@dimen/_100sdp</dimen>
     <dimen name="delivery_details_item_height">@dimen/_40sdp</dimen>
