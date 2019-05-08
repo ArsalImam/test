@@ -108,6 +108,8 @@ import butterknife.OnClick;
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
 
+    private final String TAG = BookingActivity.class.getSimpleName();
+
     @BindView(R.id.llStartAddress)
     LinearLayout llStartAddress;
     @BindView(R.id.startAddressTv)
@@ -216,6 +218,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private boolean lastPickUpFlagOnLeft, lastDropOffFlagOnLeft = false;
     boolean shouldRefreshPickupMarker = false, shouldRefreshDropOffMarker = false;
+    private boolean allowTripStatusCall = true;
     CountDownTimer countDownTimer;
 
     @Override
@@ -250,6 +253,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
 
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+        setInitialData();
     }
 
 
@@ -337,6 +341,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 callData.setEndLng("" + mDropOff.longitude);
                 callData.setEndAddress(mDropOff.address);
                 AppPreferences.setCallData(callData);
+                allowTripStatusCall = false;
+                Utils.redLog(TAG,"onActivityResult called: "+ allowTripStatusCall);
                 updateDropOffToServer();
             }
         } else if (requestCode == Permissions.LOCATION_PERMISSION) {
@@ -768,8 +774,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     protected void onResume() {
+        Utils.redLog(TAG,"onResume called: "+ allowTripStatusCall);
         mapView.onResume();
-        setInitialData();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
@@ -968,6 +974,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isDeliveryService(callData.getCallType())) {
             if (!callData.isCod()) {
                 llTopMiddle.setVisibility(View.INVISIBLE);
+            } else {
+                llTopMiddle.setVisibility(View.VISIBLE);
             }
         }
         if (callData.getKraiKiKamai() != 0) {
@@ -1064,7 +1072,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 pickUpMarker.remove();
                 pickUpMarker = null;
                 mapPolylines.remove();
-                mapPolylinesSecondary.remove();
+                if(mapPolylinesSecondary!=null)
+                    mapPolylinesSecondary.remove();
             }
         }
 
@@ -1223,7 +1232,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         else tvDistance.setText(R.string.dash);
         if (dropOffStop.getDuration() != null) tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(dropOffStop.getDuration())));
         else tvDuration.setText(R.string.dash);
-        if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty()) tvRegionName.setText(dropOffStop.getZoneNameUr());
+        if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty()) tvRegionName.setText(getString(R.string.pick_drop_name_ur, dropOffStop.getZoneNameUr()));
         else tvRegionName.setText(getString(R.string.drop_ur));
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
@@ -1252,7 +1261,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         else tvDistance.setText(R.string.dash);
         if (pickupStop.getDuration() != null) tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(pickupStop.getDuration())));
         else tvDuration.setText(R.string.dash);
-        if (pickupStop.getZoneNameUr() != null && !pickupStop.getZoneNameUr().isEmpty()) tvRegionName.setText(pickupStop.getZoneNameUr());
+        if (pickupStop.getZoneNameUr() != null && !pickupStop.getZoneNameUr().isEmpty()) tvRegionName.setText(getString(R.string.pick_drop_name_ur, pickupStop.getZoneNameUr()));
         else tvRegionName.setText(getString(R.string.pick_ur));
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
@@ -1869,6 +1878,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Dialogs.INSTANCE.dismissDialog();
                         Utils.appToast(mCurrentActivity, data.getMessage());
                         configCountDown();
+                        allowTripStatusCall=true;
+                        Utils.redLog(TAG,"driversDataHandler called: "+ allowTripStatusCall);
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     }
                 });
             }
@@ -2043,7 +2055,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (Connectivity.isConnectedFast(context)) {
                     if (null != progressDialogJobActivity && !isFirstTime) {
                         progressDialogJobActivity.dismiss();
-                        new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                        if(allowTripStatusCall)
+                            dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     } else {
                         isFirstTime = false;
                     }
@@ -2140,13 +2153,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         playNotificationSound();
                         Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
 //                        callData = AppPreferences.getCallData();
-                        new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
                         playNotificationSound();
                         Utils.appToast(mCurrentActivity, "Trip Details has been Added by Passenger.");
                         callData = AppPreferences.getCallData();
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
                         if (Utils.isDeliveryService(callData.getCallType())) showDropOffPersonInfo();
                         showWalletAmount();

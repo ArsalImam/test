@@ -71,13 +71,14 @@
 
                     </LinearLayout>
 
-                    <com.bykea.pk.partner.ui.helpers.FontTextView
+                    <com.bykea.pk.partner.widgets.AutoFitFontTextView
                         android:id="@+id/tvRegionName"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="right|center"
                         android:padding="@dimen/box_pick_up_tv_padding"
+                        android:maxLines="1"
                         android:text="@string/pick_ur"
                         android:textColor="#383737"
                         android:textSize="@dimen/box_pick_up_text_size"
