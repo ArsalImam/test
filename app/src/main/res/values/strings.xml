@@ -320,6 +320,11 @@
     <string name="display_integer_value"> %d </string>
     <string name="display_string_value"> %s </string>
 
+    <string name="destination">منزل</string>
+    <string name="fare">\u0020کرایہ</string>
+    <string name="service">\u0020سروس\u0020</string>
+    <string name="wait_for_booking">بکنگ کا انتظار کریں</string>
+
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
         <item>ناكام - وصول کرنے والا رابطے میں نہیں</item>
