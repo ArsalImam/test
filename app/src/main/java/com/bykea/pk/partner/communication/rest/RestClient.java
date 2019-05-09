@@ -7,7 +7,6 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.LoggingInterceptor;
 import com.bykea.pk.partner.utils.Utils;
-import com.squareup.okhttp.OkHttpClient;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 class RestClient {
     private static IRestClient retrofitCalls;
@@ -30,26 +29,29 @@ class RestClient {
     static IRestClient getClient(Context context) {
         if (retrofitCalls == null) {
 
-            OkHttpClient okHttpClient = new OkHttpClient();
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
             // creating an SSLSocketFactory that uses our TrustManager
             SSLContext sslContext = Utils.getSSLContext(context);
             if (sslContext != null) {
-                okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
+                //TODO sslSocketFactory method is deprecated.. will be fixed in refactoring which is further child of this branch
+                //need to pass X509 trust manager externally
+                //this PR is for checking retrofit2 is working fine
+                builder.sslSocketFactory(sslContext.getSocketFactory());
             }
 
            /* HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
                     HttpLoggingInterceptor.Level.NONE);*/
 
-            okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+            builder.connectTimeout(60, TimeUnit.SECONDS);
+            builder.readTimeout(60, TimeUnit.SECONDS);
             //okHttpClient.setRetryOnConnectionFailure(false);
             if (BuildConfig.DEBUG)
-                okHttpClient.interceptors().add(new LoggingInterceptor());
-            Retrofit.Builder builder = new Retrofit.Builder();
-            Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL)
-                    .client(okHttpClient)
+                builder.interceptors().add(new LoggingInterceptor());
+            Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
+            Retrofit client = retrofitBuilder.baseUrl(ApiTags.BASE_SERVER_URL)
+                    .client(builder.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitCalls = client.create(IRestClient.class);
@@ -66,19 +68,19 @@ class RestClient {
     static IRestClient getChatAudioClient(Context context) {
         if (retrofitChatAudio == null) {
 
-            OkHttpClient okHttpClient = new OkHttpClient();
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
             // creating an SSLSocketFactory that uses our TrustManager
             SSLContext sslContext = Utils.getSSLContext(context);
             if (sslContext != null) {
-                okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
+                builder.sslSocketFactory(sslContext.getSocketFactory());
             }
-            okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
+            builder.connectTimeout(60, TimeUnit.SECONDS);
+            builder.readTimeout(60, TimeUnit.SECONDS);
             //okHttpClient.setRetryOnConnectionFailure(false);
-            Retrofit.Builder builder = new Retrofit.Builder();
-            Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL)
-                    .client(okHttpClient)
+            Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
+            Retrofit client = retrofitBuilder.baseUrl(ApiTags.BASE_SERVER_URL)
+                    .client(builder.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitChatAudio = client.create(IRestClient.class);
@@ -86,42 +88,21 @@ class RestClient {
         return retrofitChatAudio;
     }
 
-
-    /*   public static IRestClient getClient(Context context) {
-           if (retrofitCalls == null) {
-               OkHttpClient okHttpClient;
-               HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-               loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                       HttpLoggingInterceptor.Level.NONE);
-               okHttpClient = new OkHttpClient();
-               okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
-               okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
-               okHttpClient.interceptors().add(loggingInterceptor);
-               Retrofit.Builder builder = new Retrofit.Builder();
-               Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL)
-                       .client(okHttpClient)
-                       .addConverterFactory(GsonConverterFactory.create())
-                       .build();
-               retrofitCalls = client.create(IRestClient.class);
-           }
-           return retrofitCalls;
-       }
-   */
     static IRestClient getGooglePlaceApiClient() {
         if (retrofitGoogleApiCalls == null) {
-            OkHttpClient okHttpClient = new OkHttpClient();
+            OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
             /*HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
                     HttpLoggingInterceptor.Level.NONE);*/
 
-            okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setRetryOnConnectionFailure(false);
+            okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.readTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.retryOnConnectionFailure(false);
             if (BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
             Retrofit client = builder.baseUrl(ApiTags.GOOGLE_API_BASE_URL)
-                    .client(okHttpClient)
+                    .client(okHttpClient.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitGoogleApiCalls = client.create(IRestClient.class);
@@ -131,7 +112,7 @@ class RestClient {
 
     static IRestClient getBykea2ApiClient(Context context) {
         if (bykea2retrofitCalls == null) {
-            OkHttpClient okHttpClient = new OkHttpClient();
+            OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
 
             // creating an SSLSocketFactory that uses our TrustManager
 //            SSLContext sslContext = Utils.getSSLContext(context);
@@ -144,14 +125,14 @@ class RestClient {
                     HttpLoggingInterceptor.Level.NONE);*/
 
 
-            okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setRetryOnConnectionFailure(false);
+            okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.readTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.retryOnConnectionFailure(false);
             if (BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
             Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL_2)
-                    .client(okHttpClient)
+                    .client(okHttpClient.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             bykea2retrofitCalls = client.create(IRestClient.class);
@@ -161,7 +142,7 @@ class RestClient {
 
     static IRestClient getBykeaSignUpApiClient() {
         if (bykeaSignUpretrofitCalls == null) {
-            OkHttpClient okHttpClient = new OkHttpClient();
+            OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
 
             // creating an SSLSocketFactory that uses our TrustManager
 //            SSLContext sslContext = Utils.getSSLContext(context);
@@ -174,9 +155,9 @@ class RestClient {
                     HttpLoggingInterceptor.Level.NONE);*/
 
 
-            okHttpClient.setConnectTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.setRetryOnConnectionFailure(false);
+            okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.readTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.retryOnConnectionFailure(false);
             if (BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
@@ -187,7 +168,7 @@ class RestClient {
                 signUpUrl = AppPreferences.getSettings().getSettings().getPartner_signup_url();
             }
             Retrofit client = builder.baseUrl(signUpUrl)
-                    .client(okHttpClient)
+                    .client(okHttpClient.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             bykeaSignUpretrofitCalls = client.create(IRestClient.class);
