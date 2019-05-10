@@ -1286,7 +1286,7 @@ public class RestRequestHandler {
                 limit);
         requestCall.enqueue(new Callback<LoadBoardAllListingResponse>() {
             @Override
-            public void onResponse(Response<LoadBoardAllListingResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<LoadBoardAllListingResponse> call, Response<LoadBoardAllListingResponse> response)  {
                 if (response == null || response.body() == null) {
                     onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, context.getString(R.string.error_try_again));
                     return;
@@ -1299,9 +1299,8 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<LoadBoardAllListingResponse> call, Throwable t) {
                 onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-
             }
         });
 
