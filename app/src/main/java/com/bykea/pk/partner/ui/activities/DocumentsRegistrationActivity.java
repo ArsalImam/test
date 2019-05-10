@@ -523,7 +523,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     private void startUploadImageTask(File file) {
 //        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> adapter = " + mAdapter.toString());
 //        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> mCurrentActivity = " + mCurrentActivity.toString());
-        mUserRepository.uplodaDocumentImage(mCurrentActivity, DRIVER_ID,
+        mUserRepository.uploadDocumentImage(mCurrentActivity, DRIVER_ID,
                 mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType(), file, mCallback);
         isImgCompressing = false;
     }
