@@ -25,7 +25,6 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.LoadBoardAllListingData;
 import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -35,13 +34,12 @@ import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.LoadboardZoneFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.helpers.adapters.ActiveHomeLoadBoardAllListAdapter;
+import com.bykea.pk.partner.ui.loadboard.list.LoadBoardListAdapter;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
-import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -70,7 +68,7 @@ public class HomeActivity extends BaseActivity {
     /**
      * loadboard jobs adapter and list to show on main screen
      */
-    private ActiveHomeLoadBoardAllListAdapter mloadBoardListAdapter;
+    private LoadBoardListAdapter mloadBoardListAdapter;
     private ArrayList<LoadBoardAllListingData> mlist = new ArrayList<>();
 
 
@@ -397,7 +395,7 @@ public class HomeActivity extends BaseActivity {
      * initialize loadboard listing with empty data and bottom sheet with behavior
      */
     public void setupBottomSheet() {
-        mloadBoardListAdapter = new ActiveHomeLoadBoardAllListAdapter(this, mlist, new ActiveHomeLoadBoardAllListAdapter.ItemClickListener() {
+        mloadBoardListAdapter = new LoadBoardListAdapter(this, mlist, new LoadBoardListAdapter.ItemClickListener() {
             @Override
             public void onClick(LoadBoardAllListingData item) {
                 if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
