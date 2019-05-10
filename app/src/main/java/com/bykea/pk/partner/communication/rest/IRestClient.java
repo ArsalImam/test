@@ -30,6 +30,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -433,6 +434,22 @@ interface IRestClient {
                                                            @Query("limit") String limit,
                                                            @Query("pickup_zone") String pickup_zone /*id*/,
                                                            @Query("dropoff_zone") String dropoff_zone /*id*/);
+
+    /**
+     * Getting loadboard list of all types in home screen when partner is active.
+     * @param driver_id Driver id
+     * @param token_id Driver access token
+     * @param lat Driver current lat
+     * @param lng Driver current lng
+     * @param limit jobs limit - OPTIONAL
+     * @return Loadboard jobs list
+     */
+    @GET(ApiTags.GET_LOAD_BOARD_LISTING)
+    Call<LoadBoardAllListingResponse> requestLoadBoardAllListing(@Query("_id") String driver_id,
+                                                                 @Query("token_id") String token_id,
+                                                                 @Query("lat") String lat,
+                                                                 @Query("lng") String lng,
+                                                                 @Query("limit") String limit);
 
     /**
      * Accept a booking

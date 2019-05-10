@@ -56,6 +56,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
@@ -1475,6 +1476,33 @@ public class UserRepository {
     }
 
     /**
+     * Request for load board jobs list
+     *
+     * @param context       Context
+     * @param limit         jobs limit - OPTIONAL
+     * @param handler       callback
+     */
+    public void requestLoadBoardAllListingAPI(Context context, String limit, final IUserDataHandler handler) {
+        mRestRequestHandler.loadboardAllListing(context, limit, new IResponseCallback() {
+            @Override
+            public void onResponse(Object object) {
+                if (object instanceof LoadBoardAllListingResponse)
+                    handler.onLoadboardAllListingApiResponse((LoadBoardAllListingResponse) object);
+            }
+
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError(int errorCode, String error) {
+                handler.onError(errorCode, error);
+            }
+        });
+    }
+
+    /**
      * accept request for specific booking
      *
      * @param context   Context
@@ -1737,6 +1765,8 @@ public class UserRepository {
                         break;
                     case "LoadBoardListingResponse":
                         mUserCallback.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
+                    case "LoadBoardAllListingResponse":
+                        mUserCallback.onLoadboardAllListingApiResponse((LoadBoardAllListingResponse) object);
                         break;
                     case "LoadboardBookingDetailResponse":
                         mUserCallback.onLoadboardBookingDetailResponse((LoadboardBookingDetailResponse) object);

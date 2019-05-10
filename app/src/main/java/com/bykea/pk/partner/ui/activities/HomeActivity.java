@@ -23,10 +23,10 @@ import android.widget.ProgressBar;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.LoadBoardListingData;
+import com.bykea.pk.partner.models.data.LoadBoardAllListingData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.ZoneData;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -35,8 +35,7 @@ import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.LoadboardZoneFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.helpers.Callback;
-import com.bykea.pk.partner.ui.helpers.adapters.ActiveHomeLoadBoardListAdapter;
+import com.bykea.pk.partner.ui.helpers.adapters.ActiveHomeLoadBoardAllListAdapter;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -71,8 +70,8 @@ public class HomeActivity extends BaseActivity {
     /**
      * loadboard jobs adapter and list to show on main screen
      */
-    private ActiveHomeLoadBoardListAdapter mloadBoardListAdapter;
-    private ArrayList<LoadBoardListingData> mlist = new ArrayList<>();
+    private ActiveHomeLoadBoardAllListAdapter mloadBoardListAdapter;
+    private ArrayList<LoadBoardAllListingData> mlist = new ArrayList<>();
 
 
     @BindView(R.id.toolbarLine)
@@ -98,10 +97,6 @@ public class HomeActivity extends BaseActivity {
     public AppCompatImageView bottomSheetRefreshIV;
     @BindView(R.id.bottomSheetBackIV)
     public AppCompatImageView bottomSheetBackIV;
-    @BindView(R.id.bottomSheetDropTV)
-    public FontTextView bottomSheetDropTV;
-    @BindView(R.id.bottomSheetPickTV)
-    public FontTextView bottomSheetPickTV;
     @BindView(R.id.bottomSheetNoJobsAvailableTV)
     public FontTextView bottomSheetNoJobsAvailableTV;
     @BindView(R.id.bottomSheetLoader)
@@ -402,9 +397,9 @@ public class HomeActivity extends BaseActivity {
      * initialize loadboard listing with empty data and bottom sheet with behavior
      */
     public void setupBottomSheet() {
-        mloadBoardListAdapter = new ActiveHomeLoadBoardListAdapter(this, mlist, new ActiveHomeLoadBoardListAdapter.ItemClickListener() {
+        mloadBoardListAdapter = new ActiveHomeLoadBoardAllListAdapter(this, mlist, new ActiveHomeLoadBoardAllListAdapter.ItemClickListener() {
             @Override
-            public void onClick(LoadBoardListingData item) {
+            public void onClick(LoadBoardAllListingData item) {
                 if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 } else {
@@ -463,45 +458,6 @@ public class HomeActivity extends BaseActivity {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
-        bottomSheetPickTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoadboardZoneFragment fragment = LoadboardZoneFragment.newInstance(
-                        AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE),
-                        new Callback<ZoneData>() {
-                            @Override
-                            public void invoke(ZoneData obj) {
-                                if (obj != null && obj.getUrduName() != null) {
-                                    AppPreferences.setSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE, obj);
-                                    bottomSheetPickTV.setText(getString(R.string.pick_drop_name_ur, obj.getUrduName()));
-                                    getSupportFragmentManager().popBackStack();
-                                    refreshLoadBoardListingAPI();
-                                }
-                            }
-                        });
-                showLoadboardZoneScreen(fragment);
-            }
-        });
-        bottomSheetDropTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoadboardZoneFragment fragment = LoadboardZoneFragment.newInstance(
-                        AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE),
-                        new Callback<ZoneData>() {
-                            @Override
-                            public void invoke(ZoneData obj) {
-                                if (obj != null && obj.getUrduName() != null) {
-                                    AppPreferences.setSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE, obj);
-                                    bottomSheetDropTV.setText(getString(R.string.pick_drop_name_ur, obj.getUrduName()));
-                                    getSupportFragmentManager().popBackStack();
-                                    refreshLoadBoardListingAPI();
-                                }
-                            }
-                        });
-                showLoadboardZoneScreen(fragment);
-            }
-        });
-        showSelectedPickAndDropZoneToBottomSheet();
         showBottomSheetLoader();
         if (!AppPreferences.getAvailableStatus() || !AppPreferences.getIsCash())
             hideLoadBoardBottomSheet();
@@ -522,7 +478,7 @@ public class HomeActivity extends BaseActivity {
      *
      * @param list loadboard jobs data
      */
-    public void showLoadBoardBottomSheet(ArrayList<LoadBoardListingData> list) {
+    public void showLoadBoardBottomSheet(ArrayList<LoadBoardAllListingData> list) {
         if (bottomSheet != null && list != null) {
             bottomSheet.setVisibility(View.VISIBLE);
             updateList(list);
@@ -545,7 +501,7 @@ public class HomeActivity extends BaseActivity {
      *
      * @param list jobs list
      */
-    public void updateList(ArrayList<LoadBoardListingData> list) {
+    public void updateList(ArrayList<LoadBoardAllListingData> list) {
         if (mloadBoardListAdapter != null && mlist != null) {
             if (list.size() > 0) {
                 mlist.clear();
@@ -641,13 +597,14 @@ public class HomeActivity extends BaseActivity {
      */
     private void callLoadboardListingAPI() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
-        ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
-        new UserRepository().requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
-                pickupZone == null ? null : pickupZone.get_id(),
-                dropoffZone == null ? null : dropoffZone.get_id(), new UserDataHandler() {
+//        ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
+//        ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
+        new UserRepository().requestLoadBoardAllListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
+//                pickupZone == null ? null : pickupZone.get_id(),
+//                dropoffZone == null ? null : dropoffZone.get_id(),
+                new UserDataHandler() {
                     @Override
-                    public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
+                    public void onLoadboardAllListingApiResponse(LoadBoardAllListingResponse response) {
                         Dialogs.INSTANCE.dismissDialog();
                         if (response != null && response.getData() != null) {
                             if (mCurrentActivity != null) {
@@ -684,31 +641,6 @@ public class HomeActivity extends BaseActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.drawerMainActivity, fragment, fragment.getClass().getName())
                 .addToBackStack(null).commitAllowingStateLoss();
-    }
-
-    /**
-     * set previously selected pickup and drop off zone
-     */
-    public void showSelectedPickAndDropZoneToBottomSheet() {
-        ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
-        ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
-        //checking zone data and display selected pick up zone or show empty filed with pickup text
-        if (bottomSheetPickTV != null) {
-            if (pickupZone != null && pickupZone.getUrduName() != null) {
-                bottomSheetPickTV.setText(getString(R.string.pick_drop_name_ur, pickupZone.getUrduName()));
-            } else {
-                bottomSheetPickTV.setText(getString(R.string.pick_ur));
-            }
-        }
-        //checking zone data and display selected drop off zone or show empty filed with drop text
-        if (bottomSheetDropTV != null) {
-            if (dropoffZone != null && dropoffZone.getUrduName() != null) {
-                bottomSheetDropTV.setText(getString(R.string.pick_drop_name_ur, dropoffZone.getUrduName()));
-            } else {
-                bottomSheetDropTV.setText(getString(R.string.drop_ur));
-            }
-        }
-
     }
 
     /**

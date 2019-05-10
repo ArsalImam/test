@@ -42,18 +42,14 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
-import com.bykea.pk.partner.models.response.PilotStatusResponse;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.SelectPlaceActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -404,13 +400,14 @@ public class HomeFragment extends Fragment {
     private void callLoadBoardListingAPI() {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
             //get selected pickup and dropoff zone data from local storage
-            ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
-            ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
-            repository.requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
-                    pickupZone == null ? null : pickupZone.get_id(),
-                    dropoffZone == null ? null : dropoffZone.get_id(), new UserDataHandler() {
+//            ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
+//            ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
+            repository.requestLoadBoardAllListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
+//                    pickupZone == null ? null : pickupZone.get_id(),
+//                    dropoffZone == null ? null : dropoffZone.get_id(),
+                    new UserDataHandler() {
                         @Override
-                        public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
+                        public void onLoadboardAllListingApiResponse(LoadBoardAllListingResponse response) {
                             Dialogs.INSTANCE.dismissDialog();
                             if (response != null && response.getData() != null) {
                                 if (mCurrentActivity != null) {
@@ -621,10 +618,6 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
 
             }
-            //reset zone data in local storage
-            AppPreferences.clearLoadboardSelectedZoneData();
-            //display reset zone data
-            mCurrentActivity.showSelectedPickAndDropZoneToBottomSheet();
         } else {        //active state
 
             myRangeBarLayout.setVisibility(View.INVISIBLE);

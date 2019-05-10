@@ -324,6 +324,7 @@
     <string name="fare">\u0020کرایہ</string>
     <string name="service">\u0020سروس\u0020</string>
     <string name="wait_for_booking">بکنگ کا انتظار کریں</string>
+    <string name="dash">-</string>
 
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>

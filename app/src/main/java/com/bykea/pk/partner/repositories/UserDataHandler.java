@@ -37,6 +37,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
+import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
@@ -398,6 +399,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
+
+    }
+
+    @Override
+    public void onLoadboardAllListingApiResponse(LoadBoardAllListingResponse response) {
 
     }
 
