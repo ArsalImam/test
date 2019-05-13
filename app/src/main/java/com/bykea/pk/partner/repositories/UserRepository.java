@@ -1080,10 +1080,10 @@ public class UserRepository {
         mRestRequestHandler.requestCompleteSignupData(mContext, id, mDataCallback);
     }*/
 
-    public void uplodaDocumentImage(Context context, String id, String type, File imageFile, IUserDataHandler handler) {
+    public void uploadDocumentImage(Context context, String id, String type, File imageFile, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.uplodaDocumentImage(mContext, id, type, imageFile, mDataCallback);
+        mRestRequestHandler.uploadDocumentImage(mContext, id, type, imageFile, mDataCallback);
     }
 
     public void requestBankAccounts(Context context, IUserDataHandler handler) {

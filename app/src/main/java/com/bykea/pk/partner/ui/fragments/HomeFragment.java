@@ -43,14 +43,10 @@ import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
+import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.models.response.PilotStatusResponse;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
-import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -869,6 +865,7 @@ public class HomeFragment extends Fragment {
                         if (!isDialogDisplayingForBattery)
                             Dialogs.INSTANCE.dismissDialog();
                         if (pilotStatusResponse.isSuccess()) {
+                            AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
                             if (makeDriverOffline) {
                                 AppPreferences.setAvailableStatus(false);
                             } else {
@@ -879,6 +876,7 @@ public class HomeFragment extends Fragment {
                                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                                 //Todo Need to update Server Time difference when status API returns Timestamp for now Calling location API to force update timestamp
                                 //Utils.saveServerTimeDifference(response.body().getTimeStampServer());
+
                                 forceUpdatedLocationOnDriverStatus();
                                 if (AppPreferences.isWalletAmountIncreased()) {
                                     AppPreferences.setWalletAmountIncreased(false);
@@ -1595,7 +1593,7 @@ public class HomeFragment extends Fragment {
      * Forcefully sending Location Update API on Server for Updating
      * {@link AppPreferences#setServerTimeDifference} against Time stamp provided by Server.
      */
-    private void forceUpdatedLocationOnDriverStatus(){
+    private void forceUpdatedLocationOnDriverStatus() {
         new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
 
             @Override
