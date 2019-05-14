@@ -311,10 +311,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             new com.google.maps.model.LatLng(AppPreferences.getLatitude(),
                                     AppPreferences.getLongitude()));
 
-//                    if (callData != null) {
-//                        updateMarkers();
-//                        drawRoutes();
-//                    }
+                    if (callData != null) {
+                        updateMarkers(true);
+                    }
                 }
             });
         }
@@ -375,7 +374,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     mRouteLatLng.clear();
                 }
 //                drawRoutes();
-                updateMarkers();
+                updateMarkers(true);
 //                updatePickupMarker(callData.getEndLat(), callData.getEndLng());
 //            }
         }
@@ -515,7 +514,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
                 }
-                updateMarkers();
+                updateMarkers(true);
                 break;
             case R.id.cvDirections:
                 startGoogleDirectionsApp();
@@ -1067,7 +1066,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
         }
         if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
-            updateMarkers();
+            updateMarkers(true);
             if (pickUpMarker != null) {
                 pickUpMarker.remove();
                 pickUpMarker = null;
@@ -1270,8 +1269,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     /**
      * This method updates the trip pickup and drop off markers on basis of trip's current status
+     * @param shouldUpdateBound if also update map camera bound after marker update
      */
-    private synchronized void updateMarkers() {
+    private synchronized void updateMarkers(boolean shouldUpdateBound) {
         if (null == mGoogleMap || null == callData) return;
 
         if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
@@ -1284,7 +1284,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
         }
-        setPickupBounds();
+        if (shouldUpdateBound) setPickupBounds();
     }
 
     private boolean isLastAnimationComplete = true;
@@ -1540,18 +1540,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
         int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
         mGoogleMap.setPadding(0, padding, 0, padding);
-        mGoogleMap.animateCamera(cu, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                drawRoutes();
-            }
-
-            @Override
-            public void onCancel() {
-                drawRoutes();
-            }
-        });
-//        mGoogleMap.setPadding(0, 0, 0, 0);
+        mGoogleMap.moveCamera(cu);
+        drawRoutes();
     }
 
     private LatLngBounds getCurrentLatLngBounds() {
@@ -1704,12 +1694,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         mRouteLatLngSecondary = routeSecondary.getPoints();
                         callData.getPickupStop().setDistance(routeFirst.getDistanceValue());
                         callData.getPickupStop().setDuration(routeFirst.getDurationValue());
-//TODO: Update zone name of re-render
-// callData.getPickupStop().setZoneNameUr(routeFirst.getEndAddressText());
+                        //TODO: Update zone name of re-render
+                        // callData.getPickupStop().setZoneNameUr(routeFirst.getEndAddressText());
                         callData.getDropoffStop().setDistance(routeSecondary.getDistanceValue());
                         callData.getDropoffStop().setDuration(routeSecondary.getDurationValue());
-//TODO: Update zone name of re-render
-// callData.getDropoffStop().setZoneNameUr(routeSecondary.getEndAddressText());
+                        //TODO: Update zone name of re-render
+                        // callData.getDropoffStop().setZoneNameUr(routeSecondary.getEndAddressText());
                     } else {
                         PolylineOptions polyOptions = new PolylineOptions();
                         polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
@@ -1719,13 +1709,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                         callData.getDropoffStop().setDistance(routeFirst.getDistanceValue());
                         callData.getDropoffStop().setDuration(routeFirst.getDurationValue());
-//TODO: Update zone name of re-render
-//                        callData.getDropoffStop().setZoneNameUr(routeFirst.getEndAddressText());
+                        //TODO: Update zone name of re-render
+                        // callData.getDropoffStop().setZoneNameUr(routeFirst.getEndAddressText());
                     }
 
                     shouldRefreshPickupMarker = true;
                     shouldRefreshDropOffMarker = true;
-                    updateMarkers();
+                    updateMarkers(false);
 
                     if (routeType == Routing.pickupRoute || routeType == Routing.dropOffRoute) {
                         if (mCurrentActivity != null && mGoogleMap != null) {
@@ -1828,13 +1818,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                     if (StringUtils.isNotBlank(callData.getEndLat()) &&
                             StringUtils.isNotBlank(callData.getEndLng())) {
-                        updateMarkers();
+                        updateMarkers(true);
                     } else if (pickUpMarker != null) {
                         pickUpMarker.remove();
                         pickUpMarker = null;
                     }
                 } else {
-                    updateMarkers();
+                    updateMarkers(true);
                 }
 //                drawRoutes();
                 showEstimatedDistTime();
