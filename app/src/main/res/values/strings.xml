@@ -326,6 +326,9 @@
     <string name="wait_for_booking">بکنگ کا انتظار کریں</string>
     <string name="dash">-</string>
 
+    <string name="cash_on_delivery">وصولی</string>
+    <string name="accept_booking">بکنگ منتخب کریں</string>
+
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
         <item>ناكام - وصول کرنے والا رابطے میں نہیں</item>
