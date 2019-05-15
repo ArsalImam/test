@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.loadboard.detail;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
@@ -21,7 +22,7 @@ import butterknife.ButterKnife;
  * Loadboard booking detail screen ACTIVITY - opening from homeScreen's loadboard listing items
  * this activity will hold booking detail fragment
  */
-public class LoadboardDetailActivity extends BaseActivity {
+public class LoadboardDetailActivity extends BaseActivity implements View.OnClickListener {
 
     private LoadboardDetailActivity mCurrentActivity;
     private UserRepository mRepository;
@@ -30,10 +31,17 @@ public class LoadboardDetailActivity extends BaseActivity {
 
     @BindView(R.id.backBtn)
     AppCompatImageView backBtn;
-    @BindView(R.id.bookingTypeIV)
-    AppCompatImageView bookingTypeIV;
-    @BindView(R.id.bookingNoTV)
-    FontTextView bookingNoTV;
+//    @BindView(R.id.bookingTypeIV)
+//    AppCompatImageView bookingTypeIV;
+//    @BindView(R.id.bookingNoTV)
+//    FontTextView bookingNoTV;
+
+    @BindView(R.id.imgViewDelivery)
+    AppCompatImageView imgViewDelivery;
+    @BindView(R.id.tVEstimatedFare)
+    FontTextView tVEstimatedFare;
+    @BindView(R.id.tVCODAmount)
+    FontTextView tVCODAmount;
 
     private String bookingId;
 
@@ -60,7 +68,10 @@ public class LoadboardDetailActivity extends BaseActivity {
             @Override
             public void onLoadboardBookingDetailResponse(LoadboardBookingDetailResponse response) {
                 Dialogs.INSTANCE.dismissDialog();
-                bookingNoTV.setText(response.getData().getOrderNo());
+                tVEstimatedFare.setText(response.getData().getAmount() + "");
+                tVCODAmount.setText(response.getData().getCartAmount() + "");
+
+                //bookingNoTV.setText(response.getData().getOrderNo());
 //                bookingTypeIV.setImageResource();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.bookingDetailContainerFL, LoadboardDetailFragment.newInstance(response.getData()))
@@ -83,11 +94,20 @@ public class LoadboardDetailActivity extends BaseActivity {
      * initialize click listeners for this screen's button or widgets
      */
     private void initListeners() {
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        backBtn.setOnClickListener(this);
+        imgViewDelivery.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.backBtn:
                 finish();
-            }
-        });
+                break;
+
+            case R.id.imgViewDelivery:
+                Utils.appToast(getApplicationContext(), "imgViewDelivery");
+                break;
+        }
     }
 }

@@ -13,31 +13,81 @@
         android:background="@color/windowBackground"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/backBtn"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:padding="@dimen/_9sdp"
-            app:srcCompat="@mipmap/icon_backarrow_green" />
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/bookingTypeIV"
+        <LinearLayout
+            android:id="@+id/linLayoutFirst"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/backBtn"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:padding="@dimen/_9sdp"
+                app:srcCompat="@mipmap/icon_backarrow_green" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/imgViewDelivery"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@drawable/ic_delivery" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linLayoutSecond"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:padding="@dimen/padding.small"
-            app:srcCompat="@mipmap/icon_forks" />
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/bookingNoTV"
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tVEstimatedFareLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fare"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tVEstimatedFare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rs. 150"
+                android:textColor="@color/color_06A833"
+                android:textSize="@dimen/_16sdp"
+                app:fontName="open_sans_semi_bold.ttf" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linLayoutThird"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_marginRight="@dimen/_16sdp"
-            android:textColor="@color/color_gray636363"
-            android:textSize="@dimen/_14sdp" />
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:gravity="center"
+            android:orientation="vertical">
 
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tVCODAmountLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cash_on_delivery"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tVCODAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1,000"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="open_sans_regular.ttf" />
+        </LinearLayout>
     </FrameLayout>
 
     <View
@@ -50,6 +100,5 @@
         android:id="@+id/bookingDetailContainerFL"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
 </LinearLayout>
