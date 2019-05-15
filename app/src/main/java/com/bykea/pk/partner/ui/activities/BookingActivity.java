@@ -1027,6 +1027,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             startAddressTv.setText(callData.getStartAddress());
         }
 
+        if (StringUtils.isBlank(callData.getEndAddress())) {
+            endAddressTv.setText(getString(R.string.destination_not_selected_msg));
+            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.Color_Red));
+        } else {
+            endAddressTv.setText(callData.getEndAddress());
+            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
+        }
+
         jobBtn.setText(getString(R.string.button_text_start));
         cvDirections.setVisibility(View.INVISIBLE);
         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
