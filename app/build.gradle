@@ -13,7 +13,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "com.bykea.pk.partner"
         manifestPlaceholders = [onesignal_app_id               : "65d93e99-8ef5-44b1-b6cd-d2de64b59cf4"
@@ -85,19 +84,6 @@ android {
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3000\""
             }
         }
-
-        applicationVariants.all { variant ->
-            variant.mergedFlavor.versionName = android.defaultConfig.versionName + "-" + releaseTime()
-            variant.outputs.all { output ->
-                def apkName = "bykea-partner-v" + variant.mergedFlavor.versionName + "-c" + android.defaultConfig.versionCode
-
-                apkName += "-" + variant.productFlavors[0].name + "-" + variant.buildType.name
-                apkName += ".apk"
-
-                outputFileName = new File("../../" + apkName)
-            }
-        }
-
     }
     dexOptions {
         javaMaxHeapSize "4g"
@@ -120,6 +106,9 @@ android {
     }
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
