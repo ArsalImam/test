@@ -367,6 +367,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 && StringUtils.isNotBlank(callData.getEndLat())
                 && StringUtils.isNotBlank(callData.getEndLng())) {
             endAddressTv.setText(callData.getEndAddress());
+            configCountDown();
 //            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 lastApiCallLatLng = null;
                 AppPreferences.setLastDirectionsApiCallTime(0);
