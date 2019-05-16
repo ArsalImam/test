@@ -1,21 +1,18 @@
 package com.bykea.pk.partner.ui.loadboard.detail;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.loadboard.LoadboardBookingDetailData;
@@ -23,10 +20,8 @@ import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.helpers.adapters.LoadBoardOrdersAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -35,17 +30,23 @@ import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,10 +58,13 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 
     private LoadboardDetailActivity mCurrentActivity;
     private LoadboardBookingDetailData data;
+    private static final double EARTHRADIUS = 6366198;
+    private Location mCurrentLocation;
 
-    @BindView(R.id.loadBoardMapFragment)
-    MapView mapView;
+    private SupportMapFragment mapView;
+
     private GoogleMap mGoogleMap;
+    private ArrayList<Marker> mMarkerList = new ArrayList<>();
 
     @BindView(R.id.tVEstimatedTime)
     FontTextView tVEstimatedTime;
@@ -105,15 +109,18 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         View v = inflater.inflate(R.layout.fragment_loadboard_detail, container, false);
         ButterKnife.bind(this, v);
 
-        mCurrentActivity = (LoadboardDetailActivity) getActivity();
+        mapView = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.loadBoardMapFragment);
 
+        mCurrentActivity = (LoadboardDetailActivity) getActivity();
         try {
             mapView.onCreate(savedInstanceState);
-            MapsInitializer.initialize(mCurrentActivity.getApplicationContext());
+            MapsInitializer.initialize(getActivity());
         } catch (Exception e) {
             Utils.redLog("HomeScreenException", e.getMessage());
             e.printStackTrace();
         }
+        mCurrentLocation = new Location(StringUtils.EMPTY);
+        setCurrentLocation();
         mapView.getMapAsync(mapReadyCallback);
 
         /*new UserRepository().acceptLoadboardBooking(mCurrentActivity, ""*//*item.getId()*//*, new UserDataHandler(){
@@ -134,54 +141,146 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
         @Override
-        public void onMapReady(GoogleMap googleMap) {
+        public void onMapReady(final GoogleMap googleMap) {
             //check if fragment is replaced before map is ready
-            if (mCurrentActivity == null || getView() == null) {
+            if (mCurrentActivity == null) {
                 return;
             }
-            mGoogleMap = googleMap;
+            googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    if (mCurrentActivity == null || googleMap == null) {
+                        return;
+                    }
+                    mGoogleMap = googleMap;
+                    mGoogleMap.clear();
+                    Utils.formatMap(mGoogleMap);
+                    mGoogleMap.getUiSettings().setScrollGesturesEnabled(false);
 
-            Utils.formatMap(mGoogleMap);
-            //mGoogleMap.clear();
-            if (mCurrentActivity != null && !Permissions.hasLocationPermissions(mCurrentActivity)) {
-                Permissions.getLocationPermissions(getActivity());
-            } else {
-                if (enableLocation()) return;
-            }
+                    com.google.maps.model.LatLng driverLatLng = new com.google.maps.model.LatLng(
+                            AppPreferences.getLatitude(),
+                            AppPreferences.getLongitude()
+                    );
+                    getDriverRoadPosition(driverLatLng);
 
-            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(24.8669095,67.0803487)
-                    , 12.0f));
+                    if (mCurrentActivity != null && !Permissions.hasLocationPermissions(mCurrentActivity)) {
+                        Permissions.getLocationPermissions(getActivity());
+                    }
+                    setMarkersForPickUpAndDropOff(mGoogleMap, data);
+                }
+            });
+
         }
     };
 
-    private boolean enableLocation() {
-        if (ActivityCompat.checkSelfPermission(mCurrentActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return true;
-        }
-        if (mGoogleMap != null) {
-            mGoogleMap.setMyLocationEnabled(true);
-        }
-        return false;
+    private void setCurrentLocation() {
+        mCurrentLocation.setLatitude(AppPreferences.getLatitude());
+        mCurrentLocation.setLongitude(AppPreferences.getLongitude());
     }
 
     private void setMarkersForPickUpAndDropOff(GoogleMap mMap, LoadboardBookingDetailData data) {
         LatLng mLatLngPickUp = new LatLng(data.getPickupLoc().getLatitude(), data.getPickupLoc().getLongitude());
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(mLatLngPickUp));
-        mMap.addMarker(new MarkerOptions().position(mLatLngPickUp));
+        SetMarker(mMap, mLatLngPickUp);
 
         LatLng mLatLngDropOff = new LatLng(data.getEndLoc().getLatitude(), data.getEndLoc().getLongitude());
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(mLatLngDropOff));
-        mMap.addMarker(new MarkerOptions().position(mLatLngDropOff));
+        SetMarker(mMap, mLatLngDropOff);
+
+        setPickupBounds(mMap);
     }
 
+    private void SetMarker(GoogleMap mMap, LatLng mLatLngPickUp) {
+        Marker mMarker = mMap.addMarker(new MarkerOptions().position(mLatLngPickUp));
+        mMarkerList.add(mMarker);
+    }
+
+    private void setPickupBounds(GoogleMap mMap) {
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
+        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._70sdp);
+        mMap.setPadding(0, padding, 0, 0);
+        mMap.moveCamera(cu);
+    }
+
+    private LatLngBounds getCurrentLatLngBounds() {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : mMarkerList) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds tmpBounds = builder.build();
+        /* Add 2 points 1000m northEast and southWest of the center.
+         * They increase the bounds only, if they are not already larger
+         * than this.
+         * 1000m on the diagonal translates into about 709m to each direction. */
+        LatLng center = tmpBounds.getCenter();
+        LatLng northEast = move(center, 709, 709);
+        LatLng southWest = move(center, -709, -709);
+
+        builder.include(southWest);
+        builder.include(northEast);
+        return builder.build();
+    }
+
+    private static LatLng move(LatLng startLL, double toNorth, double toEast) {
+        double lonDiff = meterToLongitude(toEast, startLL.latitude);
+        double latDiff = meterToLatitude(toNorth);
+        return new LatLng(startLL.latitude + latDiff, startLL.longitude
+                + lonDiff);
+    }
+
+    private static double meterToLongitude(double meterToEast, double latitude) {
+        double latArc = Math.toRadians(latitude);
+        double radius = Math.cos(latArc) * EARTHRADIUS;
+        double rad = meterToEast / radius;
+        return Math.toDegrees(rad);
+    }
+
+    private static double meterToLatitude(double meterToNorth) {
+        double rad = meterToNorth / EARTHRADIUS;
+        return Math.toDegrees(rad);
+    }
+
+
+    public synchronized void getDriverRoadPosition(com.google.maps.model.LatLng normalLocation) {
+        if (normalLocation != null && normalLocation.lat != 0.0 && normalLocation.lng != 0.0) {
+            onGetLocation(normalLocation.lat, normalLocation.lng);
+        }
+    }
+
+    private void onGetLocation(double lat, double lng) {
+        if (mCurrentLocation != null/* && callDriverData != null*/) {
+            mCurrentLocation.setLatitude(lat);
+            mCurrentLocation.setLongitude(lng);
+            updateDriverMarker(
+                    String.valueOf(mCurrentLocation.getLatitude()),
+                    String.valueOf(mCurrentLocation.getLongitude())
+            );
+        } else {
+            mCurrentLocation = new Location(LocationManager.GPS_PROVIDER);
+            mCurrentLocation.setLatitude(lat);
+            mCurrentLocation.setLongitude(lng);
+        }
+    }
+
+    private void updateDriverMarker(String snappedLatitude, String snappedLongitude) {
+        if (null != mGoogleMap) {
+            //if driver marker is null add driver marker on google map
+            if (null == driverMarker) {
+                Bitmap driverIcon = Utils.getBitmap(mCurrentActivity, R.drawable.ic_delivery_bike);
+                driverMarker = mGoogleMap.addMarker(new MarkerOptions().
+                        icon(
+                                BitmapDescriptorFactory.fromBitmap(
+                                        driverIcon
+                                )
+                        )
+                        .position(
+                                new LatLng(
+                                        Double.parseDouble(snappedLatitude),
+                                        Double.parseDouble(snappedLongitude)
+                                )
+                        ));
+                mMarkerList.add(driverMarker);
+            }
+        }
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -189,6 +288,9 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         initViews();
         setListeners();
     }
+
+    private boolean animationStart = false;
+    private Marker driverMarker;
 
     /**
      * initialize views and set datails data and attach click listener
@@ -296,13 +398,23 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
+        Intent mapIntent = null;
+        String sourceAddress, destinationAddress;
         switch (view.getId()) {
             case R.id.imgViewDirectionPickUp:
-                Utils.appToast(getContext(), "imgViewDirectionPickUp");
+                if (data != null) {
+                    sourceAddress = mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude();
+                    destinationAddress = data.getPickupLoc().getLatitude() + "," + data.getPickupLoc().getLongitude();
+                    openGoogleMap(sourceAddress,destinationAddress);
+                }
                 break;
 
             case R.id.imgViewDirectionDropOff:
-                Utils.appToast(getContext(), "imgViewDirectionDropOff");
+                if (data != null) {
+                    sourceAddress =  data.getPickupLoc().getLatitude() + "," +  data.getPickupLoc().getLongitude();
+                    destinationAddress = data.getEndLoc().getLatitude() + "," + data.getEndLoc().getLongitude();
+                    openGoogleMap(sourceAddress,destinationAddress);
+                }
                 break;
 
             case R.id.imgViewAudioPlay:
@@ -380,5 +492,16 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 //                startGoogleDirectionsApp();
 //            }
 //        });
+    }
+
+    private void openGoogleMap(String sourceAddress, String destinationAddress) {
+        String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + sourceAddress +
+                Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + destinationAddress;
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }
