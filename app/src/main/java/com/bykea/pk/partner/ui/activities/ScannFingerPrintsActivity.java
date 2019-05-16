@@ -13,7 +13,6 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
-import com.thefinestartist.Base;
 
 import java.util.HashMap;
 import java.util.List;

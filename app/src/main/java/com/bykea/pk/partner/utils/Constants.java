@@ -101,6 +101,11 @@ public class Constants {
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2; //30 seconds
 
+
+    public static final long ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS = 9 * 1000; //9s
+    public static final long ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS_DEFAULT = 21 * 1000; //21s
+    public static final long ON_TRIP_UPDATE_INTERVAL_DIVISIBLE = 3;
+
     public static final float LOCATION_SMALLEST_DISPLACEMENT = 10f;
 
     public static final int LOCATION_RESPONSE_COUNTER_RESET = 0;
@@ -199,6 +204,7 @@ public class Constants {
         public static final String IS_CANCELED_TRIP = "isCancelledTrip";
         public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
         public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
+        public final static String ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL = "ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL";
     }
 
     public static class Broadcast {
