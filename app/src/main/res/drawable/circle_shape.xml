@@ -11,7 +11,7 @@
     </item>
     <item
         android:bottom="@dimen/_2sdp"
-        android:drawable="@drawable/ic_direction_right_blue"
+        android:drawable="@drawable/ic_audio_stop"
         android:left="@dimen/_2sdp"
         android:right="@dimen/_2sdp"
         android:top="@dimen/_2sdp" />

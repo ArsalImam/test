@@ -31,32 +31,31 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true">
+
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="@dimen/_10sdp"
+
+                    android:layout_marginLeft="@dimen/_10sdp">
 
                     <ImageView
                         android:id="@+id/imgViewAudioPlay"
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_40sdp"
-                        android:layout_marginStart="@dimen/_10sdp"
-                        android:layout_marginLeft="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_10sdp"
-                        app:srcCompat="@drawable/ic_audio_play"
-                        />
+                        app:srcCompat="@drawable/ic_audio_play" />
 
                     <ProgressBar
                         android:id="@+id/progressBarForAudioPlay"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_40sdp"
-                        android:layout_marginStart="@dimen/_10sdp"
-                        android:layout_marginLeft="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_10sdp"
-                        android:indeterminate="false"
                         android:background="@drawable/circle_shape"
+                        android:indeterminate="false"
                         android:max="100"
-                        android:visibility="gone"
                         android:progress="60"
-                        android:progressDrawable="@drawable/circular_progress_bar" />
+                        android:progressDrawable="@drawable/circular_progress_bar"
+                        android:visibility="gone" />
 
                 </RelativeLayout>
             </RelativeLayout>
