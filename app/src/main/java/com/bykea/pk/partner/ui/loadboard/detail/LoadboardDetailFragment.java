@@ -1,18 +1,28 @@
 package com.bykea.pk.partner.ui.loadboard.detail;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.loadboard.LoadboardBookingDetailData;
@@ -36,6 +46,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -46,6 +57,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -65,6 +82,8 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 
     private GoogleMap mGoogleMap;
     private ArrayList<Marker> mMarkerList = new ArrayList<>();
+    private MediaPlayer mediaPlayer;
+    private final Handler handler = new Handler();
 
     @BindView(R.id.tVEstimatedTime)
     FontTextView tVEstimatedTime;
@@ -87,6 +106,10 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
     AppCompatImageView imgViewDirectionPickUp;
     @BindView(R.id.imgViewDirectionDropOff)
     AppCompatImageView imgViewDirectionDropOff;
+
+    @BindView(R.id.progressBarForAudioPlay)
+    ProgressBar progressBarForAudioPlay;
+
     @BindView(R.id.imgViewAudioPlay)
     AppCompatImageView imgViewAudioPlay;
 
@@ -106,8 +129,8 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_loadboard_detail, container, false);
-        ButterKnife.bind(this, v);
+        View rootView = inflater.inflate(R.layout.fragment_loadboard_detail, container, false);
+        ButterKnife.bind(this, rootView);
 
         mapView = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.loadBoardMapFragment);
 
@@ -123,20 +146,7 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         setCurrentLocation();
         mapView.getMapAsync(mapReadyCallback);
 
-        /*new UserRepository().acceptLoadboardBooking(mCurrentActivity, ""*//*item.getId()*//*, new UserDataHandler(){
-            @Override
-            public void onAcceptLoadboardBookingResponse(AcceptLoadboardBookingResponse response) {
-                Utils.appToast(mCurrentActivity,"RESsss");
-            }
-
-            @Override
-            public void onError(int errorCode, String errorMessage) {
-                Utils.appToast(mCurrentActivity,errorMessage);
-
-            }
-        });*/
-
-        return v;
+        return rootView;
     }
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
@@ -180,17 +190,29 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 
     private void setMarkersForPickUpAndDropOff(GoogleMap mMap, LoadboardBookingDetailData data) {
         LatLng mLatLngPickUp = new LatLng(data.getPickupLoc().getLatitude(), data.getPickupLoc().getLongitude());
-        SetMarker(mMap, mLatLngPickUp);
+        SetMarker(mMap, mLatLngPickUp, R.drawable.ic_marker_pickup);
 
         LatLng mLatLngDropOff = new LatLng(data.getEndLoc().getLatitude(), data.getEndLoc().getLongitude());
-        SetMarker(mMap, mLatLngDropOff);
+        SetMarker(mMap, mLatLngDropOff, R.drawable.ic_marker_dropoff);
 
         setPickupBounds(mMap);
     }
 
-    private void SetMarker(GoogleMap mMap, LatLng mLatLngPickUp) {
-        Marker mMarker = mMap.addMarker(new MarkerOptions().position(mLatLngPickUp));
+    private void SetMarker(GoogleMap mMap, LatLng mLatLngPickUp, int drawable) {
+        Marker mMarker = mMap
+                .addMarker(new MarkerOptions()
+                        .icon(bitmapDescriptorFromVector(getContext(), drawable))
+                        .position(mLatLngPickUp));
         mMarkerList.add(mMarker);
+    }
+
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
     private void setPickupBounds(GoogleMap mMap) {
@@ -297,15 +319,7 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
      */
     private void initViews() {
         if (data != null) {
-            //bd_FareTV.setText(getString(R.string.seleted_amount_rs, data.getFareEstimation()));
-            //bd_pickUpNameTV.setText(data.getPickupName());
             tVAddressPickUp.setText(data.getPickupAddress());
-            //bd_pickUpTimeTV.setText(data.getDeliveryTimings());
-//            if (data.getPickupZone() != null)
-//                bd_pickUpZoneTV.setText(getString(R.string.pick_drop_name_ur, data.getPickupZone().getUrduName()));
-//            else
-//                bd_pickUpZoneTV.setText(getString(R.string.not_selected_ur));
-
             int etaInMinute = data.getPickupEta() / Constants.MINUTE_DIVISIBLE_VALUE;
             tVEstimatedTime.setText(String.valueOf(etaInMinute));
             tVAddressDropOff.setText(data.getDropoffAddress());
@@ -330,30 +344,7 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         imgViewDirectionPickUp.setOnClickListener(this);
         imgViewDirectionDropOff.setOnClickListener(this);
         imgViewAudioPlay.setOnClickListener(this);
-    }
-
-    /**
-     * open Google's default Map application to draw route and enable direction call
-     */
-    private void startGoogleDirectionsApp() {
-        try {
-            if (data != null) {
-                String start = data.getPickupLoc().getLatitude() + "," + data.getPickupLoc().getLongitude();
-                String destination = data.getEndLoc().getLatitude() + "," + data.getEndLoc().getLongitude();
-
-                try {
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + start + "&daddr=" + destination + "&mode=motorcycle");
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
-                } catch (Exception ex) {
-                    Utils.appToast(mCurrentActivity, "Please install Google Maps");
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        progressBarForAudioPlay.setOnClickListener(this);
     }
 
     /**
@@ -405,20 +396,25 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
                 if (data != null) {
                     sourceAddress = mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude();
                     destinationAddress = data.getPickupLoc().getLatitude() + "," + data.getPickupLoc().getLongitude();
-                    openGoogleMap(sourceAddress,destinationAddress);
+                    openGoogleMap(sourceAddress, destinationAddress);
                 }
                 break;
 
             case R.id.imgViewDirectionDropOff:
                 if (data != null) {
-                    sourceAddress =  data.getPickupLoc().getLatitude() + "," +  data.getPickupLoc().getLongitude();
+                    sourceAddress = data.getPickupLoc().getLatitude() + "," + data.getPickupLoc().getLongitude();
                     destinationAddress = data.getEndLoc().getLatitude() + "," + data.getEndLoc().getLongitude();
-                    openGoogleMap(sourceAddress,destinationAddress);
+                    openGoogleMap(sourceAddress, destinationAddress);
                 }
                 break;
 
             case R.id.imgViewAudioPlay:
-                Utils.appToast(getContext(), "imgViewAudioPlay");
+                voiceClipPlayDownload();
+                break;
+            case R.id.progressBarForAudioPlay:
+                imgViewAudioPlay.setVisibility(View.VISIBLE);
+                progressBarForAudioPlay.setVisibility(View.GONE);
+                if (mediaPlayer != null) mediaPlayer.pause();
                 break;
             //region
             case R.id.acceptBookingBtn:
@@ -474,24 +470,56 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
             //endregion
         }
 
-//        bd_pickUpPhoneIV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Utils.callingIntent(mCurrentActivity, data.getPickupPhone());
-//            }
-//        });
-//        bd_dropOffPhoneIV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Utils.callingIntent(mCurrentActivity, data.getReceiverPhone());
-//            }
-//        });
-//        bd_directionIV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startGoogleDirectionsApp();
-//            }
-//        });
+    }
+
+    private void voiceClipPlayDownload() {
+        Pair<Boolean, String> checkIfFileExist = isFileExist();
+        if (checkIfFileExist.first) {
+            if (mediaPlayer != null) {
+                mediaPlayer.start();
+                startPlayProgressUpdater();
+            } else {
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(checkIfFileExist.second);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                progressBarForAudioPlay.setMax(mediaPlayer.getDuration());
+                mediaPlayer.start();
+                startPlayProgressUpdater();
+            }
+            imgViewAudioPlay.setVisibility(View.GONE);
+            progressBarForAudioPlay.setVisibility(View.VISIBLE);
+        } else {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            new DownloadFile().execute();
+        }
+    }
+
+    public Pair<Boolean, String> isFileExist() {
+        String path = getContext().getFilesDir() + "/voice_clip_" + String.valueOf(data.getId());
+        File file = new File(path);
+        return new Pair<>(file.exists(), path);
+    }
+
+    public void startPlayProgressUpdater() {
+        progressBarForAudioPlay.setProgress(mediaPlayer.getCurrentPosition());
+
+        if (mediaPlayer.isPlaying()) {
+            Runnable notification = new Runnable() {
+                public void run() {
+                    startPlayProgressUpdater();
+                }
+            };
+            handler.postDelayed(notification, 1000);
+        } else {
+            mediaPlayer.pause();
+            imgViewAudioPlay.setVisibility(View.VISIBLE);
+            progressBarForAudioPlay.setVisibility(View.GONE);
+            progressBarForAudioPlay.setProgress(0);
+        }
     }
 
     private void openGoogleMap(String sourceAddress, String destinationAddress) {
@@ -503,5 +531,56 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivity(intent);
         }
+    }
+
+    private class DownloadFile extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... url1) {
+            int downloadedSize = 0;
+            int totalSize = 0;
+            try {
+                URL url = new URL("https://sample-videos.com/audio/mp3/crowd-cheering.mp3");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+                urlConnection.connect();
+
+                String mFileName = "voice_clip_" + String.valueOf(data.getId());
+                File file = new File(getContext().getFilesDir(), mFileName);
+
+                FileOutputStream fileOutput = new FileOutputStream(file);
+
+                // Stream used for reading the data from the internet
+                InputStream inputStream = urlConnection.getInputStream();
+
+                // this is the total size of the file which we are downloading
+                totalSize = urlConnection.getContentLength();
+
+                byte[] buffer = new byte[1024];
+                int bufferLength = 0;
+
+                while ((bufferLength = inputStream.read(buffer)) > 0) {
+                    fileOutput.write(buffer, 0, bufferLength);
+                    downloadedSize += bufferLength;
+                }
+                fileOutput.close();
+
+            } catch (Exception e) {
+                int a = 2;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Dialogs.INSTANCE.dismissDialog();
+            voiceClipPlayDownload();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (mediaPlayer != null) mediaPlayer.pause();
+        startPlayProgressUpdater();
+        super.onPause();
     }
 }

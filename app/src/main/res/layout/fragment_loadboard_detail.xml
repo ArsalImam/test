@@ -35,13 +35,29 @@
 
                     <ImageView
                         android:id="@+id/imgViewAudioPlay"
-                        android:layout_width="@dimen/_38sdp"
-                        android:layout_height="@dimen/_38sdp"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_marginStart="@dimen/_10sdp"
                         android:layout_marginLeft="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_10sdp"
-                        android:padding="@dimen/_4sdp"
-                        android:src="@drawable/location_icon" />
+                        app:srcCompat="@drawable/ic_audio_play"
+                        />
+
+                    <ProgressBar
+                        android:id="@+id/progressBarForAudioPlay"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:indeterminate="false"
+                        android:background="@drawable/circle_shape"
+                        android:max="100"
+                        android:visibility="gone"
+                        android:progress="60"
+                        android:progressDrawable="@drawable/circular_progress_bar" />
+
                 </RelativeLayout>
             </RelativeLayout>
 
