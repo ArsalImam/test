@@ -62,7 +62,7 @@ public class HistoryMissedCallsActivity extends BaseActivity {
         setBackNavigation();
         setToolbarTitle("Missed Jobs");
         hideToolbarLogo();
-        toggleAchaConnection(View.GONE);
+        toggleAchaConnection(View.INVISIBLE);
         initViews();
     }
 
