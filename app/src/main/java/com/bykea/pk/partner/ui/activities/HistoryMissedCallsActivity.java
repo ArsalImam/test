@@ -31,10 +31,6 @@ public class HistoryMissedCallsActivity extends BaseActivity {
     ImageView noDataIv;
     @BindView(R.id.loader)
     ProgressBar loader;
-    @BindView(R.id.achaconnectionTv)
-    FontTextView achaconnectionTv;
-    @BindView(R.id.connectionStatusIv)
-    AppCompatImageView connectionStatusIv;
 
     private UserRepository repository;
     private HistoryMissedCallsAdapter mHistoryAdapter;
@@ -62,7 +58,6 @@ public class HistoryMissedCallsActivity extends BaseActivity {
         setBackNavigation();
         setToolbarTitle("Missed Jobs");
         hideToolbarLogo();
-        toggleAchaConnection(View.INVISIBLE);
         initViews();
     }
 
@@ -182,9 +177,5 @@ public class HistoryMissedCallsActivity extends BaseActivity {
      *
      * @param visibility VISIBLE/GONE
      */
-    public void toggleAchaConnection(int visibility) {
-        achaconnectionTv.setVisibility(visibility);
-        connectionStatusIv.setVisibility(visibility);
-    }
 }
 
