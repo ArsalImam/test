@@ -1,8 +1,8 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.widget.ListView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;

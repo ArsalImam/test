@@ -13,7 +13,7 @@
         android:weightSum="5">
 
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivRight"
             android:layout_weight="1"
             android:layout_width="@dimen/_16sdp"

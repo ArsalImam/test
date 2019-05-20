@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/cvLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,9 +60,9 @@
                 android:layout_height="@dimen/_38sdp"
                 android:padding="@dimen/_4sdp"
                 android:src="@drawable/location_icon" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/cvDirections"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,13 +75,13 @@
             app:cardCornerRadius="@dimen/_2sdp"
             app:cardElevation="@dimen/_4sdp">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/currentLocationIv"
                 android:layout_width="@dimen/_52sdp"
                 android:layout_height="@dimen/_52sdp"
                 android:padding="@dimen/_4sdp"
                 app:srcCompat="@drawable/direction_icon" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
         <LinearLayout
             android:id="@+id/buttonLayout"
