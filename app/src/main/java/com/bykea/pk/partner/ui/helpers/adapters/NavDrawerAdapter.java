@@ -119,9 +119,6 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
                 case 4:
                     Utils.startCustomWebViewActivity(mainActivity, context.getResources().getString(R.string.how_it_work_web_url), context.getString(R.string.how_it_works));
-                    /*if (HomeActivity.visibleFragmentNumber != 4) {
-                        updateCurrentFragment(new HowItWorksFragment(), 4);
-                    }*/
                     break;
                 case 5:
                     if (HomeActivity.visibleFragmentNumber != 5) {
@@ -159,12 +156,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
              * when navigation in on home screen, show bottom sheet and connection status
              * otherwise hide both
              */
-            if(pos == 1){
-                ((HomeActivity)context).toggleAchaConnection(View.VISIBLE);
+            if (pos == 1) {
+                ((HomeActivity) context).toggleAchaConnection(View.VISIBLE);
                 //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
             } else {
-                ((HomeActivity)context).toggleAchaConnection(View.GONE);
-                ((HomeActivity)context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
+                ((HomeActivity) context).toggleAchaConnection(View.GONE);
+                ((HomeActivity) context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
             }
         }
     }
