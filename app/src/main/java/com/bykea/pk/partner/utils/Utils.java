@@ -1720,22 +1720,23 @@ public class Utils {
     }
 
     public static void startCustomWebViewActivity(AppCompatActivity context, String link, String title) {
-        if (Connectivity.isConnected(context)) {
+        if (isConnected(context, true)) {
             if (StringUtils.isNotBlank(link)) {
-                new FinestWebViewBuilder.Builder(context).showIconMenu(false).showUrl(false)
-                        .toolbarScrollFlags(0)
-                        .toolbarColor(ContextCompat.getColor(context, R.color.white))
-                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
-                        .showIconForward(false).showIconBack(false)
-                        .updateTitleFromHtml(false)
-                        .showSwipeRefreshLayout(false)
-                        .webViewSupportZoom(true)
-                        .webViewBuiltInZoomControls(true)
-                        .titleDefault(StringUtils.capitalize(title))
-                        .show(link);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setPackage(Constants.GOOGLE_CHROME_PACKAGE);
+                try {
+                    context.startActivity(intent);
+                } catch (ActivityNotFoundException ex) {
+                    try {
+                        // Chrome browser is not installed so open default browser
+                        intent.setPackage(null);
+                        context.startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.no_browser_found_error));
+                    }
+                }
             }
-        } else {
-            appToast(context, context.getResources().getString(R.string.internet_error));
         }
     }
 

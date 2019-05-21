@@ -60,7 +60,7 @@ public class Constants {
     public static final int UPDATE_DROPOFF_REQUEST_CODE = 102;
     public static final String TOOLBAR_TITLE = "toolbar_title";
     public static final String SEARCHBOX_TITLE = "searchBox_title";
-
+    public static final String GOOGLE_CHROME_PACKAGE = "com.android.chrome";
 
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
     public final static String ON_PERMISSIONS_GRANTED = "ON_PERMISSIONS_GRANTED";

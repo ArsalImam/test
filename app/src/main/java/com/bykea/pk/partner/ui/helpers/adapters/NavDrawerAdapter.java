@@ -118,9 +118,10 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     }
                     break;
                 case 4:
-                    if (HomeActivity.visibleFragmentNumber != 4) {
+                    Utils.startCustomWebViewActivity(mainActivity, context.getResources().getString(R.string.how_it_work_web_url), context.getString(R.string.how_it_works));
+                    /*if (HomeActivity.visibleFragmentNumber != 4) {
                         updateCurrentFragment(new HowItWorksFragment(), 4);
-                    }
+                    }*/
                     break;
                 case 5:
                     if (HomeActivity.visibleFragmentNumber != 5) {
