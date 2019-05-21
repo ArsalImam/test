@@ -1,8 +1,8 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +35,7 @@ public class ActiveHomeLoadBoardAllListAdapter extends RecyclerView.Adapter<Acti
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.li_active_home_loadboard_all,
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.loadboard_list_item,
                 parent, false);
         return new ViewHolder(v);
     }
