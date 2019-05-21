@@ -8,8 +8,9 @@ import androidx.room.RoomDatabase
 /**
  * The Room database for this app
  */
-@Database(entities = [], version = 1, exportSchema = false)
+@Database(entities = [Booking::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun bookingDao(): BookingDao
 
     companion object {
 
