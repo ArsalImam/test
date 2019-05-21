@@ -71,6 +71,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -467,17 +468,17 @@ public class Utils {
     public static void navigateToGoogleMap(Context context,
                                            MultiDeliveryCallDriverData mCallData) {
         try {
-                String startAddr = getCurrentLocation();
-                String endAddr = mCallData.getPickup().getLat() + "," +
-                        mCallData.getPickup().getLng();
-                String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
-                        Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
-                        Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
-                if (intent.resolveActivity(context.getPackageManager()) != null) {
-                    context.startActivity(intent);
-                }
+            String startAddr = getCurrentLocation();
+            String endAddr = mCallData.getPickup().getLat() + "," +
+                    mCallData.getPickup().getLng();
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -493,7 +494,7 @@ public class Utils {
      * @param latLng the drop off lat lng.
      */
     public static void navigateDropDownToGoogleMap(Context context,
-                                           LatLng latLng) {
+                                                   LatLng latLng) {
         try {
             String startAddr = getCurrentLocation();
             String endAddr = latLng.latitude + "," +
@@ -624,8 +625,8 @@ public class Utils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             VectorDrawable vectorDrawable = (VectorDrawable) context.getDrawable(drawableId);
 
-            int h = (int) (vectorDrawable.getIntrinsicHeight()/1.3);
-            int w = (int) (vectorDrawable.getIntrinsicWidth()/1.3);
+            int h = (int) (vectorDrawable.getIntrinsicHeight() / 1.3);
+            int w = (int) (vectorDrawable.getIntrinsicWidth() / 1.3);
 
             vectorDrawable.setBounds(0, 0, w, h);
 
@@ -654,10 +655,10 @@ public class Utils {
      * Create drop off marker.
      *
      * @param context Holding the reference of an activity.
-     * @param number The number of drop off.
-     *
-     * By ignoring the constant, Time complexity of this function is O(n)^2
-     *               because this function execute in a loop.
+     * @param number  The number of drop off.
+     *                <p>
+     *                By ignoring the constant, Time complexity of this function is O(n)^2
+     *                because this function execute in a loop.
      * @return The bitmap for dropoff marker.
      */
     public static Bitmap createDropOffMarker(Context context, String number) {
@@ -673,15 +674,15 @@ public class Utils {
 
             List<MultipleDeliveryBookingResponse> bookingResponseList = data.getBookings();
 
-                int index = Integer.parseInt(number) - 1;
-                if (bookingResponseList.get(index).getTrip().getStatus().
-                        equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
-                        bookingResponseList.get(index).getTrip().getStatus().
-                                equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
+            int index = Integer.parseInt(number) - 1;
+            if (bookingResponseList.get(index).getTrip().getStatus().
+                    equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                    bookingResponseList.get(index).getTrip().getStatus().
+                            equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
 
-                    ViewCompat.setBackgroundTintList(txt_name, ContextCompat
-                            .getColorStateList(context,
-                                    R.color.multi_delivery_dropoff_completed));
+                ViewCompat.setBackgroundTintList(txt_name, ContextCompat
+                        .getColorStateList(context,
+                                R.color.multi_delivery_dropoff_completed));
 
             }
 
@@ -1142,12 +1143,10 @@ public class Utils {
      * <p>Calculate the difference of current time in millisecond, server time that keep on
      * updating from location update & the acceptance time.</p>
      *
-     * @see AppPreferences#getSettings()
-     *
      * @param acceptedTime The accepted time in millisecond.
-     *
      * @return true if calculated difference is greater than equal to
      * cancellation time otherwise false
+     * @see AppPreferences#getSettings()
      */
     public static boolean isCancelAfter5Min(long acceptedTime) {
         long diff = (System.currentTimeMillis() -
@@ -1725,16 +1724,10 @@ public class Utils {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setPackage(Constants.GOOGLE_CHROME_PACKAGE);
-                try {
+                if (intent.resolveActivityInfo(context.getPackageManager(), 0) != null) {
                     context.startActivity(intent);
-                } catch (ActivityNotFoundException ex) {
-                    try {
-                        // Chrome browser is not installed so open default browser
-                        intent.setPackage(null);
-                        context.startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.no_browser_found_error));
-                    }
+                } else {
+                    Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.no_browser_found_error));
                 }
             }
         }
@@ -2207,14 +2200,14 @@ public class Utils {
     /**
      * Load multiple delivery image URL using {@link Picasso}
      *
-     * @param imageView The image container.
-     * @param link The image URL.
+     * @param imageView   The image container.
+     * @param link        The image URL.
      * @param placeHolder The place holder image.
      */
     public static void loadMultipleDeliveryImageURL(ImageView imageView, String link,
                                                     int placeHolder) {
 
-        if(imageView!=null){
+        if (imageView != null) {
             Picasso.get().load(link)
                     .placeholder(placeHolder)
                     .into(imageView, new Callback() {
@@ -2896,6 +2889,7 @@ public class Utils {
     }
 
     //region API error response Body parsing
+
     /***
      * HTTP response body converted to specified {@code type}.
      * {@code null} if there is no response
@@ -3007,7 +3001,6 @@ public class Utils {
      * Fetch Time in MilliSeconds
      *
      * @param timeInSeconds The time in seconds.
-     *
      * @return The time in milliseconds
      */
     public static int getTimeInMilliseconds(int timeInSeconds) {
@@ -3022,7 +3015,6 @@ public class Utils {
      * Fetch drop down lat lng list.
      *
      * @param deliveryCallDriverData The {@link MultiDeliveryCallDriverData} object.
-     *
      * @return The collection of drop down lat lng.
      */
     public static List<LatLng> getDropDownLatLngList(MultiDeliveryCallDriverData
@@ -3050,6 +3042,7 @@ public class Utils {
 
     /**
      * multi delivery success or fail messages
+     *
      * @return list of messages
      */
     public static String[] getDeliveryMsgsList(Context context) {
@@ -3061,6 +3054,7 @@ public class Utils {
 
     /**
      * Clears the Local Shared Pref in case of dirt
+     *
      * @param context calling activity context
      */
     public static void clearSharedPrefIfDirty(Context context) {
@@ -3072,13 +3066,14 @@ public class Utils {
 
         }
     }
+
     /**
      * Format duration in millisecond in clock like timestemp
      *
      * @param time in millisecond
      * @return
      */
-    public static String formatTimeForTimer(long time){
+    public static String formatTimeForTimer(long time) {
         Date date = new Date(time);
         Timestamp ts = new Timestamp(date.getTime());
         Format format = new SimpleDateFormat("mm:ss");
