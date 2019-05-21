@@ -334,7 +334,6 @@
         <item>ناكام - پتہ نہیں ملا</item>
     </string-array>
 
-    <string name="how_it_work_web_url">https://www.bykea.com/partner-videos</string>
     <string name="how_it_works">How it Works</string>
     <string name="no_browser_found_error">Browser not found on Device</string>
 </resources>

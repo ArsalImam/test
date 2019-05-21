@@ -23,6 +23,7 @@ import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -30,6 +31,8 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import org.apache.commons.lang3.StringUtils;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
     private String[] titles;
@@ -118,7 +121,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     }
                     break;
                 case 4:
-                    Utils.startCustomWebViewActivity(mainActivity, context.getResources().getString(R.string.how_it_work_web_url), context.getString(R.string.how_it_works));
+                    Utils.startCustomWebViewActivity(mainActivity, HOW_IT_WORKS_WEB_URL, context.getString(R.string.how_it_works));
                     break;
                 case 5:
                     if (HomeActivity.visibleFragmentNumber != 5) {
