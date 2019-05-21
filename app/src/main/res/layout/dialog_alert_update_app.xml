@@ -82,7 +82,7 @@
                 android:textColor="@color/buttonTextColor"
                 app:fontName="MuseoSans_1.otf" />-->
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/positiveBtn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height.xlarge"

@@ -10,8 +10,10 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageView;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -160,9 +162,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         setProgressDialog();
 
         //call once on resume app to display last saved time and distance
-        setTimeDistanceOnResume();
         callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
-        ActivityStackManager.getInstance().restartLocationService(mCurrentActivity);
+        setTimeDistanceOnResume();
+        ActivityStackManager.getInstance().restartLocationServiceWithCustomIntervals(mCurrentActivity, Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocBearing = (float) AppPreferences.getBearing();
         mCurrentLocation = new Location(StringUtils.EMPTY);
         setCurrentLocation();
@@ -329,8 +331,21 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * show last saved time and distance on resume app
      */
     private void setTimeDistanceOnResume() {
-        timeTv.setText(AppPreferences.getEta());
-        distanceTv.setText(String.valueOf(AppPreferences.getEstimatedDistance()));
+    	//getEta = 0 is a default value given by sharedPref
+        if (AppPreferences.getEta().equalsIgnoreCase("0") || AppPreferences.getEstimatedDistance().equalsIgnoreCase("0")) {
+            //when the booking screen comes first after accepting ride
+            //the expected ETA and Distance would be 0, so in that case we have to show the data coming from callDriverData
+            if (callDriverData != null && callDriverData.getPickup() != null
+                    && callDriverData.getPickup().getDuration() != null && callDriverData.getPickup().getDistance() != null) {
+                AppPreferences.setEta(String.valueOf(Utils.getDuration(callDriverData.getPickup().getDuration())));
+                AppPreferences.setEstimatedDistance(String.valueOf(Utils.getDistance(callDriverData.getPickup().getDistance())));
+                timeTv.setText(AppPreferences.getEta());
+                distanceTv.setText(String.valueOf(AppPreferences.getEstimatedDistance()));
+            }
+        } else {
+            timeTv.setText(AppPreferences.getEta());
+            distanceTv.setText(String.valueOf(AppPreferences.getEstimatedDistance()));
+        }
     }
 
     /***

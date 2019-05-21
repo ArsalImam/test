@@ -41,14 +41,14 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -123,13 +123,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.sql.Timestamp;
+import java.text.Format;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -147,10 +148,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Converter;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 
 public class Utils {
@@ -1989,12 +1987,12 @@ public class Utils {
             case "parcel":
             case "send":
             case "delivery":
-                return R.drawable.bhejdo;
+                return R.drawable.bhejdo_no_caption;
             case "bring":
             case "purchase":
-                return R.drawable.lay_ao;
+                return R.drawable.lay_ao_no_caption;
             case "ride":
-                return R.drawable.ride;
+                return R.drawable.ride_right;
             case "top-up":
                 return R.drawable.top_up;
             case "utilitybill":
@@ -2004,9 +2002,9 @@ public class Utils {
             case "carryvan":
                 return R.drawable.carry_van;
             case "courier":
-                return R.drawable.courier;
+                return R.drawable.courier_no_caption;
             default:
-                return R.drawable.ride;
+                return R.drawable.ride_right;
         }
     }
 
@@ -2688,7 +2686,7 @@ public class Utils {
      * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
      */
     public static boolean disableBatteryOptimization(Context context,
-                                                     android.support.v4.app.Fragment fragment) {
+                                                     Fragment fragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = context.getPackageName();
@@ -3069,4 +3067,17 @@ public class Utils {
 
         }
     }
+    /**
+     * Format duration in millisecond in clock like timestemp
+     *
+     * @param time in millisecond
+     * @return
+     */
+    public static String formatTimeForTimer(long time){
+        Date date = new Date(time);
+        Timestamp ts = new Timestamp(date.getTime());
+        Format format = new SimpleDateFormat("mm:ss");
+        return format.format(ts);
+    }
+
 }

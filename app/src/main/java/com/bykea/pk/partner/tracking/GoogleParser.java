@@ -55,14 +55,14 @@ public class GoogleParser extends XMLParser implements Parser {
                 throw new RouteException(json);
             }
 
-            JSONArray jsonRoutes = json.getJSONArray("routes");
-
-            for (int i = 0; i < jsonRoutes.length(); i++) {
+            JSONObject jsonRoute = json.getJSONArray("routes").getJSONObject(0);
+            JSONArray legs = jsonRoute.getJSONArray("legs");
+            int numOfLegs = legs.length();
+            for (int i = 0; i < numOfLegs; i++) {
                 Route route = new Route();
                 //Create an empty segment
                 Segment segment = new Segment();
 
-                JSONObject jsonRoute = jsonRoutes.getJSONObject(i);
                 //Get the bounds - northeast and southwest
                 final JSONObject jsonBounds = jsonRoute.getJSONObject("bounds");
                 final JSONObject jsonNortheast = jsonBounds.getJSONObject("northeast");
@@ -71,7 +71,7 @@ public class GoogleParser extends XMLParser implements Parser {
                 route.setLatLgnBounds(new LatLng(jsonNortheast.getDouble("lat"), jsonNortheast.getDouble("lng")), new LatLng(jsonSouthwest.getDouble("lat"), jsonSouthwest.getDouble("lng")));
 
                 //Get the leg, only one leg as we don't support waypoints
-                final JSONObject leg = jsonRoute.getJSONArray("legs").getJSONObject(0);
+                final JSONObject leg = jsonRoute.getJSONArray("legs").getJSONObject(i);
                 //Get the steps for this leg
                 final JSONArray steps = leg.getJSONArray("steps");
                 //Number of steps for use in for loop
