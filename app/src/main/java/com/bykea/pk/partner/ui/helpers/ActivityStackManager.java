@@ -281,6 +281,19 @@ public class ActivityStackManager {
         startService(context, intent);
     }
 
+    /**
+     * This method restarts location service with custom interval when partner is on trip
+     * @param context Calling Context
+     * @param updateInterval interval in millis
+     */
+    public void restartLocationServiceWithCustomIntervals(final Context context, long updateInterval) {
+        Intent intent = new Intent(context, LocationService.class);
+        intent.setAction(Utils.isServiceRunning(context, LocationService.class) ?
+                Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
+        intent.putExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL, updateInterval);
+        startService(context, intent);
+    }
+
     public void restartLocationService(Context mContext, String STATUS) {
         stopLocationService(mContext);
         if (!Utils.isServiceRunning(mContext, LocationService.class)) {

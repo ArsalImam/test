@@ -407,12 +407,6 @@ public class UserRepository {
             return;
         }
 
-        if (!callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            mRestRequestHandler.sendDriverLocationUpdate(mContext,
-                    mDataCallback, locationRequest);
-            return;
-        }
-
         final ArrayList<MultipleDeliveryRemainingETA> trackingDataList = new ArrayList<>();
         final List<MultipleDeliveryBookingResponse> bookingResponseList =
                 callDriverData.getBookings();
