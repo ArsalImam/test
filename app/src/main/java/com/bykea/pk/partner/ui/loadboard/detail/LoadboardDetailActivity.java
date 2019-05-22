@@ -1,10 +1,8 @@
 package com.bykea.pk.partner.ui.loadboard.detail;
 
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.view.View;
-import android.widget.Toast;
-
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;

@@ -43,7 +43,7 @@
             android:textSize="@dimen/_14sdp"
             app:fontName="jameel_noori_nastaleeq.ttf" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivServiceIcon"
             android:layout_width="0dp"
             android:layout_height="match_parent"
