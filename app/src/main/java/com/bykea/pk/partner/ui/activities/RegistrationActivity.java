@@ -1,7 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.ui.fragments.NumberRegistration;

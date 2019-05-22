@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:clickable="true">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -105,7 +105,7 @@
 
                     </RelativeLayout>
 
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/bd_directionIV"
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_40sdp"
@@ -137,7 +137,7 @@
                     android:orientation="horizontal"
                     android:layout_marginTop="@dimen/_8sdp">
 
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:padding="@dimen/_3sdp"
@@ -177,7 +177,7 @@
                             app:fontName="open_sans_regular.ttf"/>
 
                     </LinearLayout>
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/bd_pickUpPhoneIV"
                         android:layout_width="@dimen/_35sdp"
                         android:layout_height="@dimen/_35sdp"
@@ -188,7 +188,7 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_30sdp"
                 app:srcCompat="@mipmap/icon_downarrow_gray"
@@ -266,7 +266,7 @@
                     android:orientation="horizontal"
                     android:layout_marginTop="@dimen/_8sdp">
 
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:padding="@dimen/_3sdp"
@@ -291,7 +291,7 @@
                             android:textSize="@dimen/_11sdp"
                             app:fontName="open_sans_regular.ttf"/>
                     </LinearLayout>
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/bd_dropOffPhoneIV"
                         android:layout_width="@dimen/_35sdp"
                         android:layout_height="@dimen/_35sdp"
@@ -302,7 +302,7 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/bd_OrdersRV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -311,9 +311,9 @@
 
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/acceptBookingBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

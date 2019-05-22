@@ -2,7 +2,7 @@ package com.bykea.pk.partner.ui.helpers.webview;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.thefinestartist.finestwebview.FinestWebView;
 import com.thefinestartist.finestwebview.listeners.BroadCastManager;

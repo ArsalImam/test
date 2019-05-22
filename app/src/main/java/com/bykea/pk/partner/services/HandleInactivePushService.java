@@ -6,7 +6,7 @@ import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
