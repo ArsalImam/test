@@ -1,11 +1,17 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
@@ -15,11 +21,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -108,6 +117,17 @@ public class HomeActivity extends BaseActivity {
     @BindView(R.id.connectionStatusIv)
     AppCompatImageView connectionStatusIv;
 
+    @BindView(R.id.appBottomBarLayoutImgView)
+    AppCompatImageView appBottomBarLayoutImgView;
+
+    @BindView(R.id.relativeLayoutBottomSheet)
+    RelativeLayout relativeLayoutBottomSheet;
+
+    LinearLayout.LayoutParams layoutParamRLZero = new LinearLayout
+            .LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+    LinearLayout.MarginLayoutParams layoutParamRL = new LinearLayout
+            .LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+
     /**
      * loadboard bottom sheet in main screen when driver is active and cash user
      */
@@ -119,7 +139,11 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        layoutParamRLZero.setMargins(0, 0, 0, 0);
+        layoutParamRL.setMargins(0, -30, 0, 0);
+
         mCurrentActivity = this;
         ButterKnife.bind(this);
         mUserRepository = new UserRepository();
@@ -191,6 +215,7 @@ public class HomeActivity extends BaseActivity {
         super.onPause();
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -337,9 +362,9 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onEvent(String action) {
         super.onEvent(action);
-        if(getSupportFragmentManager()!=null){
+        if (getSupportFragmentManager() != null) {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
-            if(currentFragment!=null){
+            if (currentFragment != null) {
                 if (currentFragment instanceof HomeFragment) {
                     ((HomeFragment) currentFragment).onEvent(action);
                 }
@@ -383,7 +408,7 @@ public class HomeActivity extends BaseActivity {
     /**
      * Check the availability of cellular data access in background.
      */
-    private void checkIfBackgroundDataAccessible(){
+    private void checkIfBackgroundDataAccessible() {
         if (!Connectivity.isBackgroundDataAccessAvailable(mCurrentActivity)) {
             DataSaverDialogFragment dialogFragment = new DataSaverDialogFragment();
             dialogFragment.setCancelable(false);
@@ -468,6 +493,7 @@ public class HomeActivity extends BaseActivity {
      */
     public void toggleBottomSheetOnNavigationMenuSelection(int visibility) {
         if (bottomSheet != null && mlist != null)
+
             bottomSheet.setVisibility(visibility);
     }
 
@@ -527,6 +553,7 @@ public class HomeActivity extends BaseActivity {
             bottomSheetPickDropLayout.setAlpha(alpha);
             bottomSheetToolbarDivider.setAlpha(alpha);
             bottomSheetToolbarLayout.setAlpha(alpha);
+            appBottomBarLayoutImgView.setVisibility(View.GONE);
         } else {
             bottomSheetToolbarLayout.setVisibility(View.GONE);
             bottomSheetPickDropLayout.setVisibility(View.GONE);
@@ -536,6 +563,12 @@ public class HomeActivity extends BaseActivity {
             bottomSheetPickDropLayout.setAlpha(alpha);
             bottomSheetToolbarDivider.setAlpha(alpha);
             bottomSheetToolbarLayout.setAlpha(alpha);
+            if (mlist != null && mlist.size() > 0) {
+                appBottomBarLayoutImgView.setVisibility(View.VISIBLE);
+                relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+            } else {
+                relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+            }
         }
     }
 
@@ -648,6 +681,7 @@ public class HomeActivity extends BaseActivity {
         bottomSheetLoader.setVisibility(View.VISIBLE);
         bottomSheetNoJobsAvailableTV.setVisibility(View.GONE);
         activeHomeLoadBoardList.setVisibility(View.GONE);
+
     }
 
     /**
@@ -657,6 +691,9 @@ public class HomeActivity extends BaseActivity {
         bottomSheetLoader.setVisibility(View.GONE);
         bottomSheetNoJobsAvailableTV.setVisibility(View.VISIBLE);
         activeHomeLoadBoardList.setVisibility(View.GONE);
+
+        relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+        appBottomBarLayoutImgView.setVisibility(View.GONE);
     }
 
     /**
@@ -666,6 +703,11 @@ public class HomeActivity extends BaseActivity {
         bottomSheetLoader.setVisibility(View.GONE);
         bottomSheetNoJobsAvailableTV.setVisibility(View.GONE);
         activeHomeLoadBoardList.setVisibility(View.VISIBLE);
+        if (bottomSheetLoader.getVisibility() == View.VISIBLE) {
+            appBottomBarLayoutImgView.setVisibility(View.VISIBLE);
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+        } else {
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+        }
     }
-
 }
