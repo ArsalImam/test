@@ -578,8 +578,10 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onPause() {
-        if (mediaPlayer != null) mediaPlayer.pause();
-        startPlayProgressUpdater();
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+            startPlayProgressUpdater();
+        }
         super.onPause();
     }
 }
