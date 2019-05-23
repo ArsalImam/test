@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-
     <item android:id="@android:id/secondaryProgress">
         <shape
             android:innerRadiusRatio="2.5"
             android:shape="ring"
             android:thickness="3dp"
             android:useLevel="false">
-            <solid android:color="#999999"/>
-            <!--<gradient
-                android:centerColor="#999999"
-                android:endColor="#999999"
-                android:startColor="#999999"
-                android:type="sweep" />-->
+            <solid android:color="#999999" />
         </shape>
     </item>
 
@@ -30,20 +22,12 @@
                 android:shape="ring"
                 android:thickness="3dp"
                 android:useLevel="true">
-
-
                 <rotate
                     android:fromDegrees="0"
                     android:pivotX="50%"
                     android:pivotY="50%"
                     android:toDegrees="360" />
-
-                <solid android:color="@color/colorAccent"/>
-                    <!--android:centerColor="@color/colorAccent"-->
-                    <!--android:endColor="@color/colorAccent"-->
-                    <!--android:startColor="@color/colorAccent"-->
-                    <!--android:type="sweep" />-->
-
+                <solid android:color="@color/colorAccent" />
             </shape>
         </rotate>
     </item>

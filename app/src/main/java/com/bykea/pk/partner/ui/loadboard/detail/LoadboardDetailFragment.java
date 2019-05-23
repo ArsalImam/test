@@ -411,7 +411,9 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
                 voiceClipPlayDownload();
                 break;
             case R.id.progressBarForAudioPlay:
-                imgViewAudioPlay.setVisibility(View.VISIBLE);
+                imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
+                imgViewAudioPlay.setEnabled(true);
+                //imgViewAudioPlay.setVisibility(View.VISIBLE);
                 progressBarForAudioPlay.setVisibility(View.GONE);
                 if (mediaPlayer != null) mediaPlayer.pause();
                 break;
@@ -489,7 +491,9 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
                 mediaPlayer.start();
                 startPlayProgressUpdater();
             }
-            imgViewAudioPlay.setVisibility(View.GONE);
+            imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_stop));
+            imgViewAudioPlay.setEnabled(false);
+            //imgViewAudioPlay.setVisibility(View.GONE);
             progressBarForAudioPlay.setVisibility(View.VISIBLE);
         } else {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -515,7 +519,11 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
             handler.postDelayed(notification, 1000);
         } else {
             mediaPlayer.pause();
-            imgViewAudioPlay.setVisibility(View.VISIBLE);
+
+            imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
+            imgViewAudioPlay.setEnabled(true);
+            //imgViewAudioPlay.setVisibility(View.VISIBLE);
+
             progressBarForAudioPlay.setVisibility(View.GONE);
             progressBarForAudioPlay.setProgress(0);
         }
