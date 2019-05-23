@@ -16,7 +16,20 @@
 
 package com.bykea.pk.partner.dal
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+
 /**
- * Constants used throughout the app.
+ * Factory for creating a [BookingDetailViewModel] with a constructor that takes a [BookingRepository]
+ * and an ID for the current [Booking].
  */
-const val DATABASE_NAME = "bykea-db"
+class BookingDetailViewModelFactory(
+        private val bookingRepository: BookingRepository,
+        private val bookingId: Long
+) : ViewModelProvider.NewInstanceFactory() {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return BookingDetailViewModel(bookingRepository, bookingId) as T
+    }
+}

@@ -8,14 +8,16 @@ import androidx.room.Query
 
 /**
  * The Data Access Object for the Plant class.
+ *
+ * Author: Yousuf Sohail
  */
 @Dao
 interface BookingDao {
-    @Query("SELECT * FROM bookings ORDER BY name")
+    @Query("SELECT * FROM bookings")
     fun getBookings(): LiveData<List<Booking>>
 
     @Query("SELECT * FROM bookings WHERE id = :bookingId")
-    fun getBooking(bookingId: String): LiveData<Booking>
+    fun getBooking(bookingId: Long): LiveData<Booking>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(bookings: List<Booking>)
