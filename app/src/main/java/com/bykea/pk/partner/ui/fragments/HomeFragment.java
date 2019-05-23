@@ -14,10 +14,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -595,6 +597,7 @@ public class HomeFragment extends Fragment {
             //inactive state
             getDriverPerformanceData();
 
+            mCurrentActivity.isVisibleFirstTime = true;
             myRangeBarLayout.setVisibility(View.VISIBLE);
             myRangeBarTopLine.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);

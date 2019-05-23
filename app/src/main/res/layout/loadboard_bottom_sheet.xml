@@ -25,7 +25,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_circle_white_arrow"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_anchor="@+id/view1"
             app:layout_anchorGravity="top|center" />
 

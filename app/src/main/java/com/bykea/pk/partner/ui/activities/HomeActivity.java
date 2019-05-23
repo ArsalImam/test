@@ -73,7 +73,7 @@ public class HomeActivity extends BaseActivity {
     private EventBus mBus = EventBus.getDefault();
     private PilotData pilotData;
     private UserRepository mUserRepository;
-    private boolean isVisibleFirstTime = true;
+    public boolean isVisibleFirstTime = true;
 
     /**
      * loadboard jobs adapter and list to show on main screen
@@ -545,6 +545,7 @@ public class HomeActivity extends BaseActivity {
      * @param alpha
      */
     private void toggleBottomSheetToolbar(float alpha) {
+        isVisibleFirstTime=false;
         if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
             bottomSheetToolbarLayout.setVisibility(View.VISIBLE);
             bottomSheetPickDropLayout.setVisibility(View.VISIBLE);
