@@ -1,8 +1,11 @@
 package com.bykea.pk.partner.ui.loadboard.detail;
 
 import android.os.Bundle;
+
 import androidx.appcompat.widget.AppCompatImageView;
+
 import android.view.View;
+
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -66,8 +69,8 @@ public class LoadboardDetailActivity extends BaseActivity implements View.OnClic
             @Override
             public void onLoadboardBookingDetailResponse(LoadboardBookingDetailResponse response) {
                 Dialogs.INSTANCE.dismissDialog();
-                tVEstimatedFare.setText(response.getData().getAmount() + "");
-                tVCODAmount.setText(response.getData().getCartAmount() + "");
+                tVEstimatedFare.setText("Rs." + response.getData().getAmount() + "");
+                tVCODAmount.setText("Rs." + response.getData().getCartAmount() + "");
 
                 //bookingNoTV.setText(response.getData().getOrderNo());
 //                bookingTypeIV.setImageResource();
