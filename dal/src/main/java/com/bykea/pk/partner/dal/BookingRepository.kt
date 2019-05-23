@@ -3,7 +3,7 @@ package com.bykea.pk.partner.dal
 /**
  * Repository module for handling data operations.
  *
- * Author: Yousuf Sohail
+ * @Author: Yousuf Sohail
  */
 class BookingRepository private constructor(private val bookingDao: BookingDao) {
 

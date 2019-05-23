@@ -5,6 +5,11 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * DAO class for booking
+ *
+ * @Author: Yousuf Sohail
+ */
 @Entity(tableName = "bookings")
 data class Booking(
         @PrimaryKey @ColumnInfo(name = "id") val id: Long,

@@ -9,7 +9,7 @@ import com.bykea.pk.partner.dal.util.DATABASE_NAME
 /**
  * The Room database for this app
  *
- * Author: Yousuf Sohail
+ * @Author: Yousuf Sohail
  */
 @Database(entities = [Booking::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {

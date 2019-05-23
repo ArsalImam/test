@@ -9,7 +9,7 @@ import androidx.room.Query
 /**
  * The Data Access Object for the Plant class.
  *
- * Author: Yousuf Sohail
+ * @Author: Yousuf Sohail
  */
 @Dao
 interface BookingDao {
