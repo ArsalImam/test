@@ -73,6 +73,7 @@ public class HomeActivity extends BaseActivity {
     private EventBus mBus = EventBus.getDefault();
     private PilotData pilotData;
     private UserRepository mUserRepository;
+    private boolean isVisibleFirstTime = true;
 
     /**
      * loadboard jobs adapter and list to show on main screen
@@ -142,7 +143,7 @@ public class HomeActivity extends BaseActivity {
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         layoutParamRLZero.setMargins(0, 0, 0, 0);
-        layoutParamRL.setMargins(0, -30, 0, 0);
+        layoutParamRL.setMargins(0, -40, 0, 0);
 
         mCurrentActivity = this;
         ButterKnife.bind(this);
@@ -554,6 +555,7 @@ public class HomeActivity extends BaseActivity {
             bottomSheetToolbarDivider.setAlpha(alpha);
             bottomSheetToolbarLayout.setAlpha(alpha);
             appBottomBarLayoutImgView.setVisibility(View.GONE);
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
         } else {
             bottomSheetToolbarLayout.setVisibility(View.GONE);
             bottomSheetPickDropLayout.setVisibility(View.GONE);
@@ -703,7 +705,8 @@ public class HomeActivity extends BaseActivity {
         bottomSheetLoader.setVisibility(View.GONE);
         bottomSheetNoJobsAvailableTV.setVisibility(View.GONE);
         activeHomeLoadBoardList.setVisibility(View.VISIBLE);
-        if (bottomSheetLoader.getVisibility() == View.VISIBLE) {
+        if (isVisibleFirstTime || bottomSheetLoader.getVisibility() == View.VISIBLE) {
+            isVisibleFirstTime = false;
             appBottomBarLayoutImgView.setVisibility(View.VISIBLE);
             relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
         } else {
