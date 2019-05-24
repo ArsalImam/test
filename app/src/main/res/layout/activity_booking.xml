@@ -48,7 +48,7 @@
 
                         <com.bykea.pk.partner.widgets.AutoFitFontTextView
                             android:id="@+id/tvPWalletAmount"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_alignParentLeft="true"
@@ -153,7 +153,7 @@
 
                     <com.bykea.pk.partner.widgets.AutoFitFontTextView
                         android:id="@+id/tvFareAmount"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"

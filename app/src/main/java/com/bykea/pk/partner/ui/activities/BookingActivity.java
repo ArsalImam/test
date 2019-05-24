@@ -963,18 +963,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             ivTopUp.setVisibility(View.INVISIBLE);
         }
 
-        int cashKiWasoliValue = callData.getCashKiWasooli();
         if (Utils.isDeliveryService(callData.getCallType())) {
+            int cashKiWasooliValue = callData.getCashKiWasooli();
             if (callData.isCod() && StringUtils.isNotBlank(callData.getCodAmount())) {
-                cashKiWasoliValue = cashKiWasoliValue + Integer.valueOf(callData.getCodAmount().trim());
+                cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmount().trim());
             }
-        } else{
+            tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
+        } else {
             if (Utils.isPurchaseService(callData.getCallType())) {
                 tvCashWasooliLabel.setText(R.string.kharidari_label);
+                if (StringUtils.isNotBlank(callData.getCodAmount())) {
+                    tvCodAmount.setText(String.format(getString(R.string.amount_rs), callData.getCodAmount()));
+                } else {
+                    tvCodAmount.setText(R.string.dash);
+                }
             }
         }
-        tvCodAmount.setText(String.format(getString(R.string.amount_rs),
-                String.valueOf(cashKiWasoliValue)));
 
         /*if (StringUtils.isNotBlank(callData.getCodAmount())) {
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), callData.getCodAmount()));
@@ -1093,9 +1097,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (pickUpMarker != null) {
                 pickUpMarker.remove();
                 pickUpMarker = null;
-                mapPolylines.remove();
-                if (mapPolylinesSecondary != null)
-                    mapPolylinesSecondary.remove();
+                if (mapPolylines != null) mapPolylines.remove();
+                if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
             }
         }
 
@@ -2105,6 +2108,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
                                 callData = normalCallData;
                                 updateDropOff();
+                                showWalletAmount();
                             }
 
                         } catch (NullPointerException e) {
