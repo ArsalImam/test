@@ -1,10 +1,10 @@
-package com.bykea.pk.partner.dal.util
+package com.bykea.pk.partner.utils
 
 import android.content.Context
 import com.bykea.pk.partner.dal.local.AppDatabase
-import com.bykea.pk.partner.dal.local.BookingDetailViewModelFactory
-import com.bykea.pk.partner.dal.local.BookingListViewModelFactory
-import com.bykea.pk.partner.dal.local.BookingRepository
+import com.bykea.pk.partner.ui.loadboard.list.BookingDetailViewModelFactory
+import com.bykea.pk.partner.ui.loadboard.list.BookingListViewModelFactory
+import com.bykea.pk.partner.ui.loadboard.list.BookingRepository
 
 object InjectorUtils {
 

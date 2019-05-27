@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal.local
+package com.bykea.pk.partner.ui.loadboard.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -1,4 +1,6 @@
-package com.bykea.pk.partner.dal.local
+package com.bykea.pk.partner.ui.loadboard.list
+
+import com.bykea.pk.partner.dal.local.BookingDao
 
 /**
  * Repository module for handling data operations.
