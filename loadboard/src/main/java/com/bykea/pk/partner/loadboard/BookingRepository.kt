@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.loadboard.list
+package com.bykea.pk.partner.loadboard
 
 import com.bykea.pk.partner.dal.source.local.BookingDao
 

@@ -194,13 +194,11 @@ dependencies {
     implementation 'me.relex:circleindicator:1.2.1@aar'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'org.greenrobot:eventbus:3.0.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
     implementation 'top.oply.opuslib:opuslib:1.0.2'
     implementation deps.markerClustering
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':dal')
+    implementation project(path: ':loadboard')
 
     // Testing dependencies
     testImplementation "junit:junit:$rootProject.junitVersion"
