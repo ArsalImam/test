@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal
+package com.bykea.pk.partner.dal.local
 
 import android.content.Context
 import androidx.room.Database
@@ -23,7 +23,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
-                instance ?: buildDatabase(context).also { instance = it }
+                instance
+                        ?: buildDatabase(context).also { instance = it }
             }
         }
 

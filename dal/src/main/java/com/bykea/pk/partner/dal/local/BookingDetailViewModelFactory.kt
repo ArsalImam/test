@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal
+package com.bykea.pk.partner.dal.local
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

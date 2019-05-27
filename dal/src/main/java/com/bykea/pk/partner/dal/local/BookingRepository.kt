@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal
+package com.bykea.pk.partner.dal.local
 
 /**
  * Repository module for handling data operations.
@@ -19,7 +19,8 @@ class BookingRepository private constructor(private val bookingDao: BookingDao) 
 
         fun getInstance(bookingDao: BookingDao) =
                 instance ?: synchronized(this) {
-                    instance ?: BookingRepository(bookingDao).also { instance = it }
+                    instance
+                            ?: BookingRepository(bookingDao).also { instance = it }
                 }
     }
 }

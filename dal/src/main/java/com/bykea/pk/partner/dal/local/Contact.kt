@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal
+package com.bykea.pk.partner.dal.local
 
 data class Contact(
         val address: String,
