@@ -963,21 +963,19 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             ivTopUp.setVisibility(View.INVISIBLE);
         }
 
-        if (Utils.isDeliveryService(callData.getCallType())) {
+        if (Utils.isPurchaseService(callData.getCallType())) {
+            tvCashWasooliLabel.setText(R.string.kharidari_label);
+            if (StringUtils.isNotBlank(callData.getCodAmount())) {
+                tvCodAmount.setText(String.format(getString(R.string.amount_rs), callData.getCodAmount()));
+            } else {
+                tvCodAmount.setText(R.string.dash);
+            }
+        } else {
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (callData.isCod() && StringUtils.isNotBlank(callData.getCodAmount())) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmount().trim());
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
-        } else {
-            if (Utils.isPurchaseService(callData.getCallType())) {
-                tvCashWasooliLabel.setText(R.string.kharidari_label);
-                if (StringUtils.isNotBlank(callData.getCodAmount())) {
-                    tvCodAmount.setText(String.format(getString(R.string.amount_rs), callData.getCodAmount()));
-                } else {
-                    tvCodAmount.setText(R.string.dash);
-                }
-            }
         }
 
         /*if (StringUtils.isNotBlank(callData.getCodAmount())) {
