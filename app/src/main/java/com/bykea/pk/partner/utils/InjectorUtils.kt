@@ -1,7 +1,7 @@
 package com.bykea.pk.partner.utils
 
 import android.content.Context
-import com.bykea.pk.partner.dal.local.AppDatabase
+import com.bykea.pk.partner.dal.source.local.AppDatabase
 import com.bykea.pk.partner.ui.loadboard.list.BookingDetailViewModelFactory
 import com.bykea.pk.partner.ui.loadboard.list.BookingListViewModelFactory
 import com.bykea.pk.partner.ui.loadboard.list.BookingRepository

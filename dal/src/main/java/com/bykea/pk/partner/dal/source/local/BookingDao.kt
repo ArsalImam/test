@@ -1,10 +1,11 @@
-package com.bykea.pk.partner.dal.local
+package com.bykea.pk.partner.dal.source.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.bykea.pk.partner.dal.Booking
 
 /**
  * The Data Access Object for the Plant class.

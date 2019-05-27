@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal.local
+package com.bykea.pk.partner.dal
 
 import androidx.room.Embedded
 

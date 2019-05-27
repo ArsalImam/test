@@ -1,9 +1,10 @@
-package com.bykea.pk.partner.dal.local
+package com.bykea.pk.partner.dal.source.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.dal.util.DATABASE_NAME
 
 /**
