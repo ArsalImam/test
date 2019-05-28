@@ -1136,7 +1136,8 @@ public class HomeFragment extends Fragment {
                 null != mCurrentActivity.getIntent() &&
                 null != mCurrentActivity.getIntent().getExtras() &&
                 mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP, false) &&
-                !Dialogs.INSTANCE.isShowing()) {
+                !Dialogs.INSTANCE.isShowing() &&
+                !mCurrentActivity.isFinishing()) {
             if (!mCurrentActivity.isDialogShown() && getView() != null) {
                 mCurrentActivity.setDialogShown(true);
 
