@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.bykea.pk.partner.ui.helpers.adapters.HistoryMissedCallsAdapter;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
@@ -169,5 +171,11 @@ public class HistoryMissedCallsActivity extends BaseActivity {
         noDataIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.no_data));
         noDataIv.setVisibility(View.VISIBLE);
     }
+
+    /**
+     * VISIBLE/GONE connections status on main screen's toolbar
+     *
+     * @param visibility VISIBLE/GONE
+     */
 }
 
