@@ -13,14 +13,14 @@
         android:background="@color/windowBackground"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/backBtn"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="@dimen/_50sdp"
             android:padding="@dimen/_9sdp"
             app:srcCompat="@mipmap/icon_backarrow_green" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/bookingTypeIV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

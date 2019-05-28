@@ -2,7 +2,7 @@ package com.bykea.pk.partner.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatEditText;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 

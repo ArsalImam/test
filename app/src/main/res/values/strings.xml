@@ -340,4 +340,7 @@
     <string name="aap_abhi_door_hain">آپ ابھی بھی کچھ دورہیں</string>
 
     <!--Testing verified commit-->
+
+    <string name="how_it_works">How it Works</string>
+    <string name="no_browser_found_error">Browser not found on Device</string>
 </resources>

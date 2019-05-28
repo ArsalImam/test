@@ -2,10 +2,8 @@ package com.bykea.pk.partner.ui.helpers.webview;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatDelegate;
-import android.view.View;
-import android.widget.LinearLayout;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bykea.pk.partner.R;
 import com.thefinestartist.finestwebview.FinestWebViewActivity;
