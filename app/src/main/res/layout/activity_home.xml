@@ -29,6 +29,7 @@
     </LinearLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:visibility="gone"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/coordinatorlayout"
         android:layout_width="match_parent"

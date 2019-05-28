@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import com.bykea.pk.partner.loadboard.BookingListDialogFragment;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -51,7 +53,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements BookingListDialogFragment.Listener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -271,7 +273,8 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        setupBottomSheet();
+        BookingListDialogFragment.Companion.newInstance().show(getSupportFragmentManager(), "dialog");
+//        setupBottomSheet();
     }
 
     public void hideToolbar() {
@@ -668,4 +671,8 @@ public class HomeActivity extends BaseActivity {
         activeHomeLoadBoardList.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onBookingClicked(int position) {
+        Toast.makeText(mCurrentActivity, "Loadboard item clicked", Toast.LENGTH_SHORT).show();
+    }
 }
