@@ -458,6 +458,17 @@ public class Constants {
 
     }
 
+    /**
+     * Inner class for Screen redirection from navigation drawer
+     */
+    public static class ScreenRedirections{
+        public static final int PROFILE_SCREEN = 0;
+        public static final int HOME_SCREEN = 1;
+        public static final int TRIP_HISTORY_SCREEN = 2;
+        public static final int WALLET_SCREEN = 3;
+        public static final int HOW_IT_WORKS_SCREEN = 4;
+        public static final int CONTACT_US_SCREEN = 5;
+    }
 
     public static final int MARKER_INCREMENT_FACTOR_DEFAULT = 20;
     public static final int MARKER_INCREMENT_FACTOR_TEN_KM = 10000;

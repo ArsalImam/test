@@ -1253,7 +1253,8 @@ public class HomeFragment extends Fragment {
     }
 
 
-    @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn, R.id.mapPinIv})
+    @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn,
+            R.id.mapPinIv, R.id.walletRL})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -1303,6 +1304,11 @@ public class HomeFragment extends Fragment {
                 setHomeLocation();
                 break;
             }
+
+            //open wallet screen
+            case R.id.walletRL:
+                showWalletFragment();
+                break;
         }
     }
 
@@ -1477,7 +1483,18 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Check the Type of request is it batch request or single
+     * Open wallet fragment from In-Active home wallet icon's tap
+     */
+    private void showWalletFragment() {
+        mCurrentActivity.getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.containerView, new WalletFragment())
+                .commit();
+        HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
+    }
+    
+     /** Check the Type of request is it batch request or single
      *
      * <p>
      * <p>
