@@ -17,10 +17,10 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.service.notification.StatusBarNotification;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -117,6 +117,7 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
         Utils.redLogLocation(TAG, "onCreate");
+        startForeground(NOTIF_ID, createForegroundNotification());
         configureInitialServiceProcess();
     }
 
@@ -327,15 +328,15 @@ public class LocationService extends Service {
             if (AppPreferences.getDeliveryType().
                     equalsIgnoreCase(Constants.CallType.SINGLE)) {
                 NormalCallData callData = AppPreferences.getCallData();
-                tripNo = callData.getTripNo();
-                status = callData.getStatus();
+                if(callData != null){
+                    tripNo = (callData.getTripNo() != null) ? callData.getTripNo() : StringUtils.EMPTY;
+                    status = (callData.getStatus() != null) ? callData.getStatus() : StringUtils.EMPTY;
+                }
             } else {
-                MultiDeliveryCallDriverData callDriverData = AppPreferences.
-                        getMultiDeliveryCallDriverData();
-                status = callDriverData.getBatchStatus();
-                List<MultipleDeliveryBookingResponse> bookingResponseList =
-                        callDriverData.getBookings();
-                int n = bookingResponseList.size();
+                MultiDeliveryCallDriverData callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
+                status = (callDriverData != null) ? callDriverData.getBatchStatus() : StringUtils.EMPTY;
+                List<MultipleDeliveryBookingResponse> bookingResponseList = callDriverData.getBookings();
+                int n = (bookingResponseList != null) ? bookingResponseList.size() : 0;
 
                 int i = 0;
                 while (i < n) {

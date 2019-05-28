@@ -14,10 +14,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1136,7 +1136,8 @@ public class HomeFragment extends Fragment {
                 null != mCurrentActivity.getIntent() &&
                 null != mCurrentActivity.getIntent().getExtras() &&
                 mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP, false) &&
-                !Dialogs.INSTANCE.isShowing()) {
+                !Dialogs.INSTANCE.isShowing() &&
+                !mCurrentActivity.isFinishing()) {
             if (!mCurrentActivity.isDialogShown() && getView() != null) {
                 mCurrentActivity.setDialogShown(true);
 

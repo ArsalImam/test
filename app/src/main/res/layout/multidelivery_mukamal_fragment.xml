@@ -20,7 +20,7 @@
         android:textColor="@color/color_616161"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="@dimen/_8sdp"
         android:id="@+id/ride_recycler_view"
         android:layout_width="match_parent"
