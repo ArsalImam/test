@@ -2,7 +2,7 @@ package com.bykea.pk.partner.ui.helpers.adapters;
 
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +10,6 @@ import android.widget.BaseAdapter;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.widgets.FontTextView;
-
-import java.util.ArrayList;
 
 public class DeliveryMsgsSpinnerAdapter extends BaseAdapter {
     private String[] mDataList;

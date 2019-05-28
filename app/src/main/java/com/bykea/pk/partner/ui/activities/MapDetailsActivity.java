@@ -1,19 +1,15 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.MultiDeliveryDirectionDetails;
 import com.bykea.pk.partner.ui.fragments.MultiDeliveryCallFragment;
 import com.bykea.pk.partner.ui.fragments.MultiDeliveryDirectionFragment;
 import com.bykea.pk.partner.ui.fragments.MultiDeliveryRideCompleteFragment;
-import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCompleteRideAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.FragmentUtils;
 import com.bykea.pk.partner.utils.Keys;

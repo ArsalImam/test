@@ -1,17 +1,14 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.ShahkarData;
-import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.ShahkarResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.ui.fragments.ZoneFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.ShahkarAdapter;
 import com.bykea.pk.partner.utils.Dialogs;

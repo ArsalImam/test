@@ -3,11 +3,10 @@ package com.bykea.pk.partner.ui.activities;
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -21,10 +20,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.CallDriverAcknowledgeData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
-import com.bykea.pk.partner.models.data.MultiDeliveryRideCompleteTripInfo;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryInvoiceData;
 import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
@@ -46,11 +42,8 @@ import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

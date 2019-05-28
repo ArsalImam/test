@@ -1,11 +1,10 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -171,11 +170,5 @@ public class HistoryMissedCallsActivity extends BaseActivity {
         noDataIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.no_data));
         noDataIv.setVisibility(View.VISIBLE);
     }
-
-    /**
-     * VISIBLE/GONE connections status on main screen's toolbar
-     *
-     * @param visibility VISIBLE/GONE
-     */
 }
 

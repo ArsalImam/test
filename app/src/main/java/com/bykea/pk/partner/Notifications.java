@@ -2,7 +2,6 @@ package com.bykea.pk.partner;
 
 
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -16,9 +15,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.text.Html;
-import android.util.Patterns;
+import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
