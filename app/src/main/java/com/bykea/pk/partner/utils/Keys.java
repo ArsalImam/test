@@ -20,6 +20,7 @@ public class Keys {
     public static final String APP_VERSION = "APP_VERSION";
     public static final String APP_VERSION_CODE = "APP_VERSION_CODE";
     public static final String IS_ALREADY_CLEAR = "IS_ALREADY_CLEAR";
+    public static final String EST_FARE = "EST_FARE";
 
 
     public static final String FULL_NAME = "full_name";
@@ -65,6 +66,7 @@ public class Keys {
 
     //Call Data
     public static final String TRIP_START_TIME = "trip_start_time";
+    public static final String TRIP_ACCEPT_TIME = "trip_accept_time";
     public static final String TRIP_TOTAL_DISTANCE = "trip_total_distance";
     public static final String INCOMING_CALL = "INCOMING_CALL";
     public static final String CALL_TYPE = "call_type";

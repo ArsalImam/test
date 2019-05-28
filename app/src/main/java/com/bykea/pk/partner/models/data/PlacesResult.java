@@ -51,6 +51,9 @@ public class PlacesResult implements Parcelable {
         }
     };
 
+    public LatLng getLatLng() {
+        return new LatLng(latitude, longitude);
+    }
 
     @Override
     public int describeContents() {

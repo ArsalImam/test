@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 
 import com.thefinestartist.finestwebview.FinestWebView;
 import com.thefinestartist.finestwebview.listeners.BroadCastManager;
-import com.thefinestartist.utils.content.Ctx;
 
 public class FinestWebViewBuilder extends FinestWebView {
 
@@ -27,7 +26,7 @@ public class FinestWebViewBuilder extends FinestWebView {
             Intent intent = new Intent(context, FinestWebViewCustomActivity.class);
             intent.putExtra("builder", this);
 
-            Ctx.startActivity(intent);
+            context.startActivity(intent);
 
             if (context instanceof Activity)
                 ((Activity) context).overridePendingTransition(animationOpenEnter, animationOpenExit);

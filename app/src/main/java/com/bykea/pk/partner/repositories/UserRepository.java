@@ -406,12 +406,6 @@ public class UserRepository {
             return;
         }
 
-        if (!callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            mRestRequestHandler.sendDriverLocationUpdate(mContext,
-                    mDataCallback, locationRequest);
-            return;
-        }
-
         final ArrayList<MultipleDeliveryRemainingETA> trackingDataList = new ArrayList<>();
         final List<MultipleDeliveryBookingResponse> bookingResponseList =
                 callDriverData.getBookings();
@@ -1080,10 +1074,10 @@ public class UserRepository {
         mRestRequestHandler.requestCompleteSignupData(mContext, id, mDataCallback);
     }*/
 
-    public void uplodaDocumentImage(Context context, String id, String type, File imageFile, IUserDataHandler handler) {
+    public void uploadDocumentImage(Context context, String id, String type, File imageFile, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.uplodaDocumentImage(mContext, id, type, imageFile, mDataCallback);
+        mRestRequestHandler.uploadDocumentImage(mContext, id, type, imageFile, mDataCallback);
     }
 
     public void requestBankAccounts(Context context, IUserDataHandler handler) {

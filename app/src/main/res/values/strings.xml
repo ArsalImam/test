@@ -1,6 +1,6 @@
 <resources>
     <!--<string name="app_name">Bykea Partner</string>-->
-    <string name="app_name">بائیکیا پارٹنر</string>
+    <string name="app_name">BykeaPartner</string>
     <!--            GOOGLE API KEY                          -->
     <!--  Live   <string name="google.api.serverkey">AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA</string>-->
     <!--<string name="google.api.serverkey">AIzaSyD-PS71WvtMUAusr3NKn7iw62tPdCQGacQ</string>-->
@@ -285,6 +285,7 @@
 
     <string name="krai_ki_kami_label">کرائے کی کمائی</string>
     <string name="cash_ki_wasooli_label">کیش کی وصولی</string>
+    <string name="kharidari_label">خریداری</string>
     <string name="kharidari_ki_raqam_label">خریداری کی رقم</string>
     <string name="places_label">PLACES</string>
     <string name="bhejneyWalaTv">بھیجنے والا</string>
@@ -300,7 +301,7 @@
     <string name="muntakhib_nahi_ki_gayi_label">منتخب نہیں کی گئی</string>
     <string name="decimal_format_one_digit">%.1f</string>
     <string name="distance_covered">( %s km, </string>
-    <string name="duration">%.1f mins)</string>
+    <string name="duration">%s mins)</string>
     <string name="amount_error">Amount can\'t be more than %d</string>
     <string name="invalid_amout">Please enter valid amount.</string>
     <string name="error_invalid_amount">Invalid amount</string>
@@ -314,11 +315,16 @@
 
     <string name="receiver_name">Please enter receiver name.</string>
     <string name="receiver_number">Please enter receiver number.</string>
+    <string name="clock_zero">00:00</string>
 
     <string name="minute_with_amount_ur"> %d منٹ </string>
     <string name="kilometer_with_amount_ur"> %d کلومیٹر </string>
     <string name="display_integer_value"> %d </string>
     <string name="display_string_value"> %s </string>
+    <string name="trip_details">تفصیلات</string>
+    <string name="amount_rs">Rs. %s</string>
+    <string name="amount_rs_int">Rs. %d</string>
+    <string name="dash">-</string>
 
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
