@@ -406,6 +406,25 @@ public class AppPreferences {
         return mSharedPreferences.getBoolean(Keys.ON_END_TRIP, false);
     }
 
+    /**
+     * Fetch TRIP_ACCEPT_TIME from App Shared Pref
+     * @return TRIP_ACCEPT_TIME
+     */
+    public static long getTripAcceptTime() {
+        return mSharedPreferences.getLong(Keys.TRIP_ACCEPT_TIME, 0);
+    }
+
+    /**
+     * Put TRIP_ACCEPT_TIME to App Shared Pref
+     * @param time TRIP_ACCEPT_TIME
+     */
+    public static void setTripAcceptTime(long time) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.TRIP_ACCEPT_TIME, time)
+                .apply();
+    }
+
     public static long getStartTripTime() {
         return mSharedPreferences.getLong(Keys.TRIP_START_TIME, 0);
     }
@@ -1375,6 +1394,28 @@ public class AppPreferences {
     public static String getDeliveryType() {
         return mSharedPreferences
                 .getString(Keys.DELIVERY_TYPE, Constants.CallType.SINGLE);
+    }
+
+    /**
+     * Set the ride estimated fare
+     *
+     * @param estimatedFare estimated fare
+     */
+    public static void setEstimatedFare(int estimatedFare) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.EST_FARE, estimatedFare)
+                .apply();
+    }
+
+    /**
+     * Get Ride estimated fare
+     *
+     * @return Ride estimated fare
+     */
+    public static int getEstimatedFare() {
+        return mSharedPreferences
+                .getInt(Keys.EST_FARE, 0);
     }
 
     //endregion

@@ -130,6 +130,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.sql.Timestamp;
+import java.text.Format;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1989,12 +1991,12 @@ public class Utils {
             case "parcel":
             case "send":
             case "delivery":
-                return R.drawable.bhejdo;
+                return R.drawable.bhejdo_no_caption;
             case "bring":
             case "purchase":
-                return R.drawable.lay_ao;
+                return R.drawable.lay_ao_no_caption;
             case "ride":
-                return R.drawable.ride;
+                return R.drawable.ride_right;
             case "top-up":
                 return R.drawable.top_up;
             case "utilitybill":
@@ -2004,9 +2006,9 @@ public class Utils {
             case "carryvan":
                 return R.drawable.carry_van;
             case "courier":
-                return R.drawable.courier;
+                return R.drawable.courier_no_caption;
             default:
-                return R.drawable.ride;
+                return R.drawable.ride_right;
         }
     }
 
@@ -3069,4 +3071,17 @@ public class Utils {
 
         }
     }
+    /**
+     * Format duration in millisecond in clock like timestemp
+     *
+     * @param time in millisecond
+     * @return
+     */
+    public static String formatTimeForTimer(long time){
+        Date date = new Date(time);
+        Timestamp ts = new Timestamp(date.getTime());
+        Format format = new SimpleDateFormat("mm:ss");
+        return format.format(ts);
+    }
+
 }

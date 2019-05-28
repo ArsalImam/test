@@ -18,6 +18,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 
@@ -129,7 +130,7 @@ public class LocationService extends Service {
         } else {
             Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
         }
-
+        createLocationRequest();
         requestLocationUpdates();
         cancelTimer();
 
@@ -146,6 +147,7 @@ public class LocationService extends Service {
         } else if (Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION.equals(intent.getAction())) {
             updateForegroundNotification();
         }
+        checkIfLocationUpdateCustomIntervalShouldSet(intent);
         return START_STICKY;
     }
 
@@ -171,7 +173,6 @@ public class LocationService extends Service {
                 onNewLocation(locationResult.getLastLocation());
             }
         };
-        createLocationRequest();
         getLastLocation();
         HandlerThread handlerThread = new HandlerThread(TAG);
         handlerThread.start();
@@ -261,6 +262,22 @@ public class LocationService extends Service {
     }
 
     //endregion
+
+    /**
+     * this method checks whether location update request should be customize when on trip
+     * @param intent is provide by onStartCommand with custom data
+     */
+    private void checkIfLocationUpdateCustomIntervalShouldSet(@Nullable Intent intent){
+        if(intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL)){
+            Utils.redLog(TAG,"------- Custom location update ON TRIP -------");
+            long updateInterval = intent.getLongExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL,
+                    Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS_DEFAULT);
+            createLocationRequestForOnTrip(updateInterval);
+            requestLocationUpdates();
+            cancelTimer();
+            mCountDownLocationTimer.start();
+        }
+    }
 
     //region Helper methods for notification messages and display logic
 
@@ -453,6 +470,16 @@ public class LocationService extends Service {
         }*/
     }
 
+    /**
+     * Create location update request with custom when ON TRIP
+     * @param updateInterval custom interval in millis
+     */
+    protected void createLocationRequestForOnTrip(long updateInterval){
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(updateInterval);
+        mLocationRequest.setFastestInterval(updateInterval / Constants.ON_TRIP_UPDATE_INTERVAL_DIVISIBLE);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
 
     protected void stopLocationUpdates() {
         try {
