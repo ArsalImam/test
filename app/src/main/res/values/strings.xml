@@ -325,6 +325,7 @@
     <string name="amount_rs">Rs. %s</string>
     <string name="amount_rs_int">Rs. %d</string>
     <string name="dash">-</string>
+    <string name="please_select_city">Please select your city.</string>
 
     <string name="destination">منزل</string>
     <string name="fare">\u0020کرایہ</string>
@@ -338,4 +339,13 @@
         <item>ناكام - پارسل وصول کرنے سے انکار</item>
         <item>ناكام - پتہ نہیں ملا</item>
     </string-array>
+    <string name="cancel_reason">Please select cancellation reason.</string>
+    <string name="amount_cannot_greater">Amount can not be more than %1$s</string>
+    <string name="aap_abhi_door_hain_kiya_pohnch_gye">آپ ابھی بھی کچھ دورہیں، کیا واقعی پہنچ گئے؟</string>
+    <string name="aap_abhi_door_hain">آپ ابھی بھی کچھ دورہیں</string>
+
+    <!--Testing verified commit-->
+
+    <string name="how_it_works">How it Works</string>
+    <string name="no_browser_found_error">Browser not found on Device</string>
 </resources>

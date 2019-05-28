@@ -60,7 +60,7 @@ public class Constants {
     public static final int UPDATE_DROPOFF_REQUEST_CODE = 102;
     public static final String TOOLBAR_TITLE = "toolbar_title";
     public static final String SEARCHBOX_TITLE = "searchBox_title";
-
+    public static final String GOOGLE_CHROME_PACKAGE = "com.android.chrome";
 
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
     public final static String ON_PERMISSIONS_GRANTED = "ON_PERMISSIONS_GRANTED";
@@ -69,6 +69,7 @@ public class Constants {
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
+    public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
     //we have replaced the passenger's app debug autocomplete key
@@ -457,6 +458,17 @@ public class Constants {
 
     }
 
+    /**
+     * Inner class for Screen redirection from navigation drawer
+     */
+    public static class ScreenRedirections{
+        public static final int PROFILE_SCREEN = 0;
+        public static final int HOME_SCREEN = 1;
+        public static final int TRIP_HISTORY_SCREEN = 2;
+        public static final int WALLET_SCREEN = 3;
+        public static final int HOW_IT_WORKS_SCREEN = 4;
+        public static final int CONTACT_US_SCREEN = 5;
+    }
 
     public static final int MARKER_INCREMENT_FACTOR_DEFAULT = 20;
     public static final int MARKER_INCREMENT_FACTOR_TEN_KM = 10000;

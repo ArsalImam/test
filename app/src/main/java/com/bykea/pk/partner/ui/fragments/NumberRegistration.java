@@ -223,6 +223,10 @@ public class NumberRegistration extends Fragment {
             cnicEt.setError("Please enter a valid CNIC No.");
             cnicEt.requestFocus();
             isValid = false;
+        } else if (mSelectedCity == null || mSelectedCity.get_id() == null || mSelectedCity.get_id().isEmpty()) {
+            Utils.appToast(mCurrentActivity, getString(R.string.please_select_city));
+            spCities.requestFocus();
+            isValid = false;
         }
         return isValid;
     }
