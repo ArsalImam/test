@@ -135,10 +135,13 @@ public class Constants {
         public static final String DATA_TYPE = "data";
     }
 
-    public static class FCMEvents {
-        public static final String MULTIDELIVER_INCOMING_CALL = "10";
-        public static final String MULTIDELIVER_CANCEL_BY_ADMIN = "11";
-    }
+//    public static class FCMEvents {
+//        public static final String MULTIDELIVER_INCOMING_CALL = "10";
+//        public static final String MULTIDELIVER_CANCEL_BY_ADMIN = "11";
+//    }
+
+    public static final String FCM_EVENTS_MULTIDELIVER_INCOMING_CALL = "10";
+    public static final String FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN = "11";
 
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
     public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
@@ -461,7 +464,7 @@ public class Constants {
     /**
      * Inner class for Screen redirection from navigation drawer
      */
-    public static class ScreenRedirections{
+    public static class ScreenRedirections {
         public static final int PROFILE_SCREEN = 0;
         public static final int HOME_SCREEN = 1;
         public static final int TRIP_HISTORY_SCREEN = 2;
