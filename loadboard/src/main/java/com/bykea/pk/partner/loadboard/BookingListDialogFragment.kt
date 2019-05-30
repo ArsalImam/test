@@ -1,28 +1,22 @@
 package com.bykea.pk.partner.loadboard
 
-import android.app.Dialog
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Color
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.loadboard.utils.Constants
 import com.bykea.pk.partner.loadboard.widgets.AutoFitFontTextView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_booking_list_dialog.*
 import kotlinx.android.synthetic.main.fragment_booking_list_dialog_item.view.*
-import me.grantland.widget.AutofitTextView
-import java.util.ArrayList
+import java.util.*
 
 /**
  *
@@ -39,10 +33,6 @@ class BookingListDialogFragment : BottomSheetDialogFragment() {
     private var mListener: Listener? = null
     public var mBehavior: BottomSheetBehavior<*>? = null
     private var bookingArrayList: ArrayList<Booking>? = ArrayList()
-
-    companion object {
-        fun newInstance(): BookingListDialogFragment = BookingListDialogFragment()
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -213,5 +203,9 @@ class BookingListDialogFragment : BottomSheetDialogFragment() {
         override fun getItemCount(): Int {
             return 6
         }
+    }
+
+    companion object {
+        fun newInstance(): BookingListDialogFragment = BookingListDialogFragment()
     }
 }
