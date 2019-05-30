@@ -16,8 +16,8 @@
 package com.bykea.pk.partner.dal.source
 
 import com.bykea.pk.partner.dal.Booking
-import java.util.ArrayList
-import java.util.LinkedHashMap
+import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
+import java.util.*
 
 /**
  * Concrete implementation to load bookings from the data sources into a cache.
@@ -28,9 +28,16 @@ import java.util.LinkedHashMap
  * exist or is empty.
  */
 class BookingsRepository(
-        val bookingsRemoteDataSource: BookingsDataSource,
-        val bookingsLocalDataSource: BookingsDataSource
+        val bookingsRemoteDataSource: BookingsRemoteDataSource,
+        private val bookingsLocalDataSource: BookingsDataSource
 ) : BookingsDataSource {
+
+    //TODO: fetch from app preference
+    private val driverId: String = "23"
+    private val token: String = "23"
+    private val lat: Double = 23.5
+    private val lng: Double = 23.3
+    private val limit: Int = 23
 
     /**
      * This variable has public visibility so it can be accessed from tests.
@@ -58,8 +65,6 @@ class BookingsRepository(
             return
         }
 
-//        EspressoIdlingResource.increment() // Set app as busy.
-
         if (cacheIsDirty) {
             // If the cache is dirty we need to fetch new data from the network.
             getBookingsFromRemoteDataSource(callback)
@@ -68,11 +73,10 @@ class BookingsRepository(
             bookingsLocalDataSource.getBookings(object : BookingsDataSource.LoadBookingsCallback {
                 override fun onBookingsLoaded(bookings: List<Booking>) {
                     refreshCache(bookings)
-//                    EspressoIdlingResource.decrement() // Set app as idle.
                     callback.onBookingsLoaded(ArrayList(cachedBookings.values))
                 }
 
-                override fun onDataNotAvailable() {
+                override fun onDataNotAvailable(errorMsg: String?) {
                     getBookingsFromRemoteDataSource(callback)
                 }
             })
@@ -82,7 +86,6 @@ class BookingsRepository(
     override fun saveBooking(booking: Booking) {
         // Do in memory cache update to keep the app UI up to date
         cacheAndPerform(booking) {
-            bookingsRemoteDataSource.saveBooking(it)
             bookingsLocalDataSource.saveBooking(it)
         }
     }
@@ -90,7 +93,7 @@ class BookingsRepository(
     override fun acceptBooking(booking: Booking) {
         // Do in memory cache update to keep the app UI up to date
         cacheAndPerform(booking) {
-            bookingsRemoteDataSource.acceptBooking(it)
+            bookingsRemoteDataSource.acceptBooking(it.id)
             bookingsLocalDataSource.acceptBooking(it)
         }
     }
@@ -118,33 +121,29 @@ class BookingsRepository(
             return
         }
 
-//        EspressoIdlingResource.increment() // Set app as busy.
-
-        // Load from server/persisted if needed.
-
         // Is the booking in the local data source? If not, query the network.
         bookingsLocalDataSource.getBooking(bookingId, object : BookingsDataSource.GetBookingCallback {
             override fun onBookingLoaded(booking: Booking) {
                 // Do in memory cache update to keep the app UI up to date
                 cacheAndPerform(booking) {
-//                    EspressoIdlingResource.decrement() // Set app as idle.
+                    //                    EspressoIdlingResource.decrement() // Set app as idle.
                     callback.onBookingLoaded(it)
                 }
             }
 
-            override fun onDataNotAvailable() {
-                bookingsRemoteDataSource.getBooking(bookingId, object : BookingsDataSource.GetBookingCallback {
+            override fun onDataNotAvailable(message: String?) {
+                bookingsRemoteDataSource.getBooking(driverId, token, bookingId, object : BookingsDataSource.GetBookingCallback {
                     override fun onBookingLoaded(booking: Booking) {
                         // Do in memory cache update to keep the app UI up to date
                         cacheAndPerform(booking) {
-//                            EspressoIdlingResource.decrement() // Set app as idle.
+                            //                            EspressoIdlingResource.decrement() // Set app as idle.
                             callback.onBookingLoaded(it)
                         }
                     }
 
-                    override fun onDataNotAvailable() {
+                    override fun onDataNotAvailable(message: String?) {
 //                        EspressoIdlingResource.decrement() // Set app as idle.
-                        callback.onDataNotAvailable()
+                        callback.onDataNotAvailable(message)
                     }
                 })
             }
@@ -156,30 +155,30 @@ class BookingsRepository(
     }
 
     override fun deleteAllBookings() {
-        bookingsRemoteDataSource.deleteAllBookings()
+//        bookingsRemoteDataSource.deleteAllBookings()
         bookingsLocalDataSource.deleteAllBookings()
         cachedBookings.clear()
     }
 
     override fun deleteBooking(bookingId: Long) {
-        bookingsRemoteDataSource.deleteBooking(bookingId)
+//        bookingsRemoteDataSource.deleteBooking(bookingId)
         bookingsLocalDataSource.deleteBooking(bookingId)
         cachedBookings.remove(bookingId)
     }
 
     private fun getBookingsFromRemoteDataSource(callback: BookingsDataSource.LoadBookingsCallback) {
-        bookingsRemoteDataSource.getBookings(object : BookingsDataSource.LoadBookingsCallback {
+
+        bookingsRemoteDataSource.getBookings(driverId, token, lat, lng, limit, object : BookingsDataSource.LoadBookingsCallback {
             override fun onBookingsLoaded(bookings: List<Booking>) {
                 refreshCache(bookings)
                 refreshLocalDataSource(bookings)
-
 //                EspressoIdlingResource.decrement() // Set app as idle.
                 callback.onBookingsLoaded(ArrayList(cachedBookings.values))
             }
 
-            override fun onDataNotAvailable() {
+            override fun onDataNotAvailable(errorMsg: String?) {
 //                EspressoIdlingResource.decrement() // Set app as idle.
-                callback.onDataNotAvailable()
+                callback.onDataNotAvailable(errorMsg)
             }
         })
     }
@@ -219,11 +218,12 @@ class BookingsRepository(
          * *
          * @return the [BookingsRepository] instance
          */
-        @JvmStatic fun getInstance(bookingsRemoteDataSource: BookingsDataSource,
-                bookingsLocalDataSource: BookingsDataSource) =
+        @JvmStatic
+        fun getInstance(bookingsRemoteDataSource: BookingsRemoteDataSource, bookingsLocalDataSource: BookingsDataSource) =
                 INSTANCE ?: synchronized(BookingsRepository::class.java) {
-                    INSTANCE ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource)
-                            .also { INSTANCE = it }
+                    INSTANCE
+                            ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource)
+                                    .also { INSTANCE = it }
                 }
 
 
@@ -231,7 +231,8 @@ class BookingsRepository(
          * Used to force [getInstance] to create a new instance
          * next time it's called.
          */
-        @JvmStatic fun destroyInstance() {
+        @JvmStatic
+        fun destroyInstance() {
             INSTANCE = null
         }
     }
