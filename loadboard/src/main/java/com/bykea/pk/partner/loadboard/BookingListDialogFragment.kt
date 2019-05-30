@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.loadboard.utils.Constants
 import com.bykea.pk.partner.loadboard.widgets.AutoFitFontTextView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_booking_list_dialog.*
 import kotlinx.android.synthetic.main.fragment_booking_list_dialog_item.view.*
 import java.util.*
@@ -29,7 +29,7 @@ import java.util.*
  *
  * You activity (or fragment) needs to implement [BookingListDialogFragment.Listener].
  */
-class BookingListDialogFragment : BottomSheetDialogFragment() {
+class BookingListDialogFragment : Fragment() {
     private var mListener: Listener? = null
     public var mBehavior: BottomSheetBehavior<*>? = null
     private var bookingArrayList: ArrayList<Booking>? = ArrayList()

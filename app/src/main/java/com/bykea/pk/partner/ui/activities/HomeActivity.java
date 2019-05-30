@@ -275,9 +275,10 @@ public class HomeActivity extends BaseActivity implements BookingListDialogFragm
             }
         });
 
-        dialogFragment = BookingListDialogFragment.Companion.newInstance();
-        dialogFragment.setCancelable(false);
-        dialogFragment.show(getSupportFragmentManager(), "dialog");
+        setupBottomSheet();
+//        dialogFragment = BookingListDialogFragment.Companion.newInstance();
+//        dialogFragment.setCancelable(false);
+//        dialogFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     public void hideToolbar() {
@@ -676,12 +677,12 @@ public class HomeActivity extends BaseActivity implements BookingListDialogFragm
 
     @Override
     public void onBookingClicked(int position) {
-        if (dialogFragment != null && dialogFragment.getMBehavior() != null &&
-                dialogFragment.getMBehavior().getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-            dialogFragment.getMBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-        } else {
-            //ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(mCurrentActivity, item.getId());
-        }
+//        if (dialogFragment != null && dialogFragment.getMBehavior() != null &&
+//                dialogFragment.getMBehavior().getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+//            dialogFragment.getMBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+//        } else {
+//            //ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(mCurrentActivity, item.getId());
+//        }
         Toast.makeText(mCurrentActivity, "Loadboard item clicked", Toast.LENGTH_SHORT).show();
     }
 }
