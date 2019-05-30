@@ -16,7 +16,7 @@ const val DATABASE_NAME = "bykea-db"
 
 @Database(entities = [Booking::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun bookingDao(): BookingDao
+    abstract fun bookingsDao(): BookingsDao
 
     companion object {
 

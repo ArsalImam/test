@@ -1,8 +1,7 @@
 package com.bykea.pk.partner.loadboard
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.source.BookingsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
@@ -10,9 +9,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  *
  * @Author: Yousuf Sohail
  */
-class BookingDetailViewModel(bookingRepository: BookingRepository, bookingId: Long) : ViewModel() {
+class BookingDetailViewModel(bookingRepository: BookingsRepository) : ViewModel() {
 
-    val booking: LiveData<Booking> = bookingRepository.getBooking(bookingId)
+//    val booking: Booking = bookingRepository.getBooking(bookingId)
 
     /**
      * Cancel all coroutines when the ViewModel is cleared.
