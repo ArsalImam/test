@@ -1,11 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:id="@+id/bottomSheet"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:paddingTop="@dimen/list_item_spacing_half"
-    android:paddingBottom="@dimen/list_item_spacing_half"
-    tools:context=".BookingListDialogFragment"
-    tools:listitem="@layout/fragment_booking_list_dialog_item" />
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/bottomSheetToolbarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/bottomSheetBackIV"
+            android:layout_width="35dp"
+            android:layout_height="50dp"
+            android:padding="9dp"
+            app:srcCompat="@mipmap/icon_backarrow_green" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/bottomSheetRefreshIV"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            app:srcCompat="@mipmap/icon_refresh" />
+    </FrameLayout>
+
+    <View
+        android:id="@+id/bottomSheetToolbarDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/bottomSheetPickDropLayout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/color_F4F4F4"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="@string/fare"
+            android:textColor="@color/dark_gray656565"
+            android:textSize="18dp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/color_grayc7c7c7" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/destination"
+            android:textColor="@color/dark_gray656565"
+            android:textSize="18dp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/color_grayc7c7c7" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/service_urdu"
+            android:textColor="@color/dark_gray656565"
+            android:textSize="18dp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/bottomSheetPickDropDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/secondaryColorLightest1" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/activeHomeLoadBoardList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/bottomSheetNoJobsAvailableTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="14dp"
+            android:text="@string/wait_for_booking"
+            android:textColor="@color/dark_gray656565"
+            android:textSize="18dp"
+            android:visibility="gone"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <ProgressBar
+            android:id="@+id/bottomSheetLoader"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</LinearLayout>
