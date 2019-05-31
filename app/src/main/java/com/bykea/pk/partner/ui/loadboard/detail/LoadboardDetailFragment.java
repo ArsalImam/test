@@ -12,11 +12,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.AppCompatImageView;
+
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -376,10 +378,10 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
             if (isOnAccept) {
                 data.put("AcceptSeconds", "0");
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             } else {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             }
         } catch (JSONException e) {
             e.printStackTrace();
