@@ -1,7 +1,10 @@
 package com.bykea.pk.partner.loadboard
 
+import android.animation.ObjectAnimator
+import android.animation.StateListAnimator
 import android.content.Context
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,9 +55,10 @@ class BookingListDialogFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
-        layoutParamRL.setMargins(0, -20, 0, 0);
+        layoutParamRL.setMargins(0, -15, 0, 0);
 
         setAdapter(bookingArrayList)
+        //setBottomSheetArrow()
 
         view.post {
             val parent = view.getParent() as View
@@ -117,7 +121,7 @@ class BookingListDialogFragment : Fragment() {
             bottomSheetToolbarDivider.alpha = alpha
             bottomSheetPickDropLayout.alpha = alpha
             bottomSheetPickDropDivider.alpha = alpha
-
+            mBehavior!!.peekHeight = 100
             relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
             appBottomBarLayoutImgView.setVisibility(View.GONE);
         } else {
@@ -140,7 +144,9 @@ class BookingListDialogFragment : Fragment() {
 //                isVisibleFirstTime = false;
             appBottomBarLayoutImgView.setVisibility(View.VISIBLE);
             relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+            mBehavior!!.peekHeight = 130
         } else {
+            mBehavior!!.peekHeight = 100
             relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
         }
     }

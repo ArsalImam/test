@@ -10,7 +10,9 @@
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/transparent">
+        android:background="@color/transparent"
+        android:elevation="1dp"
+        app:elevation="1dp">
 
         <View
             android:id="@+id/view1"
@@ -19,8 +21,8 @@
 
         <ImageView
             android:id="@+id/appBottomBarLayoutImgView"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_circle_white_arrow"
             android:visibility="gone"
@@ -121,7 +123,6 @@
         android:id="@+id/relativeLayoutBottomSheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="-15dp"
         android:background="@color/white">
 
         <androidx.recyclerview.widget.RecyclerView
