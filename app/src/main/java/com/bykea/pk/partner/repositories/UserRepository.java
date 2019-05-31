@@ -1183,61 +1183,13 @@ public class UserRepository {
                 properties.put("DD", false);
             }
             Utils.logEvent(context, pilotData.getId(),
-                    Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties);
+                    Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties, false);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         mRestRequestHandler.requestDriverStatusUpdate(mContext, statusRequest, mDataCallback);
 
-
-    }
-
-    public void requestUpdateStatus(Context context, IUserDataHandler handler, boolean status) {
-
-        mContext = context;
-        mUserCallback = handler;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            PilotData pilotData = AppPreferences.getPilotData();
-            JSONObject properties = new JSONObject();
-            properties.put("DriverID", pilotData.getId());
-            properties.put("timestamp", Utils.getIsoDate());
-            properties.put("SignUpCity", pilotData.getCity() != null ? pilotData.getCity().getName() : "N/A");
-            properties.put("DriverName", pilotData.getFullName());
-            properties.put("CurrentLocation", Utils.getCurrentLocation());
-            properties.put("cih", AppPreferences.getCashInHands());
-            properties.put("status", status ? "Active" : "Inactive");
-
-
-            jsonObject.put("is_available", "" + status);
-            jsonObject.put("driver_id", AppPreferences.getDriverId());
-            jsonObject.put("_id", AppPreferences.getDriverId());
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("lat", AppPreferences.getLatitude());
-            jsonObject.put("lng", AppPreferences.getLongitude());
-            jsonObject.put("cih", AppPreferences.getCashInHands());
-            jsonObject.put("imei", Utils.getDeviceId(mContext));
-
-            if (status && AppPreferences.getDriverDestination() != null) {
-                jsonObject.put("eLat", AppPreferences.getDriverDestination().latitude);
-                jsonObject.put("eLng", AppPreferences.getDriverDestination().longitude);
-                jsonObject.put("eAdd", AppPreferences.getDriverDestination().address);
-
-                properties.put("DD", true);
-                properties.put("DDLocation", AppPreferences.getDriverDestination().latitude
-                        + "," + AppPreferences.getDriverDestination().longitude);
-                properties.put("DDAddress", AppPreferences.getDriverDestination().address);
-            } else {
-                properties.put("DD", false);
-            }
-
-            Utils.logEvent(context, pilotData.getId(), Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mWebIORequestHandler.updatePilotStatus(mDataCallback, jsonObject);
 
     }
 
@@ -1458,11 +1410,6 @@ public class UserRepository {
             }
 
             @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
             public void onError(int errorCode, String error) {
                 handler.onError(errorCode, error);
             }
@@ -1482,11 +1429,6 @@ public class UserRepository {
             public void onResponse(Object object) {
                 if (object instanceof LoadBoardAllListingResponse)
                     handler.onLoadboardAllListingApiResponse((LoadBoardAllListingResponse) object);
-            }
-
-            @Override
-            public void onSuccess() {
-
             }
 
             @Override
@@ -1813,11 +1755,6 @@ public class UserRepository {
             } else {
                 Utils.redLog("UserRepo", "mUserCallback is Null");
             }
-        }
-
-        @Override
-        public void onSuccess() {
-
         }
 
         @Override

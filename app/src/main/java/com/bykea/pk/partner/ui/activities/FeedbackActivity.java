@@ -429,7 +429,7 @@ public class FeedbackActivity extends BaseActivity {
                 properties.put("WalletDeduction", "0");
             }
             Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_FARE.replace(
-                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), properties);
+                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), properties, true);
 
         } catch (JSONException e) {
             e.printStackTrace();

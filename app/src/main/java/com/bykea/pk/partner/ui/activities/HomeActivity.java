@@ -1,28 +1,32 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.animation.ObjectAnimator;
+import android.animation.StateListAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.loadboard.BookingListDialogFragment;
 import com.bykea.pk.partner.models.data.LoadBoardAllListingData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
@@ -34,8 +38,8 @@ import com.bykea.pk.partner.ui.fragments.HomeFragment;
 import com.bykea.pk.partner.ui.fragments.LoadboardZoneFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.loadboard.list.LoadBoardListAdapter;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
+import com.bykea.pk.partner.ui.loadboard.list.LoadBoardListAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -43,15 +47,18 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements BookingListDialogFragment.Listener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -83,20 +90,6 @@ public class HomeActivity extends BaseActivity {
     @BindView(R.id.drawerMainActivity)
     public DrawerLayout drawerLayout;
 
-    @BindView(R.id.bottomSheetToolbarDivider)
-    public View bottomSheetToolbarDivider;
-    @BindView(R.id.bottomSheetToolbarLayout)
-    public FrameLayout bottomSheetToolbarLayout;
-    @BindView(R.id.bottomSheetPickDropDivider)
-    public View bottomSheetPickDropDivider;
-    @BindView(R.id.bottomSheetPickDropLayout)
-    public LinearLayout bottomSheetPickDropLayout;
-    @BindView(R.id.bottomSheetRefreshIV)
-    public AppCompatImageView bottomSheetRefreshIV;
-    @BindView(R.id.bottomSheetBackIV)
-    public AppCompatImageView bottomSheetBackIV;
-    @BindView(R.id.bottomSheetNoJobsAvailableTV)
-    public FontTextView bottomSheetNoJobsAvailableTV;
     @BindView(R.id.bottomSheetLoader)
     public ProgressBar bottomSheetLoader;
     @BindView(R.id.appBottomBarLayout)
@@ -191,6 +184,7 @@ public class HomeActivity extends BaseActivity {
         super.onPause();
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -337,9 +331,9 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onEvent(String action) {
         super.onEvent(action);
-        if(getSupportFragmentManager()!=null){
+        if (getSupportFragmentManager() != null) {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
-            if(currentFragment!=null){
+            if (currentFragment != null) {
                 if (currentFragment instanceof HomeFragment) {
                     ((HomeFragment) currentFragment).onEvent(action);
                 }
@@ -383,7 +377,7 @@ public class HomeActivity extends BaseActivity {
     /**
      * Check the availability of cellular data access in background.
      */
-    private void checkIfBackgroundDataAccessible(){
+    private void checkIfBackgroundDataAccessible() {
         if (!Connectivity.isBackgroundDataAccessAvailable(mCurrentActivity)) {
             DataSaverDialogFragment dialogFragment = new DataSaverDialogFragment();
             dialogFragment.setCancelable(false);
@@ -405,58 +399,23 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });
-        activeHomeLoadBoardList.setLayoutManager(new LinearLayoutManager(this));
-        activeHomeLoadBoardList.setHasFixedSize(true);
-        activeHomeLoadBoardList.setAdapter(mloadBoardListAdapter);
+//        activeHomeLoadBoardList.setLayoutManager(new LinearLayoutManager(this));
+//        activeHomeLoadBoardList.setHasFixedSize(true);
+//        activeHomeLoadBoardList.setAdapter(mloadBoardListAdapter);
+
+
+//    TODO:COMMENTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            StateListAnimator stateListAnimator = new StateListAnimator();
+            stateListAnimator.addState(new int[0], ObjectAnimator.ofFloat(bottomSheet, "elevation", 0.1f));
+            bottomSheet.setStateListAnimator(stateListAnimator);
+        }
+        bottomSheet.bringToFront();
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                switch (newState) {
-                    case BottomSheetBehavior.PEEK_HEIGHT_AUTO:
-                        break;
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        break;
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        break;
 
-                }
-            }
+        //    TODO:COMMENTED
+//        showBottomSheetLoader();
 
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                toggleBottomSheetToolbar(slideOffset);
-            }
-        });
-        bottomSheetNoJobsAvailableTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                }
-            }
-        });
-        bottomSheetRefreshIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //refresh loadboard list
-                refreshLoadBoardListingAPI();
-            }
-        });
-        bottomSheetBackIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bottomSheetBehavior != null)
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
-        showBottomSheetLoader();
         if (!AppPreferences.getAvailableStatus() || !AppPreferences.getIsCash())
             hideLoadBoardBottomSheet();
     }
@@ -473,13 +432,15 @@ public class HomeActivity extends BaseActivity {
 
     /**
      * visible loadboard
-     *
-     * @param list loadboard jobs data
+     * <p>
+     * // * @param list loadboard jobs data
      */
-    public void showLoadBoardBottomSheet(ArrayList<LoadBoardAllListingData> list) {
-        if (bottomSheet != null && list != null) {
+
+    //    TODO:COMMENTED
+    public void showLoadBoardBottomSheet() {
+        if (bottomSheet != null/* && list != null*/) {
             bottomSheet.setVisibility(View.VISIBLE);
-            updateList(list);
+            // updateList(list);
         }
     }
 
@@ -489,8 +450,9 @@ public class HomeActivity extends BaseActivity {
     public void hideLoadBoardBottomSheet() {
         if (bottomSheet != null) {
             bottomSheet.setVisibility(View.GONE);
-            if (mlist != null)
-                mlist.clear();
+            //    TODO:COMMENTED
+          /*  if (mlist != null)
+                mlist.clear();*/
         }
     }
 
@@ -499,7 +461,9 @@ public class HomeActivity extends BaseActivity {
      *
      * @param list jobs list
      */
-    public void updateList(ArrayList<LoadBoardAllListingData> list) {
+
+    //    TODO:COMMENTED
+    /*public void updateList(ArrayList<LoadBoardAllListingData> list) {
         if (mloadBoardListAdapter != null && mlist != null) {
             if (list.size() > 0) {
                 mlist.clear();
@@ -510,34 +474,7 @@ public class HomeActivity extends BaseActivity {
                 showBottomSheetNoJobsAvailableHint();
             }
         }
-    }
-
-    /**
-     * VISIBLE/GONE bottom sheet toolbar when expanding or collapsing
-     *
-     * @param alpha
-     */
-    private void toggleBottomSheetToolbar(float alpha) {
-        if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
-            bottomSheetToolbarLayout.setVisibility(View.VISIBLE);
-            bottomSheetPickDropLayout.setVisibility(View.VISIBLE);
-            bottomSheetToolbarDivider.setVisibility(View.VISIBLE);
-            bottomSheetPickDropDivider.setVisibility(View.VISIBLE);
-            bottomSheetPickDropDivider.setAlpha(alpha);
-            bottomSheetPickDropLayout.setAlpha(alpha);
-            bottomSheetToolbarDivider.setAlpha(alpha);
-            bottomSheetToolbarLayout.setAlpha(alpha);
-        } else {
-            bottomSheetToolbarLayout.setVisibility(View.GONE);
-            bottomSheetPickDropLayout.setVisibility(View.GONE);
-            bottomSheetToolbarDivider.setVisibility(View.GONE);
-            bottomSheetPickDropDivider.setVisibility(View.GONE);
-            bottomSheetPickDropDivider.setAlpha(alpha);
-            bottomSheetPickDropLayout.setAlpha(alpha);
-            bottomSheetToolbarDivider.setAlpha(alpha);
-            bottomSheetToolbarLayout.setAlpha(alpha);
-        }
-    }
+    }*/
 
     /**
      * VISIBLE/GONE connections status on main screen's toolbar
@@ -583,7 +520,8 @@ public class HomeActivity extends BaseActivity {
     private void refreshLoadBoardListingAPI() {
         if (Connectivity.isConnectedFast(mCurrentActivity)) {
             if (AppPreferences.getIsCash()) {
-                callLoadboardListingAPI();
+                showLoadBoardBottomSheet();
+//                callLoadboardListingAPI();
             }
         } else {
             Utils.appToast(this, getString(R.string.internet_error));
@@ -606,7 +544,7 @@ public class HomeActivity extends BaseActivity {
                         Dialogs.INSTANCE.dismissDialog();
                         if (response != null && response.getData() != null) {
                             if (mCurrentActivity != null) {
-                                updateList(response.getData());
+                                //updateList(response.getData());
                             }
                         }
                     }
@@ -641,31 +579,13 @@ public class HomeActivity extends BaseActivity {
                 .addToBackStack(null).commitAllowingStateLoss();
     }
 
-    /**
-     * show progress loader while loadboard jobs listing api is being requested
-     */
-    private void showBottomSheetLoader() {
-        bottomSheetLoader.setVisibility(View.VISIBLE);
-        bottomSheetNoJobsAvailableTV.setVisibility(View.GONE);
-        activeHomeLoadBoardList.setVisibility(View.GONE);
+    @Override
+    public void onBookingClicked(long bookingId) {
+        if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else {
+//            ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(mCurrentActivity, item.getId());
+        }
+        Toast.makeText(mCurrentActivity, "Loadboard Booking Id: " + bookingId, Toast.LENGTH_SHORT).show();
     }
-
-    /**
-     * show No Jobs Available as hint to the user that selected zone does not have job yet.
-     */
-    private void showBottomSheetNoJobsAvailableHint() {
-        bottomSheetLoader.setVisibility(View.GONE);
-        bottomSheetNoJobsAvailableTV.setVisibility(View.VISIBLE);
-        activeHomeLoadBoardList.setVisibility(View.GONE);
-    }
-
-    /**
-     * show loadboard jobs list when jobs are available
-     */
-    private void showBottomSheetJobsList() {
-        bottomSheetLoader.setVisibility(View.GONE);
-        bottomSheetNoJobsAvailableTV.setVisibility(View.GONE);
-        activeHomeLoadBoardList.setVisibility(View.VISIBLE);
-    }
-
 }

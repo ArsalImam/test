@@ -412,7 +412,7 @@ public class HomeFragment extends Fragment {
                             Dialogs.INSTANCE.dismissDialog();
                             if (response != null && response.getData() != null) {
                                 if (mCurrentActivity != null) {
-                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
+//                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
                                     resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
                                             (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
                                 }
@@ -583,7 +583,8 @@ public class HomeFragment extends Fragment {
             }
         });
         if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
-            callLoadBoardListingAPI();
+            mCurrentActivity.showLoadBoardBottomSheet();
+//            callLoadBoardListingAPI();
     }
 
     public synchronized void setStatusBtn() {
@@ -883,7 +884,8 @@ public class HomeFragment extends Fragment {
                                     AppPreferences.setOutOfFence(false);
                                 }
                                 if (AppPreferences.getIsCash()) {
-                                    callLoadBoardListingAPI();
+                                    mCurrentActivity.showLoadBoardBottomSheet();
+                                    //callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
                                     resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
@@ -1134,7 +1136,8 @@ public class HomeFragment extends Fragment {
                 null != mCurrentActivity.getIntent() &&
                 null != mCurrentActivity.getIntent().getExtras() &&
                 mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP, false) &&
-                !Dialogs.INSTANCE.isShowing()) {
+                !Dialogs.INSTANCE.isShowing() &&
+                !mCurrentActivity.isFinishing()) {
             if (!mCurrentActivity.isDialogShown() && getView() != null) {
                 mCurrentActivity.setDialogShown(true);
 
@@ -1250,7 +1253,8 @@ public class HomeFragment extends Fragment {
     }
 
 
-    @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn, R.id.mapPinIv})
+    @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn,
+            R.id.mapPinIv, R.id.walletRL})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -1300,6 +1304,11 @@ public class HomeFragment extends Fragment {
                 setHomeLocation();
                 break;
             }
+
+            //open wallet screen
+            case R.id.walletRL:
+                showWalletFragment();
+                break;
         }
     }
 
@@ -1474,7 +1483,18 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Check the Type of request is it batch request or single
+     * Open wallet fragment from In-Active home wallet icon's tap
+     */
+    private void showWalletFragment() {
+        mCurrentActivity.getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.containerView, new WalletFragment())
+                .commit();
+        HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
+    }
+
+     /** Check the Type of request is it batch request or single
      *
      * <p>
      * <p>

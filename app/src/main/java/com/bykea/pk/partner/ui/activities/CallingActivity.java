@@ -284,10 +284,10 @@ public class CallingActivity extends BaseActivity {
             if (isOnAccept) {
                 data.put("AcceptSeconds", acceptSeconds);
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             } else {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             }
         } catch (JSONException e) {
             e.printStackTrace();
