@@ -412,7 +412,7 @@ public class HomeFragment extends Fragment {
                             Dialogs.INSTANCE.dismissDialog();
                             if (response != null && response.getData() != null) {
                                 if (mCurrentActivity != null) {
-                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
+//                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
                                     resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
                                             (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
                                 }
@@ -583,7 +583,8 @@ public class HomeFragment extends Fragment {
             }
         });
         if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
-            callLoadBoardListingAPI();
+            mCurrentActivity.showLoadBoardBottomSheet();
+//            callLoadBoardListingAPI();
     }
 
     public synchronized void setStatusBtn() {
@@ -883,7 +884,8 @@ public class HomeFragment extends Fragment {
                                     AppPreferences.setOutOfFence(false);
                                 }
                                 if (AppPreferences.getIsCash()) {
-                                    callLoadBoardListingAPI();
+                                    mCurrentActivity.showLoadBoardBottomSheet();
+                                    //callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
                                     resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
@@ -1491,7 +1493,7 @@ public class HomeFragment extends Fragment {
                 .commit();
         HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
     }
-    
+
      /** Check the Type of request is it batch request or single
      *
      * <p>

@@ -21,8 +21,8 @@ class AutoFitFontTextView : AutofitTextView {
 
     private fun applyAttributes(context: Context, attrs: AttributeSet) {
         val a = context.obtainStyledAttributes(attrs,
-                R.styleable.FontTextView)
-        val fontName = Fonts.values()[a.getInt(R.styleable.FontTextView_fontName, 0)].getName()
+                R.styleable.FontTextViewLB)
+        val fontName = Fonts.values()[a.getInt(R.styleable.FontTextViewLB_fontName1, 0)].getName()
         a.recycle()
         if (!isInEditMode && !TextUtils.isEmpty(fontName)) {
             typeface = FontUtils.getFonts(context,fontName)

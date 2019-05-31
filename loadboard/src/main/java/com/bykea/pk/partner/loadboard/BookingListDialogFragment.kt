@@ -17,6 +17,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.fragment_booking_list_dialog.*
 import kotlinx.android.synthetic.main.fragment_booking_list_dialog_item.view.*
 import java.util.*
+import android.widget.LinearLayout
+
 
 /**
  *
@@ -34,17 +36,24 @@ class BookingListDialogFragment : Fragment() {
     public var mBehavior: BottomSheetBehavior<*>? = null
     private var bookingArrayList: ArrayList<Booking>? = ArrayList()
 
+    var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+    var layoutParamRL: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return View.inflate(context, R.layout.fragment_booking_list_dialog, null)
     }
 
+    private val isVisibleFirstTime = true
     override fun onStart() {
         super.onStart()
         mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        layoutParamRLZero.setMargins(0, 0, 0, 0);
+        layoutParamRL.setMargins(0, -20, 0, 0);
+
         setAdapter(bookingArrayList)
 
         view.post {
@@ -77,6 +86,10 @@ class BookingListDialogFragment : Fragment() {
                 }
             })
 
+            bottomSheetRefreshIV.setOnClickListener {
+                //refreshLoadBoardListingAPI();
+            }
+
             bottomSheetNoJobsAvailableTV.setOnClickListener {
                 if (mBehavior != null && mBehavior?.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                     mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
@@ -86,7 +99,7 @@ class BookingListDialogFragment : Fragment() {
     }
 
     private fun setAdapter(bookingArrayList: ArrayList<Booking>?) {
-        if (bookingArrayList != null && bookingArrayList.size > 0) {
+        if (true) {//bookingArrayList != null && bookingArrayList.size > 0) {
             activeHomeLoadBoardList.layoutManager = LinearLayoutManager(context)
             activeHomeLoadBoardList.adapter = BookingAdapter(ArrayList())
         } else {
@@ -96,23 +109,39 @@ class BookingListDialogFragment : Fragment() {
 
     private fun toggleBottomSheetToolbar(alpha: Float) {
         if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
-            bottomSheetToolbarLayout.setVisibility(View.VISIBLE)
-            bottomSheetToolbarLayout.setAlpha(alpha)
-            bottomSheetToolbarDivider.setVisibility(View.VISIBLE)
-            bottomSheetToolbarDivider.setAlpha(alpha)
-            bottomSheetPickDropLayout.setVisibility(View.VISIBLE)
-            bottomSheetPickDropLayout.setAlpha(alpha)
-            bottomSheetPickDropDivider.setVisibility(View.VISIBLE)
-            bottomSheetPickDropDivider.setAlpha(alpha)
+            bottomSheetToolbarLayout.visibility = View.VISIBLE
+            bottomSheetToolbarDivider.visibility = View.VISIBLE
+            bottomSheetPickDropLayout.visibility = View.VISIBLE
+            bottomSheetPickDropDivider.visibility = View.VISIBLE
+            bottomSheetToolbarLayout.alpha = alpha
+            bottomSheetToolbarDivider.alpha = alpha
+            bottomSheetPickDropLayout.alpha = alpha
+            bottomSheetPickDropDivider.alpha = alpha
+
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+            appBottomBarLayoutImgView.setVisibility(View.GONE);
         } else {
-            bottomSheetToolbarLayout.setVisibility(View.GONE)
-            bottomSheetToolbarLayout.setAlpha(alpha)
-            bottomSheetToolbarDivider.setVisibility(View.GONE)
-            bottomSheetToolbarDivider.setAlpha(alpha)
-            bottomSheetPickDropLayout.setVisibility(View.GONE)
-            bottomSheetPickDropLayout.setAlpha(alpha)
-            bottomSheetPickDropDivider.setVisibility(View.GONE)
-            bottomSheetPickDropDivider.setAlpha(alpha)
+            bottomSheetToolbarLayout.visibility = View.GONE
+            bottomSheetToolbarDivider.visibility = View.GONE
+            bottomSheetPickDropLayout.visibility = View.GONE
+            bottomSheetPickDropDivider.visibility = View.GONE
+            bottomSheetToolbarLayout.alpha = alpha
+            bottomSheetToolbarDivider.alpha = alpha
+            bottomSheetPickDropLayout.alpha = alpha
+            bottomSheetPickDropDivider.alpha = alpha
+
+            setBottomSheetArrow()
+        }
+    }
+
+    fun setBottomSheetArrow() {
+        if (isVisibleFirstTime) {// && bookingArrayList != null && bookingArrayList!!.size > 0) {
+//                isVisibleFirstTime || bottomSheetLoader.getVisibility() == View.VISIBLE) {
+//                isVisibleFirstTime = false;
+            appBottomBarLayoutImgView.setVisibility(View.VISIBLE);
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+        } else {
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
         }
     }
 
@@ -154,7 +183,7 @@ class BookingListDialogFragment : Fragment() {
     }
 
     interface Listener {
-        fun onBookingClicked(position: Int)
+        fun onBookingClicked(booking: Long)
     }
 
     private inner class ViewHolder internal constructor(inflater: LayoutInflater, parent: ViewGroup)
@@ -165,8 +194,13 @@ class BookingListDialogFragment : Fragment() {
 
         init {
             itemView.setOnClickListener {
-                mListener?.onBookingClicked(adapterPosition)
+                mListener?.onBookingClicked(getItem(adapterPosition))
             }
+        }
+
+        private fun getItem(adapterPosition: Int): Long {
+            return adapterPosition.toLong() //TODO : REMOVE
+//            return bookingArrayList!!.get(adapterPosition).id;
         }
     }
 

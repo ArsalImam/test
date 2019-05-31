@@ -46,6 +46,7 @@
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <fragment
+                android:id="@+id/loadBoardFragment"
                 android:name="com.bykea.pk.partner.loadboard.BookingListDialogFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

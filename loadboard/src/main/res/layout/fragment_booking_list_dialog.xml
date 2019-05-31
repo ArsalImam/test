@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
     android:id="@+id/bottomSheet"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent">
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/appBottomBarLayoutImgView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_circle_white_arrow"
+            android:visibility="gone"
+            app:layout_anchor="@+id/view1"
+            app:layout_anchorGravity="top|center" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <FrameLayout
         android:id="@+id/bottomSheetToolbarLayout"
@@ -95,8 +118,10 @@
         android:background="@color/secondaryColorLightest1" />
 
     <RelativeLayout
+        android:id="@+id/relativeLayoutBottomSheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="-15dp"
         android:background="@color/white">
 
         <androidx.recyclerview.widget.RecyclerView
