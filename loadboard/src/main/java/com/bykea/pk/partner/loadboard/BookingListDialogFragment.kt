@@ -58,7 +58,7 @@ class BookingListDialogFragment : Fragment() {
         layoutParamRL.setMargins(0, -15, 0, 0);
 
         setAdapter(bookingArrayList)
-        //setBottomSheetArrow()
+        //bsetBottomSheetArrow()
 
         view.post {
             val parent = view.getParent() as View
