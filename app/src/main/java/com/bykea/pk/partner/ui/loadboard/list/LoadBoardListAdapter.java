@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.Booking;
 import com.bykea.pk.partner.models.data.LoadBoardAllListingData;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
@@ -24,11 +25,11 @@ import butterknife.ButterKnife;
  */
 public class LoadBoardListAdapter extends RecyclerView.Adapter<LoadBoardListAdapter.ViewHolder> {
 
-    private ArrayList<LoadBoardAllListingData> mItems;
+    private ArrayList<Booking> mItems;
     private ItemClickListener itemClickListener;
     private Context mContext;
 
-    public LoadBoardListAdapter(Context context, ArrayList<LoadBoardAllListingData> items, ItemClickListener itemClickListener) {
+    public LoadBoardListAdapter(Context context, ArrayList<Booking> items, ItemClickListener itemClickListener) {
         this.mContext = context;
         this.mItems = items;
         this.itemClickListener = itemClickListener;
@@ -43,8 +44,10 @@ public class LoadBoardListAdapter extends RecyclerView.Adapter<LoadBoardListAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final LoadBoardAllListingData item = mItems.get(position);
-        if(item != null){
+//        final Booking item = mItems.get(position);
+        holder.li_LoadboardDropOffTV.setText(mContext.getResources().getString(R.string.not_selected_ur));
+        holder.tvFare.setText(mContext.getResources().getString(R.string.dash));
+        /*if(item != null){
             switch (item.getTripType()){
                 case Constants.TripTypes.RIDE_TYPE:
                     holder.ivServiceIcon.setImageResource(R.drawable.ride);
@@ -73,12 +76,12 @@ public class LoadBoardListAdapter extends RecyclerView.Adapter<LoadBoardListAdap
                     itemClickListener.onClick(item);
                 }
             });
-        }
+        }*/
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return 10;//mItems.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -93,17 +96,13 @@ public class LoadBoardListAdapter extends RecyclerView.Adapter<LoadBoardListAdap
         public ViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    itemClickListener.onClick(mItems.get(getAdapterPosition()));
-//                }
-//            });
+            itemView.setOnClickListener(view -> itemClickListener.onClick(getAdapterPosition()));//mItems.get(getAdapterPosition())));
         }
     }
 
     public interface ItemClickListener {
-        void onClick(LoadBoardAllListingData item);
+        void onClick(int item);
+//        void onClick(Booking item);
     }
 }
 

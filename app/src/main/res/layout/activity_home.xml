@@ -47,7 +47,7 @@
 
             <fragment
                 android:id="@+id/loadBoardFragment"
-                android:name="com.bykea.pk.partner.loadboard.BookingListDialogFragment"
+                android:name="com.bykea.pk.partner.ui.loadboard.detail.LoadBoardListFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 

@@ -43,7 +43,7 @@
         tools:node="merge"
         tools:replace="android:allowBackup">
 
-        <!-- OTP SMS Listener-->
+        <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">

@@ -381,7 +381,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
     /***
      * Map the calling data to UI which is comming from socket.
-     * @param response is a socket response which is listen by Call Listener
+     * @param response is a socket response which is listen by Call onLoadBoardListFragmentInteractionListener
      */
     private void mapCallDataToUI(MultiDeliveryCallDriverData response) {
         try {

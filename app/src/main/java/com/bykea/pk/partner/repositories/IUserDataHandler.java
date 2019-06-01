@@ -241,7 +241,7 @@ public interface IUserDataHandler {
 
     void onError(int errorCode, String errorMessage);
 
-    //#region MultiDelivery Sockets Response Listener
+    //#region MultiDelivery Sockets Response onLoadBoardListFragmentInteractionListener
 
     /**
      * This method will be invoked when driver acknowledge response received.

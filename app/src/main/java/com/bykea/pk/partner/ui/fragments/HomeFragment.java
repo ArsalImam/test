@@ -301,7 +301,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * This method sets Click Listener on Khuda Hafiz Logo/Inactive Button
+     * This method sets Click onLoadBoardListFragmentInteractionListener on Khuda Hafiz Logo/Inactive Button
      */
     private void setInactiveStatusClick() {
         mCurrentActivity.setToolbarLogoKhudaHafiz(new View.OnClickListener() {
@@ -344,7 +344,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * This method sets Click Listener on Bismillah Logo/Active Button
+     * This method sets Click onLoadBoardListFragmentInteractionListener on Bismillah Logo/Active Button
      */
     private void setActiveStatusClick() {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {

@@ -11,9 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
@@ -26,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.loadboard.BookingListDialogFragment;
 import com.bykea.pk.partner.models.data.LoadBoardAllListingData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
@@ -51,14 +48,13 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.greenrobot.eventbus.EventBus;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeActivity extends BaseActivity implements BookingListDialogFragment.Listener {
+public class HomeActivity extends BaseActivity {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -389,21 +385,6 @@ public class HomeActivity extends BaseActivity implements BookingListDialogFragm
      * initialize loadboard listing with empty data and bottom sheet with behavior
      */
     public void setupBottomSheet() {
-        mloadBoardListAdapter = new LoadBoardListAdapter(this, mlist, new LoadBoardListAdapter.ItemClickListener() {
-            @Override
-            public void onClick(LoadBoardAllListingData item) {
-                if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                } else {
-                    ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(mCurrentActivity, item.getId());
-                }
-            }
-        });
-//        activeHomeLoadBoardList.setLayoutManager(new LinearLayoutManager(this));
-//        activeHomeLoadBoardList.setHasFixedSize(true);
-//        activeHomeLoadBoardList.setAdapter(mloadBoardListAdapter);
-
-
 //    TODO:COMMENTED
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             StateListAnimator stateListAnimator = new StateListAnimator();
@@ -579,7 +560,7 @@ public class HomeActivity extends BaseActivity implements BookingListDialogFragm
                 .addToBackStack(null).commitAllowingStateLoss();
     }
 
-    @Override
+/*    @Override
     public void onBookingClicked(long bookingId) {
         if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -587,5 +568,5 @@ public class HomeActivity extends BaseActivity implements BookingListDialogFragm
 //            ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(mCurrentActivity, item.getId());
         }
         Toast.makeText(mCurrentActivity, "Loadboard Booking Id: " + bookingId, Toast.LENGTH_SHORT).show();
-    }
+    }*/
 }

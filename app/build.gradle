@@ -198,7 +198,8 @@ dependencies {
     implementation 'top.oply.opuslib:opuslib:1.0.2'
     implementation deps.markerClustering
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':loadboard')
+//    implementation project(path: ':loadboard')
+    implementation project(path: ':dal')
 
     // Testing dependencies
     testImplementation "junit:junit:$rootProject.junitVersion"
