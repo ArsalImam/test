@@ -1,4 +1,4 @@
-package com.yousufsohail.myaudioplayer
+package com.bykea.pk.partner.utils.audio
 
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy

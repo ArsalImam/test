@@ -1,4 +1,4 @@
-package com.yousufsohail.myaudioplayer
+package com.bykea.pk.partner.utils.audio
 
 import android.content.Context
 import android.media.MediaPlayer
