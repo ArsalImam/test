@@ -2,19 +2,27 @@ package com.bykea.pk.partner.ui.loadboard.list
 
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.source.remote.ApiClient
+import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
+import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardListingResponse
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.fragment_booking_list_dialog.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 /**
@@ -51,7 +59,9 @@ class LoadBoardListFragment : Fragment() {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
         layoutParamRL.setMargins(0, -15, 0, 0);
 
-        setAdapter(bookingArrayList)
+        getData()
+
+//        setAdapter(bookingArrayList)
         //bsetBottomSheetArrow()
 
         view.post {
@@ -96,7 +106,29 @@ class LoadBoardListFragment : Fragment() {
         }
     }
 
-    private fun setAdapter(bookingArrayList: ArrayList<Booking>?) {
+    private fun getData() {
+        val call = ApiClient.build()?.getLoadboardListMock()
+        call?.enqueue(object : Callback<GetLoadboardListingResponse> {
+
+            override fun onFailure(call: Call<GetLoadboardListingResponse>, t: Throwable) {
+//                callback.onDataNotAvailable(t.message)
+                Toast.makeText(this@LoadBoardListFragment.activity, "Failed", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onResponse(call: Call<GetLoadboardListingResponse>, response: Response<GetLoadboardListingResponse>) {
+                response.body()?.let {
+                    if (response.isSuccessful && it.isSuccess()) {
+                        Log.v(BookingsRemoteDataSource::class.java.simpleName, "data ${it.data}")
+                        setAdapter(it.data)
+                    } else {
+                        Toast.makeText(this@LoadBoardListFragment.activity, "Failed", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun setAdapter(bookingArrayList: List<Booking>?) {
         if (true) {//bookingArrayList != null && bookingArrayList.size > 0) {
             activeHomeLoadBoardList.layoutManager = LinearLayoutManager(context)
             activeHomeLoadBoardList.adapter = LoadBoardListAdapter(activity, ArrayList<Booking>(), LoadBoardListAdapter.ItemClickListener {
