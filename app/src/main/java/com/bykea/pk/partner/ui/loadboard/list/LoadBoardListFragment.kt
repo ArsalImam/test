@@ -7,13 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.dal.Booking
-import com.bykea.pk.partner.dal.source.remote.ApiClient
-import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
-import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardListingResponse
 import com.bykea.pk.partner.databinding.LoadboardBookingsFragBinding
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
@@ -21,9 +17,6 @@ import com.bykea.pk.partner.utils.Constants
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.loadboard_bookings_frag.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 /**
@@ -139,7 +132,7 @@ class LoadBoardListFragment : Fragment() {
         }
     }
 
-    private fun getData() {
+/*    private fun getData() {
         val call = ApiClient.build()?.getLoadboardListMock()
         call?.enqueue(object : Callback<GetLoadboardListingResponse> {
 
@@ -159,7 +152,7 @@ class LoadBoardListFragment : Fragment() {
                 }
             }
         })
-    }
+    }*/
 
 /*
     private fun setAdapter(bookingArrayList: List<Booking>?) {

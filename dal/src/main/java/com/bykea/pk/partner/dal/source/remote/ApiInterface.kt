@@ -42,10 +42,22 @@ interface ApiInterface {
                            @Query("token_id") token: String): Call<GetLoadboardDetailResponse>
 
     @GET
-    fun getLoadboardListMock(@Url url: String = "http://www.mocky.io/v2/5cfe2bf23200004d0045eeeb"): Call<GetLoadboardListingResponse>
+    fun getLoadboardListMock(
+            @Url url: String = "http://www.mocky.io/v2/5cfe2bf23200004d0045eeeb",
+            @Query("_id") driverId: String,
+            @Query("token_id") token: String,
+            @Query("lat") lat: Double,
+            @Query("lng") lng: Double,
+            @Query("limit") limit: Int
+    ): Call<GetLoadboardListingResponse>
 
     @GET
-    fun getLoadboardDetailMock(@Url url: String = "http://www.mocky.io/v2/5cf0fee8300000c86c00bc06"): Call<GetLoadboardDetailResponse>
+    fun getLoadboardDetailMock(
+            @Url url: String = "http://www.mocky.io/v2/5cf0fee8300000c86c00bc06",
+            @Query("booking_id") bookingId: Long,
+            @Query("_id") driverId: String,
+            @Query("token_id") token: String
+    ): Call<GetLoadboardDetailResponse>
 
 
 }

@@ -20,6 +20,26 @@ interface BookingsDao {
     @Query("SELECT * FROM Bookings WHERE id = :bookingId")
     fun getBooking(bookingId: Long): Booking?
 
+    /**
+     * Insert a booking in the database. If the booking already exists, replace it.
+     *
+     * @param booking the booking to be inserted.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(booking: Booking)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(bookings: List<Booking>)
+
+    /**
+     * Delete all bookings.
+     */
+    @Query("DELETE FROM Bookings")
+    fun deleteAll()
+
+    /**
+     * Delete a booking by id.
+     */
+    @Query("DELETE FROM Bookings WHERE id = :bookingId")
+    fun delete(bookingId: Long)
 }

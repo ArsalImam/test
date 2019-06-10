@@ -12,7 +12,9 @@ class BookingsRemoteDataSource {
 
     fun getBookings(driverId: String, token: String, lat: Double, lng: Double, limit: Int, callback: BookingsDataSource.LoadBookingsCallback) {
 
-        val call = ApiClient.build()?.getLoadboardList(driverId, token, lat, lng, limit)
+        val call = ApiClient.build()?.getLoadboardListMock(
+                "http://www.mocky.io/v2/5cfe2bf23200004d0045eeeb",
+                driverId, token, lat, lng, limit)
         call?.enqueue(object : Callback<GetLoadboardListingResponse> {
 
             override fun onFailure(call: Call<GetLoadboardListingResponse>, t: Throwable) {
@@ -34,7 +36,9 @@ class BookingsRemoteDataSource {
 
     fun getBooking(driverId: String, token: String, bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
 
-        val call = ApiClient.build()?.getLoadboardDetail(bookingId, driverId, token)
+        val call = ApiClient.build()?.getLoadboardDetailMock(
+                "http://www.mocky.io/v2/5cf0fee8300000c86c00bc06",
+                bookingId, driverId, token)
         call?.enqueue(object : Callback<GetLoadboardDetailResponse> {
 
             override fun onFailure(call: Call<GetLoadboardDetailResponse>, t: Throwable) {

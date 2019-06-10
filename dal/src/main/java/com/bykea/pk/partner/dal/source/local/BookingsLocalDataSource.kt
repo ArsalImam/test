@@ -40,7 +40,7 @@ class BookingsLocalDataSource private constructor(val appExecutors: AppExecutors
     }
 
     override fun saveBooking(booking: Booking) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        appExecutors.diskIO.execute { bookingsDao.insert(booking) }
     }
 
     override fun acceptBooking(booking: Booking) {
@@ -56,11 +56,15 @@ class BookingsLocalDataSource private constructor(val appExecutors: AppExecutors
     }
 
     override fun deleteAllBookings() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        appExecutors.diskIO.execute {
+            bookingsDao.deleteAll()
+        }
     }
 
     override fun deleteBooking(bookingId: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        appExecutors.diskIO.execute {
+            bookingsDao.delete(bookingId)
+        }
     }
 
     companion object {
