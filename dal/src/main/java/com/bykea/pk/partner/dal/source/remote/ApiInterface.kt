@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 /**
  *
@@ -39,6 +40,12 @@ interface ApiInterface {
     fun getLoadboardDetail(@Path("booking_id") bookingId: Long,
                            @Query("_id") driverId: String,
                            @Query("token_id") token: String): Call<GetLoadboardDetailResponse>
+
+    @GET
+    fun getLoadboardListMock(@Url url: String = "http://www.mocky.io/v2/5cf1020b300000d16c00bc20")
+
+    @GET
+    fun getLoadboardDetailMock(@Url url: String = "http://www.mocky.io/v2/5cf0fee8300000c86c00bc06")
 
 
 }

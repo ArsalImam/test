@@ -1,28 +1,20 @@
-package com.bykea.pk.partner.ui.loadboard.detail
+package com.bykea.pk.partner.ui.loadboard.list
 
-import android.content.Context
-import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager
-import com.bykea.pk.partner.ui.loadboard.list.LoadBoardListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.fragment_booking_list_dialog.*
-import okhttp3.internal.Util
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 /**
