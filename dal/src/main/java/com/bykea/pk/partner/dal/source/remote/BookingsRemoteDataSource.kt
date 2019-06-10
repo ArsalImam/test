@@ -34,7 +34,7 @@ class BookingsRemoteDataSource {
 
     fun getBooking(driverId: String, token: String, bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
 
-        val call = ApiClient.build()?.getLoadboardDetail(driverId, token, bookingId)
+        val call = ApiClient.build()?.getLoadboardDetail(bookingId, driverId, token)
         call?.enqueue(object : Callback<GetLoadboardDetailResponse> {
 
             override fun onFailure(call: Call<GetLoadboardDetailResponse>, t: Throwable) {

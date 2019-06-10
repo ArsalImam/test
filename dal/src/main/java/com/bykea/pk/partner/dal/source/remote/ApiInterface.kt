@@ -4,6 +4,7 @@ import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardDetailRespons
 import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardListingResponse
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -21,7 +22,7 @@ interface ApiInterface {
      * @param limit jobs limit - OPTIONAL
      * @return Loadboard jobs list
      */
-    @GET("/api/v1/driver/loadboard?")
+    @GET("/api/v1/driver/loadboard")
     fun getLoadboardList(@Query("_id") driverId: String,
                          @Query("token_id") token: String,
                          @Query("lat") lat: Double,
@@ -34,10 +35,10 @@ interface ApiInterface {
      * @param token Driver access token
      * @return Loadboard job details
      */
-    @GET("/api/v1/driver/loadboard?")
-    fun getLoadboardDetail(@Query("_id") driverId: String,
-                           @Query("token_id") token: String,
-                           @Query("booking_id") bookingId: Long): Call<GetLoadboardDetailResponse>
+    @GET("/api/v1/driver/loadboard/{booking_id}")
+    fun getLoadboardDetail(@Path("booking_id") bookingId: Long,
+                           @Query("_id") driverId: String,
+                           @Query("token_id") token: String): Call<GetLoadboardDetailResponse>
 
 
 }
