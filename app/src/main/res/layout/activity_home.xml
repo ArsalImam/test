@@ -42,7 +42,8 @@
             android:background="@color/transparent"
             android:fitsSystemWindows="true"
             app:behavior_hideable="false"
-            app:behavior_peekHeight="@dimen/_62sdp"
+            app:behavior_peekHeight="@dimen/_75sdp"
+            app:elevation="0dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <fragment

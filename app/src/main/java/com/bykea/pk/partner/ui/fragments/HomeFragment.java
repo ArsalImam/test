@@ -14,10 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +25,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -36,7 +37,6 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
-import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
@@ -50,7 +50,6 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.SelectPlaceActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -596,6 +595,7 @@ public class HomeFragment extends Fragment {
             //inactive state
             getDriverPerformanceData();
 
+            mCurrentActivity.isVisibleFirstTime = true;
             myRangeBarLayout.setVisibility(View.VISIBLE);
             myRangeBarTopLine.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);
