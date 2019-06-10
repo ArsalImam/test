@@ -43,7 +43,7 @@ interface ApiInterface {
 
     @GET
     fun getLoadboardListMock(
-            @Url url: String = "http://www.mocky.io/v2/5cfe2bf23200004d0045eeeb",
+            @Url url: String = "http://www.mocky.io/v2/5cfe47333200000f0045efbb",
             @Query("_id") driverId: String,
             @Query("token_id") token: String,
             @Query("lat") lat: Double,
