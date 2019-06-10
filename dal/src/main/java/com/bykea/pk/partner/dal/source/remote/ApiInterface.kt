@@ -42,7 +42,7 @@ interface ApiInterface {
                            @Query("token_id") token: String): Call<GetLoadboardDetailResponse>
 
     @GET
-    fun getLoadboardListMock(@Url url: String = "http://www.mocky.io/v2/5cf1020b300000d16c00bc20"): Call<GetLoadboardListingResponse>
+    fun getLoadboardListMock(@Url url: String = "http://www.mocky.io/v2/5cfe2bf23200004d0045eeeb"): Call<GetLoadboardListingResponse>
 
     @GET
     fun getLoadboardDetailMock(@Url url: String = "http://www.mocky.io/v2/5cf0fee8300000c86c00bc06"): Call<GetLoadboardDetailResponse>

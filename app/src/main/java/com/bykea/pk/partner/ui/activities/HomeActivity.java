@@ -81,8 +81,6 @@ public class HomeActivity extends BaseActivity {
     FrameLayout containerView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @BindView(R.id.activeHomeLoadBoardList)
-    RecyclerView activeHomeLoadBoardList;
     @BindView(R.id.drawerMainActivity)
     public DrawerLayout drawerLayout;
 

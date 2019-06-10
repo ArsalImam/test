@@ -1,1 +1,1 @@
-include ':app', ':dal', ':loadboard'
+include ':app', ':dal', ':loadboard', ':common'

@@ -125,6 +125,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
 
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 static def releaseTime() {
@@ -198,8 +202,14 @@ dependencies {
     implementation 'top.oply.opuslib:opuslib:1.0.2'
     implementation deps.markerClustering
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-//    implementation project(path: ':loadboard')
     implementation project(path: ':dal')
+
+
+//    implementation project(path: ':loadboard')
+    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"
+    kapt "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
 
     // Testing dependencies
     testImplementation "junit:junit:$rootProject.junitVersion"

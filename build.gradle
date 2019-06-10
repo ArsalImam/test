@@ -10,6 +10,7 @@ buildscript {
         buildToolsVersion = '27.0.3'
 
         // App dependencies
+        archLifecycleVersion = '2.0.0'
         coroutinesVersion = "1.1.1"
         gradleVersion = '3.4.1'
         junitVersion = '4.12'

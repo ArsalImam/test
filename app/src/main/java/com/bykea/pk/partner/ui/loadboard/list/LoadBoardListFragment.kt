@@ -10,16 +10,17 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.dal.source.remote.ApiClient
 import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardListingResponse
+import com.bykea.pk.partner.databinding.LoadboardBookingsFragBinding
+import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
+import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Constants
-import com.bykea.pk.partner.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.fragment_booking_list_dialog.*
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.loadboard_bookings_frag.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,6 +38,12 @@ import retrofit2.Response
  * You activity (or fragment) needs to implement [LoadBoardListFragment.onLoadBoardListFragmentInteractionListener].
  */
 class LoadBoardListFragment : Fragment() {
+
+    private lateinit var viewDataBinding: LoadboardBookingsFragBinding
+    private lateinit var listAdapter: BookingsAdapter
+
+    private val isVisibleFirstTime = true
+
     private var mOnLoadBoardListFragmentInteractionListener: onLoadBoardListFragmentInteractionListener? = null
     public var mBehavior: BottomSheetBehavior<*>? = null
     private var bookingArrayList: ArrayList<Booking>? = ArrayList()
@@ -44,22 +51,48 @@ class LoadBoardListFragment : Fragment() {
     var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
     var layoutParamRL: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return View.inflate(context, R.layout.fragment_booking_list_dialog, null)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        viewDataBinding = LoadboardBookingsFragBinding.inflate(inflater, container, false).apply {
+            viewmodel = obtainViewModel(BookingListViewModel::class.java)
+        }
+        return viewDataBinding.root
     }
 
-    private val isVisibleFirstTime = true
     override fun onStart() {
         super.onStart()
         mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewDataBinding.viewmodel?.start()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewDataBinding.viewmodel?.let {
+            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_LONG)
+        }
+        viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
+        setupListAdapter()
+    }
+
+    private fun setupListAdapter() {
+        val viewModel = viewDataBinding.viewmodel
+        if (viewModel != null) {
+            listAdapter = BookingsAdapter(java.util.ArrayList(0), viewModel)
+            viewDataBinding.bookingsList.adapter = listAdapter
+        } else {
+            Log.w(TAG, "ViewModel not initialized when attempting to set up adapter.")
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
         layoutParamRL.setMargins(0, -15, 0, 0);
 
-        getData()
+//        getData()
 
 //        setAdapter(bookingArrayList)
         //bsetBottomSheetArrow()
@@ -119,7 +152,7 @@ class LoadBoardListFragment : Fragment() {
                 response.body()?.let {
                     if (response.isSuccessful && it.isSuccess()) {
                         Log.v(BookingsRemoteDataSource::class.java.simpleName, "data ${it.data}")
-                        setAdapter(it.data)
+//                        setAdapter(it.data)
                     } else {
                         Toast.makeText(this@LoadBoardListFragment.activity, "Failed", Toast.LENGTH_LONG).show()
                     }
@@ -128,10 +161,11 @@ class LoadBoardListFragment : Fragment() {
         })
     }
 
+/*
     private fun setAdapter(bookingArrayList: List<Booking>?) {
         if (true) {//bookingArrayList != null && bookingArrayList.size > 0) {
-            activeHomeLoadBoardList.layoutManager = LinearLayoutManager(context)
-            activeHomeLoadBoardList.adapter = LoadBoardListAdapter(activity, ArrayList<Booking>(), LoadBoardListAdapter.ItemClickListener {
+            bookingsList.layoutManager = LinearLayoutManager(context)
+            bookingsList.adapter = LoadBoardListAdapter(activity, ArrayList<Booking>(), LoadBoardListAdapter.ItemClickListener {
                 if (mBehavior != null && mBehavior!!.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                     mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
                 } else {
@@ -143,6 +177,8 @@ class LoadBoardListFragment : Fragment() {
             showBottomSheetNoJobsAvailableHint()
         }
     }
+
+*/
 
     private fun toggleBottomSheetToolbar(alpha: Float) {
         if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
@@ -209,7 +245,7 @@ class LoadBoardListFragment : Fragment() {
     private fun showBottomSheetLoader() {
         bottomSheetLoader.visibility = View.VISIBLE
         bottomSheetNoJobsAvailableTV.visibility = View.GONE
-        activeHomeLoadBoardList.visibility = View.GONE
+        bookingsList.visibility = View.GONE
     }
 
     /**
@@ -218,7 +254,7 @@ class LoadBoardListFragment : Fragment() {
     private fun showBottomSheetNoJobsAvailableHint() {
         bottomSheetLoader.visibility = View.GONE
         bottomSheetNoJobsAvailableTV.visibility = View.VISIBLE
-        activeHomeLoadBoardList.visibility = View.GONE
+        bookingsList.visibility = View.GONE
     }
 
     interface onLoadBoardListFragmentInteractionListener {
@@ -279,6 +315,7 @@ class LoadBoardListFragment : Fragment() {
     }*/
 
     companion object {
-        fun newInstance(): LoadBoardListFragment = LoadBoardListFragment()
+        fun newInstance() = LoadBoardListFragment()
+        private const val TAG = "BookingsFragment"
     }
 }
