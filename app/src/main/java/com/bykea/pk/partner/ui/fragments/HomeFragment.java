@@ -595,7 +595,7 @@ public class HomeFragment extends Fragment {
             //inactive state
             getDriverPerformanceData();
 
-            mCurrentActivity.isVisibleFirstTime = true;
+//            mCurrentActivity.isVisibleFirstTime = true;
             myRangeBarLayout.setVisibility(View.VISIBLE);
             myRangeBarTopLine.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);
