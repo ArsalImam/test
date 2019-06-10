@@ -16,7 +16,7 @@ data class Booking(
         val service_code: Int,
         val fare: Double,
         val collectible: Double,
-        @Embedded(prefix = "pick_") val pick: Stop,
-        @Embedded(prefix = "drop_") val drop: Stop,
+        @Embedded(prefix = "pick_") val pick: Stop?,
+        @Embedded(prefix = "drop_") val drop: Stop?,
         val voice_note: String?
 )
