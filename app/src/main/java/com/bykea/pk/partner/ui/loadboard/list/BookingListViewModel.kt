@@ -46,7 +46,11 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
         loadBookings(false)
     }
 
-    fun loadBookings(forceUpdate: Boolean) {
+    fun refresh() {
+        loadBookings(true)
+    }
+
+    private fun loadBookings(forceUpdate: Boolean) {
         loadBookings(forceUpdate, true)
     }
 

@@ -10,6 +10,10 @@
             name="viewmodel"
             type="com.bykea.pk.partner.ui.loadboard.list.BookingListViewModel" />
 
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.ui.loadboard.list.BookingsListUserActionsListener" />
+
     </data>
 
     <LinearLayout
@@ -54,6 +58,7 @@
                 android:id="@+id/bottomSheetBackIV"
                 android:layout_width="35dp"
                 android:layout_height="50dp"
+                android:onClick="@{() -> listener.onBackClicked()}"
                 android:padding="9dp"
                 app:srcCompat="@mipmap/icon_backarrow_green" />
 
@@ -62,6 +67,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
+                android:onClick="@{() -> listener.onRefreshClicked()}"
                 android:padding="10dp"
                 app:srcCompat="@mipmap/icon_refresh" />
         </FrameLayout>

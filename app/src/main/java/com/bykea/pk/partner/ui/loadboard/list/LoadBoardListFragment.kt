@@ -16,7 +16,6 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Constants
-import com.bykea.pk.partner.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.loadboard_bookings_frag.*
@@ -48,18 +47,26 @@ class LoadBoardListFragment : Fragment() {
     var layoutParamRL: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         viewDataBinding = LoadboardBookingsFragBinding.inflate(inflater, container, false).apply {
+
             viewmodel = obtainViewModel(BookingListViewModel::class.java).apply {
                 openBookingEvent.observe(this@LoadBoardListFragment, Observer {
                     if (mBehavior != null && mBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
                         mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
                     } else {
-                        Utils.appToast(activity, "$it")
-
                         ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(activity, it.peekContent())
                     }
                 })
+            }
+
+            listener = object : BookingsListUserActionsListener {
+                override fun onBackClicked() {
+                    mBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+
+                override fun onRefreshClicked() {
+                    viewDataBinding.viewmodel!!.refresh()
+                }
             }
         }
         return viewDataBinding.root
@@ -67,7 +74,7 @@ class LoadBoardListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED);
+//        mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     override fun onResume() {
@@ -133,15 +140,15 @@ class LoadBoardListFragment : Fragment() {
                 }
             })
 
-            bottomSheetRefreshIV.setOnClickListener {
-                //refreshLoadBoardListingAPI();
-            }
-
-            bottomSheetNoJobsAvailableTV.setOnClickListener {
-                if (mBehavior != null && mBehavior?.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-                    mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
-                }
-            }
+//            bottomSheetRefreshIV.setOnClickListener {
+//                //refreshLoadBoardListingAPI();
+//            }
+//
+//            bottomSheetNoJobsAvailableTV.setOnClickListener {
+//                if (mBehavior != null && mBehavior?.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+//                    mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
+//                }
+//            }
         }
     }
 
