@@ -41,7 +41,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/ic_circle_white_arrow"
-                android:visibility="@{!viewmodel.isCollapsed() ? View.GONE: viewmodel.empty ? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewmodel.isExpended ? View.GONE: viewmodel.empty ? View.GONE : View.VISIBLE}"
                 app:layout_anchor="@+id/view1"
                 app:layout_anchorGravity="top|center" />
 
@@ -158,7 +158,7 @@
                 android:text="@string/wait_for_booking"
                 android:textColor="@color/dark_gray656565"
                 android:textSize="18dp"
-                android:visibility="gone"
+                android:visibility="@{viewmodel.empty ? View.VISIBLE: View.GONE }"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <ProgressBar

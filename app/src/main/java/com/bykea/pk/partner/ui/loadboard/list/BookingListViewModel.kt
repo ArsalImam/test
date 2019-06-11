@@ -42,7 +42,17 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
         it.isEmpty()
     }
 
-    var isCollapsed: Boolean = true
+    // This LiveData depends on another so we can use a transformation.
+    val showArray: LiveData<Boolean> = Transformations.map(_items) {
+        it.isEmpty()
+    }
+
+    private var _isExpended = MutableLiveData<Boolean>()
+    var isExpended: MutableLiveData<Boolean>
+        get() = _isExpended
+        set(value) {
+            _isExpended = value
+        }
 
     fun start() {
         loadBookings(false)
