@@ -40,6 +40,8 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.utils.audio.MediaPlayerHolder;
+import com.bykea.pk.partner.utils.audio.PlaybackInfoListener;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -114,6 +116,11 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
     @BindView(R.id.imgViewAudioPlay)
     AppCompatImageView imgViewAudioPlay;
 
+    MediaPlayerHolder mMediaPlayerHolder = null;
+    private boolean mUserIsSeeking = false;
+    private String mediaFile =
+            "https://www.naatsharif.com/download-mp3/hafiz-ahmed-raza-qadri/hasbi-rabbi-jallallah-2.mp3";
+
     /**
      * fragment instance that accept booking detail data to be displayed
      *
@@ -126,6 +133,13 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         return fragment;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mMediaPlayerHolder != null)
+            mMediaPlayerHolder.loadUri(mediaFile);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -133,9 +147,14 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         View rootView = inflater.inflate(R.layout.fragment_loadboard_detail, container, false);
         ButterKnife.bind(this, rootView);
 
+        mCurrentActivity = (LoadboardDetailActivity) getActivity();
+        mMediaPlayerHolder = new MediaPlayerHolder(mCurrentActivity);
+        mMediaPlayerHolder.setPlaybackInfoListener(new PlaybackListener());
+
+        /*
+        TODO:UNCOMMENT WHEN DETAIL DATA WILL BE RECEIVED
         mapView = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.loadBoardMapFragment);
 
-        mCurrentActivity = (LoadboardDetailActivity) getActivity();
         try {
             mapView.onCreate(savedInstanceState);
             MapsInitializer.initialize(getActivity());
@@ -145,9 +164,33 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         }
         mCurrentLocation = new Location(StringUtils.EMPTY);
         setCurrentLocation();
-        mapView.getMapAsync(mapReadyCallback);
+        mapView.getMapAsync(mapReadyCallback);*/
+
 
         return rootView;
+    }
+
+    class PlaybackListener extends PlaybackInfoListener {
+        @Override
+        public void onDurationChanged$bykea_partner_v5_3_Jun_11_localDebug(int duration) {
+            progressBarForAudioPlay.setMax(duration);
+        }
+
+        @Override
+        public void onPositionChanged$bykea_partner_v5_3_Jun_11_localDebug(int position) {
+            if (!mUserIsSeeking) {
+                progressBarForAudioPlay.setProgress(position);
+            }
+        }
+
+        @Override
+        public void onStateChanged$bykea_partner_v5_3_Jun_11_localDebug(int state) {
+        }
+
+        @Override
+        public void onPlaybackCompleted$bykea_partner_v5_3_Jun_11_localDebug() {
+
+        }
     }
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
@@ -413,11 +456,12 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
                 voiceClipPlayDownload();
                 break;
             case R.id.progressBarForAudioPlay:
-                imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
-                imgViewAudioPlay.setEnabled(true);
-                //imgViewAudioPlay.setVisibility(View.VISIBLE);
-                progressBarForAudioPlay.setVisibility(View.GONE);
-                if (mediaPlayer != null) mediaPlayer.pause();
+                if (mMediaPlayerHolder != null) {
+                    imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
+                    imgViewAudioPlay.setEnabled(true);
+                    progressBarForAudioPlay.setVisibility(View.GONE);
+                    mMediaPlayerHolder.pause();
+                }
                 break;
             //region
             case R.id.acceptBookingBtn:
@@ -476,37 +520,13 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
     }
 
     private void voiceClipPlayDownload() {
-        Pair<Boolean, String> checkIfFileExist = isFileExist();
-        if (checkIfFileExist.first) {
-            if (mediaPlayer != null) {
-                mediaPlayer.start();
-                startPlayProgressUpdater();
-            } else {
-                mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(checkIfFileExist.second);
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                progressBarForAudioPlay.setMax(mediaPlayer.getDuration());
-                mediaPlayer.start();
-                startPlayProgressUpdater();
-            }
+        if (mMediaPlayerHolder != null) {
+            mMediaPlayerHolder.play();
             imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_stop));
             imgViewAudioPlay.setEnabled(false);
             //imgViewAudioPlay.setVisibility(View.GONE);
             progressBarForAudioPlay.setVisibility(View.VISIBLE);
-        } else {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            new DownloadFile().execute();
         }
-    }
-
-    public Pair<Boolean, String> isFileExist() {
-        String path = getContext().getFilesDir() + "/voice_clip_" + String.valueOf(data.getId());
-        File file = new File(path);
-        return new Pair<>(file.exists(), path);
     }
 
     public void startPlayProgressUpdater() {
@@ -524,8 +544,6 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 
             imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
             imgViewAudioPlay.setEnabled(true);
-            //imgViewAudioPlay.setVisibility(View.VISIBLE);
-
             progressBarForAudioPlay.setVisibility(View.GONE);
             progressBarForAudioPlay.setProgress(0);
         }
@@ -542,56 +560,11 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    private class DownloadFile extends AsyncTask<String, Integer, String> {
-        @Override
-        protected String doInBackground(String... url1) {
-            int downloadedSize = 0;
-            int totalSize = 0;
-            try {
-                URL url = new URL("https://sample-videos.com/audio/mp3/crowd-cheering.mp3");
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-                urlConnection.connect();
-
-                String mFileName = "voice_clip_" + String.valueOf(data.getId());
-                File file = new File(getContext().getFilesDir(), mFileName);
-
-                FileOutputStream fileOutput = new FileOutputStream(file);
-
-                // Stream used for reading the data from the internet
-                InputStream inputStream = urlConnection.getInputStream();
-
-                // this is the total size of the file which we are downloading
-                totalSize = urlConnection.getContentLength();
-
-                byte[] buffer = new byte[1024];
-                int bufferLength = 0;
-
-                while ((bufferLength = inputStream.read(buffer)) > 0) {
-                    fileOutput.write(buffer, 0, bufferLength);
-                    downloadedSize += bufferLength;
-                }
-                fileOutput.close();
-
-            } catch (Exception e) {
-                int a = 2;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            Dialogs.INSTANCE.dismissDialog();
-            voiceClipPlayDownload();
-        }
-    }
-
     @Override
-    public void onPause() {
-        if (mediaPlayer != null) {
-            mediaPlayer.pause();
-            startPlayProgressUpdater();
+    public void onStop() {
+        super.onStop();
+        if (mMediaPlayerHolder != null) {
+            mMediaPlayerHolder.release();
         }
-        super.onPause();
     }
 }

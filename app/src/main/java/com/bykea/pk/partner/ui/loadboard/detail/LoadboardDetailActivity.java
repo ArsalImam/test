@@ -52,7 +52,8 @@ public class LoadboardDetailActivity extends BaseActivity implements View.OnClic
         setContentView(R.layout.loadboard_detail);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
-        bookingId = getIntent().getStringExtra(BOOKING_ID);
+        bookingId = String.valueOf(getIntent().getLongExtra(BOOKING_ID,0));
+//        bookingId = getIntent().getStringExtra(BOOKING_ID);
         ButterKnife.bind(this);
 
         initViews();
