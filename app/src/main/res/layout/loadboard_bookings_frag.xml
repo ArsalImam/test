@@ -41,7 +41,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/ic_circle_white_arrow"
-                android:visibility="@{viewmodel.empty ? View.GONE : View.VISIBLE}"
+                android:visibility="@{!viewmodel.isCollapsed() ? View.GONE: viewmodel.empty ? View.GONE : View.VISIBLE}"
                 app:layout_anchor="@+id/view1"
                 app:layout_anchorGravity="top|center" />
 

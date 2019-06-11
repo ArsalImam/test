@@ -86,8 +86,10 @@ class LoadBoardListFragment : Fragment() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
+                            viewDataBinding.viewmodel!!.isCollapsed = true
                         }
                         BottomSheetBehavior.STATE_EXPANDED -> {
+                            viewDataBinding.viewmodel!!.isCollapsed = false
                         }
                         BottomSheetBehavior.STATE_DRAGGING -> {
                         }

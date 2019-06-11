@@ -42,6 +42,8 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
         it.isEmpty()
     }
 
+    var isCollapsed: Boolean = true
+
     fun start() {
         loadBookings(false)
     }
