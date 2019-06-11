@@ -9,21 +9,18 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.AppCompatImageView;
-
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.loadboard.LoadboardBookingDetailData;
@@ -46,7 +43,6 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -60,12 +56,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -172,23 +162,23 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
 
     class PlaybackListener extends PlaybackInfoListener {
         @Override
-        public void onDurationChanged$bykea_partner_v5_3_Jun_11_localDebug(int duration) {
+        public void onDurationChanged(int duration) {
             progressBarForAudioPlay.setMax(duration);
         }
 
         @Override
-        public void onPositionChanged$bykea_partner_v5_3_Jun_11_localDebug(int position) {
+        public void onPositionChanged(int position) {
             if (!mUserIsSeeking) {
                 progressBarForAudioPlay.setProgress(position);
             }
         }
 
         @Override
-        public void onStateChanged$bykea_partner_v5_3_Jun_11_localDebug(int state) {
+        public void onStateChanged(int state) {
         }
 
         @Override
-        public void onPlaybackCompleted$bykea_partner_v5_3_Jun_11_localDebug() {
+        public void onPlaybackCompleted() {
 
         }
     }

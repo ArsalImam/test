@@ -16,12 +16,12 @@ abstract class PlaybackInfoListener {
         }
     }
 
-    internal open fun onDurationChanged(duration: Int) {}
+    open fun onDurationChanged(duration: Int) {}
 
-    internal open fun onPositionChanged(position: Int) {}
+    open fun onPositionChanged(position: Int) {}
 
-    internal open fun onStateChanged(@State state: Int) {}
+    open fun onStateChanged(@State state: Int) {}
 
-    internal open fun onPlaybackCompleted() {}
+    open fun onPlaybackCompleted() {}
 
 }
