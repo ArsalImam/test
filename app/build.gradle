@@ -21,10 +21,10 @@ android {
                                 /*for testing  ->*/ /*"efb89186-0b1b-4060-8985-fa8533a8b401"*/,
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "REMOTE"]
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
-        versionCode 33
-        versionName "5.3"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 34
+        versionName "5.4"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
