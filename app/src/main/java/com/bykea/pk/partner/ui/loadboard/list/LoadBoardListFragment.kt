@@ -9,11 +9,14 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.databinding.LoadboardBookingsFragBinding
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.loadboard_bookings_frag.*
@@ -47,7 +50,17 @@ class LoadBoardListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         viewDataBinding = LoadboardBookingsFragBinding.inflate(inflater, container, false).apply {
-            viewmodel = obtainViewModel(BookingListViewModel::class.java)
+            viewmodel = obtainViewModel(BookingListViewModel::class.java).apply {
+                openBookingEvent.observe(this@LoadBoardListFragment, Observer {
+                    if (mBehavior != null && mBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
+                        mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
+                    } else {
+                        Utils.appToast(activity, "$it")
+
+                        ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(activity, it.peekContent())
+                    }
+                })
+            }
         }
         return viewDataBinding.root
     }
