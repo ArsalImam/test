@@ -26,5 +26,7 @@ data class Booking(
         val voice_note: String?,
         val dt: String,
         @Embedded(prefix = "pick_") val pickup: Stop?,
-        @Embedded(prefix = "drop_") val dropoff: Stop?
+        @Embedded(prefix = "drop_") val dropoff: Stop?,
+        @Embedded(prefix = "receiver_") val receiver: Contact?,
+        @Embedded(prefix = "sender_") val sender: Contact?
 )
