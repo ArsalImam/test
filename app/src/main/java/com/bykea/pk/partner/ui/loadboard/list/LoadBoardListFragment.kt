@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.databinding.LoadboardBookingsFragBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
@@ -30,7 +30,6 @@ import kotlinx.android.synthetic.main.loadboard_bookings_frag.*
  *    BookingListDialogFragment.newInstance(30).show(supportFragmentManager, "dialog")
  * </pre>
  *
- * You activity (or fragment) needs to implement [LoadBoardListFragment.onLoadBoardListFragmentInteractionListener].
  */
 class LoadBoardListFragment : Fragment() {
 
@@ -39,9 +38,7 @@ class LoadBoardListFragment : Fragment() {
 
     private val isVisibleFirstTime = true
 
-    private var mOnLoadBoardListFragmentInteractionListener: onLoadBoardListFragmentInteractionListener? = null
-    public var mBehavior: BottomSheetBehavior<*>? = null
-    private var bookingArrayList: ArrayList<Booking>? = ArrayList()
+    private var mBehavior: BottomSheetBehavior<*>? = null
 
     var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
     var layoutParamRL: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
@@ -72,42 +69,10 @@ class LoadBoardListFragment : Fragment() {
         return viewDataBinding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-//        mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED);
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewDataBinding.viewmodel?.start()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewDataBinding.viewmodel?.let {
-            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_LONG)
-        }
-        viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
-        setupListAdapter()
-    }
-
-    private fun setupListAdapter() {
-        val viewModel = viewDataBinding.viewmodel
-        if (viewModel != null) {
-            listAdapter = BookingsAdapter(java.util.ArrayList(0), viewModel)
-            viewDataBinding.bookingsList.adapter = listAdapter
-        } else {
-            Log.w(TAG, "ViewModel not initialized when attempting to set up adapter.")
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
         layoutParamRL.setMargins(0, -15, 0, 0);
 
-//        getData()
-
-//        setAdapter(bookingArrayList)
         //bsetBottomSheetArrow()
 
         view.post {
@@ -139,18 +104,83 @@ class LoadBoardListFragment : Fragment() {
                     toggleBottomSheetToolbar(slideOffset)
                 }
             })
-
-//            bottomSheetRefreshIV.setOnClickListener {
-//                //refreshLoadBoardListingAPI();
-//            }
-//
-//            bottomSheetNoJobsAvailableTV.setOnClickListener {
-//                if (mBehavior != null && mBehavior?.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-//                    mBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
-//                }
-//            }
         }
     }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewDataBinding.viewmodel?.let {
+            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_LONG)
+        }
+        viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
+        setupListAdapter()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewDataBinding.viewmodel?.start()
+    }
+
+    private fun setupListAdapter() {
+        val viewModel = viewDataBinding.viewmodel
+        if (viewModel != null) {
+            ViewCompat.setNestedScrollingEnabled(viewDataBinding.bookingsList, true)
+            listAdapter = BookingsAdapter(java.util.ArrayList(0), viewModel)
+            viewDataBinding.bookingsList.adapter = listAdapter
+        } else {
+            Log.w(TAG, "ViewModel not initialized when attempting to set up adapter.")
+        }
+    }
+
+    private fun toggleBottomSheetToolbar(alpha: Float) {
+        if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
+            bottomSheetToolbarLayout.visibility = View.VISIBLE
+            bottomSheetToolbarDivider.visibility = View.VISIBLE
+            bottomSheetPickDropLayout.visibility = View.VISIBLE
+            bottomSheetPickDropDivider.visibility = View.VISIBLE
+            bottomSheetToolbarLayout.alpha = alpha
+            bottomSheetToolbarDivider.alpha = alpha
+            bottomSheetPickDropLayout.alpha = alpha
+            bottomSheetPickDropDivider.alpha = alpha
+            mBehavior!!.peekHeight = 100
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+            appBottomBarLayoutImgView.setVisibility(View.GONE);
+        } else {
+            bottomSheetToolbarLayout.visibility = View.GONE
+            bottomSheetToolbarDivider.visibility = View.GONE
+            bottomSheetPickDropLayout.visibility = View.GONE
+            bottomSheetPickDropDivider.visibility = View.GONE
+            bottomSheetToolbarLayout.alpha = alpha
+            bottomSheetToolbarDivider.alpha = alpha
+            bottomSheetPickDropLayout.alpha = alpha
+            bottomSheetPickDropDivider.alpha = alpha
+
+            setBottomSheetArrow()
+        }
+    }
+
+    private fun setBottomSheetArrow() {
+        if (isVisibleFirstTime) {// && bookingArrayList != null && bookingArrayList!!.size > 0) {
+            //  isVisibleFirstTime || bottomSheetLoader.getVisibility() == View.VISIBLE) {
+            //  isVisibleFirstTime = false;
+            appBottomBarLayoutImgView.setVisibility(View.VISIBLE);
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+            mBehavior!!.peekHeight = 130
+        } else {
+            mBehavior!!.peekHeight = 100
+            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+        }
+    }
+
+    private fun getScreenHeight(): Int {
+        return Resources.getSystem().getDisplayMetrics().heightPixels
+    }
+
+    companion object {
+        fun newInstance() = LoadBoardListFragment()
+        private const val TAG = "BookingsFragment"
+    }
+
 
 /*    private fun getData() {
         val call = ApiClient.build()?.getLoadboardListMock()
@@ -193,65 +223,6 @@ class LoadBoardListFragment : Fragment() {
 
 */
 
-    private fun toggleBottomSheetToolbar(alpha: Float) {
-        if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
-            bottomSheetToolbarLayout.visibility = View.VISIBLE
-            bottomSheetToolbarDivider.visibility = View.VISIBLE
-            bottomSheetPickDropLayout.visibility = View.VISIBLE
-            bottomSheetPickDropDivider.visibility = View.VISIBLE
-            bottomSheetToolbarLayout.alpha = alpha
-            bottomSheetToolbarDivider.alpha = alpha
-            bottomSheetPickDropLayout.alpha = alpha
-            bottomSheetPickDropDivider.alpha = alpha
-            mBehavior!!.peekHeight = 100
-            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
-            appBottomBarLayoutImgView.setVisibility(View.GONE);
-        } else {
-            bottomSheetToolbarLayout.visibility = View.GONE
-            bottomSheetToolbarDivider.visibility = View.GONE
-            bottomSheetPickDropLayout.visibility = View.GONE
-            bottomSheetPickDropDivider.visibility = View.GONE
-            bottomSheetToolbarLayout.alpha = alpha
-            bottomSheetToolbarDivider.alpha = alpha
-            bottomSheetPickDropLayout.alpha = alpha
-            bottomSheetPickDropDivider.alpha = alpha
-
-            setBottomSheetArrow()
-        }
-    }
-
-    fun setBottomSheetArrow() {
-        if (isVisibleFirstTime) {// && bookingArrayList != null && bookingArrayList!!.size > 0) {
-            //  isVisibleFirstTime || bottomSheetLoader.getVisibility() == View.VISIBLE) {
-            //  isVisibleFirstTime = false;
-            appBottomBarLayoutImgView.setVisibility(View.VISIBLE);
-            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
-            mBehavior!!.peekHeight = 130
-        } else {
-            mBehavior!!.peekHeight = 100
-            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
-        }
-    }
-
-    fun getScreenHeight(): Int {
-        return Resources.getSystem().getDisplayMetrics().heightPixels
-    }
-
-    /*override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val parent = parentFragment
-        if (parent != null) {
-            mOnLoadBoardListFragmentInteractionListener = parent as onLoadBoardListFragmentInteractionListener
-        } else {
-            mOnLoadBoardListFragmentInteractionListener = context as onLoadBoardListFragmentInteractionListener
-        }
-    }*/
-
-    override fun onDetach() {
-        mOnLoadBoardListFragmentInteractionListener = null
-        super.onDetach()
-    }
-
     /**
      * show progress loader while loadboard jobs listing api is being requested
      */
@@ -268,10 +239,6 @@ class LoadBoardListFragment : Fragment() {
         bottomSheetLoader.visibility = View.GONE
         bottomSheetNoJobsAvailableTV.visibility = View.VISIBLE
         bookingsList.visibility = View.GONE
-    }
-
-    interface onLoadBoardListFragmentInteractionListener {
-        fun onBookingClicked(booking: Long)
     }
 
     /*private inner class ViewHolder internal constructor(inflater: LayoutInflater, parent: ViewGroup)
@@ -327,8 +294,5 @@ class LoadBoardListFragment : Fragment() {
         }
     }*/
 
-    companion object {
-        fun newInstance() = LoadBoardListFragment()
-        private const val TAG = "BookingsFragment"
-    }
+
 }
