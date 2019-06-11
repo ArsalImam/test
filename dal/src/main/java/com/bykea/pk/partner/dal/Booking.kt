@@ -13,10 +13,18 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "bookings")
 data class Booking(
         @PrimaryKey @ColumnInfo(name = "id") val id: Long,
+        val state: String?,
+        val booking_no: String?,
+        val order_no: String?,
+        val trip_id: String?,
+        val trip_type: String?,
         val service_code: Int,
-        val fare: Double,
-        val collectible: Double,
-        @Embedded(prefix = "pick_") val pick: Stop?,
-        @Embedded(prefix = "drop_") val drop: Stop?,
-        val voice_note: String?
+        val customer_id: String?,
+        val creator_type: String?,
+        val fare_est: Double,
+        val amount: Double?,
+        val voice_note: String?,
+        val dt: String,
+        @Embedded(prefix = "pick_") val pickup: Stop?,
+        @Embedded(prefix = "drop_") val dropoff: Stop?
 )

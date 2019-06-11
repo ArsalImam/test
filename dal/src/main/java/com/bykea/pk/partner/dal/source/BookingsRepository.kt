@@ -1,18 +1,3 @@
-/*
- * Copyright 2017, The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.bykea.pk.partner.dal.source
 
 import com.bykea.pk.partner.dal.Booking
@@ -35,9 +20,9 @@ class BookingsRepository(
     //TODO: fetch from app preference
     private val driverId: String = "23"
     private val token: String = "23"
-    private val lat: Double = 23.5
-    private val lng: Double = 23.3
-    private val limit: Int = 23
+    private val lat: Double = 24.914
+    private val lng: Double = 67.118
+    private val limit: Int = 20
 
     /**
      * This variable has public visibility so it can be accessed from tests.
@@ -83,27 +68,6 @@ class BookingsRepository(
         }
     }
 
-    override fun saveBooking(booking: Booking) {
-        // Do in memory cache update to keep the app UI up to date
-        cacheAndPerform(booking) {
-            bookingsLocalDataSource.saveBooking(it)
-        }
-    }
-
-    override fun acceptBooking(booking: Booking) {
-        // Do in memory cache update to keep the app UI up to date
-        cacheAndPerform(booking) {
-            bookingsRemoteDataSource.acceptBooking(it.id)
-            bookingsLocalDataSource.acceptBooking(it)
-        }
-    }
-
-    override fun acceptBooking(bookingId: Long) {
-        getBookingWithId(bookingId)?.let {
-            acceptBooking(it)
-        }
-    }
-
     /**
      * Gets bookings from local data source (sqlite) unless the table is new or empty. In that case it
      * uses the network data source. This is done to simplify the sample.
@@ -132,7 +96,7 @@ class BookingsRepository(
             }
 
             override fun onDataNotAvailable(message: String?) {
-                bookingsRemoteDataSource.getBooking(driverId, token, bookingId, object : BookingsDataSource.GetBookingCallback {
+                bookingsRemoteDataSource.getBooking(bookingId, driverId, token, lat, lng, object : BookingsDataSource.GetBookingCallback {
                     override fun onBookingLoaded(booking: Booking) {
                         // Do in memory cache update to keep the app UI up to date
                         cacheAndPerform(booking) {
@@ -148,6 +112,27 @@ class BookingsRepository(
                 })
             }
         })
+    }
+
+    override fun saveBooking(booking: Booking) {
+        // Do in memory cache update to keep the app UI up to date
+        cacheAndPerform(booking) {
+            bookingsLocalDataSource.saveBooking(it)
+        }
+    }
+
+    override fun acceptBooking(booking: Booking) {
+        // Do in memory cache update to keep the app UI up to date
+        cacheAndPerform(booking) {
+            bookingsRemoteDataSource.acceptBooking(it.id)
+            bookingsLocalDataSource.acceptBooking(it)
+        }
+    }
+
+    override fun acceptBooking(bookingId: Long) {
+        getBookingWithId(bookingId)?.let {
+            acceptBooking(it)
+        }
     }
 
     override fun refreshBookings() {

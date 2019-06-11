@@ -23,12 +23,14 @@ interface ApiInterface {
      * @param limit jobs limit - OPTIONAL
      * @return Loadboard jobs list
      */
-    @GET("/api/v1/driver/loadboard")
-    fun getLoadboardList(@Query("_id") driverId: String,
-                         @Query("token_id") token: String,
-                         @Query("lat") lat: Double,
-                         @Query("lng") lng: Double,
-                         @Query("limit") limit: Int): Call<GetLoadboardListingResponse>
+    @GET("/v1/bookings")
+    fun getLoadboardList(
+            @Query("_id") driverId: String,
+            @Query("token_id") token: String,
+            @Query("lat") lat: Double,
+            @Query("lng") lng: Double,
+            @Query("f_distance") distance: Int = 10,
+            @Query("sort") sort: String = "nearby"): Call<GetLoadboardListingResponse>
 
     /**
      * Getting loadboard job details .
@@ -36,28 +38,29 @@ interface ApiInterface {
      * @param token Driver access token
      * @return Loadboard job details
      */
-    @GET("/api/v1/driver/loadboard/{booking_id}")
-    fun getLoadboardDetail(@Path("booking_id") bookingId: Long,
-                           @Query("_id") driverId: String,
-                           @Query("token_id") token: String): Call<GetLoadboardDetailResponse>
+    @GET("/v1/bookings/{booking_id}")
+    fun getLoadboardDetail(
+            @Path("booking_id") bookingId: Long,
+            @Query("_id") driverId: String,
+            @Query("token_id") token: String,
+            @Query("lat") lat: Double,
+            @Query("lng") lng: Double): Call<GetLoadboardDetailResponse>
 
     @GET
     fun getLoadboardListMock(
-            @Url url: String = "http://www.mocky.io/v2/5cfe47333200000f0045efbb",
+            @Url url: String = "http://www.mocky.io/v2/5cfe4cb33200000f0045efe2",
             @Query("_id") driverId: String,
             @Query("token_id") token: String,
             @Query("lat") lat: Double,
             @Query("lng") lng: Double,
-            @Query("limit") limit: Int
-    ): Call<GetLoadboardListingResponse>
+            @Query("limit") limit: Int): Call<GetLoadboardListingResponse>
 
     @GET
     fun getLoadboardDetailMock(
             @Url url: String = "http://www.mocky.io/v2/5cf0fee8300000c86c00bc06",
             @Query("booking_id") bookingId: Long,
             @Query("_id") driverId: String,
-            @Query("token_id") token: String
-    ): Call<GetLoadboardDetailResponse>
+            @Query("token_id") token: String): Call<GetLoadboardDetailResponse>
 
 
 }
