@@ -146,6 +146,7 @@
             <ListView
                 android:id="@+id/bookingsList"
                 android:layout_width="match_parent"
+                android:nestedScrollingEnabled="true"
                 android:layout_height="match_parent"
                 app:items="@{viewmodel.items}" />
 
