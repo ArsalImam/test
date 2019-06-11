@@ -21,11 +21,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.View;
@@ -654,6 +654,21 @@ public class BaseActivity extends AppCompatActivity {
             Utils.onUnauthorized(mCurrentActivity);
         } else if (Keys.MOCK_LOCATION.equalsIgnoreCase(action)) {
             Utils.onUnauthorizedMockLocation(mCurrentActivity);
+        } else if (Keys.MULTIDELIVERY_ERROR_BORADCAST.equalsIgnoreCase(action)) {
+            //MULTI DELIVERY EVENT ERROR HANDLING
+            Utils.appToast(mCurrentActivity,
+                    mCurrentActivity.getString(R.string.error_try_again));
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
+            Utils.multiDeliveryFreeDriverOnBatchComplete();
+            ActivityStackManager
+                    .getInstance()
+                    .startHomeActivity(true, mCurrentActivity);
+            finish();
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN )) {
+            Utils.setCallIncomingState();
+            AppPreferences.setAvailableStatus(true);
+            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(true, mCurrentActivity);
+            finish();
         }
     }
 

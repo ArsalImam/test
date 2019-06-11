@@ -13,7 +13,7 @@
         android:layout_height="@dimen/_50sdp"
         android:background="@color/white">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/backFromLoadboardZoneIV"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="@dimen/_50sdp"
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvZones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

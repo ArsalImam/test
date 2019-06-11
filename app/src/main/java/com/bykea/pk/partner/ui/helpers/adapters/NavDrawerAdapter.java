@@ -1,10 +1,10 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +23,7 @@ import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -30,6 +31,8 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import org.apache.commons.lang3.StringUtils;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
     private String[] titles;
@@ -98,33 +101,34 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
             switch (getLayoutPosition()) {
                 case 0:// This case is for driver header part click.
-                    if (HomeActivity.visibleFragmentNumber != 0) {
-                        updateCurrentFragment(new ProfileFragment(), 0);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.PROFILE_SCREEN) {
+                        updateCurrentFragment(new ProfileFragment(), Constants.ScreenRedirections.PROFILE_SCREEN);
                     }
                     break;
                 case 1:
-                    if (HomeActivity.visibleFragmentNumber != 1) {
-                        updateCurrentFragment(new HomeFragment(), 1);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOME_SCREEN) {
+                        updateCurrentFragment(new HomeFragment(), Constants.ScreenRedirections.HOME_SCREEN);
                     }
                     break;
                 case 2:
-                    if (HomeActivity.visibleFragmentNumber != 2) {
-                        updateCurrentFragment(new TripHistoryFragment(), 2);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.TRIP_HISTORY_SCREEN) {
+                        updateCurrentFragment(new TripHistoryFragment(), Constants.ScreenRedirections.TRIP_HISTORY_SCREEN);
                     }
                     break;
                 case 3:
-                    if (HomeActivity.visibleFragmentNumber != 3) {
-                        updateCurrentFragment(new WalletFragment(), 3);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.WALLET_SCREEN) {
+                        updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN);
                     }
                     break;
                 case 4:
-                    if (HomeActivity.visibleFragmentNumber != 4) {
-                        updateCurrentFragment(new HowItWorksFragment(), 4);
-                    }
+//                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN) {
+//                         updateCurrentFragment(new HowItWorksFragment(), Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN);
+//                     }
+                    Utils.startCustomWebViewActivity(mainActivity, HOW_IT_WORKS_WEB_URL, context.getString(R.string.how_it_works));
                     break;
                 case 5:
-                    if (HomeActivity.visibleFragmentNumber != 5) {
-                        updateCurrentFragment(new ContactUsFragment(), 5);
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.CONTACT_US_SCREEN) {
+                        updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN);
                     }
                     break;
 
@@ -158,12 +162,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
              * when navigation in on home screen, show bottom sheet and connection status
              * otherwise hide both
              */
-            if(pos == 1){
-                ((HomeActivity)context).toggleAchaConnection(View.VISIBLE);
+            if (pos == 1) {
+                ((HomeActivity) context).toggleAchaConnection(View.VISIBLE);
                 //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
             } else {
-                ((HomeActivity)context).toggleAchaConnection(View.GONE);
-                ((HomeActivity)context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
+                ((HomeActivity) context).toggleAchaConnection(View.GONE);
+                ((HomeActivity) context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
             }
         }
     }

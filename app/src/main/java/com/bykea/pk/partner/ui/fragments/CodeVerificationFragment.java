@@ -8,10 +8,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Telephony;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 import android.telephony.SmsMessage;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
@@ -37,11 +37,9 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.OTPReceiveListener;
 import com.bykea.pk.partner.ui.helpers.SmsBroadcastReceiver;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
-import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.DonutProgress;
 import com.bykea.pk.partner.widgets.FontEditText;
@@ -486,7 +484,7 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
         AppPreferences.setPilotData(loginResponse.getUser());
         AppPreferences.setAvailableStatus(loginResponse.getUser().isAvailable());
         AppPreferences.setCashInHands(loginResponse.getUser().getCashInHand());
-        AppPreferences.setCash(loginResponse.getUser().isCash()); //saving driver's cash/non-cash status to local storage
+        //AppPreferences.setCash(loginResponse.getUser().isCash()); //saving driver's cash/non-cash status to local storage
         /*AppPreferences.setCashInHandsRange(mCurrentActivity, loginResponse.getUser().getCashInHandRange());
         AppPreferences.setVerifiedStatus(mCurrentActivity, loginResponse.getUser().isVerified());*/
         AppPreferences.saveLoginStatus(true);

@@ -287,16 +287,6 @@ public class FeedbackActivity extends BaseActivity {
         receivedAmountEt.setHint("Suggested Rs. " + Utils.getCommaFormattedAmount(totalCharges));
     }
 
-    private ArrayList<String> getDeliveryMsgsList() {
-        ArrayList<String> list = new ArrayList<>();
-        list.add("کامیاب ڈیلیوری");
-        list.add("ناكام - وصول کرنے والا رابطے میں نہیں");
-        list.add("ناكام - وصول کرنے والا موجود نہیں ہے");
-        list.add("ناكام - پارسل وصول کرنے سے انکار");
-        list.add("ناكام - پتہ نہیں ملا");
-        return list;
-    }
-
     private void updateUIICODelivery() {
         llReceiverInfo.setVisibility(View.VISIBLE);
         llReceiverInfo.setPadding(0, 0, 0, (int) mCurrentActivity.getResources().getDimension(R.dimen._8sdp));
@@ -321,7 +311,8 @@ public class FeedbackActivity extends BaseActivity {
 
     private void initAdapter(final NormalCallData callData) {
 
-        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, getDeliveryMsgsList());
+        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity,
+                Utils.getDeliveryMsgsList(mCurrentActivity));
 
 
         spDeliveryStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -384,7 +375,7 @@ public class FeedbackActivity extends BaseActivity {
             if (isDeliveryType) {
                 new UserRepository().requestFeedback(mCurrentActivity, handler,
                         "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
-                        , selectedMsgPosition == 0, getDeliveryMsgsList().get(selectedMsgPosition), etReceiverName.getText().toString(),
+                        , selectedMsgPosition == 0, Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition], etReceiverName.getText().toString(),
                         etReceiverMobileNo.getText().toString());
             } else if (isPurchaseType) {
                 new UserRepository().requestFeedback(mCurrentActivity, handler,
@@ -438,7 +429,7 @@ public class FeedbackActivity extends BaseActivity {
                 properties.put("WalletDeduction", "0");
             }
             Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_FARE.replace(
-                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), properties);
+                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), properties, true);
 
         } catch (JSONException e) {
             e.printStackTrace();

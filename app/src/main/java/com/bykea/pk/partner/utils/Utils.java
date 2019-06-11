@@ -18,9 +18,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -32,16 +36,19 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -49,6 +56,7 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -75,6 +83,8 @@ import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -85,10 +95,13 @@ import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontUtils;
 import com.elvishew.xlog.XLog;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -96,11 +109,9 @@ import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.ResponseBody;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -113,13 +124,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.sql.Timestamp;
+import java.text.Format;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -135,9 +147,9 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import retrofit.Converter;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Response;
 
 
 public class Utils {
@@ -197,10 +209,22 @@ public class Utils {
         return linearLayoutManager;
     }
 
-    public static void appToast(Context context, String message) {
+    /**
+     * Show application toast
+     *
+     * @param context Holding the reference of an activity.
+     * @param message The message that will display in toast.
+     */
+    public static void appToast(final Context context, final String message) {
         try {
             if (StringUtils.isNotBlank(message)) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -390,6 +414,102 @@ public class Utils {
         }
     }
 
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param mCallData NormalCallData object to fetch the lat lng.
+     */
+    public static void navigateToGoogleMap(Context context,
+                                           NormalCallData mCallData) {
+        try {
+            if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                String startAddr = StringUtils.EMPTY;
+                String endAddr = StringUtils.EMPTY;
+                if (mCallData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                    startAddr = getCurrentLocation();
+                    endAddr = mCallData.getStartLat() + "," + mCallData.getStartLng();
+                }
+                String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                        Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                        Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(intent);
+                }
+            } else {
+                Uri gmmIntentUri = Uri.parse("geo:" + getCurrentLocation());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage(Constants.GoogleMap.GOOGLE_MAP_PACKAGE);
+                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(mapIntent);
+                }
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param mCallData MultiDeliveryCallDriverData object to fetch the lat lng.
+     */
+    public static void navigateToGoogleMap(Context context,
+                                           MultiDeliveryCallDriverData mCallData) {
+        try {
+            String startAddr = getCurrentLocation();
+            String endAddr = mCallData.getPickup().getLat() + "," +
+                    mCallData.getPickup().getLng();
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
+     * @param latLng the drop off lat lng.
+     */
+    public static void navigateDropDownToGoogleMap(Context context,
+                                                   LatLng latLng) {
+        try {
+            String startAddr = getCurrentLocation();
+            String endAddr = latLng.latitude + "," +
+                    latLng.longitude;
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String formatETA(String value) {
         if (StringUtils.isBlank(value) || value.equalsIgnoreCase("0") || value.equalsIgnoreCase("0.0")
                 || value.equalsIgnoreCase("0.00"))
@@ -486,6 +606,135 @@ public class Utils {
                     return R.drawable.map_pin_without_passenger;
                 }
         }
+    }
+
+
+    /***
+     * Convert the drawable id into BitmapDescriptor.
+     *
+     * @param context holds the reference of an activity.
+     *
+     * @return The BitmapDescriptor.
+     */
+    public static BitmapDescriptor getBitmapDiscriptor(Context context) {
+        int drawableId = R.drawable.ic_pickupmarker;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            VectorDrawable vectorDrawable = (VectorDrawable) context.getDrawable(drawableId);
+
+            int h = (int) (vectorDrawable.getIntrinsicHeight() / 1.3);
+            int w = (int) (vectorDrawable.getIntrinsicWidth() / 1.3);
+
+            vectorDrawable.setBounds(0, 0, w, h);
+
+            Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bm);
+            vectorDrawable.draw(canvas);
+
+            return BitmapDescriptorFactory.fromBitmap(bm);
+
+        } else {
+            Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+
+            Bitmap bmp = Bitmap.createBitmap(
+                    drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+            Canvas canvas = new Canvas(bmp);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return BitmapDescriptorFactory.fromBitmap(bmp);
+        }
+    }
+
+    /**
+     * Create drop off marker.
+     *
+     * @param context Holding the reference of an activity.
+     * @param number  The number of drop off.
+     *                <p>
+     *                By ignoring the constant, Time complexity of this function is O(n)^2
+     *                because this function execute in a loop.
+     * @return The bitmap for dropoff marker.
+     */
+    public static Bitmap createDropOffMarker(Context context, String number) {
+
+        View marker = ((LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.drop_off_marker_layout, null);
+
+        FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
+        txt_name.setText(number);
+        try {
+            MultiDeliveryCallDriverData data = AppPreferences.getMultiDeliveryCallDriverData();
+
+            List<MultipleDeliveryBookingResponse> bookingResponseList = data.getBookings();
+
+            int index = Integer.parseInt(number) - 1;
+            if (bookingResponseList.get(index).getTrip().getStatus().
+                    equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                    bookingResponseList.get(index).getTrip().getStatus().
+                            equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
+
+                ViewCompat.setBackgroundTintList(txt_name, ContextCompat
+                        .getColorStateList(context,
+                                R.color.multi_delivery_dropoff_completed));
+
+            }
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(
+                40,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(
+                marker.getMeasuredWidth(),
+                marker.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
+    }
+
+    public static BitmapDescriptor getDropOffBitmapDiscriptor(Context context, String number) {
+        Bitmap bmp = createDropOffMarker(context, number);
+        return BitmapDescriptorFactory.fromBitmap(bmp);
+    }
+
+    /***
+     * Fetch the bitmap from drawable resource id.
+     *
+     * @param context is holding a reference of an activity.
+     * @param resourceID is a drawable id.
+     *
+     * @return the Bitmap generated from drawable id.
+     */
+    public static Bitmap getBitmap(Context context, int resourceID) {
+        try {
+            float height = context.getResources().getDimension(R.dimen.driver_marker_height);
+            float width = context.getResources().getDimension(R.dimen.driver_marker_width);
+            BitmapDrawable bitmapdraw = (BitmapDrawable) context.getResources().
+                    getDrawable(resourceID);
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, (int) width, (int) height, false);
+            return smallMarker;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static boolean isValidEmail(String email) {
@@ -883,8 +1132,21 @@ public class Utils {
         return diff <= 6000;
     }
 
-    public static boolean isCancelAfter5Min() {
-        long diff = (System.currentTimeMillis() - (AppPreferences.getServerTimeDifference() + AppPreferences.getCallData().getSentTime()));
+    /**
+     * Invoked this method to check that the customer is
+     * canceling the ride after 5 minutes of its acceptance
+     *
+     * <p>Calculate the difference of current time in millisecond, server time that keep on
+     * updating from location update & the acceptance time.</p>
+     *
+     * @param acceptedTime The accepted time in millisecond.
+     * @return true if calculated difference is greater than equal to
+     * cancellation time otherwise false
+     * @see AppPreferences#getSettings()
+     */
+    public static boolean isCancelAfter5Min(long acceptedTime) {
+        long diff = (System.currentTimeMillis() -
+                (AppPreferences.getServerTimeDifference() + acceptedTime));
         Utils.redLog("Time Diff Call", "" + diff);
         long cancel_time = 5;
         if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
@@ -1453,22 +1715,17 @@ public class Utils {
     }
 
     public static void startCustomWebViewActivity(AppCompatActivity context, String link, String title) {
-        if (Connectivity.isConnected(context)) {
+        if (isConnected(context, true)) {
             if (StringUtils.isNotBlank(link)) {
-                new FinestWebViewBuilder.Builder(context).showIconMenu(false).showUrl(false)
-                        .toolbarScrollFlags(0)
-                        .toolbarColor(ContextCompat.getColor(context, R.color.white))
-                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
-                        .showIconForward(false).showIconBack(false)
-                        .updateTitleFromHtml(false)
-                        .showSwipeRefreshLayout(false)
-                        .webViewSupportZoom(true)
-                        .webViewBuiltInZoomControls(true)
-                        .titleDefault(StringUtils.capitalize(title))
-                        .show(link);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setPackage(Constants.GOOGLE_CHROME_PACKAGE);
+                if (intent.resolveActivityInfo(context.getPackageManager(), 0) != null) {
+                    context.startActivity(intent);
+                } else {
+                    Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.no_browser_found_error));
+                }
             }
-        } else {
-            appToast(context, context.getResources().getString(R.string.internet_error));
         }
     }
 
@@ -1553,12 +1810,15 @@ public class Utils {
      * @param userID User id which is currently logged in.
      * @param EVENT Event name which needs to be flush.
      * @param data Json data which needs to be emitted.
+     * @param shouldLogToMixpanel whether the log event is triggered for mixpanel or not
      */
-    public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
-        MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
-        mixpanelAPI.identify(userID);
-        mixpanelAPI.getPeople().identify(userID);
-        mixpanelAPI.track(EVENT, data);
+    public static void logEvent(Context context, String userID, String EVENT, JSONObject data, boolean shouldLogToMixpanel) {
+        if(shouldLogToMixpanel){
+            MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
+            mixpanelAPI.identify(userID);
+            mixpanelAPI.getPeople().identify(userID);
+            mixpanelAPI.track(EVENT, data);
+        }
 
         logFireBaseEvent(context, userID, EVENT, data);
     }
@@ -1724,12 +1984,12 @@ public class Utils {
             case "parcel":
             case "send":
             case "delivery":
-                return R.drawable.bhejdo;
+                return R.drawable.bhejdo_no_caption;
             case "bring":
             case "purchase":
-                return R.drawable.lay_ao;
+                return R.drawable.lay_ao_no_caption;
             case "ride":
-                return R.drawable.ride;
+                return R.drawable.ride_right;
             case "top-up":
                 return R.drawable.top_up;
             case "utilitybill":
@@ -1739,9 +1999,9 @@ public class Utils {
             case "carryvan":
                 return R.drawable.carry_van;
             case "courier":
-                return R.drawable.courier;
+                return R.drawable.courier_no_caption;
             default:
-                return R.drawable.ride;
+                return R.drawable.ride_right;
         }
     }
 
@@ -1936,6 +2196,34 @@ public class Utils {
         }
     }
 
+    /**
+     * Load multiple delivery image URL using {@link Picasso}
+     *
+     * @param imageView   The image container.
+     * @param link        The image URL.
+     * @param placeHolder The place holder image.
+     */
+    public static void loadMultipleDeliveryImageURL(ImageView imageView, String link,
+                                                    int placeHolder) {
+
+        if (imageView != null) {
+            Picasso.get().load(link)
+                    .placeholder(placeHolder)
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
+        }
+
+    }
+
 
     public static void fadeOutAndHideImage(final ImageView img) {
         Animation fadeOut = new AlphaAnimation(1, 0);
@@ -1960,7 +2248,7 @@ public class Utils {
 
     public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView ivThumbnail, ImageView ytIcon, YouTubePlayerSupportFragment playerFragment) {
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+        if (playerFragment == null || playerFragment.getView() == null || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
             //TODO: Remove it when crash is resolved in latest YouTube App
             watchYoutubeVideo(context, VIDEO_ID);
@@ -2022,7 +2310,7 @@ public class Utils {
 
     public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView ivThumbnail, ImageView ytIcon, YouTubePlayerFragment playerFragment) {
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+        if (playerFragment == null || playerFragment.getView() == null || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
             //TODO: Remove it when crash is resolved in latest YouTube App
             watchYoutubeVideo(context, VIDEO_ID);
@@ -2395,7 +2683,7 @@ public class Utils {
      * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
      */
     public static boolean disableBatteryOptimization(Context context,
-                                                     android.support.v4.app.Fragment fragment) {
+                                                     Fragment fragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = context.getPackageName();
@@ -2605,17 +2893,13 @@ public class Utils {
      * HTTP response body converted to specified {@code type}.
      * {@code null} if there is no response
      * @param response response we received from API server.
-     * @param retrofit Retrofit Object
      * @param type Concrete type class which is use to parse error response.
      * @return {@link Object } Object class which would be casted to respective class
      * parsed when we receive error body
      */
-    public static <T> T parseAPIErrorResponse(Response<?> response, Retrofit retrofit,
-                                              Class<T> type) {
+    public static <T> T parseAPIErrorResponse(Response<?> response, Class<T> type) {
         try {
-            Converter<ResponseBody, T> converter = retrofit.responseConverter(type,
-                    new Annotation[0]);
-            return converter.convert(response.errorBody());
+            return new Gson().fromJson(response.errorBody().string(), type);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2679,17 +2963,120 @@ public class Utils {
 
     }
 
+    //region MultiDelivery Helper Methods
+
+    /**
+     * Fetch the distance in meter or kilo meter.
+     *
+     * <p>If the distance in meter is greater than equals to 1000 return the
+     * distance in kilometer otherwise return the distance in meter</p>
+     *
+     * @param distanceInMeter The distance in meter.
+     * @return The distance in meter or kilometer
+     */
+    public static String getDistance(float distanceInMeter) {
+        return String.format(DriverApp.
+                        getContext().
+                        getString(R.string.decimal_format_one_digit),
+                distanceInMeter / 1000);
+    }
+
+    /**
+     * Fetch the duration in minutes
+     *
+     * <p>If the duration in second is greater than or equal to 60 than convert
+     * it into minutes. If duration in seconds is greater than equal to 3600 convert
+     * duration to hour other wise keep it in seconds</p>
+     *
+     * @param durationInSeconds The duration in seconds
+     * @return The duration in Seconds or minutes & hours
+     */
+    public static int getDuration(int durationInSeconds) {
+        int SECONDS_IN_MINUTES = 60;
+        return durationInSeconds / SECONDS_IN_MINUTES;
+    }
+
+    /**
+     * Fetch Time in MilliSeconds
+     *
+     * @param timeInSeconds The time in seconds.
+     * @return The time in milliseconds
+     */
+    public static int getTimeInMilliseconds(int timeInSeconds) {
+        return timeInSeconds * 1000;
+    }
+
+    public static int getTimeInPercentage(int timeInMilliSeconds, float percentage) {
+        return (int) ((percentage / 100f) * timeInMilliSeconds);
+    }
+
+    /**
+     * Fetch drop down lat lng list.
+     *
+     * @param deliveryCallDriverData The {@link MultiDeliveryCallDriverData} object.
+     * @return The collection of drop down lat lng.
+     */
+    public static List<LatLng> getDropDownLatLngList(MultiDeliveryCallDriverData
+                                                             deliveryCallDriverData) {
+        List<LatLng> latLngList = new ArrayList<>();
+        for (MultipleDeliveryBookingResponse response : deliveryCallDriverData.getBookings()) {
+            latLngList.add(new LatLng(
+
+                    response.getDropOff().getLat(),
+                    response.getDropOff().getLng())
+            );
+        }
+
+        return latLngList;
+    }
+
+    /**
+     * Multi Delivery Free Driver on Batch Complete.
+     */
+    public static void multiDeliveryFreeDriverOnBatchComplete() {
+        setCallIncomingState();
+        AppPreferences.setWalletAmountIncreased(false);
+        AppPreferences.setAvailableStatus(true);
+    }
+
+    /**
+     * multi delivery success or fail messages
+     *
+     * @return list of messages
+     */
+    public static String[] getDeliveryMsgsList(Context context) {
+        return context.getResources().getStringArray(R.array.delivery_messages);
+    }
+
+    //endregion
+
 
     /**
      * Clears the Local Shared Pref in case of dirt
+     *
      * @param context calling activity context
      */
     public static void clearSharedPrefIfDirty(Context context) {
         int savedVersionCode = AppPreferences.getAppVersionCode();
         int currentVersionCode = BuildConfig.VERSION_CODE;
         if (savedVersionCode < currentVersionCode) {
-            Utils.clearData(context);
             AppPreferences.setAppVersionCode(currentVersionCode);
+            Utils.clearData(context);
+
         }
     }
+
+    /**
+     * Format duration in millisecond in clock like timestemp
+     *
+     * @param time in millisecond
+     * @return
+     */
+    public static String formatTimeForTimer(long time) {
+        Date date = new Date(time);
+        Timestamp ts = new Timestamp(date.getTime());
+        Format format = new SimpleDateFormat("mm:ss");
+        return format.format(ts);
+    }
+
 }

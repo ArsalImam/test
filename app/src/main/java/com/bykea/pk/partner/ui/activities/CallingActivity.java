@@ -5,8 +5,8 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -197,11 +197,14 @@ public class CallingActivity extends BaseActivity {
                             NormalCallData callData = AppPreferences.getCallData();
                             callData.setStatus(TripStatus.ON_ACCEPT_CALL);
                             AppPreferences.setCallData(callData);
+                            AppPreferences.setTripAcceptTime(System.currentTimeMillis());
+                            AppPreferences.setEstimatedFare(callData.getKraiKiKamai());
                             logMixpanelEvent(callData, true);
 
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
                             AppPreferences.setIsOnTrip(true);
+                            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
                             ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                             stopSound();
                             finishActivity();
@@ -281,10 +284,10 @@ public class CallingActivity extends BaseActivity {
             if (isOnAccept) {
                 data.put("AcceptSeconds", acceptSeconds);
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             } else {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
             }
         } catch (JSONException e) {
             e.printStackTrace();

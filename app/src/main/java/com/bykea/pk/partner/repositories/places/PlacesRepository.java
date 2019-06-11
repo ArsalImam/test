@@ -10,12 +10,6 @@ import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.utils.Constants;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
-
-
 public class PlacesRepository {
 
     private IPlacesDataHandler mUserCallback;

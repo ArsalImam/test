@@ -195,7 +195,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
 
             Utils.logEvent(mCurrentActivity, callData.getPassId(),
                     Constants.AnalyticsEvents.ON_ACCEPT.replace(
-                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
+                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
         } catch (JSONException e) {
             e.printStackTrace();
         }

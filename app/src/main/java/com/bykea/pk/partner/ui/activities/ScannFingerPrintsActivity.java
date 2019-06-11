@@ -2,22 +2,13 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.view.View;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Utils;
-import com.google.gson.Gson;
-import com.thefinestartist.Base;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;

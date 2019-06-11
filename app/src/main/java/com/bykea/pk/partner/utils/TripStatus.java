@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.utils;
 
+//TODO: Suggestion: Make the Trip Statues as Integer for performance optimization
 public class TripStatus {
     public final static String ON_CALLING = "Call";
     public final static String ON_FREE = "Free";
@@ -11,4 +12,5 @@ public class TripStatus {
     public final static String ON_CANCEL_TRIP = "Cancelled";
     public final static String ON_IN_PROGRESS = "inprogress";
     public final static String ON_COMPLETED_TRIP = "completed";
+    public final static String ON_FEEDBACK_TRIP = "feedback";
 }

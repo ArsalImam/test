@@ -20,6 +20,7 @@ public class Keys {
     public static final String APP_VERSION = "APP_VERSION";
     public static final String APP_VERSION_CODE = "APP_VERSION_CODE";
     public static final String IS_ALREADY_CLEAR = "IS_ALREADY_CLEAR";
+    public static final String EST_FARE = "EST_FARE";
 
 
     public static final String FULL_NAME = "full_name";
@@ -47,8 +48,25 @@ public class Keys {
     public static final String CALLDATA_OBJECT = "CALLDATA_OBJECT";
     public static final String ADVANCE_CALL_DATA_OBJECT = "ADVANCE_CALL_DATA_OBJECT";
 
+    //region MULTI DELIVERY OBJECT STRING KEY
+    public static final String MULTIDELIVERY_CALLDRIVER_OBJECT = "MULTIDELIVERY_CALLDRIVER_OBJECT";
+    public static final String MULTIDELIVERY_MISSED_EVENT = "MULTIDELIVERY_MISSED_EVENT";
+    public static final String MULTIDELIVERY_BATCH_COMPLETED = "MULTIDELIVERY_BATCH_TRIP_COMPLETED";
+    public static final String DELIVERY_TYPE = "DELIVERY_TYPE";
+    public static final String MULTIDELIVERY_COMPLETE_DATA = "MULTIDELIVERY_COMPLETE_DATA";
+    public static final String MULTIDELIVERY_TRIP_ID = "MULTIDELIVERY_TRIP_ID";
+    public static final String MULTIDELIVERY_COMPLETED_COUNT = "MULTIDELIVERY_COMPLETED_COUNT";
+    public static final String MULTIDELIVERY_CANCELLED_BY_ADMIN = "MULTIDELIVERY_CANCELLED_BY_ADMIN";
+
+    /*Added this to control feedback screen to go back or not*/
+    public static final String MULTIDELIVERY_FEEDBACK_SCREEN = "MULTIDELIVERY_FEEDBACK_SCREEN";
+
+
+    //endregion
+
     //Call Data
     public static final String TRIP_START_TIME = "trip_start_time";
+    public static final String TRIP_ACCEPT_TIME = "trip_accept_time";
     public static final String TRIP_TOTAL_DISTANCE = "trip_total_distance";
     public static final String INCOMING_CALL = "INCOMING_CALL";
     public static final String CALL_TYPE = "call_type";
@@ -89,6 +107,7 @@ public class Keys {
     //BROADCAST RECEIVER ACTIONS
     public static final String LOCATION_UPDATE_BROADCAST = "location_tracking_broadcast";
     public static final String UNAUTHORIZED_BROADCAST = "UNAUTHORIZED_USER";
+    public static final String MULTIDELIVERY_ERROR_BORADCAST = "MULTIDELIVERY_ERROR_BORADCAST";
     public static final String CONNECTION_BROADCAST = "CONNECTION_BROADCAST";
     public static final String LOCATION_NOT_UPDATE_BROADCAST = "location_not_update_broadcast";
 
@@ -166,6 +185,8 @@ public class Keys {
     public static final String SAVED_PLACES = "SAVED_PLACES_NEW";
     public static final String IS_SAVED_PLACES_API_CALLED = "IS_SAVED_PLACES_API_CALLED";
     public static final String INACTIVE_CHECK_TIME = "INACTIVE_CHECK_TIME";
+
+    public static final String FRAGMENT_TYPE_NAME = "Type";
 
     public static final String BASE_URL_LOCAL = "BASE_URL_LOCAL";
 

@@ -2,13 +2,13 @@ package com.bykea.pk.partner.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 
-public class FontTextView extends TextView {
+public class FontTextView extends AppCompatTextView {
 
     AttributeSet attributeSet;
 

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingTop="@dimen/_12sdp"
+    android:paddingBottom="@dimen/_12sdp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/dropOffMarker"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginLeft="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_dropoff_icon" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/numberTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginRight="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintBottom_toBottomOf="@+id/dropOffMarker"
+        app:layout_constraintEnd_toEndOf="@+id/dropOffMarker"
+        app:layout_constraintStart_toStartOf="@+id/dropOffMarker"
+        app:layout_constraintTop_toTopOf="@+id/dropOffMarker"
+        tools:text="2" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/areaTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginLeft="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginBottom="16dp"
+        android:maxWidth="@dimen/_180sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_15sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintBottom_toTopOf="@+id/streetAddress"
+        app:layout_constraintStart_toEndOf="@+id/dropOffMarker"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="University Road" />
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/driverNameTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginLeft="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:layout_marginRight="@dimen/_24sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:fontName="open_sans_regular.ttf"
+        app:layout_constraintEnd_toStartOf="@+id/callBtn"
+        app:layout_constraintStart_toEndOf="@+id/dropOffMarker"
+        app:layout_constraintTop_toBottomOf="@+id/areaTv"
+        tools:text="Shafiq Khalid" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/completeBtn"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/streetAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/areaTv"
+        app:srcCompat="@drawable/ic_tick_circle" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

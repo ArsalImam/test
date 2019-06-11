@@ -1,16 +1,11 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,7 +15,6 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.ui.fragments.PlacesAreaFragment;
 import com.bykea.pk.partner.ui.fragments.PlacesRecentFragment;
-import com.bykea.pk.partner.ui.fragments.PlacesSavedFragment;
 import com.bykea.pk.partner.ui.fragments.PlacesSearchFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.CustomPagerAdapter;
@@ -251,7 +245,7 @@ public class SelectPlaceActivity extends BaseActivity {
     public void onBackPressed() {
         if (mViewPager.getCurrentItem() == 0) {
             Fragment fragment = list.get(0);
-            if (fragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
+            if (fragment != null && fragment.isAdded() && fragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
                 fragment.getChildFragmentManager().popBackStack();
             } else {
                 super.onBackPressed();

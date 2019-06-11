@@ -1,7 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.view.View;
 
 import com.bykea.pk.partner.R;
@@ -13,9 +13,6 @@ import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

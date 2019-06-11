@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/custom_marker_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/box_drop_off_pin_size">
+
+    <LinearLayout
+        android:id="@+id/rlFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible"
+        tools:visibility="visible">
+
+        <FrameLayout
+            android:id="@+id/flBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/box_width_small">
+
+            <FrameLayout
+                android:layout_width="@dimen/box_width_small"
+                android:layout_height="@dimen/box_height"
+                android:layout_marginStart="@dimen/box_margin_left"
+                android:layout_marginLeft="@dimen/box_margin_left"
+                android:layout_marginTop="@dimen/box_margin_top"
+                android:layout_marginEnd="@dimen/box_margin_right"
+                android:layout_marginRight="@dimen/box_margin_right"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:id="@+id/rlAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/address_box_bg_pre_21"
+                    android:orientation="horizontal"
+                    tools:visibility="visible">
+
+                    <LinearLayout
+                        android:id="@+id/chooseDropoff"
+                        android:layout_width="@dimen/box_height"
+                        android:layout_height="@dimen/box_height"
+                        android:background="@color/color_blue1f81a6"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="2dp">
+
+                        <com.bykea.pk.partner.ui.helpers.FontTextView
+                            android:id="@+id/tvDistance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="-6dp"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/box_eta_text_size"
+                            app:fontName="open_sans_semi_bold.ttf"
+                            tools:text="0.8" />
+
+                        <com.bykea.pk.partner.ui.helpers.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/kilometer_ur"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/box_eta_text_size"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
+                    </LinearLayout>
+
+                    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                        android:id="@+id/tvRegionName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="right|center"
+                        android:maxLines="1"
+                        android:padding="@dimen/box_pick_up_tv_padding"
+                        android:text="@string/drop_ur"
+                        android:textColor="#383737"
+                        android:textSize="@dimen/box_pick_up_text_size"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/grey_light" />
+
+                    <LinearLayout
+                        android:layout_width="@dimen/box_height"
+                        android:layout_height="@dimen/box_height"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="2dp">
+
+                        <com.bykea.pk.partner.ui.helpers.FontTextView
+                            android:id="@+id/tvDuration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="-6dp"
+                            android:textSize="@dimen/box_eta_text_size"
+                            app:fontName="open_sans_semi_bold.ttf"
+                            tools:text="5" />
+
+                        <com.bykea.pk.partner.ui.helpers.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/minute_ur"
+                            android:textSize="@dimen/box_eta_text_size"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </FrameLayout>
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/ivDropOffPin"
+            android:layout_width="@dimen/box_drop_off_pin_size"
+            android:layout_height="@dimen/box_drop_off_pin_size"
+            android:layout_below="@+id/flBox"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_drop_off_blue"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</FrameLayout>

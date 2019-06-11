@@ -3,12 +3,11 @@ package com.bykea.pk.partner.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
@@ -65,6 +64,7 @@ public class ContactUsFragment extends Fragment {
         mCurrentActivity.hideToolbarLogo();
 
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
+        mCurrentActivity.findViewById(R.id.statusLayout).setVisibility(View.VISIBLE);
         mCurrentActivity.hideStatusCompletely();
         UserRepository repository = new UserRepository();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);

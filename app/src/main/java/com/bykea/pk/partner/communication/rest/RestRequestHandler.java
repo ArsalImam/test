@@ -1,8 +1,8 @@
 package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
+
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -10,7 +10,6 @@ import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
-import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
 import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
@@ -72,7 +71,6 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
-import com.squareup.okhttp.ResponseBody;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -81,14 +79,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
-
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RestRequestHandler {
 
@@ -123,13 +121,13 @@ public class RestRequestHandler {
                 phoneNumber, OtpType, deviceType, latitude, longitude, Utils.getVersion());
 
         numberResponseCall.enqueue(new Callback<VerifyNumberResponse>() {
+
             @Override
-            public void onResponse(Response<VerifyNumberResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<VerifyNumberResponse> call, Response<VerifyNumberResponse> response) {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
                         VerifyNumberResponse verifyNumberResponse =
-                                Utils.parseAPIErrorResponse(response,
-                                        retrofit, VerifyNumberResponse.class);
+                                Utils.parseAPIErrorResponse(response, VerifyNumberResponse.class);
                         if (verifyNumberResponse != null) {
                             mResponseCallBack.onResponse(verifyNumberResponse);
                         } else {
@@ -141,7 +139,7 @@ public class RestRequestHandler {
                                 mContext.getString(R.string.error_try_again) + " ");
                     }
                 } else {
-                    if (response.isSuccess()) {
+                    if (response.isSuccessful()) {
                         if (null != mResponseCallBack) {
                             mResponseCallBack.onResponse(response.body());
                         }
@@ -154,7 +152,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<VerifyNumberResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -212,11 +210,12 @@ public class RestRequestHandler {
 
         restCall.enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(Response<LoginResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
                         LoginResponse loginResponse =
-                                Utils.parseAPIErrorResponse(response, retrofit, LoginResponse.class);
+                                Utils.parseAPIErrorResponse(response, LoginResponse.class);
                         if (loginResponse != null) {
                             mResponseCallBack.onResponse(loginResponse);
                         } else {
@@ -228,7 +227,7 @@ public class RestRequestHandler {
                                 mContext.getString(R.string.error_try_again) + " ");
                     }
                 } else {
-                    if (response.isSuccess()) {
+                    if (response.isSuccessful()) {
                         if (null != mResponseCallBack) {
                             mResponseCallBack.onResponse(response.body());
                         }
@@ -240,7 +239,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -256,7 +255,7 @@ public class RestRequestHandler {
                 AppPreferences.getAccessToken(), AppPreferences.getDriverId());
         restCall.enqueue(new Callback<LogoutResponse>() {
             @Override
-            public void onResponse(Response<LogoutResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<LogoutResponse> call, Response<LogoutResponse> response) {
                 // Got success from server
                 if (response != null && response.body() != null) {
                     if (response.body().isSuccess()) {
@@ -275,7 +274,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<LogoutResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -294,7 +293,7 @@ public class RestRequestHandler {
                 AppPreferences.getAccessToken(), Constants.USER_TYPE, pincode);
         restCall.enqueue(new Callback<UpdateProfileResponse>() {
             @Override
-            public void onResponse(Response<UpdateProfileResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<UpdateProfileResponse> call, Response<UpdateProfileResponse> response) {
                 // Got success from server
                 if (response.body().isSuccess()) {
                     if (null != mResponseCallBack) {
@@ -308,7 +307,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<UpdateProfileResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -325,7 +324,7 @@ public class RestRequestHandler {
         Call<VerifyNumberResponse> restCall = mRestClient.phoneNumberVerification(phoneNumber, Constants.USER_TYPE);
         restCall.enqueue(new Callback<VerifyNumberResponse>() {
             @Override
-            public void onResponse(Response<VerifyNumberResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<VerifyNumberResponse> call, Response<VerifyNumberResponse> response) {
                 Gson gson = new Gson();
 
                 // Got success from server
@@ -339,7 +338,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<VerifyNumberResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -358,7 +357,7 @@ public class RestRequestHandler {
                 Constants.USER_TYPE);
         restCall.enqueue(new Callback<VerifyCodeResponse>() {
             @Override
-            public void onResponse(Response<VerifyCodeResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<VerifyCodeResponse> call, Response<VerifyCodeResponse> response) {
                 Gson gson = new Gson();
 
                 // Got success from server
@@ -371,7 +370,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<VerifyCodeResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -385,7 +384,7 @@ public class RestRequestHandler {
         Call<ForgotPasswordResponse> requestCall = mRestClient.forgotPassword(phone);
         requestCall.enqueue(new Callback<ForgotPasswordResponse>() {
             @Override
-            public void onResponse(Response<ForgotPasswordResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<ForgotPasswordResponse> call, Response<ForgotPasswordResponse> response) {
                 if (response.body().getCode() == HTTPStatus.OK ||
                         response.body().getCode() == HTTPStatus.CREATED) {
                     mResponseCallBack.onResponse(response.body());
@@ -396,9 +395,8 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ForgotPasswordResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
-
             }
         });
 
@@ -412,7 +410,7 @@ public class RestRequestHandler {
                 AppPreferences.getAccessToken(), Constants.USER_TYPE, pageNo);
         restCall.enqueue(new Callback<TripHistoryResponse>() {
             @Override
-            public void onResponse(Response<TripHistoryResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<TripHistoryResponse> call, Response<TripHistoryResponse> response) {
                 // Got success from server
                 if (null != response.body()) {
                     mResponseCallBack.onResponse(response.body());
@@ -422,9 +420,8 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<TripHistoryResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
-
             }
         });
 
@@ -439,7 +436,7 @@ public class RestRequestHandler {
                 AppPreferences.getAccessToken(), Constants.USER_TYPE, pageNo);
         restCall.enqueue(new Callback<TripMissedHistoryResponse>() {
             @Override
-            public void onResponse(Response<TripMissedHistoryResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<TripMissedHistoryResponse> call, Response<TripMissedHistoryResponse> response) {
                 // Got success from server
                 if (null != response.body()) {
                     mResponseCallBack.onResponse(response.body());
@@ -449,7 +446,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<TripMissedHistoryResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -461,21 +458,24 @@ public class RestRequestHandler {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
-        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(AppPreferences.getDriverId(),
+        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(
+                AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken());
         restCall.enqueue(new Callback<CheckDriverStatusResponse>() {
             @Override
-            public void onResponse(Response<CheckDriverStatusResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<CheckDriverStatusResponse> call, Response<CheckDriverStatusResponse> response) {
                 // Got success from server
-                if (null != response.body()) {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
                     mResponseCallBack.onResponse(response.body());
+                    Utils.redLog(TAG, new Gson().toJson(response.body().getData()));
+                } else {
+                    mResponseCallBack.onError(response.code(), response.message());
                 }
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<CheckDriverStatusResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
-
             }
         });
 
@@ -490,7 +490,7 @@ public class RestRequestHandler {
         Call<UploadAudioFile> requestCall = mRestClient.uploadAudioFile(Utils.convertFileToRequestBody(file));
         requestCall.enqueue(new Callback<UploadAudioFile>() {
             @Override
-            public void onResponse(Response<UploadAudioFile> response, Retrofit retrofit) {
+            public void onResponse(Call<UploadAudioFile> call, Response<UploadAudioFile> response) {
                 Utils.deleteFile(file);
                 if (null == response.body()) {
                     mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
@@ -504,7 +504,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<UploadAudioFile> call, Throwable t) {
                 Utils.deleteFile(file);
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
@@ -520,7 +520,7 @@ public class RestRequestHandler {
         Call<UploadImageFile> requestCall = mRestClient.uploadImageFile(Utils.convertFileToRequestBody(file));
         requestCall.enqueue(new Callback<UploadImageFile>() {
             @Override
-            public void onResponse(Response<UploadImageFile> response, Retrofit retrofit) {
+            public void onResponse(Call<UploadImageFile> call, Response<UploadImageFile> response) {
                 Utils.deleteFile(file);
                 if (null == response.body()) {
                     mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
@@ -534,7 +534,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<UploadImageFile> call, Throwable t) {
                 Utils.deleteFile(file);
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
@@ -578,7 +578,7 @@ public class RestRequestHandler {
         Call<ServiceTypeResponse> requestCall = mRestClient.getServiceTypes();
         requestCall.enqueue(new Callback<ServiceTypeResponse>() {
             @Override
-            public void onResponse(Response<ServiceTypeResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<ServiceTypeResponse> call, Response<ServiceTypeResponse> response) {
                 if (null == response.body()) {
                     mResponseCallBack.onError(0, mContext.getString(R.string.error_try_again));
                 } else if (response.body().getCode() == HTTPStatus.OK ||
@@ -591,7 +591,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ServiceTypeResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -605,7 +605,7 @@ public class RestRequestHandler {
         Call<GeocoderApi> requestCall = mRestClient.callGeoCoderApi(latLng, key);
         requestCall.enqueue(new Callback<GeocoderApi>() {
             @Override
-            public void onResponse(Response<GeocoderApi> response, Retrofit retrofit) {
+            public void onResponse(Call<GeocoderApi> call, Response<GeocoderApi> response) {
                 if (response.body().getStatus().equalsIgnoreCase("ok")) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
@@ -614,7 +614,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<GeocoderApi> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -627,8 +627,8 @@ public class RestRequestHandler {
         Call<SignUpSettingsResponse> requestCall = mRestClient.requestSignUpSettings(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API);
         requestCall.enqueue(new Callback<SignUpSettingsResponse>() {
             @Override
-            public void onResponse(Response<SignUpSettingsResponse> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+            public void onResponse(Call<SignUpSettingsResponse> call, Response<SignUpSettingsResponse> response) {
+                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, mContext.getString(R.string.error_try_again));
@@ -636,7 +636,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<SignUpSettingsResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -665,8 +665,8 @@ public class RestRequestHandler {
 
         requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
             @Override
-            public void onResponse(Response<SignUpAddNumberResponse> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+            public void onResponse(Call<SignUpAddNumberResponse> call, Response<SignUpAddNumberResponse> response) {
+                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
@@ -674,7 +674,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<SignUpAddNumberResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -689,8 +689,8 @@ public class RestRequestHandler {
                 id, StringUtils.isNotBlank(email) ? email : null, StringUtils.isNotBlank(referenceNo) ? referenceNo : null);
         requestCall.enqueue(new Callback<SignUpOptionalDataResponse>() {
             @Override
-            public void onResponse(Response<SignUpOptionalDataResponse> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+            public void onResponse(Call<SignUpOptionalDataResponse> call, Response<SignUpOptionalDataResponse> response) {
+                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
@@ -698,7 +698,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<SignUpOptionalDataResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -712,8 +712,8 @@ public class RestRequestHandler {
                 id, isVerified);
         requestCall.enqueue(new Callback<BiometricApiResponse>() {
             @Override
-            public void onResponse(Response<BiometricApiResponse> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+            public void onResponse(Call<BiometricApiResponse> call, Response<BiometricApiResponse> response) {
+                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
@@ -721,36 +721,13 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<BiometricApiResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
     }
 
-    public void requestCompleteSignupData(Context context, String id, final IResponseCallback onResponseCallBack) {
-        mContext = context;
-        mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-        Call<SignUpCompleteResponse> requestCall = mRestClient.requestCompleteSignupData(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                id);
-        requestCall.enqueue(new Callback<SignUpCompleteResponse>() {
-            @Override
-            public void onResponse(Response<SignUpCompleteResponse> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
-    }
-
-    public void uplodaDocumentImage(Context context, String id, String type, File file, final IResponseCallback onResponseCallBack) {
+    public void uploadDocumentImage(Context context, String id, String type, File file, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getBykeaSignUpApiClient();
@@ -758,8 +735,8 @@ public class RestRequestHandler {
                 Utils.convertStringToRequestBody(id), Utils.convertStringToRequestBody(type), Utils.convertFileToRequestBody(file));
         requestCall.enqueue(new Callback<SignupUplodaImgResponse>() {
             @Override
-            public void onResponse(Response<SignupUplodaImgResponse> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().getCode() == HTTPStatus.OK) {
+            public void onResponse(Call<SignupUplodaImgResponse> call, Response<SignupUplodaImgResponse> response) {
+                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
@@ -767,7 +744,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<SignupUplodaImgResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -785,13 +762,13 @@ public class RestRequestHandler {
                 AppPreferences.getPilotData().getCity().get_id(), AppPreferences.getSettingsVersion());
         requestCall.enqueue(new Callback<SettingsResponse>() {
             @Override
-            public void onResponse(Response<SettingsResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<SettingsResponse> call, Response<SettingsResponse> response) {
                 if (response == null || response.body() == null) {
                     mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, ""
                             + mContext.getString(R.string.error_try_again) + " ");
                     return;
                 }
-                if (response.isSuccess()) {
+                if (response.isSuccessful()) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
@@ -799,7 +776,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<SettingsResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -812,13 +789,13 @@ public class RestRequestHandler {
         Call<SettingsResponse> requestCall = mRestClient.getSettings("d");
         requestCall.enqueue(new Callback<SettingsResponse>() {
             @Override
-            public void onResponse(Response<SettingsResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<SettingsResponse> call, Response<SettingsResponse> response) {
                 if (response == null || response.body() == null) {
                     mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, ""
                             + mContext.getString(R.string.error_try_again) + " ");
                     return;
                 }
-                if (response.isSuccess()) {
+                if (response.isSuccessful()) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
@@ -826,7 +803,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<SettingsResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -842,12 +819,12 @@ public class RestRequestHandler {
 //        restCall.enqueue(new GenericRetrofitCallBackSuccess<WalletHistoryResponse>(onResponseCallBack));
         restCall.enqueue(new Callback<WalletHistoryResponse>() {
             @Override
-            public void onResponse(Response<WalletHistoryResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<WalletHistoryResponse> call, Response<WalletHistoryResponse> response) {
                 if (response == null || response.body() == null) {
                     mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + mContext.getString(R.string.error_try_again) + " ");
                     return;
                 }
-                if (response.isSuccess()) {
+                if (response.isSuccessful()) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
@@ -855,7 +832,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<WalletHistoryResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -877,7 +854,7 @@ public class RestRequestHandler {
      * @param statusRequestBody Driver status request body which needs to be send to API Server
      * @param responseCallback Response callback handler.
      */
-    public void requestDriverStatusUpdate(Context context,
+    public void requestDriverStatusUpdate(final Context context,
                                           DriverAvailabilityRequest statusRequestBody,
                                           IResponseCallback responseCallback) {
         mContext = context;
@@ -886,11 +863,11 @@ public class RestRequestHandler {
         Call<PilotStatusResponse> restCall = mRestClient.updateDriverStatus(statusRequestBody);
         restCall.enqueue(new Callback<PilotStatusResponse>() {
             @Override
-            public void onResponse(Response<PilotStatusResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<PilotStatusResponse> call, Response<PilotStatusResponse> response) {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
                         PilotStatusResponse pilotStatusResponse =
-                                Utils.parseAPIErrorResponse(response, retrofit, PilotStatusResponse.class);
+                                Utils.parseAPIErrorResponse(response, PilotStatusResponse.class);
                         if (pilotStatusResponse != null) {
                             mResponseCallBack.onResponse(pilotStatusResponse);
                         } else {
@@ -902,7 +879,7 @@ public class RestRequestHandler {
                                 mContext.getString(R.string.error_try_again) + " ");
                     }
                 } else {
-                    if (response.isSuccess()) {
+                    if (response.isSuccessful()) {
                         mResponseCallBack.onResponse(response.body());
                     } else {
                         mResponseCallBack.onError(response.body().getCode(),
@@ -912,7 +889,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<PilotStatusResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -937,12 +914,12 @@ public class RestRequestHandler {
 //        restCall.enqueue(new GenericRetrofitCallBackSuccess<WalletHistoryResponse>(onResponseCallBack));
         restCall.enqueue(new Callback<ContactNumbersResponse>() {
             @Override
-            public void onResponse(Response<ContactNumbersResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<ContactNumbersResponse> call, Response<ContactNumbersResponse> response) {
                 if (response == null || response.body() == null) {
                     mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + mContext.getString(R.string.error_try_again) + " ");
                     return;
                 }
-                if (response.isSuccess()) {
+                if (response.isSuccessful()) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
@@ -950,11 +927,10 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ContactNumbersResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
-        });
-
+       });
     }
 
     public void requestChangePin(Context context, String newPin, String oldPin, final IResponseCallback onResponseCallBack) {
@@ -990,8 +966,8 @@ public class RestRequestHandler {
         Call<ArrayList<HeatMapUpdatedResponse>> requestCall = RestClient.getBykea2ApiClient(mContext).getHeatMap(ApiTags.HEAT_MAP_2_X_API, url);
         requestCall.enqueue(new Callback<ArrayList<HeatMapUpdatedResponse>>() {
             @Override
-            public void onResponse(Response<ArrayList<HeatMapUpdatedResponse>> response, Retrofit retrofit) {
-                if (response != null && response.isSuccess() && response.body() != null) {
+            public void onResponse(Call<ArrayList<HeatMapUpdatedResponse>> call, Response<ArrayList<HeatMapUpdatedResponse>> response) {
+                if (response != null && response.isSuccessful() && response.body() != null) {
                     mResponseCallBack.onResponse(response.body());
                 } else {
                     mResponseCallBack.onResponse(new ArrayList<>());
@@ -999,7 +975,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ArrayList<HeatMapUpdatedResponse>> call, Throwable t) {
                 Utils.redLog("onError", "HeatMapUpdatedResponse");
             }
         });
@@ -1014,12 +990,12 @@ public class RestRequestHandler {
         }
 
         @Override
-        public void onResponse(Response<T> response, Retrofit retrofit) {
+        public void onResponse(Call<T> call, Response<T> response) {
             if (response == null || response.body() == null) {
                 mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + mContext.getString(R.string.error_try_again) + " ");
                 return;
             }
-            if (response.isSuccess()) {
+            if (response.isSuccessful()) {
                 mCallBack.onResponse(response.body());
             } else {
                 mCallBack.onError(response.body().getCode(), response.body().getMessage());
@@ -1027,7 +1003,7 @@ public class RestRequestHandler {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onFailure(Call<T> call, Throwable t) {
             mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
         }
     }
@@ -1040,7 +1016,7 @@ public class RestRequestHandler {
         }
 
         @Override
-        public void onResponse(Response<T> response, Retrofit retrofit) {
+        public void onResponse(Call<T> call, Response<T> response) {
             if (response == null || response.body() == null) {
                 mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
                         mContext.getString(R.string.error_try_again) + " ");
@@ -1054,7 +1030,7 @@ public class RestRequestHandler {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onFailure(Call<T> call, Throwable t) {
             mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
         }
     }
@@ -1071,11 +1047,11 @@ public class RestRequestHandler {
         }
 
         @Override
-        public void onResponse(Response<LocationResponse> response, Retrofit retrofit) {
+        public void onResponse(Call<LocationResponse> call, Response<LocationResponse> response) {
             if (response == null || response.body() == null) {
                 if (response != null && response.errorBody() != null) {
                     LocationResponse LocationResponse =
-                            Utils.parseAPIErrorResponse(response, retrofit, LocationResponse.class);
+                            Utils.parseAPIErrorResponse(response, LocationResponse.class);
                     if (LocationResponse != null) {
                         mResponseCallBack.onResponse(LocationResponse);
                         /*mResponseCallBack.onError(LocationResponse.getCode(),
@@ -1092,7 +1068,7 @@ public class RestRequestHandler {
                             mContext.getString(R.string.error_try_again) + " ");
                 }
             } else {
-                if (response.isSuccess()) {
+                if (response.isSuccessful()) {
                     if (AppPreferences.isLoggedIn() && response.body().getLocation() != null) {
                         if (StringUtils.isNotBlank(response.body().getLocation().getLat())
                                 && StringUtils.isNotBlank(response.body().getLocation().getLng())) {
@@ -1117,11 +1093,10 @@ public class RestRequestHandler {
                 }
             }
 
-
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onFailure(Call<LocationResponse> call, Throwable t) {
             Utils.redLog(TAG, "Location on Failure: " + t.getMessage());
             mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
         }
@@ -1273,7 +1248,7 @@ public class RestRequestHandler {
                 limit, pickupZoneId, dropoffZoneId);
         requestCall.enqueue(new Callback<LoadBoardListingResponse>() {
             @Override
-            public void onResponse(Response<LoadBoardListingResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<LoadBoardListingResponse> call, Response<LoadBoardListingResponse> response) {
                 if (response == null || response.body() == null) {
                     onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, context.getString(R.string.error_try_again));
                     return;
@@ -1286,9 +1261,8 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<LoadBoardListingResponse> call, Throwable t) {
                 onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-
             }
         });
 
@@ -1314,11 +1288,11 @@ public class RestRequestHandler {
                 String.valueOf(AppPreferences.getLongitude()));
         requestCall.enqueue(new Callback<AcceptLoadboardBookingResponse>() {
             @Override
-            public void onResponse(Response<AcceptLoadboardBookingResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<AcceptLoadboardBookingResponse> call, Response<AcceptLoadboardBookingResponse> response) {
                 if (response == null || response.body() == null) {
                     if (response != null && response.errorBody() != null) {
                         AcceptLoadboardBookingResponse acceptLoadboardBookingResponse =
-                                Utils.parseAPIErrorResponse(response, retrofit, AcceptLoadboardBookingResponse.class);
+                                Utils.parseAPIErrorResponse(response, AcceptLoadboardBookingResponse.class);
                         if (acceptLoadboardBookingResponse != null) {
                             mResponseCallBack.onResponse(acceptLoadboardBookingResponse);
                         } else {
@@ -1330,7 +1304,7 @@ public class RestRequestHandler {
                                 mContext.getString(R.string.error_try_again) + " ");
                     }
                 } else {
-                    if (response.isSuccess()) {
+                    if (response.isSuccessful()) {
                         mResponseCallBack.onResponse(response.body());
                     } else {
                         mResponseCallBack.onError(response.body().getCode(), response.body().getMessage());
@@ -1339,7 +1313,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<AcceptLoadboardBookingResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -1421,8 +1395,8 @@ public class RestRequestHandler {
         Call<ResponseBody> restCall = mRestClient.downloadAudioFile(url);
         restCall.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
                     Utils.redLog("DownloadAudio", "server contacted and has file");
 
                     boolean writtenToDisk = writeResponseBodyToDisk(response.body());
@@ -1439,7 +1413,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 onResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + getErrorMessage(t));
             }
         });
@@ -1501,9 +1475,9 @@ public class RestRequestHandler {
         Call<GeocoderApi> call = restClient.callGeoCoderApi(latitude + "," + longitude, Utils.getApiKeyForGeoCoder());
         call.enqueue(new Callback<GeocoderApi>() {
             @Override
-            public void onResponse(Response<GeocoderApi> geocoderApiResponse, Retrofit retrofit) {
+            public void onResponse(Call<GeocoderApi> call, Response<GeocoderApi> geocoderApiResponse) {
                 String add = StringUtils.EMPTY;
-                if (geocoderApiResponse != null && geocoderApiResponse.isSuccess()) {
+                if (geocoderApiResponse != null && geocoderApiResponse.isSuccessful()) {
                     if (geocoderApiResponse.body() != null
                             && geocoderApiResponse.body().getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
                             && geocoderApiResponse.body().getResults().length > 0) {
@@ -1569,7 +1543,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<GeocoderApi> call, Throwable t) {
                 AppPreferences.setGeoCoderApiKeyRequired(true);
                 Utils.redLog("GeoCode", t.getMessage() + "");
             }
@@ -1582,8 +1556,8 @@ public class RestRequestHandler {
         Call<GoogleDistanceMatrixApi> call = restClient.callDistanceMatrixApi(origin, destination, Utils.getApiKeyForDirections(mContext));
         call.enqueue(new Callback<GoogleDistanceMatrixApi>() {
             @Override
-            public void onResponse(Response<GoogleDistanceMatrixApi> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body() != null) {
+            public void onResponse(Call<GoogleDistanceMatrixApi> call, Response<GoogleDistanceMatrixApi> response) {
+                if (response.isSuccessful() && response.body() != null) {
                     mDataCallback.onResponse(response.body());
                     if (Constants.INVALID_REQUEST.equalsIgnoreCase(response.body().getStatus()) ||
                             Constants.OVER_QUERY_LIMIT.equalsIgnoreCase(response.body().getStatus())) {
@@ -1596,7 +1570,7 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<GoogleDistanceMatrixApi> call, Throwable t) {
                 AppPreferences.setDirectionsApiKeyRequired(true);
                 mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + getErrorMessage(t));
             }
@@ -1610,8 +1584,8 @@ public class RestRequestHandler {
         Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000", Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
         call.enqueue(new Callback<PlaceAutoCompleteResponse>() {
             @Override
-            public void onResponse(Response<PlaceAutoCompleteResponse> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body() != null &&
+            public void onResponse(Call<PlaceAutoCompleteResponse> call, Response<PlaceAutoCompleteResponse> response) {
+                if (response.isSuccessful() && response.body() != null &&
                         response.body().getStatus().equalsIgnoreCase("OK")) {
                     mDataCallback.onResponse(response.body());
                 } else {
@@ -1620,21 +1594,10 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<PlaceAutoCompleteResponse> call, Throwable t) {
                 mDataCallback.onError(0, t.toString());
             }
         });
-//        PlaceAutoCompleteResponse placeAutoCompleteResponse = null;
-//        try {
-//            Response<PlaceAutoCompleteResponse> response = call.execute();
-//            if (response.body().getStatus().equalsIgnoreCase("OK")) {
-//                placeAutoCompleteResponse = response.body();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        Utils.redLog("AutoComplete", "Api called with input = " + input);
-//        return placeAutoCompleteResponse;
     }
 
 
@@ -1644,8 +1607,8 @@ public class RestRequestHandler {
         Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
         call.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
-            public void onResponse(Response<PlaceDetailsResponse> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body() != null) {
+            public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
                     mDataCallback.onResponse(response.body());
                 } else {
                     mDataCallback.onError(0, response.message());
@@ -1653,11 +1616,10 @@ public class RestRequestHandler {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<PlaceDetailsResponse> call, Throwable t) {
                 mDataCallback.onError(0, t.toString());
             }
         });
-
     }
 
 

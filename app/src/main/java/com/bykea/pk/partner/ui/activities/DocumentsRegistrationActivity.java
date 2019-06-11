@@ -3,26 +3,23 @@ package com.bykea.pk.partner.ui.activities;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DocumentsData;
 import com.bykea.pk.partner.models.data.Images;
-import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpUserData;
@@ -57,7 +54,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.zelory.compressor.Compressor;
-import okhttp3.internal.Util;
 
 public class DocumentsRegistrationActivity extends BaseActivity {
     @BindView(R.id.phoneNumberEt)
@@ -523,7 +519,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     private void startUploadImageTask(File file) {
 //        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> adapter = " + mAdapter.toString());
 //        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> mCurrentActivity = " + mCurrentActivity.toString());
-        mUserRepository.uplodaDocumentImage(mCurrentActivity, DRIVER_ID,
+        mUserRepository.uploadDocumentImage(mCurrentActivity, DRIVER_ID,
                 mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType(), file, mCallback);
         isImgCompressing = false;
     }

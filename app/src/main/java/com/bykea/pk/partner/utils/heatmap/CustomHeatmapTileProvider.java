@@ -14,7 +14,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.v4.util.LongSparseArray;
+import androidx.collection.LongSparseArray;
 
 import com.bykea.pk.partner.DriverApp;
 import com.google.android.gms.maps.model.LatLng;

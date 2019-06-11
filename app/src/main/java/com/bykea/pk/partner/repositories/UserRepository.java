@@ -1,11 +1,17 @@
 package com.bykea.pk.partner.repositories;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
+import android.util.Log;
 
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
@@ -48,6 +54,7 @@ import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
+import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
@@ -55,6 +62,15 @@ import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryDropOff;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
@@ -79,9 +95,12 @@ import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 
@@ -91,14 +110,18 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class UserRepository {
 
+    private static final String TAG = UserRepository.class.getSimpleName();
     private Context mContext;
     private IUserDataHandler mUserCallback;
     private WebIORequestHandler mWebIORequestHandler;
     private RestRequestHandler mRestRequestHandler;
+
+    private DirectionDropOffData directionDropOffData;
 
     public UserRepository() {
         mWebIORequestHandler = WebIORequestHandler.getInstance();
@@ -311,29 +334,130 @@ public class UserRepository {
         locationRequest.setLongitude(lon + "");
         String tripStatus = StringUtils.EMPTY;
         if (AppPreferences.isOnTrip()) {
-            tripStatus = AppPreferences.getCallData() != null
-                    && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
-                    ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
-            locationRequest.setEta(AppPreferences.getEta());
-            locationRequest.setDistance(AppPreferences.getEstimatedDistance());
-            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
-            ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
-            if (trackingData.size() == 0) {
-                TrackingData data = new TrackingData();
-                data.setLat(lat + "");
-                data.setLng(lon + "");
-                trackingData.add(data);
+            if (AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.SINGLE)) {
+                tripStatus = AppPreferences.getCallData() != null
+                        && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
+                        ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
+                setupLocationRequestUpdate(lat, lon, locationRequest, tripStatus);
+                mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                        mDataCallback, locationRequest);
+            } else {
+                //In Batch Trip
+                setupLocationRequestUpdate(lat, lon, locationRequest, tripStatus);
+                calculateDistanceFromDirectionAPI(locationRequest);
             }
-            locationRequest.setTrackingData(trackingData);
-            AppPreferences.clearTrackingData();
+        } else {
+            if (StringUtils.isBlank(tripStatus)) {
+                tripStatus = AppPreferences.getTripStatus();
+            }
+            locationRequest.setAvailableStatus(tripStatus);
+            locationRequest.setUuid(UUID.randomUUID().toString());
+            mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                    mDataCallback, locationRequest);
         }
+    }
+
+    /**
+     * Prepare data for location update when partner's on trip.
+     *
+     * @param lat             current lat
+     * @param lon             current lng
+     * @param locationRequest request data object
+     * @param tripStatus      current status of running trip
+     */
+    private void setupLocationRequestUpdate(double lat, double lon, DriverLocationRequest locationRequest, String tripStatus) {
+        locationRequest.setEta(AppPreferences.getEta());
+        locationRequest.setDistance(AppPreferences.getEstimatedDistance());
+        if(AppPreferences.getCallData() != null && AppPreferences.getCallData().getTripId() != null)
+            locationRequest.setTripID(AppPreferences.getCallData().getTripId());
+        ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
+        if (trackingData.size() == 0) {
+            TrackingData data = new TrackingData();
+            data.setLat(lat + "");
+            data.setLng(lon + "");
+            trackingData.add(data);
+        }
+        locationRequest.setTrackingData(trackingData);
+        AppPreferences.clearTrackingData();
         if (StringUtils.isBlank(tripStatus)) {
             tripStatus = AppPreferences.getTripStatus();
         }
         locationRequest.setAvailableStatus(tripStatus);
         locationRequest.setUuid(UUID.randomUUID().toString());
-        mRestRequestHandler.sendDriverLocationUpdate(context, mDataCallback, locationRequest);
     }
+
+    /**
+     * Fetch Tracking Data List
+     *
+     * <p>Calculate the distance & duration between driver location to each drop off location</p>
+     *
+     * @param locationRequest The {@linkplain DriverLocationRequest} object.
+     */
+    private synchronized void calculateDistanceFromDirectionAPI(final DriverLocationRequest
+                                                                        locationRequest) {
+        String driverLatLng =
+                AppPreferences.getLatitude() + "," + AppPreferences.getLongitude();
+        String dropLatLng = StringUtils.EMPTY;
+        final MultiDeliveryCallDriverData callDriverData = AppPreferences.
+                getMultiDeliveryCallDriverData();
+
+        //TODO temp fix until we figure it out how to handle tip notification socket for single trips.
+        if (callDriverData == null) {
+            return;
+        }
+
+        final ArrayList<MultipleDeliveryRemainingETA> trackingDataList = new ArrayList<>();
+        final List<MultipleDeliveryBookingResponse> bookingResponseList =
+                callDriverData.getBookings();
+
+        final int bookingSize = bookingResponseList.size();
+        final int[] counter = {0};
+        for (final MultipleDeliveryBookingResponse bookingResponse : bookingResponseList) {
+            counter[0]++;
+            MultipleDeliveryDropOff dropOff = bookingResponse.getDropOff();
+            dropLatLng = dropLatLng.concat(dropOff.getLat() + "," +
+                    dropOff.getLng());
+            Log.d(TAG, bookingResponse.getTrip().getId());
+            if (counter[0] != bookingSize)
+                dropLatLng = dropLatLng.concat("|");
+        }
+
+        new PlacesRepository().getDistanceMatrix(
+                driverLatLng,
+                dropLatLng,
+                mContext,
+                new PlacesDataHandler() {
+                    @Override
+                    public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
+                        if(response != null && response.getRows() != null && response.getRows().length > 0){
+                            counter[0] = 0;
+                            GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
+                            for (GoogleDistanceMatrixApi.Elements element : elements) {
+                                String tripID = bookingResponseList.get(counter[0]).getTrip().getId();
+                                Log.d(TAG, tripID);
+                                int distance = element.getDistance().getValueInt();
+                                int duration = element.getDuration().getValueInt();
+                                MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
+                                remainingETA.setTripID(tripID);
+                                remainingETA.setRemainingDistance(distance);
+                                remainingETA.setRemainingTime(duration);
+                                trackingDataList.add(remainingETA);
+                                counter[0]++;
+                            }
+                            locationRequest.setBatchBookings(trackingDataList);
+                            mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                                    mDataCallback, locationRequest);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.d(TAG, error);
+                    }
+                });
+
+    }
+
 
     public void freeDriverStatus(Context context, IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
@@ -487,23 +611,23 @@ public class UserRepository {
         mUserCallback = handler;
         mContext = context;
         try {
+            NormalCallData callData = AppPreferences.getCallData();
             String startLat = AppPreferences.getLatitude() + "";
             String startLng = AppPreferences.getLongitude() + "";
             jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-            jsonObject.put("trip_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("tid", callData.getTripId());
+            jsonObject.put("trip_id", callData.getTripId());
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("did", AppPreferences.getDriverId());
             jsonObject.put("startlatitude", startLat);
             jsonObject.put("startlongitude", startLng);
-            jsonObject.put("start_address", AppPreferences.getCallData().getStartAddress());
-            jsonObject.put("pid", AppPreferences.getCallData().getPassId());
+            jsonObject.put("start_address", callData.getStartAddress());
+            jsonObject.put("pid", callData.getPassId());
             jsonObject.put("endlatitude", endLat);
             jsonObject.put("endlongitude", endLng);
             jsonObject.put("end_address", endAddress);
 
             //To update start latlng on App Side.
-            NormalCallData callData = AppPreferences.getCallData();
             callData.setStartLat(startLat);
             callData.setStartLng(startLng);
             AppPreferences.setCallData(callData);
@@ -648,6 +772,227 @@ public class UserRepository {
 
     }
 
+    //region Multi Delivery emit data
+
+    /**
+     * Set Driver Acknowledge Data in Json Object.
+     *
+     * @param jsonObject The json object.
+     * @throws JSONException if something went wrong with json object it will throw an exception.
+     */
+    private void setMultiDeliveryData(JSONObject jsonObject) throws JSONException {
+        jsonObject.put("batch_id", AppPreferences
+                .getMultiDeliveryCallDriverData()
+                .getBatchID());
+        jsonObject.put("_id", AppPreferences.getDriverId());
+        jsonObject.put("token_id", AppPreferences.getAccessToken());
+        jsonObject.put("trip_type", Constants.TripTypes.BATCH_TYPE);
+        jsonObject.put("lat", AppPreferences.getLatitude());
+        jsonObject.put("lng", AppPreferences.getLongitude());
+    }
+
+    /**
+     * Emit request Driver Acknowledge Response.
+     *
+     * @param handler The Callback that will be invoked when response received.
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestDriverAcknowledged(IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.sendCallDriverAcknowledge(jsonObject, mDataCallback);
+
+    }
+
+    /**
+     * Emit request MuliDelivery Accept Call event
+     *
+     * @param context        Holding the reference of an activity.
+     * @param acceptedSecond The timer interval at which driver accept the call.
+     * @param handler        The Callback that will be invoked when response received.
+     */
+    public void requestMultiDeliveryAcceptCall(Context context, String acceptedSecond,
+                                               IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        mContext = context;
+        try {
+
+            setMultiDeliveryData(jsonObject);
+            jsonObject.put("accept_timer_seconds", acceptedSecond);
+            jsonObject.put("os", Build.VERSION.SDK_INT);
+            jsonObject.put("os_name", Constants.OS_NAME);
+            jsonObject.put("imei", Utils.getDeviceId(context));
+            try {
+                int battery = Integer.parseInt(Utils.getBatteryPercentage(context)
+                        .split(" ")[0]);
+                int signalStrength = Integer.parseInt(Utils.getSignalStrength(context));
+                jsonObject.put("battery", battery);
+                jsonObject.put("connection_strength", signalStrength);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        mWebIORequestHandler.acceptMultiDeliveryRequest(jsonObject, mDataCallback);
+
+    }
+
+    /**
+     * Emit Driver Arrived data.
+     *
+     * @param handler The Callback that will be invoked when driver arrived response received.
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverArrived(IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            LocCoordinatesInTrip arrivedLatLng = new LocCoordinatesInTrip();
+            arrivedLatLng.setLat(String.valueOf(AppPreferences.getLatitude()));
+            arrivedLatLng.setLng(String.valueOf(AppPreferences.getLongitude()));
+            arrivedLatLng.setDate(Utils.getIsoDate());
+            ArrayList<LocCoordinatesInTrip> prevLatLngList = AppPreferences.getLocCoordinatesInTrip();
+            prevLatLngList.add(arrivedLatLng);
+            jsonObject.put("route", new Gson().toJson(prevLatLngList));
+
+            AppPreferences.clearTripDistanceData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultideliveryDriverArrived(jsonObject, mDataCallback);
+
+    }
+
+    /**
+     * Emit Driver Started data.
+     *
+     * @param handler The Callback that will be invoked when driver started response received.
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverStarted(Activity activity, IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            String address = Utils.getLocationAddress(
+                    AppPreferences.getLatitude() + "",
+                    AppPreferences.getLongitude() + "",
+                    activity).split(",")[0];
+            jsonObject.put("start_address", address);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultiDriverStartedRide(jsonObject, mDataCallback);
+    }
+
+    /**
+     * Emit Driver Finished data.
+     *
+     * @param handler The Callback that will be invoked when driver finish event response received.
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverFinishRide(DirectionDropOffData data,
+                                                     IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            jsonObject.put("trip_id", data.getTripID());
+            jsonObject.put("route", new Gson()
+                    .toJson(AppPreferences.getLocCoordinatesInTrip()));
+            directionDropOffData = data;
+            AppPreferences.clearTripDistanceData();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultiDriverFinishRide(jsonObject, mDataCallback);
+    }
+
+    /**
+     * Emit Driver Finished data.
+     *
+     * @param tripID             finishing trip id
+     * @param receivedAmount     amount that is received by partner
+     * @param rating             feedback rating
+     * @param isDeliveryFeedback check whether finishing of multiple delivery ride or multiple delivery simple ride
+     * @param deliveryStatus     delivery success or fail
+     * @param deliveryMsg        delivery success or fail msg
+     * @param receiverName       receiver name
+     * @param receiverPhone      receiver phone number
+     * @param handler            handler The Callback that will be invoked when driver finish event response received.
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryDriverFeedback(String tripID,
+                                                   int receivedAmount,
+                                                   float rating,
+                                                   boolean isDeliveryFeedback,
+                                                   boolean deliveryStatus,
+                                                   String deliveryMsg,
+                                                   String receiverName,
+                                                   String receiverPhone,
+                                                   IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            jsonObject.remove("batch_id");
+            jsonObject.remove("trip_type");
+            jsonObject.put("trip_id", tripID);
+            jsonObject.put("rate", rating);
+            jsonObject.put("feedback", "nice");
+            jsonObject.put("received_amount", receivedAmount);
+            if (isDeliveryFeedback) {
+                jsonObject.put("delivery_status", deliveryStatus);
+                jsonObject.put("delivery_message", deliveryMsg);
+                jsonObject.put("received_by_name", receiverName);
+                jsonObject.put("received_by_phone", receiverPhone);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultiDeliveryDriverFeedback(jsonObject, mDataCallback);
+    }
+
+    /**
+     * Emit driver cancel batch request.
+     *
+     * @param cancelReason The cancellation reason.
+     * @param handler      The Callback that will be invoked when driver arrived response received.
+     * @see IUserDataHandler
+     * @see UserRepository#setMultiDeliveryData(JSONObject)
+     */
+    public void requestMultiDeliveryCancelBatch(String cancelReason, IUserDataHandler handler) {
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        try {
+            setMultiDeliveryData(jsonObject);
+            jsonObject.put("cancelled_at", Utils.getIsoDate());
+            jsonObject.put("cancel_reason", cancelReason);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mWebIORequestHandler.requestMultideliveryCancelBatch(jsonObject, mDataCallback);
+
+    }
+
+
+    //endregion
+
 
     /***
      * Send request to API server using socket connection which Assigns scheduled request
@@ -729,10 +1074,10 @@ public class UserRepository {
         mRestRequestHandler.requestCompleteSignupData(mContext, id, mDataCallback);
     }*/
 
-    public void uplodaDocumentImage(Context context, String id, String type, File imageFile, IUserDataHandler handler) {
+    public void uploadDocumentImage(Context context, String id, String type, File imageFile, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.uplodaDocumentImage(mContext, id, type, imageFile, mDataCallback);
+        mRestRequestHandler.uploadDocumentImage(mContext, id, type, imageFile, mDataCallback);
     }
 
     public void requestBankAccounts(Context context, IUserDataHandler handler) {
@@ -837,61 +1182,13 @@ public class UserRepository {
                 properties.put("DD", false);
             }
             Utils.logEvent(context, pilotData.getId(),
-                    Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties);
+                    Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties, false);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         mRestRequestHandler.requestDriverStatusUpdate(mContext, statusRequest, mDataCallback);
 
-
-    }
-
-    public void requestUpdateStatus(Context context, IUserDataHandler handler, boolean status) {
-
-        mContext = context;
-        mUserCallback = handler;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            PilotData pilotData = AppPreferences.getPilotData();
-            JSONObject properties = new JSONObject();
-            properties.put("DriverID", pilotData.getId());
-            properties.put("timestamp", Utils.getIsoDate());
-            properties.put("SignUpCity", pilotData.getCity() != null ? pilotData.getCity().getName() : "N/A");
-            properties.put("DriverName", pilotData.getFullName());
-            properties.put("CurrentLocation", Utils.getCurrentLocation());
-            properties.put("cih", AppPreferences.getCashInHands());
-            properties.put("status", status ? "Active" : "Inactive");
-
-
-            jsonObject.put("is_available", "" + status);
-            jsonObject.put("driver_id", AppPreferences.getDriverId());
-            jsonObject.put("_id", AppPreferences.getDriverId());
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("lat", AppPreferences.getLatitude());
-            jsonObject.put("lng", AppPreferences.getLongitude());
-            jsonObject.put("cih", AppPreferences.getCashInHands());
-            jsonObject.put("imei", Utils.getDeviceId(mContext));
-
-            if (status && AppPreferences.getDriverDestination() != null) {
-                jsonObject.put("eLat", AppPreferences.getDriverDestination().latitude);
-                jsonObject.put("eLng", AppPreferences.getDriverDestination().longitude);
-                jsonObject.put("eAdd", AppPreferences.getDriverDestination().address);
-
-                properties.put("DD", true);
-                properties.put("DDLocation", AppPreferences.getDriverDestination().latitude
-                        + "," + AppPreferences.getDriverDestination().longitude);
-                properties.put("DDAddress", AppPreferences.getDriverDestination().address);
-            } else {
-                properties.put("DD", false);
-            }
-
-            Utils.logEvent(context, pilotData.getId(), Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mWebIORequestHandler.updatePilotStatus(mDataCallback, jsonObject);
 
     }
 
@@ -1393,6 +1690,42 @@ public class UserRepository {
                     case "AcceptLoadboardBookingResponse":
                         WebIORequestHandler.getInstance().registerChatListener();
                         mUserCallback.onAcceptLoadboardBookingResponse((AcceptLoadboardBookingResponse) object);
+                        break;
+                    case "MultiDeliveryCallDriverAcknowledgeResponse":
+                        mUserCallback.onDriverAcknowledgeResponse(
+                                (MultiDeliveryCallDriverAcknowledgeResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryDriverArrivedResponse":
+                        mUserCallback.onMultiDeliveryDriverArrived(
+                                (MultiDeliveryDriverArrivedResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryAcceptCallResponse":
+                        mUserCallback.onMultiDeliveryAcceptCall(
+                                (MultiDeliveryAcceptCallResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryDriverStartedResponse":
+                        mUserCallback.onMultiDeliveryDriverStarted(
+                                (MultiDeliveryDriverStartedResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryCompleteRideResponse":
+                        mUserCallback.onMultiDeliveryDriverRideFinish(
+                                (MultiDeliveryCompleteRideResponse) object,
+                                directionDropOffData
+                        );
+                        break;
+                    case "MultiDeliveryFeedbackResponse":
+                        mUserCallback.onMultiDeliveryDriverFeedback(
+                                (MultiDeliveryFeedbackResponse) object
+                        );
+                        break;
+                    case "MultiDeliveryCancelBatchResponse":
+                        mUserCallback.onMultiDeliveryDriverCancelBatch(
+                                (MultiDeliveryCancelBatchResponse) object
+                        );
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

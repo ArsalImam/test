@@ -1,7 +1,7 @@
 package com.bykea.pk.partner.ui.helpers;
 
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.bykea.pk.partner.DriverApp;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;

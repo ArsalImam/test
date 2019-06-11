@@ -8,9 +8,12 @@ import android.util.Log;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.ReceivedMessage;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -19,6 +22,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Constants.FCMEvents;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -120,7 +124,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
             } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase("2")) {
+                ReceivedMessage receivedMessage = gson.fromJson(remoteMessage.getData().
+                        get(Constants.Notification.DATA_TYPE), ReceivedMessage.class);
                 if (AppPreferences.isOnTrip()) {
+                    //Do not open Chat activity when the trip is of Batch i.e Multi Delivery Trip
+                    if (StringUtils.isNotBlank(receivedMessage.getData().getBatchID()))
+                        return;
                     Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivityNew.class);
                     chatIntent.putExtra("chat", true);
                     chatIntent.putExtra("fromNotification", true);
@@ -157,6 +166,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(FCMEvents.MULTIDELIVER_INCOMING_CALL))) { //Multi delivery call
+                MultipleDeliveryCallDriverResponse response = gson.fromJson(
+                        remoteMessage.getData().get(Constants.Notification.DATA_TYPE),
+                        MultipleDeliveryCallDriverResponse.class);
+
+                MultiDeliveryCallDriverData data = response.getData();
+                if (data != null) {
+                    AppPreferences.setMultiDeliveryCallDriverData(data);
+                    ActivityStackManager.getInstance().startMultiDeliveryCallingActivity(
+                                    AppPreferences.getMultiDeliveryCallDriverData(), true, DriverApp.getContext());
+                }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(FCMEvents.MULTIDELIVER_CANCEL_BY_ADMIN))) { //Multi delivery cancel by admin
+                mBus.post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
             }
         }
     }
