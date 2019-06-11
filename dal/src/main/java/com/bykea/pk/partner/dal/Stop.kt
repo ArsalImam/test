@@ -9,5 +9,5 @@ data class Stop(
         val distance_est: Int,
         val zone_name_en: String?,
         val zone_name_ur: String?,
-        @Embedded val contact: Contact
+        @Embedded val contact: Contact?
 )

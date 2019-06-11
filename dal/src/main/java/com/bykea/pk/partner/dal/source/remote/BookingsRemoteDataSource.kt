@@ -13,7 +13,7 @@ class BookingsRemoteDataSource {
     fun getBookings(driverId: String, token: String, lat: Double, lng: Double, limit: Int, callback: BookingsDataSource.LoadBookingsCallback) {
 
         val call = ApiClient.build()?.getLoadboardListMock(
-                "http://www.mocky.io/v2/5cfe2bf23200004d0045eeeb",
+                "http://www.mocky.io/v2/5cfe47333200000f0045efbb",
                 driverId, token, lat, lng, limit)
         call?.enqueue(object : Callback<GetLoadboardListingResponse> {
 
