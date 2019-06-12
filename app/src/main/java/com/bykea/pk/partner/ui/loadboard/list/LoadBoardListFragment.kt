@@ -17,9 +17,9 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Dialogs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
-import com.onesignal.OSEmailSubscriptionObserver
 import kotlinx.android.synthetic.main.loadboard_bookings_frag.*
 
 
@@ -58,6 +58,11 @@ class LoadBoardListFragment : Fragment() {
                     } else {
                         ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(activity, it.peekContent())
                     }
+                })
+
+                dataLoading.observe(this@LoadBoardListFragment, Observer {
+                    if (it) Dialogs.INSTANCE.showLoader(activity)
+                    else Dialogs.INSTANCE.dismissDialog()
                 })
                 isExpended.observe(this@LoadBoardListFragment, Observer {
                     if (it) {

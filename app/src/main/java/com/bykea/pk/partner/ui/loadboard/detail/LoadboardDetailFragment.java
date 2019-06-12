@@ -134,7 +134,7 @@ public class LoadboardDetailFragment extends Fragment implements View.OnClickLis
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_loadboard_detail, container, false);
+        View rootView = inflater.inflate(R.layout.loadboard_detail_frag, container, false);
         ButterKnife.bind(this, rootView);
 
         mCurrentActivity = (LoadboardDetailActivity) getActivity();

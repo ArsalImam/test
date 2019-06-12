@@ -477,7 +477,7 @@ public class ActivityStackManager {
      */
     public void startLoadboardBookingDetailActiivty(Context context, Long bookingId) {
         Intent intent = new Intent(context, LoadboardDetailActivity.class);
-        intent.putExtra(LoadboardDetailActivity.BOOKING_ID, bookingId);
+        intent.putExtra(LoadboardDetailActivity.EXTRA_BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
 
