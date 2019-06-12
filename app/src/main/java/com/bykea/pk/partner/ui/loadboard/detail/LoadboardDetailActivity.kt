@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.loadboard.detail
 
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.LoadboardDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
@@ -20,7 +21,10 @@ class LoadboardDetailActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.loadboard_detail_act)
         binding.viewmodel = obtainViewModel(BookingDetailViewModel::class.java).apply {
-
+            dataLoading.observe(this@LoadboardDetailActivity, Observer {
+                if (it) Dialogs.INSTANCE.showLoader(this@LoadboardDetailActivity)
+                else Dialogs.INSTANCE.dismissDialog()
+            })
         }
         binding.listener = object : BookingDetailUserActionsListener {
             override fun onPlayAudio(url: String) {
