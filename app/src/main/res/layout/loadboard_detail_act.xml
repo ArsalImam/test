@@ -250,7 +250,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewPickUp"
                                 android:layout_toLeftOf="@id/cardViewPickUp"
-                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.booking.pickup.lat, viewmodel.booking.pickup.lng)}"
+                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.currentLatLng.latitude, viewmodel.currentLatLng.longitude, viewmodel.booking.pickup.lat, viewmodel.booking.pickup.lng)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
@@ -357,7 +357,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
-                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.booking.dropoff.lat, viewmodel.booking.dropoff.lng)}"
+                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.booking.pickup.lat, viewmodel.booking.pickup.lng, viewmodel.booking.dropoff.lat, viewmodel.booking.dropoff.lng)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>

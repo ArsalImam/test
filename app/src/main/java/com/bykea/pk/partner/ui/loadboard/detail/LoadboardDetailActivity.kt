@@ -8,6 +8,7 @@ import com.bykea.pk.partner.databinding.LoadboardDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Utils
 
 /**
  * Loadboard booking detail screen ACTIVITY - opening from homeScreen's loadboard listing items
@@ -27,12 +28,12 @@ class LoadboardDetailActivity : BaseActivity() {
             })
         }
         binding.listener = object : BookingDetailUserActionsListener {
-            override fun onPlayAudio(url: String) {
+            override fun onPlayAudio(url: String?) {
                 Dialogs.INSTANCE.showLoader(this@LoadboardDetailActivity)
             }
 
-            override fun onNavigateToMap(lat: Double, lng: Double) {
-
+            override fun onNavigateToMap(pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double) {
+                Utils.navigateToGoogleMap(this@LoadboardDetailActivity,pickLat, pickLng, dropLat, dropLng)
             }
 
             override fun onAcceptBooking() {

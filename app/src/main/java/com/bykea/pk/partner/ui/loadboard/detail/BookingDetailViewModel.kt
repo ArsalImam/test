@@ -8,6 +8,7 @@ import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.dal.source.BookingsDataSource
 import com.bykea.pk.partner.dal.source.BookingsRepository
 import com.bykea.pk.partner.ui.loadboard.common.Event
+import com.google.android.gms.maps.model.LatLng
 
 /**
  * The ViewModel used in [BookingDetailFragment].
@@ -15,6 +16,10 @@ import com.bykea.pk.partner.ui.loadboard.common.Event
  * @Author: Yousuf Sohail
  */
 class BookingDetailViewModel(private val bookingsRepository: BookingsRepository) : ViewModel(), BookingsDataSource.GetBookingCallback {
+
+    private val _currentLatLng = MutableLiveData<LatLng>()
+    val currentLatLng: LiveData<LatLng>
+        get() = _currentLatLng
 
     private val _booking = MutableLiveData<Booking>()
     val booking: LiveData<Booking>
@@ -47,6 +52,7 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     fun start(bookingId: Long) {
         _dataLoading.value = true
         bookingsRepository.getBooking(bookingId, this)
+        _currentLatLng.value = LatLng(bookingsRepository.lat, bookingsRepository.lng)
     }
 
     private fun setBooking(booking: Booking?) {

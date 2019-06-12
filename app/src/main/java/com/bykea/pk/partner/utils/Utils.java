@@ -487,6 +487,36 @@ public class Utils {
      * to draw the direction on google map.
      *
      * @param context holding the reference of an activity.
+     * @param pickLat Double, latitude
+     * @param pickLng Double, longitude
+     * @param dropLat Double, latitude
+     * @param dropLng Double, longitude
+     */
+    public static void navigateToGoogleMap(Context context,
+                                           double pickLat, double pickLng, double dropLat, double dropLng) {
+        try {
+            String startAddr = pickLat+","+pickLng;
+            String endAddr = dropLat + "," + dropLng;
+            String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Navigate to google map with origin (Start) lat, lng & destination (end) lat, lng
+     * to draw the direction on google map.
+     *
+     * @param context holding the reference of an activity.
      * @param latLng the drop off lat lng.
      */
     public static void navigateDropDownToGoogleMap(Context context,
