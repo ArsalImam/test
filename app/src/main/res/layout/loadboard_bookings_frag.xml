@@ -76,7 +76,7 @@
             android:id="@+id/bottomSheetToolbarDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorAccent"
+            android:background="@color/color_grayc7c7c7"
             android:visibility="gone" />
 
         <LinearLayout

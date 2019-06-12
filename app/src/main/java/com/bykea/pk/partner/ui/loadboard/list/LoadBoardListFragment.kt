@@ -97,6 +97,7 @@ class LoadBoardListFragment : Fragment() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
+                            viewDataBinding.bookingsList.smoothScrollToPosition(0)
                         }
                         BottomSheetBehavior.STATE_EXPANDED -> {
                         }
