@@ -70,6 +70,16 @@ class LoadBoardListFragment : Fragment() {
                         }
                     }
                 })
+
+                empty.observe(this@LoadBoardListFragment, Observer {
+                    if (it) {
+                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+                    } else {
+                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+                    }
+                })
+
+
             }
 
             listener = object : BookingsListUserActionsListener {
