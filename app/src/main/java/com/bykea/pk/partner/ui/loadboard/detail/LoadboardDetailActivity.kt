@@ -10,7 +10,6 @@ import com.bykea.pk.partner.utils.Dialogs
 
 /**
  * Loadboard booking detail screen ACTIVITY - opening from homeScreen's loadboard listing items
- * this activity will hold booking detail fragment
  */
 class LoadboardDetailActivity : BaseActivity() {
 
