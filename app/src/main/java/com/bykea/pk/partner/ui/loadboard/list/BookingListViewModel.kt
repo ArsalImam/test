@@ -56,6 +56,7 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
 
     fun start() {
         loadBookings(false)
+        isExpended.value = false
     }
 
     fun refresh() {
