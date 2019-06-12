@@ -15,14 +15,8 @@ import java.util.*
 class BookingsRepository(
         private val bookingsRemoteDataSource: BookingsRemoteDataSource,
         private val bookingsLocalDataSource: BookingsDataSource,
-        val driverId: String, val token: String, val lat: Double, val lng: Double
-) : BookingsDataSource {
+        val driverId: String, val token: String, val lat: Double, val lng: Double) : BookingsDataSource {
 
-    //TODO: fetch from app preference
-//    private val driverId: String = "23"
-//    private val token: String = "23"
-//    private val lat: Double = 24.914
-//    private val lng: Double = 67.118
     private val limit: Int = 20
 
     /**

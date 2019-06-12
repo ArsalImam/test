@@ -75,7 +75,7 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         bookingId?.let { start(it) }
     }
 
-    private fun showSnackbarMessage(@StringRes message: Int) {
+    fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
     }
 

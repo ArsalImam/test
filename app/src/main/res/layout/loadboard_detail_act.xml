@@ -144,11 +144,12 @@
                             android:layout_height="@dimen/_200sdp" />
 
                         <RelativeLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
                             android:layout_marginLeft="@dimen/_10sdp"
-                            android:layout_marginRight="@dimen/_10sdp">
+                            android:layout_marginRight="@dimen/_10sdp"
+                            app:goneUnless="@{viewmodel.booking.voice_note != null}">
 
                             <ImageView
                                 android:id="@+id/imgViewAudioPlay"
@@ -157,8 +158,6 @@
                                 android:layout_marginEnd="@dimen/_5sdp"
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_marginBottom="@dimen/_10sdp"
-                                android:layout_toStartOf="@id/viewWithPlayButton"
-                                android:layout_toLeftOf="@id/viewWithPlayButton"
                                 android:onClick="@{() -> listener.onPlayAudio(viewmodel.booking.voice_note)}"
                                 app:srcCompat="@drawable/ic_audio_play" />
 
@@ -170,22 +169,15 @@
                                 android:layout_marginEnd="@dimen/_5sdp"
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_marginBottom="@dimen/_10sdp"
-                                android:layout_toStartOf="@id/viewWithPlayButton"
-                                android:layout_toLeftOf="@id/viewWithPlayButton"
                                 android:indeterminate="false"
                                 android:max="100"
                                 android:progress="80"
                                 android:progressDrawable="@drawable/circular_progress_bar"
-                                android:visibility="gone" />
-
-                            <View
-                                android:id="@+id/viewWithPlayButton"
-                                android:layout_width="@dimen/_200sdp"
-                                android:layout_height="0dp"
-                                android:layout_centerHorizontal="true"
-                                android:layout_margin="@dimen/_5sdp" />
+                                android:visibility="gone"
+                                tools:visibility="visible" />
 
                         </RelativeLayout>
+
                     </RelativeLayout>
 
                     <LinearLayout
