@@ -1,6 +1,9 @@
 package com.bykea.pk.partner.dal
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * DAO class for booking
@@ -24,14 +27,4 @@ data class Booking(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
                    @Embedded(prefix = "pick_") val pickup: Stop?,
                    @Embedded(prefix = "drop_") val dropoff: Stop?,
                    @Embedded(prefix = "receiver_") val receiver: Contact?,
-                   @Embedded(prefix = "sender_") val sender: Contact?) {
-
-    @Ignore
-    var serviceIcon: String = "bhejdo_no_caption"
-        get() = when (service_code) {
-            22 -> "bhejdo_no_caption"
-            21 -> "bhejdo_no_caption"
-            else -> "bhejdo_no_caption"
-        }
-
-}
+                   @Embedded(prefix = "sender_") val sender: Contact?)

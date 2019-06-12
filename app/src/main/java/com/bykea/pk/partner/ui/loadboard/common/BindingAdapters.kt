@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
 import androidx.databinding.BindingAdapter
+import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.ui.loadboard.list.BookingsAdapter
 
@@ -22,11 +23,14 @@ object BindingAdapters {
         }
     }
 
-    @BindingAdapter("app:srcName")
-    fun setImageViewResource(imageView: ImageView, resource: String) {
-        val id = imageView.context.resources.getIdentifier(resource, "drawable", imageView.context.packageName)
-        val drawable = imageView.context.resources.getDrawable(id)
-        imageView.setImageDrawable(drawable)
+    @BindingAdapter("app:serviceCode")
+    @JvmStatic
+    fun setServiceCode(imageView: ImageView, serviceCode: Int) {
+        when (serviceCode) {
+            21 -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            22 -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            else -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+        }
     }
 
     @BindingAdapter("app:goneUnless")
