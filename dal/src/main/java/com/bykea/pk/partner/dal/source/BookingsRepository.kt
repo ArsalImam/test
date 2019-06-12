@@ -13,15 +13,16 @@ import java.util.*
  * exist or is empty.
  */
 class BookingsRepository(
-        val bookingsRemoteDataSource: BookingsRemoteDataSource,
-        private val bookingsLocalDataSource: BookingsDataSource
+        private val bookingsRemoteDataSource: BookingsRemoteDataSource,
+        private val bookingsLocalDataSource: BookingsDataSource,
+        val driverId: String, val token: String, val lat: Double, val lng: Double
 ) : BookingsDataSource {
 
     //TODO: fetch from app preference
-    private val driverId: String = "23"
-    private val token: String = "23"
-    private val lat: Double = 24.914
-    private val lng: Double = 67.118
+//    private val driverId: String = "23"
+//    private val token: String = "23"
+//    private val lat: Double = 24.914
+//    private val lng: Double = 67.118
     private val limit: Int = 20
 
     /**
@@ -204,10 +205,11 @@ class BookingsRepository(
          * @return the [BookingsRepository] instance
          */
         @JvmStatic
-        fun getInstance(bookingsRemoteDataSource: BookingsRemoteDataSource, bookingsLocalDataSource: BookingsDataSource) =
+        fun getInstance(bookingsRemoteDataSource: BookingsRemoteDataSource, bookingsLocalDataSource: BookingsDataSource,
+                        driverId: String, token: String, lat: Double, lng: Double) =
                 INSTANCE ?: synchronized(BookingsRepository::class.java) {
                     INSTANCE
-                            ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource)
+                            ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource, driverId, token, lat, lng)
                                     .also { INSTANCE = it }
                 }
 

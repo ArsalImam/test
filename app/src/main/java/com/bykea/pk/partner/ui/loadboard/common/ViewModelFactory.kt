@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.bykea.pk.partner.dal.source.BookingsRepository
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.detail.BookingDetailViewModel
 import com.bykea.pk.partner.ui.loadboard.list.BookingListViewModel
 
@@ -53,7 +54,12 @@ class ViewModelFactory private constructor(private val bookingsRepository: Booki
         fun getInstance(application: Application) =
                 INSTANCE ?: synchronized(ViewModelFactory::class.java) {
                     INSTANCE ?: ViewModelFactory(
-                            Injection.provideBookingsRepository(application.applicationContext))
+                            Injection.provideBookingsRepository(application.applicationContext,
+                                    AppPreferences.getDriverId(),
+                                    AppPreferences.getAccessToken(),
+                                    AppPreferences.getLatitude(),
+                                    AppPreferences.getLongitude()
+                            ))
                             .also { INSTANCE = it }
                 }
 

@@ -28,9 +28,11 @@ import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
  */
 object Injection {
 
-    fun provideBookingsRepository(context: Context): BookingsRepository {
+    fun provideBookingsRepository(context: Context, driverId: String, token: String, lat: Double, lng: Double): BookingsRepository {
         val database = AppDatabase.getInstance(context)
         return BookingsRepository.getInstance(BookingsRemoteDataSource(),
-                BookingsLocalDataSource.getInstance(AppExecutors(), database.bookingsDao()))
+                BookingsLocalDataSource.getInstance(AppExecutors(), database.bookingsDao())
+                , driverId, token, lat, lng
+        )
     }
 }
