@@ -4,10 +4,10 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.dal.source.BookingsDataSource
 import com.bykea.pk.partner.dal.source.BookingsRepository
+import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.ui.loadboard.common.Event
 import com.google.android.gms.maps.model.LatLng
 
@@ -56,7 +56,7 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     fun start(bookingId: Long) {
         _dataLoading.value = true
         bookingsRepository.getBooking(bookingId, this)
-        _currentLatLng.value = LatLng(bookingsRepository.lat, bookingsRepository.lng)
+        _currentLatLng.value = LatLng(AppPref.getLat(bookingsRepository.pref), AppPref.getLng(bookingsRepository.pref))
     }
 
     fun accept() {

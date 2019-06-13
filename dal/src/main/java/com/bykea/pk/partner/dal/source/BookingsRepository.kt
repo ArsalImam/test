@@ -1,6 +1,8 @@
 package com.bykea.pk.partner.dal.source
 
+import android.content.SharedPreferences
 import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
 import java.util.*
 
@@ -15,7 +17,7 @@ import java.util.*
 class BookingsRepository(
         private val bookingsRemoteDataSource: BookingsRemoteDataSource,
         private val bookingsLocalDataSource: BookingsDataSource,
-        val driverId: String, val token: String, val lat: Double, val lng: Double) : BookingsDataSource {
+        val driverId: String, val token: String, val pref: SharedPreferences) : BookingsDataSource {
 
     private val limit: Int = 20
 
@@ -91,7 +93,7 @@ class BookingsRepository(
             }
 
             override fun onDataNotAvailable(message: String?) {
-                bookingsRemoteDataSource.getBooking(bookingId, driverId, token, lat, lng, object : BookingsDataSource.GetBookingCallback {
+                bookingsRemoteDataSource.getBooking(bookingId, driverId, token, AppPref.getLat(pref), AppPref.getLng(pref), object : BookingsDataSource.GetBookingCallback {
                     override fun onBookingLoaded(booking: Booking) {
                         // Do in memory cache update to keep the app UI up to date
                         cacheAndPerform(booking) {
@@ -117,7 +119,7 @@ class BookingsRepository(
     }
 
     override fun acceptBooking(bookingId: Long, callback: BookingsDataSource.AcceptBookingCallback) {
-        bookingsRemoteDataSource.acceptBooking(bookingId, driverId, token, lat, lng, callback)
+        bookingsRemoteDataSource.acceptBooking(bookingId, driverId, token, AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
     override fun refreshBookings() {
@@ -138,7 +140,7 @@ class BookingsRepository(
 
     private fun getBookingsFromRemoteDataSource(callback: BookingsDataSource.LoadBookingsCallback) {
 
-        bookingsRemoteDataSource.getBookings(driverId, token, lat, lng, limit, object : BookingsDataSource.LoadBookingsCallback {
+        bookingsRemoteDataSource.getBookings(driverId, token, AppPref.getLat(pref), AppPref.getLng(pref), limit, object : BookingsDataSource.LoadBookingsCallback {
             override fun onBookingsLoaded(bookings: List<Booking>) {
                 refreshCache(bookings)
                 refreshLocalDataSource(bookings)
@@ -189,11 +191,10 @@ class BookingsRepository(
          * @return the [BookingsRepository] instance
          */
         @JvmStatic
-        fun getInstance(bookingsRemoteDataSource: BookingsRemoteDataSource, bookingsLocalDataSource: BookingsDataSource,
-                        driverId: String, token: String, lat: Double, lng: Double) =
+        fun getInstance(bookingsRemoteDataSource: BookingsRemoteDataSource, bookingsLocalDataSource: BookingsDataSource, driverId: String, token: String, preferences: SharedPreferences) =
                 INSTANCE ?: synchronized(BookingsRepository::class.java) {
                     INSTANCE
-                            ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource, driverId, token, lat, lng)
+                            ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource, driverId, token, preferences)
                                     .also { INSTANCE = it }
                 }
 
