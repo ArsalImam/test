@@ -48,7 +48,7 @@ class BookingsRemoteDataSource {
                         Log.v(BookingsRemoteDataSource::class.java.simpleName, "data ${it.data}")
                         callback.onBookingLoaded(it.data)
                     } else {
-                        callback.onDataNotAvailable(it.msg)
+                        callback.onDataNotAvailable(it.message)
                     }
                 }
             }
@@ -68,7 +68,7 @@ class BookingsRemoteDataSource {
                     if (response.isSuccessful && it.isSuccess()) {
                         callback.onBookingAccepted()
                     } else {
-                        callback.onBookingAcceptFailed(it.msg)
+                        callback.onBookingAcceptFailed(it.message)
                     }
                 }
             }

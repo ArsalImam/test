@@ -34,10 +34,6 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     val dataLoading: LiveData<Boolean>
         get() = _dataLoading
 
-    private val _editBookingCommand = MutableLiveData<Event<Unit>>()
-    val editBookingCommand: LiveData<Event<Unit>>
-        get() = _editBookingCommand
-
     private val _acceptBookingCommand = MutableLiveData<Event<Unit>>()
     val acceptBookingCommand: LiveData<Event<Unit>>
         get() = _acceptBookingCommand

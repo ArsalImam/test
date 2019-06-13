@@ -90,7 +90,7 @@ class LoadboardDetailActivity : BaseActivity() {
                 finish()
             }
         }
-
+        binding.lifecycleOwner = this
         bookingId = intent.getLongExtra(EXTRA_BOOKING_ID, 0)
         binding.viewmodel!!.start(bookingId)
 
