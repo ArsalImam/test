@@ -354,4 +354,6 @@
 
     <string name="booking_already_taken_title">!معذرت</string>
     <string name="booking_already_taken_msg">یہ بکنگ کسی اور پارٹنر نے اسٹارٹ کرلی ہے</string>
+    <string name="no_voice_note_available">No voice note available</string>
+    <string name="err_booking_accept_failed">Failed to accept booking. Refresh the list and try again.</string>
 </resources>

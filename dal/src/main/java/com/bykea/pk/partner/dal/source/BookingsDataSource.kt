@@ -21,9 +21,7 @@ interface BookingsDataSource {
 
     fun saveBooking(booking: Booking)
 
-    fun acceptBooking(booking: Booking)
-
-    fun acceptBooking(bookingId: Long)
+    fun acceptBooking(bookingId: Long, callback: AcceptBookingCallback)
 
     fun refreshBookings()
 
@@ -43,5 +41,12 @@ interface BookingsDataSource {
         fun onBookingLoaded(booking: Booking)
 
         fun onDataNotAvailable(message: String?)
+    }
+
+    interface AcceptBookingCallback {
+
+        fun onBookingAccepted()
+
+        fun onBookingAcceptFailed(message: String?)
     }
 }
