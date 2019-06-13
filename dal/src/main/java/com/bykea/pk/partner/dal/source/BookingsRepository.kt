@@ -74,6 +74,10 @@ class BookingsRepository(
      * get the data.
      */
     override fun getBooking(bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
+
+        getBookingFromRemoteDataSource(bookingId, callback)
+        return
+
         val bookingInCache = getBookingWithId(bookingId)
 
         // Respond immediately with cache if available
@@ -151,6 +155,23 @@ class BookingsRepository(
             override fun onDataNotAvailable(errorMsg: String?) {
 //                EspressoIdlingResource.decrement() // Set app as idle.
                 callback.onDataNotAvailable(errorMsg)
+            }
+        })
+    }
+
+    private fun getBookingFromRemoteDataSource(bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
+        bookingsRemoteDataSource.getBooking(bookingId, driverId, token, AppPref.getLat(pref), AppPref.getLng(pref), object : BookingsDataSource.GetBookingCallback {
+            override fun onBookingLoaded(booking: Booking) {
+                // Do in memory cache update to keep the app UI up to date
+                booking.isComplete = true
+                cacheAndPerform(booking) {
+                    saveBooking(booking)
+                    callback.onBookingLoaded(it)
+                }
+            }
+
+            override fun onDataNotAvailable(message: String?) {
+                callback.onDataNotAvailable(message)
             }
         })
     }
