@@ -8,4 +8,5 @@ interface BookingDetailUserActionsListener {
     fun onPlayAudio(url: String?)
     fun onNavigateToMap(pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double)
     fun onAcceptBooking()
+    fun onBackClicked()
 }

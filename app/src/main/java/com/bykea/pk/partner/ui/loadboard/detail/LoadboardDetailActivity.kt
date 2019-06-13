@@ -85,6 +85,10 @@ class LoadboardDetailActivity : BaseActivity() {
             override fun onAcceptBooking() {
                 binding.viewmodel!!.accept()
             }
+
+            override fun onBackClicked() {
+                finish()
+            }
         }
 
         bookingId = intent.getLongExtra(EXTRA_BOOKING_ID, 0)
