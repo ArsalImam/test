@@ -45,7 +45,8 @@
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"
                     android:layout_gravity="center_vertical"
-                    app:srcCompat="@drawable/ic_delivery" />
+                    app:serviceCode="@{viewmodel.booking.service_code}"
+                    tools:src="@drawable/bhejdo_no_caption" />
             </LinearLayout>
 
             <LinearLayout
@@ -69,7 +70,7 @@
                     android:id="@+id/tVEstimatedFare"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{`Rs. ` + viewmodel.booking.fare_est}"
+                    android:text="@{`Rs. ` + (int)viewmodel.booking.fare_est}"
                     android:textColor="@color/color_06A833"
                     android:textSize="@dimen/_18sdp"
                     android:textStyle="bold"
@@ -99,7 +100,7 @@
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/tVCODAmount"
-                    android:layout_width="wrap_content"
+                    android:layout_width="33dp"
                     android:layout_height="wrap_content"
                     android:text="@{`` + viewmodel.booking.amount}"
                     android:textColor="@color/black"
@@ -141,7 +142,9 @@
                             android:id="@+id/loadBoardMapFragment"
                             android:name="com.google.android.gms.maps.SupportMapFragment"
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/_200sdp" />
+                            android:layout_height="@dimen/_200sdp"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginTop="0dp" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -214,7 +217,7 @@
                                         android:id="@+id/tVEstimatedTime"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@{Double.toString(viewmodel.booking.pickup.duration)}"
+                                        android:text="@{viewmodel.booking.pickup.duration==0 ? `?` :Double.toString(viewmodel.booking.pickup.duration)}"
                                         android:textColor="@color/color_06A833"
                                         android:textSize="@dimen/_18sdp"
                                         app:fontName="open_sans_semi_bold.ttf"
@@ -321,7 +324,7 @@
                                         android:id="@+id/tVEstimatedDistanceDropOff"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@{Double.toString(viewmodel.booking.dropoff.distance)}"
+                                        android:text="@{viewmodel.booking.dropoff.distance==0 ?`?`:Double.toString(viewmodel.booking.dropoff.distance)}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         app:fontName="open_sans_semi_bold.ttf"
