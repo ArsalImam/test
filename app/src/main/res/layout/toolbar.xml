@@ -169,6 +169,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/acha_connection_ur"
+                android:visibility="invisible"
                 android:textColor="@color/black_3a3a3a"
                 android:textSize="@dimen/_12sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -177,6 +178,7 @@
                 android:id="@+id/connectionStatusIv"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/_4sdp"
+                android:visibility="invisible"
                 android:layout_marginLeft="@dimen/_4sdp"
                 android:layout_toEndOf="@+id/achaconnectionTv"
                 android:layout_toRightOf="@+id/achaconnectionTv"
