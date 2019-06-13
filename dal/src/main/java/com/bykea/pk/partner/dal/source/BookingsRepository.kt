@@ -75,44 +75,31 @@ class BookingsRepository(
      */
     override fun getBooking(bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
 
-        getBookingFromRemoteDataSource(bookingId, callback)
-        return
-
         val bookingInCache = getBookingWithId(bookingId)
 
         // Respond immediately with cache if available
         if (bookingInCache != null) {
             callback.onBookingLoaded(bookingInCache)
-            return
         }
 
-        // Is the booking in the local data source? If not, query the network.
-        bookingsLocalDataSource.getBooking(bookingId, object : BookingsDataSource.GetBookingCallback {
-            override fun onBookingLoaded(booking: Booking) {
-                // Do in memory cache update to keep the app UI up to date
-                cacheAndPerform(booking) {
-                    //                    EspressoIdlingResource.decrement() // Set app as idle.
-                    callback.onBookingLoaded(it)
-                }
-            }
-
-            override fun onDataNotAvailable(message: String?) {
-                bookingsRemoteDataSource.getBooking(bookingId, driverId, token, AppPref.getLat(pref), AppPref.getLng(pref), object : BookingsDataSource.GetBookingCallback {
-                    override fun onBookingLoaded(booking: Booking) {
+        if (bookingInCache == null || !bookingInCache.isComplete) {
+            bookingsLocalDataSource.getBooking(bookingId, object : BookingsDataSource.GetBookingCallback {
+                override fun onBookingLoaded(booking: Booking) {
+                    if (booking.isComplete) {
                         // Do in memory cache update to keep the app UI up to date
                         cacheAndPerform(booking) {
-                            //                            EspressoIdlingResource.decrement() // Set app as idle.
                             callback.onBookingLoaded(it)
                         }
+                    } else {
+                        getBookingFromRemoteDataSource(bookingId, callback)
                     }
+                }
 
-                    override fun onDataNotAvailable(message: String?) {
-//                        EspressoIdlingResource.decrement() // Set app as idle.
-                        callback.onDataNotAvailable(message)
-                    }
-                })
-            }
-        })
+                override fun onDataNotAvailable(message: String?) {
+                    getBookingFromRemoteDataSource(bookingId, callback)
+                }
+            })
+        }
     }
 
     override fun saveBooking(booking: Booking) {
