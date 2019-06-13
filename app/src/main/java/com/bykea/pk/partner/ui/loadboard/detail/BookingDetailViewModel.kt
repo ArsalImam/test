@@ -42,6 +42,10 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     val acceptBookingCommand: LiveData<Event<Unit>>
         get() = _acceptBookingCommand
 
+    private val _acceptFailedBookingCommand = MutableLiveData<Event<Unit>>()
+    val acceptFailedBookingCommand: LiveData<Event<Unit>>
+        get() = _acceptFailedBookingCommand
+
     private val _snackbarText = MutableLiveData<Event<Int>>()
     val snackbarMessage: LiveData<Event<Int>>
         get() = _snackbarText
@@ -82,7 +86,7 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     }
 
     override fun onBookingAcceptFailed(message: String?) {
-        showSnackbarMessage(R.string.err_booking_accept_failed)
+        _acceptFailedBookingCommand.value = Event(Unit)
     }
 
     fun onRefresh() {

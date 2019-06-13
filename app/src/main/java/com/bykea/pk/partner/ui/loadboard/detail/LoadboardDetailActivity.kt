@@ -58,6 +58,13 @@ class LoadboardDetailActivity : BaseActivity() {
             acceptBookingCommand.observe(this@LoadboardDetailActivity, Observer {
                 ActivityStackManager.getInstance().startJobActivity(this@LoadboardDetailActivity)
             })
+
+            acceptFailedBookingCommand.observe(this@LoadboardDetailActivity, Observer {
+                Dialogs.INSTANCE
+                        .showAlertDialogTick(this@LoadboardDetailActivity,
+                                this@LoadboardDetailActivity.resources.getString(R.string.booking_already_taken_title),
+                                this@LoadboardDetailActivity.resources.getString(R.string.booking_already_taken_msg))
+            })
         }
         binding.listener = object : BookingDetailUserActionsListener {
             override fun onPlayAudio(url: String?) {
