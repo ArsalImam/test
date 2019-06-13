@@ -3,8 +3,6 @@ package com.bykea.pk.partner.ui.loadboard.detail
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -12,38 +10,37 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.LoadboardDetailActBinding
-import com.bykea.pk.partner.models.data.loadboard.LoadboardBookingDetailData
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
-import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.utils.audio.MediaPlayerHolder
 import com.bykea.pk.partner.utils.audio.PlaybackInfoListener
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_confirm_drop_off_address.*
 import kotlinx.android.synthetic.main.loadboard_detail_act.*
-import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.*
-import kotlinx.android.synthetic.main.loadboard_detail_act.*
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Loadboard booking detail screen ACTIVITY - opening from homeScreen's loadboard listing items
  */
 class LoadboardDetailActivity : BaseActivity() {
 
+    private val EARTHRADIUS = 6366198.0
     private lateinit var binding: LoadboardDetailActBinding
     private var bookingId: Long = 0
-
-    lateinit var mapView : SupportMapFragment
+    private lateinit var mMediaPlayerHolder: MediaPlayerHolder
     private val mMarkerList = ArrayList<Marker>()
+    lateinit var mapView: SupportMapFragment
     private lateinit var mGoogleMap: GoogleMap
     private var driverMarker: Marker? = null
-
-    private lateinit var mMediaPlayerHolder: MediaPlayerHolder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,7 +81,7 @@ class LoadboardDetailActivity : BaseActivity() {
         try {
             loadBoardMapFragment.onCreate(savedInstanceState);
             MapsInitializer.initialize(this);
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             Utils.redLog("HomeScreenException", e.message);
             e.printStackTrace();
         }
@@ -120,10 +117,6 @@ class LoadboardDetailActivity : BaseActivity() {
         override fun onPlaybackCompleted() {
 
         }
-    }
-
-    companion object {
-        const val EXTRA_BOOKING_ID = "EXTRA_BOOKING_ID"
     }
 
     private fun setMarkersForPickUpAndDropOff(mMap: GoogleMap) {
@@ -184,7 +177,6 @@ class LoadboardDetailActivity : BaseActivity() {
         val latDiff = meterToLatitude(toNorth)
         return LatLng(startLL.latitude + latDiff, startLL.longitude + lonDiff)
     }
-    private val EARTHRADIUS = 6366198.0
 
     private fun meterToLongitude(meterToEast: Double, latitude: Double): Double {
         val latArc = Math.toRadians(latitude)
@@ -197,7 +189,6 @@ class LoadboardDetailActivity : BaseActivity() {
         val rad = meterToNorth / EARTHRADIUS
         return Math.toDegrees(rad)
     }
-
 
     @Synchronized
     fun getDriverRoadPosition(lat: Double, lng: Double) {
@@ -213,64 +204,13 @@ class LoadboardDetailActivity : BaseActivity() {
                 val driverIcon = Utils.getBitmap(this@LoadboardDetailActivity, R.drawable.ic_delivery_bike)
                 driverMarker = mGoogleMap.addMarker(MarkerOptions().icon(
                         BitmapDescriptorFactory.fromBitmap(driverIcon))
-                        .position(LatLng(snappedLatitude,snappedLongitude)))
+                        .position(LatLng(snappedLatitude, snappedLongitude)))
                 mMarkerList.add(driverMarker!!)
             }
         }
     }
-/*
 
-    */
-    /**
-     * initialize views and objects related to this screen
-     */
-    /*
-
-    private fun initViews() {
-
-        mRepository!!.loadboardBookingDetail(mCurrentActivity, bookingId, object : UserDataHandler() {
-            override fun onLoadboardBookingDetailResponse(response: LoadboardBookingDetailResponse) {
-                Dialogs.INSTANCE.dismissDialog()
-                tVEstimatedFare!!.text = "Rs." + response.data.amount + ""
-                tVCODAmount!!.text = "Rs." + response.data.cartAmount + ""
-
-                //bookingNoTV.setText(response.getData().getOrderNo());
-                //                bookingTypeIV.setImageResource();
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.bookingDetailContainerFL, LoadboardDetailFragment.newInstance(response.data))
-                        .commitAllowingStateLoss()
-            }
-
-            override fun onError(errorCode: Int, errorMessage: String) {
-                Dialogs.INSTANCE.dismissDialog()
-                if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                    Utils.onUnauthorized(mCurrentActivity)
-                } else {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage)
-                }
-            }
-        })
+    companion object {
+        const val EXTRA_BOOKING_ID = "EXTRA_BOOKING_ID"
     }
-
-    */
-    /**
-     * initialize click listeners for this screen's button or widgets
-     */
-    /*
-
-    private fun initListeners() {
-        backBtn!!.setOnClickListener(this)
-        imgViewDelivery!!.setOnClickListener(this)
-    }
-
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.backBtn -> finish()
-
-            R.id.imgViewDelivery -> Utils.appToast(applicationContext, "imgViewDelivery")
-        }
-    }
-*/
-
-
 }
