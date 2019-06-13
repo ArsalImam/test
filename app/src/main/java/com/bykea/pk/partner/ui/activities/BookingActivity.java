@@ -973,7 +973,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (callData.isCod() && StringUtils.isNotBlank(callData.getCodAmount())) {
-                cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmount().trim());
+                cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted());
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
         }
