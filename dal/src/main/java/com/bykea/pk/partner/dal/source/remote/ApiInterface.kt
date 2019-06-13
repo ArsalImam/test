@@ -27,7 +27,7 @@ interface ApiInterface {
             @Header("x-lb-user-token") token: String,
             @Query("lat") lat: Double,
             @Query("lng") lng: Double,
-            @Query("f_distance") distance: Int = 10,
+            @Query("f_distance") distance: Int = 5,
             @Query("sort") sort: String = "nearby"): Call<GetLoadboardListingResponse>
 
     /**
