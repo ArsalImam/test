@@ -352,4 +352,5 @@
     <string name="how_it_works">How it Works</string>
     <string name="no_browser_found_error">Browser not found on Device</string>
     <string name="no_voice_note_available">No voice note available</string>
+    <string name="err_booking_accept_failed">Failed to accept booking. Refresh the list and try again.</string>
 </resources>

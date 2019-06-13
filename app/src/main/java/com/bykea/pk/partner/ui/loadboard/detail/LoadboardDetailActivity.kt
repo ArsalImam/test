@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.LoadboardDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Dialogs
@@ -38,6 +39,10 @@ class LoadboardDetailActivity : BaseActivity() {
                 if (it) Dialogs.INSTANCE.showLoader(this@LoadboardDetailActivity)
                 else Dialogs.INSTANCE.dismissDialog()
             })
+
+            acceptBookingCommand.observe(this@LoadboardDetailActivity, Observer {
+                ActivityStackManager.getInstance().startJobActivity(this@LoadboardDetailActivity)
+            })
         }
         binding.listener = object : BookingDetailUserActionsListener {
             override fun onPlayAudio(url: String?) {
@@ -56,7 +61,7 @@ class LoadboardDetailActivity : BaseActivity() {
             }
 
             override fun onAcceptBooking() {
-
+                binding.viewmodel!!.accept()
             }
         }
 

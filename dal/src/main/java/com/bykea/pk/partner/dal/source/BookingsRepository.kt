@@ -116,18 +116,8 @@ class BookingsRepository(
         }
     }
 
-    override fun acceptBooking(booking: Booking) {
-        // Do in memory cache update to keep the app UI up to date
-        cacheAndPerform(booking) {
-            bookingsRemoteDataSource.acceptBooking(it.id)
-            bookingsLocalDataSource.acceptBooking(it)
-        }
-    }
-
-    override fun acceptBooking(bookingId: Long) {
-        getBookingWithId(bookingId)?.let {
-            acceptBooking(it)
-        }
+    override fun acceptBooking(bookingId: Long, callback: BookingsDataSource.AcceptBookingCallback) {
+        bookingsRemoteDataSource.acceptBooking(bookingId, driverId, token, lat, lng, callback)
     }
 
     override fun refreshBookings() {
