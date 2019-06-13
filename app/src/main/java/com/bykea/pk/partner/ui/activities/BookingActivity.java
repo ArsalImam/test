@@ -15,10 +15,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.cardview.widget.CardView;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -28,6 +24,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -973,7 +974,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (callData.isCod() && StringUtils.isNotBlank(callData.getCodAmount())) {
-                cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmount().trim());
+                cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted());
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
         }

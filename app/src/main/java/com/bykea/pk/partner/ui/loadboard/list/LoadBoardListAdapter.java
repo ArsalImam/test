@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.Booking;
-import com.bykea.pk.partner.models.data.LoadBoardAllListingData;
-import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 
 import java.util.ArrayList;

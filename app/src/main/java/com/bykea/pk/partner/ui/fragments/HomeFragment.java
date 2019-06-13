@@ -42,7 +42,6 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -391,47 +390,6 @@ public class HomeFragment extends Fragment {
             AppPreferences.setAvailableAPICalling(true);
             repository.requestDriverUpdateStatus(mCurrentActivity, handler, status);
             //repository.requestUpdateStatus(mCurrentActivity, handler, status);
-        }
-    }
-
-    /**
-     * making loadboard jobs listing api call when driver's status is cash
-     */
-    private void callLoadBoardListingAPI() {
-        if (Connectivity.isConnectedFast(mCurrentActivity)) {
-            //get selected pickup and dropoff zone data from local storage
-//            ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
-//            ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
-            repository.requestLoadBoardAllListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
-//                    pickupZone == null ? null : pickupZone.get_id(),
-//                    dropoffZone == null ? null : dropoffZone.get_id(),
-                    new UserDataHandler() {
-                        @Override
-                        public void onLoadboardAllListingApiResponse(LoadBoardAllListingResponse response) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            if (response != null && response.getData() != null) {
-                                if (mCurrentActivity != null) {
-//                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
-                                    resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
-                                            (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onError(int errorCode, String errorMessage) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                                Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                Utils.appToast(mCurrentActivity, errorMessage);
-                                mCurrentActivity.hideLoadBoardBottomSheet();
-                                resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
-                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
-                            }
-
-                        }
-                    });
         }
     }
 

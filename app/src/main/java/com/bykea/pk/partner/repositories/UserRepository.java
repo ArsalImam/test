@@ -56,7 +56,6 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
@@ -101,7 +100,6 @@ import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 
@@ -1417,28 +1415,6 @@ public class UserRepository {
     }
 
     /**
-     * Request for load board jobs list
-     *
-     * @param context       Context
-     * @param limit         jobs limit - OPTIONAL
-     * @param handler       callback
-     */
-    public void requestLoadBoardAllListingAPI(Context context, String limit, final IUserDataHandler handler) {
-        mRestRequestHandler.loadboardAllListing(context, limit, new IResponseCallback() {
-            @Override
-            public void onResponse(Object object) {
-                if (object instanceof LoadBoardAllListingResponse)
-                    handler.onLoadboardAllListingApiResponse((LoadBoardAllListingResponse) object);
-            }
-
-            @Override
-            public void onError(int errorCode, String error) {
-                handler.onError(errorCode, error);
-            }
-        });
-    }
-
-    /**
      * accept request for specific booking
      *
      * @param context   Context
@@ -1701,8 +1677,6 @@ public class UserRepository {
                         break;
                     case "LoadBoardListingResponse":
                         mUserCallback.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
-                    case "LoadBoardAllListingResponse":
-                        mUserCallback.onLoadboardAllListingApiResponse((LoadBoardAllListingResponse) object);
                         break;
                     case "LoadboardBookingDetailResponse":
                         mUserCallback.onLoadboardBookingDetailResponse((LoadboardBookingDetailResponse) object);

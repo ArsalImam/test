@@ -234,8 +234,6 @@
             android:launchMode="singleTask"/>
         <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activities.LoadboardBookingDetailActivity"
-            android:screenOrientation="portrait" />
         <activity android:name=".ui.loadboard.detail.LoadboardDetailActivity"
             android:screenOrientation="portrait" />
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
