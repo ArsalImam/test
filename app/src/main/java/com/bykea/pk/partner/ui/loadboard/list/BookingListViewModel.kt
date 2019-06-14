@@ -54,11 +54,19 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
             _isExpended = value
         }
 
+    /**
+     * Start the ViewModel by fetching the booking listing to be shown on loadboard
+     *
+     */
     fun start() {
         loadBookings(false)
         isExpended.value = false
     }
 
+    /**
+     * Refresh by loading the fresh booking listing
+     *
+     */
     fun refresh() {
         loadBookings(true)
     }

@@ -1,8 +1,8 @@
 package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -38,7 +38,6 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
@@ -1263,42 +1262,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Call<LoadBoardListingResponse> call, Throwable t) {
-                onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
-
-    }
-
-    /**
-     * Request for loadboard list for all job types
-     *
-     * @param context            Context
-     * @param limit              jobs limit
-     * @param onResponseCallback callback
-     */
-    public void loadboardAllListing(final Context context, String limit, final IResponseCallback onResponseCallback) {
-        Call<LoadBoardAllListingResponse> requestCall = RestClient.getClient(context).requestLoadBoardAllListing(
-                AppPreferences.getDriverId(),
-                AppPreferences.getAccessToken(),
-                String.valueOf(AppPreferences.getLatitude())/*"24.7984714" DHA lat*/,
-                String.valueOf(AppPreferences.getLongitude())/*"67.0326814" DHA lng*/,
-                limit);
-        requestCall.enqueue(new Callback<LoadBoardAllListingResponse>() {
-            @Override
-            public void onResponse(Call<LoadBoardAllListingResponse> call, Response<LoadBoardAllListingResponse> response)  {
-                if (response == null || response.body() == null) {
-                    onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, context.getString(R.string.error_try_again));
-                    return;
-                }
-                if (response.body().isSuccess()) {
-                    onResponseCallback.onResponse(response.body());
-                } else {
-                    onResponseCallback.onError(response.body().getCode(), response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<LoadBoardAllListingResponse> call, Throwable t) {
                 onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });

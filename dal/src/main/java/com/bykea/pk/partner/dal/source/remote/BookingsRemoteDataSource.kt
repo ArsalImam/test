@@ -11,6 +11,16 @@ import retrofit2.Response
 
 class BookingsRemoteDataSource {
 
+    /**
+     * Fetch Booking listing from remote data source
+     *
+     * @param driverId Driver Id
+     * @param token User access token
+     * @param lat User's location latitude
+     * @param lng User's location longitude
+     * @param limit Number of items to be fetched
+     * @param callback Callback to be executed on response from remote data source
+     */
     fun getBookings(driverId: String, token: String, lat: Double, lng: Double, limit: Int, callback: BookingsDataSource.LoadBookingsCallback) {
 
         val call = ApiClient.build()?.getLoadboardList(driverId, token, lat, lng)
@@ -33,6 +43,16 @@ class BookingsRemoteDataSource {
         })
     }
 
+    /**
+     * Fetch Booking details from remote data source
+     *
+     * @param bookingId Booking id whose detail to be fetched
+     * @param driverId Driver Id
+     * @param token User access token
+     * @param lat User's location latitude
+     * @param lng User's location longitude
+     * @param callback Callback to be executed on response from remote data source
+     */
     fun getBooking(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: BookingsDataSource.GetBookingCallback) {
 
         val call = ApiClient.build()?.getLoadboardDetail(driverId, token, bookingId, lat, lng)
@@ -55,6 +75,12 @@ class BookingsRemoteDataSource {
         })
     }
 
+
+    /**
+     * Accept Booking
+     *
+     * @param bookingId Id of Booking to be accepted
+     */
     fun acceptBooking(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: BookingsDataSource.AcceptBookingCallback) {
         val call = ApiClient.build()?.acceptLoadboardBooking(bookingId, driverId, token, RequestBodyAcceptBooking(lat, lng))
         call?.enqueue(object : Callback<GetLoadboardDetailResponse> {

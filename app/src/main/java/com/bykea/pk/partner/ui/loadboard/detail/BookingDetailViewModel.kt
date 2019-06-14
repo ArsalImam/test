@@ -49,6 +49,12 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     val bookingId: Long?
         get() = _booking.value?.id
 
+
+    /**
+     * Start the ViewModel by fetching the [Booking] id
+     *
+     * @param bookingId [Booking.id]
+     */
     fun start(bookingId: Long) {
         _dataLoading.value = true
         bookingsRepository.getBooking(bookingId, this)
@@ -59,6 +65,13 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         bookingId?.let {
             bookingsRepository.acceptBooking(it, this)
         }
+    }
+
+    /**
+     * Refresh by loading the [Booking] details all over again
+     */
+    fun onRefresh() {
+        bookingId?.let { start(it) }
     }
 
     private fun setBooking(booking: Booking?) {
@@ -89,7 +102,7 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         bookingId?.let { start(it) }
     }
 
-    fun showSnackbarMessage(@StringRes message: Int) {
+    private fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
     }
 
