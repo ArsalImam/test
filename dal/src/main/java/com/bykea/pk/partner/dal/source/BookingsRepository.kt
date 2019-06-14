@@ -41,10 +41,12 @@ class BookingsRepository(
      * get the data.
      */
     override fun getBookings(callback: BookingsDataSource.LoadBookingsCallback) {
+
+        cacheIsDirty = true //Cache disabled
+
         // Respond immediately with cache if available and not dirty
         if (cachedBookings.isNotEmpty() && !cacheIsDirty) {
             callback.onBookingsLoaded(ArrayList(cachedBookings.values))
-            return
         }
 
         if (cacheIsDirty) {
