@@ -8,6 +8,12 @@ import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.databinding.LoadboardListItemBinding
 
+/**
+ * List Adapter for [Booking] listing to be shown on Loadboard
+ *
+ * @property bookings List of booking
+ * @property bookingsViewModel ViewModel for [LoadBoardListFragment]
+ */
 class BookingsAdapter(
         private var bookings: List<Booking>,
         private val bookingsViewModel: BookingListViewModel
