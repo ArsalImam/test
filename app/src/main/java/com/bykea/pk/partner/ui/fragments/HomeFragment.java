@@ -843,6 +843,8 @@ public class HomeFragment extends Fragment {
                                 }
                                 if (AppPreferences.getIsCash()) {
                                     mCurrentActivity.showLoadBoardBottomSheet();
+                                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                                            (int) getResources().getDimension(R.dimen._110sdp));
                                     //callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
