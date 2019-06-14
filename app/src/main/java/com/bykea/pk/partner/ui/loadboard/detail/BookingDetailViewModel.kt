@@ -98,11 +98,7 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         _acceptFailedBookingCommand.value = Event(Unit)
     }
 
-    fun onRefresh() {
-        bookingId?.let { start(it) }
-    }
-
-    private fun showSnackbarMessage(@StringRes message: Int) {
+    fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
     }
 
