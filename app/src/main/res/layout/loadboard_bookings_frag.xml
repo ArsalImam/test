@@ -154,10 +154,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="14dp"
+                android:padding="@dimen/_14sdp"
                 android:text="@string/wait_for_booking"
                 android:textColor="@color/dark_gray656565"
-                android:textSize="18dp"
+                android:textSize="@dimen/_18sdp"
                 android:visibility="@{viewmodel.empty ? View.VISIBLE: View.GONE }"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
