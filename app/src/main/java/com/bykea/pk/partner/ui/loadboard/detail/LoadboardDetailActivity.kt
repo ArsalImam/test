@@ -3,11 +3,14 @@ package com.bykea.pk.partner.ui.loadboard.detail
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import com.bykea.pk.custom.BykeaAmazonClient
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.LoadboardDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
@@ -15,8 +18,10 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
+import com.bykea.pk.partner.utils.audio.Callback
 import com.bykea.pk.partner.utils.audio.MediaPlayerHolder
 import com.bykea.pk.partner.utils.audio.PlaybackInfoListener
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -27,6 +32,8 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_confirm_drop_off_address.*
 import kotlinx.android.synthetic.main.loadboard_detail_act.*
+import java.io.File
+import java.io.FileInputStream
 import java.util.*
 
 /**
@@ -42,6 +49,9 @@ class LoadboardDetailActivity : BaseActivity() {
     lateinit var mapView: SupportMapFragment
     private lateinit var mGoogleMap: GoogleMap
     private var driverMarker: Marker? = null
+
+    private var mediaPlayer: MediaPlayer? = null;
+    private val handler: Handler = Handler();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,12 +79,18 @@ class LoadboardDetailActivity : BaseActivity() {
         binding.listener = object : BookingDetailUserActionsListener {
             override fun onPlayAudio(url: String?) {
                 if (url != null) {
-                    mMediaPlayerHolder = MediaPlayerHolder(this@LoadboardDetailActivity)
-                    mMediaPlayerHolder.setPlaybackInfoListener(PlaybackListener())
-                    mMediaPlayerHolder.loadUri(url)
-                    voiceClipPlayDownload()
+                    voiceClipPlayDownload(url)
                 } else {
                     binding.viewmodel!!.showSnackbarMessage(R.string.no_voice_note_available)
+                }
+            }
+
+            override fun onStopAudio() {
+                if (mediaPlayer != null) {
+                    imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
+                    imgViewAudioPlay.setEnabled(true);
+                    progressBarForAudioPlay.setVisibility(View.GONE);
+                    mediaPlayer?.pause();
                 }
             }
 
@@ -111,27 +127,37 @@ class LoadboardDetailActivity : BaseActivity() {
         }
     }
 
-    private fun voiceClipPlayDownload() {
-        mMediaPlayerHolder.play()
-        imgViewAudioPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_audio_stop))
-        imgViewAudioPlay.isEnabled = false
-        progressBarForAudioPlay.visibility = View.VISIBLE
-    }
+    private fun voiceClipPlayDownload(url: String) {
+        if (mediaPlayer != null) {
+            imgViewAudioPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_audio_stop))
+            imgViewAudioPlay.isEnabled = false
+            progressBarForAudioPlay.visibility = View.VISIBLE
 
+            mediaPlayer?.start()
+            startPlayProgressUpdater()
+        } else {
+            Dialogs.INSTANCE.showLoader(this@LoadboardDetailActivity)
+            BykeaAmazonClient.getFileObject(url, object : Callback<File> {
+                override fun success(obj: File) {
+                    Dialogs.INSTANCE.dismissDialog()
 
-    internal inner class PlaybackListener : PlaybackInfoListener() {
-        override fun onDurationChanged(duration: Int) {
-            progressBarForAudioPlay.max = duration
-        }
+                    imgViewAudioPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_audio_stop))
+                    imgViewAudioPlay.isEnabled = false
+                    progressBarForAudioPlay.visibility = View.VISIBLE
 
-        override fun onPositionChanged(position: Int) {
-            progressBarForAudioPlay.progress = position
-        }
+                    mediaPlayer = MediaPlayer()
+                    mediaPlayer?.setDataSource(FileInputStream(obj).fd);
+                    mediaPlayer?.prepare()
+                    progressBarForAudioPlay.setMax(mediaPlayer!!.duration);
+                    mediaPlayer?.start()
+                    startPlayProgressUpdater()
+                }
 
-        override fun onStateChanged(state: Int) {}
-
-        override fun onPlaybackCompleted() {
-
+                override fun fail(errorCode: Int, errorMsg: String) {
+                    Dialogs.INSTANCE.dismissDialog()
+                    binding.viewmodel!!.showSnackbarMessage(R.string.no_voice_note_available)
+                }
+            })
         }
     }
 
@@ -228,5 +254,30 @@ class LoadboardDetailActivity : BaseActivity() {
 
     companion object {
         const val EXTRA_BOOKING_ID = "EXTRA_BOOKING_ID"
+    }
+
+    fun startPlayProgressUpdater() {
+        progressBarForAudioPlay.setProgress(mediaPlayer!!.currentPosition);
+        if (mediaPlayer!!.isPlaying) {
+            val notification = Runnable {
+                startPlayProgressUpdater();
+            }
+            handler.postDelayed(notification, 1000)
+        } else {
+            mediaPlayer?.pause();
+
+            imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
+            imgViewAudioPlay.setEnabled(true);
+            progressBarForAudioPlay.setVisibility(View.GONE);
+            progressBarForAudioPlay.setProgress(0);
+        }
+    }
+
+    override fun onPause() {
+        if (mediaPlayer != null) {
+            mediaPlayer?.pause();
+            startPlayProgressUpdater();
+        }
+        super.onPause()
     }
 }

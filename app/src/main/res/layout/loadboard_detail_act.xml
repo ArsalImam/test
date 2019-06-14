@@ -172,6 +172,7 @@
                                 android:layout_height="@dimen/_40sdp"
                                 android:layout_marginEnd="@dimen/_5sdp"
                                 android:layout_marginRight="@dimen/_5sdp"
+                                android:onClick="@{() -> listener.onStopAudio()}"
                                 android:layout_marginBottom="@dimen/_10sdp"
                                 android:indeterminate="false"
                                 android:max="100"

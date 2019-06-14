@@ -213,6 +213,9 @@ dependencies {
 
     // Testing dependencies
     testImplementation "junit:junit:$rootProject.junitVersion"
+
+    //Amazon client sdk to upload file
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
 }
 
 apply plugin: 'com.google.gms.google-services'

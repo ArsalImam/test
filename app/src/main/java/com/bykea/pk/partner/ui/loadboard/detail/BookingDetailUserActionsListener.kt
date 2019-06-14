@@ -27,4 +27,5 @@ interface BookingDetailUserActionsListener {
      */
     fun onAcceptBooking()
     fun onBackClicked()
+    fun onStopAudio()
 }
