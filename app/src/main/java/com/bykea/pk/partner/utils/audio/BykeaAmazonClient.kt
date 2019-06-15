@@ -1,4 +1,4 @@
-package com.bykea.pk.custom
+package com.bykea.pk.partner.utils.audio
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.regions.Regions
@@ -8,12 +8,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.services.s3.model.PutObjectResult
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.utils.Constants
-import com.bykea.pk.partner.utils.audio.Callback
 import io.fabric.sdk.android.services.concurrency.AsyncTask
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.lang.Exception
 
 /**
  * Class to use upload and download file for amazon
