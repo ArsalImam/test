@@ -100,7 +100,6 @@ import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 
@@ -1409,11 +1408,6 @@ public class UserRepository {
             }
 
             @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
             public void onError(int errorCode, String error) {
                 handler.onError(errorCode, error);
             }
@@ -1735,11 +1729,6 @@ public class UserRepository {
             } else {
                 Utils.redLog("UserRepo", "mUserCallback is Null");
             }
-        }
-
-        @Override
-        public void onSuccess() {
-
         }
 
         @Override

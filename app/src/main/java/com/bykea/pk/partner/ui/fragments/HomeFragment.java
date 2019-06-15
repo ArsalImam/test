@@ -14,10 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +25,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -36,13 +37,11 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
-import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -300,7 +299,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * This method sets Click Listener on Khuda Hafiz Logo/Inactive Button
+     * This method sets Click onLoadBoardListFragmentInteractionListener on Khuda Hafiz Logo/Inactive Button
      */
     private void setInactiveStatusClick() {
         mCurrentActivity.setToolbarLogoKhudaHafiz(new View.OnClickListener() {
@@ -343,7 +342,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * This method sets Click Listener on Bismillah Logo/Active Button
+     * This method sets Click onLoadBoardListFragmentInteractionListener on Bismillah Logo/Active Button
      */
     private void setActiveStatusClick() {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
@@ -391,46 +390,6 @@ public class HomeFragment extends Fragment {
             AppPreferences.setAvailableAPICalling(true);
             repository.requestDriverUpdateStatus(mCurrentActivity, handler, status);
             //repository.requestUpdateStatus(mCurrentActivity, handler, status);
-        }
-    }
-
-    /**
-     * making loadboard jobs listing api call when driver's status is cash
-     */
-    private void callLoadBoardListingAPI() {
-        if (Connectivity.isConnectedFast(mCurrentActivity)) {
-            //get selected pickup and dropoff zone data from local storage
-            ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
-            ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
-            repository.requestLoadBoardListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
-                    pickupZone == null ? null : pickupZone.get_id(),
-                    dropoffZone == null ? null : dropoffZone.get_id(), new UserDataHandler() {
-                        @Override
-                        public void onLoadboardListingApiResponse(LoadBoardListingResponse response) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            if (response != null && response.getData() != null) {
-                                if (mCurrentActivity != null) {
-                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
-                                    resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
-                                            (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onError(int errorCode, String errorMessage) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                                Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                Utils.appToast(mCurrentActivity, errorMessage);
-                                mCurrentActivity.hideLoadBoardBottomSheet();
-                                resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
-                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
-                            }
-
-                        }
-                    });
         }
     }
 
@@ -581,7 +540,8 @@ public class HomeFragment extends Fragment {
             }
         });
         if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
-            callLoadBoardListingAPI();
+            mCurrentActivity.showLoadBoardBottomSheet();
+//            callLoadBoardListingAPI();
     }
 
     public synchronized void setStatusBtn() {
@@ -593,6 +553,7 @@ public class HomeFragment extends Fragment {
             //inactive state
             getDriverPerformanceData();
 
+//            mCurrentActivity.isVisibleFirstTime = true;
             myRangeBarLayout.setVisibility(View.VISIBLE);
             myRangeBarTopLine.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);
@@ -617,10 +578,6 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(AppPreferences.getDriverDestination().address);
 
             }
-            //reset zone data in local storage
-            AppPreferences.clearLoadboardSelectedZoneData();
-            //display reset zone data
-            mCurrentActivity.showSelectedPickAndDropZoneToBottomSheet();
         } else {        //active state
 
             myRangeBarLayout.setVisibility(View.INVISIBLE);
@@ -885,7 +842,10 @@ public class HomeFragment extends Fragment {
                                     AppPreferences.setOutOfFence(false);
                                 }
                                 if (AppPreferences.getIsCash()) {
-                                    callLoadBoardListingAPI();
+                                    mCurrentActivity.showLoadBoardBottomSheet();
+                                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                                            (int) getResources().getDimension(R.dimen._110sdp));
+                                    //callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
                                     resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
@@ -1493,7 +1453,7 @@ public class HomeFragment extends Fragment {
                 .commit();
         HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
     }
-    
+
      /** Check the Type of request is it batch request or single
      *
      * <p>

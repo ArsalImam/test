@@ -327,6 +327,14 @@
     <string name="dash">-</string>
     <string name="please_select_city">Please select your city.</string>
 
+    <string name="destination">منزل</string>
+    <string name="fare">\u0020کرایہ</string>
+    <string name="service">\u0020سروس\u0020</string>
+    <string name="wait_for_booking">بکنگ کا انتظار کریں</string>
+
+    <string name="cash_on_delivery">وصولی</string>
+    <string name="accept_booking">بکنگ منتخب کریں</string>
+
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
         <item>ناكام - وصول کرنے والا رابطے میں نہیں</item>

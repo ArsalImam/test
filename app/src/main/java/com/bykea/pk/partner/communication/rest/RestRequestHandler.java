@@ -1,8 +1,8 @@
 package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
