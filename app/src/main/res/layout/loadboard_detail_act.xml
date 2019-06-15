@@ -93,7 +93,8 @@
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="@{viewmodel.booking.service_code==22 ? View.VISIBLE: View.GONE }">
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:id="@+id/tVCODAmountLabel"
@@ -233,8 +234,8 @@
                                         android:id="@+id/tVEstimatedTime"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@{Integer.toString(viewmodel.booking.pickup.duration/60)}"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
+                                        android:text="@{Integer.toString(viewmodel.booking.pickup.duration/60)}"
                                         android:textColor="@color/color_06A833"
                                         android:textSize="@dimen/_18sdp"
                                         android:textStyle="bold"
@@ -334,9 +335,9 @@
                                         android:id="@+id/tVZoneDropOff"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginBottom="@dimen/_minus6sdp"
                                         android:text="@{` ` + viewmodel.booking.dropoff.zone_ur}"
                                         android:textColor="@color/blue_lightest"
-                                        android:layout_marginBottom="@dimen/_minus6sdp"
                                         android:textSize="@dimen/_18sdp"
                                         app:fontName="jameel_noori_nastaleeq.ttf"
                                         tools:text="@string/nazimabad_ur" />
