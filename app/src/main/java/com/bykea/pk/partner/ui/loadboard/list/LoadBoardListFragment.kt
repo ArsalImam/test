@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -40,12 +39,12 @@ class LoadBoardListFragment : Fragment() {
     private lateinit var listAdapter: BookingsAdapter
     private var mBehavior: BottomSheetBehavior<*>? = null
 
-    var layoutParamRLZero = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-    var layoutParamRL: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+    var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+    var layoutParamRL: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
-        layoutParamRL.setMargins(0, resources.getDimension(R.dimen._10sdp).toInt(), 0, 0);
+        layoutParamRL.setMargins(0, resources.getDimension(R.dimen._minus8sdp).toInt(), 0, 0);
 
         viewDataBinding = LoadboardBookingsFragBinding.inflate(inflater, container, false).apply {
 
@@ -64,11 +63,25 @@ class LoadBoardListFragment : Fragment() {
                 })
                 isExpended.observe(this@LoadBoardListFragment, Observer {
                     if (it) {
-                        bottomSheetNoJobsAvailableTV.setLayoutParams(layoutParamRLZero);
+                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
-                        bottomSheetNoJobsAvailableTV.setLayoutParams(layoutParamRL);
+                        if (viewmodel?.empty?.value!!) {
+                            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+                        } else {
+                            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+                        }
                     }
                 })
+
+                empty.observe(this@LoadBoardListFragment, Observer {
+                    if (it) {
+                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+                    } else {
+                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+                    }
+                })
+
+
             }
 
             listener = object : BookingsListUserActionsListener {

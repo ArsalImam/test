@@ -26,7 +26,6 @@
             android:id="@+id/coordinatorLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_minus10sdp"
             android:background="@color/transparent"
             android:elevation="1dp"
             app:elevation="1dp">
@@ -52,7 +51,6 @@
             android:id="@+id/bottomSheetToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
-            android:layout_marginTop="@dimen/_10sdp"
             android:background="@color/white"
             android:visibility="gone">
 
