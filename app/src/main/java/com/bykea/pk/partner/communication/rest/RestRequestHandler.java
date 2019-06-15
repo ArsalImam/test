@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 
@@ -17,11 +18,13 @@ import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
+import com.bykea.pk.partner.models.request.LoadBoardRideCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
@@ -64,6 +67,7 @@ import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
+import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
@@ -930,7 +934,7 @@ public class RestRequestHandler {
             public void onFailure(Call<ContactNumbersResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
-       });
+        });
     }
 
     public void requestChangePin(Context context, String newPin, String oldPin, final IResponseCallback onResponseCallBack) {
@@ -1642,5 +1646,25 @@ public class RestRequestHandler {
                 AppPreferences.getAccessToken(),
                 Double.parseDouble(Utils.getVersion()));
         restCall.enqueue(new GenericRetrofitCallBack<UpdateAppVersionResponse>(onResponseCallBack));
+    }
+
+    public void cancelLoadBoardBooking(Context context, LoadBoardRideCancelRequest body, final IUserDataHandler userDataHandler) {
+        mContext = context;
+        RestClient.getClient(context).cancelLoadBoardBooking(body).enqueue(
+                new Callback<CancelRideResponse>() {
+                    @Override
+                    public void onResponse(Call<CancelRideResponse> call, Response<CancelRideResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            userDataHandler.onCancelRide(response.body());
+                        } else {
+                            userDataHandler.onError(0, response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CancelRideResponse> call, Throwable t) {
+                        userDataHandler.onError(0, t.toString());
+                    }
+                });
     }
 }

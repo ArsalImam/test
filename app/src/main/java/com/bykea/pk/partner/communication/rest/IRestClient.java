@@ -11,11 +11,13 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
+import com.bykea.pk.partner.models.request.LoadBoardRideCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
@@ -466,6 +468,15 @@ interface IRestClient {
                                                                        @Query("lat") String lat,
                                                                        @Query("lng") String lng,
                                                                        @Query("token_id") String token_id);
+
+
+    /**
+     * Cancel selected booking
+     *
+     * @return booking detail response
+     */
+    @GET(ApiTags.CANCEL_LOAD_BOARD_BOOKING)
+    Call<CancelRideResponse> cancelLoadBoardBooking(@Body LoadBoardRideCancelRequest body);
 
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(
