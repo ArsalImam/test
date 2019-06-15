@@ -413,12 +413,12 @@ public class WebIO {
 
     }
 
-    /* public static void onError(Emitter.Listener callBack){
+    /* public static void onError(Emitter.onLoadBoardListFragmentInteractionListener callBack){
          WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT_TIMEOUT, callBack)
                  .on(Socket.EVENT_CONNECT_ERROR, callBack).on(Socket.EVENT_DISCONNECT, callBack);
      }
 
-     public static void offError(Emitter.Listener callBack){
+     public static void offError(Emitter.onLoadBoardListFragmentInteractionListener callBack){
          WebIO.getInstance().getSocket().off(Socket.EVENT_CONNECT_TIMEOUT, callBack)
                  .off(Socket.EVENT_CONNECT_ERROR, callBack).off(Socket.EVENT_DISCONNECT, callBack);
      }*/

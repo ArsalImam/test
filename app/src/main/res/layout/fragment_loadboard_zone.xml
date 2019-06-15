@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
-    android:orientation="vertical"
-    android:clickable="true">
+    android:clickable="true"
+    android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -23,12 +23,12 @@
         <com.bykea.pk.partner.widgets.FontTextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center"
+            android:text="@string/muqam_muqarrar_karein_ur"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/_14sdp"
-            app:fontName="jameel_noori_nastaleeq.ttf"
-            android:layout_gravity="center"
-            android:text="@string/muqam_muqarrar_karein_ur" />
+            app:fontName="jameel_noori_nastaleeq.ttf" />
     </FrameLayout>
 
     <View
@@ -48,9 +48,9 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/_6sdp"
+            android:text="Karachi"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_14sdp"
-            android:text="Karachi"/>
+            android:textSize="@dimen/_14sdp" />
 
     </RelativeLayout>
 

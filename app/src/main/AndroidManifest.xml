@@ -43,7 +43,7 @@
         tools:node="merge"
         tools:replace="android:allowBackup">
 
-        <!-- OTP SMS Listener-->
+        <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">
@@ -234,7 +234,7 @@
             android:launchMode="singleTask"/>
         <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activities.LoadboardBookingDetailActivity"
+        <activity android:name=".ui.loadboard.detail.LoadboardDetailActivity"
             android:screenOrientation="portrait" />
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>

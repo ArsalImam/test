@@ -29,7 +29,6 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
-import com.bykea.pk.partner.ui.activities.LoadboardBookingDetailActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
 import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
@@ -45,6 +44,7 @@ import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
+import com.bykea.pk.partner.ui.loadboard.detail.LoadboardDetailActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -475,9 +475,9 @@ public class ActivityStackManager {
      * @param context Context
      * @param bookingId selected booking id
      */
-    public void startLoadboardBookingDetailActiivty(Context context, String bookingId) {
-        Intent intent = new Intent(context, LoadboardBookingDetailActivity.class);
-        intent.putExtra(LoadboardBookingDetailActivity.BOOKING_ID, bookingId);
+    public void startLoadboardBookingDetailActiivty(Context context, Long bookingId) {
+        Intent intent = new Intent(context, LoadboardDetailActivity.class);
+        intent.putExtra(LoadboardDetailActivity.EXTRA_BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
 

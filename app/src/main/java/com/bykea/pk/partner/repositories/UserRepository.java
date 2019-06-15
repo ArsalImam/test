@@ -1423,11 +1423,6 @@ public class UserRepository {
             }
 
             @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
             public void onError(int errorCode, String error) {
                 handler.onError(errorCode, error);
             }
@@ -1749,11 +1744,6 @@ public class UserRepository {
             } else {
                 Utils.redLog("UserRepo", "mUserCallback is Null");
             }
-        }
-
-        @Override
-        public void onSuccess() {
-
         }
 
         @Override
