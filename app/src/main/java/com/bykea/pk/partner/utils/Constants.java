@@ -241,7 +241,7 @@ public class Constants {
     public static class GoogleMap {
         public final static String GOOGLE_NAVIGATE_ENDPOINT = "http://maps.google.com/maps?saddr=";
         public final static String GOOGLE_DESTINATION_ENDPOINT = "&daddr=";
-        public final static String TRANSIT_MODE_BIKE = "&mode=bike";
+        public final static String TRANSIT_MODE_BIKE = "&mode=motorbike";
         public final static String GOOGLE_MAP_PACKAGE = "com.google.android.apps.maps";
         public final static String GOOGLE_MAP_ACTIVITY = "com.google.android.maps.MapsActivity";
     }
