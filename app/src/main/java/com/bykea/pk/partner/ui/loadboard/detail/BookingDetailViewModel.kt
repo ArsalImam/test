@@ -74,6 +74,11 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         bookingId?.let { start(it) }
     }
 
+    /**
+     * Set hold [Booking] to be shown
+     *
+     * @param booking Updated [Booking] object
+     */
     private fun setBooking(booking: Booking?) {
         this._booking.value = booking
         _isDataAvailable.value = booking != null
@@ -98,6 +103,11 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         _acceptFailedBookingCommand.value = Event(Unit)
     }
 
+    /**
+     * Show snackbar
+     *
+     * @param message String resource id to be shown in snackbar
+     */
     fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
     }

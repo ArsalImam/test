@@ -38,7 +38,6 @@ class LoadBoardListFragment : Fragment() {
 
     private lateinit var viewDataBinding: LoadboardBookingsFragBinding
     private lateinit var listAdapter: BookingsAdapter
-
     private var mBehavior: BottomSheetBehavior<*>? = null
 
     var layoutParamRLZero = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
@@ -90,7 +89,7 @@ class LoadBoardListFragment : Fragment() {
         view.post {
             val parent = view.getParent() as View
             val params = parent.layoutParams as CoordinatorLayout.LayoutParams
-            params.height = getScreenHeight()
+            params.height = Resources.getSystem().displayMetrics.heightPixels
             val behavior = params.behavior
             mBehavior = behavior as BottomSheetBehavior<*>?
             mBehavior!!.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -137,6 +136,10 @@ class LoadBoardListFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup List Adapter
+     *
+     */
     private fun setupListAdapter() {
         val viewModel = viewDataBinding.viewmodel
         if (viewModel != null) {
@@ -148,6 +151,11 @@ class LoadBoardListFragment : Fragment() {
         }
     }
 
+    /**
+     * Toggle Bottom Sheet Toolbar
+     *
+     * @param alpha Alpha value to be applied on Toolbar
+     */
     private fun toggleBottomSheetToolbar(alpha: Float) {
         if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
             bottomSheetToolbarLayout.visibility = View.VISIBLE
@@ -170,11 +178,6 @@ class LoadBoardListFragment : Fragment() {
             bottomSheetPickDropDivider.alpha = alpha
             viewDataBinding.viewmodel!!.isExpended.value = false
         }
-    }
-
-
-    private fun getScreenHeight(): Int {
-        return Resources.getSystem().getDisplayMetrics().heightPixels
     }
 
     companion object {
