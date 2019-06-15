@@ -117,10 +117,12 @@ class LoadboardDetailActivity : BaseActivity() {
             Utils.redLog("HomeScreenException", e.message);
             e.printStackTrace();
         }
+
         (loadBoardMapFragment as SupportMapFragment).getMapAsync { p0 ->
             p0.setOnMapLoadedCallback {
 
                 mGoogleMap = p0
+                mGoogleMap.uiSettings.setAllGesturesEnabled(false)
                 getDriverRoadPosition(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 setMarkersForPickUpAndDropOff(p0)
             }
