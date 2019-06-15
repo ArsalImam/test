@@ -151,6 +151,8 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
 
+import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+
 
 public class Utils {
 
@@ -498,7 +500,7 @@ public class Utils {
             String startAddr = pickLat + "," + pickLng;
             String endAddr = dropLat + "," + dropLng;
             String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
-                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr + TRANSIT_MODE_BIKE;
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
             intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
                     Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);

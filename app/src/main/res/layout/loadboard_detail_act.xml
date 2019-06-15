@@ -94,7 +94,7 @@
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
                 android:orientation="vertical"
-                android:visibility="@{viewmodel.booking.service_code==22 ? View.VISIBLE: View.GONE }">
+                app:goneUnless="@{viewmodel.booking.service_code==22}">
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:id="@+id/tVCODAmountLabel"
