@@ -479,4 +479,13 @@ public class Constants {
     public static final int MARKER_INCREMENT_FACTOR_FOUR_KM = 4000;
     public static final int MARKER_INCREMENT_FACTOR_TWO_KM = 2000;
 
+
+    public static final String FILE_EXT = ".aac";
+    public static final String AUDIO_TEMP_FILE_NAME = "tempFile";
+
+    //Amazon credentials
+    public static class Amazon {
+        public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
+        public static String BUCKET_NAME = "loadboard";
+    }
 }

@@ -1,6 +1,8 @@
 package com.bykea.pk.partner.dal.source
 
+import android.content.SharedPreferences
 import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
 import java.util.*
 
@@ -15,14 +17,8 @@ import java.util.*
 class BookingsRepository(
         private val bookingsRemoteDataSource: BookingsRemoteDataSource,
         private val bookingsLocalDataSource: BookingsDataSource,
-        val driverId: String, val token: String, val lat: Double, val lng: Double
-) : BookingsDataSource {
+        val driverId: String, val token: String, val pref: SharedPreferences) : BookingsDataSource {
 
-    //TODO: fetch from app preference
-//    private val driverId: String = "23"
-//    private val token: String = "23"
-//    private val lat: Double = 24.914
-//    private val lng: Double = 67.118
     private val limit: Int = 20
 
     /**
@@ -45,10 +41,12 @@ class BookingsRepository(
      * get the data.
      */
     override fun getBookings(callback: BookingsDataSource.LoadBookingsCallback) {
+
+        cacheIsDirty = true //Cache disabled
+
         // Respond immediately with cache if available and not dirty
         if (cachedBookings.isNotEmpty() && !cacheIsDirty) {
             callback.onBookingsLoaded(ArrayList(cachedBookings.values))
-            return
         }
 
         if (cacheIsDirty) {
@@ -78,41 +76,32 @@ class BookingsRepository(
      * get the data.
      */
     override fun getBooking(bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
+
         val bookingInCache = getBookingWithId(bookingId)
 
         // Respond immediately with cache if available
         if (bookingInCache != null) {
             callback.onBookingLoaded(bookingInCache)
-            return
         }
 
-        // Is the booking in the local data source? If not, query the network.
-        bookingsLocalDataSource.getBooking(bookingId, object : BookingsDataSource.GetBookingCallback {
-            override fun onBookingLoaded(booking: Booking) {
-                // Do in memory cache update to keep the app UI up to date
-                cacheAndPerform(booking) {
-                    //                    EspressoIdlingResource.decrement() // Set app as idle.
-                    callback.onBookingLoaded(it)
-                }
-            }
-
-            override fun onDataNotAvailable(message: String?) {
-                bookingsRemoteDataSource.getBooking(bookingId, driverId, token, lat, lng, object : BookingsDataSource.GetBookingCallback {
-                    override fun onBookingLoaded(booking: Booking) {
+        if (bookingInCache == null || !bookingInCache.isComplete) {
+            bookingsLocalDataSource.getBooking(bookingId, object : BookingsDataSource.GetBookingCallback {
+                override fun onBookingLoaded(booking: Booking) {
+                    if (booking.isComplete) {
                         // Do in memory cache update to keep the app UI up to date
                         cacheAndPerform(booking) {
-                            //                            EspressoIdlingResource.decrement() // Set app as idle.
                             callback.onBookingLoaded(it)
                         }
+                    } else {
+                        getBookingFromRemoteDataSource(bookingId, callback)
                     }
+                }
 
-                    override fun onDataNotAvailable(message: String?) {
-//                        EspressoIdlingResource.decrement() // Set app as idle.
-                        callback.onDataNotAvailable(message)
-                    }
-                })
-            }
-        })
+                override fun onDataNotAvailable(message: String?) {
+                    getBookingFromRemoteDataSource(bookingId, callback)
+                }
+            })
+        }
     }
 
     override fun saveBooking(booking: Booking) {
@@ -122,18 +111,8 @@ class BookingsRepository(
         }
     }
 
-    override fun acceptBooking(booking: Booking) {
-        // Do in memory cache update to keep the app UI up to date
-        cacheAndPerform(booking) {
-            bookingsRemoteDataSource.acceptBooking(it.id)
-            bookingsLocalDataSource.acceptBooking(it)
-        }
-    }
-
-    override fun acceptBooking(bookingId: Long) {
-        getBookingWithId(bookingId)?.let {
-            acceptBooking(it)
-        }
+    override fun acceptBooking(bookingId: Long, callback: BookingsDataSource.AcceptBookingCallback) {
+        bookingsRemoteDataSource.acceptBooking(bookingId, driverId, token, AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
     override fun refreshBookings() {
@@ -154,7 +133,7 @@ class BookingsRepository(
 
     private fun getBookingsFromRemoteDataSource(callback: BookingsDataSource.LoadBookingsCallback) {
 
-        bookingsRemoteDataSource.getBookings(driverId, token, lat, lng, limit, object : BookingsDataSource.LoadBookingsCallback {
+        bookingsRemoteDataSource.getBookings(driverId, token, AppPref.getLat(pref), AppPref.getLng(pref), limit, object : BookingsDataSource.LoadBookingsCallback {
             override fun onBookingsLoaded(bookings: List<Booking>) {
                 refreshCache(bookings)
                 refreshLocalDataSource(bookings)
@@ -168,6 +147,24 @@ class BookingsRepository(
             }
         })
     }
+
+    private fun getBookingFromRemoteDataSource(bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
+        bookingsRemoteDataSource.getBooking(bookingId, driverId, token, AppPref.getLat(pref), AppPref.getLng(pref), object : BookingsDataSource.GetBookingCallback {
+            override fun onBookingLoaded(booking: Booking) {
+                // Do in memory cache update to keep the app UI up to date
+                booking.isComplete = true
+                cacheAndPerform(booking) {
+                    saveBooking(booking)
+                    callback.onBookingLoaded(it)
+                }
+            }
+
+            override fun onDataNotAvailable(message: String?) {
+                callback.onDataNotAvailable(message)
+            }
+        })
+    }
+
 
     /**
      * Delete and save new list of Booking list in memory cache
@@ -226,11 +223,10 @@ class BookingsRepository(
          * @return the [BookingsRepository] instance
          */
         @JvmStatic
-        fun getInstance(bookingsRemoteDataSource: BookingsRemoteDataSource, bookingsLocalDataSource: BookingsDataSource,
-                        driverId: String, token: String, lat: Double, lng: Double) =
+        fun getInstance(bookingsRemoteDataSource: BookingsRemoteDataSource, bookingsLocalDataSource: BookingsDataSource, driverId: String, token: String, preferences: SharedPreferences) =
                 INSTANCE ?: synchronized(BookingsRepository::class.java) {
                     INSTANCE
-                            ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource, driverId, token, lat, lng)
+                            ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource, driverId, token, preferences)
                                     .also { INSTANCE = it }
                 }
 

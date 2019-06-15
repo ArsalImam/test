@@ -20,11 +20,15 @@ data class Booking(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
                    val service_code: Int,
                    val customer_id: String?,
                    val creator_type: String?,
-                   val fare_est: Double,
-                   val amount: Double?,
+                   val fare_est: Int,
+                   val cod_value: Int?,
                    val voice_note: String?,
                    val dt: String,
                    @Embedded(prefix = "pick_") val pickup: Stop?,
                    @Embedded(prefix = "drop_") val dropoff: Stop?,
                    @Embedded(prefix = "receiver_") val receiver: Contact?,
-                   @Embedded(prefix = "sender_") val sender: Contact?)
+                   @Embedded(prefix = "sender_") val sender: Contact?) {
+
+    var isComplete: Boolean = false
+
+}

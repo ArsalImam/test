@@ -11,6 +11,9 @@ import com.bykea.pk.partner.dal.util.AppExecutors
  * @Author: Yousuf Sohail
  */
 class BookingsLocalDataSource private constructor(val appExecutors: AppExecutors, val bookingsDao: BookingsDao) : BookingsDataSource {
+    override fun acceptBooking(bookingId: Long, callback: BookingsDataSource.AcceptBookingCallback) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun getBookings(callback: BookingsDataSource.LoadBookingsCallback) {
         appExecutors.diskIO.execute {
@@ -41,14 +44,6 @@ class BookingsLocalDataSource private constructor(val appExecutors: AppExecutors
 
     override fun saveBooking(booking: Booking) {
         appExecutors.diskIO.execute { bookingsDao.insert(booking) }
-    }
-
-    override fun acceptBooking(booking: Booking) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun acceptBooking(bookingId: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun refreshBookings() {

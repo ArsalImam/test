@@ -56,10 +56,7 @@ class ViewModelFactory private constructor(private val bookingsRepository: Booki
                     INSTANCE ?: ViewModelFactory(
                             Injection.provideBookingsRepository(application.applicationContext,
                                     AppPreferences.getDriverId(),
-                                    AppPreferences.getAccessToken(),
-                                    AppPreferences.getLatitude(),
-                                    AppPreferences.getLongitude()
-                            ))
+                                    AppPreferences.getAccessToken()))
                             .also { INSTANCE = it }
                 }
 
