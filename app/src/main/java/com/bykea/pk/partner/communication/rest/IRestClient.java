@@ -475,7 +475,7 @@ interface IRestClient {
      * @param body Body having details of Booking
      * @return Server response
      */
-    @GET(ApiTags.CANCEL_LOAD_BOARD_BOOKING)
+    @POST(ApiTags.CANCEL_LOAD_BOARD_BOOKING)
     Call<CancelRideResponse> cancelLoadBoardBooking(@Body LoadBoardBookingCancelRequest body);
 
 //    @GET("/news")
