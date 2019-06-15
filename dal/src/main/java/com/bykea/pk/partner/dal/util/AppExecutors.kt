@@ -12,6 +12,8 @@ const val THREAD_COUNT = 3
  *
  * Grouping tasks like this avoids the effects of task starvation (e.g. disk reads don't wait behind
  * webservice requests).
+ *
+ * @author Yousuf Sohail
  */
 open class AppExecutors constructor(
         val diskIO: Executor = DiskIOThreadExecutor(),
@@ -19,6 +21,10 @@ open class AppExecutors constructor(
         val mainThread: Executor = MainThreadExecutor()
 ) {
 
+    /**
+     * Executor to run runnable on main tread
+     *
+     */
     private class MainThreadExecutor : Executor {
         private val mainThreadHandler = Handler(Looper.getMainLooper())
 

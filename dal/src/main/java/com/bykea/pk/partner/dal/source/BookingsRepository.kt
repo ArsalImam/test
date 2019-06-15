@@ -169,6 +169,11 @@ class BookingsRepository(
         })
     }
 
+    /**
+     * Delete and save new list of Booking list in memory cache
+     *
+     * @param bookings List of [Booking] to update
+     */
     private fun refreshCache(bookings: List<Booking>) {
         cachedBookings.clear()
         bookings.forEach {
@@ -177,6 +182,11 @@ class BookingsRepository(
         cacheIsDirty = false
     }
 
+    /**
+     * Delete and save new list of Booking list in local data source
+     *
+     * @param bookings List of [Booking] to update
+     */
     private fun refreshLocalDataSource(bookings: List<Booking>) {
         bookingsLocalDataSource.deleteAllBookings()
         for (booking in bookings) {
@@ -184,8 +194,19 @@ class BookingsRepository(
         }
     }
 
+    /**
+     * Fetch [Booking] from in memory cache
+     *
+     * @param id Booking Id to fetch
+     */
     private fun getBookingWithId(id: Long) = cachedBookings[id]
 
+    /**
+     * Update cache with [Booking] and then perform given task
+     *
+     * @param booking [Booking] to cache
+     * @param perform Task to perform after cache
+     */
     private inline fun cacheAndPerform(booking: Booking, perform: (Booking) -> Unit) {
         cachedBookings[booking.id] = booking
         perform(booking)

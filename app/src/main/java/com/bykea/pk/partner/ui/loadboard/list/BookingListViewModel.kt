@@ -71,18 +71,27 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
         loadBookings(true)
     }
 
+    /**
+     * Load Booking list from Repository
+     *
+     * @param forceUpdate Pass in true to refresh the data in the [BookingsDataSource]
+     */
     private fun loadBookings(forceUpdate: Boolean) {
         loadBookings(forceUpdate, true)
     }
 
     /**
-     * Called by the [BookingsAdapter].
+     * Open Booking Detail screen. Called by the [BookingsAdapter].
+     *
+     * @param bookingId [Booking] id
      */
     internal fun openBooking(bookingId: Long) {
         _openBookingEvent.value = Event(bookingId)
     }
 
     /**
+     * Load Booking list from Repository
+     *
      * @param forceUpdate   Pass in true to refresh the data in the [BookingsDataSource]
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
