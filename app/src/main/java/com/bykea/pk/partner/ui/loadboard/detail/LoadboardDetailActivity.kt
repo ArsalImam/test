@@ -10,7 +10,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import com.bykea.pk.custom.BykeaAmazonClient
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.LoadboardDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
@@ -20,6 +19,7 @@ import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
+import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
 import com.bykea.pk.partner.utils.audio.MediaPlayerHolder
 import com.google.android.gms.maps.CameraUpdateFactory
