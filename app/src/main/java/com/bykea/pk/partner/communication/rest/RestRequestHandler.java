@@ -17,7 +17,7 @@ import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
-import com.bykea.pk.partner.models.request.LoadBoardRideCancelRequest;
+import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -1647,7 +1647,14 @@ public class RestRequestHandler {
         restCall.enqueue(new GenericRetrofitCallBack<UpdateAppVersionResponse>(onResponseCallBack));
     }
 
-    public void cancelLoadBoardBooking(Context context, LoadBoardRideCancelRequest body, final IUserDataHandler userDataHandler) {
+    /**
+     * Request remote to cancel booking picked from loadboard
+     *
+     * @param context         App context
+     * @param body            Request body
+     * @param userDataHandler Callback
+     */
+    public void cancelLoadBoardBooking(Context context, LoadBoardBookingCancelRequest body, final IUserDataHandler userDataHandler) {
         mContext = context;
         RestClient.getClient(context).cancelLoadBoardBooking(body).enqueue(
                 new Callback<CancelRideResponse>() {

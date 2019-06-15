@@ -11,7 +11,7 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
-import com.bykea.pk.partner.models.request.LoadBoardRideCancelRequest;
+import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -471,12 +471,12 @@ interface IRestClient {
 
 
     /**
-     * Cancel selected booking
-     *
-     * @return booking detail response
+     * Driver cancel booking picked from load board
+     * @param body Body having details of Booking
+     * @return Server response
      */
     @GET(ApiTags.CANCEL_LOAD_BOARD_BOOKING)
-    Call<CancelRideResponse> cancelLoadBoardBooking(@Body LoadBoardRideCancelRequest body);
+    Call<CancelRideResponse> cancelLoadBoardBooking(@Body LoadBoardBookingCancelRequest body);
 
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(

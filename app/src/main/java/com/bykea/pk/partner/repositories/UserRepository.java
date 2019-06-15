@@ -24,7 +24,7 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
-import com.bykea.pk.partner.models.request.LoadBoardRideCancelRequest;
+import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
@@ -549,11 +549,19 @@ public class UserRepository {
 
     }
 
+    /**
+     * Request to cancel driver booking either to goto socket or to REST server
+     *
+     * @param context     App context
+     * @param handler     Callback
+     * @param reasonMsg   Reason to cancel
+     * @param serviceCode Booking service code
+     */
     public void requestCancelRide(Context context, IUserDataHandler handler, String reasonMsg, Integer serviceCode) {
         if (serviceCode == 21 || serviceCode == 22) {
             mRestRequestHandler.cancelLoadBoardBooking(
                     context,
-                    new LoadBoardRideCancelRequest(
+                    new LoadBoardBookingCancelRequest(
                             AppPreferences.getDriverId(),
                             reasonMsg,
                             "",
