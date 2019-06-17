@@ -33,18 +33,14 @@ object Injection {
      * Provides Booking repository with all of it's dependencies resolved.
      *
      * @param context App Context
-     * @param driverId Driver Id
-     * @param token User access token
-     * @param lat
-     * @param lng
      * @return [BookingsRepository]
      */
-    fun provideBookingsRepository(context: Context, driverId: String, token: String): BookingsRepository {
+    fun provideBookingsRepository(context: Context): BookingsRepository {
         val database = AppDatabase.getInstance(context)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         return BookingsRepository.getInstance(
                 BookingsRemoteDataSource(),
-                BookingsLocalDataSource.getInstance(AppExecutors(), database.bookingsDao())
-                , driverId, token, preferences)
+                BookingsLocalDataSource.getInstance(AppExecutors(), database.bookingsDao()),
+                preferences)
     }
 }
