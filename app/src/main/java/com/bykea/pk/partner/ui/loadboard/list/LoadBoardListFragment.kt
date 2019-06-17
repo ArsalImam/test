@@ -63,8 +63,10 @@ class LoadBoardListFragment : Fragment() {
                 })
                 isExpended.observe(this@LoadBoardListFragment, Observer {
                     if (it) {
+                        relativeLayoutBottomView.visibility = View.VISIBLE
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
+                        relativeLayoutBottomView.visibility = View.GONE
                         if (viewmodel?.empty?.value!!) {
                             relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                         } else {

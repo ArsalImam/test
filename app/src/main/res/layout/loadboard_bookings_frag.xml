@@ -147,8 +147,15 @@
                 android:id="@+id/bookingsList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_above="@+id/relativeLayoutBottomView"
                 app:items="@{viewmodel.items}" />
+
+            <View
+                android:id="@+id/relativeLayoutBottomView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/bottomSheetNoJobsAvailableTV"
