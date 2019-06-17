@@ -113,6 +113,6 @@ interface BookingsDataSource {
 
         fun onBookingAccepted()
 
-        fun onBookingAcceptFailed(message: String?)
+        fun onBookingAcceptFailed(message: String?, taken: Boolean)
     }
 }

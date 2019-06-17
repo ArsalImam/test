@@ -1,15 +1,17 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.source.remote.request.RequestBodyAcceptBooking
+import com.bykea.pk.partner.dal.source.remote.response.AssignLoadboardBookingResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardDetailResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardListingResponse
 import retrofit2.Call
 import retrofit2.http.*
 
 /**
+ * API interface for Load Board
  *
+ * @author Yousuf Sohail
  */
-
 interface ApiInterface {
 
     /**
@@ -55,7 +57,7 @@ interface ApiInterface {
             @Path("booking_id") bookingId: Long,
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
-            @Body body: RequestBodyAcceptBooking): Call<GetLoadboardDetailResponse>
+            @Body body: RequestBodyAcceptBooking): Call<AssignLoadboardBookingResponse>
 
 
     @GET
