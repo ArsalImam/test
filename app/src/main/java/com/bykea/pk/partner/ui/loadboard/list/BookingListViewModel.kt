@@ -97,7 +97,7 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
      */
     private fun loadBookings(forceUpdate: Boolean, showLoadingUI: Boolean) {
         if (showLoadingUI) {
-            _dataLoading.setValue(true)
+            _dataLoading.value = true
         }
         if (forceUpdate) {
             bookingsRepository.refreshBookings()
@@ -110,7 +110,7 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
             }
 
             override fun onDataNotAvailable(errorMsg: String?) {
-                //TODO: Show error if needed
+                if (showLoadingUI) _dataLoading.value = false
             }
         })
     }
