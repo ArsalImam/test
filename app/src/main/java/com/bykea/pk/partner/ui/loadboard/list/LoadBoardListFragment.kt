@@ -79,7 +79,8 @@ class LoadBoardListFragment : Fragment() {
                     if (it) {
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
-                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+                        if (!viewmodel?.isExpended?.value!!)
+                            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
                     }
                 })
 

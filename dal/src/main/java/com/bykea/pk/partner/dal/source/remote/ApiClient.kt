@@ -8,7 +8,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
 
-    private var API_BASE_URL = BuildConfig.FLAVOR_URL
+    var API_BASE_URL = getBaseFlavorURL()
+
+    fun getBaseFlavorURL(): String = BuildConfig.FLAVOR_URL
 
     private var servicesApiInterface: ApiInterface? = null
 

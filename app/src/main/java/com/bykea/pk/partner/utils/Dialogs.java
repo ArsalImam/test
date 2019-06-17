@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.remote.ApiClient;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
@@ -1085,6 +1086,50 @@ public enum Dialogs {
             mDialog.setCancelable(false);
 
             showDialog();
+        }
+    }
+
+    public void showAlertDialogForURL(final Activity activity, final StringCallBack dataHandler) {
+        try {
+            if (activity instanceof AppCompatActivity && !activity.isFinishing()) {
+                dismissDialog();
+                mDialog = new Dialog(activity, R.style.actionSheetTheme);
+                mDialog.setContentView(R.layout.dialog_service_host_url);
+
+                EditText mEditTextIP, mEditTextLoadBoardIP;
+
+                mEditTextIP = mDialog.findViewById(R.id.editTextIP);
+                mEditTextLoadBoardIP = mDialog.findViewById(R.id.editTextLoadBoardIP);
+
+                mEditTextIP.setText(BuildConfig.FLAVOR_URL);
+                mEditTextLoadBoardIP.setText(ApiClient.INSTANCE.getBaseFlavorURL());
+
+                mDialog.setOnShowListener(dialog -> mDialog.findViewById(R.id.imgViewClick).setOnClickListener(v -> {
+                    if (mEditTextIP.getText().length() == 0) {
+                        Utils.appToast(activity, "enter your ip");
+                        return;
+                    } else if (!Utils.isValidUrl(mEditTextIP.getText().toString())) {
+                        Utils.appToast(activity, "enter valid url");
+                        return;
+                    }
+
+                    if (mEditTextLoadBoardIP.getText().length() == 0) {
+                        Utils.appToast(activity, "enter your loadboard ip");
+                        return;
+                    } else if (!Utils.isValidUrl(mEditTextLoadBoardIP.getText().toString())) {
+                        Utils.appToast(activity, "enter valid loadboard url");
+                        return;
+                    }
+
+                    mDialog.dismiss();
+                    dataHandler.onCallBack(mEditTextIP.getText().toString(), mEditTextLoadBoardIP.getText().toString());
+                }));
+
+                mDialog.setCancelable(false);
+                showDialog();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
