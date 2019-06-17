@@ -61,6 +61,10 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         _currentLatLng.value = LatLng(AppPref.getLat(bookingsRepository.pref), AppPref.getLng(bookingsRepository.pref))
     }
 
+    /**
+     * Accept current booking
+     *
+     */
     fun accept() {
         bookingId?.let {
             bookingsRepository.acceptBooking(it, this)

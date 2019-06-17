@@ -128,6 +128,11 @@ class LoadboardDetailActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Download audio resource via Amazon SDK
+     *
+     * @param url Url to download from
+     */
     private fun voiceClipPlayDownload(url: String) {
         if (mediaPlayer != null) {
             imgViewAudioPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_audio_stop))
