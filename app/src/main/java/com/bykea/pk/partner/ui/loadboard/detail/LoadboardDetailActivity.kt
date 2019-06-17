@@ -71,7 +71,8 @@ class LoadboardDetailActivity : BaseActivity() {
                 Dialogs.INSTANCE
                         .showAlertDialogTick(this@LoadboardDetailActivity,
                                 this@LoadboardDetailActivity.resources.getString(R.string.booking_already_taken_title),
-                                this@LoadboardDetailActivity.resources.getString(R.string.booking_already_taken_msg))
+                                this@LoadboardDetailActivity.resources.getString(R.string.booking_already_taken_msg),
+                                { finish() })
             })
         }
         binding.listener = object : BookingDetailUserActionsListener {
