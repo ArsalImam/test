@@ -558,13 +558,12 @@ public class UserRepository {
      * @param serviceCode Booking service code
      */
     public void requestCancelRide(Context context, IUserDataHandler handler, String reasonMsg, Integer serviceCode) {
-        if (serviceCode == 21 || serviceCode == 22) {
+        if (serviceCode == Constants.ServiceType.SEND_CODE || serviceCode == Constants.ServiceType.SEND_COD_CODE) {
             mRestRequestHandler.cancelLoadBoardBooking(
                     context,
                     new LoadBoardBookingCancelRequest(
                             AppPreferences.getDriverId(),
                             reasonMsg,
-                            "",
                             AppPreferences.getLatitude() + "",
                             AppPreferences.getLongitude() + "",
                             AppPreferences.getAccessToken(),

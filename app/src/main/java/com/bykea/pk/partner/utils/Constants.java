@@ -349,6 +349,8 @@ public class Constants {
 
         public static final String SEND_NAME = "Send";
         public static final String SEND_TITLE = "Delivery";
+        public static final int SEND_CODE = 21;
+        public static final int SEND_COD_CODE = 22;
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
