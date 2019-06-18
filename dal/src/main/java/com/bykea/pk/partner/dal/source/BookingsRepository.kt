@@ -133,7 +133,10 @@ class BookingsRepository(
 
     private fun getBookingsFromRemoteDataSource(callback: BookingsDataSource.LoadBookingsCallback) {
 
-        bookingsRemoteDataSource.getBookings(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), limit, object : BookingsDataSource.LoadBookingsCallback {
+        var serviceCode: Int? = null
+        if (!AppPref.getIsCash(pref)) serviceCode = 21
+
+        bookingsRemoteDataSource.getBookings(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), serviceCode, limit, object : BookingsDataSource.LoadBookingsCallback {
             override fun onBookingsLoaded(bookings: List<Booking>) {
                 refreshCache(bookings)
                 refreshLocalDataSource(bookings)
