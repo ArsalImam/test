@@ -241,6 +241,7 @@ public class Constants {
     public static class GoogleMap {
         public final static String GOOGLE_NAVIGATE_ENDPOINT = "http://maps.google.com/maps?saddr=";
         public final static String GOOGLE_DESTINATION_ENDPOINT = "&daddr=";
+        public final static String TRANSIT_MODE_BIKE = "&mode=motorbike";
         public final static String GOOGLE_MAP_PACKAGE = "com.google.android.apps.maps";
         public final static String GOOGLE_MAP_ACTIVITY = "com.google.android.maps.MapsActivity";
     }
@@ -479,4 +480,12 @@ public class Constants {
     public static final int MARKER_INCREMENT_FACTOR_FOUR_KM = 4000;
     public static final int MARKER_INCREMENT_FACTOR_TWO_KM = 2000;
 
+
+    //Amazon credentials
+    public static class Amazon {
+        public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
+        public static String BUCKET_NAME = "loadboard";
+    }
+    public static final String FILE_EXT = ".aac";
+    public static final String AUDIO_TEMP_FILE_NAME = "tempFile";
 }

@@ -37,6 +37,7 @@
                     android:id="@+id/backBtn"
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_50sdp"
+                    android:onClick="@{() -> listener.onBackClicked()}"
                     android:padding="@dimen/_9sdp"
                     app:srcCompat="@mipmap/icon_backarrow_green" />
 
@@ -45,68 +46,84 @@
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"
                     android:layout_gravity="center_vertical"
-                    app:srcCompat="@drawable/ic_delivery" />
+                    app:serviceCode="@{viewmodel.booking.service_code}"
+                    tools:src="@drawable/bhejdo_no_caption" />
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/linLayoutSecond"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
+                android:layout_gravity="center_horizontal"
                 android:orientation="vertical">
 
-                <com.bykea.pk.partner.widgets.FontTextView
+                <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:id="@+id/tVEstimatedFareLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_above="@+id/tVEstimatedFare"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/_minus6sdp"
                     android:text="@string/fare"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="bold"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
-                <com.bykea.pk.partner.widgets.FontTextView
+                <TextView
                     android:id="@+id/tVEstimatedFare"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{`Rs. ` + viewmodel.booking.fare_est}"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/_7sdp"
+                    android:text="@{`Rs. ` + (int)viewmodel.booking.fare_est}"
                     android:textColor="@color/color_06A833"
-                    android:textSize="@dimen/_18sdp"
+                    android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
                     app:fontName="open_sans_semi_bold.ttf"
-                    tools:text="Rs. 150" />
+                    tools:text="R" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/linLayoutThird"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="end|center_vertical"
+                android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                app:goneUnless="@{viewmodel.booking.service_code==22}">
 
-                <com.bykea.pk.partner.widgets.FontTextView
+                <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:id="@+id/tVCODAmountLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_above="@+id/tVCODAmount"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/_minus5sdp"
                     android:text="@string/cash_on_delivery"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="bold"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
-                <com.bykea.pk.partner.widgets.FontTextView
+                <TextView
                     android:id="@+id/tVCODAmount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{`` + viewmodel.booking.amount}"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/_7sdp"
+                    android:gravity="center"
+                    android:text="@{viewmodel.booking.cod_value == null ? `?` : Integer.toString(viewmodel.booking.cod_value)}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="open_sans_regular.ttf"
-                    tools:text="1,000" />
-            </LinearLayout>
+                    tools:text="1" />
+            </RelativeLayout>
         </FrameLayout>
 
         <View
@@ -141,14 +158,17 @@
                             android:id="@+id/loadBoardMapFragment"
                             android:name="com.google.android.gms.maps.SupportMapFragment"
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/_200sdp" />
+                            android:layout_height="@dimen/_200sdp"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginTop="0dp" />
 
                         <RelativeLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
                             android:layout_marginLeft="@dimen/_10sdp"
-                            android:layout_marginRight="@dimen/_10sdp">
+                            android:layout_marginRight="@dimen/_10sdp"
+                            app:goneUnless="@{viewmodel.booking.voice_note != null}">
 
                             <ImageView
                                 android:id="@+id/imgViewAudioPlay"
@@ -157,8 +177,6 @@
                                 android:layout_marginEnd="@dimen/_5sdp"
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_marginBottom="@dimen/_10sdp"
-                                android:layout_toStartOf="@id/viewWithPlayButton"
-                                android:layout_toLeftOf="@id/viewWithPlayButton"
                                 android:onClick="@{() -> listener.onPlayAudio(viewmodel.booking.voice_note)}"
                                 app:srcCompat="@drawable/ic_audio_play" />
 
@@ -170,22 +188,16 @@
                                 android:layout_marginEnd="@dimen/_5sdp"
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_marginBottom="@dimen/_10sdp"
-                                android:layout_toStartOf="@id/viewWithPlayButton"
-                                android:layout_toLeftOf="@id/viewWithPlayButton"
                                 android:indeterminate="false"
                                 android:max="100"
+                                android:onClick="@{() -> listener.onStopAudio()}"
                                 android:progress="80"
                                 android:progressDrawable="@drawable/circular_progress_bar"
-                                android:visibility="gone" />
-
-                            <View
-                                android:id="@+id/viewWithPlayButton"
-                                android:layout_width="@dimen/_200sdp"
-                                android:layout_height="0dp"
-                                android:layout_centerHorizontal="true"
-                                android:layout_margin="@dimen/_5sdp" />
+                                android:visibility="gone"
+                                tools:visibility="visible" />
 
                         </RelativeLayout>
+
                     </RelativeLayout>
 
                     <LinearLayout
@@ -218,13 +230,15 @@
                                     android:gravity="center"
                                     android:orientation="vertical">
 
-                                    <com.bykea.pk.partner.widgets.FontTextView
+                                    <TextView
                                         android:id="@+id/tVEstimatedTime"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@{Double.toString(viewmodel.booking.pickup.duration)}"
+                                        android:layout_marginBottom="@dimen/_minus6sdp"
+                                        android:text="@{Integer.toString(viewmodel.booking.pickup.duration/60)}"
                                         android:textColor="@color/color_06A833"
                                         android:textSize="@dimen/_18sdp"
+                                        android:textStyle="bold"
                                         app:fontName="open_sans_semi_bold.ttf"
                                         tools:text="5" />
 
@@ -250,7 +264,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewPickUp"
                                 android:layout_toLeftOf="@id/cardViewPickUp"
-                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.booking.pickup.lat, viewmodel.booking.pickup.lng)}"
+                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.currentLatLng.latitude, viewmodel.currentLatLng.longitude, viewmodel.booking.pickup.lat, viewmodel.booking.pickup.lng)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
@@ -264,6 +278,7 @@
                             android:text="@{viewmodel.booking.sender.name}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
+                            app:goneUnless="@{viewmodel.booking.sender.name != null}"
                             tools:text="Sender Name" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
@@ -274,6 +289,7 @@
                             android:text="@{viewmodel.booking.sender.address}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
+                            app:goneUnless="@{viewmodel.booking.sender.address != null}"
                             tools:text="Sender Address Sender Address" />
 
                     </LinearLayout>
@@ -319,19 +335,22 @@
                                         android:id="@+id/tVZoneDropOff"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@{viewmodel.booking.dropoff.zone_ur}"
+                                        android:layout_marginBottom="@dimen/_minus6sdp"
+                                        android:text="@{` ` + viewmodel.booking.dropoff.zone_ur}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         app:fontName="jameel_noori_nastaleeq.ttf"
                                         tools:text="@string/nazimabad_ur" />
 
-                                    <com.bykea.pk.partner.widgets.FontTextView
+                                    <TextView
                                         android:id="@+id/tVEstimatedDistanceDropOff"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@{Double.toString(viewmodel.booking.dropoff.distance)}"
+                                        android:layout_marginBottom="@dimen/_minus6sdp"
+                                        android:text="@{Integer.toString(viewmodel.booking.dropoff.distance/1000)}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
+                                        android:textStyle="bold"
                                         app:fontName="open_sans_semi_bold.ttf"
                                         tools:text="12" />
 
@@ -340,7 +359,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
-                                        android:text="@string/kilometer_ur"
+                                        android:text="@{` ` + @string/kilometer_ur}"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_14sdp"
                                         app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -357,7 +376,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
-                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.booking.dropoff.lat, viewmodel.booking.dropoff.lng)}"
+                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.booking.pickup.lat, viewmodel.booking.pickup.lng, viewmodel.booking.dropoff.lat, viewmodel.booking.dropoff.lng)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
@@ -371,6 +390,7 @@
                             android:text="@{viewmodel.booking.receiver.name}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
+                            app:goneUnless="@{viewmodel.booking.receiver.name != null}"
                             tools:text="Receiver Name" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
@@ -382,6 +402,7 @@
                             android:text="@{viewmodel.booking.receiver.address}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
+                            app:goneUnless="@{viewmodel.booking.receiver.address != null}"
                             tools:text="Drop Off Address Drop Off Address" />
 
                     </LinearLayout>

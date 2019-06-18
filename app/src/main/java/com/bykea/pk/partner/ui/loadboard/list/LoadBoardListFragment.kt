@@ -38,6 +38,7 @@ class LoadBoardListFragment : Fragment() {
     private lateinit var viewDataBinding: LoadboardBookingsFragBinding
     private lateinit var listAdapter: BookingsAdapter
     private var mBehavior: BottomSheetBehavior<*>? = null
+
     var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
     var layoutParamRL: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
 
@@ -62,8 +63,10 @@ class LoadBoardListFragment : Fragment() {
                 })
                 isExpended.observe(this@LoadBoardListFragment, Observer {
                     if (it) {
+                        relativeLayoutBottomView.visibility = View.VISIBLE
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
+                        relativeLayoutBottomView.visibility = View.GONE
                         if (viewmodel?.empty?.value!!) {
                             relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                         } else {
@@ -76,7 +79,8 @@ class LoadBoardListFragment : Fragment() {
                     if (it) {
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
-                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+                        if (!viewmodel?.isExpended?.value!!)
+                            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
                     }
                 })
 

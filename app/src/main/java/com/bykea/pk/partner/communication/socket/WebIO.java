@@ -145,12 +145,11 @@ public class WebIO {
     }
 
     public boolean isSocketConnected() {
-        if (getSocket() != null
-                && getSocket().connected()) {
-            Utils.redLogLocation(TAG, "isSocketConnected: true");
+        if (getSocket() != null && getSocket().connected()) {
+//            Utils.redLogLocation(TAG, "isSocketConnected: true");
             return true;
         } else {
-            Utils.redLogLocation(TAG, "isSocketConnected: false");
+//            Utils.redLogLocation(TAG, "isSocketConnected: false");
             return false;
         }
     }
@@ -237,10 +236,10 @@ public class WebIO {
                 public void call(Object... args) {
                     if (args != null && args.length > 0) {
                         String serverResponse = args[0].toString();
-                        Utils.redLogLocation(TAG, "Server response from Ping : " + serverResponse);
+//                        Utils.redLogLocation(TAG, "Server response from Ping : " + serverResponse);
                     }
                     WebIO.getInstance().getSocket().emit(Socket.EVENT_PONG);
-                    Utils.redLogLocation(TAG, "Socket Ping: " + Socket.EVENT_PING);
+//                    Utils.redLogLocation(TAG, "Socket Ping: " + Socket.EVENT_PING);
                 }
             });
             on(Socket.EVENT_PONG, new Emitter.Listener() {
@@ -248,9 +247,9 @@ public class WebIO {
                 public void call(Object... args) {
                     if (args != null && args.length > 0) {
                         String serverResponse = args[0].toString();
-                        Utils.redLogLocation(TAG, "Server response from Pong : " + serverResponse);
+//                        Utils.redLogLocation(TAG, "Server response from Pong : " + serverResponse);
                     }
-                    Utils.redLogLocation(TAG, "Socket Pong: " + Socket.EVENT_PONG);
+//                    Utils.redLogLocation(TAG, "Socket Pong: " + Socket.EVENT_PONG);
                 }
             });
             on(ApiTags.SOCKEY_AUTH_FAILED, new Emitter.Listener() {

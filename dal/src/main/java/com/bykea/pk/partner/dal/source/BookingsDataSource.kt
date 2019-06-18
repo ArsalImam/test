@@ -40,16 +40,9 @@ interface BookingsDataSource {
     /**
      * Accept booking
      *
-     * @param booking Booking
-     */
-    fun acceptBooking(booking: Booking)
-
-    /**
-     * Accept booking
-     *
      * @param bookingId Id of Booking to be accepted
      */
-    fun acceptBooking(bookingId: Long)
+    fun acceptBooking(bookingId: Long, callback: AcceptBookingCallback)
 
     /**
      * Re-fetch booking listing
@@ -110,5 +103,16 @@ interface BookingsDataSource {
          * @param message
          */
         fun onDataNotAvailable(message: String?)
+    }
+
+    /**
+     * Callback interface used for accepting Booking
+     *
+     */
+    interface AcceptBookingCallback {
+
+        fun onBookingAccepted()
+
+        fun onBookingAcceptFailed(message: String?, taken: Boolean)
     }
 }

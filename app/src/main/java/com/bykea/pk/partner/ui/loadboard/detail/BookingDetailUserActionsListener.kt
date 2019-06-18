@@ -11,7 +11,7 @@ interface BookingDetailUserActionsListener {
      *
      * @param url URL of the audio file to be played
      */
-    fun onPlayAudio(url: String)
+    fun onPlayAudio(url: String?)
 
     /**
      * On navigation to Google map for route
@@ -19,11 +19,23 @@ interface BookingDetailUserActionsListener {
      * @param lat Latitude
      * @param lng Longitude
      */
-    fun onNavigateToMap(lat: Double, lng: Double)
+    fun onNavigateToMap(pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double)
 
     /**
      * On user attempt to accept booking
      *
      */
     fun onAcceptBooking()
+
+    /**
+     * On user taps back button
+     *
+     */
+    fun onBackClicked()
+
+    /**
+     * On user taps audio stops button
+     *
+     */
+    fun onStopAudio()
 }
