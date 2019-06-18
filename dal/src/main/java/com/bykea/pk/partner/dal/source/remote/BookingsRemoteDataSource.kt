@@ -91,12 +91,16 @@ class BookingsRemoteDataSource {
             }
 
             override fun onResponse(call: Call<AssignLoadboardBookingResponse>, response: Response<AssignLoadboardBookingResponse>) {
-                response.body()?.let {
-                    if (response.isSuccessful && it.isSuccess()) {
-                        callback.onBookingAccepted()
-                    } else {
-                        callback.onBookingAcceptFailed(it.message, it.data.isTaken())
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.isSuccess()) {
+                            callback.onBookingAccepted()
+                        } else {
+                            callback.onBookingAcceptFailed(it.message, it.data.isTaken())
+                        }
                     }
+                } else {
+                    callback.onBookingAcceptFailed("Booking is no longer available", true)
                 }
             }
         })
