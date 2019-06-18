@@ -70,6 +70,7 @@ import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
@@ -468,6 +469,7 @@ public class RestRequestHandler {
             @Override
             public void onResponse(Call<CheckDriverStatusResponse> call, Response<CheckDriverStatusResponse> response) {
                 // Got success from server
+                Dialogs.INSTANCE.dismissDialog();
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     mResponseCallBack.onResponse(response.body());
                     Utils.redLog(TAG, new Gson().toJson(response.body().getData()));
@@ -478,6 +480,7 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Call<CheckDriverStatusResponse> call, Throwable t) {
+                Dialogs.INSTANCE.dismissDialog();
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });

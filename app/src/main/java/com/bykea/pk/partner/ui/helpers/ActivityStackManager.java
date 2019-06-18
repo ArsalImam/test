@@ -173,6 +173,8 @@ public class ActivityStackManager {
 
     public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
+        if (mContext instanceof LoadboardDetailActivity)
+            intent.putExtra(BookingActivity.IS_CALLED_FROM_LOADBOARD, true);
         mContext.startActivity(intent);
     }
 
@@ -206,11 +208,11 @@ public class ActivityStackManager {
     /**
      * Start multi delivery feedback activity.
      *
-     * @param mContext Holding the reference of an activity.
+     * @param mContext                Holding the reference of an activity.
      * @param isComingFromOnGoingRide Is user coming from on going ride.
-     * @param tripID Current Trip id.
+     * @param tripID                  Current Trip id.
      */
-    public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID,boolean isComingFromOnGoingRide) {
+    public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID, boolean isComingFromOnGoingRide) {
         Intent intent = new Intent(mContext, MultiDeliveryFeedbackActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(Keys.MULTIDELIVERY_TRIP_ID, tripID);
@@ -283,7 +285,8 @@ public class ActivityStackManager {
 
     /**
      * This method restarts location service with custom interval when partner is on trip
-     * @param context Calling Context
+     *
+     * @param context        Calling Context
      * @param updateInterval interval in millis
      */
     public void restartLocationServiceWithCustomIntervals(final Context context, long updateInterval) {
@@ -331,9 +334,9 @@ public class ActivityStackManager {
     /**
      * Start multi delivery calling activity.
      *
-     * @param response The {@link MultiDeliveryCallDriverData} object.
+     * @param response  The {@link MultiDeliveryCallDriverData} object.
      * @param isFromGcm boolean indicating that start activity from GCM or not.
-     * @param mContext Holding the reference of an activity.
+     * @param mContext  Holding the reference of an activity.
      */
     public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverData response,
                                                   boolean isFromGcm,
@@ -352,7 +355,6 @@ public class ActivityStackManager {
             mContext.startActivity(callIntent);
         }
     }
-
 
 
     public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {
@@ -472,7 +474,8 @@ public class ActivityStackManager {
 
     /**
      * open loadboard booking screen
-     * @param context Context
+     *
+     * @param context   Context
      * @param bookingId selected booking id
      */
     public void startLoadboardBookingDetailActiivty(Context context, Long bookingId) {
