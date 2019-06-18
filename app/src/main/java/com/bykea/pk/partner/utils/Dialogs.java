@@ -1089,6 +1089,11 @@ public enum Dialogs {
         }
     }
 
+
+    /**
+     * Dialog Called From Splash Activity
+     * Enter Testing IP and LoadBoard IP
+     */
     public void showAlertDialogForURL(final Activity activity, final StringCallBack dataHandler) {
         try {
             if (activity instanceof AppCompatActivity && !activity.isFinishing()) {
@@ -1106,18 +1111,18 @@ public enum Dialogs {
 
                 mDialog.setOnShowListener(dialog -> mDialog.findViewById(R.id.imgViewClick).setOnClickListener(v -> {
                     if (mEditTextIP.getText().length() == 0) {
-                        Utils.appToast(activity, "enter your ip");
+                        Utils.appToast(activity, activity.getString(R.string.enter_your_ip));
                         return;
                     } else if (!Utils.isValidUrl(mEditTextIP.getText().toString())) {
-                        Utils.appToast(activity, "enter valid url");
+                        Utils.appToast(activity, activity.getString(R.string.enter_valid_ip));
                         return;
                     }
 
                     if (mEditTextLoadBoardIP.getText().length() == 0) {
-                        Utils.appToast(activity, "enter your loadboard ip");
+                        Utils.appToast(activity, activity.getString(R.string.enter_your_loadboard_ip));
                         return;
                     } else if (!Utils.isValidUrl(mEditTextLoadBoardIP.getText().toString())) {
-                        Utils.appToast(activity, "enter valid loadboard url");
+                        Utils.appToast(activity, activity.getString(R.string.enter_valid_loadboard_ip));
                         return;
                     }
 
