@@ -222,7 +222,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean allowTripStatusCall = true;
     CountDownTimer countDownTimer;
 
-    public static boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
+    private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -2114,13 +2114,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                             if (IS_CALLED_FROM_LOADBOARD_VALUE) {
                                 if (response.getData().getTrip() == null) {
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                            dataRepository.requestRunningTrip(mCurrentActivity, handler);
-                                        }
-                                    },1000);
+                                    new Handler().postDelayed(() -> {
+                                        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
+                                    }, Constants.HANDLER_POST_DELAY1);
                                     return;
                                 }
                                 AppPreferences.setTripAcceptTime(System.currentTimeMillis());
