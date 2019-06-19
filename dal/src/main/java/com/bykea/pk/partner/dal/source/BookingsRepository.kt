@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
+import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
 import java.util.*
 
 /**
@@ -134,7 +135,7 @@ class BookingsRepository(
     private fun getBookingsFromRemoteDataSource(callback: BookingsDataSource.LoadBookingsCallback) {
 
         var serviceCode: Int? = null
-        if (!AppPref.getIsCash(pref)) serviceCode = 21
+        if (!AppPref.getIsCash(pref)) serviceCode = SERVICE_CODE_SEND
 
         bookingsRemoteDataSource.getBookings(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), serviceCode, limit, object : BookingsDataSource.LoadBookingsCallback {
             override fun onBookingsLoaded(bookings: List<Booking>) {
