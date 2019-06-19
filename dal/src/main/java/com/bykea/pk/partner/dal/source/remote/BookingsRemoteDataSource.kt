@@ -3,6 +3,7 @@ package com.bykea.pk.partner.dal.source.remote
 import android.util.Log
 import com.bykea.pk.partner.dal.source.BookingsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.RequestBodyAcceptBooking
+import com.bykea.pk.partner.dal.source.remote.response.AssignLoadboardBookingResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardDetailResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardListingResponse
 import retrofit2.Call
@@ -83,19 +84,23 @@ class BookingsRemoteDataSource {
      */
     fun acceptBooking(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: BookingsDataSource.AcceptBookingCallback) {
         val call = ApiClient.build()?.acceptLoadboardBooking(bookingId, driverId, token, RequestBodyAcceptBooking(lat, lng))
-        call?.enqueue(object : Callback<GetLoadboardDetailResponse> {
+        call?.enqueue(object : Callback<AssignLoadboardBookingResponse> {
 
-            override fun onFailure(call: Call<GetLoadboardDetailResponse>, t: Throwable) {
-                callback.onBookingAcceptFailed(t.message)
+            override fun onFailure(call: Call<AssignLoadboardBookingResponse>, t: Throwable) {
+                callback.onBookingAcceptFailed(t.message, false)
             }
 
-            override fun onResponse(call: Call<GetLoadboardDetailResponse>, response: Response<GetLoadboardDetailResponse>) {
-                response.body()?.let {
-                    if (response.isSuccessful && it.isSuccess()) {
-                        callback.onBookingAccepted()
-                    } else {
-                        callback.onBookingAcceptFailed(it.message)
+            override fun onResponse(call: Call<AssignLoadboardBookingResponse>, response: Response<AssignLoadboardBookingResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.isSuccess()) {
+                            callback.onBookingAccepted()
+                        } else {
+                            callback.onBookingAcceptFailed(it.message, it.data.isTaken())
+                        }
                     }
+                } else {
+                    callback.onBookingAcceptFailed("Booking is no longer available", true)
                 }
             }
         })

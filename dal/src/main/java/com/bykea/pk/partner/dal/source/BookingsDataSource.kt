@@ -105,10 +105,14 @@ interface BookingsDataSource {
         fun onDataNotAvailable(message: String?)
     }
 
+    /**
+     * Callback interface used for accepting Booking
+     *
+     */
     interface AcceptBookingCallback {
 
         fun onBookingAccepted()
 
-        fun onBookingAcceptFailed(message: String?)
+        fun onBookingAcceptFailed(message: String?, taken: Boolean)
     }
 }

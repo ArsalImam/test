@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.dal.source.BookingsDataSource
 import com.bykea.pk.partner.dal.source.BookingsRepository
@@ -38,9 +39,9 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     val acceptBookingCommand: LiveData<Event<Unit>>
         get() = _acceptBookingCommand
 
-    private val _acceptFailedBookingCommand = MutableLiveData<Event<Unit>>()
-    val acceptFailedBookingCommand: LiveData<Event<Unit>>
-        get() = _acceptFailedBookingCommand
+    private val _bookingTakenCommand = MutableLiveData<Event<Unit>>()
+    val bookingTakenCommand: LiveData<Event<Unit>>
+        get() = _bookingTakenCommand
 
     private val _snackbarText = MutableLiveData<Event<Int>>()
     val snackbarMessage: LiveData<Event<Int>>
@@ -61,6 +62,10 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         _currentLatLng.value = LatLng(AppPref.getLat(bookingsRepository.pref), AppPref.getLng(bookingsRepository.pref))
     }
 
+    /**
+     * Accept current booking
+     *
+     */
     fun accept() {
         bookingId?.let {
             bookingsRepository.acceptBooking(it, this)
@@ -99,8 +104,12 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         _acceptBookingCommand.value = Event(Unit)
     }
 
-    override fun onBookingAcceptFailed(message: String?) {
-        _acceptFailedBookingCommand.value = Event(Unit)
+    override fun onBookingAcceptFailed(message: String?, taken: Boolean) {
+        if (taken) {
+            _bookingTakenCommand.value = Event(Unit)
+        } else {
+            showSnackbarMessage(R.string.error_try_again)
+        }
     }
 
     /**
