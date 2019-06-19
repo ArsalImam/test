@@ -222,7 +222,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean allowTripStatusCall = true;
     CountDownTimer countDownTimer;
 
-    public static String IS_CALLED_FROM_LOADBOARD = "IS_CALLED_FROM_LOADBOARD";
     public static boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
 
     @Override
@@ -234,8 +233,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mCurrentActivity = this;
         dataRepository = new UserRepository();
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(IS_CALLED_FROM_LOADBOARD)) {
-            IS_CALLED_FROM_LOADBOARD_VALUE = getIntent().getExtras().getBoolean(IS_CALLED_FROM_LOADBOARD);
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(Constants.Extras.IS_CALLED_FROM_LOADBOARD)) {
+            IS_CALLED_FROM_LOADBOARD_VALUE = getIntent().getExtras().getBoolean(Constants.Extras.IS_CALLED_FROM_LOADBOARD);
         }
         if (IS_CALLED_FROM_LOADBOARD_VALUE) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);

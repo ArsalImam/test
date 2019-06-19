@@ -174,7 +174,7 @@ public class ActivityStackManager {
     public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
         if (mContext instanceof LoadboardDetailActivity)
-            intent.putExtra(BookingActivity.IS_CALLED_FROM_LOADBOARD, true);
+            intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
         mContext.startActivity(intent);
     }
 
