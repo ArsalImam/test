@@ -288,7 +288,7 @@ public class Constants {
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
     public final static int LOCATION_API_WAIT_ON_INACTIVE_PUSH = 15000;
-    public final static int HANDLER_POST_DELAY1 = 1000;
+    public final static int HANDLER_POST_DELAY_LOAD_BOARD = 1000;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
 

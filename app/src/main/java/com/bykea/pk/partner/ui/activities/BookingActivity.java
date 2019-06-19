@@ -2117,7 +2117,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                     new Handler().postDelayed(() -> {
                                         Dialogs.INSTANCE.showLoader(mCurrentActivity);
                                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
-                                    }, Constants.HANDLER_POST_DELAY1);
+                                    }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
                                     return;
                                 }
                                 AppPreferences.setTripAcceptTime(System.currentTimeMillis());
