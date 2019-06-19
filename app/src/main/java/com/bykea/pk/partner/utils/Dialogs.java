@@ -1049,11 +1049,11 @@ public enum Dialogs {
     }
 
     /**
-     *
      * GENERIC DIALOG
-     * @param mTitle ? View.VISIBLE : View.GONE
+     *
+     * @param mTitle    ? View.VISIBLE : View.GONE
      * @param mMesssage ? View.VISIBLE : View.GONE
-     * @param onClick ? If Want To Perform Another Operation, Implement Callback Else Send Null (As Dialog Will Already Being
+     * @param onClick   ? If Want To Perform Another Operation, Implement Callback Else Send Null (As Dialog Will Already Being
      *                  Dismiss By OnClick
      */
     public void showAlertDialogTick(Context context, String mTitle, String mMesssage, View.OnClickListener onClick) {
@@ -1089,10 +1089,11 @@ public enum Dialogs {
         }
     }
 
-
     /**
      * Dialog Called From Splash Activity
      * Enter Testing IP and LoadBoard IP
+     * @param activity : calling activity
+     * @param dataHandler : Use for the callback of strings.
      */
     public void showAlertDialogForURL(final Activity activity, final StringCallBack dataHandler) {
         try {
