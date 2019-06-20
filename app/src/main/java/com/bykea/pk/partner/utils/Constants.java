@@ -209,6 +209,7 @@ public class Constants {
         public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
         public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
         public final static String ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL = "ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL";
+        public final static String IS_CALLED_FROM_LOADBOARD = "IS_CALLED_FROM_LOADBOARD";
     }
 
     public static class Broadcast {
@@ -287,6 +288,7 @@ public class Constants {
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
     public final static int LOCATION_API_WAIT_ON_INACTIVE_PUSH = 15000;
+    public final static int HANDLER_POST_DELAY_LOAD_BOARD = 1000;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
 
