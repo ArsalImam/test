@@ -1,35 +1,18 @@
 package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
-import android.nfc.Tag;
 import android.util.Log;
 
-import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
-import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
-import com.bykea.pk.partner.models.response.CommonResponse;
-import com.bykea.pk.partner.models.response.DriverStatsResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
-import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
-import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
-import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
-import com.bykea.pk.partner.repositories.IUserDataHandler;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.utils.HTTPStatus;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.models.ReceivedMessage;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
+import com.bykea.pk.partner.models.response.BookingAcceptedResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
@@ -40,11 +23,22 @@ import com.bykea.pk.partner.models.response.FreeDriverResponse;
 import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.HeatMapResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
+import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
 import com.bykea.pk.partner.models.response.RejectCallResponse;
 import com.bykea.pk.partner.models.response.SendMessageResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
+import com.bykea.pk.partner.repositories.IUserDataHandler;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
@@ -597,6 +591,24 @@ public class WebIORequestHandler {
             }
         }
 
+    }
+
+    public static class NewActiveJobListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("NEW ACTIVE JOB (Socket) ", serverResponse);
+            Gson gson = new Gson();
+            try {
+                BookingAcceptedResponse response = gson.fromJson(serverResponse, BookingAcceptedResponse.class);
+                if (response.isSuccess() && !AppPreferences.isJobActivityOnForeground()) {
+                    ActivityStackManager.getInstance().startJobActivity(DriverApp.getContext());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
