@@ -539,8 +539,6 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-        if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
-            mCurrentActivity.showLoadBoardBottomSheet();
 //            callLoadBoardListingAPI();
     }
 
@@ -549,6 +547,7 @@ public class HomeFragment extends Fragment {
             return;
         }
         if (!AppPreferences.getAvailableStatus()) {
+            mCurrentActivity.hideLoadBoardBottomSheet();
 
             //inactive state
             getDriverPerformanceData();
@@ -579,6 +578,7 @@ public class HomeFragment extends Fragment {
 
             }
         } else {        //active state
+            mCurrentActivity.showLoadBoardBottomSheet();
 
             myRangeBarLayout.setVisibility(View.INVISIBLE);
             myRangeBarTopLine.setVisibility(View.INVISIBLE);
