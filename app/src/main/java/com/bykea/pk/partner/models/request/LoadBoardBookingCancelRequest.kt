@@ -5,7 +5,6 @@ package com.bykea.pk.partner.models.request
  *
  * @property _id Driver Id
  * @property cancel_reason Cancellation reason
- * @property cancelled_at Time of cancellation
  * @property lat Latitude of driver at the time of cancellation
  * @property lng Longitude of driver at the time of cancellation
  * @property token_id Access token of driver
