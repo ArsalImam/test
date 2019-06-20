@@ -603,7 +603,7 @@ public class WebIORequestHandler {
             try {
                 BookingAcceptedResponse response = gson.fromJson(serverResponse, BookingAcceptedResponse.class);
                 if (response.isSuccess() && !AppPreferences.isJobActivityOnForeground()) {
-                    ActivityStackManager.getInstance().startJobActivity(DriverApp.getContext());
+                    ActivityStackManager.getInstance().startJobActivity(DriverApp.getContext(), false);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

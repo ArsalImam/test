@@ -173,8 +173,12 @@ public class ActivityStackManager {
 
     public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
-        if (mContext instanceof LoadboardDetailActivity)
-            intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
+        mContext.startActivity(intent);
+    }
+
+    public void startJobActivity(Context mContext, boolean dataPrefetch) {
+        Intent intent = new Intent(mContext, BookingActivity.class);
+        if (!dataPrefetch) intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
         mContext.startActivity(intent);
     }
 

@@ -64,7 +64,7 @@ class LoadboardDetailActivity : BaseActivity() {
             })
 
             acceptBookingCommand.observe(this@LoadboardDetailActivity, Observer {
-                ActivityStackManager.getInstance().startJobActivity(this@LoadboardDetailActivity)
+                ActivityStackManager.getInstance().startJobActivity(this@LoadboardDetailActivity, false)
             })
 
             bookingTakenCommand.observe(this@LoadboardDetailActivity, Observer {
