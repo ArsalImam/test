@@ -1092,11 +1092,13 @@ public class HomeFragment extends Fragment {
      * This method checks if cancel dialog need to be shown or not by checking Intent Extras
      */
     private void showCancelDialogIfRequired() {
+        if (Dialogs.INSTANCE.isShowing())
+            Dialogs.INSTANCE.dismissDialog();
+
         if (mCurrentActivity != null &&
                 null != mCurrentActivity.getIntent() &&
                 null != mCurrentActivity.getIntent().getExtras() &&
                 mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP, false) &&
-                !Dialogs.INSTANCE.isShowing() &&
                 !mCurrentActivity.isFinishing()) {
             if (!mCurrentActivity.isDialogShown() && getView() != null) {
                 mCurrentActivity.setDialogShown(true);
@@ -1454,7 +1456,8 @@ public class HomeFragment extends Fragment {
         HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
     }
 
-     /** Check the Type of request is it batch request or single
+    /**
+     * Check the Type of request is it batch request or single
      *
      * <p>
      * <p>
