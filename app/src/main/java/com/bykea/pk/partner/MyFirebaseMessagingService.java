@@ -189,9 +189,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 mBus.post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(SOCKET_NEW_JOB_CALL))) {
-                BookingAcceptedResponse response = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), BookingAcceptedResponse.class);
-                if (response.isSuccess() && !AppPreferences.isJobActivityOnForeground()) {
-                    ActivityStackManager.getInstance().startJobActivity(DriverApp.getContext(), false);
+                try {
+                    BookingAcceptedResponse response = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), BookingAcceptedResponse.class);
+                    if (response.isSuccess() && !AppPreferences.isJobActivityOnForeground()) {
+                        ActivityStackManager.getInstance().startJobActivity(DriverApp.getContext(), false);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
