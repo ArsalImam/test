@@ -22,9 +22,9 @@ class BookingsRemoteDataSource {
      * @param limit Number of items to be fetched
      * @param callback Callback to be executed on response from remote data source
      */
-    fun getBookings(driverId: String, token: String, lat: Double, lng: Double, limit: Int, callback: BookingsDataSource.LoadBookingsCallback) {
+    fun getBookings(driverId: String, token: String, lat: Double, lng: Double, serviceCode: Int?, limit: Int, callback: BookingsDataSource.LoadBookingsCallback) {
 
-        val call = ApiClient.build()?.getLoadboardList(driverId, token, lat, lng)
+        val call = ApiClient.build()?.getLoadboardList(driverId, token, lat, lng, serviceCode)
         call?.enqueue(object : Callback<GetLoadboardListingResponse> {
 
             override fun onFailure(call: Call<GetLoadboardListingResponse>, t: Throwable) {
