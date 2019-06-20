@@ -497,7 +497,7 @@ public class Utils {
     public static void navigateToGoogleMap(Context context,
                                            double pickLat, double pickLng, double dropLat, double dropLng) {
         try {
-            String startAddr = pickLat+","+pickLng;
+            String startAddr = pickLat + "," + pickLng;
             String endAddr = dropLat + "," + dropLng;
             String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
                     Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr + TRANSIT_MODE_BIKE;

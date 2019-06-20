@@ -108,6 +108,7 @@ public class ApiTags {
     public static final String GET_LOAD_BOARD_LISTING = "/api/v1/driver/loadboard?";
     public static final String ACCEPT_LOAD_BOARD_BOOKING = "/api/v1/driver/loadboard/{id}/accept";
     public static final String GET_LOAD_BOARD_BOOKING_DETAIL = "/api/v1/driver/loadboard/{id}?";
+    public static final String CANCEL_LOAD_BOARD_BOOKING = "/api/v1/driver/cancel";
 
     //Driver Status
     public static final String DRIVER_STATUS_ONLINE_OFFLINE = "/api/v1/driver/status";

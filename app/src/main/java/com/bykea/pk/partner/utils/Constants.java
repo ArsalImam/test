@@ -349,6 +349,8 @@ public class Constants {
 
         public static final String SEND_NAME = "Send";
         public static final String SEND_TITLE = "Delivery";
+        public static final int SEND_CODE = 21;
+        public static final int SEND_COD_CODE = 22;
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -481,11 +483,12 @@ public class Constants {
     public static final int MARKER_INCREMENT_FACTOR_TWO_KM = 2000;
 
 
+    public static final String FILE_EXT = ".aac";
+    public static final String AUDIO_TEMP_FILE_NAME = "tempFile";
+
     //Amazon credentials
     public static class Amazon {
         public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
         public static String BUCKET_NAME = "loadboard";
     }
-    public static final String FILE_EXT = ".aac";
-    public static final String AUDIO_TEMP_FILE_NAME = "tempFile";
 }

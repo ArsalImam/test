@@ -151,6 +151,9 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("dropoff")
     private Stop dropoffStop;
 
+    @SerializedName("trip_status_code")
+    private Integer serviceCode;
+
 
     public String getDistanceCovered() {
         return distanceCovered;
@@ -660,5 +663,13 @@ public class NormalCallData extends CommonResponse {
 
     public void setDropoffStop(Stop dropoffStop) {
         this.dropoffStop = dropoffStop;
+    }
+
+    public Integer getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(Integer serviceCode) {
+        this.serviceCode = serviceCode;
     }
 }

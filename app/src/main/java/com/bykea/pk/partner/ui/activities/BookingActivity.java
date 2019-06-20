@@ -756,14 +756,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void cancelReasonDialog() {
         Dialogs.INSTANCE.showCancelDialog(mCurrentActivity, new StringCallBack() {
             @Override
-            public void onCallBack(String msg) {
+            public void onCallBack(String reasonMsg) {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                cancelReason = msg;
-                dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler,
-                        msg);
+                cancelReason = reasonMsg;
+                dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler, reasonMsg, callData.getServiceCode());
             }
         });
-
     }
 
     @Override
