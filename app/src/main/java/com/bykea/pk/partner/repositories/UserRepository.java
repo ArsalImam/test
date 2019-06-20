@@ -558,7 +558,7 @@ public class UserRepository {
      * @param serviceCode Booking service code
      */
     public void requestCancelRide(Context context, IUserDataHandler handler, String reasonMsg, Integer serviceCode) {
-        if (serviceCode == Constants.ServiceType.SEND_CODE || serviceCode == Constants.ServiceType.SEND_COD_CODE) {
+        if (serviceCode != null && (serviceCode == Constants.ServiceType.SEND_CODE || serviceCode == Constants.ServiceType.SEND_COD_CODE)) {
             mRestRequestHandler.cancelLoadBoardBooking(
                     context,
                     new LoadBoardBookingCancelRequest(
