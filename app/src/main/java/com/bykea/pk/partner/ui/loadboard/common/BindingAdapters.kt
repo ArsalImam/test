@@ -6,7 +6,7 @@ import android.widget.ListView
 import androidx.databinding.BindingAdapter
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
-import com.bykea.pk.partner.ui.loadboard.list.BookingsAdapter
+import com.bykea.pk.partner.ui.loadboard.list.JobRequestListAdapter
 
 /**
  * Contains [BindingAdapter]s.
@@ -18,7 +18,7 @@ object BindingAdapters {
     @BindingAdapter("app:items")
     @JvmStatic
     fun setItems(listView: ListView, items: List<Booking>) {
-        with(listView.adapter as BookingsAdapter) {
+        with(listView.adapter as JobRequestListAdapter) {
             replaceData(items)
         }
     }

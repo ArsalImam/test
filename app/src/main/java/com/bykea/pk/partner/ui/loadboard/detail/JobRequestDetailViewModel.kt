@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.LatLng
  *
  * @Author: Yousuf Sohail
  */
-class BookingDetailViewModel(private val bookingsRepository: BookingsRepository) : ViewModel(), BookingsDataSource.GetBookingCallback, BookingsDataSource.AcceptBookingCallback {
+class JobRequestDetailViewModel(private val bookingsRepository: BookingsRepository) : ViewModel(), BookingsDataSource.GetBookingCallback, BookingsDataSource.AcceptBookingCallback {
 
     private val _currentLatLng = MutableLiveData<LatLng>()
     val currentLatLng: LiveData<LatLng>

@@ -15,7 +15,7 @@ import java.util.*
  *
  * @Author: Yousuf Sohail
  */
-class BookingListViewModel internal constructor(private val bookingsRepository: BookingsRepository) : ViewModel() {
+class JobRequestListViewModel internal constructor(private val bookingsRepository: BookingsRepository) : ViewModel() {
 
     private val _items = MutableLiveData<List<Booking>>().apply { value = emptyList() }
     val items: LiveData<List<Booking>>
@@ -81,7 +81,7 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
     }
 
     /**
-     * Open Booking Detail screen. Called by the [BookingsAdapter].
+     * Open Booking Detail screen. Called by the [JobRequestListAdapter].
      *
      * @param bookingId [Booking] id
      */

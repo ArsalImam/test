@@ -6,17 +6,17 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.dal.Booking
-import com.bykea.pk.partner.databinding.LoadboardListItemBinding
+import com.bykea.pk.partner.databinding.JobRequestListItemBinding
 
 /**
  * List Adapter for [Booking] listing to be shown on Loadboard
  *
  * @property bookings List of booking
- * @property bookingsViewModel ViewModel for [LoadBoardListFragment]
+ * @property bookingsViewModel ViewModel for [JobRequestListFragment]
  */
-class BookingsAdapter(
+class JobRequestListAdapter(
         private var bookings: List<Booking>,
-        private val bookingsViewModel: BookingListViewModel
+        private val bookingsViewModel: JobRequestListViewModel
 ) : BaseAdapter() {
 
     fun replaceData(bookings: List<Booking>) {
@@ -30,19 +30,19 @@ class BookingsAdapter(
     override fun getItemId(position: Int) = position.toLong()
 
     override fun getView(position: Int, view: View?, viewGroup: ViewGroup): View {
-        val binding: LoadboardListItemBinding
+        val binding: JobRequestListItemBinding
         binding = if (view == null) {
             // Inflate
             val inflater = LayoutInflater.from(viewGroup.context)
 
             // Create the binding
-            LoadboardListItemBinding.inflate(inflater, viewGroup, false)
+            JobRequestListItemBinding.inflate(inflater, viewGroup, false)
         } else {
             // Recycling view
             DataBindingUtil.getBinding(view) ?: throw IllegalStateException()
         }
 
-        val userActionsListener = object : BookingItemUserActionsListener {
+        val userActionsListener = object : JobRequestListItemActionsListener {
 
             override fun onBookingClicked(booking: Booking) {
                 bookingsViewModel.openBooking(booking.id)
