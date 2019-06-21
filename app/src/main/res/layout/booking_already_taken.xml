@@ -15,12 +15,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingTop="@dimen/_8sdp"
-        android:visibility="visible"
+        android:layout_marginTop="@dimen/_8sdp"
         android:text="@string/booking_already_taken_title"
-        android:textColor="#585858"
-        android:textSize="@dimen/_26sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_30sdp"
         android:textStyle="bold"
+        android:layout_marginBottom="@dimen/_minus5sdp"
+        android:visibility="visible"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
     <com.bykea.pk.partner.widgets.FontTextView
@@ -28,12 +29,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="visible"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
         android:gravity="center"
         android:paddingBottom="@dimen/_2sdp"
         android:text="@string/booking_already_taken_msg"
-        android:textColor="#585858"
+        android:textColor="@color/black"
         android:textSize="@dimen/_26sdp"
+        android:visibility="visible"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -42,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_8sdp"
-        android:background="@drawable/button_green"
+        android:background="@drawable/button_bottom_curve"
         android:padding="@dimen/_12sdp"
         android:src="@drawable/correct_symbol"
         android:textAllCaps="false"
