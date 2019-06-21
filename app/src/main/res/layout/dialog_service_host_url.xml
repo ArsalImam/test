@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_8sdp"
-        android:background="@drawable/button_bottom_curve"
+        android:background="@drawable/button_green"
         android:padding="@dimen/_12sdp"
         android:src="@drawable/correct_symbol"
         android:textAllCaps="false"

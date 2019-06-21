@@ -14,12 +14,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/_8sdp"
+        android:paddingTop="@dimen/_8sdp"
         android:text="@string/booking_already_taken_title"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_30sdp"
+        android:textColor="#585858"
+        android:textSize="@dimen/_26sdp"
         android:textStyle="bold"
-        android:layout_marginBottom="@dimen/_minus5sdp"
         android:visibility="visible"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
@@ -33,7 +32,7 @@
         android:gravity="center"
         android:paddingBottom="@dimen/_2sdp"
         android:text="@string/booking_already_taken_msg"
-        android:textColor="@color/black"
+        android:textColor="#585858"
         android:textSize="@dimen/_26sdp"
         android:visibility="visible"
         app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -44,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_8sdp"
-        android:background="@drawable/button_bottom_curve"
+        android:background="@drawable/button_green_square"
         android:padding="@dimen/_12sdp"
         android:src="@drawable/correct_symbol"
         android:textAllCaps="false"
