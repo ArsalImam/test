@@ -265,6 +265,9 @@ public class HomeFragment extends Fragment {
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.GONE);
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                (int) getResources().getDimension(R.dimen._110sdp));
+
         return view;
     }
 
@@ -843,13 +846,13 @@ public class HomeFragment extends Fragment {
                                 }
                                 if (AppPreferences.getIsCash()) {
                                     mCurrentActivity.showLoadBoardBottomSheet();
-                                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
-                                            (int) getResources().getDimension(R.dimen._110sdp));
+                                    /*resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                                            (int) getResources().getDimension(R.dimen._110sdp));*/
                                     //callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
-                                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
-                                            (int) getResources().getDimension(R.dimen._50sdp));
+                                    /*resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                                            (int) getResources().getDimension(R.dimen._50sdp));*/
                                 }
                             } else {
                                 AppPreferences.setDriverDestination(null);
@@ -1078,12 +1081,12 @@ public class HomeFragment extends Fragment {
 
             showCancelDialogIfRequired();
             if (AppPreferences.getIsCash()) {
-                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
-                        (int) getResources().getDimension(R.dimen._110sdp));
+                /*resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                        (int) getResources().getDimension(R.dimen._110sdp));*/
                 setDriverLocation();
             } else {
-                resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
-                        (int) getResources().getDimension(R.dimen._19sdp));
+                /*resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
+                        (int) getResources().getDimension(R.dimen._19sdp));*/
             }
         }
     };
