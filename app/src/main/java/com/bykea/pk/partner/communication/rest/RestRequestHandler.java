@@ -1,8 +1,8 @@
 package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -17,11 +17,13 @@ import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
+import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.CommonResponse;
@@ -38,7 +40,6 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
@@ -65,9 +66,11 @@ import com.bykea.pk.partner.models.response.VerifyCodeResponse;
 import com.bykea.pk.partner.models.response.VerifyNumberResponse;
 import com.bykea.pk.partner.models.response.WalletHistoryResponse;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
+import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
@@ -466,6 +469,7 @@ public class RestRequestHandler {
             @Override
             public void onResponse(Call<CheckDriverStatusResponse> call, Response<CheckDriverStatusResponse> response) {
                 // Got success from server
+                Dialogs.INSTANCE.dismissDialog();
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     mResponseCallBack.onResponse(response.body());
                     Utils.redLog(TAG, new Gson().toJson(response.body().getData()));
@@ -476,6 +480,7 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Call<CheckDriverStatusResponse> call, Throwable t) {
+                Dialogs.INSTANCE.dismissDialog();
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
@@ -931,7 +936,7 @@ public class RestRequestHandler {
             public void onFailure(Call<ContactNumbersResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
-       });
+        });
     }
 
     public void requestChangePin(Context context, String newPin, String oldPin, final IResponseCallback onResponseCallBack) {
@@ -1263,42 +1268,6 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Call<LoadBoardListingResponse> call, Throwable t) {
-                onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
-
-    }
-
-    /**
-     * Request for loadboard list for all job types
-     *
-     * @param context            Context
-     * @param limit              jobs limit
-     * @param onResponseCallback callback
-     */
-    public void loadboardAllListing(final Context context, String limit, final IResponseCallback onResponseCallback) {
-        Call<LoadBoardAllListingResponse> requestCall = RestClient.getClient(context).requestLoadBoardAllListing(
-                AppPreferences.getDriverId(),
-                AppPreferences.getAccessToken(),
-                String.valueOf(AppPreferences.getLatitude())/*"24.7984714" DHA lat*/,
-                String.valueOf(AppPreferences.getLongitude())/*"67.0326814" DHA lng*/,
-                limit);
-        requestCall.enqueue(new Callback<LoadBoardAllListingResponse>() {
-            @Override
-            public void onResponse(Call<LoadBoardAllListingResponse> call, Response<LoadBoardAllListingResponse> response)  {
-                if (response == null || response.body() == null) {
-                    onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, context.getString(R.string.error_try_again));
-                    return;
-                }
-                if (response.body().isSuccess()) {
-                    onResponseCallback.onResponse(response.body());
-                } else {
-                    onResponseCallback.onError(response.body().getCode(), response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<LoadBoardAllListingResponse> call, Throwable t) {
                 onResponseCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
             }
         });
@@ -1679,5 +1648,32 @@ public class RestRequestHandler {
                 AppPreferences.getAccessToken(),
                 Double.parseDouble(Utils.getVersion()));
         restCall.enqueue(new GenericRetrofitCallBack<UpdateAppVersionResponse>(onResponseCallBack));
+    }
+
+    /**
+     * Request remote to cancel booking picked from loadboard
+     *
+     * @param context         App context
+     * @param body            Request body
+     * @param userDataHandler Callback
+     */
+    public void cancelLoadBoardBooking(Context context, LoadBoardBookingCancelRequest body, final IUserDataHandler userDataHandler) {
+        mContext = context;
+        RestClient.getClient(context).cancelLoadBoardBooking(body).enqueue(
+                new Callback<CancelRideResponse>() {
+                    @Override
+                    public void onResponse(Call<CancelRideResponse> call, Response<CancelRideResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            userDataHandler.onCancelRide(response.body());
+                        } else {
+                            userDataHandler.onError(0, response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CancelRideResponse> call, Throwable t) {
+                        userDataHandler.onError(0, t.toString());
+                    }
+                });
     }
 }

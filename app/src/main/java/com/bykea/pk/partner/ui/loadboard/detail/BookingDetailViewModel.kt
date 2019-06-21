@@ -8,6 +8,7 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.dal.source.BookingsDataSource
 import com.bykea.pk.partner.dal.source.BookingsRepository
+import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.ui.loadboard.common.Event
 import com.google.android.gms.maps.model.LatLng
 
@@ -34,17 +35,13 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     val dataLoading: LiveData<Boolean>
         get() = _dataLoading
 
-    private val _editBookingCommand = MutableLiveData<Event<Unit>>()
-    val editBookingCommand: LiveData<Event<Unit>>
-        get() = _editBookingCommand
-
     private val _acceptBookingCommand = MutableLiveData<Event<Unit>>()
     val acceptBookingCommand: LiveData<Event<Unit>>
         get() = _acceptBookingCommand
 
-    private val _acceptFailedBookingCommand = MutableLiveData<Event<Unit>>()
-    val acceptFailedBookingCommand: LiveData<Event<Unit>>
-        get() = _acceptFailedBookingCommand
+    private val _bookingTakenCommand = MutableLiveData<Event<Unit>>()
+    val bookingTakenCommand: LiveData<Event<Unit>>
+        get() = _bookingTakenCommand
 
     private val _snackbarText = MutableLiveData<Event<Int>>()
     val snackbarMessage: LiveData<Event<Int>>
@@ -53,18 +50,40 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
     val bookingId: Long?
         get() = _booking.value?.id
 
+
+    /**
+     * Start the ViewModel by fetching the [Booking] id
+     *
+     * @param bookingId [Booking.id]
+     */
     fun start(bookingId: Long) {
         _dataLoading.value = true
         bookingsRepository.getBooking(bookingId, this)
-        _currentLatLng.value = LatLng(bookingsRepository.lat, bookingsRepository.lng)
+        _currentLatLng.value = LatLng(AppPref.getLat(bookingsRepository.pref), AppPref.getLng(bookingsRepository.pref))
     }
 
+    /**
+     * Accept current booking
+     *
+     */
     fun accept() {
         bookingId?.let {
             bookingsRepository.acceptBooking(it, this)
         }
     }
 
+    /**
+     * Refresh by loading the [Booking] details all over again
+     */
+    fun onRefresh() {
+        bookingId?.let { start(it) }
+    }
+
+    /**
+     * Set hold [Booking] to be shown
+     *
+     * @param booking Updated [Booking] object
+     */
     private fun setBooking(booking: Booking?) {
         this._booking.value = booking
         _isDataAvailable.value = booking != null
@@ -85,14 +104,19 @@ class BookingDetailViewModel(private val bookingsRepository: BookingsRepository)
         _acceptBookingCommand.value = Event(Unit)
     }
 
-    override fun onBookingAcceptFailed(message: String?) {
-        _acceptFailedBookingCommand.value = Event(Unit)
+    override fun onBookingAcceptFailed(message: String?, taken: Boolean) {
+        if (taken) {
+            _bookingTakenCommand.value = Event(Unit)
+        } else {
+            showSnackbarMessage(R.string.error_try_again)
+        }
     }
 
-    fun onRefresh() {
-        bookingId?.let { start(it) }
-    }
-
+    /**
+     * Show snackbar
+     *
+     * @param message String resource id to be shown in snackbar
+     */
     fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
     }

@@ -41,14 +41,6 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -72,10 +64,20 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
@@ -83,7 +85,6 @@ import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.LocationResponse;
-import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
@@ -91,11 +92,10 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.ui.helpers.webview.FinestWebViewBuilder;
 import com.bykea.pk.partner.widgets.FontEditText;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
 import com.elvishew.xlog.XLog;
-import com.bykea.pk.partner.widgets.FontTextView;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -150,6 +150,8 @@ import javax.net.ssl.TrustManagerFactory;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
+
+import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 
 
 public class Utils {
@@ -495,10 +497,10 @@ public class Utils {
     public static void navigateToGoogleMap(Context context,
                                            double pickLat, double pickLng, double dropLat, double dropLng) {
         try {
-            String startAddr = pickLat+","+pickLng;
+            String startAddr = pickLat + "," + pickLng;
             String endAddr = dropLat + "," + dropLng;
             String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
-                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
+                    Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr + TRANSIT_MODE_BIKE;
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
             intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
                     Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);

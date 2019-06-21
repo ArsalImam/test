@@ -37,9 +37,6 @@ class LoadBoardListFragment : Fragment() {
 
     private lateinit var viewDataBinding: LoadboardBookingsFragBinding
     private lateinit var listAdapter: BookingsAdapter
-
-    private val isVisibleFirstTime = true
-
     private var mBehavior: BottomSheetBehavior<*>? = null
 
     var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
@@ -66,8 +63,10 @@ class LoadBoardListFragment : Fragment() {
                 })
                 isExpended.observe(this@LoadBoardListFragment, Observer {
                     if (it) {
+                        relativeLayoutBottomView.visibility = View.VISIBLE
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
+                        relativeLayoutBottomView.visibility = View.GONE
                         if (viewmodel?.empty?.value!!) {
                             relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                         } else {
@@ -80,7 +79,8 @@ class LoadBoardListFragment : Fragment() {
                     if (it) {
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
-                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+                        if (!viewmodel?.isExpended?.value!!)
+                            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
                     }
                 })
 
@@ -105,7 +105,7 @@ class LoadBoardListFragment : Fragment() {
         view.post {
             val parent = view.getParent() as View
             val params = parent.layoutParams as CoordinatorLayout.LayoutParams
-            params.height = getScreenHeight()
+            params.height = Resources.getSystem().displayMetrics.heightPixels
             val behavior = params.behavior
             mBehavior = behavior as BottomSheetBehavior<*>?
             mBehavior!!.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -152,6 +152,10 @@ class LoadBoardListFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup List Adapter
+     *
+     */
     private fun setupListAdapter() {
         val viewModel = viewDataBinding.viewmodel
         if (viewModel != null) {
@@ -163,6 +167,11 @@ class LoadBoardListFragment : Fragment() {
         }
     }
 
+    /**
+     * Toggle Bottom Sheet Toolbar
+     *
+     * @param alpha Alpha value to be applied on Toolbar
+     */
     private fun toggleBottomSheetToolbar(alpha: Float) {
         if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
             bottomSheetToolbarLayout.visibility = View.VISIBLE
@@ -187,128 +196,8 @@ class LoadBoardListFragment : Fragment() {
         }
     }
 
-
-    private fun getScreenHeight(): Int {
-        return Resources.getSystem().getDisplayMetrics().heightPixels
-    }
-
     companion object {
         fun newInstance() = LoadBoardListFragment()
         private const val TAG = "BookingsFragment"
     }
-
-
-/*    private fun getData() {
-        val call = ApiClient.build()?.getLoadboardListMock()
-        call?.enqueue(object : Callback<GetLoadboardListingResponse> {
-
-            override fun onFailure(call: Call<GetLoadboardListingResponse>, t: Throwable) {
-//                callback.onDataNotAvailable(t.message)
-                Toast.makeText(this@LoadBoardListFragment.activity, "Failed", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onResponse(call: Call<GetLoadboardListingResponse>, response: Response<GetLoadboardListingResponse>) {
-                response.body()?.let {
-                    if (response.isSuccessful && it.isSuccess()) {
-                        Log.v(BookingsRemoteDataSource::class.java.simpleName, "data ${it.data}")
-//                        setAdapter(it.data)
-                    } else {
-                        Toast.makeText(this@LoadBoardListFragment.activity, "Failed", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        })
-    }*/
-
-/*
-    private fun setAdapter(bookingArrayList: List<Booking>?) {
-        if (true) {//bookingArrayList != null && bookingArrayList.size > 0) {
-            bookingsList.layoutManager = LinearLayoutManager(context)
-            bookingsList.adapter = LoadBoardListAdapter(activity, ArrayList<Booking>(), LoadBoardListAdapter.ItemClickListener {
-                if (mBehavior != null && mBehavior!!.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-                    mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
-                } else {
-//                      ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(mCurrentActivity, item.getId());
-                }
-                Utils.appToast(activity?.applicationContext, "Loadboard Booking Id: ${it}")
-            })
-        } else {
-            showBottomSheetNoJobsAvailableHint()
-        }
-    }
-
-*/
-
-    /**
-     * show progress loader while loadboard jobs listing api is being requested
-     */
-    private fun showBottomSheetLoader() {
-        bottomSheetLoader.visibility = View.VISIBLE
-        bottomSheetNoJobsAvailableTV.visibility = View.GONE
-        bookingsList.visibility = View.GONE
-    }
-
-    /**
-     * show No Jobs Available as hint to the user that selected zone does not have job yet.
-     */
-    private fun showBottomSheetNoJobsAvailableHint() {
-        bottomSheetLoader.visibility = View.GONE
-        bottomSheetNoJobsAvailableTV.visibility = View.VISIBLE
-        bookingsList.visibility = View.GONE
-    }
-
-/*private inner class ViewHolder internal constructor(inflater: LayoutInflater, parent: ViewGroup)
-    : RecyclerView.ViewHolder(inflater.inflate(R.layout.fragment_booking_list_dialog_item, parent, false)) {
-
-    internal val li_LoadboardDropOffTV: AutoFitFontTextView = itemView.li_LoadboardDropOffTV
-    internal val tvFare: AutoFitFontTextView = itemView.tv_fare
-
-    init {
-        itemView.setOnClickListener {
-            mOnLoadBoardListFragmentInteractionListener?.onBookingClicked(getItem(adapterPosition))
-        }
-    }
-
-    private fun getItem(adapterPosition: Int): Long {
-        return adapterPosition.toLong() //TODO : REMOVE
-//            return bookingArrayList!!.get(adapterPosition).id;
-    }
-}
-
-private inner class BookingAdapter(val items: ArrayList<Booking>) : RecyclerView.Adapter<ViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context), parent)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.li_LoadboardDropOffTV.setText(context!!.resources.getString(R.string.not_selected_ur))
-        holder.tvFare.setText(context!!.resources.getString(R.string.dash))
-
-        *//*val item: Booking = items.get(position)
-
-            when (item.getTripType()) {
-                Constants.TripTypes.RIDE_TYPE -> holder.ivServiceIcon.setImageResource(R.drawable.ride)
-                Constants.TripTypes.PURCHASE_TYPE -> holder.ivServiceIcon.setImageResource(R.drawable.lay_ao)
-                Constants.TripTypes.DELIVERY_TYPE -> holder.ivServiceIcon.setImageResource(R.drawable.bhejdo)
-                else -> holder.ivServiceIcon.setImageResource(R.drawable.bhejdo)
-            }
-           if (item.getDropoffZone() != null) {
-                holder.li_LoadboardDropOffTV.setText(context!!.resources.getString(R.string.pick_drop_name_ur, item.getDropoffZone().getUrduName()))
-            } else {
-                holder.li_LoadboardDropOffTV.setText(context!!.resources.getString(R.string.not_selected_ur))
-            }
-            if (item.getFare() != null) {
-                holder.tvFare.setText(context!!.resources.getString(R.string.seleted_amount_rs, item.getFare()))
-            } else {
-                holder.tvFare.setText(context!!.resources.getString(R.string.dash))
-            }*//*
-        }
-
-        override fun getItemCount(): Int {
-            return 6
-        }
-    }*/
-
-
 }

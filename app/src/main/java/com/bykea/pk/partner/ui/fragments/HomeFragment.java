@@ -42,7 +42,6 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -394,47 +393,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    /**
-     * making loadboard jobs listing api call when driver's status is cash
-     */
-    private void callLoadBoardListingAPI() {
-        if (Connectivity.isConnectedFast(mCurrentActivity)) {
-            //get selected pickup and dropoff zone data from local storage
-//            ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
-//            ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
-            repository.requestLoadBoardAllListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
-//                    pickupZone == null ? null : pickupZone.get_id(),
-//                    dropoffZone == null ? null : dropoffZone.get_id(),
-                    new UserDataHandler() {
-                        @Override
-                        public void onLoadboardAllListingApiResponse(LoadBoardAllListingResponse response) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            if (response != null && response.getData() != null) {
-                                if (mCurrentActivity != null) {
-//                                    mCurrentActivity.showLoadBoardBottomSheet(response.getData());
-                                    resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._79sdp),
-                                            (int) mCurrentActivity.getResources().getDimension(R.dimen._110sdp));
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onError(int errorCode, String errorMessage) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                                Utils.onUnauthorized(mCurrentActivity);
-                            } else {
-                                Utils.appToast(mCurrentActivity, errorMessage);
-                                mCurrentActivity.hideLoadBoardBottomSheet();
-                                resetPositionOfMapPinAndSelectedCashView((int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
-                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
-                            }
-
-                        }
-                    });
-        }
-    }
-
     /***
      * Handle UI logic and API status call for driver availability according to
      * ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS check if user allowed it.
@@ -581,8 +539,6 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-        if (AppPreferences.getAvailableStatus() && AppPreferences.getIsCash())
-            mCurrentActivity.showLoadBoardBottomSheet();
 //            callLoadBoardListingAPI();
     }
 
@@ -591,6 +547,7 @@ public class HomeFragment extends Fragment {
             return;
         }
         if (!AppPreferences.getAvailableStatus()) {
+            mCurrentActivity.hideLoadBoardBottomSheet();
 
             //inactive state
             getDriverPerformanceData();
@@ -621,6 +578,7 @@ public class HomeFragment extends Fragment {
 
             }
         } else {        //active state
+            mCurrentActivity.showLoadBoardBottomSheet();
 
             myRangeBarLayout.setVisibility(View.INVISIBLE);
             myRangeBarTopLine.setVisibility(View.INVISIBLE);
@@ -885,6 +843,8 @@ public class HomeFragment extends Fragment {
                                 }
                                 if (AppPreferences.getIsCash()) {
                                     mCurrentActivity.showLoadBoardBottomSheet();
+                                    resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
+                                            (int) getResources().getDimension(R.dimen._110sdp));
                                     //callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
@@ -1132,11 +1092,13 @@ public class HomeFragment extends Fragment {
      * This method checks if cancel dialog need to be shown or not by checking Intent Extras
      */
     private void showCancelDialogIfRequired() {
+        if (Dialogs.INSTANCE.isShowing())
+            Dialogs.INSTANCE.dismissDialog();
+
         if (mCurrentActivity != null &&
                 null != mCurrentActivity.getIntent() &&
                 null != mCurrentActivity.getIntent().getExtras() &&
                 mCurrentActivity.getIntent().getBooleanExtra(Constants.Extras.IS_CANCELED_TRIP, false) &&
-                !Dialogs.INSTANCE.isShowing() &&
                 !mCurrentActivity.isFinishing()) {
             if (!mCurrentActivity.isDialogShown() && getView() != null) {
                 mCurrentActivity.setDialogShown(true);
@@ -1494,7 +1456,8 @@ public class HomeFragment extends Fragment {
         HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
     }
 
-     /** Check the Type of request is it batch request or single
+    /**
+     * Check the Type of request is it batch request or single
      *
      * <p>
      * <p>

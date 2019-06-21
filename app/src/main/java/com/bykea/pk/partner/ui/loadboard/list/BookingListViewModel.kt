@@ -54,33 +54,50 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
             _isExpended = value
         }
 
+    /**
+     * Start the ViewModel by fetching the booking listing to be shown on loadboard
+     *
+     */
     fun start() {
         loadBookings(false)
         isExpended.value = false
     }
 
+    /**
+     * Refresh by loading the fresh booking listing
+     *
+     */
     fun refresh() {
         loadBookings(true)
     }
 
+    /**
+     * Load Booking list from Repository
+     *
+     * @param forceUpdate Pass in true to refresh the data in the [BookingsDataSource]
+     */
     private fun loadBookings(forceUpdate: Boolean) {
         loadBookings(forceUpdate, true)
     }
 
     /**
-     * Called by the [BookingsAdapter].
+     * Open Booking Detail screen. Called by the [BookingsAdapter].
+     *
+     * @param bookingId [Booking] id
      */
     internal fun openBooking(bookingId: Long) {
         _openBookingEvent.value = Event(bookingId)
     }
 
     /**
+     * Load Booking list from Repository
+     *
      * @param forceUpdate   Pass in true to refresh the data in the [BookingsDataSource]
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
     private fun loadBookings(forceUpdate: Boolean, showLoadingUI: Boolean) {
         if (showLoadingUI) {
-            _dataLoading.setValue(true)
+            _dataLoading.value = true
         }
         if (forceUpdate) {
             bookingsRepository.refreshBookings()
@@ -93,7 +110,7 @@ class BookingListViewModel internal constructor(private val bookingsRepository: 
             }
 
             override fun onDataNotAvailable(errorMsg: String?) {
-                //TODO: Show error if needed
+                if (showLoadingUI) _dataLoading.value = false
             }
         })
     }

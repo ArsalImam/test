@@ -1047,7 +1047,15 @@ public enum Dialogs {
         }
     }
 
-    public void showAlertDialogTick(Context context, String mTitle, String mMesssage) {
+    /**
+     *
+     * GENERIC DIALOG
+     * @param mTitle ? View.VISIBLE : View.GONE
+     * @param mMesssage ? View.VISIBLE : View.GONE
+     * @param onClick ? If Want To Perform Another Operation, Implement Callback Else Send Null (As Dialog Will Already Being
+     *                  Dismiss By OnClick
+     */
+    public void showAlertDialogTick(Context context, String mTitle, String mMesssage, View.OnClickListener onClick) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
@@ -1070,7 +1078,10 @@ public enum Dialogs {
 
             mDialog.findViewById(R.id.ivPositive).setOnClickListener(v -> {
                 dismissDialog();
+                if (onClick != null)
+                    onClick.onClick(v);
             });
+
             mDialog.setCancelable(false);
 
             showDialog();

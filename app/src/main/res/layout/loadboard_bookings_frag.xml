@@ -50,25 +50,25 @@
         <FrameLayout
             android:id="@+id/bottomSheetToolbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/_50sdp"
             android:background="@color/white"
             android:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/bottomSheetBackIV"
-                android:layout_width="35dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_50sdp"
                 android:onClick="@{() -> listener.onBackClicked()}"
-                android:padding="9dp"
+                android:padding="@dimen/_9sdp"
                 app:srcCompat="@mipmap/icon_backarrow_green" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/bottomSheetRefreshIV"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
                 android:layout_gravity="center"
                 android:onClick="@{() -> listener.onRefreshClicked()}"
-                android:padding="10dp"
+                android:padding="@dimen/_10sdp"
                 app:srcCompat="@mipmap/icon_refresh" />
         </FrameLayout>
 
@@ -147,17 +147,25 @@
                 android:id="@+id/bookingsList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_above="@+id/relativeLayoutBottomView"
                 app:items="@{viewmodel.items}" />
+
+            <View
+                android:id="@+id/relativeLayoutBottomView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/bottomSheetNoJobsAvailableTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="14dp"
+                android:padding="@dimen/_14sdp"
                 android:text="@string/wait_for_booking"
                 android:textColor="@color/dark_gray656565"
-                android:textSize="18dp"
+                android:textSize="@dimen/_18sdp"
                 android:visibility="@{viewmodel.empty ? View.VISIBLE: View.GONE }"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 

@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 34
-        versionName "5.4"
+        versionCode 35
+        versionName "5.5"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -72,7 +72,7 @@ android {
         productFlavors {
             local {
                 dimension "driver"
-                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3001\""
             }
             staging {
                 dimension "driver"
@@ -213,6 +213,9 @@ dependencies {
 
     // Testing dependencies
     testImplementation "junit:junit:$rootProject.junitVersion"
+
+    //Amazon client sdk to upload file
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
 }
 
 apply plugin: 'com.google.gms.google-services'

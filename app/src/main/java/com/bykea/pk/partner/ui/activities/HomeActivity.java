@@ -24,9 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.LoadBoardAllListingData;
 import com.bykea.pk.partner.models.data.PilotData;
-import com.bykea.pk.partner.models.response.LoadBoardAllListingResponse;
 import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -36,11 +34,9 @@ import com.bykea.pk.partner.ui.fragments.LoadboardZoneFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
-import com.bykea.pk.partner.ui.loadboard.list.LoadBoardListAdapter;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -48,8 +44,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,13 +61,6 @@ public class HomeActivity extends BaseActivity {
     private EventBus mBus = EventBus.getDefault();
     private PilotData pilotData;
     private UserRepository mUserRepository;
-
-    /**
-     * loadboard jobs adapter and list to show on main screen
-     */
-    private LoadBoardListAdapter mloadBoardListAdapter;
-    private ArrayList<LoadBoardAllListingData> mlist = new ArrayList<>();
-
 
     @BindView(R.id.toolbarLine)
     View toolbarLine;
@@ -395,8 +382,8 @@ public class HomeActivity extends BaseActivity {
         //    TODO:COMMENTED
 //        showBottomSheetLoader();
 
-        if (!AppPreferences.getAvailableStatus() || !AppPreferences.getIsCash())
-            hideLoadBoardBottomSheet();
+        if (AppPreferences.getAvailableStatus()) showLoadBoardBottomSheet();
+        else hideLoadBoardBottomSheet();
     }
 
     /**
@@ -405,7 +392,7 @@ public class HomeActivity extends BaseActivity {
      * @param visibility VISIBLE/GONE
      */
     public void toggleBottomSheetOnNavigationMenuSelection(int visibility) {
-        if (bottomSheet != null && mlist != null)
+        if (bottomSheet != null)
             bottomSheet.setVisibility(visibility);
     }
 
@@ -417,9 +404,8 @@ public class HomeActivity extends BaseActivity {
 
     //    TODO:COMMENTED
     public void showLoadBoardBottomSheet() {
-        if (bottomSheet != null/* && list != null*/) {
+        if (bottomSheet != null) {
             bottomSheet.setVisibility(View.VISIBLE);
-            // updateList(list);
         }
     }
 
@@ -429,31 +415,8 @@ public class HomeActivity extends BaseActivity {
     public void hideLoadBoardBottomSheet() {
         if (bottomSheet != null) {
             bottomSheet.setVisibility(View.GONE);
-            //    TODO:COMMENTED
-          /*  if (mlist != null)
-                mlist.clear();*/
         }
     }
-
-    /**
-     * updating loadboard jobs list when api returns jobs
-     *
-     * @param list jobs list
-     */
-
-    //    TODO:COMMENTED
-    /*public void updateList(ArrayList<LoadBoardAllListingData> list) {
-        if (mloadBoardListAdapter != null && mlist != null) {
-            if (list.size() > 0) {
-                mlist.clear();
-                mlist.addAll(list);
-                mloadBoardListAdapter.notifyDataSetChanged();
-                showBottomSheetJobsList();
-            } else {
-                showBottomSheetNoJobsAvailableHint();
-            }
-        }
-    }*/
 
     /**
      * VISIBLE/GONE connections status on main screen's toolbar
@@ -492,79 +455,4 @@ public class HomeActivity extends BaseActivity {
                 break;
         }
     }
-
-    /**
-     * making refresh call of loadboard jobs listing api when driver's status is cash
-     */
-    private void refreshLoadBoardListingAPI() {
-        if (Connectivity.isConnectedFast(mCurrentActivity)) {
-            if (AppPreferences.getIsCash()) {
-                showLoadBoardBottomSheet();
-//                callLoadboardListingAPI();
-            }
-        } else {
-            Utils.appToast(this, getString(R.string.internet_error));
-        }
-    }
-
-    /**
-     * making loadboard jobs request
-     */
-    private void callLoadboardListingAPI() {
-        Dialogs.INSTANCE.showLoader(mCurrentActivity);
-//        ZoneData pickupZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_PICKUP_ZONE);
-//        ZoneData dropoffZone = AppPreferences.getSelectedLoadboardZoneData(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE);
-        new UserRepository().requestLoadBoardAllListingAPI(mCurrentActivity, Constants.LOADBOARD_JOBS_LIMIT,
-//                pickupZone == null ? null : pickupZone.get_id(),
-//                dropoffZone == null ? null : dropoffZone.get_id(),
-                new UserDataHandler() {
-                    @Override
-                    public void onLoadboardAllListingApiResponse(LoadBoardAllListingResponse response) {
-                        Dialogs.INSTANCE.dismissDialog();
-                        if (response != null && response.getData() != null) {
-                            if (mCurrentActivity != null) {
-                                //updateList(response.getData());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(int errorCode, String errorMessage) {
-                        Dialogs.INSTANCE.dismissDialog();
-                        if (errorCode == HTTPStatus.UNAUTHORIZED) {
-                            Utils.onUnauthorized(mCurrentActivity);
-                        } else {
-                            Utils.appToast(mCurrentActivity, errorMessage);
-                            hideLoadBoardBottomSheet();
-                            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
-                            if (currentFragment instanceof HomeFragment) {
-                                ((HomeFragment) currentFragment).resetPositionOfMapPinAndSelectedCashView(
-                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._19sdp),
-                                        (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp));
-                            }
-                        }
-                    }
-                });
-    }
-
-    /**
-     * display/inflate zone selection screen
-     *
-     * @param fragment loadboard zone screen/fragment reference
-     */
-    private void showLoadboardZoneScreen(LoadboardZoneFragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.drawerMainActivity, fragment, fragment.getClass().getName())
-                .addToBackStack(null).commitAllowingStateLoss();
-    }
-
-/*    @Override
-    public void onBookingClicked(long bookingId) {
-        if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        } else {
-//            ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(mCurrentActivity, item.getId());
-        }
-        Toast.makeText(mCurrentActivity, "Loadboard Booking Id: " + bookingId, Toast.LENGTH_SHORT).show();
-    }*/
 }

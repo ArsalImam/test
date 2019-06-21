@@ -265,7 +265,7 @@
     <string name="dha_ur">ڈی ایچ اے</string>
     <string name="nazimabad_ur">نارتھ ناظم آباد</string>
     <string name="selected_amount_ur"> منتخب رقم </string>
-    <string name="seleted_amount_rs"> Rs.%1$d&#160;</string>
+    <string name="seleted_amount_rs"> Rs.&#160;%1$d&#160;</string>
     <string name="acha_connection_ur">اچھا کنکشن</string>
     <string name="bura_connection_ur">برا کنکشن</string>
     <string name="low_battery_ur">لو بیٹری</string>
@@ -352,7 +352,7 @@
     <string name="how_it_works">How it Works</string>
     <string name="no_browser_found_error">Browser not found on Device</string>
 
-    <string name="booking_already_taken_title">!معذرت</string>
+    <string name="booking_already_taken_title">معذرت!</string>
     <string name="booking_already_taken_msg">یہ بکنگ کسی اور پارٹنر نے اسٹارٹ کرلی ہے</string>
     <string name="no_voice_note_available">No voice note available</string>
     <string name="err_booking_accept_failed">Failed to accept booking. Refresh the list and try again.</string>

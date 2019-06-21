@@ -17,6 +17,7 @@
 package com.bykea.pk.partner.dal.util
 
 import android.content.Context
+import android.preference.PreferenceManager
 import com.bykea.pk.partner.dal.source.BookingsRepository
 import com.bykea.pk.partner.dal.source.local.AppDatabase
 import com.bykea.pk.partner.dal.source.local.BookingsLocalDataSource
@@ -28,11 +29,18 @@ import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
  */
 object Injection {
 
-    fun provideBookingsRepository(context: Context, driverId: String, token: String, lat: Double, lng: Double): BookingsRepository {
+    /**
+     * Provides Booking repository with all of it's dependencies resolved.
+     *
+     * @param context App Context
+     * @return [BookingsRepository]
+     */
+    fun provideBookingsRepository(context: Context): BookingsRepository {
         val database = AppDatabase.getInstance(context)
-        return BookingsRepository.getInstance(BookingsRemoteDataSource(),
-                BookingsLocalDataSource.getInstance(AppExecutors(), database.bookingsDao())
-                , driverId, token, lat, lng
-        )
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        return BookingsRepository.getInstance(
+                BookingsRemoteDataSource(),
+                BookingsLocalDataSource.getInstance(AppExecutors(), database.bookingsDao()),
+                preferences)
     }
 }

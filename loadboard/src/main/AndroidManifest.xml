@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bykea.pk.partner.loadboard">
+<manifest package="com.bykea.pk.partner.loadboard">
 
     <application>
-        <activity
-            android:name=".BookingDetailActivity"
-            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

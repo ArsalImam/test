@@ -209,6 +209,7 @@ public class Constants {
         public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
         public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
         public final static String ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL = "ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL";
+        public final static String IS_CALLED_FROM_LOADBOARD = "IS_CALLED_FROM_LOADBOARD";
     }
 
     public static class Broadcast {
@@ -241,6 +242,7 @@ public class Constants {
     public static class GoogleMap {
         public final static String GOOGLE_NAVIGATE_ENDPOINT = "http://maps.google.com/maps?saddr=";
         public final static String GOOGLE_DESTINATION_ENDPOINT = "&daddr=";
+        public final static String TRANSIT_MODE_BIKE = "&mode=motorbike";
         public final static String GOOGLE_MAP_PACKAGE = "com.google.android.apps.maps";
         public final static String GOOGLE_MAP_ACTIVITY = "com.google.android.maps.MapsActivity";
     }
@@ -286,6 +288,7 @@ public class Constants {
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
     public final static int LOCATION_API_WAIT_ON_INACTIVE_PUSH = 15000;
+    public final static int HANDLER_POST_DELAY_LOAD_BOARD = 1000;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
 
@@ -348,6 +351,8 @@ public class Constants {
 
         public static final String SEND_NAME = "Send";
         public static final String SEND_TITLE = "Delivery";
+        public static final int SEND_CODE = 21;
+        public static final int SEND_COD_CODE = 22;
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -479,4 +484,13 @@ public class Constants {
     public static final int MARKER_INCREMENT_FACTOR_FOUR_KM = 4000;
     public static final int MARKER_INCREMENT_FACTOR_TWO_KM = 2000;
 
+
+    public static final String FILE_EXT = ".aac";
+    public static final String AUDIO_TEMP_FILE_NAME = "tempFile";
+
+    //Amazon credentials
+    public static class Amazon {
+        public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
+        public static String BUCKET_NAME = "loadboard";
+    }
 }
