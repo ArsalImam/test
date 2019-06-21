@@ -358,6 +358,6 @@
     <string name="err_booking_accept_failed">Failed to accept booking. Refresh the list and try again.</string>
     <string name="enter_your_ip">enter your ip</string>
     <string name="enter_valid_ip">enter valid url</string>
-    <string name="enter_your_loadboard_ip">enter your ip</string>
-    <string name="enter_valid_loadboard_ip">enter valid url</string>
+    <string name="enter_your_loadboard_ip">enter your loadboard ip</string>
+    <string name="enter_valid_loadboard_ip">enter valid loadboard url</string>
 </resources>
