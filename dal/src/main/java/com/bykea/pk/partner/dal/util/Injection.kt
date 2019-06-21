@@ -40,7 +40,7 @@ object Injection {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         return JobRequestsRepository.getInstance(
                 JobRequestsRemoteDataSource(),
-                JobRequestsLocalDataSource.getInstance(AppExecutors(), database.bookingsDao()),
+                JobRequestsLocalDataSource.getInstance(AppExecutors(), database.jobRequestsDao()),
                 preferences)
     }
 }

@@ -1,6 +1,6 @@
 package com.bykea.pk.partner.dal.source
 
-import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.JobRequest
 
 /**
  * Main entry point for accessing job requests data.
@@ -11,65 +11,65 @@ import com.bykea.pk.partner.dal.Booking
 interface JobRequestsDataSource {
 
     /**
-     * Get Booking Listing
+     * Get JobRequest Listing
      *
      * @param callback Callback to executed
      */
     fun getJobRequests(callback: LoadJobRequestsCallback)
 
     /**
-     * Fetch Booking details
+     * Fetch JobRequest details
      *
-     * @param bookingId Id of Booking to be fetched
+     * @param jobRequestId Id of JobRequest to be fetched
      * @param callback Callback to executed
      */
-    fun getJobRequest(bookingId: Long, callback: GetJobRequestCallback)
+    fun getJobRequest(jobRequestId: Long, callback: GetJobRequestCallback)
 
     /**
-     * Save Booking to data source
+     * Save JobRequest to data source
      *
-     * @param booking
+     * @param jobRequest
      */
-    fun saveJobRequest(booking: Booking)
+    fun saveJobRequest(jobRequest: JobRequest)
 
     /**
-     * Accept booking
+     * Accept jobRequest
      *
-     * @param bookingId Id of Booking to be accepted
+     * @param jobRequestId Id of JobRequest to be accepted
      */
-    fun acceptJobRequest(bookingId: Long, callback: AcceptJobRequestCallback)
+    fun acceptJobRequest(jobRequestId: Long, callback: AcceptJobRequestCallback)
 
     /**
-     * Re-fetch booking listing
+     * Re-fetch jobRequest listing
      *
      */
     fun refreshJobRequestList()
 
     /**
-     * Delete all booking from data source
+     * Delete all jobRequest from data source
      *
      */
     fun deleteAllJobRequests()
 
     /**
-     * Delete booking from data source
+     * Delete jobRequest from data source
      *
-     * @param bookingId Id of booking to be deleted
+     * @param jobRequestId Id of jobRequest to be deleted
      */
-    fun deleteJobRequest(bookingId: Long)
+    fun deleteJobRequest(jobRequestId: Long)
 
     /**
-     * Callback interface used for fetch Booking listing
+     * Callback interface used for fetch JobRequest listing
      *
      */
     interface LoadJobRequestsCallback {
 
         /**
-         * On successfully Booking listing loaded
+         * On successfully JobRequest listing loaded
          *
          * @param jobRequests
          */
-        fun onJobRequestsLoaded(jobRequests: List<Booking>)
+        fun onJobRequestsLoaded(jobRequests: List<JobRequest>)
 
         /**
          * On data not available on data source
@@ -80,17 +80,17 @@ interface JobRequestsDataSource {
     }
 
     /**
-     * Callback interface used for fetch Booking details
+     * Callback interface used for fetch JobRequest details
      *
      */
     interface GetJobRequestCallback {
 
         /**
-         * On successfully Booking detail loaded
+         * On successfully JobRequest detail loaded
          *
          * @param jobRequest
          */
-        fun onBookingLoaded(jobRequest: Booking)
+        fun onJobRequestLoaded(jobRequest: JobRequest)
 
         /**
          * On data not available on data source
@@ -101,7 +101,7 @@ interface JobRequestsDataSource {
     }
 
     /**
-     * Callback interface used for accepting Booking
+     * Callback interface used for accepting JobRequest
      *
      */
     interface AcceptJobRequestCallback {

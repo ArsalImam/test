@@ -4,42 +4,42 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.JobRequest
 
 /**
- * The Data Access Object for the [Booking] class.
+ * The Data Access Object for the [JobRequest] class.
  *
  * @Author: Yousuf Sohail
  */
 @Dao
 interface JobRequestsDao {
 
-    @Query("SELECT * FROM Bookings")
-    fun getBookings(): List<Booking>
+    @Query("SELECT * FROM JobRequests")
+    fun getJobRequests(): List<JobRequest>
 
-    @Query("SELECT * FROM Bookings WHERE id = :bookingId")
-    fun getBooking(bookingId: Long): Booking?
+    @Query("SELECT * FROM JobRequests WHERE id = :jobRequestId")
+    fun getJobRequest(jobRequestId: Long): JobRequest?
 
     /**
-     * Insert a booking in the database. If the booking already exists, replace it.
+     * Insert a jobRequest in the database. If the jobRequest already exists, replace it.
      *
-     * @param booking the booking to be inserted.
+     * @param jobRequest the jobRequest to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(booking: Booking)
+    fun insert(jobRequest: JobRequest)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(bookings: List<Booking>)
+    fun insertAll(jobRequests: List<JobRequest>)
 
     /**
-     * Delete all bookings.
+     * Delete all jobRequests.
      */
-    @Query("DELETE FROM Bookings")
+    @Query("DELETE FROM JobRequests")
     fun deleteAll()
 
     /**
-     * Delete a booking by id.
+     * Delete a jobRequest by id.
      */
-    @Query("DELETE FROM Bookings WHERE id = :bookingId")
-    fun delete(bookingId: Long)
+    @Query("DELETE FROM JobRequests WHERE id = :jobRequestId")
+    fun delete(jobRequestId: Long)
 }

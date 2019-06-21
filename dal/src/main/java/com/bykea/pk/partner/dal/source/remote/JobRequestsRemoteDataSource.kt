@@ -22,7 +22,7 @@ class JobRequestsRemoteDataSource {
      * @param limit Number of items to be fetched
      * @param callback Callback to be executed on response from remote data source
      */
-    fun getBookings(driverId: String, token: String, lat: Double, lng: Double, serviceCode: Int?, limit: Int, callback: JobRequestsDataSource.LoadJobRequestsCallback) {
+    fun getJobRequests(driverId: String, token: String, lat: Double, lng: Double, serviceCode: Int?, limit: Int, callback: JobRequestsDataSource.LoadJobRequestsCallback) {
 
         val call = ApiClient.build()?.getJobRequestList(driverId, token, lat, lng, serviceCode)
         call?.enqueue(object : Callback<GetJobRequestListResponse> {
@@ -54,7 +54,7 @@ class JobRequestsRemoteDataSource {
      * @param lng User's location longitude
      * @param callback Callback to be executed on response from remote data source
      */
-    fun getBooking(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobRequestsDataSource.GetJobRequestCallback) {
+    fun getJobRequest(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobRequestsDataSource.GetJobRequestCallback) {
 
         val call = ApiClient.build()?.getJobRequestDetail(driverId, token, bookingId, lat, lng)
         call?.enqueue(object : Callback<GetJobRequestDetailResponse> {
@@ -67,7 +67,7 @@ class JobRequestsRemoteDataSource {
                 response.body()?.let {
                     if (response.isSuccessful && it.isSuccess()) {
                         Log.v(JobRequestsRemoteDataSource::class.java.simpleName, "data ${it.data}")
-                        callback.onBookingLoaded(it.data)
+                        callback.onJobRequestLoaded(it.data)
                     } else {
                         callback.onDataNotAvailable(it.message)
                     }
@@ -78,12 +78,12 @@ class JobRequestsRemoteDataSource {
 
 
     /**
-     * Accept Booking
+     * Accept Job Request
      *
-     * @param bookingId Id of Booking to be accepted
+     * @param jobRequestId Id of Booking to be accepted
      */
-    fun acceptBooking(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobRequestsDataSource.AcceptJobRequestCallback) {
-        val call = ApiClient.build()?.acceptJobRequest(bookingId, driverId, token, AcceptJobRequestRequest(lat, lng))
+    fun acceptJobRequest(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobRequestsDataSource.AcceptJobRequestCallback) {
+        val call = ApiClient.build()?.acceptJobRequest(jobRequestId, driverId, token, AcceptJobRequestRequest(lat, lng))
         call?.enqueue(object : Callback<AcceptJobRequestResponse> {
 
             override fun onFailure(call: Call<AcceptJobRequestResponse>, t: Throwable) {

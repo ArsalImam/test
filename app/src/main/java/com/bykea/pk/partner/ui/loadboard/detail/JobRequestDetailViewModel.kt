@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.dal.source.JobRequestsDataSource
 import com.bykea.pk.partner.dal.source.JobRequestsRepository
 import com.bykea.pk.partner.dal.source.pref.AppPref
@@ -23,8 +23,8 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobRequestsRepos
     val currentLatLng: LiveData<LatLng>
         get() = _currentLatLng
 
-    private val _booking = MutableLiveData<Booking>()
-    val booking: LiveData<Booking>
+    private val _booking = MutableLiveData<JobRequest>()
+    val jobRequest: LiveData<JobRequest>
         get() = _booking
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
@@ -52,9 +52,9 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobRequestsRepos
 
 
     /**
-     * Start the ViewModel by fetching the [Booking] id
+     * Start the ViewModel by fetching the [JobRequest] id
      *
-     * @param bookingId [Booking.id]
+     * @param bookingId [JobRequest.id]
      */
     fun start(bookingId: Long) {
         _dataLoading.value = true
@@ -73,23 +73,23 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobRequestsRepos
     }
 
     /**
-     * Refresh by loading the [Booking] details all over again
+     * Refresh by loading the [JobRequest] details all over again
      */
     fun onRefresh() {
         bookingId?.let { start(it) }
     }
 
     /**
-     * Set hold [Booking] to be shown
+     * Set hold [JobRequest] to be shown
      *
-     * @param booking Updated [Booking] object
+     * @param jobRequest Updated [JobRequest] object
      */
-    private fun setBooking(booking: Booking?) {
-        this._booking.value = booking
-        _isDataAvailable.value = booking != null
+    private fun setBooking(jobRequest: JobRequest?) {
+        this._booking.value = jobRequest
+        _isDataAvailable.value = jobRequest != null
     }
 
-    override fun onBookingLoaded(jobRequest: Booking) {
+    override fun onJobRequestLoaded(jobRequest: JobRequest) {
         setBooking(jobRequest)
         _dataLoading.value = false
     }

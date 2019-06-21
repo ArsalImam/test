@@ -43,7 +43,7 @@ interface ApiInterface {
     fun getJobRequestDetail(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
-            @Path("booking_id") bookingId: Long,
+            @Path("booking_id") jobRequestId: Long,
             @Query("lat") lat: Double,
             @Query("lng") lng: Double): Call<GetJobRequestDetailResponse>
 

@@ -1,49 +1,53 @@
 package com.bykea.pk.partner.dal.source.local
 
 import androidx.annotation.VisibleForTesting
-import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.dal.source.JobRequestsDataSource
 import com.bykea.pk.partner.dal.util.AppExecutors
 
 /**
- * Concrete implementation of a data source as a db.
+ * Concrete implementation of Job Request data source as a db.
  *
  * @Author: Yousuf Sohail
  */
-class JobRequestsLocalDataSource private constructor(val appExecutors: AppExecutors, val jobRequestsDao: JobRequestsDao) : JobRequestsDataSource {
-    override fun acceptJobRequest(bookingId: Long, callback: JobRequestsDataSource.AcceptJobRequestCallback) {
+class JobRequestsLocalDataSource private constructor(
+        private val appExecutors: AppExecutors,
+        private val jobRequestsDao: JobRequestsDao
+) : JobRequestsDataSource {
+
+    override fun acceptJobRequest(jobRequestId: Long, callback: JobRequestsDataSource.AcceptJobRequestCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun getJobRequests(callback: JobRequestsDataSource.LoadJobRequestsCallback) {
         appExecutors.diskIO.execute {
-            val bookings = jobRequestsDao.getBookings()
+            val jobRequests = jobRequestsDao.getJobRequests()
             appExecutors.mainThread.execute {
-                if (bookings.isEmpty()) {
+                if (jobRequests.isEmpty()) {
                     // This will be called if the table is new or just empty.
-                    callback.onDataNotAvailable("No bookings found")
+                    callback.onDataNotAvailable("No job requests found")
                 } else {
-                    callback.onJobRequestsLoaded(bookings)
+                    callback.onJobRequestsLoaded(jobRequests)
                 }
             }
         }
     }
 
-    override fun getJobRequest(bookingId: Long, callback: JobRequestsDataSource.GetJobRequestCallback) {
+    override fun getJobRequest(jobRequestId: Long, callback: JobRequestsDataSource.GetJobRequestCallback) {
         appExecutors.diskIO.execute {
-            val booking = jobRequestsDao.getBooking(bookingId)
+            val jobRequest = jobRequestsDao.getJobRequest(jobRequestId)
             appExecutors.mainThread.execute {
-                if (booking != null) {
-                    callback.onBookingLoaded(booking)
+                if (jobRequest != null) {
+                    callback.onJobRequestLoaded(jobRequest)
                 } else {
-                    callback.onDataNotAvailable("No booking found")
+                    callback.onDataNotAvailable("No job request found")
                 }
             }
         }
     }
 
-    override fun saveJobRequest(booking: Booking) {
-        appExecutors.diskIO.execute { jobRequestsDao.insert(booking) }
+    override fun saveJobRequest(jobRequest: JobRequest) {
+        appExecutors.diskIO.execute { jobRequestsDao.insert(jobRequest) }
     }
 
     override fun refreshJobRequestList() {
@@ -56,9 +60,9 @@ class JobRequestsLocalDataSource private constructor(val appExecutors: AppExecut
         }
     }
 
-    override fun deleteJobRequest(bookingId: Long) {
+    override fun deleteJobRequest(jobRequestId: Long) {
         appExecutors.diskIO.execute {
-            jobRequestsDao.delete(bookingId)
+            jobRequestsDao.delete(jobRequestId)
         }
     }
 

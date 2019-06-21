@@ -168,10 +168,10 @@ class JobRequestDetailActivity : BaseActivity() {
     }
 
     private fun setMarkersForPickUpAndDropOff(mMap: GoogleMap) {
-        val mLatLngPickUp = LatLng(binding.viewmodel?.booking?.value?.pickup?.lat!!, binding.viewmodel?.booking?.value?.pickup?.lng!!)
+        val mLatLngPickUp = LatLng(binding.viewmodel?.jobRequest?.value?.pickup?.lat!!, binding.viewmodel?.jobRequest?.value?.pickup?.lng!!)
         setMarker(mMap, mLatLngPickUp, R.drawable.ic_marker_pickup)
 
-        val mLatLngDropOff = LatLng(binding.viewmodel?.booking?.value?.dropoff?.lat!!, binding.viewmodel?.booking?.value?.dropoff?.lng!!)
+        val mLatLngDropOff = LatLng(binding.viewmodel?.jobRequest?.value?.dropoff?.lat!!, binding.viewmodel?.jobRequest?.value?.dropoff?.lng!!)
         setMarker(mMap, mLatLngDropOff, R.drawable.ic_marker_dropoff)
 
         setPickupBounds(mMap)

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.bykea.pk.partner.dal.Booking
+import com.bykea.pk.partner.dal.JobRequest
 
 /**
  * The Room database for this app
@@ -14,9 +14,9 @@ import com.bykea.pk.partner.dal.Booking
 
 const val DATABASE_NAME = "bykea-db"
 
-@Database(entities = [Booking::class], version = 1, exportSchema = false)
+@Database(entities = [JobRequest::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun bookingsDao(): JobRequestsDao
+    abstract fun jobRequestsDao(): JobRequestsDao
 
     companion object {
 
