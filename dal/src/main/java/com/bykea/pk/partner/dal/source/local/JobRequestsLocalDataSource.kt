@@ -2,7 +2,7 @@ package com.bykea.pk.partner.dal.source.local
 
 import androidx.annotation.VisibleForTesting
 import com.bykea.pk.partner.dal.Booking
-import com.bykea.pk.partner.dal.source.BookingsDataSource
+import com.bykea.pk.partner.dal.source.JobRequestsDataSource
 import com.bykea.pk.partner.dal.util.AppExecutors
 
 /**
@@ -10,28 +10,28 @@ import com.bykea.pk.partner.dal.util.AppExecutors
  *
  * @Author: Yousuf Sohail
  */
-class BookingsLocalDataSource private constructor(val appExecutors: AppExecutors, val bookingsDao: BookingsDao) : BookingsDataSource {
-    override fun acceptBooking(bookingId: Long, callback: BookingsDataSource.AcceptBookingCallback) {
+class JobRequestsLocalDataSource private constructor(val appExecutors: AppExecutors, val jobRequestsDao: JobRequestsDao) : JobRequestsDataSource {
+    override fun acceptJobRequest(bookingId: Long, callback: JobRequestsDataSource.AcceptJobRequestCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getBookings(callback: BookingsDataSource.LoadBookingsCallback) {
+    override fun getJobRequests(callback: JobRequestsDataSource.LoadJobRequestsCallback) {
         appExecutors.diskIO.execute {
-            val bookings = bookingsDao.getBookings()
+            val bookings = jobRequestsDao.getBookings()
             appExecutors.mainThread.execute {
                 if (bookings.isEmpty()) {
                     // This will be called if the table is new or just empty.
                     callback.onDataNotAvailable("No bookings found")
                 } else {
-                    callback.onBookingsLoaded(bookings)
+                    callback.onJobRequestsLoaded(bookings)
                 }
             }
         }
     }
 
-    override fun getBooking(bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
+    override fun getJobRequest(bookingId: Long, callback: JobRequestsDataSource.GetJobRequestCallback) {
         appExecutors.diskIO.execute {
-            val booking = bookingsDao.getBooking(bookingId)
+            val booking = jobRequestsDao.getBooking(bookingId)
             appExecutors.mainThread.execute {
                 if (booking != null) {
                     callback.onBookingLoaded(booking)
@@ -42,34 +42,34 @@ class BookingsLocalDataSource private constructor(val appExecutors: AppExecutors
         }
     }
 
-    override fun saveBooking(booking: Booking) {
-        appExecutors.diskIO.execute { bookingsDao.insert(booking) }
+    override fun saveJobRequest(booking: Booking) {
+        appExecutors.diskIO.execute { jobRequestsDao.insert(booking) }
     }
 
-    override fun refreshBookings() {
+    override fun refreshJobRequestList() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun deleteAllBookings() {
+    override fun deleteAllJobRequests() {
         appExecutors.diskIO.execute {
-            bookingsDao.deleteAll()
+            jobRequestsDao.deleteAll()
         }
     }
 
-    override fun deleteBooking(bookingId: Long) {
+    override fun deleteJobRequest(bookingId: Long) {
         appExecutors.diskIO.execute {
-            bookingsDao.delete(bookingId)
+            jobRequestsDao.delete(bookingId)
         }
     }
 
     companion object {
-        private var INSTANCE: BookingsLocalDataSource? = null
+        private var INSTANCE: JobRequestsLocalDataSource? = null
 
         @JvmStatic
-        fun getInstance(appExecutors: AppExecutors, bookingsDao: BookingsDao): BookingsLocalDataSource {
+        fun getInstance(appExecutors: AppExecutors, jobRequestsDao: JobRequestsDao): JobRequestsLocalDataSource {
             if (INSTANCE == null) {
-                synchronized(BookingsLocalDataSource::javaClass) {
-                    INSTANCE = BookingsLocalDataSource(appExecutors, bookingsDao)
+                synchronized(JobRequestsLocalDataSource::javaClass) {
+                    INSTANCE = JobRequestsLocalDataSource(appExecutors, jobRequestsDao)
                 }
             }
             return INSTANCE!!

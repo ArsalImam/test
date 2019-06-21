@@ -3,24 +3,19 @@ package com.bykea.pk.partner.dal.source
 import com.bykea.pk.partner.dal.Booking
 
 /**
- * Main entry point for accessing bookings data.
+ * Main entry point for accessing job requests data.
  *
- *
- * For simplicity, only getBookings() and getBooking() have callbacks. Consider adding callbacks to other
- * methods to inform the user of network/database errors or successful operations.
- * For example, when a new booking is created, it's synchronously stored in cache but usually every
- * operation on database or network should be executed in a different thread.
  *
  * @Author: Yousuf Sohail
  */
-interface BookingsDataSource {
+interface JobRequestsDataSource {
 
     /**
      * Get Booking Listing
      *
      * @param callback Callback to executed
      */
-    fun getBookings(callback: LoadBookingsCallback)
+    fun getJobRequests(callback: LoadJobRequestsCallback)
 
     /**
      * Fetch Booking details
@@ -28,53 +23,53 @@ interface BookingsDataSource {
      * @param bookingId Id of Booking to be fetched
      * @param callback Callback to executed
      */
-    fun getBooking(bookingId: Long, callback: GetBookingCallback)
+    fun getJobRequest(bookingId: Long, callback: GetJobRequestCallback)
 
     /**
      * Save Booking to data source
      *
      * @param booking
      */
-    fun saveBooking(booking: Booking)
+    fun saveJobRequest(booking: Booking)
 
     /**
      * Accept booking
      *
      * @param bookingId Id of Booking to be accepted
      */
-    fun acceptBooking(bookingId: Long, callback: AcceptBookingCallback)
+    fun acceptJobRequest(bookingId: Long, callback: AcceptJobRequestCallback)
 
     /**
      * Re-fetch booking listing
      *
      */
-    fun refreshBookings()
+    fun refreshJobRequestList()
 
     /**
      * Delete all booking from data source
      *
      */
-    fun deleteAllBookings()
+    fun deleteAllJobRequests()
 
     /**
      * Delete booking from data source
      *
      * @param bookingId Id of booking to be deleted
      */
-    fun deleteBooking(bookingId: Long)
+    fun deleteJobRequest(bookingId: Long)
 
     /**
      * Callback interface used for fetch Booking listing
      *
      */
-    interface LoadBookingsCallback {
+    interface LoadJobRequestsCallback {
 
         /**
          * On successfully Booking listing loaded
          *
-         * @param bookings
+         * @param jobRequests
          */
-        fun onBookingsLoaded(bookings: List<Booking>)
+        fun onJobRequestsLoaded(jobRequests: List<Booking>)
 
         /**
          * On data not available on data source
@@ -88,14 +83,14 @@ interface BookingsDataSource {
      * Callback interface used for fetch Booking details
      *
      */
-    interface GetBookingCallback {
+    interface GetJobRequestCallback {
 
         /**
          * On successfully Booking detail loaded
          *
-         * @param booking
+         * @param jobRequest
          */
-        fun onBookingLoaded(booking: Booking)
+        fun onBookingLoaded(jobRequest: Booking)
 
         /**
          * On data not available on data source
@@ -109,10 +104,10 @@ interface BookingsDataSource {
      * Callback interface used for accepting Booking
      *
      */
-    interface AcceptBookingCallback {
+    interface AcceptJobRequestCallback {
 
-        fun onBookingAccepted()
+        fun onJobRequestAccepted()
 
-        fun onBookingAcceptFailed(message: String?, taken: Boolean)
+        fun onJobRequestAcceptFailed(message: String?, taken: Boolean)
     }
 }

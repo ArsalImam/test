@@ -5,7 +5,7 @@ import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.bykea.pk.partner.dal.source.BookingsRepository
+import com.bykea.pk.partner.dal.source.JobRequestsRepository
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailViewModel
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel
@@ -17,7 +17,7 @@ import com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel
  * This creator is to showcase how to inject dependencies into ViewModels. It's not
  * actually necessary in this case, as the product ID can be passed in a public method.
  */
-class ViewModelFactory private constructor(private val bookingsRepository: BookingsRepository) : ViewModelProvider.NewInstanceFactory() {
+class ViewModelFactory private constructor(private val bookingsRepository: JobRequestsRepository) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>) =
             with(modelClass) {

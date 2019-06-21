@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Booking
-import com.bykea.pk.partner.dal.source.BookingsDataSource
-import com.bykea.pk.partner.dal.source.BookingsRepository
+import com.bykea.pk.partner.dal.source.JobRequestsDataSource
+import com.bykea.pk.partner.dal.source.JobRequestsRepository
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.ui.loadboard.common.Event
 import com.google.android.gms.maps.model.LatLng
@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.LatLng
  *
  * @Author: Yousuf Sohail
  */
-class JobRequestDetailViewModel(private val bookingsRepository: BookingsRepository) : ViewModel(), BookingsDataSource.GetBookingCallback, BookingsDataSource.AcceptBookingCallback {
+class JobRequestDetailViewModel(private val bookingsRepository: JobRequestsRepository) : ViewModel(), JobRequestsDataSource.GetJobRequestCallback, JobRequestsDataSource.AcceptJobRequestCallback {
 
     private val _currentLatLng = MutableLiveData<LatLng>()
     val currentLatLng: LiveData<LatLng>
@@ -58,7 +58,7 @@ class JobRequestDetailViewModel(private val bookingsRepository: BookingsReposito
      */
     fun start(bookingId: Long) {
         _dataLoading.value = true
-        bookingsRepository.getBooking(bookingId, this)
+        bookingsRepository.getJobRequest(bookingId, this)
         _currentLatLng.value = LatLng(AppPref.getLat(bookingsRepository.pref), AppPref.getLng(bookingsRepository.pref))
     }
 
@@ -68,7 +68,7 @@ class JobRequestDetailViewModel(private val bookingsRepository: BookingsReposito
      */
     fun accept() {
         bookingId?.let {
-            bookingsRepository.acceptBooking(it, this)
+            bookingsRepository.acceptJobRequest(it, this)
         }
     }
 
@@ -89,8 +89,8 @@ class JobRequestDetailViewModel(private val bookingsRepository: BookingsReposito
         _isDataAvailable.value = booking != null
     }
 
-    override fun onBookingLoaded(booking: Booking) {
-        setBooking(booking)
+    override fun onBookingLoaded(jobRequest: Booking) {
+        setBooking(jobRequest)
         _dataLoading.value = false
     }
 
@@ -100,11 +100,11 @@ class JobRequestDetailViewModel(private val bookingsRepository: BookingsReposito
         _isDataAvailable.value = false
     }
 
-    override fun onBookingAccepted() {
+    override fun onJobRequestAccepted() {
         _acceptBookingCommand.value = Event(Unit)
     }
 
-    override fun onBookingAcceptFailed(message: String?, taken: Boolean) {
+    override fun onJobRequestAcceptFailed(message: String?, taken: Boolean) {
         if (taken) {
             _bookingTakenCommand.value = Event(Unit)
         } else {
