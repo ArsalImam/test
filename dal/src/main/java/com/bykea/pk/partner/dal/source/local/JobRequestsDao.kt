@@ -12,7 +12,7 @@ import com.bykea.pk.partner.dal.Booking
  * @Author: Yousuf Sohail
  */
 @Dao
-interface BookingsDao {
+interface JobRequestsDao {
 
     @Query("SELECT * FROM Bookings")
     fun getBookings(): List<Booking>

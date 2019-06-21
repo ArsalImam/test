@@ -1,6 +1,6 @@
 package com.bykea.pk.partner.dal.source.remote.response
 
-data class AssignLoadboardBookingResponseData(
+data class AcceptJobRequestResponseData(
         val subcode: Int?,
         val driver_id: String?,
         val id: String?,

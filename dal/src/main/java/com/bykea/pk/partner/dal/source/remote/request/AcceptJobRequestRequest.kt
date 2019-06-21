@@ -1,6 +1,6 @@
 package com.bykea.pk.partner.dal.source.remote.request
 
-data class RequestBodyAcceptBooking(
+data class AcceptJobRequestRequest(
         val lat: Double,
         val lng: Double
 )

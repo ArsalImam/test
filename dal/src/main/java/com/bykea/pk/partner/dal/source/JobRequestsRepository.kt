@@ -3,7 +3,7 @@ package com.bykea.pk.partner.dal.source
 import android.content.SharedPreferences
 import com.bykea.pk.partner.dal.Booking
 import com.bykea.pk.partner.dal.source.pref.AppPref
-import com.bykea.pk.partner.dal.source.remote.BookingsRemoteDataSource
+import com.bykea.pk.partner.dal.source.remote.JobRequestsRemoteDataSource
 import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
 import java.util.*
 
@@ -15,10 +15,10 @@ import java.util.*
  * obtained from the server, by using the remote data source only if the local database doesn't
  * exist or is empty.
  */
-class BookingsRepository(
-        private val bookingsRemoteDataSource: BookingsRemoteDataSource,
-        private val bookingsLocalDataSource: BookingsDataSource,
-        val pref: SharedPreferences) : BookingsDataSource {
+class JobRequestsRepository(
+        private val jobRequestsRemoteDataSource: JobRequestsRemoteDataSource,
+        private val jobRequestsLocalDataSource: JobRequestsDataSource,
+        val pref: SharedPreferences) : JobRequestsDataSource {
 
     private val limit: Int = 20
 
@@ -41,13 +41,13 @@ class BookingsRepository(
      * Note: [LoadBookingsCallback.onDataNotAvailable] is fired if all data sources fail to
      * get the data.
      */
-    override fun getBookings(callback: BookingsDataSource.LoadBookingsCallback) {
+    override fun getJobRequests(callback: JobRequestsDataSource.LoadJobRequestsCallback) {
 
         cacheIsDirty = true //Cache disabled
 
         // Respond immediately with cache if available and not dirty
         if (cachedBookings.isNotEmpty() && !cacheIsDirty) {
-            callback.onBookingsLoaded(ArrayList(cachedBookings.values))
+            callback.onJobRequestsLoaded(ArrayList(cachedBookings.values))
         }
 
         if (cacheIsDirty) {
@@ -55,10 +55,10 @@ class BookingsRepository(
             getBookingsFromRemoteDataSource(callback)
         } else {
             // Query the local storage if available. If not, query the network.
-            bookingsLocalDataSource.getBookings(object : BookingsDataSource.LoadBookingsCallback {
-                override fun onBookingsLoaded(bookings: List<Booking>) {
-                    refreshCache(bookings)
-                    callback.onBookingsLoaded(ArrayList(cachedBookings.values))
+            jobRequestsLocalDataSource.getJobRequests(object : JobRequestsDataSource.LoadJobRequestsCallback {
+                override fun onJobRequestsLoaded(jobRequests: List<Booking>) {
+                    refreshCache(jobRequests)
+                    callback.onJobRequestsLoaded(ArrayList(cachedBookings.values))
                 }
 
                 override fun onDataNotAvailable(errorMsg: String?) {
@@ -76,7 +76,7 @@ class BookingsRepository(
      * Note: [GetBookingCallback.onDataNotAvailable] is fired if both data sources fail to
      * get the data.
      */
-    override fun getBooking(bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
+    override fun getJobRequest(bookingId: Long, callback: JobRequestsDataSource.GetJobRequestCallback) {
 
         val bookingInCache = getBookingWithId(bookingId)
 
@@ -86,11 +86,11 @@ class BookingsRepository(
         }
 
         if (bookingInCache == null || !bookingInCache.isComplete) {
-            bookingsLocalDataSource.getBooking(bookingId, object : BookingsDataSource.GetBookingCallback {
-                override fun onBookingLoaded(booking: Booking) {
-                    if (booking.isComplete) {
+            jobRequestsLocalDataSource.getJobRequest(bookingId, object : JobRequestsDataSource.GetJobRequestCallback {
+                override fun onBookingLoaded(jobRequest: Booking) {
+                    if (jobRequest.isComplete) {
                         // Do in memory cache update to keep the app UI up to date
-                        cacheAndPerform(booking) {
+                        cacheAndPerform(jobRequest) {
                             callback.onBookingLoaded(it)
                         }
                     } else {
@@ -105,44 +105,44 @@ class BookingsRepository(
         }
     }
 
-    override fun saveBooking(booking: Booking) {
+    override fun saveJobRequest(booking: Booking) {
         // Do in memory cache update to keep the app UI up to date
         cacheAndPerform(booking) {
-            bookingsLocalDataSource.saveBooking(it)
+            jobRequestsLocalDataSource.saveJobRequest(it)
         }
     }
 
-    override fun acceptBooking(bookingId: Long, callback: BookingsDataSource.AcceptBookingCallback) {
-        bookingsRemoteDataSource.acceptBooking(bookingId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    override fun acceptJobRequest(bookingId: Long, callback: JobRequestsDataSource.AcceptJobRequestCallback) {
+        jobRequestsRemoteDataSource.acceptBooking(bookingId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
-    override fun refreshBookings() {
+    override fun refreshJobRequestList() {
         cacheIsDirty = true
     }
 
-    override fun deleteAllBookings() {
-//        bookingsRemoteDataSource.deleteAllBookings()
-        bookingsLocalDataSource.deleteAllBookings()
+    override fun deleteAllJobRequests() {
+//        jobRequestsRemoteDataSource.deleteAllJobRequests()
+        jobRequestsLocalDataSource.deleteAllJobRequests()
         cachedBookings.clear()
     }
 
-    override fun deleteBooking(bookingId: Long) {
-//        bookingsRemoteDataSource.deleteBooking(bookingId)
-        bookingsLocalDataSource.deleteBooking(bookingId)
+    override fun deleteJobRequest(bookingId: Long) {
+//        jobRequestsRemoteDataSource.deleteJobRequest(bookingId)
+        jobRequestsLocalDataSource.deleteJobRequest(bookingId)
         cachedBookings.remove(bookingId)
     }
 
-    private fun getBookingsFromRemoteDataSource(callback: BookingsDataSource.LoadBookingsCallback) {
+    private fun getBookingsFromRemoteDataSource(callback: JobRequestsDataSource.LoadJobRequestsCallback) {
 
         var serviceCode: Int? = null
         if (!AppPref.getIsCash(pref)) serviceCode = SERVICE_CODE_SEND
 
-        bookingsRemoteDataSource.getBookings(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), serviceCode, limit, object : BookingsDataSource.LoadBookingsCallback {
-            override fun onBookingsLoaded(bookings: List<Booking>) {
-                refreshCache(bookings)
-                refreshLocalDataSource(bookings)
+        jobRequestsRemoteDataSource.getBookings(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), serviceCode, limit, object : JobRequestsDataSource.LoadJobRequestsCallback {
+            override fun onJobRequestsLoaded(jobRequests: List<Booking>) {
+                refreshCache(jobRequests)
+                refreshLocalDataSource(jobRequests)
 //                EspressoIdlingResource.decrement() // Set app as idle.
-                callback.onBookingsLoaded(ArrayList(cachedBookings.values))
+                callback.onJobRequestsLoaded(ArrayList(cachedBookings.values))
             }
 
             override fun onDataNotAvailable(errorMsg: String?) {
@@ -152,13 +152,13 @@ class BookingsRepository(
         })
     }
 
-    private fun getBookingFromRemoteDataSource(bookingId: Long, callback: BookingsDataSource.GetBookingCallback) {
-        bookingsRemoteDataSource.getBooking(bookingId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : BookingsDataSource.GetBookingCallback {
-            override fun onBookingLoaded(booking: Booking) {
+    private fun getBookingFromRemoteDataSource(bookingId: Long, callback: JobRequestsDataSource.GetJobRequestCallback) {
+        jobRequestsRemoteDataSource.getBooking(bookingId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : JobRequestsDataSource.GetJobRequestCallback {
+            override fun onBookingLoaded(jobRequest: Booking) {
                 // Do in memory cache update to keep the app UI up to date
-                booking.isComplete = true
-                cacheAndPerform(booking) {
-                    saveBooking(booking)
+                jobRequest.isComplete = true
+                cacheAndPerform(jobRequest) {
+                    saveJobRequest(jobRequest)
                     callback.onBookingLoaded(it)
                 }
             }
@@ -189,9 +189,9 @@ class BookingsRepository(
      * @param bookings List of [Booking] to update
      */
     private fun refreshLocalDataSource(bookings: List<Booking>) {
-        bookingsLocalDataSource.deleteAllBookings()
+        jobRequestsLocalDataSource.deleteAllJobRequests()
         for (booking in bookings) {
-            bookingsLocalDataSource.saveBooking(booking)
+            jobRequestsLocalDataSource.saveJobRequest(booking)
         }
     }
 
@@ -215,22 +215,22 @@ class BookingsRepository(
 
     companion object {
 
-        private var INSTANCE: BookingsRepository? = null
+        private var INSTANCE: JobRequestsRepository? = null
 
         /**
          * Returns the single instance of this class, creating it if necessary.
 
-         * @param bookingsRemoteDataSource the backend data source
+         * @param jobRequestsRemoteDataSource the backend data source
          * *
-         * @param bookingsLocalDataSource  the device storage data source
+         * @param jobRequestsLocalDataSource  the device storage data source
          * *
-         * @return the [BookingsRepository] instance
+         * @return the [JobRequestsRepository] instance
          */
         @JvmStatic
-        fun getInstance(bookingsRemoteDataSource: BookingsRemoteDataSource, bookingsLocalDataSource: BookingsDataSource, preferences: SharedPreferences) =
-                INSTANCE ?: synchronized(BookingsRepository::class.java) {
+        fun getInstance(jobRequestsRemoteDataSource: JobRequestsRemoteDataSource, jobRequestsLocalDataSource: JobRequestsDataSource, preferences: SharedPreferences) =
+                INSTANCE ?: synchronized(JobRequestsRepository::class.java) {
                     INSTANCE
-                            ?: BookingsRepository(bookingsRemoteDataSource, bookingsLocalDataSource, preferences)
+                            ?: JobRequestsRepository(jobRequestsRemoteDataSource, jobRequestsLocalDataSource, preferences)
                                     .also { INSTANCE = it }
                 }
 
