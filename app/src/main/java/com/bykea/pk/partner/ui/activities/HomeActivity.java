@@ -382,8 +382,8 @@ public class HomeActivity extends BaseActivity {
         //    TODO:COMMENTED
 //        showBottomSheetLoader();
 
-        if (!AppPreferences.getAvailableStatus() || !AppPreferences.getIsCash())
-            hideLoadBoardBottomSheet();
+        if (AppPreferences.getAvailableStatus()) showLoadBoardBottomSheet();
+        else hideLoadBoardBottomSheet();
     }
 
     /**
@@ -404,9 +404,8 @@ public class HomeActivity extends BaseActivity {
 
     //    TODO:COMMENTED
     public void showLoadBoardBottomSheet() {
-        if (bottomSheet != null/* && list != null*/) {
+        if (bottomSheet != null) {
             bottomSheet.setVisibility(View.VISIBLE);
-            // updateList(list);
         }
     }
 
@@ -416,9 +415,6 @@ public class HomeActivity extends BaseActivity {
     public void hideLoadBoardBottomSheet() {
         if (bottomSheet != null) {
             bottomSheet.setVisibility(View.GONE);
-            //    TODO:COMMENTED
-          /*  if (mlist != null)
-                mlist.clear();*/
         }
     }
 

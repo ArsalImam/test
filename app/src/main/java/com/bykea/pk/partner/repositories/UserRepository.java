@@ -24,6 +24,7 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
+import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
@@ -367,7 +368,7 @@ public class UserRepository {
     private void setupLocationRequestUpdate(double lat, double lon, DriverLocationRequest locationRequest, String tripStatus) {
         locationRequest.setEta(AppPreferences.getEta());
         locationRequest.setDistance(AppPreferences.getEstimatedDistance());
-        if(AppPreferences.getCallData() != null && AppPreferences.getCallData().getTripId() != null)
+        if (AppPreferences.getCallData() != null && AppPreferences.getCallData().getTripId() != null)
             locationRequest.setTripID(AppPreferences.getCallData().getTripId());
         ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
         if (trackingData.size() == 0) {
@@ -428,7 +429,7 @@ public class UserRepository {
                 new PlacesDataHandler() {
                     @Override
                     public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
-                        if(response != null && response.getRows() != null && response.getRows().length > 0){
+                        if (response != null && response.getRows() != null && response.getRows().length > 0) {
                             counter[0] = 0;
                             GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
                             for (GoogleDistanceMatrixApi.Elements element : elements) {
@@ -548,25 +549,46 @@ public class UserRepository {
 
     }
 
-    public void requestCancelRide(Context context, IUserDataHandler handler, String message) {
-        JSONObject jsonObject = new JSONObject();
-        mUserCallback = handler;
-        mContext = context;
-        try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("driver_id", AppPreferences.getDriverId());
-            jsonObject.put("message", message);
-            jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
-            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-            jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
-            jsonObject.put("_id", AppPreferences.getDriverId());
-            jsonObject.put("lat", AppPreferences.getLatitude() + "");
-            jsonObject.put("lng", AppPreferences.getLongitude() + "");
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    /**
+     * Request to cancel driver booking either to goto socket or to REST server
+     *
+     * @param context     App context
+     * @param handler     Callback
+     * @param reasonMsg   Reason to cancel
+     * @param serviceCode Booking service code
+     */
+    public void requestCancelRide(Context context, IUserDataHandler handler, String reasonMsg, Integer serviceCode) {
+        if (serviceCode != null && (serviceCode == Constants.ServiceType.SEND_CODE || serviceCode == Constants.ServiceType.SEND_COD_CODE)) {
+            mRestRequestHandler.cancelLoadBoardBooking(
+                    context,
+                    new LoadBoardBookingCancelRequest(
+                            AppPreferences.getDriverId(),
+                            reasonMsg,
+                            AppPreferences.getLatitude() + "",
+                            AppPreferences.getLongitude() + "",
+                            AppPreferences.getAccessToken(),
+                            AppPreferences.getCallData().getTripId()),
+                    handler
+            );
+        } else {
+            JSONObject jsonObject = new JSONObject();
+            mUserCallback = handler;
+            mContext = context;
+            try {
+                jsonObject.put("token_id", AppPreferences.getAccessToken());
+                jsonObject.put("driver_id", AppPreferences.getDriverId());
+                jsonObject.put("message", reasonMsg);
+                jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
+                jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+                jsonObject.put("_id", AppPreferences.getDriverId());
+                jsonObject.put("lat", AppPreferences.getLatitude() + "");
+                jsonObject.put("lng", AppPreferences.getLongitude() + "");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            mWebIORequestHandler.cancelRide(jsonObject, mDataCallback);
         }
-        mWebIORequestHandler.cancelRide(jsonObject, mDataCallback);
-
     }
 
 

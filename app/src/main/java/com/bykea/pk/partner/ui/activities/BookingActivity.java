@@ -222,6 +222,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean allowTripStatusCall = true;
     CountDownTimer countDownTimer;
 
+    private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -230,7 +232,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         ButterKnife.bind(this);
         mCurrentActivity = this;
         dataRepository = new UserRepository();
-        ButterKnife.bind(this);
+
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(Constants.Extras.IS_CALLED_FROM_LOADBOARD)) {
+            IS_CALLED_FROM_LOADBOARD_VALUE = getIntent().getExtras().getBoolean(Constants.Extras.IS_CALLED_FROM_LOADBOARD);
+        }
+        if (IS_CALLED_FROM_LOADBOARD_VALUE) {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            dataRepository.requestRunningTrip(mCurrentActivity, handler);
+        }
+
         AppPreferences.setStatsApiCallRequired(true);
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
@@ -254,7 +264,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
 
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
-        setInitialData();
+
+        if (!IS_CALLED_FROM_LOADBOARD_VALUE)
+            setInitialData();
     }
 
 
@@ -756,14 +768,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void cancelReasonDialog() {
         Dialogs.INSTANCE.showCancelDialog(mCurrentActivity, new StringCallBack() {
             @Override
-            public void onCallBack(String msg) {
+            public void onCallBack(String reasonMsg) {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                cancelReason = msg;
-                dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler,
-                        msg);
+                cancelReason = reasonMsg;
+                dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler, reasonMsg, callData.getServiceCode());
             }
         });
-
     }
 
     @Override
@@ -974,7 +984,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (callData.isCod() && StringUtils.isNotBlank(callData.getCodAmount())) {
-                cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted());
+                cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
         }
@@ -2102,7 +2112,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }.getType();
                             NormalCallData normalCallData = gson.fromJson(trip, type);
 
-                            if (shouldUpdateTripData(normalCallData.getStatus())) {
+                            if (IS_CALLED_FROM_LOADBOARD_VALUE) {
+                                if (response.getData().getTrip() == null) {
+                                    new Handler().postDelayed(() -> {
+                                        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
+                                    }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
+                                    return;
+                                }
+                                AppPreferences.setTripAcceptTime(System.currentTimeMillis());
+                                AppPreferences.setEstimatedFare(normalCallData.getKraiKiKamai());
+                                AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                                AppPreferences.setIsOnTrip(true);
+                            }
+
+                            if (normalCallData.getStatus() != null &&
+                                    shouldUpdateTripData(normalCallData.getStatus())) {
                                 AppPreferences.setCallData(normalCallData);
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
                                 callData = normalCallData;
@@ -2110,6 +2135,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 showWalletAmount();
                             }
 
+                            if (IS_CALLED_FROM_LOADBOARD_VALUE)
+                                setInitialData();
                         } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
