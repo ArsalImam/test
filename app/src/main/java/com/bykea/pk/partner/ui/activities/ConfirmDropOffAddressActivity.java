@@ -339,7 +339,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
         public void onError(String error) {
             Utils.redLog("Address error", error + "");
             finishLoading();
-            Dialogs.INSTANCE.showToast("" + error);
+            Dialogs.INSTANCE.showToast(error);
 //            stopLoadingAnimation();
         }
     };
