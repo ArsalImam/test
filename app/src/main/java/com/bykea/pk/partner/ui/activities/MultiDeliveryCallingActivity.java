@@ -4,7 +4,9 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
+
 import androidx.appcompat.widget.AppCompatImageView;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -142,7 +144,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -220,7 +221,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                     multiDeliveryAcceptCallResponse.setBatchStatus(TripStatus.ON_ACCEPT_CALL);
                     multiDeliveryAcceptCallResponse.setAcceptTime(
                             System.currentTimeMillis() +
-                            AppPreferences.getServerTimeDifference()
+                                    AppPreferences.getServerTimeDifference()
                     );
                     AppPreferences.setMultiDeliveryCallDriverData(multiDeliveryAcceptCallResponse);
                 }
@@ -242,7 +243,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                    Dialogs.INSTANCE.showToast(errorMessage);
                     if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
                     } else {
@@ -268,7 +269,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
      */
     private class CountDownTimerClass extends CountDownTimer {
 
-        int totalTime = timeInMilliSeconds /1000;
+        int totalTime = timeInMilliSeconds / 1000;
 
         /**
          * @param millisInFuture    The number of millis in the future from the call
@@ -293,7 +294,7 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
                 donutProgress.setProgress(progress);
                 try {
                     int elapsedTime = (timeInMilliSeconds - ACCEPTANCE_TIMEOUT) / 1000;
-                    Log.d("progress", progress+" elapsed" + elapsedTime);
+                    Log.d("progress", progress + " elapsed" + elapsedTime);
                     counterTv.setText(String.valueOf((int) ((millisUntilFinished / 1000) +
                             elapsedTime)));
                 } catch (NumberFormatException e) {
@@ -356,10 +357,10 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
      * Set the initial data.
      *
      * <p>
-     *     <ul>Calculate the timer percentage</ul>
-     *     <ul>Initiate the timer</ul>
-     *     <ul>Start the timer animation</ul>
-     *     <ul>Map the data to UI</ul>
+     * <ul>Calculate the timer percentage</ul>
+     * <ul>Initiate the timer</ul>
+     * <ul>Start the timer animation</ul>
+     * <ul>Map the data to UI</ul>
      * </p>
      */
     private void setInitialData() {

@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.utils;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -10,12 +9,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,13 +60,13 @@ public enum Dialogs {
     private Dialog mDialog;
     private Dialog mAdminNotifiationDialog;
 
-    public void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    public void showToast(String message) {
+        Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    public void showTempToast(Context context, String message) {
+    public void showTempToast(String message) {
         if (BuildConfig.DEBUG) {
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -124,7 +126,7 @@ public enum Dialogs {
      * @param context Calling context
      */
     public void showInvalidCodeDialog(Context context) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.invalid_code_dialog);
@@ -192,7 +194,7 @@ public enum Dialogs {
 
     public void showAlertDialog(Context context, View.OnClickListener positive,
                                 View.OnClickListener negative, String title, String message) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_alert);
@@ -220,7 +222,7 @@ public enum Dialogs {
 
     public void showAlertDialogWithTickCross(Context context, View.OnClickListener positive,
                                              View.OnClickListener negative, String title, String message) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_alert_tick_cross);
@@ -259,9 +261,9 @@ public enum Dialogs {
     public void showAlertDialogForBattery(Context context,
                                           String title,
                                           String message,
-                                          View.OnClickListener onClick){
+                                          View.OnClickListener onClick) {
 
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_alert);
@@ -278,7 +280,7 @@ public enum Dialogs {
     }
 
     public void showAlertDialog(Context context, String title, String message, View.OnClickListener onClick) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_alert);
@@ -310,7 +312,7 @@ public enum Dialogs {
 
     public void showCallPassengerDialog(Context context, View.OnClickListener btnSender,
                                         View.OnClickListener btnRecipient) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.call_passenger_dialog);
@@ -330,7 +332,7 @@ public enum Dialogs {
 
     public void showRideStatusDialog(Context context, View.OnClickListener positive,
                                      View.OnClickListener negative, String title) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_ride_status);
@@ -344,7 +346,7 @@ public enum Dialogs {
 
     public void showAlertDialogNotSingleton(Context context, final StringCallBack positive,
                                             View.OnClickListener negative, String title, String message) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             final Dialog dialog = new Dialog(context, R.style.actionSheetTheme);
             dialog.setContentView(R.layout.dialog_alert);
@@ -483,7 +485,7 @@ public enum Dialogs {
     }
 
     public void showCancelDialog(final Context context, final StringCallBack callBack) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
             mDialog.setContentView(R.layout.cancel_job_dialog);
@@ -517,7 +519,7 @@ public enum Dialogs {
     }
 
     public void showConfirmArrivalDialog(Context context, boolean showTickBtn, View.OnClickListener positive) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_confirm_arrival);
@@ -546,7 +548,7 @@ public enum Dialogs {
      * @param number Support Helpline number
      */
     public void showInactiveAccountDialog(final Context context, final String number) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_inactive_account);
@@ -570,7 +572,7 @@ public enum Dialogs {
     public void showRegionOutErrorDialog(final Context context,
                                          final String number,
                                          final String msg) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_region_out);
@@ -597,7 +599,7 @@ public enum Dialogs {
     public void showImeiRegistrationErrorDialog(final Context context,
                                                 final SpannableStringBuilder msg,
                                                 final View.OnClickListener positive) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_imei_not_registerd);
@@ -617,7 +619,7 @@ public enum Dialogs {
 
 
     public void showTopUpDialog(final Context context, final boolean isCourierType, final StringCallBack callBack) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.top_up_add_dialog);
@@ -637,10 +639,10 @@ public enum Dialogs {
                         callBack.onCallBack(receivedAmountEt.getText().toString());
                     } else {
                         String amount = AppPreferences.getSettings().getSettings().getPartner_topup_limit();
-                        if(isCourierType)
+                        if (isCourierType)
                             amount = AppPreferences.getSettings().getSettings().getVan_partner_topup_limit();
 
-                        receivedAmountEt.setError(DriverApp.getContext().getResources().getString(R.string.amount_cannot_greater,amount));
+                        receivedAmountEt.setError(DriverApp.getContext().getResources().getString(R.string.amount_cannot_greater, amount));
                     }
                 }
             });
@@ -672,7 +674,7 @@ public enum Dialogs {
     }
 
     public void showLocationSettings(final Context context, final int requestCode) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.enable_gps_dialog);
@@ -699,7 +701,7 @@ public enum Dialogs {
     }
 
     public void showPermissionSettings(final Context context, final int requestCode, String title, String message) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             try {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
@@ -793,7 +795,7 @@ public enum Dialogs {
      */
     public void showNegativeAlertDialog(Context context, String msg,
                                         View.OnClickListener onClickListener) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()){
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
             mDialog.setContentView(R.layout.dialog_neg_alert_ur_tick_cross);
@@ -827,7 +829,7 @@ public enum Dialogs {
     public void showNegativeAlertDialogForDemand(Context context,
                                                  String msg,
                                                  final View.OnClickListener onClickListener) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
             mDialog.setContentView(R.layout.dialog_neg_alert_ur_tick_cross);
@@ -848,7 +850,7 @@ public enum Dialogs {
     }
 
     public void showUpdateAppDialog(final Context context, String title, String message, final String link) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_alert_update_app);
@@ -872,7 +874,7 @@ public enum Dialogs {
     }
 
     public void showAlertDialog(final Context context, String title, String message) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_alert);
@@ -900,7 +902,7 @@ public enum Dialogs {
      * @param onClick callback to handle positive button's click
      */
     public void showSignUpSuccessDialog(Context context, String phoneNo, View.OnClickListener onClick) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
             mDialog.setContentView(R.layout.signup_success_dialog);
@@ -912,7 +914,7 @@ public enum Dialogs {
     }
 
     public void showVerificationDialog(Context context, boolean success, View.OnClickListener onClick) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeTimer);
             if (success) {
@@ -934,7 +936,7 @@ public enum Dialogs {
      */
     public void showInputAlert(final Activity activity, final StringCallBack dataHandler) {
         try {
-            if(activity instanceof AppCompatActivity && !activity.isFinishing()) {
+            if (activity instanceof AppCompatActivity && !activity.isFinishing()) {
 
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
                 alertDialogBuilder.setTitle("Enter Your IP");
@@ -995,7 +997,7 @@ public enum Dialogs {
      */
     public void showAlertDialogUrduWithTickCross(Context context, String message, float textSize,
                                                  View.OnClickListener negative, View.OnClickListener positive) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
             mDialog.setContentView(R.layout.dialog_alert_tick_cross_urdu);
@@ -1026,7 +1028,7 @@ public enum Dialogs {
      * @param onClick Callback to notify that OK/Positive button is clicked
      */
     public void showCancelNotification(Context context, String message, final StringCallBack onClick) {
-        if(context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
             dialog.setContentView(R.layout.dialog_cancel_notification);

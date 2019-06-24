@@ -57,7 +57,7 @@ public class PostBankAccountActivity extends BaseActivity {
                 if (StringUtils.isNotBlank(financeNumber)) {
                     Utils.callingIntent(mCurrentActivity, financeNumber);
                 } else {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, "Number not available.");
+                    Dialogs.INSTANCE.showToast("Number not available.");
                 }
                 break;
         }

@@ -3,12 +3,14 @@ package com.bykea.pk.partner.ui.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,10 +85,11 @@ public class LoadboardBookingDetailFragment extends Fragment {
 
     /**
      * fragment instance that accept booking detail data to be displayed
+     *
      * @param data booking detail data
      * @return current fragment
      */
-    public static LoadboardBookingDetailFragment newInstance(LoadboardBookingDetailData data){
+    public static LoadboardBookingDetailFragment newInstance(LoadboardBookingDetailData data) {
         LoadboardBookingDetailFragment fragment = new LoadboardBookingDetailFragment();
         fragment.data = data;
         return fragment;
@@ -126,14 +129,14 @@ public class LoadboardBookingDetailFragment extends Fragment {
     /**
      * initialize views and set datails data and attach click listener
      */
-    private void initViews(){
-        if(data != null){
-            bd_FareTV.setText(getString(R.string.seleted_amount_rs,data.getFareEstimation()));
+    private void initViews() {
+        if (data != null) {
+            bd_FareTV.setText(getString(R.string.seleted_amount_rs, data.getFareEstimation()));
             bd_pickUpNameTV.setText(data.getPickupName());
             bd_pickUpAddressTV.setText(data.getPickupAddress());
             bd_pickUpTimeTV.setText(data.getDeliveryTimings());
-            if(data.getPickupZone() != null)
-                bd_pickUpZoneTV.setText(getString(R.string.pick_drop_name_ur,data.getPickupZone().getUrduName()));
+            if (data.getPickupZone() != null)
+                bd_pickUpZoneTV.setText(getString(R.string.pick_drop_name_ur, data.getPickupZone().getUrduName()));
             else
                 bd_pickUpZoneTV.setText(getString(R.string.not_selected_ur));
 
@@ -141,8 +144,8 @@ public class LoadboardBookingDetailFragment extends Fragment {
             bd_estimatedTimeTV.setText(String.valueOf(etaInMinute));
             bd_dropOffAddressTV.setText(data.getDropoffAddress());
 
-            if(data.getDropoffZone() != null)
-                bd_dropOffZoneTV.setText(getString(R.string.pick_drop_name_ur,data.getDropoffZone().getUrduName()));
+            if (data.getDropoffZone() != null)
+                bd_dropOffZoneTV.setText(getString(R.string.pick_drop_name_ur, data.getDropoffZone().getUrduName()));
             else
                 bd_dropOffZoneTV.setText(getString(R.string.not_selected_ur));
 
@@ -171,13 +174,13 @@ public class LoadboardBookingDetailFragment extends Fragment {
         acceptBookingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Connectivity.isConnectedFast(mCurrentActivity)){
+                if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                    new UserRepository().acceptLoadboardBooking(mCurrentActivity, data.getId(), new UserDataHandler(){
+                    new UserRepository().acceptLoadboardBooking(mCurrentActivity, data.getId(), new UserDataHandler() {
                         @Override
                         public void onAcceptLoadboardBookingResponse(AcceptLoadboardBookingResponse response) {
                             Dialogs.INSTANCE.dismissDialog();
-                            if(response != null){
+                            if (response != null) {
                                 if (response.isSuccess()) {
                                     AppPreferences.clearTripDistanceData();
                                     AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
@@ -192,17 +195,17 @@ public class LoadboardBookingDetailFragment extends Fragment {
                                     AppPreferences.setIsOnTrip(true);
                                     ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
                                     mCurrentActivity.finish();
-                                } else if (response.getSubCode() == Constants.ApiError.LOADBOARD_BOOKING_ALREADY_TAKEN){
+                                } else if (response.getSubCode() == Constants.ApiError.LOADBOARD_BOOKING_ALREADY_TAKEN) {
                                     Utils.appToast(mCurrentActivity, response.getMessage());
                                     ActivityStackManager.getInstance().startHomeActivity(mCurrentActivity);
-                                } else if (response.getSubCode() == Constants.ApiError.LOADBOARD_ALREADY_IN_TRIP){
+                                } else if (response.getSubCode() == Constants.ApiError.LOADBOARD_ALREADY_IN_TRIP) {
                                     Utils.appToast(mCurrentActivity, response.getMessage());
                                 } else {
                                     Utils.setCallIncomingState();
-                                    Dialogs.INSTANCE.showToast(mCurrentActivity, response.getMessage());
+                                    Dialogs.INSTANCE.showToast(response.getMessage());
                                 }
-                            } else{
-                                Dialogs.INSTANCE.showTempToast(mCurrentActivity, "Response is null");
+                            } else {
+                                Dialogs.INSTANCE.showTempToast("Response is null");
                             }
                         }
 
@@ -212,7 +215,7 @@ public class LoadboardBookingDetailFragment extends Fragment {
                             if (errorCode == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
-                                Dialogs.INSTANCE.showTempToast(mCurrentActivity, errorMessage);
+                                Dialogs.INSTANCE.showTempToast(errorMessage);
                             }
                         }
                     });
@@ -233,8 +236,8 @@ public class LoadboardBookingDetailFragment extends Fragment {
     private void startGoogleDirectionsApp() {
         try {
             if (data != null) {
-                String start = data.getPickupLoc().getLatitude()+","+data.getPickupLoc().getLongitude();
-                String destination =data.getEndLoc().getLatitude()+","+data.getEndLoc().getLongitude();
+                String start = data.getPickupLoc().getLatitude() + "," + data.getPickupLoc().getLongitude();
+                String destination = data.getEndLoc().getLatitude() + "," + data.getEndLoc().getLongitude();
 
                 try {
                     Uri gmmIntentUri = Uri.parse("google.navigation:q=" + start + "&daddr=" + destination + "&mode=motorcycle");
@@ -246,14 +249,15 @@ public class LoadboardBookingDetailFragment extends Fragment {
                 }
 
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
      * logging accepted response for tracking data
-     * @param callData response data
+     *
+     * @param callData   response data
      * @param isOnAccept trip state
      */
     private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
