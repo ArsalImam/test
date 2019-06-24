@@ -77,7 +77,7 @@ public class ForgotPasswordActivity extends BaseActivity {
                                 Utils.phoneNumberForServer(phoneNumberEt.getText().toString()));
                     }
                 } else {
-                    Dialogs.INSTANCE.showToast("Please check your internet connection.");
+                    Dialogs.INSTANCE.showToast(getString(R.string.error_internet_connectivity));
                 }
                 break;
             case R.id.phoneNumberEt:
