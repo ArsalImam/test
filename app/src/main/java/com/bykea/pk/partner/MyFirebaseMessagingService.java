@@ -61,14 +61,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
         if (remoteMessage == null) {
             return;
         }
-        if (remoteMessage.getData() != null)
-            if (BuildConfig.DEBUG)
-                Utils.appToast(this, remoteMessage.getData().get(Constants.Notification.EVENT_TYPE) + "\n" + remoteMessage.getData());
-
         mContext = this;
         Gson gson = new Gson();
         //if you intend on generating your own notifications as a result of a received FCM
