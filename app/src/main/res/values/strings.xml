@@ -343,4 +343,5 @@
     <string name="how_it_works">How it Works</string>
     <string name="no_browser_found_error">Browser not found on Device</string>
     <string name="error_internet_connectivity">Please check your internet connection.</string>
+    <string name="not_available">Number not available.</string>
 </resources>
