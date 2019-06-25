@@ -9,11 +9,11 @@
 
         <variable
             name="booking"
-            type="com.bykea.pk.partner.dal.Booking" />
+            type="com.bykea.pk.partner.dal.JobRequest" />
 
         <variable
             name="listener"
-            type="com.bykea.pk.partner.ui.loadboard.list.BookingItemUserActionsListener" />
+            type="com.bykea.pk.partner.ui.loadboard.list.JobRequestListItemActionsListener" />
 
     </data>
 

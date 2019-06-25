@@ -30,7 +30,6 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.DataSaverDialogFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
-import com.bykea.pk.partner.ui.fragments.LoadboardZoneFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
@@ -171,13 +170,8 @@ public class HomeActivity extends BaseActivity {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(Gravity.START); //CLOSE Nav Drawer!
         } else {
-            //check if zone selection screen is activated/visible
-            LoadboardZoneFragment fragment = (LoadboardZoneFragment) getSupportFragmentManager().findFragmentByTag(LoadboardZoneFragment.class.getName());
-            if (fragment != null) {
-                super.onBackPressed();
-            }
             //close bottom sheet if is in expanded state
-            else if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             } else {
                 if (visibleFragmentNumber == 1) {

@@ -1,9 +1,9 @@
 package com.bykea.pk.partner.dal.source.remote
 
-import com.bykea.pk.partner.dal.source.remote.request.RequestBodyAcceptBooking
-import com.bykea.pk.partner.dal.source.remote.response.AssignLoadboardBookingResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardDetailResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetLoadboardListingResponse
+import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequestRequest
+import com.bykea.pk.partner.dal.source.remote.response.AcceptJobRequestResponse
+import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
+import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -24,14 +24,14 @@ interface ApiInterface {
      * @return Loadboard jobs list
      */
     @GET("/v1/bookings")
-    fun getLoadboardList(
+    fun getJobRequestList(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
             @Query("lat") lat: Double,
             @Query("lng") lng: Double,
             @Query("f_service_code") serviceCode: Int? = null,
             @Query("f_distance") distance: Int = 5,
-            @Query("sort") sort: String = "nearby"): Call<GetLoadboardListingResponse>
+            @Query("sort") sort: String = "nearby"): Call<GetJobRequestListResponse>
 
     /**
      * Getting loadboard job details
@@ -40,12 +40,12 @@ interface ApiInterface {
      * @return Loadboard job details
      */
     @GET("/v1/bookings/{booking_id}")
-    fun getLoadboardDetail(
+    fun getJobRequestDetail(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
-            @Path("booking_id") bookingId: Long,
+            @Path("booking_id") jobRequestId: Long,
             @Query("lat") lat: Double,
-            @Query("lng") lng: Double): Call<GetLoadboardDetailResponse>
+            @Query("lng") lng: Double): Call<GetJobRequestDetailResponse>
 
     /**
      * Getting loadboard job details
@@ -54,27 +54,27 @@ interface ApiInterface {
      * @return Loadboard job details
      */
     @POST("/v1/bookings/{booking_id}/assign")
-    fun acceptLoadboardBooking(
+    fun acceptJobRequest(
             @Path("booking_id") bookingId: Long,
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
-            @Body body: RequestBodyAcceptBooking): Call<AssignLoadboardBookingResponse>
+            @Body body: AcceptJobRequestRequest): Call<AcceptJobRequestResponse>
 
 
     @GET
-    fun getLoadboardListMock(
+    fun getMockJobRequestList(
             @Url url: String = "http://www.mocky.io/v2/5cfe4cb33200000f0045efe2",
             @Query("_id") driverId: String,
             @Query("token_id") token: String,
             @Query("lat") lat: Double,
             @Query("lng") lng: Double,
-            @Query("limit") limit: Int): Call<GetLoadboardListingResponse>
+            @Query("limit") limit: Int): Call<GetJobRequestListResponse>
 
     @GET
-    fun getLoadboardDetailMock(
+    fun getMockJobRequestDetail(
             @Url url: String = "http://www.mocky.io/v2/5cf0fee8300000c86c00bc06",
             @Query("booking_id") bookingId: Long,
             @Query("_id") driverId: String,
-            @Query("token_id") token: String): Call<GetLoadboardDetailResponse>
+            @Query("token_id") token: String): Call<GetJobRequestDetailResponse>
 
 }

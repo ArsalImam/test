@@ -48,7 +48,7 @@
 
             <fragment
                 android:id="@+id/loadBoardFragment"
-                android:name="com.bykea.pk.partner.ui.loadboard.list.LoadBoardListFragment"
+                android:name="com.bykea.pk.partner.ui.loadboard.list.JobRequestListFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 

@@ -44,7 +44,7 @@ import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
-import com.bykea.pk.partner.ui.loadboard.detail.LoadboardDetailActivity;
+import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -173,7 +173,7 @@ public class ActivityStackManager {
 
     public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
-        if (mContext instanceof LoadboardDetailActivity)
+        if (mContext instanceof JobRequestDetailActivity)
             intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
         mContext.startActivity(intent);
     }
@@ -479,8 +479,8 @@ public class ActivityStackManager {
      * @param bookingId selected booking id
      */
     public void startLoadboardBookingDetailActiivty(Context context, Long bookingId) {
-        Intent intent = new Intent(context, LoadboardDetailActivity.class);
-        intent.putExtra(LoadboardDetailActivity.EXTRA_BOOKING_ID, bookingId);
+        Intent intent = new Intent(context, JobRequestDetailActivity.class);
+        intent.putExtra(JobRequestDetailActivity.EXTRA_BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
 

@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.databinding.LoadboardBookingsFragBinding
+import com.bykea.pk.partner.databinding.JobRequestListFragBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
@@ -20,7 +20,7 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.loadboard_bookings_frag.*
+import kotlinx.android.synthetic.main.job_request_list_frag.*
 
 
 /**
@@ -33,10 +33,10 @@ import kotlinx.android.synthetic.main.loadboard_bookings_frag.*
  * </pre>
  *
  */
-class LoadBoardListFragment : Fragment() {
+class JobRequestListFragment : Fragment() {
 
-    private lateinit var viewDataBinding: LoadboardBookingsFragBinding
-    private lateinit var listAdapter: BookingsAdapter
+    private lateinit var viewDataBinding: JobRequestListFragBinding
+    private lateinit var listAdapter: JobRequestListAdapter
     private var mBehavior: BottomSheetBehavior<*>? = null
 
     var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
@@ -46,10 +46,10 @@ class LoadBoardListFragment : Fragment() {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
         layoutParamRL.setMargins(0, resources.getDimension(R.dimen._minus8sdp).toInt(), 0, 0);
 
-        viewDataBinding = LoadboardBookingsFragBinding.inflate(inflater, container, false).apply {
+        viewDataBinding = JobRequestListFragBinding.inflate(inflater, container, false).apply {
 
-            viewmodel = obtainViewModel(BookingListViewModel::class.java).apply {
-                openBookingEvent.observe(this@LoadBoardListFragment, Observer {
+            viewmodel = obtainViewModel(JobRequestListViewModel::class.java).apply {
+                openBookingEvent.observe(this@JobRequestListFragment, Observer {
                     if (mBehavior != null && mBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
                         mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
                     } else {
@@ -57,11 +57,11 @@ class LoadBoardListFragment : Fragment() {
                     }
                 })
 
-                dataLoading.observe(this@LoadBoardListFragment, Observer {
+                dataLoading.observe(this@JobRequestListFragment, Observer {
                     if (it) Dialogs.INSTANCE.showLoader(activity)
                     else Dialogs.INSTANCE.dismissDialog()
                 })
-                isExpended.observe(this@LoadBoardListFragment, Observer {
+                isExpended.observe(this@JobRequestListFragment, Observer {
                     if (it) {
                         relativeLayoutBottomView.visibility = View.VISIBLE
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
@@ -75,7 +75,7 @@ class LoadBoardListFragment : Fragment() {
                     }
                 })
 
-                empty.observe(this@LoadBoardListFragment, Observer {
+                empty.observe(this@JobRequestListFragment, Observer {
                     if (it) {
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
@@ -87,7 +87,7 @@ class LoadBoardListFragment : Fragment() {
 
             }
 
-            listener = object : BookingsListUserActionsListener {
+            listener = object : JobRequestListActionsListener {
                 override fun onBackClicked() {
                     mBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
@@ -160,7 +160,7 @@ class LoadBoardListFragment : Fragment() {
         val viewModel = viewDataBinding.viewmodel
         if (viewModel != null) {
             ViewCompat.setNestedScrollingEnabled(viewDataBinding.bookingsList, true)
-            listAdapter = BookingsAdapter(java.util.ArrayList(0), viewModel)
+            listAdapter = JobRequestListAdapter(java.util.ArrayList(0), viewModel)
             viewDataBinding.bookingsList.adapter = listAdapter
         } else {
             Log.w(TAG, "ViewModel not initialized when attempting to set up adapter.")
@@ -197,7 +197,7 @@ class LoadBoardListFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = LoadBoardListFragment()
+        fun newInstance() = JobRequestListFragment()
         private const val TAG = "BookingsFragment"
     }
 }

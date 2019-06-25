@@ -37,9 +37,7 @@ import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
-import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -213,18 +211,6 @@ public interface IUserDataHandler {
     void onSignupCompleteResponse(SignUpCompleteResponse response);
 
     void onBiometricApiResponse(BiometricApiResponse response);
-
-    /**
-     * callback for loadboard listing api call
-     * @param response loadborad jobs listing response
-     */
-    void onLoadboardListingApiResponse(LoadBoardListingResponse response);
-
-    /**
-     * callback for loadboard booking detail api call
-     * @param response loadborad specific booking details response
-     */
-    void onLoadboardBookingDetailResponse(LoadboardBookingDetailResponse response);
 
     /**
      * callback for loadboard accept api call

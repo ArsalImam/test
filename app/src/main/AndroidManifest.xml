@@ -234,7 +234,8 @@
             android:launchMode="singleTask"/>
         <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.loadboard.detail.LoadboardDetailActivity"
+        <activity
+            android:name=".ui.loadboard.detail.JobRequestDetailActivity"
             android:screenOrientation="portrait" />
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>

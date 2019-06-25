@@ -4,7 +4,7 @@ package com.bykea.pk.partner.ui.loadboard.detail
 /**
  * Listener used with data binding to process user actions.
  */
-interface BookingDetailUserActionsListener {
+interface JobRequestDetailActionsListener {
 
     /**
      * On user plays audio

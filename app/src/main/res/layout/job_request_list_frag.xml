@@ -8,11 +8,11 @@
 
         <variable
             name="viewmodel"
-            type="com.bykea.pk.partner.ui.loadboard.list.BookingListViewModel" />
+            type="com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel" />
 
         <variable
             name="listener"
-            type="com.bykea.pk.partner.ui.loadboard.list.BookingsListUserActionsListener" />
+            type="com.bykea.pk.partner.ui.loadboard.list.JobRequestListActionsListener" />
 
     </data>
 
