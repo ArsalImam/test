@@ -103,6 +103,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
+
 //import com.google.android.gms.location.places.Place;
 //import com.google.android.gms.location.places.Places;
 
@@ -223,6 +225,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     CountDownTimer countDownTimer;
 
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
+    private int requestTripCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -2114,10 +2117,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                             if (IS_CALLED_FROM_LOADBOARD_VALUE) {
                                 if (response.getData().getTrip() == null) {
-                                    new Handler().postDelayed(() -> {
-                                        Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
-                                    }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
+                                    requestTripCounter++;
+                                    if (requestTripCounter < MAX_LIMIT_LOAD_BOARD) {
+                                        new Handler().postDelayed(() -> {
+                                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                                            dataRepository.requestRunningTrip(mCurrentActivity, handler);
+                                        }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
+                                    } else {
+                                        Dialogs.INSTANCE.showTempToast("Request trip limit Exceeded");
+                                        ActivityStackManager.getInstance().startHomeActivity(BookingActivity.this);
+                                    }
                                     return;
                                 }
                                 AppPreferences.setTripAcceptTime(System.currentTimeMillis());
