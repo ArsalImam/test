@@ -124,8 +124,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showTempToast(mCurrentActivity,
-                                acceptCallResponse.getMessage());
+                        Dialogs.INSTANCE.showTempToast(acceptCallResponse.getMessage());
                         if (acceptCallResponse.isSuccess()) {
                             AppPreferences.clearTripDistanceData();
                             AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
@@ -142,8 +141,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
                             finishActivity();
                         } else {
                             Utils.setCallIncomingState();
-                            Dialogs.INSTANCE.showToast(mCurrentActivity
-                                    , acceptCallResponse.getMessage());
+                            Dialogs.INSTANCE.showToast(acceptCallResponse.getMessage());
 
                         }
                     }
@@ -195,7 +193,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
 
             Utils.logEvent(mCurrentActivity, callData.getPassId(),
                     Constants.AnalyticsEvents.ON_ACCEPT.replace(
-                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
+                            Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -14,10 +14,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -932,7 +934,7 @@ public class HomeFragment extends Fragment {
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
                             Utils.onUnauthorized(mCurrentActivity);
                         } else {
-                            Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                            Dialogs.INSTANCE.showToast(errorMessage);
                         }
                     }
                 });
@@ -1493,8 +1495,9 @@ public class HomeFragment extends Fragment {
                 .commit();
         HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
     }
-    
-     /** Check the Type of request is it batch request or single
+
+    /**
+     * Check the Type of request is it batch request or single
      *
      * <p>
      * <p>
