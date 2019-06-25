@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.utils;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -10,6 +9,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.remote.ApiClient;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
@@ -62,13 +71,13 @@ public enum Dialogs {
     private Dialog mDialog;
     private Dialog mAdminNotifiationDialog;
 
-    public void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    public void showToast(String message) {
+        Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    public void showTempToast(Context context, String message) {
+    public void showTempToast(String message) {
         if (BuildConfig.DEBUG) {
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1048,11 +1057,11 @@ public enum Dialogs {
     }
 
     /**
-     *
      * GENERIC DIALOG
-     * @param mTitle ? View.VISIBLE : View.GONE
+     *
+     * @param mTitle    ? View.VISIBLE : View.GONE
      * @param mMesssage ? View.VISIBLE : View.GONE
-     * @param onClick ? If Want To Perform Another Operation, Implement Callback Else Send Null (As Dialog Will Already Being
+     * @param onClick   ? If Want To Perform Another Operation, Implement Callback Else Send Null (As Dialog Will Already Being
      *                  Dismiss By OnClick
      */
     public void showAlertDialogTick(Context context, String mTitle, String mMesssage, View.OnClickListener onClick) {
@@ -1085,6 +1094,56 @@ public enum Dialogs {
             mDialog.setCancelable(false);
 
             showDialog();
+        }
+    }
+
+    /**
+     * Dialog Called From Splash Activity
+     * Enter Testing IP and LoadBoard IP
+     * @param activity : calling activity
+     * @param dataHandler : Use for the callback of strings.
+     */
+    public void showAlertDialogForURL(final Activity activity, final StringCallBack dataHandler) {
+        try {
+            if (activity instanceof AppCompatActivity && !activity.isFinishing()) {
+                dismissDialog();
+                mDialog = new Dialog(activity, R.style.actionSheetTheme);
+                mDialog.setContentView(R.layout.dialog_service_host_url);
+
+                EditText mEditTextIP, mEditTextLoadBoardIP;
+
+                mEditTextIP = mDialog.findViewById(R.id.editTextIP);
+                mEditTextLoadBoardIP = mDialog.findViewById(R.id.editTextLoadBoardIP);
+
+                mEditTextIP.setText(BuildConfig.FLAVOR_URL);
+                mEditTextLoadBoardIP.setText(ApiClient.INSTANCE.getBaseFlavorURL());
+
+                mDialog.setOnShowListener(dialog -> mDialog.findViewById(R.id.imgViewClick).setOnClickListener(v -> {
+                    if (mEditTextIP.getText().length() == 0) {
+                        Utils.appToast(activity, activity.getString(R.string.enter_your_ip));
+                        return;
+                    } else if (!Utils.isValidUrl(mEditTextIP.getText().toString())) {
+                        Utils.appToast(activity, activity.getString(R.string.enter_valid_ip));
+                        return;
+                    }
+
+                    if (mEditTextLoadBoardIP.getText().length() == 0) {
+                        Utils.appToast(activity, activity.getString(R.string.enter_your_loadboard_ip));
+                        return;
+                    } else if (!Utils.isValidUrl(mEditTextLoadBoardIP.getText().toString())) {
+                        Utils.appToast(activity, activity.getString(R.string.enter_valid_loadboard_ip));
+                        return;
+                    }
+
+                    mDialog.dismiss();
+                    dataHandler.onCallBack(mEditTextIP.getText().toString(), mEditTextLoadBoardIP.getText().toString());
+                }));
+
+                mDialog.setCancelable(false);
+                showDialog();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

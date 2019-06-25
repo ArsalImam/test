@@ -57,9 +57,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
-import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -1413,30 +1411,6 @@ public class UserRepository {
     }
 
     /**
-     * request for loadboard jobs list
-     *
-     * @param context       Context
-     * @param limit         jobs limit - OPTIONAL
-     * @param pickupZoneId  jobs pickup zone id - OPTIONAL
-     * @param dropoffZoneId - jons dropoff zone id - OPTIONAL
-     * @param handler       callback
-     */
-    public void requestLoadBoardListingAPI(Context context, String limit, String pickupZoneId, String dropoffZoneId, final IUserDataHandler handler) {
-        mRestRequestHandler.loadboardListing(context, limit, pickupZoneId, dropoffZoneId, new IResponseCallback() {
-            @Override
-            public void onResponse(Object object) {
-                if (object instanceof LoadBoardListingResponse)
-                    handler.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
-            }
-
-            @Override
-            public void onError(int errorCode, String error) {
-                handler.onError(errorCode, error);
-            }
-        });
-    }
-
-    /**
      * accept request for specific booking
      *
      * @param context   Context
@@ -1447,20 +1421,6 @@ public class UserRepository {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.acceptLoadboardBooking(mContext, bookingId, mDataCallback);
-
-    }
-
-    /**
-     * request for details of selected booking
-     *
-     * @param context   Context
-     * @param bookingId selected booking id
-     * @param handler   callback
-     */
-    public void loadboardBookingDetail(Context context, String bookingId, IUserDataHandler handler) {
-        mContext = context;
-        mUserCallback = handler;
-        mRestRequestHandler.loadboardBookingDetail(mContext, bookingId, mDataCallback);
 
     }
 
@@ -1696,12 +1656,6 @@ public class UserRepository {
                         break;
                     case "UpdateAppVersionResponse":
                         mUserCallback.onUpdateAppVersionResponse((UpdateAppVersionResponse) object);
-                        break;
-                    case "LoadBoardListingResponse":
-                        mUserCallback.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
-                        break;
-                    case "LoadboardBookingDetailResponse":
-                        mUserCallback.onLoadboardBookingDetailResponse((LoadboardBookingDetailResponse) object);
                         break;
                     case "AcceptLoadboardBookingResponse":
                         WebIORequestHandler.getInstance().registerChatListener();

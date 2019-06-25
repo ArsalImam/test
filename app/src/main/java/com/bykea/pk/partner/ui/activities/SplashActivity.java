@@ -10,6 +10,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.dal.source.remote.ApiClient;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
@@ -292,12 +293,15 @@ public class SplashActivity extends BaseActivity {
      * This would only be displayed when build variant is local.
      */
     private void displayDialogBaseURLInput() {
-        Dialogs.INSTANCE.showInputAlert(mCurrentActivity, new StringCallBack() {
+        Dialogs.INSTANCE.showAlertDialogForURL(mCurrentActivity, new StringCallBack() {
             @Override
-            public void onCallBack(String localUrl) {
+            public void onCallBack(String localUrl, String localLoadboardUrl) {
                 ApiTags.LOCAL_BASE_URL = localUrl;
                 ApiTags.BASE_SERVER_URL = ApiTags.LOCAL_BASE_URL;
+
                 AppPreferences.setLocalBaseUrl(ApiTags.BASE_SERVER_URL);
+                ApiClient.INSTANCE.setAPI_BASE_URL(localLoadboardUrl);
+
                 WebIO.getInstance().clearConnectionData();
                 new RestRequestHandler().clearRetrofitClient();
                 configureScreenForApiRequest();

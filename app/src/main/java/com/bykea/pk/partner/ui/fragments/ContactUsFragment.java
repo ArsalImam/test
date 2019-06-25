@@ -3,8 +3,10 @@ package com.bykea.pk.partner.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +84,7 @@ public class ContactUsFragment extends Fragment {
         @Override
         public void onError(int errorCode, String errorMessage) {
             Dialogs.INSTANCE.dismissDialog();
-            Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+            Dialogs.INSTANCE.showToast(errorMessage);
             if (errorCode == HTTPStatus.UNAUTHORIZED) {
                 Utils.logout(mCurrentActivity);
             }
