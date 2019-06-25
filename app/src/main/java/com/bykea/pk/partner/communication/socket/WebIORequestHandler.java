@@ -593,6 +593,9 @@ public class WebIORequestHandler {
 
     }
 
+    /**
+     * Socket listener for new active job
+     */
     public static class NewActiveJobListener implements Emitter.Listener {
 
         @Override
