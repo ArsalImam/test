@@ -68,7 +68,6 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("total")
     private String totalFare;
     private String pass_socket_id;
-    private String rec_no;
 
     @SerializedName("km")
     private String distanceCovered;
@@ -105,11 +104,27 @@ public class NormalCallData extends CommonResponse {
     private boolean isReturnRun;
     @SerializedName("wallet_deposit")
     private boolean isWalletDeposit;
+    private String sub_type;
+    private String order_no;
+
+    @SerializedName("receiver_phone")
+    private String receiverPhone;
+
+    @SerializedName("receiver_name")
+    private String receiverName;
+
+    @SerializedName("receiver_address")
+    private String receiverAddress;
+
+    @Deprecated
+    private String recName;
+
+    @Deprecated
+    private String rec_no;
+
+    @Deprecated
     @SerializedName("cAddr")
     private String complete_address;
-    private String sub_type;
-    private String recName;
-    private String order_no;
 
     @Deprecated
     @SerializedName("driver_passenger_eta")
@@ -457,10 +472,12 @@ public class NormalCallData extends CommonResponse {
         this.icon = icon;
     }
 
+    @Deprecated
     public String getRec_no() {
         return rec_no;
     }
 
+    @Deprecated
     public void setRec_no(String rec_no) {
         this.rec_no = rec_no;
     }
@@ -513,10 +530,12 @@ public class NormalCallData extends CommonResponse {
         isWalletDeposit = walletDeposit;
     }
 
+    @Deprecated
     public String getComplete_address() {
         return complete_address;
     }
 
+    @Deprecated
     public void setComplete_address(String complete_address) {
         this.complete_address = complete_address;
     }
@@ -529,10 +548,12 @@ public class NormalCallData extends CommonResponse {
         this.sub_type = sub_type;
     }
 
+    @Deprecated
     public String getRecName() {
         return recName;
     }
 
+    @Deprecated
     public void setRecName(String recName) {
         this.recName = recName;
     }
@@ -671,5 +692,29 @@ public class NormalCallData extends CommonResponse {
 
     public void setServiceCode(Integer serviceCode) {
         this.serviceCode = serviceCode;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getReceiverAddress() {
+        return receiverAddress;
+    }
+
+    public void setReceiverAddress(String receiverAddress) {
+        this.receiverAddress = receiverAddress;
     }
 }

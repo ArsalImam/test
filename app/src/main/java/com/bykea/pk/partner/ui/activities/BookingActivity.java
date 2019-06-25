@@ -429,7 +429,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.callbtn:
-                if (StringUtils.isNotBlank(callData.getRec_no())) {
+                if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
                     showCallPassengerDialog();
                 } else {
                     Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
@@ -656,7 +656,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
                         || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())
                         || TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getRec_no();
+                    return callData.getReceiverPhone();
                 }
             } else {
                 return callData.getPhoneNo();
@@ -674,12 +674,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (isServiceTypeFoodDelivery()) {
                 if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
                         || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getRec_no();
+                    return callData.getReceiverPhone();
                 } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
                     return callData.getPhoneNo();
                 }
             } else {
-                return callData.getRec_no();
+                return callData.getReceiverPhone();
             }
         }
         return StringUtils.EMPTY;
@@ -1019,11 +1019,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             llDetails.setVisibility(View.VISIBLE);
             tvDetailsNotEntered.setVisibility(View.GONE);
 
-            tvCustomerName.setText(callData.getRecName());
-            tvCustomerPhone.setText(callData.getRec_no());
-            if (StringUtils.isNotBlank(callData.getComplete_address())) {
+            tvCustomerName.setText(callData.getReceiverName());
+            tvCustomerPhone.setText(callData.getReceiverPhone());
+            if (StringUtils.isNotBlank(callData.getReceiverAddress())) {
                 tvDetailsAddress.setVisibility(View.VISIBLE);
-                tvDetailsAddress.setText(callData.getComplete_address());
+                tvDetailsAddress.setText(callData.getReceiverAddress());
             } else {
                 tvDetailsAddress.setVisibility(View.GONE);
             }
@@ -2247,7 +2247,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         /*if (StringUtils.isBlank(callData.getRecName())) {
             isAdded = false;
         } else */
-        if (StringUtils.isBlank(callData.getRec_no())) {
+        if (StringUtils.isBlank(callData.getReceiverPhone())) {
             isAdded = false;
         } else if (StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;

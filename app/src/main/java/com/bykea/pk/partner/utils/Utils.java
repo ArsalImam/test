@@ -2651,9 +2651,9 @@ public class Utils {
                 currentcallData.setEndLng(callData.getData().getEndLng());
                 currentcallData.setStatus(callData.getStatus());
 
-                currentcallData.setComplete_address(callData.getData().getComplete_address());
-                currentcallData.setRec_no(callData.getData().getRec_no());
-                currentcallData.setRecName(callData.getData().getRecName());
+                currentcallData.setReceiverAddress(callData.getData().getReceiverAddress());
+                currentcallData.setReceiverPhone(callData.getData().getReceiverPhone());
+                currentcallData.setReceiverName(callData.getData().getReceiverName());
                 currentcallData.setAmount_parcel_value(callData.getData().getAmount_parcel_value());
                 currentcallData.setCodAmount(callData.getData().getCodAmountNotFormatted());
                 currentcallData.setOrder_no(callData.getData().getOrder_no());
