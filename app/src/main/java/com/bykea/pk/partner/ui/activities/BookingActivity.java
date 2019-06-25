@@ -15,10 +15,12 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
+
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -2231,12 +2233,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Sets up Countdown timer for ETA on ride Pickup and ride Drop-off stops
      */
     private void configCountDown() {
-        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && callData.getPickupStop() != null) {
+        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && callData.getPickupStop() != null &&
+                callData.getPickupStop().getDuration() != null) {
             int pickDuration = callData.getPickupStop().getDuration();
             long eta = AppPreferences.getTripAcceptTime() + TimeUnit.SECONDS.toMillis(pickDuration);
             tvCountDown.setVisibility(View.VISIBLE);
             startCountDown(eta);
-        } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP) && callData.getDropoffStop() != null) {
+        } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP) && callData.getDropoffStop() != null &&
+                callData.getDropoffStop().getDuration() != null) {
             int dropDuration = callData.getDropoffStop().getDuration();
             long eta = AppPreferences.getStartTripTime() + TimeUnit.SECONDS.toMillis(dropDuration);
             tvCountDownEnd.setVisibility(View.VISIBLE);
