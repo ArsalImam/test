@@ -1845,7 +1845,7 @@ public class Utils {
      * @param shouldLogToMixpanel whether the log event is triggered for mixpanel or not
      */
     public static void logEvent(Context context, String userID, String EVENT, JSONObject data, boolean shouldLogToMixpanel) {
-        if(shouldLogToMixpanel){
+        if (shouldLogToMixpanel) {
             MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
             mixpanelAPI.identify(userID);
             mixpanelAPI.getPeople().identify(userID);
@@ -1919,9 +1919,17 @@ public class Utils {
         }
     }
 
+    /**
+     * Checks if call type is one of the delivery types
+     *
+     * @param callType Call type
+     * @return Either delivery service or not
+     */
     public static boolean isDeliveryService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Send")
-                || StringUtils.containsIgnoreCase(callType, "Delivery");
+                || StringUtils.containsIgnoreCase(callType, "Delivery")
+                || StringUtils.containsIgnoreCase(callType, "COD")
+                || StringUtils.containsIgnoreCase(callType, "NOD");
     }
 
     public static boolean isRideService(String callType) {
@@ -2010,12 +2018,19 @@ public class Utils {
 
     }
 
+    /**
+     * Return resource id of image for service icon on basis of call type
+     * @param callData Call data
+     * @return Resource id of service icon image
+     */
     public static Integer getServiceIcon(NormalCallData callData) {
         String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
         switch (callType) {
             case "parcel":
             case "send":
             case "delivery":
+            case "cod":
+            case "nod":
                 return R.drawable.bhejdo_no_caption;
             case "bring":
             case "purchase":
