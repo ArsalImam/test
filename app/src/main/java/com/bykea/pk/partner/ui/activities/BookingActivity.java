@@ -824,7 +824,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @Override
     protected void onDestroy() {
 //        Utils.flushMixPanelEvent(mCurrentActivity);
-        progressDialogJobActivity.dismiss();
+        if (progressDialogJobActivity != null) progressDialogJobActivity.dismiss();
         AppPreferences.setJobActivityOnForeground(false);
         AppPreferences.setLastDirectionsApiCallTime(0);
         // Unregister here due to some reasons.
