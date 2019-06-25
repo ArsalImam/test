@@ -895,7 +895,7 @@ public class HomeFragment extends Fragment {
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
                             Utils.onUnauthorized(mCurrentActivity);
                         } else {
-                            Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                            Dialogs.INSTANCE.showToast(errorMessage);
                         }
                     }
                 });

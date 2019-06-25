@@ -43,8 +43,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -443,7 +441,7 @@ public class FeedbackActivity extends BaseActivity {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, feedbackResponse.getMessage());
+                    Dialogs.INSTANCE.showToast(feedbackResponse.getMessage());
                     Utils.setCallIncomingState();
                     AppPreferences.setWalletAmountIncreased(!feedbackResponse.isAvailable());
                     AppPreferences.setAvailableStatus(feedbackResponse.isAvailable());

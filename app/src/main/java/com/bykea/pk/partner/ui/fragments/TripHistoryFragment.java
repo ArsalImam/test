@@ -1,12 +1,14 @@
 package com.bykea.pk.partner.ui.fragments;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -206,7 +208,7 @@ public class TripHistoryFragment extends Fragment {
                             if (loader != null) {
                                 loader.setVisibility(View.GONE);
                             }
-                            Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                            Dialogs.INSTANCE.showToast(errorMessage);
                             if (errorCode == HTTPStatus.UNAUTHORIZED) {
                                 Utils.logout(mCurrentActivity);
                             }

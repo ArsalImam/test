@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.utils;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -10,6 +9,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,13 +71,13 @@ public enum Dialogs {
     private Dialog mDialog;
     private Dialog mAdminNotifiationDialog;
 
-    public void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    public void showToast(String message) {
+        Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    public void showTempToast(Context context, String message) {
+    public void showTempToast(String message) {
         if (BuildConfig.DEBUG) {
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_LONG).show();
         }
     }
 
