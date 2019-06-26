@@ -24,8 +24,7 @@ class JobRequestsRemoteDataSource {
      */
     fun getJobRequests(driverId: String, token: String, lat: Double, lng: Double, serviceCode: Int?, limit: Int, callback: JobRequestsDataSource.LoadJobRequestsCallback) {
 
-        val call = ApiClient.build()?.getJobRequestList(driverId, token, lat, lng, serviceCode)
-        call?.enqueue(object : Callback<GetJobRequestListResponse> {
+        Backend.loadboard.getJobRequestList(driverId, token, lat, lng, serviceCode).enqueue(object : Callback<GetJobRequestListResponse> {
 
             override fun onFailure(call: Call<GetJobRequestListResponse>, t: Throwable) {
                 callback.onDataNotAvailable(t.message)
@@ -56,8 +55,7 @@ class JobRequestsRemoteDataSource {
      */
     fun getJobRequest(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobRequestsDataSource.GetJobRequestCallback) {
 
-        val call = ApiClient.build()?.getJobRequestDetail(driverId, token, bookingId, lat, lng)
-        call?.enqueue(object : Callback<GetJobRequestDetailResponse> {
+        Backend.loadboard.getJobRequestDetail(driverId, token, bookingId, lat, lng).enqueue(object : Callback<GetJobRequestDetailResponse> {
 
             override fun onFailure(call: Call<GetJobRequestDetailResponse>, t: Throwable) {
                 callback.onDataNotAvailable(t.message)
@@ -83,8 +81,7 @@ class JobRequestsRemoteDataSource {
      * @param jobRequestId Id of Booking to be accepted
      */
     fun acceptJobRequest(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobRequestsDataSource.AcceptJobRequestCallback) {
-        val call = ApiClient.build()?.acceptJobRequest(jobRequestId, driverId, token, AcceptJobRequestRequest(lat, lng))
-        call?.enqueue(object : Callback<AcceptJobRequestResponse> {
+        Backend.loadboard.acceptJobRequest(jobRequestId, driverId, token, AcceptJobRequestRequest(lat, lng)).enqueue(object : Callback<AcceptJobRequestResponse> {
 
             override fun onFailure(call: Call<AcceptJobRequestResponse>, t: Throwable) {
                 callback.onJobRequestAcceptFailed(t.message, false)

@@ -1,18 +1,24 @@
 package com.bykea.pk.partner.dal.source.remote
 
+import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequestRequest
 import com.bykea.pk.partner.dal.source.remote.response.AcceptJobRequestResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.util.concurrent.TimeUnit
 
 /**
  * API interface for Load Board
  *
  * @author Yousuf Sohail
  */
-interface ApiInterface {
+interface Backend {
 
     /**
      * Getting loadboard list of all types in home screen when partner is active.
@@ -76,5 +82,33 @@ interface ApiInterface {
             @Query("booking_id") bookingId: Long,
             @Query("_id") driverId: String,
             @Query("token_id") token: String): Call<GetJobRequestDetailResponse>
+
+
+    companion object {
+
+        val telos by lazy { invoke(BuildConfig.FLAVOR_URL_TELOS) }
+        val loadboard by lazy { invoke(BuildConfig.FLAVOR_URL_LOADBOARD) }
+
+        private val loggingInterceptor = HttpLoggingInterceptor().apply {
+            this.level = HttpLoggingInterceptor.Level.BODY
+        }
+
+        operator fun invoke(baseUrl: String): Backend {
+            val client = OkHttpClient.Builder().apply {
+                addNetworkInterceptor(loggingInterceptor)
+                connectTimeout(10, TimeUnit.MINUTES)
+                readTimeout(10, TimeUnit.MINUTES)
+                writeTimeout(10, TimeUnit.MINUTES)
+            }.build()
+
+            return Retrofit.Builder()
+                    .client(client)
+                    .baseUrl(baseUrl)
+//                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                    .create(Backend::class.java)
+        }
+    }
 
 }
