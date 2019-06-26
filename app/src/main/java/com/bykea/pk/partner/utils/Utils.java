@@ -1932,6 +1932,17 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "NOD");
     }
 
+    /**
+     * Checks if call type is from loadboard
+     *
+     * @param callType Call type
+     * @return Either loadboard service or not
+     */
+    public static boolean isLoadboardService(String callType) {
+        return StringUtils.containsIgnoreCase(callType, "COD")
+                || StringUtils.containsIgnoreCase(callType, "NOD");
+    }
+
     public static boolean isRideService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Ride");
     }

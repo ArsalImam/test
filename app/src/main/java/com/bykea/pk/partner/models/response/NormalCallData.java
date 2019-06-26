@@ -695,8 +695,8 @@ public class NormalCallData extends CommonResponse {
     }
 
     public String getReceiverPhone() {
-        if (receiverPhone.isEmpty()) return rec_no;
-        else return receiverPhone;
+        if (receiverPhone != null && !receiverPhone.isEmpty()) return receiverPhone;
+        else return rec_no;
     }
 
     public void setReceiverPhone(String receiverPhone) {
@@ -704,8 +704,8 @@ public class NormalCallData extends CommonResponse {
     }
 
     public String getReceiverName() {
-        if (receiverName.isEmpty()) return recName;
-        else return receiverName;
+        if (receiverName != null && !receiverName.isEmpty()) return receiverName;
+        else return recName;
     }
 
     public void setReceiverName(String receiverName) {
@@ -713,8 +713,8 @@ public class NormalCallData extends CommonResponse {
     }
 
     public String getReceiverAddress() {
-        if (receiverAddress.isEmpty()) return complete_address;
-        else return receiverAddress;
+        if (receiverAddress != null && !receiverAddress.isEmpty()) return receiverAddress;
+        else return complete_address;
     }
 
     public void setReceiverAddress(String receiverAddress) {

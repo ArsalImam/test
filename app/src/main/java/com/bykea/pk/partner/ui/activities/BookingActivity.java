@@ -2258,7 +2258,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else */
         if (StringUtils.isBlank(callData.getReceiverPhone())) {
             isAdded = false;
-        } else if (StringUtils.isBlank(callData.getCodAmount())) {
+        } else if (!Utils.isLoadboardService(callData.getCallType()) && StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;
         }
         return isAdded;
