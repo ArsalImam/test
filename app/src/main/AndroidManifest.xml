@@ -236,6 +236,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.loadboard.detail.JobRequestDetailActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>
