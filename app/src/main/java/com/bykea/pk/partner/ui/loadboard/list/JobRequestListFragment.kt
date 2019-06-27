@@ -222,9 +222,12 @@ class JobRequestListFragment : Fragment() {
         private const val TAG = "BookingsFragment"
     }
 
+    /**
+     * Broadcast Receiver to updated the Booking Request.
+     */
     private val mUpdatedBookingRequestReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            viewDataBinding.viewmodel!!.refresh()
+            viewDataBinding.viewmodel?.refresh()
         }
     }
 
