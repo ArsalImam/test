@@ -24,7 +24,7 @@ class JobRequestsRemoteDataSource {
      */
     fun getJobRequests(driverId: String, token: String, lat: Double, lng: Double, serviceCode: Int?, limit: Int, callback: JobRequestsDataSource.LoadJobRequestsCallback) {
 
-        Backend.loadboard.getJobRequestList(driverId, token, lat, lng, serviceCode).enqueue(object : Callback<GetJobRequestListResponse> {
+        Backend.telos.getJobRequestList(driverId, token, lat, lng, serviceCode).enqueue(object : Callback<GetJobRequestListResponse> {
 
             override fun onFailure(call: Call<GetJobRequestListResponse>, t: Throwable) {
                 callback.onDataNotAvailable(t.message)

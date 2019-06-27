@@ -241,7 +241,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         if (IS_CALLED_FROM_LOADBOARD_VALUE) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            dataRepository.requestRunningTrip(mCurrentActivity, handler);
+            dataRepository.requestRunningTripForPooling(mCurrentActivity, handler);
         }
 
         AppPreferences.setStatsApiCallRequired(true);
@@ -2120,15 +2120,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                     requestTripCounter++;
                                     if (requestTripCounter < MAX_LIMIT_LOAD_BOARD) {
                                         new Handler().postDelayed(() -> {
-                                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                            dataRepository.requestRunningTrip(mCurrentActivity, handler);
+                                            dataRepository.requestRunningTripForPooling(mCurrentActivity, handler);
                                         }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
                                     } else {
+                                        Dialogs.INSTANCE.dismissDialog();
                                         Dialogs.INSTANCE.showTempToast("Request trip limit Exceeded");
                                         ActivityStackManager.getInstance().startHomeActivity(BookingActivity.this);
                                     }
                                     return;
                                 }
+
+                                Dialogs.INSTANCE.dismissDialog();
+
                                 AppPreferences.setTripAcceptTime(System.currentTimeMillis());
                                 AppPreferences.setEstimatedFare(normalCallData.getKraiKiKamai());
                                 AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());

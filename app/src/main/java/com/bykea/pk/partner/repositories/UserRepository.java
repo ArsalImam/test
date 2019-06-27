@@ -213,6 +213,12 @@ public class UserRepository {
         mRestRequestHandler.checkRunningTrip(mContext, mDataCallback);
     }
 
+    public void requestRunningTripForPooling(Context context, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.checkRunningTripForPooling(mContext, mDataCallback);
+    }
+
     public void requestTripHistory(Context context, IUserDataHandler handler, String pageNo) {
         mContext = context;
         mUserCallback = handler;

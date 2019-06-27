@@ -486,6 +486,33 @@ public class RestRequestHandler {
 
     }
 
+    public void checkRunningTripForPooling(Context context, final IResponseCallback onResponseCallBack) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getClient(mContext);
+        Call<CheckDriverStatusResponse> restCall = mRestClient.checkRunningTrip(
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken());
+        restCall.enqueue(new Callback<CheckDriverStatusResponse>() {
+            @Override
+            public void onResponse(Call<CheckDriverStatusResponse> call, Response<CheckDriverStatusResponse> response) {
+                // Got success from server
+                if (response.code() == HttpURLConnection.HTTP_OK) {
+                    mResponseCallBack.onResponse(response.body());
+                    Utils.redLog(TAG, new Gson().toJson(response.body().getData()));
+                } else {
+                    mResponseCallBack.onError(response.code(), response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckDriverStatusResponse> call, Throwable t) {
+                Dialogs.INSTANCE.dismissDialog();
+                mResponseCallBack.onError(0, getErrorMessage(t));
+            }
+        });
+    }
+
     //THIS METHOD IS TO UPLOAD AUDIO MESSAGE FILE
     public void uploadAudioFile(Context context, IResponseCallback responseCallBack, final File file) {
         mContext = context;
