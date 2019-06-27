@@ -486,7 +486,13 @@ public class RestRequestHandler {
 
     }
 
-    public void checkRunningTripForPooling(Context context, final IResponseCallback onResponseCallBack) {
+    /**
+     * USE WHEN YOU WANT TO DISMISS WHEN THE SUCCESSFUL DATA IS RETRIEVE FOR THE ACTIVE TRIP
+     * @param context : Calling Activity
+     * @param onResponseCallBack : Override in Calling Acitivity
+     */
+
+    public void checkActiveTrip(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);

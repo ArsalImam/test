@@ -241,7 +241,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         if (IS_CALLED_FROM_LOADBOARD_VALUE) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            dataRepository.requestRunningTripForPooling(mCurrentActivity, handler);
+            dataRepository.getActiveTrip(mCurrentActivity, handler);
         }
 
         AppPreferences.setStatsApiCallRequired(true);
@@ -2120,7 +2120,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                     requestTripCounter++;
                                     if (requestTripCounter < MAX_LIMIT_LOAD_BOARD) {
                                         new Handler().postDelayed(() -> {
-                                            dataRepository.requestRunningTripForPooling(mCurrentActivity, handler);
+                                            dataRepository.getActiveTrip(mCurrentActivity, handler);
                                         }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
                                     } else {
                                         Dialogs.INSTANCE.dismissDialog();
