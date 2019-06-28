@@ -12,6 +12,7 @@ import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.response.BookingAcceptedResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -33,6 +34,7 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
 
@@ -120,7 +122,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                         Log.d(TAG, "Push Notification Received: With Status: " + callData.getStatus());
 
-                        Utils.redLog(TAG,"On Call FCM");
+                        Utils.redLog(TAG, "On Call FCM");
                         ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
                     } else {
                         Utils.updateTripData(callData);
@@ -180,11 +182,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (data != null) {
                     AppPreferences.setMultiDeliveryCallDriverData(data);
                     ActivityStackManager.getInstance().startMultiDeliveryCallingActivity(
-                                    AppPreferences.getMultiDeliveryCallDriverData(), true, DriverApp.getContext());
+                            AppPreferences.getMultiDeliveryCallDriverData(), true, DriverApp.getContext());
                 }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN))) { //Multi delivery cancel by admin
                 mBus.post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(SOCKET_NEW_JOB_CALL))) {
+                try {
+                    BookingAcceptedResponse response = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), BookingAcceptedResponse.class);
+                    if (response.isSuccess() && !AppPreferences.isJobActivityOnForeground()) {
+                        ActivityStackManager.getInstance().startJobActivity(DriverApp.getContext(), false);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -281,7 +293,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (locationResponse != null) {
             switch (locationResponse.getCode()) {
                 case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
-                    Utils.handleLocationBusinessLogicErrors(mBus,locationResponse);
+                    Utils.handleLocationBusinessLogicErrors(mBus, locationResponse);
                     break;
                 }
                 //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.

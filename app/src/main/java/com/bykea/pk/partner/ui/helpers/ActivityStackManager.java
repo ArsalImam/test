@@ -173,8 +173,18 @@ public class ActivityStackManager {
 
     public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
-        if (mContext instanceof JobRequestDetailActivity)
-            intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * Util method to start active job activity aka Booking Activity
+     *
+     * @param mContext     source activity's context
+     * @param dataPrefetch flag to identify is active job data is already fetch from server
+     */
+    public void startJobActivity(Context mContext, boolean dataPrefetch) {
+        Intent intent = new Intent(mContext, BookingActivity.class);
+        if (!dataPrefetch) intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
         mContext.startActivity(intent);
     }
 

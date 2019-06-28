@@ -64,7 +64,7 @@ class JobRequestDetailActivity : BaseActivity() {
             })
 
             acceptBookingCommand.observe(this@JobRequestDetailActivity, Observer {
-                ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity)
+                ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity, false)
             })
 
             bookingTakenCommand.observe(this@JobRequestDetailActivity, Observer {
