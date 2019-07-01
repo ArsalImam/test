@@ -9,15 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,7 +31,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.dal.source.remote.ApiClient;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
@@ -1116,7 +1106,7 @@ public enum Dialogs {
                 mEditTextLoadBoardIP = mDialog.findViewById(R.id.editTextLoadBoardIP);
 
                 mEditTextIP.setText(BuildConfig.FLAVOR_URL);
-                mEditTextLoadBoardIP.setText(ApiClient.INSTANCE.getBaseFlavorURL());
+                mEditTextLoadBoardIP.setText(com.bykea.pk.partner.dal.BuildConfig.FLAVOR_URL_LOADBOARD);
 
                 mDialog.setOnShowListener(dialog -> mDialog.findViewById(R.id.imgViewClick).setOnClickListener(v -> {
                     if (mEditTextIP.getText().length() == 0) {

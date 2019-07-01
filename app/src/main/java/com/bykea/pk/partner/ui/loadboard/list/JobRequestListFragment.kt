@@ -1,5 +1,9 @@
 package com.bykea.pk.partner.ui.loadboard.list
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
@@ -11,13 +15,17 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.JobRequestListFragBinding
+import com.bykea.pk.partner.ui.activities.HomeActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
+import com.bykea.pk.partner.utils.Connectivity
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.NetworkChangeListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.job_request_list_frag.*
@@ -37,6 +45,7 @@ class JobRequestListFragment : Fragment() {
 
     private lateinit var viewDataBinding: JobRequestListFragBinding
     private lateinit var listAdapter: JobRequestListAdapter
+    private lateinit var mCurrentActivity: HomeActivity
     private var mBehavior: BottomSheetBehavior<*>? = null
 
     var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
@@ -45,6 +54,8 @@ class JobRequestListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
         layoutParamRL.setMargins(0, resources.getDimension(R.dimen._minus8sdp).toInt(), 0, 0);
+
+        mCurrentActivity = activity as HomeActivity
 
         viewDataBinding = JobRequestListFragBinding.inflate(inflater, container, false).apply {
 
@@ -97,6 +108,7 @@ class JobRequestListFragment : Fragment() {
                 }
             }
         }
+
         return viewDataBinding.root
     }
 
@@ -145,11 +157,20 @@ class JobRequestListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        mCurrentActivity.registerReceiver(mUpdatedBookingRequestReceiver,
+                IntentFilter(Constants.Broadcast.UPDATE_LOADBOARD_BOOKINGS_REQUEST))
+
         viewDataBinding.viewmodel?.start()
         if (mBehavior != null &&
                 mBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
             viewDataBinding.viewmodel!!.isExpended.value = true
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mCurrentActivity.unregisterReceiver(mUpdatedBookingRequestReceiver);
     }
 
     /**
@@ -200,4 +221,14 @@ class JobRequestListFragment : Fragment() {
         fun newInstance() = JobRequestListFragment()
         private const val TAG = "BookingsFragment"
     }
+
+    /**
+     * Broadcast Receiver to updated the Booking Request.
+     */
+    private val mUpdatedBookingRequestReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            viewDataBinding.viewmodel?.refresh()
+        }
+    }
+
 }

@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
@@ -351,6 +352,9 @@ public class HomeFragment extends Fragment {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //  Below broadcast has send to update the loadboard bookings request
+                mCurrentActivity.sendBroadcast(new Intent(Constants.Broadcast.UPDATE_LOADBOARD_BOOKINGS_REQUEST));
+
                 if (Utils.isGpsEnable()) {
                     if (Connectivity.isConnectedFast(mCurrentActivity)) {
                         if (AppPreferences.getAvailableStatus()) {

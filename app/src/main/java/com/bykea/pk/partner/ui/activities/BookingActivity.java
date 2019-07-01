@@ -103,6 +103,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
+
 //import com.google.android.gms.location.places.Place;
 //import com.google.android.gms.location.places.Places;
 
@@ -223,6 +225,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     CountDownTimer countDownTimer;
 
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
+    private int requestTripCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -429,7 +432,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.callbtn:
-                if (StringUtils.isNotBlank(callData.getRec_no())) {
+                if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
                     showCallPassengerDialog();
                 } else {
                     Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
@@ -656,7 +659,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
                         || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())
                         || TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getRec_no();
+                    return callData.getReceiverPhone();
                 }
             } else {
                 return callData.getPhoneNo();
@@ -674,12 +677,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (isServiceTypeFoodDelivery()) {
                 if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
                         || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getRec_no();
+                    return callData.getReceiverPhone();
                 } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
                     return callData.getPhoneNo();
                 }
             } else {
-                return callData.getRec_no();
+                return callData.getReceiverPhone();
             }
         }
         return StringUtils.EMPTY;
@@ -824,7 +827,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @Override
     protected void onDestroy() {
 //        Utils.flushMixPanelEvent(mCurrentActivity);
-        progressDialogJobActivity.dismiss();
+        if (progressDialogJobActivity != null) progressDialogJobActivity.dismiss();
         AppPreferences.setJobActivityOnForeground(false);
         AppPreferences.setLastDirectionsApiCallTime(0);
         // Unregister here due to some reasons.
@@ -1019,11 +1022,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             llDetails.setVisibility(View.VISIBLE);
             tvDetailsNotEntered.setVisibility(View.GONE);
 
-            tvCustomerName.setText(callData.getRecName());
-            tvCustomerPhone.setText(callData.getRec_no());
-            if (StringUtils.isNotBlank(callData.getComplete_address())) {
+            tvCustomerName.setText(callData.getReceiverName());
+            tvCustomerPhone.setText(callData.getReceiverPhone());
+            if (StringUtils.isNotBlank(callData.getReceiverAddress())) {
                 tvDetailsAddress.setVisibility(View.VISIBLE);
-                tvDetailsAddress.setText(callData.getComplete_address());
+                tvDetailsAddress.setText(callData.getReceiverAddress());
             } else {
                 tvDetailsAddress.setVisibility(View.GONE);
             }
@@ -2114,10 +2117,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                             if (IS_CALLED_FROM_LOADBOARD_VALUE) {
                                 if (response.getData().getTrip() == null) {
-                                    new Handler().postDelayed(() -> {
-                                        Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
-                                    }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
+                                    requestTripCounter++;
+                                    if (requestTripCounter < MAX_LIMIT_LOAD_BOARD) {
+                                        new Handler().postDelayed(() -> {
+                                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                                            dataRepository.requestRunningTrip(mCurrentActivity, handler);
+                                        }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
+                                    } else {
+                                        Dialogs.INSTANCE.showTempToast("Request trip limit Exceeded");
+                                        ActivityStackManager.getInstance().startHomeActivity(BookingActivity.this);
+                                    }
                                     return;
                                 }
                                 AppPreferences.setTripAcceptTime(System.currentTimeMillis());
@@ -2247,9 +2256,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         /*if (StringUtils.isBlank(callData.getRecName())) {
             isAdded = false;
         } else */
-        if (StringUtils.isBlank(callData.getRec_no())) {
+        if (StringUtils.isBlank(callData.getReceiverPhone())) {
             isAdded = false;
-        } else if (StringUtils.isBlank(callData.getCodAmount())) {
+        } else if (!Utils.isLoadboardService(callData.getCallType()) && StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;
         }
         return isAdded;

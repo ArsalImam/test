@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -10,21 +9,13 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
-import com.bykea.pk.partner.dal.source.remote.ApiClient;
-import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.ui.helpers.AdvertisingIdTask;
-import com.bykea.pk.partner.ui.helpers.StringCallBack;
-import com.bykea.pk.partner.utils.ApiTags;
-import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.Keys;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
-import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -36,31 +27,20 @@ import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
+import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -300,7 +280,7 @@ public class SplashActivity extends BaseActivity {
                 ApiTags.BASE_SERVER_URL = ApiTags.LOCAL_BASE_URL;
 
                 AppPreferences.setLocalBaseUrl(ApiTags.BASE_SERVER_URL);
-                ApiClient.INSTANCE.setAPI_BASE_URL(localLoadboardUrl);
+//                ApiClient.INSTANCE.setAPI_BASE_URL(localLoadboardUrl);
 
                 WebIO.getInstance().clearConnectionData();
                 new RestRequestHandler().clearRetrofitClient();

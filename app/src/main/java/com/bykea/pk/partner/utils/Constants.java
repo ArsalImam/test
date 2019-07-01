@@ -214,6 +214,7 @@ public class Constants {
 
     public static class Broadcast {
         public static final String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
+        public static final String UPDATE_LOADBOARD_BOOKINGS_REQUEST = "UPDATE_LOADBOARD_BOOKINGS_REQUEST";
     }
 
     public static class Actions {
@@ -288,7 +289,8 @@ public class Constants {
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
     public final static int LOCATION_API_WAIT_ON_INACTIVE_PUSH = 15000;
-    public final static int HANDLER_POST_DELAY_LOAD_BOARD = 1000;
+    public final static int HANDLER_POST_DELAY_LOAD_BOARD = 2000;
+    public final static int MAX_LIMIT_LOAD_BOARD = 10;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
 

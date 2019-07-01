@@ -26,6 +26,8 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.View;
@@ -303,6 +305,9 @@ public class BaseActivity extends AppCompatActivity {
     public void checkConnectivity(Context context) {
         if (Connectivity.isConnectedFast(context)) {
             dismissProgressDialog();
+
+            //  Below broadcast has send to update the loadboard bookings request
+            sendBroadcast(new Intent(Constants.Broadcast.UPDATE_LOADBOARD_BOOKINGS_REQUEST));
         } else {
             showProgressDialog();
         }
