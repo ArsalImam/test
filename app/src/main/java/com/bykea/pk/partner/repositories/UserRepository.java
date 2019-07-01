@@ -213,6 +213,18 @@ public class UserRepository {
         mRestRequestHandler.checkRunningTrip(mContext, mDataCallback);
     }
 
+
+    /**
+     * USE WHEN YOU WANT TO DISMISS WHEN THE SUCCESSFUL DATA IS RETRIEVE FOR THE ACTIVE TRIP
+     * @param context : Calling Activity
+     * @param handler : Override in Calling Acitivity
+     */
+    public void getActiveTrip(Context context, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.checkActiveTrip(mContext, mDataCallback);
+    }
+
     public void requestTripHistory(Context context, IUserDataHandler handler, String pageNo) {
         mContext = context;
         mUserCallback = handler;
