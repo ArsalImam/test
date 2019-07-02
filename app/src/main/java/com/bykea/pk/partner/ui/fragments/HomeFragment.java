@@ -352,9 +352,6 @@ public class HomeFragment extends Fragment {
         mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //  Below broadcast has send to update the loadboard bookings request
-                mCurrentActivity.sendBroadcast(new Intent(Constants.Broadcast.UPDATE_LOADBOARD_BOOKINGS_REQUEST));
-
                 if (Utils.isGpsEnable()) {
                     if (Connectivity.isConnectedFast(mCurrentActivity)) {
                         if (AppPreferences.getAvailableStatus()) {
@@ -837,6 +834,9 @@ public class HomeFragment extends Fragment {
                             }
                             AppPreferences.setAvailableAPICalling(false);
                             if (AppPreferences.getAvailableStatus()) {
+                                //  Below broadcast has send to update the loadboard bookings request
+                                mCurrentActivity.sendBroadcast(new Intent(Constants.Broadcast.UPDATE_LOADBOARD_BOOKINGS_REQUEST));
+
                                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
                                 //Todo Need to update Server Time difference when status API returns Timestamp for now Calling location API to force update timestamp
                                 //Utils.saveServerTimeDifference(response.body().getTimeStampServer());
