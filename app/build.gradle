@@ -130,6 +130,7 @@ repositories {
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     maven { url "https://jitpack.io" }
     maven { url "https://maven.google.com" }
+    maven { url 'https://zendesk.jfrog.io/zendesk/repo' }
     /*maven {
         url 'http://artifactory.paysyslabs.com/instascan-complete'
         credentials {
@@ -210,6 +211,7 @@ dependencies {
     implementation 'androidx.transition:transition:1.0.0'
 
     implementation deps.markerClustering
+    implementation group: 'com.zendesk', name: 'support', version: '2.3.1'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'de.felixschulze.gradle.hockeyapp'
