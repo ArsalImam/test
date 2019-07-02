@@ -1,6 +1,7 @@
 package com.bykea.pk.partner;
 
 import android.content.Context;
+
 import androidx.multidex.MultiDexApplication;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
@@ -37,6 +38,10 @@ import java.io.File;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import zendesk.core.AnonymousIdentity;
+import zendesk.core.Identity;
+import zendesk.core.Zendesk;
+import zendesk.support.Support;
 
 public class DriverApp extends MultiDexApplication {
 
@@ -67,6 +72,8 @@ public class DriverApp extends MultiDexApplication {
         if (mContext == null) {
             mContext = this;
         }
+
+        setupZendeskConfiguration();
         AppEventsLogger.activateApp(this);
 
         mBasicComponent = DaggerBasicComponent.builder()
@@ -84,6 +91,22 @@ public class DriverApp extends MultiDexApplication {
                 .filterOtherGCMReceivers(true)
                 .init();
         setupLoggerConfigurations();
+    }
+
+    private void setupZendeskConfiguration() {
+        Zendesk.INSTANCE.init(this, Constants.ZendeskConfigurations.SUBDOMAIN_URL,
+                Constants.ZendeskConfigurations.APPLICATION_ID,
+                Constants.ZendeskConfigurations.OAUTH_CLIENT_ID);
+
+        Identity identity = new AnonymousIdentity
+                .Builder()
+                .withNameIdentifier("Sibtain Raza")
+                .withEmailIdentifier("03412414814@bykea.com")
+                .build();
+
+        Zendesk.INSTANCE.setIdentity(identity);
+
+        Support.INSTANCE.init(Zendesk.INSTANCE);
     }
 
     /***

@@ -1,27 +1,17 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.ui.fragments.ProblemFragment;
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter;
-import com.bykea.pk.partner.widgets.FontTextView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.ui.fragments.ProblemListFragment;
+import com.bykea.pk.partner.ui.fragments.ProblemSubmittedFragment;
+import com.bykea.pk.partner.widgets.FontTextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,16 +19,13 @@ import butterknife.ButterKnife;
 public class ProblemActivity extends BaseActivity {
 
     private ProblemActivity mCurrentActivity;
-    private ProblemItemsAdapter mAdapter;
-    private ArrayList<String> mProblemList;
-    private LinearLayoutManager mLayoutManager;
     public String tripId;
-    String[] probReasons;
     public String selectedReason;
-    public boolean isMain = true,isSubmitted = false;
 
-    @BindView(R.id.rvProblemList)
-    RecyclerView rvProblemList;
+    public static final String LIST_FRAGMENT = "LIST_FRAGMENT";
+    public static final String DETAIL_FRAGMENT = "DETAIL_FRAGMENT";
+    public static final String DETAIL_SUBMITTED_FRAGMENT = "DETAIL_SUBMITTED_FRAGMENT";
+
     @BindView(R.id.toolbar)
     FrameLayout toolbar;
     @BindView(R.id.ivBackBtn)
@@ -58,74 +45,28 @@ public class ProblemActivity extends BaseActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         tripId = getIntent().getStringExtra("TRIP_ID");
         fragmentManager = getSupportFragmentManager();
-        loadFragment(new ProblemFragment(),true);
-        setGreenActionBarTitle(tripId,"");
-        mProblemList = new ArrayList<>();
-        probReasons = AppPreferences.getSettings().getPredefine_messages().getReasons();
-        copyList();
-        initProblemList();
+        loadFragment(new ProblemListFragment(), LIST_FRAGMENT);
+        setGreenActionBarTitle(tripId, "");
     }
 
-    public void loadFragment(Fragment fragment, boolean isMainFrag) {
-        setMain(isMainFrag);
+    public void loadFragment(Fragment fragment, String fragmentTag) {
         fragmentManager
                 .beginTransaction()
-                .replace(R.id.containerView, fragment)
+                .replace(R.id.containerView, fragment, fragmentTag)
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .commit();
     }
 
-    public static Drawable setTint(Drawable d, int color) {
-        Drawable wrappedDrawable = DrawableCompat.wrap(d);
-        DrawableCompat.setTint(wrappedDrawable, color);
-        return wrappedDrawable;
-    }
-
-    private void copyList() {
-        if (probReasons != null) {
-            Collections.addAll(mProblemList, probReasons);
-        } else {
-            mProblemList.add("Partner ka ravaiya gair ikhlaqi tha");
-            mProblemList.add("Partner ne aik gair mansooba stop kia");
-            mProblemList.add("Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair).");
-            mProblemList.add("Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair).");
-            mProblemList.add("Parner ne baqaya raqam mere wallet me nahi daali");
-            mProblemList.add("main haadse main malavas tha.");
-        }
-    }
-
-    private void initProblemList() {
-        mAdapter = new ProblemItemsAdapter(mProblemList, mCurrentActivity);
-        mLayoutManager = new LinearLayoutManager(mCurrentActivity);
-        rvProblemList.setLayoutManager(mLayoutManager);
-        rvProblemList.setItemAnimator(new DefaultItemAnimator());
-        rvProblemList.setAdapter(mAdapter);
-        mAdapter.setMyOnItemClickListener(new ProblemItemsAdapter.MyOnItemClickListener() {
-            @Override
-            public void onItemClickListener(int position, View view, String reason) {
-                ActivityStackManager.getInstance().startProblemPostActivity(mCurrentActivity, tripId, reason);
-//                selectedReason = reason;
-//                loadFragment(new PostProblemFragment());
-            }
-        });
-    }
-
-    public boolean isMain() {
-        return isMain;
-    }
-
-    public void setMain(boolean main) {
-        isMain = main;
-    }
-
     @Override
     public void onBackPressed() {
-        if(isSubmitted){
+        /*switch (getSupportFragmentManager().getFragments()
+                .get(1).getTag()) {
+
+        }*/
+        if (getSupportFragmentManager().findFragmentByTag(DETAIL_SUBMITTED_FRAGMENT) instanceof ProblemSubmittedFragment) {
             finish();
-        } else if(isMain()){
+        } else {
             super.onBackPressed();
-        }else{
-            loadFragment(new ProblemFragment(),true);
         }
     }
 }

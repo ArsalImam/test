@@ -1,9 +1,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingTop="@dimen/_40sdp"
-    android:layout_height="match_parent">
+    android:paddingTop="@dimen/_40sdp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,31 +15,31 @@
 
         <LinearLayout
             android:id="@+id/text_lay"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_200sdp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginTop="@dimen/_30sdp"
+                android:gravity="center"
+                android:padding="@dimen/_9sdp"
+                android:text="THANK YOU"
+                android:textColor="@color/colorAccent"
                 android:textSize="@dimen/_30sdp"
                 android:textStyle="bold"
-                app:fontName="roboto_bold.ttf"
-                android:textColor="@color/colorAccent"
-                android:padding="@dimen/_9sdp"
-                android:text="THANK YOU" />
+                app:fontName="roboto_bold.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="@dimen/_9sdp"
-                android:textSize="@dimen/_18sdp"
                 android:lineSpacingExtra="@dimen/_20sdp"
-                android:text="Hamara Numainda Apse Jald\nHee Rabta Karaiga" />
+                android:padding="@dimen/_9sdp"
+                android:text="Hamara Numainda Apse Jald\nHee Rabta Karaiga"
+                android:textSize="@dimen/_18sdp" />
 
         </LinearLayout>
 
@@ -56,10 +56,10 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/square_outline_bg"
                 android:hint="Email"
-                android:textColorHint="@color/Color_Gray"
-                android:textColor="@color/textColorPrimary"
                 android:inputType="textEmailAddress"
                 android:padding="@dimen/_9sdp"
+                android:textColor="@color/textColorPrimary"
+                android:textColorHint="@color/color_gray373737"
                 android:textSize="@dimen/textsize.body1" />
 
             <com.bykea.pk.partner.widgets.FontEditText
@@ -76,8 +76,8 @@
                 android:padding="@dimen/_9sdp"
                 android:scrollbarStyle="insideInset"
                 android:scrollbars="vertical"
-                android:textColorHint="@color/Color_Gray"
                 android:textColor="@color/textColorPrimary"
+                android:textColorHint="@color/color_gray373737"
                 android:textSize="@dimen/textsize.body1"
                 android:visibility="visible" />
 

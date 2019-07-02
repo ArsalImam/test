@@ -461,7 +461,7 @@ public class Constants {
     /**
      * Inner class for Screen redirection from navigation drawer
      */
-    public static class ScreenRedirections{
+    public static class ScreenRedirections {
         public static final int PROFILE_SCREEN = 0;
         public static final int HOME_SCREEN = 1;
         public static final int TRIP_HISTORY_SCREEN = 2;
@@ -476,4 +476,9 @@ public class Constants {
     public static final int MARKER_INCREMENT_FACTOR_FOUR_KM = 4000;
     public static final int MARKER_INCREMENT_FACTOR_TWO_KM = 2000;
 
+    public static class ZendeskConfigurations {
+        public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
+        public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";
+    }
 }
