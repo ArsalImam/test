@@ -170,8 +170,8 @@ public class HomeActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onPostResume() {
+        super.onPostResume();
         /*SETTING SERVICE CONTEXT WITH ACTIVITY TO SEND BROADCASTS*/
 //        LocationService.setContext(HomeActivity.this);
 //        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
@@ -394,7 +394,7 @@ public class HomeActivity extends BaseActivity {
         if (!Connectivity.isBackgroundDataAccessAvailable(mCurrentActivity)) {
             DataSaverDialogFragment dialogFragment = new DataSaverDialogFragment();
             dialogFragment.setCancelable(false);
-            dialogFragment.show(getSupportFragmentManager(), TAG);
+            dialogFragment.show(mCurrentActivity.getSupportFragmentManager(), TAG);
         }
     }
 
