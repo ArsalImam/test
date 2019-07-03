@@ -9,7 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.support.dummy.DummyContent
+import com.bykea.pk.partner.utils.Utils
+import com.zendesk.service.ErrorResponse
+import com.zendesk.service.ZendeskCallback
 import kotlinx.android.synthetic.main.activity_complain_list.*
+import zendesk.support.Request
+import zendesk.support.Support
 
 /**
  * An activity representing a list of Pings. This activity
@@ -37,6 +42,20 @@ class ComplainListActivity : AppCompatActivity() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.adapter = SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, twoPane)
+    }
+
+    private fun getAllRequests() {
+
+        val requestProvider = Support.INSTANCE.provider()!!.requestProvider()
+        requestProvider.getAllRequests(object : ZendeskCallback<List<Request>>() {
+            override fun onSuccess(requests: List<Request>) {
+                Utils.appToastDebug(this@ComplainListActivity, "Zendesk(createRequest) - onSuccess")
+            }
+
+            override fun onError(errorResponse: ErrorResponse) {
+                Utils.appToastDebug(this@ComplainListActivity, "Zendesk(createRequest) - onError")
+            }
+        })
     }
 
     class SimpleItemRecyclerViewAdapter(private val parentActivity: ComplainListActivity,
