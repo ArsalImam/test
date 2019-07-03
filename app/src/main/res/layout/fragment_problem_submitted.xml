@@ -21,7 +21,8 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/_15sdp"
             android:paddingTop="@dimen/_80sdp"
-            android:paddingRight="@dimen/_15sdp">
+            android:paddingRight="@dimen/_15sdp"
+            android:paddingBottom="@dimen/_80sdp">
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="match_parent"
