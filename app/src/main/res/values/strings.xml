@@ -350,4 +350,6 @@
     <string name="issue_submitted">درج کی جا چکی ہے</string>
     <string name="issue_submitted_detail">درج کردہ شکایت دیکھیں</string>
     <string name="move_to_home_screen">ہوم سکرین پر جائیں</string>
+    <string name="title_activity_main123">MainActivity123</string>
+    <string name="title_activity_problem_final">ProblemActivityFinal</string>
 </resources>
