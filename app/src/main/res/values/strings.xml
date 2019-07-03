@@ -352,4 +352,5 @@
     <string name="move_to_home_screen">ہوم سکرین پر جائیں</string>
     <string name="title_activity_main123">MainActivity123</string>
     <string name="title_activity_problem_final">ProblemActivityFinal</string>
+    <string name="submit">\u0020درج کریں\u0020</string>
 </resources>

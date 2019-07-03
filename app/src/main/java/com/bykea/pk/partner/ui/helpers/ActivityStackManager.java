@@ -421,6 +421,12 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
+    public void startProblemActivity(Context context, TripHistoryData tripNo) {
+        Intent intent = new Intent(context, ProblemActivity.class);
+        intent.putExtra("TRIP_HISTORY_DATA", tripNo);
+        context.startActivity(intent);
+    }
+
     public void startReportActivity(Context mContext, String cTtype) {
         Intent intent = new Intent(mContext, ReportActivity.class);
         intent.putExtra(Constants.Extras.CONTACT_TYPE, cTtype);
