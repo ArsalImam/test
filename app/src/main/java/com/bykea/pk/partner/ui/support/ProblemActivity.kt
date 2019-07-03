@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
+import com.bykea.pk.partner.models.data.TripHistoryData
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 
 import kotlinx.android.synthetic.main.activity_problem.*
@@ -21,6 +22,8 @@ class ProblemActivity : AppCompatActivity() {
     private var fragmentManager: FragmentManager? = null
 
     private var tripId: String? = null
+    var tripHistoryDate: TripHistoryData? = null
+
     var selectedReason: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,8 +35,8 @@ class ProblemActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        tripId = intent.getStringExtra("TRIP_ID")
-        toolbar_title.text = tripId
+        tripHistoryDate = intent.getSerializableExtra("TRIP_HISTORY_DATA") as TripHistoryData?
+        toolbar_title.text = tripHistoryDate?.trip_id.toString()
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
