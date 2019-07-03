@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils
 import java.util.ArrayList
 
 import com.bykea.pk.partner.databinding.FragmentProblemDetailBinding
-import com.bykea.pk.partner.ui.support.ProblemActivity.Companion.DETAIL_SUBMITTED_FRAGMENT
 import com.bykea.pk.partner.utils.Constants
 import kotlinx.android.synthetic.main.fragment_problem_detail.*
 import zendesk.support.CreateRequest
