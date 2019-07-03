@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
-import com.bykea.pk.partner.ui.support.ProblemActivity.Companion.DETAIL_FRAGMENT
 import kotlinx.android.synthetic.main.fragment_problem_list.*
 import java.util.*
 
