@@ -54,7 +54,7 @@
                 android:id="@+id/submitBtn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
-                android:background="@drawable/button_background_green_round"
+                android:background="@drawable/button_green_no_rounded_corner"
                 android:gravity="center"
                 android:onClick="@{() -> listener.onSubmitClicked()}"
                 android:text="@string/submit"

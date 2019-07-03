@@ -21,7 +21,6 @@ class ProblemActivity : AppCompatActivity() {
     private lateinit var mCurrentActivity: ProblemActivity
     private var fragmentManager: FragmentManager? = null
 
-    private var tripId: String? = null
     var tripHistoryDate: TripHistoryData? = null
 
     var selectedReason: String? = null
@@ -35,19 +34,14 @@ class ProblemActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        tripHistoryDate = intent.getSerializableExtra("TRIP_HISTORY_DATA") as TripHistoryData?
-        toolbar_title.text = tripHistoryDate?.trip_id.toString()
+        tripHistoryDate = intent.getSerializableExtra("TRIP_HISTORY_DATA") as TripHistoryData
+        toolbar_title.text = tripHistoryDate?.tripNo
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         fragmentManager = supportFragmentManager
         changeFragment(ProblemListFragment(), LIST_FRAGMENT)
-
-        binding.viewmodel = obtainViewModel(ProblemViewModel::class.java)
-        binding.listener = object : ProblemListener {
-
-        }
     }
 
     fun changeFragment(fragment: Fragment, fragmentTag: String) {

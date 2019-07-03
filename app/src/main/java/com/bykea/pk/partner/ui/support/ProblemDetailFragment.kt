@@ -60,17 +60,13 @@ class ProblemDetailFragment : Fragment() {
 
     private val isValid: Boolean
         get() {
-            if (StringUtils.isBlank(etDetails!!.text!!.toString().trim { it <= ' ' })) {
-                setError(etDetails!!, "Please Enter Some Details")
+            if (StringUtils.isBlank(etDetails.text.toString().trim { it <= ' ' })) {
+                etDetails.error =  "Please Enter Some Details"
+                etDetails.requestFocus()
                 return false
             }
             return true
         }
-
-    private fun setError(editText: FontEditText, message: String) {
-        editText.error = message
-        editText.requestFocus()
-    }
 
     private fun createRequest() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
@@ -84,18 +80,6 @@ class ProblemDetailFragment : Fragment() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onError")
-            }
-        })
-    }
-
-    private fun getAllRequests() {
-        requestProvider.getAllRequests(object : ZendeskCallback<List<Request>>() {
-            override fun onSuccess(requests: List<Request>) {
-                Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
-            }
-
-            override fun onError(errorResponse: ErrorResponse) {
                 Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onError")
             }
         })

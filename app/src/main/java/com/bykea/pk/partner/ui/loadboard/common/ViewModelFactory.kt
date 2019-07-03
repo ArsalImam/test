@@ -5,7 +5,6 @@ import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.bykea.pk.partner.ui.support.ProblemViewModel
 
 /**
  * A creator is used to inject the product ID into the ViewModel
@@ -19,7 +18,6 @@ class ViewModelFactory private constructor() : ViewModelProvider.NewInstanceFact
     override fun <T : ViewModel> create(modelClass: Class<T>) =
             with(modelClass) {
                 when {
-                    isAssignableFrom(ProblemViewModel::class.java) -> ProblemViewModel()
 //                    isAssignableFrom(JobRequestListViewModel::class.java) -> JobRequestListViewModel(bookingsRepository)
 //                    isAssignableFrom(JobRequestDetailViewModel::class.java) -> JobRequestDetailViewModel(bookingsRepository)
                     else ->
