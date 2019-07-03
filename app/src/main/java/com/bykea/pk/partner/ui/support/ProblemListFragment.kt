@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import butterknife.ButterKnife
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
@@ -22,12 +21,7 @@ class ProblemListFragment : Fragment() {
     private var mAdapter: ProblemItemsAdapter? = null
     private var mProblemList: ArrayList<String> = ArrayList()
     private var mLayoutManager: LinearLayoutManager? = null
-    private val tripId: String? = null
     internal var probReasons: Array<String>? = null
-
-//    @BindView(R.id.rvProblemList)
-//    var rvProblemList: RecyclerView? = null
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_problem_list, container, false)
@@ -36,16 +30,15 @@ class ProblemListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         mProblemList = ArrayList()
         probReasons = AppPreferences.getSettings().predefine_messages.reasons
-//        mCurrentActivity!!.findViewById<View>(R.id.ivBackBtn).visibility = View.VISIBLE
-        copyList()
+
+        cloneReasonsList()
         setupAdapter()
     }
 
 
-    private fun copyList() {
+    private fun cloneReasonsList() {
         if (probReasons != null) {
             mProblemList.addAll(probReasons!!)
         } else {
@@ -70,4 +63,4 @@ class ProblemListFragment : Fragment() {
             mCurrentActivity?.changeFragment(ProblemDetailFragment(), DETAIL_FRAGMENT)
         }
     }
-}// Required empty public constructor
+}
