@@ -58,6 +58,9 @@ class ProblemDetailFragment : Fragment() {
         return rootView
     }
 
+    /**
+     * Check Is Details Are Empty Or Not
+     */
     private val isValid: Boolean
         get() {
             if (StringUtils.isBlank(etDetails.text.toString().trim { it <= ' ' })) {
@@ -75,7 +78,7 @@ class ProblemDetailFragment : Fragment() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
                 Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
-                mCurrentActivity?.changeFragment(ProblemSubmittedFragment(), DETAIL_SUBMITTED_FRAGMENT);
+                mCurrentActivity?.changeFragment(ProblemSubmittedFragment());
             }
 
             override fun onError(errorResponse: ErrorResponse) {
@@ -85,6 +88,9 @@ class ProblemDetailFragment : Fragment() {
         })
     }
 
+    /**
+     * Genereate Create Request Body For Zendesk
+     */
     private fun buildCreateRequest(): CreateRequest {
         val createRequest = CreateRequest()
         createRequest.subject = "Ticket Subject"
@@ -94,6 +100,10 @@ class ProblemDetailFragment : Fragment() {
         return createRequest
     }
 
+
+    /**
+     * Generate Custom Fields For Ticket For Zendesk
+     */
     private fun buildCustomFields(): List<CustomField> {
         val customerFields = ArrayList<CustomField>()
         customerFields.add(CustomField(Constants.ZendeskCustomFields.Subject, ""));

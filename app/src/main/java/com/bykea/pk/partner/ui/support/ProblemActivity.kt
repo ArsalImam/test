@@ -41,17 +41,23 @@ class ProblemActivity : AppCompatActivity() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         fragmentManager = supportFragmentManager
-        changeFragment(ProblemListFragment(), LIST_FRAGMENT)
+        changeFragment(ProblemListFragment())
     }
 
-    fun changeFragment(fragment: Fragment, fragmentTag: String) {
+    /**
+     * Use For Change Fragment
+     */
+    fun changeFragment(fragment: Fragment) {
         fragmentManager!!
                 .beginTransaction()
-                .replace(R.id.containerView, fragment, fragmentTag)
+                .replace(R.id.containerView, fragment)
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .commit()
     }
 
+    /**
+     * Trigger When Toolbar Back Button Is Tapped
+     */
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val id = item?.getItemId()
 
@@ -64,14 +70,9 @@ class ProblemActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        //STOP BACK PRESSED FOR PROBLEM SUBMITTED FRAGMENT
         if (!supportFragmentManager.fragments.get(0).javaClass.simpleName.equals(ProblemSubmittedFragment::class.java.simpleName)) {
             super.onBackPressed()
         }
-    }
-
-    companion object {
-        val LIST_FRAGMENT: String = "LIST_FRAGMENT"
-        val DETAIL_FRAGMENT: String = "DETAIL_FRAGMENT"
-        val DETAIL_SUBMITTED_FRAGMENT: String = "DETAIL_SUBMITTED_FRAGMENT"
     }
 }
