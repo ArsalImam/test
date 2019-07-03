@@ -2,33 +2,23 @@ package com.bykea.pk.partner.ui.support
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-
+import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.databinding.FragmentProblemDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
-import com.bykea.pk.partner.widgets.FontEditText
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
-
-import org.apache.commons.lang3.StringUtils
-
-import java.util.ArrayList
-
-import com.bykea.pk.partner.databinding.FragmentProblemDetailBinding
-import com.bykea.pk.partner.utils.Constants
 import kotlinx.android.synthetic.main.fragment_problem_detail.*
-import zendesk.support.CreateRequest
-import zendesk.support.CustomField
-import zendesk.support.Request
-import zendesk.support.RequestProvider
-import zendesk.support.Support
+import org.apache.commons.lang3.StringUtils
+import zendesk.support.*
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
