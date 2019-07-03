@@ -118,6 +118,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
 
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 static def releaseTime() {
@@ -212,6 +215,7 @@ dependencies {
     implementation group: 'com.zendesk', name: 'support', version: '2.3.1'
 
     implementation deps.markerClustering
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'de.felixschulze.gradle.hockeyapp'
