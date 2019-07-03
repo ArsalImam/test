@@ -435,12 +435,6 @@ public class ActivityStackManager {
 
     public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
         Intent intent = new Intent(context, ProblemActivity.class);
-        intent.putExtra("HISTORY_TRIP_DATE", tripHistoryData);
-        context.startActivity(intent);
-    }
-
-    public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
-        Intent intent = new Intent(context, ProblemActivity.class);
         intent.putExtra("TRIP_HISTORY_DATA", tripHistoryData);
         context.startActivity(intent);
     }
