@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
@@ -13,7 +12,6 @@ import com.bykea.pk.partner.ui.support.dummy.DummyContent
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_complain_list.*
 import kotlinx.android.synthetic.main.complain_list.*
-import kotlinx.android.synthetic.main.complain_list_content.view.*
 
 /**
  * An activity representing a list of Pings. This activity
@@ -95,8 +93,8 @@ class ComplainListActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
-            holder.idView.text = item.id
-            holder.contentView.text = item.content
+//            holder.idView.text = item.id
+//            holder.contentView.text = item.content
 
             with(holder.itemView) {
                 tag = item
@@ -107,8 +105,8 @@ class ComplainListActivity : AppCompatActivity() {
         override fun getItemCount() = values.size
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val idView: TextView = view.id_text
-            val contentView: TextView = view.content
+//            val idView: TextView = view.id_text
+//            val contentView: TextView = view.content
         }
     }
 }

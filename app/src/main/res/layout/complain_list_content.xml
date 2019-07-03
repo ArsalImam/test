@@ -57,6 +57,8 @@
             android:layout_marginRight="@dimen/_5sdp"
             android:layout_weight="1"
             android:gravity="center_vertical"
+            android:paddingEnd="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"
             android:text="@string/issue_no"
             android:textAllCaps="true"
             android:textColor="@color/black"

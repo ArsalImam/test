@@ -6,8 +6,6 @@
     android:name="com.bykea.pk.partner.ui.support.ComplainListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".ui.support.ComplainListActivity"
     tools:listitem="@layout/complain_list_content" />

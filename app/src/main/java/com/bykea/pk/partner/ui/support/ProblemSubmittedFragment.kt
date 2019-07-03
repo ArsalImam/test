@@ -1,6 +1,6 @@
 package com.bykea.pk.partner.ui.support
 
-import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +8,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.databinding.FragmentProblemDetailBinding
 import com.bykea.pk.partner.databinding.FragmentProblemSubmittedBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_problem_submitted.*
-import zendesk.support.guide.HelpCenterActivity
 
 class ProblemSubmittedFragment : Fragment() {
 
@@ -32,7 +30,8 @@ class ProblemSubmittedFragment : Fragment() {
         binding.listener = object : ProblemFragmentListener {
             override fun onRequestSubmittedTickets() {
                 Utils.appToast(mCurrentActivity, "submittedIssueDetail")
-                HelpCenterActivity.builder().show(mCurrentActivity)
+//                HelpCenterActivity.builder().show(mCurrentActivity)
+                startActivity(Intent(activity, ComplainListActivity::class.java))
             }
 
             override fun onNavigateToHomeScreen() {
