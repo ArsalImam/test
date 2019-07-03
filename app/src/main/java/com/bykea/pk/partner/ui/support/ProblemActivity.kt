@@ -22,7 +22,6 @@ class ProblemActivity : AppCompatActivity() {
 
     private var tripId: String? = null
     var selectedReason: String? = null
-    var CURRENT_STATUS = LIST_FRAGMENT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,10 +30,14 @@ class ProblemActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        tripId = intent.getStringExtra("TRIP_ID")
+        toolbar_title.text = tripId
+
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        tripId = intent.getStringExtra("TRIP_ID")
         fragmentManager = supportFragmentManager
         changeFragment(ProblemListFragment(), LIST_FRAGMENT)
 

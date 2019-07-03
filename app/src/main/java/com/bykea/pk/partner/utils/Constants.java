@@ -481,4 +481,41 @@ public class Constants {
         public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
         public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";
     }
+
+    public static class ZendeskCustomFields {
+        public static long Subject = 360020102491L;
+        public static long Description = 360020102511L;
+        public static long Status = 360020102531L;
+        public static long Type = 360020102551L;
+        public static long Priority = 360020102571L;
+        public static long Group = 360020102591L;
+        public static long Assignee = 360020102611L;
+        public static long Booking_ID = 360020167552L;
+        public static long Customer_Number = 360020244432L;
+        public static long Receivers_Number = 360020244492L;
+        public static long Receivers_Name = 360020244512L;
+        public static long Trip_Time = 360020244532L;
+        public static long Cancelled_by = 360020244552L;
+        public static long Cancellation_Reason = 360020244572L;
+        public static long Wallet_Deduction = 360020244592L;
+        public static long Customer_Penalty_Amount = 360020244612L;
+        public static long Partner_Penalty_Amount = 360020244632L;
+        public static long Distance_to_Pickup = 360020244652L;
+        public static long Customer_Name = 360020244992L;
+        public static long Partner_Number = 360020314791L;
+        public static long Partner_Name = 360020314811L;
+        public static long Partner_Email = 360020314831L;
+        public static long Booking_Type = 360020315151L;
+        public static long Parcel_Value = 360020315191L;
+        public static long COD_Amount = 360020315211L;
+        public static long Trip_Fare = 360020315231L;
+        public static long Trip_Distance = 360020315251L;
+        public static long Trip_Start_Address = 360020315291L;
+        public static long Trip_End_Address = 360020315331L;
+        public static long Received_Amount = 360020315351L;
+        public static long Wait_Time = 360020315391L;
+        public static long Problem_Topic_Selected = 360020315851L;
+        public static long Last_Trip_Status = 360020315871L;
+        public static long Testing = 360020317511L;
+    }
 }
