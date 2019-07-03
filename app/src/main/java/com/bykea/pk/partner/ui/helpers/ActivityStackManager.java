@@ -29,7 +29,6 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
-import com.bykea.pk.partner.ui.activities.LoadboardBookingDetailActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
 import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
@@ -45,6 +44,7 @@ import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
+import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -173,6 +173,18 @@ public class ActivityStackManager {
 
     public void startJobActivity(Context mContext) {
         Intent intent = new Intent(mContext, BookingActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * Util method to start active job activity aka Booking Activity
+     *
+     * @param mContext     source activity's context
+     * @param dataPrefetch flag to identify is active job data is already fetch from server
+     */
+    public void startJobActivity(Context mContext, boolean dataPrefetch) {
+        Intent intent = new Intent(mContext, BookingActivity.class);
+        if (!dataPrefetch) intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
         mContext.startActivity(intent);
     }
 
@@ -482,9 +494,9 @@ public class ActivityStackManager {
      * @param context   Context
      * @param bookingId selected booking id
      */
-    public void startLoadboardBookingDetailActiivty(Context context, String bookingId) {
-        Intent intent = new Intent(context, LoadboardBookingDetailActivity.class);
-        intent.putExtra(LoadboardBookingDetailActivity.BOOKING_ID, bookingId);
+    public void startLoadboardBookingDetailActiivty(Context context, Long bookingId) {
+        Intent intent = new Intent(context, JobRequestDetailActivity.class);
+        intent.putExtra(JobRequestDetailActivity.EXTRA_BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
 

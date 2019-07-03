@@ -135,10 +135,13 @@ public class Constants {
         public static final String DATA_TYPE = "data";
     }
 
-    public static class FCMEvents {
-        public static final String MULTIDELIVER_INCOMING_CALL = "10";
-        public static final String MULTIDELIVER_CANCEL_BY_ADMIN = "11";
-    }
+//    public static class FCMEvents {
+//        public static final String MULTIDELIVER_INCOMING_CALL = "10";
+//        public static final String MULTIDELIVER_CANCEL_BY_ADMIN = "11";
+//    }
+
+    public static final String FCM_EVENTS_MULTIDELIVER_INCOMING_CALL = "10";
+    public static final String FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN = "11";
 
     public static final int SPLASH_SCREEN_FUTURE_TIMER = 2000;// 2 Seconds
     public static final int SPLASH_SCREEN_INTERVAL_TIMER = 2000;// 2 Seconds
@@ -206,10 +209,12 @@ public class Constants {
         public static final String IS_CANCELED_TRIP_BY_ADMIN = "isCanceledByAdmin";
         public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
         public final static String ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL = "ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL";
+        public final static String IS_CALLED_FROM_LOADBOARD = "IS_CALLED_FROM_LOADBOARD";
     }
 
     public static class Broadcast {
         public static final String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
+        public static final String UPDATE_LOADBOARD_BOOKINGS_REQUEST = "UPDATE_LOADBOARD_BOOKINGS_REQUEST";
     }
 
     public static class Actions {
@@ -238,6 +243,7 @@ public class Constants {
     public static class GoogleMap {
         public final static String GOOGLE_NAVIGATE_ENDPOINT = "http://maps.google.com/maps?saddr=";
         public final static String GOOGLE_DESTINATION_ENDPOINT = "&daddr=";
+        public final static String TRANSIT_MODE_BIKE = "&mode=motorbike";
         public final static String GOOGLE_MAP_PACKAGE = "com.google.android.apps.maps";
         public final static String GOOGLE_MAP_ACTIVITY = "com.google.android.maps.MapsActivity";
     }
@@ -283,6 +289,8 @@ public class Constants {
     public final static String UPLOAD_IMG_EXT = ".jpg";
     public final static int RESTART_LOCATION_SERVICE_DELAY = 1000;
     public final static int LOCATION_API_WAIT_ON_INACTIVE_PUSH = 15000;
+    public final static int HANDLER_POST_DELAY_LOAD_BOARD = 2000;
+    public final static int MAX_LIMIT_LOAD_BOARD = 10;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
 
@@ -345,6 +353,8 @@ public class Constants {
 
         public static final String SEND_NAME = "Send";
         public static final String SEND_TITLE = "Delivery";
+        public static final int SEND_CODE = 21;
+        public static final int SEND_COD_CODE = 22;
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -476,6 +486,15 @@ public class Constants {
     public static final int MARKER_INCREMENT_FACTOR_FOUR_KM = 4000;
     public static final int MARKER_INCREMENT_FACTOR_TWO_KM = 2000;
 
+
+    public static final String FILE_EXT = ".aac";
+    public static final String AUDIO_TEMP_FILE_NAME = "tempFile";
+
+    //Amazon credentials
+    public static class Amazon {
+        public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
+        public static String BUCKET_NAME = "loadboard";
+    }
     public static class ZendeskConfigurations {
         public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
         public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";

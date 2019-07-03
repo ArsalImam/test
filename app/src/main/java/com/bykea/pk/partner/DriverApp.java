@@ -48,6 +48,7 @@ public class DriverApp extends MultiDexApplication {
     private static DriverApp mContext;
     private BasicComponent mBasicComponent;
     private Emitter.Listener mJobCallListener = new WebIORequestHandler.JobCallListener();
+    private Emitter.Listener mNewActiveJobListener = new WebIORequestHandler.NewActiveJobListener();
     /**
      * XLog Printer global object which would be used for writing logs on file.
      */
@@ -179,6 +180,8 @@ public class DriverApp extends MultiDexApplication {
         EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
         WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL,
                 mJobCallListener);
+        WebIO.getInstance().on(ApiTags.SOCKET_NEW_JOB_CALL,
+                mNewActiveJobListener);
         WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER,
                 mCallDriverListener);
         WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED,
