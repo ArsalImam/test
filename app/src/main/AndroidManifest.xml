@@ -38,9 +38,11 @@
         tools:node="merge"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".ui.support.ProblemActivityFinal"
+            android:name=".ui.support.ProblemActivity"
             android:label="@string/title_activity_problem_final"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">
@@ -200,9 +202,6 @@
             android:name=".ui.activities.ConfirmDropOffAddressActivity"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated" />
         <activity
-            android:name=".ui.support.ProblemActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activities.PostProblemActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -267,8 +266,8 @@
             android:name=".ui.activities.MultiDeliveryFeedbackActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.LoadboardBookingDetailActivity"
-            android:screenOrientation="portrait" />
+            android:name=".ui.loadboard.detail.JobRequestDetailActivity"
+            android:launchMode="singleTop" />
 
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>

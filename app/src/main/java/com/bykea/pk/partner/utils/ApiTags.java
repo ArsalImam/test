@@ -108,6 +108,7 @@ public class ApiTags {
     public static final String GET_LOAD_BOARD_LISTING = "/api/v1/driver/loadboard?";
     public static final String ACCEPT_LOAD_BOARD_BOOKING = "/api/v1/driver/loadboard/{id}/accept";
     public static final String GET_LOAD_BOARD_BOOKING_DETAIL = "/api/v1/driver/loadboard/{id}?";
+    public static final String CANCEL_LOAD_BOARD_BOOKING = "/api/v1/driver/cancel";
 
     //Driver Status
     public static final String DRIVER_STATUS_ONLINE_OFFLINE = "/api/v1/driver/status";
@@ -122,6 +123,7 @@ public class ApiTags {
     public static final String SOCKET_FREE_PILOT = "free-when-call-end";
     public static final String SOCKET_DRIVER_FEEDBACK = "trip-driverFeedback";
     public static final String SOCKET_PASSENGER_CALL = "trip-notification";
+    public static final String SOCKET_NEW_JOB_CALL = "BOOKING_ACCEPTED";
     public static final String SOCKEY_AUTH_FAILED = "AUTH_FAILED";
     public static final String SOCKEY_AUTH_SUCCESS = "AUTH_SUCCESS";
     public static final String SOCKET_CANCEL_RIDE_DRIVER = "trip-driverCancelTrip";

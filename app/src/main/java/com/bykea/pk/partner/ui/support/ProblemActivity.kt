@@ -36,11 +36,6 @@ class ProblemActivity : AppCompatActivity() {
         tripId = intent.getStringExtra("TRIP_ID")
         fragmentManager = supportFragmentManager
         changeFragment(ProblemListFragment(), LIST_FRAGMENT)
-
-        binding.viewmodel = obtainViewModel(ProblemViewModel::class.java)
-        binding.listener = object : ProblemListener {
-
-        }
     }
 
     fun changeFragment(fragment: Fragment, fragmentTag: String) {
