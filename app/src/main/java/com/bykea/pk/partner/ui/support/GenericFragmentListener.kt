@@ -1,5 +1,8 @@
 package com.bykea.pk.partner.ui.support
 
+/**
+ * Interface Used For Click Listener (In Different Fragments)
+ */
 interface GenericFragmentListener {
     /**
      * Tapped When User Generate The Ticket
