@@ -10,8 +10,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.models.response.ProblemPostResponse
-import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
@@ -50,7 +48,7 @@ class ProblemDetailFragment : Fragment() {
 
         requestProvider = Support.INSTANCE.provider()!!.requestProvider()
 
-        binding.listener = object : ProblemFragmentListener {
+        binding.listener = object : GenericFragmentListener {
             override fun onSubmitClicked() {
                 if (isValid) {
                     createRequest()
@@ -60,19 +58,18 @@ class ProblemDetailFragment : Fragment() {
         return rootView
     }
 
+    /**
+     * Check Is Details Are Empty Or Not
+     */
     private val isValid: Boolean
         get() {
-            if (StringUtils.isBlank(etDetails!!.text!!.toString().trim { it <= ' ' })) {
-                setError(etDetails!!, "Please Enter Some Details")
+            if (StringUtils.isBlank(etDetails.text.toString().trim { it <= ' ' })) {
+                etDetails.error =  "Please Enter Some Details"
+                etDetails.requestFocus()
                 return false
             }
             return true
         }
-
-    private fun setError(editText: FontEditText, message: String) {
-        editText.error = message
-        editText.requestFocus()
-    }
 
     private fun createRequest() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
@@ -81,7 +78,7 @@ class ProblemDetailFragment : Fragment() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
                 Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
-                mCurrentActivity?.changeFragment(ProblemSubmittedFragment(), DETAIL_SUBMITTED_FRAGMENT);
+                mCurrentActivity?.changeFragment(ProblemSubmittedFragment());
             }
 
             override fun onError(errorResponse: ErrorResponse) {
@@ -91,18 +88,9 @@ class ProblemDetailFragment : Fragment() {
         })
     }
 
-    private fun getAllRequests() {
-        requestProvider.getAllRequests(object : ZendeskCallback<List<Request>>() {
-            override fun onSuccess(requests: List<Request>) {
-                Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
-            }
-
-            override fun onError(errorResponse: ErrorResponse) {
-                Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onError")
-            }
-        })
-    }
-
+    /**
+     * Genereate Create Request Body For Zendesk
+     */
     private fun buildCreateRequest(): CreateRequest {
         val createRequest = CreateRequest()
         createRequest.subject = "Ticket Subject"
@@ -112,6 +100,10 @@ class ProblemDetailFragment : Fragment() {
         return createRequest
     }
 
+
+    /**
+     * Generate Custom Fields For Ticket For Zendesk
+     */
     private fun buildCustomFields(): List<CustomField> {
         val customerFields = ArrayList<CustomField>()
         customerFields.add(CustomField(Constants.ZendeskCustomFields.Subject, ""));

@@ -21,7 +21,6 @@ class ProblemActivity : AppCompatActivity() {
     private lateinit var mCurrentActivity: ProblemActivity
     private var fragmentManager: FragmentManager? = null
 
-    private var tripId: String? = null
     var tripHistoryDate: TripHistoryData? = null
 
     var selectedReason: String? = null
@@ -35,29 +34,30 @@ class ProblemActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        tripHistoryDate = intent.getSerializableExtra("TRIP_HISTORY_DATA") as TripHistoryData?
-        toolbar_title.text = tripHistoryDate?.trip_id.toString()
+        tripHistoryDate = intent.getSerializableExtra("TRIP_HISTORY_DATA") as TripHistoryData
+        toolbar_title.text = tripHistoryDate?.tripNo
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         fragmentManager = supportFragmentManager
-        changeFragment(ProblemListFragment(), LIST_FRAGMENT)
-
-        binding.viewmodel = obtainViewModel(ProblemViewModel::class.java)
-        binding.listener = object : ProblemListener {
-
-        }
+        changeFragment(ProblemListFragment())
     }
 
-    fun changeFragment(fragment: Fragment, fragmentTag: String) {
+    /**
+     * Use For Change Fragment
+     */
+    fun changeFragment(fragment: Fragment) {
         fragmentManager!!
                 .beginTransaction()
-                .replace(R.id.containerView, fragment, fragmentTag)
+                .replace(R.id.containerView, fragment)
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .commit()
     }
 
+    /**
+     * Trigger When Toolbar Back Button Is Tapped
+     */
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val id = item?.getItemId()
 
@@ -70,14 +70,9 @@ class ProblemActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        //STOP BACK PRESSED FOR PROBLEM SUBMITTED FRAGMENT
         if (!supportFragmentManager.fragments.get(0).javaClass.simpleName.equals(ProblemSubmittedFragment::class.java.simpleName)) {
             super.onBackPressed()
         }
-    }
-
-    companion object {
-        val LIST_FRAGMENT: String = "LIST_FRAGMENT"
-        val DETAIL_FRAGMENT: String = "DETAIL_FRAGMENT"
-        val DETAIL_SUBMITTED_FRAGMENT: String = "DETAIL_SUBMITTED_FRAGMENT"
     }
 }

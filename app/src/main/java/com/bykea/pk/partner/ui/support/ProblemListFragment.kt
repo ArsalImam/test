@@ -37,7 +37,9 @@ class ProblemListFragment : Fragment() {
         setupAdapter()
     }
 
-
+    /**
+     * Copy Reasons To List (Retrieve From App Preferences)
+     */
     private fun cloneReasonsList() {
         if (probReasons != null) {
             mProblemList.addAll(probReasons!!)
@@ -51,6 +53,9 @@ class ProblemListFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup Adapter and Set Listener
+     */
     private fun setupAdapter() {
         mAdapter = ProblemItemsAdapter(mProblemList, mCurrentActivity)
         mLayoutManager = LinearLayoutManager(mCurrentActivity)
@@ -60,7 +65,7 @@ class ProblemListFragment : Fragment() {
 
         mAdapter!!.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
-            mCurrentActivity?.changeFragment(ProblemDetailFragment(), DETAIL_FRAGMENT)
+            mCurrentActivity?.changeFragment(ProblemDetailFragment())
         }
     }
 }

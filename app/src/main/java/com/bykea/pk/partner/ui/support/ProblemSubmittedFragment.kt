@@ -27,7 +27,7 @@ class ProblemSubmittedFragment : Fragment() {
 
         mCurrentActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        binding.listener = object : ProblemFragmentListener {
+        binding.listener = object : GenericFragmentListener {
             override fun onRequestSubmittedTickets() {
                 Utils.appToast(mCurrentActivity, "submittedIssueDetail")
 //                HelpCenterActivity.builder().show(mCurrentActivity)

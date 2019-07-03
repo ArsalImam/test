@@ -4,7 +4,7 @@
 
         <variable
             name="listener"
-            type="com.bykea.pk.partner.ui.support.ProblemFragmentListener" />
+            type="com.bykea.pk.partner.ui.support.GenericFragmentListener" />
     </data>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

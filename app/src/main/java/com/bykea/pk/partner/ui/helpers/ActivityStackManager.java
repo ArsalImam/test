@@ -29,7 +29,6 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
-import com.bykea.pk.partner.ui.activities.LoadboardBookingDetailActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
 import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
@@ -45,6 +44,7 @@ import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
+import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -176,6 +176,18 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /**
+     * Util method to start active job activity aka Booking Activity
+     *
+     * @param mContext     source activity's context
+     * @param dataPrefetch flag to identify is active job data is already fetch from server
+     */
+    public void startJobActivity(Context mContext, boolean dataPrefetch) {
+        Intent intent = new Intent(mContext, BookingActivity.class);
+        if (!dataPrefetch) intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
+        mContext.startActivity(intent);
+    }
+
     /***
      * Start Map Details Activity.
      *
@@ -206,11 +218,11 @@ public class ActivityStackManager {
     /**
      * Start multi delivery feedback activity.
      *
-     * @param mContext Holding the reference of an activity.
+     * @param mContext                Holding the reference of an activity.
      * @param isComingFromOnGoingRide Is user coming from on going ride.
-     * @param tripID Current Trip id.
+     * @param tripID                  Current Trip id.
      */
-    public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID,boolean isComingFromOnGoingRide) {
+    public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID, boolean isComingFromOnGoingRide) {
         Intent intent = new Intent(mContext, MultiDeliveryFeedbackActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(Keys.MULTIDELIVERY_TRIP_ID, tripID);
@@ -283,7 +295,8 @@ public class ActivityStackManager {
 
     /**
      * This method restarts location service with custom interval when partner is on trip
-     * @param context Calling Context
+     *
+     * @param context        Calling Context
      * @param updateInterval interval in millis
      */
     public void restartLocationServiceWithCustomIntervals(final Context context, long updateInterval) {
@@ -331,9 +344,9 @@ public class ActivityStackManager {
     /**
      * Start multi delivery calling activity.
      *
-     * @param response The {@link MultiDeliveryCallDriverData} object.
+     * @param response  The {@link MultiDeliveryCallDriverData} object.
      * @param isFromGcm boolean indicating that start activity from GCM or not.
-     * @param mContext Holding the reference of an activity.
+     * @param mContext  Holding the reference of an activity.
      */
     public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverData response,
                                                   boolean isFromGcm,
@@ -352,7 +365,6 @@ public class ActivityStackManager {
             mContext.startActivity(callIntent);
         }
     }
-
 
 
     public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {
@@ -421,9 +433,9 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-    public void startProblemActivity(Context context, TripHistoryData tripNo) {
+    public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
         Intent intent = new Intent(context, ProblemActivity.class);
-        intent.putExtra("TRIP_HISTORY_DATA", tripNo);
+        intent.putExtra("TRIP_HISTORY_DATA", tripHistoryData);
         context.startActivity(intent);
     }
 
@@ -478,12 +490,13 @@ public class ActivityStackManager {
 
     /**
      * open loadboard booking screen
-     * @param context Context
+     *
+     * @param context   Context
      * @param bookingId selected booking id
      */
-    public void startLoadboardBookingDetailActiivty(Context context, String bookingId) {
-        Intent intent = new Intent(context, LoadboardBookingDetailActivity.class);
-        intent.putExtra(LoadboardBookingDetailActivity.BOOKING_ID, bookingId);
+    public void startLoadboardBookingDetailActiivty(Context context, Long bookingId) {
+        Intent intent = new Intent(context, JobRequestDetailActivity.class);
+        intent.putExtra(JobRequestDetailActivity.EXTRA_BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
 

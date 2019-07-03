@@ -57,11 +57,6 @@ public class PlacesRepository {
         }
 
         @Override
-        public void onSuccess() {
-
-        }
-
-        @Override
         public void onError(int code, String error) {
             mUserCallback.onError(error);
         }

@@ -24,6 +24,7 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
+import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
@@ -56,9 +57,7 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
-import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
@@ -100,7 +99,6 @@ import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
-import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 
@@ -213,6 +211,18 @@ public class UserRepository {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.checkRunningTrip(mContext, mDataCallback);
+    }
+
+
+    /**
+     * USE WHEN YOU WANT TO DISMISS WHEN THE SUCCESSFUL DATA IS RETRIEVE FOR THE ACTIVE TRIP
+     * @param context : Calling Activity
+     * @param handler : Override in Calling Acitivity
+     */
+    public void getActiveTrip(Context context, IUserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.checkActiveTrip(mContext, mDataCallback);
     }
 
     public void requestTripHistory(Context context, IUserDataHandler handler, String pageNo) {
@@ -368,7 +378,7 @@ public class UserRepository {
     private void setupLocationRequestUpdate(double lat, double lon, DriverLocationRequest locationRequest, String tripStatus) {
         locationRequest.setEta(AppPreferences.getEta());
         locationRequest.setDistance(AppPreferences.getEstimatedDistance());
-        if(AppPreferences.getCallData() != null && AppPreferences.getCallData().getTripId() != null)
+        if (AppPreferences.getCallData() != null && AppPreferences.getCallData().getTripId() != null)
             locationRequest.setTripID(AppPreferences.getCallData().getTripId());
         ArrayList<TrackingData> trackingData = AppPreferences.getTrackingData();
         if (trackingData.size() == 0) {
@@ -429,7 +439,7 @@ public class UserRepository {
                 new PlacesDataHandler() {
                     @Override
                     public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
-                        if(response != null && response.getRows() != null && response.getRows().length > 0){
+                        if (response != null && response.getRows() != null && response.getRows().length > 0) {
                             counter[0] = 0;
                             GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
                             for (GoogleDistanceMatrixApi.Elements element : elements) {
@@ -549,25 +559,46 @@ public class UserRepository {
 
     }
 
-    public void requestCancelRide(Context context, IUserDataHandler handler, String message) {
-        JSONObject jsonObject = new JSONObject();
-        mUserCallback = handler;
-        mContext = context;
-        try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("driver_id", AppPreferences.getDriverId());
-            jsonObject.put("message", message);
-            jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
-            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-            jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
-            jsonObject.put("_id", AppPreferences.getDriverId());
-            jsonObject.put("lat", AppPreferences.getLatitude() + "");
-            jsonObject.put("lng", AppPreferences.getLongitude() + "");
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    /**
+     * Request to cancel driver booking either to goto socket or to REST server
+     *
+     * @param context     App context
+     * @param handler     Callback
+     * @param reasonMsg   Reason to cancel
+     * @param serviceCode Booking service code
+     */
+    public void requestCancelRide(Context context, IUserDataHandler handler, String reasonMsg, Integer serviceCode) {
+        if (serviceCode != null && (serviceCode == Constants.ServiceType.SEND_CODE || serviceCode == Constants.ServiceType.SEND_COD_CODE)) {
+            mRestRequestHandler.cancelLoadBoardBooking(
+                    context,
+                    new LoadBoardBookingCancelRequest(
+                            AppPreferences.getDriverId(),
+                            reasonMsg,
+                            AppPreferences.getLatitude() + "",
+                            AppPreferences.getLongitude() + "",
+                            AppPreferences.getAccessToken(),
+                            AppPreferences.getCallData().getTripId()),
+                    handler
+            );
+        } else {
+            JSONObject jsonObject = new JSONObject();
+            mUserCallback = handler;
+            mContext = context;
+            try {
+                jsonObject.put("token_id", AppPreferences.getAccessToken());
+                jsonObject.put("driver_id", AppPreferences.getDriverId());
+                jsonObject.put("message", reasonMsg);
+                jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
+                jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+                jsonObject.put("_id", AppPreferences.getDriverId());
+                jsonObject.put("lat", AppPreferences.getLatitude() + "");
+                jsonObject.put("lng", AppPreferences.getLongitude() + "");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            mWebIORequestHandler.cancelRide(jsonObject, mDataCallback);
         }
-        mWebIORequestHandler.cancelRide(jsonObject, mDataCallback);
-
     }
 
 
@@ -1392,35 +1423,6 @@ public class UserRepository {
     }
 
     /**
-     * request for loadboard jobs list
-     *
-     * @param context       Context
-     * @param limit         jobs limit - OPTIONAL
-     * @param pickupZoneId  jobs pickup zone id - OPTIONAL
-     * @param dropoffZoneId - jons dropoff zone id - OPTIONAL
-     * @param handler       callback
-     */
-    public void requestLoadBoardListingAPI(Context context, String limit, String pickupZoneId, String dropoffZoneId, final IUserDataHandler handler) {
-        mRestRequestHandler.loadboardListing(context, limit, pickupZoneId, dropoffZoneId, new IResponseCallback() {
-            @Override
-            public void onResponse(Object object) {
-                if (object instanceof LoadBoardListingResponse)
-                    handler.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
-            }
-
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onError(int errorCode, String error) {
-                handler.onError(errorCode, error);
-            }
-        });
-    }
-
-    /**
      * accept request for specific booking
      *
      * @param context   Context
@@ -1431,20 +1433,6 @@ public class UserRepository {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.acceptLoadboardBooking(mContext, bookingId, mDataCallback);
-
-    }
-
-    /**
-     * request for details of selected booking
-     *
-     * @param context   Context
-     * @param bookingId selected booking id
-     * @param handler   callback
-     */
-    public void loadboardBookingDetail(Context context, String bookingId, IUserDataHandler handler) {
-        mContext = context;
-        mUserCallback = handler;
-        mRestRequestHandler.loadboardBookingDetail(mContext, bookingId, mDataCallback);
 
     }
 
@@ -1681,12 +1669,6 @@ public class UserRepository {
                     case "UpdateAppVersionResponse":
                         mUserCallback.onUpdateAppVersionResponse((UpdateAppVersionResponse) object);
                         break;
-                    case "LoadBoardListingResponse":
-                        mUserCallback.onLoadboardListingApiResponse((LoadBoardListingResponse) object);
-                        break;
-                    case "LoadboardBookingDetailResponse":
-                        mUserCallback.onLoadboardBookingDetailResponse((LoadboardBookingDetailResponse) object);
-                        break;
                     case "AcceptLoadboardBookingResponse":
                         WebIORequestHandler.getInstance().registerChatListener();
                         mUserCallback.onAcceptLoadboardBookingResponse((AcceptLoadboardBookingResponse) object);
@@ -1735,11 +1717,6 @@ public class UserRepository {
             } else {
                 Utils.redLog("UserRepo", "mUserCallback is Null");
             }
-        }
-
-        @Override
-        public void onSuccess() {
-
         }
 
         @Override
