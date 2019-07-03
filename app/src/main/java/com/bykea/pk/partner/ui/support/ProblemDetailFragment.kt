@@ -7,16 +7,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import androidx.databinding.DataBindingUtil
 
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.models.response.ProblemPostResponse
-import com.bykea.pk.partner.repositories.IUserDataHandler
 import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
-import com.bykea.pk.partner.widgets.FontButton
 import com.bykea.pk.partner.widgets.FontEditText
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
@@ -25,9 +23,8 @@ import org.apache.commons.lang3.StringUtils
 
 import java.util.ArrayList
 
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
+import com.bykea.pk.partner.databinding.FragmentProblemDetailBinding
+import com.bykea.pk.partner.ui.support.ProblemActivity.Companion.DETAIL_SUBMITTED_FRAGMENT
 import kotlinx.android.synthetic.main.fragment_problem_detail.*
 import zendesk.support.CreateRequest
 import zendesk.support.CustomField
@@ -40,7 +37,28 @@ import zendesk.support.Support
  */
 class ProblemDetailFragment : Fragment() {
     private var mCurrentActivity: ProblemActivity? = null
-    private var requestProvider: RequestProvider? = null
+    private lateinit var requestProvider: RequestProvider
+    private lateinit var rootView: View
+    private lateinit var binding: FragmentProblemDetailBinding
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_problem_detail, container, false)
+        rootView = binding.root
+        mCurrentActivity = activity as ProblemActivity?
+
+        requestProvider = Support.INSTANCE.provider()!!.requestProvider()
+
+        binding.listener = object : ProblemFragmentListener {
+            override fun onSubmitClicked() {
+                if (isValid) {
+                    createRequest()
+                }
+            }
+        }
+        return rootView
+    }
+
 
     private val isValid: Boolean
         get() {
@@ -59,7 +77,6 @@ class ProblemDetailFragment : Fragment() {
             return true
         }
 
-
     private val mCallBack = object : UserDataHandler() {
 
         override fun onProblemPosted(response: ProblemPostResponse) {
@@ -71,16 +88,6 @@ class ProblemDetailFragment : Fragment() {
                 Dialogs.INSTANCE.dismissDialog()
             }
         }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_problem_detail, container, false)
-        mCurrentActivity = activity as ProblemActivity?
-
-        requestProvider = Support.INSTANCE.provider()!!.requestProvider()
-
-        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,12 +107,11 @@ class ProblemDetailFragment : Fragment() {
     private fun createRequest() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
 
-
-        requestProvider!!.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
+        requestProvider.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
                 Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
-                //                mCurrentActivity.changeFragment(new ProblemSubmittedFragment(), DETAIL_SUBMITTED_FRAGMENT);
+                mCurrentActivity?.changeFragment(ProblemSubmittedFragment(), DETAIL_SUBMITTED_FRAGMENT);
             }
 
             override fun onError(errorResponse: ErrorResponse) {
@@ -125,7 +131,7 @@ class ProblemDetailFragment : Fragment() {
     }
 
     private fun getAllRequests() {
-        requestProvider!!.getAllRequests(object : ZendeskCallback<List<Request>>() {
+        requestProvider.getAllRequests(object : ZendeskCallback<List<Request>>() {
             override fun onSuccess(requests: List<Request>) {
                 Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
             }
@@ -147,14 +153,5 @@ class ProblemDetailFragment : Fragment() {
 
     private fun buildCustomFields(): List<CustomField> {
         return ArrayList()
-    }
-
-    @OnClick(R.id.submitBtn)
-    internal fun onClick(view: View) {
-        when (view.id) {
-            R.id.submitBtn -> if (isValid) {
-                getAllRequests()
-            }
-        }
     }
 }

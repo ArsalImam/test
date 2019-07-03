@@ -22,6 +22,7 @@ class ProblemActivity : AppCompatActivity() {
 
     private var tripId: String? = null
     var selectedReason: String? = null
+    var CURRENT_STATUS = LIST_FRAGMENT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +64,14 @@ class ProblemActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        if (!supportFragmentManager.fragments.get(0).javaClass.simpleName.equals(ProblemSubmittedFragment::class.java.simpleName)) {
+            super.onBackPressed()
+        }
     }
 
     companion object {
-        val DETAIL_FRAGMENT: String = "DETAIL_FRAGMENT"
         val LIST_FRAGMENT: String = "LIST_FRAGMENT"
+        val DETAIL_FRAGMENT: String = "DETAIL_FRAGMENT"
+        val DETAIL_SUBMITTED_FRAGMENT: String = "DETAIL_SUBMITTED_FRAGMENT"
     }
 }
