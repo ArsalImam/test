@@ -9,9 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.support.dummy.DummyContent
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_complain_list.*
-import kotlinx.android.synthetic.main.complain_list.*
 
 /**
  * An activity representing a list of Pings. This activity
@@ -32,23 +30,8 @@ class ComplainListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complain_list)
-
         setSupportActionBar(toolbar)
         toolbar.title = title
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-
-        if (complain_detail_container != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            twoPane = true
-        }
-
         setupRecyclerView(complain_list)
     }
 
