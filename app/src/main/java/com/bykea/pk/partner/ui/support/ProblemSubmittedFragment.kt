@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.support
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.databinding.FragmentProblemDetailBinding
 import com.bykea.pk.partner.databinding.FragmentProblemSubmittedBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.utils.Utils
@@ -29,7 +27,7 @@ class ProblemSubmittedFragment : Fragment() {
 
         mCurrentActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        binding.listener = object : ProblemFragmentListener {
+        binding.listener = object : GenericFragmentListener {
             override fun onRequestSubmittedTickets() {
                 Utils.appToast(mCurrentActivity, "submittedIssueDetail")
                 HelpCenterActivity.builder().show(mCurrentActivity)

@@ -1,6 +1,6 @@
 package com.bykea.pk.partner.ui.support
 
-interface ProblemFragmentListener {
+interface GenericFragmentListener {
     fun onSubmitClicked() {}
 
     fun onRequestSubmittedTickets() {}

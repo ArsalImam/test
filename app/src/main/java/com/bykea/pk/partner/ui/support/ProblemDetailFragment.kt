@@ -10,8 +10,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.models.response.ProblemPostResponse
-import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
@@ -50,7 +48,7 @@ class ProblemDetailFragment : Fragment() {
 
         requestProvider = Support.INSTANCE.provider()!!.requestProvider()
 
-        binding.listener = object : ProblemFragmentListener {
+        binding.listener = object : GenericFragmentListener {
             override fun onSubmitClicked() {
                 if (isValid) {
                     createRequest()
