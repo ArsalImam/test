@@ -4,9 +4,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListAdapter
+import zendesk.support.Request
 
 /**
  * Contains [BindingAdapter]s.
@@ -14,6 +16,14 @@ import com.bykea.pk.partner.ui.loadboard.list.JobRequestListAdapter
  * @author Yousuf Sohail
  */
 object BindingAdapters {
+
+    @BindingAdapter("app:items")
+    @JvmStatic
+    fun setItems(recyclerView: RecyclerView, list: List<Request>) {
+        with(recyclerView.adapter as LastAdapter<Request>) {
+            items = list
+        }
+    }
 
     @BindingAdapter("app:items")
     @JvmStatic
