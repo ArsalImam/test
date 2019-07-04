@@ -372,4 +372,5 @@
     <string name="submit">\u0020درج کریں\u0020</string>
     <string name="title_complain_list">My Complaints</string>
     <string name="title_complain_detail">Complaint Detail</string>
+    <string name="title_new_complain">New Complaint\u0020نئی شکایت\u0020</string>
 </resources>

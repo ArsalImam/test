@@ -40,7 +40,7 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         fragmentManager = supportFragmentManager
-        changeFragment(ProblemListFragment())
+        changeFragment(ComplainReasonFragment())
     }
 
     /**
@@ -70,7 +70,7 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         //STOP BACK PRESSED FOR PROBLEM SUBMITTED FRAGMENT
-        if (!supportFragmentManager.fragments.get(0).javaClass.simpleName.equals(ProblemSubmittedFragment::class.java.simpleName)) {
+        if (!supportFragmentManager.fragments.get(0).javaClass.simpleName.equals(ComplainSubmittedFragment::class.java.simpleName)) {
             super.onBackPressed()
         }
     }

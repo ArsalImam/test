@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.databinding.FragmentProblemDetailBinding
+import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
-import kotlinx.android.synthetic.main.fragment_problem_detail.*
+import kotlinx.android.synthetic.main.fragment_complain_detail.*
 import org.apache.commons.lang3.StringUtils
 import zendesk.support.*
 import java.util.*
@@ -23,16 +23,13 @@ import java.util.*
 /**
  * A simple [Fragment] subclass.
  */
-class ProblemDetailFragment : Fragment() {
+class ComplainDetailFragment : Fragment() {
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
     private lateinit var requestProvider: RequestProvider
-    private lateinit var rootView: View
-    private lateinit var binding: FragmentProblemDetailBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_problem_detail, container, false)
-        rootView = binding.root
+        val binding: FragmentComplainDetailBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_complain_detail, container, false)
         mCurrentActivity = activity as ComplaintSubmissionActivity?
 
         requestProvider = Support.INSTANCE.provider()!!.requestProvider()
@@ -44,7 +41,7 @@ class ProblemDetailFragment : Fragment() {
                 }
             }
         }
-        return rootView
+        return binding.root
     }
 
     /**
@@ -67,7 +64,7 @@ class ProblemDetailFragment : Fragment() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
                 Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
-                mCurrentActivity?.changeFragment(ProblemSubmittedFragment());
+                mCurrentActivity?.changeFragment(ComplainSubmittedFragment());
             }
 
             override fun onError(errorResponse: ErrorResponse) {

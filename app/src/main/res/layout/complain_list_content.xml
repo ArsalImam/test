@@ -54,9 +54,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|start"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:text="@{item.createdAt.toString()}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
+                    app:dateFormat="@{item.createdAt}"
                     app:fontName="roboto_bold.ttf"
                     tools:text="24 Jun, 10:53 PM" />
             </LinearLayout>

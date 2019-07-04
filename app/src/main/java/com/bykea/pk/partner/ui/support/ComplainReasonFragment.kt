@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
-import kotlinx.android.synthetic.main.fragment_problem_list.*
+import kotlinx.android.synthetic.main.fragment_complain_reason.*
 import java.util.*
 
-class ProblemListFragment : Fragment() {
+class ComplainReasonFragment : Fragment() {
 
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
     private var mAdapter: ProblemItemsAdapter? = null
@@ -23,7 +23,7 @@ class ProblemListFragment : Fragment() {
     internal var probReasons: Array<String>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_problem_list, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_complain_reason, container, false)
         mCurrentActivity = activity as ComplaintSubmissionActivity?
         return rootView
     }
@@ -64,7 +64,7 @@ class ProblemListFragment : Fragment() {
 
         mAdapter!!.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
-            mCurrentActivity?.changeFragment(ProblemDetailFragment())
+            mCurrentActivity?.changeFragment(ComplainDetailFragment())
         }
     }
 }

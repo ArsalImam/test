@@ -8,7 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListAdapter
+import com.bykea.pk.partner.widgets.FontTextView
 import zendesk.support.Request
+import java.lang.Exception
+import java.util.*
+import java.text.SimpleDateFormat
+
 
 /**
  * Contains [BindingAdapter]s.
@@ -47,5 +52,19 @@ object BindingAdapters {
     @JvmStatic
     fun setGoneUnless(view: View, visible: Boolean) {
         view.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
+    @BindingAdapter("app:dateFormat")
+    @JvmStatic
+    fun setDateTimeFormat(fontTextView: FontTextView, date: Date?) {
+        if (date != null) {
+            val dateFormat = "dd MMM, hh:mm a"
+            try {
+                val sdf = SimpleDateFormat(dateFormat)
+                fontTextView.text = sdf.format(date)
+            } catch (e: Exception) {
+                fontTextView.text = ""
+            }
+        }
     }
 }

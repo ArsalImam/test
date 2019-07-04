@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.support
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bykea.pk.partner.utils.Dialogs
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
 import zendesk.support.Request
@@ -19,13 +20,15 @@ class ComplaintListViewModel : ViewModel() {
 
     fun start() {
         val requestProvider = Support.INSTANCE.provider()!!.requestProvider()
+
         requestProvider.getAllRequests(object : ZendeskCallback<List<Request>>() {
             override fun onSuccess(requests: List<Request>) {
+                Dialogs.INSTANCE.dismissDialog()
                 _items.value = ArrayList(requests)
             }
 
             override fun onError(errorResponse: ErrorResponse) {
-//                TODO: Utils.appToast()
+                Dialogs.INSTANCE.dismissDialog()
             }
         })
     }
