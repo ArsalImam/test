@@ -53,7 +53,7 @@ class ProblemDetailFragment : Fragment() {
     private val isValid: Boolean
         get() {
             if (StringUtils.isBlank(etDetails.text.toString().trim { it <= ' ' })) {
-                etDetails.error =  "Please Enter Some Details"
+                etDetails.error = "Please Enter Some Details"
                 etDetails.requestFocus()
                 return false
             }
@@ -82,8 +82,8 @@ class ProblemDetailFragment : Fragment() {
      */
     private fun buildCreateRequest(): CreateRequest {
         val createRequest = CreateRequest()
-        createRequest.subject = "Ticket Subject"
-        createRequest.description = "Ticket Description"
+        createRequest.subject = mCurrentActivity?.tripHistoryDate?.tripNo
+        createRequest.description = etDetails.text.toString()
         createRequest.customFields = buildCustomFields()
 
         return createRequest
