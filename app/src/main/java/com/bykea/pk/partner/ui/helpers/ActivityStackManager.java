@@ -37,7 +37,6 @@ import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
-import com.bykea.pk.partner.ui.support.ProblemActivity;
 import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
 import com.bykea.pk.partner.ui.activities.ReportActivity;
@@ -45,6 +44,7 @@ import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
+import com.bykea.pk.partner.ui.support.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -434,7 +434,7 @@ public class ActivityStackManager {
     }*/
 
     public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
-        Intent intent = new Intent(context, ProblemActivity.class);
+        Intent intent = new Intent(context, ComplaintSubmissionActivity.class);
         intent.putExtra("TRIP_HISTORY_DATA", tripHistoryData);
         context.startActivity(intent);
     }

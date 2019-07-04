@@ -37,11 +37,6 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <activity
-            android:name=".ui.support.ProblemActivity"
-            android:label="@string/title_activity_problem_final"
-            android:theme="@style/AppTheme.NoActionBar" />
-
         <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
@@ -268,33 +263,19 @@
         <activity
             android:name=".ui.loadboard.detail.JobRequestDetailActivity"
             android:launchMode="singleTop" />
-
+        <activity
+            android:name=".ui.support.ComplaintSubmissionActivity"
+            android:label="@string/title_activity_problem_final"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.support.ComplaintListActivity"
+            android:label="@string/title_complain_list"
+            android:theme="@style/AppTheme.NoActionBar" />
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-
-        <activity
-            android:name="zendesk.support.request.RequestActivity"
-            android:theme="@style/RequestsTheme" />
-        <activity
-            android:name=".ui.support.ComplainListActivity"
-            android:label="@string/title_complain_list"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.support.ComplainDetailActivity"
-            android:label="@string/title_complain_detail"
-            android:parentActivityName=".ui.support.ComplainListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bykea.pk.partner.ui.support.ComplainListActivity" />
-        </activity>
-        <activity
-            android:name=".ui.support.ProblemActivityFinal"
-            android:label="@string/title_activity_problem_final"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

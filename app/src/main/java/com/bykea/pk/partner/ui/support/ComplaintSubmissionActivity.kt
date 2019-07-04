@@ -10,15 +10,14 @@ import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
-import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 
 import kotlinx.android.synthetic.main.activity_problem.*
 
 
-class ProblemActivity : AppCompatActivity() {
+class ComplaintSubmissionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProblemBinding
-    private lateinit var mCurrentActivity: ProblemActivity
+    private lateinit var mCurrentActivity: ComplaintSubmissionActivity
     private var fragmentManager: FragmentManager? = null
 
     var tripHistoryDate: TripHistoryData? = null

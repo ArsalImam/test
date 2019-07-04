@@ -2,14 +2,14 @@ package com.bykea.pk.partner.ui.helpers.adapters;
 
 
 import android.content.Context;
-
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.ui.support.ProblemActivity;
+import com.bykea.pk.partner.ui.support.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
 
@@ -28,7 +28,7 @@ public class ProblemItemsAdapter extends RecyclerView.Adapter<ProblemItemsAdapte
     public ProblemItemsAdapter(ArrayList<String> list, Context context) {
         mProblemList = list;
         this.context = context;
-        isUrdu = context instanceof ProblemActivity;
+        isUrdu = context instanceof ComplaintSubmissionActivity;
     }
 
     @Override

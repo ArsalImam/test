@@ -24,7 +24,7 @@ import java.util.*
  * A simple [Fragment] subclass.
  */
 class ProblemDetailFragment : Fragment() {
-    private var mCurrentActivity: ProblemActivity? = null
+    private var mCurrentActivity: ComplaintSubmissionActivity? = null
     private lateinit var requestProvider: RequestProvider
     private lateinit var rootView: View
     private lateinit var binding: FragmentProblemDetailBinding
@@ -33,7 +33,7 @@ class ProblemDetailFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_problem_detail, container, false)
         rootView = binding.root
-        mCurrentActivity = activity as ProblemActivity?
+        mCurrentActivity = activity as ComplaintSubmissionActivity?
 
         requestProvider = Support.INSTANCE.provider()!!.requestProvider()
 

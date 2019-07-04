@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.fragment_problem_submitted.*
 
 class ProblemSubmittedFragment : Fragment() {
 
-    private lateinit var mCurrentActivity: ProblemActivity
+    private lateinit var mCurrentActivity: ComplaintSubmissionActivity
     private lateinit var rootView: View
     private lateinit var binding: FragmentProblemSubmittedBinding
 
@@ -23,15 +23,14 @@ class ProblemSubmittedFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_problem_submitted, container, false)
         rootView = binding.root
-        mCurrentActivity = activity as ProblemActivity
+        mCurrentActivity = activity as ComplaintSubmissionActivity
 
         mCurrentActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         binding.listener = object : GenericFragmentListener {
             override fun onRequestSubmittedTickets() {
                 Utils.appToast(mCurrentActivity, "submittedIssueDetail")
-//                HelpCenterActivity.builder().show(mCurrentActivity)
-                startActivity(Intent(activity, ComplainListActivity::class.java))
+                startActivity(Intent(activity, ComplaintListActivity::class.java))
             }
 
             override fun onNavigateToHomeScreen() {

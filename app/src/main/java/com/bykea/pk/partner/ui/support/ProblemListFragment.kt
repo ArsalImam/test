@@ -16,7 +16,7 @@ import java.util.*
 
 class ProblemListFragment : Fragment() {
 
-    private var mCurrentActivity: ProblemActivity? = null
+    private var mCurrentActivity: ComplaintSubmissionActivity? = null
     private var mAdapter: ProblemItemsAdapter? = null
     private var mProblemList: ArrayList<String> = ArrayList()
     private var mLayoutManager: LinearLayoutManager? = null
@@ -24,7 +24,7 @@ class ProblemListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_problem_list, container, false)
-        mCurrentActivity = activity as ProblemActivity?
+        mCurrentActivity = activity as ComplaintSubmissionActivity?
         return rootView
     }
 
