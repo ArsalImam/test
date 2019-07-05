@@ -96,7 +96,7 @@ interface Backend {
         }
 
         private val socketFactory: SSLSocketFactory?
-        val sslContext: SSLContext? = Utils.getSSLContext().apply {
+        val sslContext: SSLContext? = NetworkUtil.getSSLContext().apply {
             socketFactory = this?.socketFactory
         }
 
