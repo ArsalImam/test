@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.bykea.pk.partner.ui.support.RequestExtKt" />
+
         <variable
             name="item"
             type="zendesk.support.Request" />
@@ -57,7 +59,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:dateFormat="@{item.createdAt}"
-                    app:fontName="roboto_bold.ttf"
+                    app:fontName="roboto_light.ttf"
                     tools:text="24 Jun, 10:53 PM" />
             </LinearLayout>
 
@@ -69,11 +71,10 @@
                 android:layout_marginRight="@dimen/_5sdp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:paddingEnd="@dimen/_5sdp"
-                android:paddingRight="@dimen/_5sdp"
+                android:text="@{RequestExtKt.getCancellationReason(item.customFields)}"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp"
+                android:textSize="@dimen/_14sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf"
                 tools:text="@string/issue_no" />
 
