@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListAdapter
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.widgets.FontTextView
 import zendesk.support.Request
 import java.lang.Exception
@@ -65,6 +66,16 @@ object BindingAdapters {
             } catch (e: Exception) {
                 fontTextView.text = ""
             }
+        }
+    }
+
+    @BindingAdapter("app:ticketStatus")
+    @JvmStatic
+    fun setTicketStatus(fontTextView: FontTextView, ticketStatus: String?) {
+        when (ticketStatus) {
+            Constants.ZendeskTicketStatus.Pending -> fontTextView.setText(R.string.ticket_status_pending)
+            Constants.ZendeskTicketStatus.Solved -> fontTextView.setText(R.string.ticket_status_solved)
+            else -> fontTextView.setText(R.string.ticket_status_open)
         }
     }
 }

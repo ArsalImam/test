@@ -495,6 +495,7 @@ public class Constants {
         public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
         public static String BUCKET_NAME = "loadboard";
     }
+
     public static class ZendeskConfigurations {
         public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
         public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
@@ -536,5 +537,12 @@ public class Constants {
         public static long Problem_Topic_Selected = 360020315851L;
         public static long Last_Trip_Status = 360020315871L;
         public static long Testing = 360020317511L;
+    }
+
+    public static class ZendeskTicketStatus {
+        public static String New = "New";
+        public static String Open = "Open";
+        public static String Pending = "Pending";
+        public static String Solved = "Solved";
     }
 }

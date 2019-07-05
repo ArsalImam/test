@@ -5,8 +5,6 @@
 
     <data>
 
-        <import type="com.bykea.pk.partner.ui.support.RequestExtKt" />
-
         <variable
             name="item"
             type="zendesk.support.Request" />
@@ -71,8 +69,7 @@
                 android:layout_marginRight="@dimen/_5sdp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="@{RequestExtKt.getCancellationReason(item.customFields)}"
-                android:textAllCaps="true"
+                app:ticketStatus="@{item.status.toString()}"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf"
