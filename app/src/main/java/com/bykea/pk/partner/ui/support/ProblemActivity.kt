@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
-import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
+import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
 
 import kotlinx.android.synthetic.main.activity_problem.*
 
@@ -34,7 +34,7 @@ class ProblemActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        tripHistoryDate = intent.getSerializableExtra("TRIP_HISTORY_DATA") as TripHistoryData
+        tripHistoryDate = intent.getSerializableExtra(INTENT_TRIP_HISTORY_DATA) as TripHistoryData
         toolbar_title.text = tripHistoryDate?.tripNo
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
@@ -48,11 +48,9 @@ class ProblemActivity : AppCompatActivity() {
      * Use For Change Fragment
      */
     fun changeFragment(fragment: Fragment) {
-        fragmentManager!!
-                .beginTransaction()
-                .replace(R.id.containerView, fragment)
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .commit()
+        fragmentManager?.beginTransaction()
+                ?.replace(R.id.containerView, fragment)
+                ?.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)?.commit()
     }
 
     /**

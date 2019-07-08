@@ -25,7 +25,7 @@ import java.util.*
  */
 class ProblemDetailFragment : Fragment() {
     private var mCurrentActivity: ProblemActivity? = null
-    private lateinit var requestProvider: RequestProvider
+    private var requestProvider: RequestProvider? = null
     private lateinit var rootView: View
     private lateinit var binding: FragmentProblemDetailBinding
 
@@ -35,7 +35,7 @@ class ProblemDetailFragment : Fragment() {
         rootView = binding.root
         mCurrentActivity = activity as ProblemActivity?
 
-        requestProvider = Support.INSTANCE.provider()!!.requestProvider()
+        requestProvider = Support.INSTANCE.provider()?.requestProvider()
 
         binding.listener = object : GenericFragmentListener {
             override fun onSubmitClicked() {
@@ -52,7 +52,7 @@ class ProblemDetailFragment : Fragment() {
      */
     private val isValid: Boolean
         get() {
-            if (StringUtils.isBlank(etDetails.text.toString().trim { it <= ' ' })) {
+            if (StringUtils.isBlank(etDetails?.text?.toString()?.trim { it <= ' ' })) {
                 etDetails.error = "Please Enter Some Details"
                 etDetails.requestFocus()
                 return false
@@ -60,10 +60,13 @@ class ProblemDetailFragment : Fragment() {
             return true
         }
 
+    /**
+     * Create The Request To Get All The Submitted Tickets For Zendesk
+     */
     private fun createRequest() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
 
-        requestProvider.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
+        requestProvider?.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
                 Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
@@ -118,7 +121,7 @@ class ProblemDetailFragment : Fragment() {
         customerFields.add(CustomField(Constants.ZendeskCustomFields.Partner_Name, AppPreferences.getPilotData().fullName));
         customerFields.add(CustomField(Constants.ZendeskCustomFields.Partner_Email, AppPreferences.getDriverEmail()));
         customerFields.add(CustomField(Constants.ZendeskCustomFields.Booking_Type, mCurrentActivity?.tripHistoryDate?.trip_type));
-        customerFields.add(CustomField(Constants.ZendeskCustomFields.Parcel_Value, mCurrentActivity?.tripHistoryDate?.trip_type));
+        customerFields.add(CustomField(Constants.ZendeskCustomFields.Parcel_Value, ""));
         customerFields.add(CustomField(Constants.ZendeskCustomFields.COD_Amount, ""));
         customerFields.add(CustomField(Constants.ZendeskCustomFields.Trip_Fare, mCurrentActivity?.tripHistoryDate?.invoice?.tripCharges));
         customerFields.add(CustomField(Constants.ZendeskCustomFields.Trip_Distance, ""));

@@ -495,12 +495,20 @@ public class Constants {
         public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
         public static String BUCKET_NAME = "loadboard";
     }
+
+
+    /**
+     * Zendesk SDK Configurations
+     */
     public static class ZendeskConfigurations {
         public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
         public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
         public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";
     }
 
+    /**
+     * Zendesk Custom Fields
+     */
     public static class ZendeskCustomFields {
         public static long Subject = 360020102491L;
         public static long Description = 360020102511L;
@@ -537,4 +545,6 @@ public class Constants {
         public static long Last_Trip_Status = 360020315871L;
         public static long Testing = 360020317511L;
     }
+
+    public static final String INTENT_TRIP_HISTORY_DATA = "INTENT_TRIP_HISTORY_DATA";
 }

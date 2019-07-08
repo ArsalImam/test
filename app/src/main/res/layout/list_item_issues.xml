@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white">
@@ -31,11 +32,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="KHI1602092092"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14sdp"
                 android:textStyle="bold"
-                app:fontName="roboto_bold.ttf" />
+                app:fontName="roboto_bold.ttf"
+                tools:text="KHI1602092092" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/tVIssueDateTime"
@@ -43,10 +44,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|start"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:text="24 Jun, 10:53 PM"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12sdp"
-                app:fontName="roboto_bold.ttf" />
+                app:fontName="roboto_bold.ttf"
+                tools:text="24 Jun, 10:53 PM" />
         </LinearLayout>
 
         <com.bykea.pk.partner.widgets.FontTextView
@@ -57,11 +58,11 @@
             android:layout_marginRight="@dimen/_5sdp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/issue_no"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            tools:text="@string/issue_no" />
 
     </LinearLayout>
 
