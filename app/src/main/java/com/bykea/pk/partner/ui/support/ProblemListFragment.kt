@@ -62,7 +62,7 @@ class ProblemListFragment : Fragment() {
         rvProblemList?.itemAnimator = DefaultItemAnimator()
         rvProblemList?.adapter = mAdapter
 
-        mAdapter!!.setMyOnItemClickListener { position, view, reason ->
+        mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
             mCurrentActivity?.changeFragment(ProblemDetailFragment())
         }
