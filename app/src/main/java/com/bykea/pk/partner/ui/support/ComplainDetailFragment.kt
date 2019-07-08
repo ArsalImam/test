@@ -59,6 +59,9 @@ class ComplainDetailFragment : Fragment() {
             return true
         }
 
+    /**
+     * Get All Submitted Tickets For Zendesk
+     */
     private fun createRequest() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
 

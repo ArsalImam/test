@@ -545,4 +545,6 @@ public class Constants {
         public static String Pending = "Pending";
         public static String Solved = "Solved";
     }
+
+    public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
 }

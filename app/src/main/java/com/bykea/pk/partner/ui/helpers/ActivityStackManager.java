@@ -50,6 +50,8 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
+import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
+
 
 public class ActivityStackManager {
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
@@ -433,9 +435,14 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }*/
 
+    /**
+     *
+     * @param context Calling Activity
+     * @param tripHistoryData Model Send For Intent
+     */
     public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
         Intent intent = new Intent(context, ComplaintSubmissionActivity.class);
-        intent.putExtra("TRIP_HISTORY_DATA", tripHistoryData);
+        intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
         context.startActivity(intent);
     }
 
