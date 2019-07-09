@@ -44,6 +44,7 @@ import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
+import com.bykea.pk.partner.ui.support.ComplaintListActivity;
 import com.bykea.pk.partner.ui.support.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -436,13 +437,13 @@ public class ActivityStackManager {
     }*/
 
     /**
-     *
-     * @param context Calling Activity
+     * @param context         Calling Activity
      * @param tripHistoryData Model Send For Intent
      */
     public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
         Intent intent = new Intent(context, ComplaintSubmissionActivity.class);
-        intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
+        if (tripHistoryData != null)
+            intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
         context.startActivity(intent);
     }
 
@@ -520,6 +521,16 @@ public class ActivityStackManager {
             intent.putExtra(Constants.Extras.INACTIVE_PUSH_DATA, data);
             context.startService(intent);
         }
+    }
+
+
+    /**
+     * Submitted Tickets Activity
+     * @param context Calling Activity
+     */
+    public void startComplainListActivity(Context context) {
+        Intent intent = new Intent(context, ComplaintListActivity.class);
+        context.startActivity(intent);
     }
 
 }

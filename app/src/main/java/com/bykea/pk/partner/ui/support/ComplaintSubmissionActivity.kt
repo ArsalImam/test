@@ -3,7 +3,7 @@ package com.bykea.pk.partner.ui.support
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -11,7 +11,6 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
-
 import kotlinx.android.synthetic.main.activity_problem.*
 
 
@@ -22,7 +21,6 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
     private var fragmentManager: FragmentManager? = null
 
     var tripHistoryDate: TripHistoryData? = null
-
     var selectedReason: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,8 +32,19 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        tripHistoryDate = intent.getSerializableExtra(INTENT_TRIP_HISTORY_DATA) as TripHistoryData
-        toolbar_title.text = tripHistoryDate?.tripNo
+        if (intent?.extras != null) {
+            if (intent.extras.containsKey(INTENT_TRIP_HISTORY_DATA))
+                tripHistoryDate = intent.getSerializableExtra(INTENT_TRIP_HISTORY_DATA) as TripHistoryData
+        }
+
+        if (tripHistoryDate != null && tripHistoryDate?.tripNo != null) {
+            //CREATE TICKET FOR RIDE REASONS
+            toolbar_title.text = tripHistoryDate?.tripNo
+        }
+        else {
+            //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
+            toolbar_title.text = getString(R.string.title_report)
+        }
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)

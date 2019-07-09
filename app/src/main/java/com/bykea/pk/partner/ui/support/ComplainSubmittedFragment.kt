@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.support
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.FragmentComplainSubmittedBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
-import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_complain_submitted.*
 
 class ComplainSubmittedFragment : Fragment() {
@@ -29,8 +27,7 @@ class ComplainSubmittedFragment : Fragment() {
 
         binding.listener = object : GenericFragmentListener {
             override fun onRequestSubmittedTickets() {
-                Utils.appToast(mCurrentActivity, "submittedIssueDetail")
-                startActivity(Intent(activity, ComplaintListActivity::class.java))
+                ActivityStackManager.getInstance().startComplainListActivity(activity)
             }
 
             override fun onNavigateToHomeScreen() {

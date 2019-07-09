@@ -20,7 +20,8 @@ class ComplainReasonFragment : Fragment() {
     private var mAdapter: ProblemItemsAdapter? = null
     private var mProblemList: ArrayList<String> = ArrayList()
     private var mLayoutManager: LinearLayoutManager? = null
-    internal var probReasons: Array<String>? = null
+    internal var probReasons1: Array<String>? = null
+    internal var probReasons2: Array<String>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_complain_reason, container, false)
@@ -30,7 +31,12 @@ class ComplainReasonFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mProblemList = ArrayList()
-        probReasons = AppPreferences.getSettings().predefine_messages.reasons
+        if (mCurrentActivity?.tripHistoryDate != null) {
+            probReasons1 = AppPreferences.getSettings().predefine_messages.reasons
+        } else {
+            probReasons1 = AppPreferences.getSettings().predefine_messages.contact_reason
+            probReasons2 = AppPreferences.getSettings().predefine_messages.contact_reason_finance
+        }
 
         cloneReasonsList()
         setupAdapter()
@@ -40,15 +46,25 @@ class ComplainReasonFragment : Fragment() {
      * Copy Reasons To List (Retrieve From App Preferences)
      */
     private fun cloneReasonsList() {
-        if (probReasons != null) {
-            mProblemList.addAll(probReasons!!)
+        if (mCurrentActivity?.tripHistoryDate != null) {
+            //CREATE TICKET FOR RIDE REASONS
+            if (probReasons1 != null) {
+                mProblemList.addAll(probReasons1!!)
+            } else {
+                mProblemList.add("Partner ka ravaiya gair ikhlaqi tha")
+                mProblemList.add("Partner ne aik gair mansooba stop kia")
+                mProblemList.add("Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair).")
+                mProblemList.add("Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair).")
+                mProblemList.add("Parner ne baqaya raqam mere wallet me nahi daali")
+                mProblemList.add("main haadse main manavas tha.")
+            }
         } else {
-            mProblemList.add("Partner ka ravaiya gair ikhlaqi tha")
-            mProblemList.add("Partner ne aik gair mansooba stop kia")
-            mProblemList.add("Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair).")
-            mProblemList.add("Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair).")
-            mProblemList.add("Parner ne baqaya raqam mere wallet me nahi daali")
-            mProblemList.add("main haadse main manavas tha.")
+            //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
+            if (probReasons1 != null)
+                mProblemList.addAll(probReasons1!!)
+
+            if (probReasons2 != null)
+                mProblemList.addAll(probReasons2!!)
         }
     }
 

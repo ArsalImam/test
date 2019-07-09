@@ -1,202 +1,99 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:weightSum="2">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:weightSum="2">
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="match_parent"
+            android:id="@+id/supportEmail"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_error"
+            android:drawablePadding="@dimen/_8sdp"
             android:gravity="center"
-            android:text="سپروائزر"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/textsize.xlarge"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2">
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/supportCall"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="-6dp"
-                android:drawableTop="@drawable/contact_call_icon"
-                android:gravity="center"
-                android:text="کال"
-                android:textAllCaps="true"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.large"
-                app:fontName="jameel_noori_nastaleeq.ttf" />
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/supportEmail"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="-8dp"
-                android:drawableTop="@drawable/ic_error"
-                android:gravity="center"
-                android:text="رپورٹ"
-                android:textAllCaps="true"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.large"
-                app:fontName="jameel_noori_nastaleeq.ttf" />
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/supportWatsapp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="-8dp"
-                android:drawableTop="@drawable/contact_whatsapp_icon"
-                android:gravity="center"
-                android:text="چیٹ"
-                android:textAllCaps="true"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.large"
-                android:visibility="gone"
-                app:fontName="jameel_noori_nastaleeq.ttf" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/Color_DarkGray" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:background="@color/Color_DarkGray" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="فنانس"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/textsize.xlarge"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2">
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/financeCall"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="-6dp"
-                android:drawableTop="@drawable/contact_call_icon"
-                android:gravity="center"
-                android:text="کال"
-                android:textAllCaps="true"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.large"
-                app:fontName="jameel_noori_nastaleeq.ttf" />
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/financeEmail"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="-8dp"
-                android:drawableTop="@drawable/ic_error"
-                android:gravity="center"
-                android:text="رپورٹ"
-                android:textAllCaps="true"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.large"
-                app:fontName="jameel_noori_nastaleeq.ttf" />
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/financeWatsapp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="-8dp"
-                android:drawableTop="@drawable/contact_whatsapp_icon"
-                android:gravity="center"
-                android:text="چیٹ"
-                android:textAllCaps="true"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.large"
-                android:visibility="gone"
-                app:fontName="jameel_noori_nastaleeq.ttf" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/Color_DarkGray" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:background="@color/Color_DarkGray" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/fontTextView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="بینک اکاوٴنٹ"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/textsize.xlarge"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/bankAccountNumber"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="-8dp"
-                android:drawableTop="@drawable/contact_bank_icon"
-                android:gravity="center"
-                android:text=" معلومات "
-                android:textAllCaps="true"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.large"
-                app:fontName="jameel_noori_nastaleeq.ttf" />
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/Color_DarkGray" />
-
-        <com.bykea.pk.partner.widgets.FontTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:gravity="center"
-            android:padding="@dimen/_6sdp"
-            android:text="@string/complain_msg"
+            android:text="@string/contact_us_report"
+            android:textAllCaps="true"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_14sdp"
-            android:visibility="gone" />
+            android:textSize="@dimen/textsize.large"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            tools:ignore="NestedWeights" />
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_light" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/yourComplain"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_user"
+            android:drawablePadding="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@string/contact_us_your_complain"
+            android:textAllCaps="true"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.large"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
     </LinearLayout>
 
-</ScrollView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_light" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:weightSum="2">
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/bankAccountNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_bank"
+            android:drawablePadding="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@string/contact_us_bank_account"
+            android:textAllCaps="true"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.large"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            tools:ignore="NestedWeights" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_light" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/supportCall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_call"
+            android:drawablePadding="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@string/contact_us_call"
+            android:textAllCaps="true"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/textsize.large"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+    </LinearLayout>
+</LinearLayout>
+

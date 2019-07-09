@@ -1,9 +1,11 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,7 +30,8 @@ public class ReportActivity extends BaseActivity {
     private ArrayList<String> mReportList;
     private final String BOOKING_PROBLEM = "Booking se mutalik koi masla";
     private boolean isHelpShowing = false;
-    private String[] contactReasongs;
+    private String[] contactReasonsSupervisors;
+    private String[] contactReasonsFinance;
 
     @BindView(R.id.reportList)
     RecyclerView rvReportList;
@@ -65,40 +68,28 @@ public class ReportActivity extends BaseActivity {
         rvReportList.setLayoutManager(mLayoutManager);
         rvReportList.setItemAnimator(new DefaultItemAnimator());
         rvReportList.setAdapter(mAdapter);
-        mAdapter.setMyOnItemClickListener(new ProblemItemsAdapter.MyOnItemClickListener() {
-            @Override
-            public void onItemClickListener(int position, View view, String reason) {
-                if (reason.equalsIgnoreCase(BOOKING_PROBLEM)) {
-                    isHelpShowing = true;
-                    rvReportList.setVisibility(View.GONE);
-                    helpLayout.setVisibility(View.VISIBLE);
-                } else {
-                    ActivityStackManager.getInstance().startReportPostActivity(mCurrentActivity, reason, contactType);
-                }
+        mAdapter.setMyOnItemClickListener((position, view, reason) -> {
+            if (reason.equalsIgnoreCase(BOOKING_PROBLEM)) {
+                isHelpShowing = true;
+                rvReportList.setVisibility(View.GONE);
+                helpLayout.setVisibility(View.VISIBLE);
+            } else {
+                ActivityStackManager.getInstance().startProblemActivity(mCurrentActivity, null);
+//                ActivityStackManager.getInstance().startReportPostActivity(mCurrentActivity, reason, contactType);
             }
         });
     }
 
     private void createData() {
         mReportList = new ArrayList<>();
-        if (contactType.equalsIgnoreCase("f")){
-            contactReasongs = AppPreferences.getSettings().getPredefine_messages().getContact_reason_finance();
-        }else {
-            contactReasongs = AppPreferences.getSettings().getPredefine_messages().getContact_reason();
-        }
-        if (contactReasongs != null){
-            Collections.addAll(mReportList, contactReasongs);
-        }
+        contactReasonsSupervisors = AppPreferences.getSettings().getPredefine_messages().getContact_reason();
+        contactReasonsFinance = AppPreferences.getSettings().getPredefine_messages().getContact_reason_finance();
 
-//        mReportList.add("App me masla hai");
-//        mReportList.add("Mujhay request nahi arahi");
-//        mReportList.add("Guarantee me masla he");
-//        mReportList.add("Guarantee me masla he");
-//        mReportList.add("Payout ka sms nahi mila");
-//        mReportList.add("Penalty issue");
-//        mReportList.add("Wallet ki Entry me masla he");
-//        mReportList.add(BOOKING_PROBLEM);
-//        mReportList.add("Others");
+        if (contactReasonsSupervisors != null)
+            Collections.addAll(mReportList, contactReasonsSupervisors);
+
+        if (contactReasonsFinance != null)
+            Collections.addAll(mReportList, contactReasonsFinance);
     }
 
     @Override

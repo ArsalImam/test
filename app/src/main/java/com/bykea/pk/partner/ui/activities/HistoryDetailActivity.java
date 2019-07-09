@@ -205,12 +205,11 @@ public class HistoryDetailActivity extends BaseActivity {
                         rlFeedbackMsg1.setVisibility(View.GONE);
                         rlFeedbackMsg2.setVisibility(View.GONE);
                     }
-                    /*if (Utils.getDaysInBetween(System.currentTimeMillis(),
+                    if (Utils.getDaysInBetween(System.currentTimeMillis(),
                             new SimpleDateFormat(CURRENT_DATE_FORMAT).parse(data.getAcceptTime()).getTime()) >=
                             AppPreferences.getSettings().getSettings().getTrip_support_max_days()) {
                         btnProblem.setVisibility(View.GONE);
-                    }*/
-
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

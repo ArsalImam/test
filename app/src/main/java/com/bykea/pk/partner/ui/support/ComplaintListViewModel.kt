@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.support
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.utils.Dialogs
 import com.zendesk.service.ErrorResponse
@@ -17,6 +18,10 @@ class ComplaintListViewModel : ViewModel() {
     private val _items = MutableLiveData<List<Request>>().apply { value = emptyList() }
     val items: LiveData<List<Request>>
         get() = _items
+
+    val empty: LiveData<Boolean> = Transformations.map(_items) {
+        it.isEmpty()
+    }
 
     fun start() {
         val requestProvider = Support.INSTANCE.provider()!!.requestProvider()

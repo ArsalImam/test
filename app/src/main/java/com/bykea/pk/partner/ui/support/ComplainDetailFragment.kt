@@ -12,14 +12,10 @@ import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.Utils
-import com.google.android.gms.common.util.Strings
-import com.google.android.gms.common.util.Strings.emptyToNull
 import com.google.android.gms.common.util.Strings.isEmptyOrWhitespace
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
 import kotlinx.android.synthetic.main.fragment_complain_detail.*
-import org.apache.commons.lang3.StringUtils
 import zendesk.support.*
 import java.util.*
 
@@ -29,6 +25,7 @@ import java.util.*
 class ComplainDetailFragment : Fragment() {
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
     private lateinit var requestProvider: RequestProvider
+    private var ticketSubject: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -43,6 +40,15 @@ class ComplainDetailFragment : Fragment() {
                     createRequest()
             }
         }
+
+        if (mCurrentActivity?.tripHistoryDate != null) {
+            //CREATE TICKET FOR RIDE REASONS
+            ticketSubject = mCurrentActivity?.tripHistoryDate?.tripNo
+        } else {
+            //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
+            ticketSubject = AppPreferences.getPilotData().id
+        }
+
         return binding.root
     }
 
@@ -68,13 +74,11 @@ class ComplainDetailFragment : Fragment() {
         requestProvider.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onSuccess")
                 mCurrentActivity?.changeFragment(ComplainSubmittedFragment());
             }
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.appToastDebug(mCurrentActivity, "Zendesk(createRequest) - onError")
             }
         })
     }
@@ -84,7 +88,7 @@ class ComplainDetailFragment : Fragment() {
      */
     private fun buildCreateRequest(): CreateRequest {
         return CreateRequest().apply {
-            subject = mCurrentActivity?.tripHistoryDate?.tripNo
+            subject = ticketSubject
             description = etDetails.text.toString()
             customFields = buildCustomFields()
         }
@@ -95,7 +99,7 @@ class ComplainDetailFragment : Fragment() {
      */
     private fun buildCustomFields(): List<CustomField> {
         return ArrayList<CustomField>().apply {
-            add(CustomField(Constants.ZendeskCustomFields.Subject, mCurrentActivity?.tripHistoryDate?.tripNo))
+            add(CustomField(Constants.ZendeskCustomFields.Subject, ticketSubject))
             add(CustomField(Constants.ZendeskCustomFields.Description, etDetails.text.toString()))
             add(CustomField(Constants.ZendeskCustomFields.Status, ""))
             add(CustomField(Constants.ZendeskCustomFields.Type, ""))
