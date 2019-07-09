@@ -266,7 +266,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:maxLines="1"
-                        android:text="Sajid"
+                        tools:text="Sajid"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_10sdp"
                         android:visibility="visible"

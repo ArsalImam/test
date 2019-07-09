@@ -41,12 +41,12 @@ android {
             livetesting {
                 dimension "driver"
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3001\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://secure.bykea.net:4001\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://loadboard.bykea.net:3000\""
             }
             production {
                 dimension "driver"
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3000\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://secure.bykea.net:4000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://loadboard.bykea.net:3000\""
             }
         }
     }

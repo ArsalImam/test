@@ -12,6 +12,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
 
 /**
  * API interface for Load Board
@@ -93,16 +95,23 @@ interface Backend {
             this.level = HttpLoggingInterceptor.Level.BODY
         }
 
-        operator fun invoke(baseUrl: String): Backend {
-            val client = OkHttpClient.Builder().apply {
-                addNetworkInterceptor(loggingInterceptor)
-                connectTimeout(10, TimeUnit.MINUTES)
-                readTimeout(10, TimeUnit.MINUTES)
-                writeTimeout(10, TimeUnit.MINUTES)
-            }.build()
+        private val socketFactory: SSLSocketFactory?
+        val sslContext: SSLContext? = NetworkUtil.getSSLContext().apply {
+            socketFactory = this?.socketFactory
+        }
 
+        val client: OkHttpClient = OkHttpClient.Builder().apply {
+            connectTimeout(1, TimeUnit.MINUTES)
+            readTimeout(1, TimeUnit.MINUTES)
+            writeTimeout(1, TimeUnit.MINUTES)
+            if (socketFactory != null) sslSocketFactory(socketFactory)
+            if (BuildConfig.DEBUG) addNetworkInterceptor(loggingInterceptor)
+        }.build()
+
+        operator fun invoke(baseUrl: String): Backend {
             return Retrofit.Builder()
                     .client(client)
+//                    .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
                     .baseUrl(baseUrl)
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create())
