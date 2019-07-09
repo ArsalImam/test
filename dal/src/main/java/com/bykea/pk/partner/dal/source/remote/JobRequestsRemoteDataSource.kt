@@ -33,7 +33,7 @@ class JobRequestsRemoteDataSource {
             override fun onResponse(call: Call<GetJobRequestListResponse>, response: Response<GetJobRequestListResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        if (response.isSuccessful && it.isSuccess()) {
+                        if (it.isSuccess()) {
                             Log.v(JobRequestsRemoteDataSource::class.java.simpleName, "data ${it.data}")
                             callback.onJobRequestsLoaded(it.data)
                         } else {
