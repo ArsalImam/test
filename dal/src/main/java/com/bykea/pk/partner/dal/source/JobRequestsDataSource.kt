@@ -76,7 +76,7 @@ interface JobRequestsDataSource {
          *
          * @param errorMsg
          */
-        fun onDataNotAvailable(errorMsg: String?)
+        fun onDataNotAvailable(errorMsg: String? = "Data Not Available")
     }
 
     /**
