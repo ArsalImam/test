@@ -39,7 +39,6 @@ import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
-import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
@@ -454,13 +453,6 @@ public class ActivityStackManager {
     public void startDeliveryScheduleDetailActivity(Context mContext, DeliveryScheduleModel deliveryScheduleData) {
         Intent intent = new Intent(mContext, DeliveryScheduleDetailActivity.class);
         intent.putExtra(Constants.Extras.SELECTED_ITEM, deliveryScheduleData);
-        mContext.startActivity(intent);
-    }
-
-    public void startReportPostActivity(Context mContext, String reason, String contactType) {
-        Intent intent = new Intent(mContext, ReportPostActivity.class);
-        intent.putExtra("reason", reason);
-        intent.putExtra(Constants.Extras.CONTACT_TYPE, contactType);
         mContext.startActivity(intent);
     }
 

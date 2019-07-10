@@ -200,9 +200,6 @@
             android:name=".ui.activities.PostProblemActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.ReportPostActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activities.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
