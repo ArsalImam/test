@@ -3105,6 +3105,12 @@ public class Utils {
     public static String[] getDeliveryMsgsList(Context context) {
         return context.getResources().getStringArray(R.array.delivery_messages);
     }
+
+    /**
+     * Get Ride Complain Reasons List.
+     * @param context : Calling Activity
+     * @return
+     */
     public static String[] getRideComplainReasonsList(Context context) {
         return context.getResources().getStringArray(R.array.ride_complain_reasons);
     }
