@@ -39,7 +39,6 @@ import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
-import com.bykea.pk.partner.ui.activities.ReportActivity;
 import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
@@ -446,13 +445,6 @@ public class ActivityStackManager {
             intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
         context.startActivity(intent);
     }
-
-    public void startReportActivity(Context mContext, String cTtype) {
-        Intent intent = new Intent(mContext, ReportActivity.class);
-        intent.putExtra(Constants.Extras.CONTACT_TYPE, cTtype);
-        mContext.startActivity(intent);
-    }
-
     /**
      * This method will start details activity for Scheduled Delivery Service
      *

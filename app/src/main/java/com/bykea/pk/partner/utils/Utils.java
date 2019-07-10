@@ -3105,6 +3105,9 @@ public class Utils {
     public static String[] getDeliveryMsgsList(Context context) {
         return context.getResources().getStringArray(R.array.delivery_messages);
     }
+    public static String[] getRideComplainReasonsList(Context context) {
+        return context.getResources().getStringArray(R.array.ride_complain_reasons);
+    }
 
     //endregion
 
