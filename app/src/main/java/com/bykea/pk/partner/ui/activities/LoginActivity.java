@@ -200,7 +200,7 @@ public class LoginActivity extends BaseActivity {
                         sendLoginRequest(phoneNumberEt.getText().toString());
                     }
                 } else {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, getString(R.string.error_internet_connectivity));
+                    Dialogs.INSTANCE.showToast(getString(R.string.error_internet_connectivity));
                 }
                 break;
         }

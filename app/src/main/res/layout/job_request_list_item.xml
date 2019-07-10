@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View.OnClickListener" />
+
+        <variable
+            name="booking"
+            type="com.bykea.pk.partner.dal.JobRequest" />
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.ui.loadboard.list.JobRequestListItemActionsListener" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_58sdp"
+        android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="@{() -> listener.onBookingClicked(booking)}"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/_12sdp"
+            android:paddingBottom="@dimen/_12sdp">
+
+            <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                android:id="@+id/tv_fare"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:layout_weight="3"
+                android:background="@drawable/gray_bordered_bg"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@{`Rs. `+(int)booking.fare_est}"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="open_sans_regular.ttf" />
+
+            <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                android:id="@+id/li_LoadboardDropOffTV"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginLeft="@dimen/_6sdp"
+                android:layout_weight="5"
+                android:background="@drawable/gray_bordered_bg"
+                android:gravity="start|center_vertical"
+                android:maxLines="1"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:text="@{` ` +booking.dropoff.zone_ur}"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivServiceIcon"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:layout_weight="2"
+                app:serviceCode="@{booking.service_code}"
+                tools:src="@drawable/bhejdo_no_caption" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="@dimen/_1sdp"
+            android:layout_height="match_parent"
+            android:background="@color/color_grayc7c7c7" />
+
+    </LinearLayout>
+
+</layout>

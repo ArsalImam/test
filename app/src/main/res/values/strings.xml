@@ -31,7 +31,6 @@
 
 
     <!--                ERROR STRINGS HERE                  -->
-    <string name="error_internet_connectivity">Please check your internet connection.</string>
     <string name="error_phone_number_1">Please enter correct mobile number</string>
     <string name="error_field_empty">Required</string>
     <string name="error_picture_not_selected">Picture not selected.</string>
@@ -265,7 +264,7 @@
     <string name="dha_ur">ڈی ایچ اے</string>
     <string name="nazimabad_ur">نارتھ ناظم آباد</string>
     <string name="selected_amount_ur"> منتخب رقم </string>
-    <string name="seleted_amount_rs"> Rs.%1$d&#160;</string>
+    <string name="seleted_amount_rs"> Rs.&#160;%1$d&#160;</string>
     <string name="acha_connection_ur">اچھا کنکشن</string>
     <string name="bura_connection_ur">برا کنکشن</string>
     <string name="low_battery_ur">لو بیٹری</string>
@@ -327,6 +326,14 @@
     <string name="dash">-</string>
     <string name="please_select_city">Please select your city.</string>
 
+    <string name="destination">منزل</string>
+    <string name="fare">\u0020کرایہ</string>
+    <string name="service">\u0020سروس\u0020</string>
+    <string name="wait_for_booking">بکنگ کا انتظار کریں</string>
+
+    <string name="cash_on_delivery">وصولی</string>
+    <string name="accept_booking">بکنگ منتخب کریں</string>
+
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
         <item>ناكام - وصول کرنے والا رابطے میں نہیں</item>
@@ -343,4 +350,15 @@
 
     <string name="how_it_works">How it Works</string>
     <string name="no_browser_found_error">Browser not found on Device</string>
+
+    <string name="booking_already_taken_title">معذرت!</string>
+    <string name="booking_already_taken_msg">یہ بکنگ کسی اور پارٹنر نے اسٹارٹ کرلی ہے</string>
+    <string name="no_voice_note_available">No voice note available</string>
+    <string name="err_booking_accept_failed">Failed to accept booking. Refresh the list and try again.</string>
+    <string name="enter_your_ip">enter your ip</string>
+    <string name="enter_valid_ip">enter valid url</string>
+    <string name="enter_your_loadboard_ip">enter your loadboard ip</string>
+    <string name="enter_valid_loadboard_ip">enter valid loadboard url</string>
+    <string name="error_internet_connectivity">Please check your internet connection.</string>
+    <string name="not_available">Number not available.</string>
 </resources>

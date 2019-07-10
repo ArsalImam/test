@@ -17,6 +17,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.service.notification.StatusBarNotification;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -689,7 +690,7 @@ public class LocationService extends Service {
     private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
-            Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
+//            Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
             if (Connectivity.isConnectedFast(mContext)) {
                 if (AppPreferences.isLoggedIn()) {
                     DriverApp.getApplication().connect();

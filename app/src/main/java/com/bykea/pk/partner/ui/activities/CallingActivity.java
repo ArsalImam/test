@@ -5,8 +5,10 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
+
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.AppCompatImageView;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -188,8 +190,7 @@ public class CallingActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showTempToast(mCurrentActivity,
-                                acceptCallResponse.getMessage());
+                        Dialogs.INSTANCE.showTempToast(acceptCallResponse.getMessage());
                         if (acceptCallResponse.isSuccess()) {
                             AppPreferences.clearTripDistanceData();
                             AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
@@ -210,8 +211,7 @@ public class CallingActivity extends BaseActivity {
                             finishActivity();
                         } else {
                             Utils.setCallIncomingState();
-                            Dialogs.INSTANCE.showToast(mCurrentActivity
-                                    , acceptCallResponse.getMessage());
+                            Dialogs.INSTANCE.showToast(acceptCallResponse.getMessage());
 
                         }
                     }
@@ -224,8 +224,7 @@ public class CallingActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity,
-                            rejectCallResponse.getMessage());
+                    Dialogs.INSTANCE.showToast(rejectCallResponse.getMessage());
                     Dialogs.INSTANCE.dismissDialog();
                     if (AppPreferences.isOnTrip()) {
                         AppPreferences.setIncomingCall(false);
@@ -246,7 +245,7 @@ public class CallingActivity extends BaseActivity {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                    Dialogs.INSTANCE.showToast(errorMessage);
                     ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     stopSound();
                     finishActivity();
@@ -361,7 +360,7 @@ public class CallingActivity extends BaseActivity {
 
     private void setInitialData() {
         NormalCallData callData = AppPreferences.getCallData();
-        if(callData == null)
+        if (callData == null)
             return;
 
         Utils.redLog(TAG, "Call Data: " + new Gson().toJson(callData));
@@ -393,28 +392,28 @@ public class CallingActivity extends BaseActivity {
             ivCallType.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride));
         }
 
-        if (estDistanceTV != null){
-            if((callData.getDropoffZoneNameUrdu() == null || callData.getDropoffZoneNameUrdu().isEmpty())
+        if (estDistanceTV != null) {
+            if ((callData.getDropoffZoneNameUrdu() == null || callData.getDropoffZoneNameUrdu().isEmpty())
                     && (callData.getEndAddress() == null || callData.getEndAddress().isEmpty()))
                 estDistanceTV.setText("?");
-            else if(callData.getEstimatedDistance() == 0)
+            else if (callData.getEstimatedDistance() == 0)
                 estDistanceTV.setText("1");
             else
                 estDistanceTV.setText(String.valueOf(Double.valueOf(Math.ceil(callData.getEstimatedDistance())).intValue()));
 
         }
 
-        if (dropZoneNameTV != null){
-            if(callData.getDropoffZoneNameUrdu() != null && !callData.getDropoffZoneNameUrdu().isEmpty())
+        if (dropZoneNameTV != null) {
+            if (callData.getDropoffZoneNameUrdu() != null && !callData.getDropoffZoneNameUrdu().isEmpty())
                 dropZoneNameTV.setText(callData.getDropoffZoneNameUrdu());
-            else if(callData.getEndAddress() != null && !callData.getEndAddress().isEmpty())
-                dropZoneNameTV.setText(FontUtils.getStyledTitle(mCurrentActivity,callData.getEndAddress(),Constants.FontNames.OPEN_SANS_BOLD));
+            else if (callData.getEndAddress() != null && !callData.getEndAddress().isEmpty())
+                dropZoneNameTV.setText(FontUtils.getStyledTitle(mCurrentActivity, callData.getEndAddress(), Constants.FontNames.OPEN_SANS_BOLD));
             else
                 dropZoneNameTV.setText(getString(R.string.customer_btayega));
         }
 
-        if (StringUtils.isNotBlank(callData.getArivalTime())){
-            if(Integer.parseInt(callData.getArivalTime()) <= 0)
+        if (StringUtils.isNotBlank(callData.getArivalTime())) {
+            if (Integer.parseInt(callData.getArivalTime()) <= 0)
                 estArrivalTimeTV.setText("1");
             else
                 estArrivalTimeTV.setText(callData.getArivalTime());
