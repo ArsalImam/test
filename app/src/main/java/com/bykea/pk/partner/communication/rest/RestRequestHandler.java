@@ -1528,6 +1528,13 @@ public class RestRequestHandler {
         });
     }
 
+    /**
+     * Call Geo Code Api via Place Id
+     *
+     * @param placeId       Place Id
+     * @param context       Caller context
+     * @param mDataCallback Result callback
+     */
     public void callGeoCodeApiWithPlaceId(final String placeId, Context context, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
