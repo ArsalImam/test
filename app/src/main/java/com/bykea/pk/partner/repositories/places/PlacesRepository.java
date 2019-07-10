@@ -50,21 +50,44 @@ public class PlacesRepository {
 
     };
 
+    /**
+     *
+     * @param origin : Longitude and Latitude - String Concatenation
+     * @param destination : Longitude and Latitude - String Concatenation
+     * @param context : Calling Activity
+     * @param handler : CallBack
+     */
+
     public void getDistanceMatrix(String origin, String destination, Context context, IPlacesDataHandler handler) {
         mUserCallback = handler;
         mRestRequestHandler.getDistanceMatriax(origin, destination, mGeoCoderPlaces, context);
     }
 
+    /**
+     * @param placeId : Place Id
+     * @param context : Calling Activity
+     * @param handler : CallBack
+     */
     public void getPlaceDetails(String placeId, Context context, IPlacesDataHandler handler) {
         mUserCallback = handler;
         mRestRequestHandler.getPlaceDetails(placeId, context, mGeoCoderPlaces);
     }
 
+    /**
+     * @param context : Calling Activity
+     * @param search : Filter String Value
+     * @param handler : CallBack
+     */
     public void getPlaceAutoComplete(Context context, String search, IPlacesDataHandler handler) {
         mUserCallback = handler;
         mRestRequestHandler.autocomplete(context, search, mGeoCoderPlaces);
     }
 
+    /**
+     * @param placeId : Place Id
+     * @param context : Calling Activity
+     * @param handler : CallBack
+     */
     public void geoCodeWithPlaceId(String placeId, Context context, IPlacesDataHandler handler) {
         mUserCallback = handler;
         mRestRequestHandler.callGeoCodeApiWithPlaceId(placeId, context, mGeoCoderPlaces);
