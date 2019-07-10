@@ -5,10 +5,10 @@ import android.content.Context;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
-import com.bykea.pk.partner.utils.Constants;
 
 public class PlacesRepository {
 
@@ -27,6 +27,29 @@ public class PlacesRepository {
         mRestRequestHandler.callGeoCoderApi(lat, lng, mGeoCoderPlaces, context);
     }
 
+    private IResponseCallback mGeoCoderPlaces = new IResponseCallback() {
+        @Override
+        public void onResponse(Object object) {
+            if (object instanceof String) {
+                mUserCallback.onPlacesResponse((String) object);
+            } else if (object instanceof GoogleDistanceMatrixApi) {
+                mUserCallback.onDistanceMatrixResponse((GoogleDistanceMatrixApi) object);
+            } else if (object instanceof PlaceDetailsResponse) {
+                mUserCallback.onPlaceDetailsResponse((PlaceDetailsResponse) object);
+            }else if (object instanceof PlaceAutoCompleteResponse) {
+                mUserCallback.onPlaceAutoCompleteResponse((PlaceAutoCompleteResponse) object);
+            } else if (object instanceof GeoCodeApiResponse) {
+                mUserCallback.onGeoCodeApiResponse((GeoCodeApiResponse) object);
+            }
+        }
+
+        @Override
+        public void onError(int code, String error) {
+            mUserCallback.onError(error);
+        }
+
+    };
+
     public void getDistanceMatrix(String origin, String destination, Context context, IPlacesDataHandler handler) {
         mUserCallback = handler;
         mRestRequestHandler.getDistanceMatriax(origin, destination, mGeoCoderPlaces, context);
@@ -42,26 +65,10 @@ public class PlacesRepository {
         mRestRequestHandler.autocomplete(context, search, mGeoCoderPlaces);
     }
 
-    private IResponseCallback mGeoCoderPlaces = new IResponseCallback() {
-        @Override
-        public void onResponse(Object object) {
-            if (object instanceof String) {
-                mUserCallback.onPlacesResponse((String) object);
-            } else if (object instanceof GoogleDistanceMatrixApi) {
-                mUserCallback.onDistanceMatrixResponse((GoogleDistanceMatrixApi) object);
-            } else if (object instanceof PlaceDetailsResponse) {
-                mUserCallback.onPlaceDetailsResponse((PlaceDetailsResponse) object);
-            }else if (object instanceof PlaceAutoCompleteResponse) {
-                mUserCallback.onPlaceAutoCompleteResponse((PlaceAutoCompleteResponse) object);
-            }
-        }
-
-        @Override
-        public void onError(int code, String error) {
-            mUserCallback.onError(error);
-        }
-
-    };
+    public void geoCodeWithPlaceId(String placeId, Context context, IPlacesDataHandler handler) {
+        mUserCallback = handler;
+        mRestRequestHandler.callGeoCodeApiWithPlaceId(placeId, context, mGeoCoderPlaces);
+    }
 
 
 }
