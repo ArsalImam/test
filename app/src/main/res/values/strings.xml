@@ -377,6 +377,7 @@
     <string name="ticket_status_pending">\u0020تحقیق جاری ہے\u0020</string>
     <string name="ticket_status_solved">\u0020شکایت حل ہوگئی ہے\u0020</string>
     <string name="contact_fragment_title">\u0020شکایت پر بات چیت\u0020</string>
+    <string name="request_activity_title">\u0020شکایت پر بات چیت\u0020</string>
 
     <string name="contact_us_your_complain">\u0020آپ کی  شکایات\u0020</string>
     <string name="contact_us_report">\u0020رپورٹ\u0020</string>
