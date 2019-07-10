@@ -16,6 +16,9 @@ import kotlinx.android.synthetic.main.fragment_complain_reason.*
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * Use For The Selection Of Reasons For Ticket Submission.
+ */
 class ComplainReasonFragment : Fragment() {
 
     private var mCurrentActivity: ComplaintSubmissionActivity? = null

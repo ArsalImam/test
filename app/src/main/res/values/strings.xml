@@ -389,9 +389,9 @@
     <string-array name="ride_complain_reasons">
         <item>Partner ka ravaiya gair ikhlaqi tha</item>
         <item>Partner ne aik gair mansooba stop kia</item>
-        <item>Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair).</item>
+        <item>Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair.</item>
         <item>Parner ne baqaya raqam mere wallet me nahi daali</item>
-        <item>main haadse main manavas tha.</item>
+        <item>Main haadse main manavas tha.</item>
     </string-array>
 
 </resources>
