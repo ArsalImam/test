@@ -14,15 +14,17 @@ import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_complain_reason.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ComplainReasonFragment : Fragment() {
 
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
     private var mAdapter: ProblemItemsAdapter? = null
-    private var complainReasonsAdapterList: ArrayList<String> = ArrayList()
     private var mLayoutManager: LinearLayoutManager? = null
-    internal var rideOrGeneralComplainReasonsList: Array<String>? = null
-    internal var financeComplainReasonsList: Array<String>? = null
+
+    private var complainReasonsAdapterList: ArrayList<String> = ArrayList()
+    private lateinit var rideOrGeneralComplainReasonsList: Array<String>
+    private lateinit var financeComplainReasonsList: Array<String>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_complain_reason, container, false)
@@ -42,7 +44,9 @@ class ComplainReasonFragment : Fragment() {
         }
 
         cloneReasonsList()
-        setupAdapter()
+
+        if (!complainReasonsAdapterList.isEmpty())
+            setupAdapter()
     }
 
     /**
@@ -51,18 +55,18 @@ class ComplainReasonFragment : Fragment() {
     private fun cloneReasonsList() {
         if (mCurrentActivity?.tripHistoryDate != null) {
             //CREATE TICKET FOR RIDE REASONS
-            if (rideOrGeneralComplainReasonsList != null) {
-                complainReasonsAdapterList.addAll(rideOrGeneralComplainReasonsList!!)
+            if (!rideOrGeneralComplainReasonsList.isNullOrEmpty()) {
+                complainReasonsAdapterList.addAll(rideOrGeneralComplainReasonsList)
             } else {
                 complainReasonsAdapterList.addAll(Utils.getRideComplainReasonsList(mCurrentActivity))
             }
         } else {
             //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
-            if (rideOrGeneralComplainReasonsList != null)
-                complainReasonsAdapterList.addAll(rideOrGeneralComplainReasonsList!!)
+            if (!rideOrGeneralComplainReasonsList.isNullOrEmpty())
+                complainReasonsAdapterList.addAll(rideOrGeneralComplainReasonsList)
 
-            if (financeComplainReasonsList != null)
-                complainReasonsAdapterList.addAll(financeComplainReasonsList!!)
+            if (!financeComplainReasonsList.isNullOrEmpty())
+                complainReasonsAdapterList.addAll(financeComplainReasonsList)
         }
     }
 
