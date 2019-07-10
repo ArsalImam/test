@@ -26,6 +26,7 @@
 -keep class org.jsoup.** { *; }
 -keep class com.github.jd.** { *; }
 -keep class com.bykea.pk.partner.models.** { *; }
+-keep class com.bykea.pk.partner.dal.** { *; }
 -keep class top.oply.opuslib.** { *; }
 -keep class java.io.** { *; }
 -keep class id.zelory.** { *; }
