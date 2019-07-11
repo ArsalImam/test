@@ -21,7 +21,7 @@ import zendesk.support.*
 import java.util.*
 
 /**
- * A simple [Fragment] subclass.
+ * Fragment Used To Get The Input Details Regarding Ticket
  */
 class ComplainDetailFragment : Fragment() {
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
@@ -59,7 +59,7 @@ class ComplainDetailFragment : Fragment() {
     private val isValid: Boolean
         get() {
             if (isEmptyOrWhitespace(etDetails.text.toString().trim())) {
-                etDetails.error = "Please Enter Some Details"
+                etDetails.error = getString(R.string.enter_some_details)
                 etDetails.requestFocus()
                 return false
             }

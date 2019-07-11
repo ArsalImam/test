@@ -385,6 +385,7 @@
     <string name="contact_us_bank_account">\u0020بینک اکاوٴنٹ\u0020</string>
     <string name="title_report">Report\u0020رپورٹ\u0020</string>
     <string name="complains_not_found">\u0020آپ کی کوئی شکایت درج نہیں ہے\u0020</string>
+    <string name="enter_some_details">Please Enter Some Details</string>
 
     <string-array name="ride_complain_reasons">
         <item>Partner ka ravaiya gair ikhlaqi tha</item>

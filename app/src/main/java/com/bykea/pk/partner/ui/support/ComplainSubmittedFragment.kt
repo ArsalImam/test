@@ -10,6 +10,7 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.FragmentComplainSubmittedBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import kotlinx.android.synthetic.main.fragment_complain_submitted.*
+import org.apache.commons.lang3.StringUtils
 
 class ComplainSubmittedFragment : Fragment() {
 
@@ -39,6 +40,6 @@ class ComplainSubmittedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tVIssueNumber.text = context?.getString(R.string.issue_no) + " " + context?.getString(R.string.issue_submitted)
+        tVIssueNumber.text = StringBuilder().append(context?.getString(R.string.issue_no)).append(StringUtils.SPACE).append(context?.getString(R.string.issue_submitted))
     }
 }
