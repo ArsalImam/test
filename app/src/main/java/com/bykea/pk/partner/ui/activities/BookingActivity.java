@@ -467,7 +467,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             case R.id.jobBtn:
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                    if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived))) {
+                    if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
+                            callData != null) {
                         int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
                                 Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
                         if (distance > 200) {
@@ -495,7 +496,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         }
                     }
                     //CHECK FOR BEGIN TRIP BUTTON CLICK
-                    else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start))) {
+                    else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start)) && callData != null) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -512,7 +513,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 Dialogs.INSTANCE.dismissDialog();
                             }
                         }, " اسٹارٹ؟");
-                    } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish))) {
+                    } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
