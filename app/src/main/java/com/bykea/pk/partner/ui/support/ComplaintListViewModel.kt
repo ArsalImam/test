@@ -9,6 +9,8 @@ import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
 import zendesk.support.Request
 import zendesk.support.Support
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * ViewModel for Complaint list
@@ -29,6 +31,11 @@ class ComplaintListViewModel : ViewModel() {
         requestProvider.getAllRequests(object : ZendeskCallback<List<Request>>() {
             override fun onSuccess(requests: List<Request>) {
                 Dialogs.INSTANCE.dismissDialog()
+                Collections.sort(requests, object : Comparator<Request> {
+                    override fun compare(p1: Request, p2: Request): Int {
+                        return p2.createdAt!!.compareTo(p1.createdAt)
+                    }
+                })
                 _items.value = ArrayList(requests)
             }
 
