@@ -9,6 +9,7 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListAdapter
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Constants.REQUIRED_DATE_FORMAT
 import com.bykea.pk.partner.widgets.FontTextView
 import zendesk.support.Request
 import java.lang.Exception
@@ -59,9 +60,8 @@ object BindingAdapters {
     @JvmStatic
     fun setDateTimeFormat(fontTextView: FontTextView, date: Date?) {
         if (date != null) {
-            val dateFormat = "dd MMM, hh:mm a"
             try {
-                val sdf = SimpleDateFormat(dateFormat)
+                val sdf = SimpleDateFormat(REQUIRED_DATE_FORMAT)
                 fontTextView.text = sdf.format(date)
             } catch (e: Exception) {
                 fontTextView.text = ""

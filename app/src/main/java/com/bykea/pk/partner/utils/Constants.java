@@ -547,4 +547,5 @@ public class Constants {
     }
 
     public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
+    public final static String REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a";
 }
