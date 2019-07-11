@@ -195,24 +195,24 @@ class JobRequestListFragment : Fragment() {
      */
     private fun toggleBottomSheetToolbar(alpha: Float) {
         if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
-            bottomSheetToolbarLayout.visibility = View.VISIBLE
-            bottomSheetToolbarDivider.visibility = View.VISIBLE
-            bottomSheetPickDropLayout.visibility = View.VISIBLE
-            bottomSheetPickDropDivider.visibility = View.VISIBLE
-            bottomSheetToolbarLayout.alpha = alpha
-            bottomSheetToolbarDivider.alpha = alpha
-            bottomSheetPickDropLayout.alpha = alpha
-            bottomSheetPickDropDivider.alpha = alpha
+            bottomSheetToolbarLayout?.visibility = View.VISIBLE
+            bottomSheetToolbarDivider?.visibility = View.VISIBLE
+            bottomSheetPickDropLayout?.visibility = View.VISIBLE
+            bottomSheetPickDropDivider?.visibility = View.VISIBLE
+            bottomSheetToolbarLayout?.alpha = alpha
+            bottomSheetToolbarDivider?.alpha = alpha
+            bottomSheetPickDropLayout?.alpha = alpha
+            bottomSheetPickDropDivider?.alpha = alpha
             viewDataBinding.viewmodel!!.isExpended.value = true
         } else {
-            bottomSheetToolbarLayout.visibility = View.GONE
-            bottomSheetToolbarDivider.visibility = View.GONE
-            bottomSheetPickDropLayout.visibility = View.GONE
-            bottomSheetPickDropDivider.visibility = View.GONE
-            bottomSheetToolbarLayout.alpha = alpha
-            bottomSheetToolbarDivider.alpha = alpha
-            bottomSheetPickDropLayout.alpha = alpha
-            bottomSheetPickDropDivider.alpha = alpha
+            bottomSheetToolbarLayout?.visibility = View.GONE
+            bottomSheetToolbarDivider?.visibility = View.GONE
+            bottomSheetPickDropLayout?.visibility = View.GONE
+            bottomSheetPickDropDivider?.visibility = View.GONE
+            bottomSheetToolbarLayout?.alpha = alpha
+            bottomSheetToolbarDivider?.alpha = alpha
+            bottomSheetPickDropLayout?.alpha = alpha
+            bottomSheetPickDropDivider?.alpha = alpha
             viewDataBinding.viewmodel!!.isExpended.value = false
         }
     }
