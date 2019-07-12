@@ -383,7 +383,7 @@ public class PlacesSearchFragment extends Fragment {
                     public void onGeoCodeApiResponse(GeoCodeApiResponse response) {
                         Result result = response.getResults().get(0);
                         if (result != null) {
-                            String resultText = result.getFormatted_address();
+                            String resultText = StringUtils.isNotBlank(primaryText) ? primaryText : Utils.cookAddressGeoCodeResult(result);
                             PlacesResult placesResult = new PlacesResult(resultText, "", result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
                             updateDropOff(placesResult);
                         }
