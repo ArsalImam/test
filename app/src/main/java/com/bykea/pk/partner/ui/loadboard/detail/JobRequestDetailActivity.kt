@@ -9,14 +9,17 @@ import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.databinding.JobRequestDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
@@ -30,6 +33,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_confirm_drop_off_address.*
 import kotlinx.android.synthetic.main.job_request_detail_act.*
+import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
@@ -64,10 +68,13 @@ class JobRequestDetailActivity : BaseActivity() {
             })
 
             acceptBookingCommand.observe(this@JobRequestDetailActivity, Observer {
+
+                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_ACCEPT, jobRequest)
                 ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity, false)
             })
 
             bookingTakenCommand.observe(this@JobRequestDetailActivity, Observer {
+                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_TAKEN, jobRequest)
                 Dialogs.INSTANCE
                         .showAlertDialogTick(this@JobRequestDetailActivity,
                                 this@JobRequestDetailActivity.resources.getString(R.string.booking_already_taken_title),
@@ -125,6 +132,36 @@ class JobRequestDetailActivity : BaseActivity() {
                 getDriverRoadPosition(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 setMarkersForPickUpAndDropOff(p0)
             }
+        }
+    }
+
+    /**
+     * Generate Event Log For Accept/Taken LoadBoard Delivery
+     */
+    private fun generateAcceptOrTakenEventLog(logEvent: String, jobRequest: LiveData<JobRequest>) {
+        Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                logEvent, getDataForAcceptOrTakenEvent(jobRequest), true)
+    }
+
+    /**
+     * Data For Accept/Taken LoadBoard Delivery
+     */
+    private fun getDataForAcceptOrTakenEvent(jobRequest: LiveData<JobRequest>): JSONObject {
+        return JSONObject().apply {
+            put("Sender", jobRequest.value?.sender?.name)
+            put("Receiver", jobRequest.value?.receiver?.name)
+            put("DriverID", AppPreferences.getPilotData().id)
+            put("TripID", jobRequest.value?.trip_id)
+            put("BookingId", jobRequest.value?.booking_no)
+            put("PickUpLocation", jobRequest.value?.pickup?.lat.toString() + "," + jobRequest.value?.pickup?.lng.toString())
+            put("timestamp", Utils.getIsoDate())
+            put("DropOffLocation", jobRequest.value?.dropoff?.lat.toString() + "," + jobRequest.value?.dropoff?.lng.toString())
+            put("EstimatedDistance", AppPreferences.getEstimatedDistance())
+            put("CurrentLocation", Utils.getCurrentLocation())
+            put("PassengerName", jobRequest.value?.sender)
+            put("DriverName", AppPreferences.getPilotData().fullName)
+            put("type", jobRequest.value?.trip_type)
+            put("SignUpCity", AppPreferences.getPilotData().city.name)
         }
     }
 

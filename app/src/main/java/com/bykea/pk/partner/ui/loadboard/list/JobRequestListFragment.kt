@@ -15,20 +15,18 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.JobRequestListFragBinding
 import com.bykea.pk.partner.ui.activities.HomeActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
-import com.bykea.pk.partner.utils.Connectivity
-import com.bykea.pk.partner.utils.Constants
-import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.NetworkChangeListener
+import com.bykea.pk.partner.utils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.job_request_list_frag.*
+import org.json.JSONObject
 
 
 /**
@@ -64,6 +62,7 @@ class JobRequestListFragment : Fragment() {
                     if (mBehavior != null && mBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
                         mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
                     } else {
+                        generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_DETAIL, it.peekContent())
                         ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(activity, it.peekContent())
                     }
                 })
@@ -104,6 +103,7 @@ class JobRequestListFragment : Fragment() {
                 }
 
                 override fun onRefreshClicked() {
+                    generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_REFRESH)
                     viewDataBinding.viewmodel!!.refresh()
                 }
             }
@@ -231,4 +231,26 @@ class JobRequestListFragment : Fragment() {
         }
     }
 
+    /**
+     * Generate Event Log For Refresh/Detail LoadBoard Delivery
+     */
+    private fun generateDetailOrRefreshEventLog(logEvent: String, bookingId: Long? = null) {
+        Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
+                logEvent, getDataForDetailOrRefreshEvent(bookingId), true)
+    }
+
+    /**
+     * Data For Refresh/Detail LoadBoard Delivery
+     */
+    private fun getDataForDetailOrRefreshEvent(bookingId: Long? = null): JSONObject {
+        return JSONObject().apply {
+            put("DriverID", AppPreferences.getPilotData().id)
+            if (bookingId != null)
+                put("BookingId", bookingId)
+            put("timestamp", Utils.getIsoDate())
+            put("CurrentLocation", Utils.getCurrentLocation())
+            put("DriverName", AppPreferences.getPilotData().fullName)
+            put("SignUpCity", AppPreferences.getPilotData().city.name)
+        }
+    }
 }

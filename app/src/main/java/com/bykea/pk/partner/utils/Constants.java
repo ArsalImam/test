@@ -271,6 +271,10 @@ public class Constants {
         public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
         public final static String ON_RIDE_COMPLETE = "RideComplete";
 
+        public final static String ON_LB_ACCEPT = EYE_BALL + "-LoadBoard-Accept";
+        public final static String ON_LB_DETAIL = EYE_BALL + "-LoadBoard-Detail";
+        public final static String ON_LB_REFRESH = EYE_BALL + "-LoadBoard-Refresh";
+        public final static String ON_LB_TAKEN = EYE_BALL + "-LoadBoard-Taken";
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
 //        public final static String ON_FEEDBACK = EYE_BALL+ REPLACE   + "-Feedback";//already logged against passenger
