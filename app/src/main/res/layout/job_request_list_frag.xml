@@ -37,7 +37,7 @@
 
             <ImageView
                 android:id="@+id/appBottomBarLayoutImgView"
-                android:layout_width="11dp"
+                android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center_horizontal"
                 android:visibility="@{viewmodel.isExpended ? View.GONE: viewmodel.empty ? View.GONE : View.VISIBLE}"
