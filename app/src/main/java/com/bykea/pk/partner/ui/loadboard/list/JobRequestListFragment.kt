@@ -20,6 +20,7 @@ import com.bykea.pk.partner.databinding.JobRequestListFragBinding
 import com.bykea.pk.partner.ui.activities.HomeActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.ui.loadboard.common.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.*
@@ -62,7 +63,6 @@ class JobRequestListFragment : Fragment() {
                     if (mBehavior != null && mBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
                         mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
                     } else {
-                        generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL, it.peekContent())
                         ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(activity, it.peekContent())
                     }
                 })
@@ -73,9 +73,6 @@ class JobRequestListFragment : Fragment() {
                 })
                 isExpended.observe(this@JobRequestListFragment, Observer {
                     if (it) {
-                        //LOG_EVENT
-                        generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_SWIPE_UP)
-
                         relativeLayoutBottomView.visibility = View.VISIBLE
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
@@ -102,12 +99,14 @@ class JobRequestListFragment : Fragment() {
 
             listener = object : JobRequestListActionsListener {
                 override fun onBackClicked() {
-                    generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN)
                     mBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
 
                 override fun onRefreshClicked() {
-                    generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_REFRESH)
+                    Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
+                            Constants.AnalyticsEvents.ON_LB_REFRESH,
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_REFRESH),
+                            true)
                     viewDataBinding.viewmodel!!.refresh()
                 }
             }
@@ -128,9 +127,18 @@ class JobRequestListFragment : Fragment() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
+                            Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
+                                    Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN,
+                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN),
+                                    true)
+
                             viewDataBinding.bookingsList.smoothScrollToPosition(0)
                         }
                         BottomSheetBehavior.STATE_EXPANDED -> {
+                            Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
+                                    Constants.AnalyticsEvents.ON_LB_SWIPE_UP,
+                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_SWIPE_UP),
+                                    true)
                         }
                         BottomSheetBehavior.STATE_DRAGGING -> {
                         }
@@ -232,39 +240,6 @@ class JobRequestListFragment : Fragment() {
     private val mUpdatedBookingRequestReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             viewDataBinding.viewmodel?.refresh()
-        }
-    }
-
-    /**
-     * Generate Event Log For Refresh/Detail LoadBoard Delivery
-     * @param logEvent : Event Name
-     * @param bookingId : Booking Id
-     */
-    private fun generateDetailOrRefreshEventLog(logEvent: String, bookingId: Long? = null) {
-        Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
-                logEvent, getDataForDetailOrRefreshEvent(logEvent, bookingId), true)
-    }
-
-    /**
-     * Data For Refresh/Detail LoadBoard Delivery
-     * @param logEvent : Event Name
-     * @param bookingId : Booking Id
-     */
-    private fun getDataForDetailOrRefreshEvent(logEvent: String, bookingId: Long?): JSONObject {
-        return JSONObject().apply {
-            put("DriverID", AppPreferences.getPilotData().id)
-            if (bookingId != null)
-                put("BookingId", bookingId)
-            put("timestamp", Utils.getIsoDate())
-            put("CurrentLocation", Utils.getCurrentLocation())
-            put("DriverName", AppPreferences.getPilotData().fullName)
-            put("SignUpCity", AppPreferences.getPilotData().city.name)
-
-            if (logEvent.equals(Constants.AnalyticsEvents.ON_LB_REFRESH, ignoreCase = true))
-                put("IsCash", AppPreferences.getIsCash())
-
-            if (logEvent.equals(Constants.AnalyticsEvents.ON_LB_SWIPE_UP, ignoreCase = true))
-                put("LoadBoardCounts", listAdapter.count)
         }
     }
 }

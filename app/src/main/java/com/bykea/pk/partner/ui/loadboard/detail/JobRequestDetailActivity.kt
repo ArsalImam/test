@@ -17,6 +17,7 @@ import com.bykea.pk.partner.databinding.JobRequestDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.ui.loadboard.common.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Constants
@@ -68,11 +69,14 @@ class JobRequestDetailActivity : BaseActivity() {
             })
 
             acceptBookingCommand.observe(this@JobRequestDetailActivity, Observer {
+                Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT,
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, jobRequest?.value),
+                        true)
                 ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity, false)
             })
 
             bookingTakenCommand.observe(this@JobRequestDetailActivity, Observer {
-                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_TAKEN, jobRequest)
                 Dialogs.INSTANCE
                         .showAlertDialogTick(this@JobRequestDetailActivity,
                                 this@JobRequestDetailActivity.resources.getString(R.string.booking_already_taken_title),
@@ -100,20 +104,28 @@ class JobRequestDetailActivity : BaseActivity() {
 
             override fun onNavigateToMap(isPickUp: Boolean, pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double) {
                 if (isPickUp) //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE CURRENT TO PICKUP
-                    generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.jobRequest)
+                    Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                            Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION,
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.jobRequest?.value),
+                            true)
                 else //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE PICKUP TO DROPOFF
-                    generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.jobRequest)
+                    Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                            Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION,
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.jobRequest?.value),
+                            true)
 
                 Utils.navigateToGoogleMap(this@JobRequestDetailActivity, pickLat, pickLng, dropLat, dropLng)
             }
 
             override fun onAcceptBooking() {
-                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_ACCEPT, binding.viewmodel?.jobRequest)
                 binding.viewmodel!!.accept()
             }
 
             override fun onBackClicked() {
-                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.jobRequest)
+                Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL,
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.jobRequest?.value),
+                        true)
                 finish()
             }
         }
@@ -156,20 +168,10 @@ class JobRequestDetailActivity : BaseActivity() {
      */
     private fun getDataForAcceptOrTakenEvent(jobRequest: LiveData<JobRequest>?): JSONObject {
         return JSONObject().apply {
-            put("Sender", jobRequest?.value?.sender?.name)
-            put("Receiver", jobRequest?.value?.receiver?.name)
-            put("DriverID", AppPreferences.getPilotData().id)
             put("TripID", jobRequest?.value?.trip_id)
             put("BookingId", jobRequest?.value?.booking_no)
-            put("PickUpLocation", "${jobRequest?.value?.pickup?.lat.toString()},${jobRequest?.value?.pickup?.lng.toString()}")
-            put("timestamp", Utils.getIsoDate())
-            put("DropOffLocation", "${jobRequest?.value?.dropoff?.lat.toString()},${jobRequest?.value?.dropoff?.lng.toString()}")
             put("EstimatedDistance", AppPreferences.getEstimatedDistance())
-            put("CurrentLocation", Utils.getCurrentLocation())
-            put("PassengerName", jobRequest?.value?.sender)
-            put("DriverName", AppPreferences.getPilotData().fullName)
             put("type", jobRequest?.value?.trip_type)
-            put("SignUpCity", AppPreferences.getPilotData().city.name)
         }
     }
 

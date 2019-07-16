@@ -273,13 +273,14 @@ public class Constants {
 
         public final static String ON_LB_SWIPE_UP = EYE_BALL + "LoadBoard-Swipe-Up";
         public final static String ON_LB_REFRESH = EYE_BALL + "LoadBoard-Refreshed";
-        public final static String ON_LB_BOOKING_DETAIL = EYE_BALL + "LoadBoard-Booking-Detail";
         public final static String ON_LB_BACK_SWIPE_DOWN = EYE_BALL + "LoadBoard-Swipe-Down";
+
+        public final static String ON_LB_BOOKING_DETAIL = EYE_BALL + "LoadBoard-Booking-Detail";
         public final static String ON_LB_BACK_FROM_BOOKING_DETAIL = EYE_BALL + "LoadBoard-Back-To-List";
         public final static String ON_LB_PICKUP_DIRECTION = EYE_BALL + "LoadBoard-Direction-Pick";
         public final static String ON_LB_DROPOFF_DIRECTION = EYE_BALL + "LoadBoard-Direction-Drop";
-        public final static String ON_LB_ACCEPT = EYE_BALL + "LoadBoard-Booking-Accept";
-        public final static String ON_LB_TAKEN = EYE_BALL + "LoadBoard-Taken";
+        public final static String ON_LB_BOOKING_ACCEPT = EYE_BALL + "LoadBoard-Booking-Accept";
+//        public final static String ON_LB_TAKEN = EYE_BALL + "LoadBoard-Taken";
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
 //        public final static String ON_FEEDBACK = EYE_BALL+ REPLACE   + "-Feedback";//already logged against passenger
