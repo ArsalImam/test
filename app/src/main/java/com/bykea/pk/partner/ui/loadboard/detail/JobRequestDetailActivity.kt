@@ -68,8 +68,6 @@ class JobRequestDetailActivity : BaseActivity() {
             })
 
             acceptBookingCommand.observe(this@JobRequestDetailActivity, Observer {
-
-                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_ACCEPT, jobRequest)
                 ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity, false)
             })
 
@@ -100,15 +98,22 @@ class JobRequestDetailActivity : BaseActivity() {
                 }
             }
 
-            override fun onNavigateToMap(pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double) {
+            override fun onNavigateToMap(isPickUp: Boolean, pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double) {
+                if (isPickUp) //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE CURRENT TO PICKUP
+                    generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.jobRequest)
+                else //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE PICKUP TO DROPOFF
+                    generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.jobRequest)
+
                 Utils.navigateToGoogleMap(this@JobRequestDetailActivity, pickLat, pickLng, dropLat, dropLng)
             }
 
             override fun onAcceptBooking() {
+                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_ACCEPT,  binding.viewmodel?.jobRequest)
                 binding.viewmodel!!.accept()
             }
 
             override fun onBackClicked() {
+                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.jobRequest)
                 finish()
             }
         }
@@ -138,7 +143,7 @@ class JobRequestDetailActivity : BaseActivity() {
     /**
      * Generate Event Log For Accept/Taken LoadBoard Delivery
      */
-    private fun generateAcceptOrTakenEventLog(logEvent: String, jobRequest: LiveData<JobRequest>) {
+    private fun generateAcceptOrTakenEventLog(logEvent: String, jobRequest: LiveData<JobRequest>?) {
         Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
                 logEvent, getDataForAcceptOrTakenEvent(jobRequest), true)
     }
@@ -146,21 +151,21 @@ class JobRequestDetailActivity : BaseActivity() {
     /**
      * Data For Accept/Taken LoadBoard Delivery
      */
-    private fun getDataForAcceptOrTakenEvent(jobRequest: LiveData<JobRequest>): JSONObject {
+    private fun getDataForAcceptOrTakenEvent(jobRequest: LiveData<JobRequest>?): JSONObject {
         return JSONObject().apply {
-            put("Sender", jobRequest.value?.sender?.name)
-            put("Receiver", jobRequest.value?.receiver?.name)
+            put("Sender", jobRequest?.value?.sender?.name)
+            put("Receiver", jobRequest?.value?.receiver?.name)
             put("DriverID", AppPreferences.getPilotData().id)
-            put("TripID", jobRequest.value?.trip_id)
-            put("BookingId", jobRequest.value?.booking_no)
-            put("PickUpLocation", jobRequest.value?.pickup?.lat.toString() + "," + jobRequest.value?.pickup?.lng.toString())
+            put("TripID", jobRequest?.value?.trip_id)
+            put("BookingId", jobRequest?.value?.booking_no)
+            put("PickUpLocation", jobRequest?.value?.pickup?.lat.toString() + "," + jobRequest?.value?.pickup?.lng.toString())
             put("timestamp", Utils.getIsoDate())
-            put("DropOffLocation", jobRequest.value?.dropoff?.lat.toString() + "," + jobRequest.value?.dropoff?.lng.toString())
+            put("DropOffLocation", jobRequest?.value?.dropoff?.lat.toString() + "," + jobRequest?.value?.dropoff?.lng.toString())
             put("EstimatedDistance", AppPreferences.getEstimatedDistance())
             put("CurrentLocation", Utils.getCurrentLocation())
-            put("PassengerName", jobRequest.value?.sender)
+            put("PassengerName", jobRequest?.value?.sender)
             put("DriverName", AppPreferences.getPilotData().fullName)
-            put("type", jobRequest.value?.trip_type)
+            put("type", jobRequest?.value?.trip_type)
             put("SignUpCity", AppPreferences.getPilotData().city.name)
         }
     }

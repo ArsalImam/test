@@ -62,7 +62,7 @@ class JobRequestListFragment : Fragment() {
                     if (mBehavior != null && mBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
                         mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
                     } else {
-                        generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_DETAIL, it.peekContent())
+                        generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL, it.peekContent())
                         ActivityStackManager.getInstance().startLoadboardBookingDetailActiivty(activity, it.peekContent())
                     }
                 })
@@ -73,6 +73,9 @@ class JobRequestListFragment : Fragment() {
                 })
                 isExpended.observe(this@JobRequestListFragment, Observer {
                     if (it) {
+                        //LOG_EVENT
+                        generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_SWIPE_UP)
+
                         relativeLayoutBottomView.visibility = View.VISIBLE
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
@@ -99,6 +102,7 @@ class JobRequestListFragment : Fragment() {
 
             listener = object : JobRequestListActionsListener {
                 override fun onBackClicked() {
+                    generateDetailOrRefreshEventLog(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN)
                     mBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
 
@@ -236,13 +240,13 @@ class JobRequestListFragment : Fragment() {
      */
     private fun generateDetailOrRefreshEventLog(logEvent: String, bookingId: Long? = null) {
         Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
-                logEvent, getDataForDetailOrRefreshEvent(bookingId), true)
+                logEvent, getDataForDetailOrRefreshEvent(logEvent, bookingId), true)
     }
 
     /**
      * Data For Refresh/Detail LoadBoard Delivery
      */
-    private fun getDataForDetailOrRefreshEvent(bookingId: Long? = null): JSONObject {
+    private fun getDataForDetailOrRefreshEvent(logEvent: String, bookingId: Long?): JSONObject {
         return JSONObject().apply {
             put("DriverID", AppPreferences.getPilotData().id)
             if (bookingId != null)
@@ -251,6 +255,12 @@ class JobRequestListFragment : Fragment() {
             put("CurrentLocation", Utils.getCurrentLocation())
             put("DriverName", AppPreferences.getPilotData().fullName)
             put("SignUpCity", AppPreferences.getPilotData().city.name)
+
+            if (logEvent.equals(Constants.AnalyticsEvents.ON_LB_REFRESH, ignoreCase = true))
+                put("IsCash", AppPreferences.getIsCash())
+
+            if (logEvent.equals(Constants.AnalyticsEvents.ON_LB_SWIPE_UP, ignoreCase = true))
+                put("LoadBoardCounts", listAdapter.count)
         }
     }
 }

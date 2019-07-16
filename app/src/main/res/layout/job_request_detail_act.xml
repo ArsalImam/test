@@ -264,7 +264,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewPickUp"
                                 android:layout_toLeftOf="@id/cardViewPickUp"
-                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.currentLatLng.latitude, viewmodel.currentLatLng.longitude, viewmodel.jobRequest.pickup.lat, viewmodel.jobRequest.pickup.lng)}"
+                                android:onClick="@{() -> listener.onNavigateToMap(true,viewmodel.currentLatLng.latitude, viewmodel.currentLatLng.longitude, viewmodel.jobRequest.pickup.lat, viewmodel.jobRequest.pickup.lng)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
@@ -376,7 +376,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
-                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.jobRequest.pickup.lat, viewmodel.jobRequest.pickup.lng, viewmodel.jobRequest.dropoff.lat, viewmodel.jobRequest.dropoff.lng)}"
+                                android:onClick="@{() -> listener.onNavigateToMap(false,viewmodel.jobRequest.pickup.lat, viewmodel.jobRequest.pickup.lng, viewmodel.jobRequest.dropoff.lat, viewmodel.jobRequest.dropoff.lng)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
