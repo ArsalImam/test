@@ -142,6 +142,8 @@ class JobRequestDetailActivity : BaseActivity() {
 
     /**
      * Generate Event Log For Accept/Taken LoadBoard Delivery
+     * @param logEvent : Event Name
+     * @param jobRequest : BookingModel
      */
     private fun generateAcceptOrTakenEventLog(logEvent: String, jobRequest: LiveData<JobRequest>?) {
         Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
@@ -150,6 +152,7 @@ class JobRequestDetailActivity : BaseActivity() {
 
     /**
      * Data For Accept/Taken LoadBoard Delivery
+     * @param jobRequest : BookingModel
      */
     private fun getDataForAcceptOrTakenEvent(jobRequest: LiveData<JobRequest>?): JSONObject {
         return JSONObject().apply {

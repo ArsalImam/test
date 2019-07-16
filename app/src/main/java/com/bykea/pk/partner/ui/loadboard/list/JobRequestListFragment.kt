@@ -237,6 +237,8 @@ class JobRequestListFragment : Fragment() {
 
     /**
      * Generate Event Log For Refresh/Detail LoadBoard Delivery
+     * @param logEvent : Event Name
+     * @param bookingId : Booking Id
      */
     private fun generateDetailOrRefreshEventLog(logEvent: String, bookingId: Long? = null) {
         Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
@@ -245,6 +247,8 @@ class JobRequestListFragment : Fragment() {
 
     /**
      * Data For Refresh/Detail LoadBoard Delivery
+     * @param logEvent : Event Name
+     * @param bookingId : Booking Id
      */
     private fun getDataForDetailOrRefreshEvent(logEvent: String, bookingId: Long?): JSONObject {
         return JSONObject().apply {
