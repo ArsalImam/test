@@ -108,7 +108,7 @@ class JobRequestDetailActivity : BaseActivity() {
             }
 
             override fun onAcceptBooking() {
-                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_ACCEPT,  binding.viewmodel?.jobRequest)
+                generateAcceptOrTakenEventLog(Constants.AnalyticsEvents.ON_LB_ACCEPT, binding.viewmodel?.jobRequest)
                 binding.viewmodel!!.accept()
             }
 
@@ -161,9 +161,9 @@ class JobRequestDetailActivity : BaseActivity() {
             put("DriverID", AppPreferences.getPilotData().id)
             put("TripID", jobRequest?.value?.trip_id)
             put("BookingId", jobRequest?.value?.booking_no)
-            put("PickUpLocation", jobRequest?.value?.pickup?.lat.toString() + "," + jobRequest?.value?.pickup?.lng.toString())
+            put("PickUpLocation", "${jobRequest?.value?.pickup?.lat.toString()},${jobRequest?.value?.pickup?.lng.toString()}")
             put("timestamp", Utils.getIsoDate())
-            put("DropOffLocation", jobRequest?.value?.dropoff?.lat.toString() + "," + jobRequest?.value?.dropoff?.lng.toString())
+            put("DropOffLocation", "${jobRequest?.value?.dropoff?.lat.toString()},${jobRequest?.value?.dropoff?.lng.toString()}")
             put("EstimatedDistance", AppPreferences.getEstimatedDistance())
             put("CurrentLocation", Utils.getCurrentLocation())
             put("PassengerName", jobRequest?.value?.sender)
