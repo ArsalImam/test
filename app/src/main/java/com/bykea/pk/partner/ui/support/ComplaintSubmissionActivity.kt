@@ -1,6 +1,8 @@
 package com.bykea.pk.partner.ui.support
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +12,12 @@ import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import kotlinx.android.synthetic.main.activity_problem.*
 
 
@@ -19,8 +26,12 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProblemBinding
     private lateinit var mCurrentActivity: ComplaintSubmissionActivity
     private var fragmentManager: FragmentManager? = null
-
+    internal var isTicketSubmitted: Boolean = false
     var tripHistoryDate: TripHistoryData? = null
+
+    private var mGoogleSignInClient: GoogleSignInClient? = null
+    private val RC_SIGN_IN = 9001
+
     var selectedReason: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +51,7 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
         if (tripHistoryDate != null && tripHistoryDate?.tripNo != null) {
             //CREATE TICKET FOR RIDE REASONS
             toolbar_title.text = tripHistoryDate?.tripNo
-        }
-        else {
+        } else {
             //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
             toolbar_title.text = getString(R.string.title_report)
         }
@@ -59,8 +69,9 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
     fun changeFragment(fragment: Fragment) {
         fragmentManager!!
                 .beginTransaction()
-                .replace(R.id.containerView, fragment)
+                .add(R.id.containerView, fragment)
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .addToBackStack(null)
                 .commit()
     }
 
@@ -79,9 +90,41 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        //STOP BACK PRESSED FOR PROBLEM SUBMITTED FRAGMENT
-        if (!supportFragmentManager.fragments.get(0).javaClass.simpleName.equals(ComplainSubmittedFragment::class.java.simpleName)) {
-            super.onBackPressed()
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            if (!isTicketSubmitted)
+                supportFragmentManager.popBackStack()
+        } else if (supportFragmentManager.backStackEntryCount == 1) {
+            finish()
         }
+    }
+
+    /**
+     * Create GoogleSignInClient, Dialog For Account Selection
+     */
+    internal fun signIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build()
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+        startActivityForResult(mGoogleSignInClient?.getSignInIntent(), RC_SIGN_IN)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                if (!account?.email.isNullOrEmpty()) {
+                    AppPreferences.setDriverEmail(account?.email)
+                    mGoogleSignInClient?.signOut()
+                    changeFragment(ComplainDetailFragment())
+                }
+            } catch (e: ApiException) {
+
+            }
+        }
+
     }
 }

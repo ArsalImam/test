@@ -75,6 +75,7 @@ class ComplainDetailFragment : Fragment() {
         requestProvider.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
+                mCurrentActivity?.isTicketSubmitted = true
                 mCurrentActivity?.changeFragment(ComplainSubmittedFragment());
             }
 

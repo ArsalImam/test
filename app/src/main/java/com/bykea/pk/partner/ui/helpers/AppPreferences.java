@@ -155,6 +155,13 @@ public class AppPreferences {
         return mSharedPreferences.getString(Keys.EMAIL, StringUtils.EMPTY);
     }
 
+    public static void setDriverEmail(String email) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.EMAIL, email)
+                .apply();
+    }
+
     public static String getDriverId() {
         return mSharedPreferences.getString(Keys.DRIVER_ID, StringUtils.EMPTY);
     }

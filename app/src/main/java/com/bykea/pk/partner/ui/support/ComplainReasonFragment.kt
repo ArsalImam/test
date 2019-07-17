@@ -85,7 +85,11 @@ class ComplainReasonFragment : Fragment() {
 
         mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
-            mCurrentActivity?.changeFragment(ComplainDetailFragment())
+            if (AppPreferences.getDriverEmail().isNullOrEmpty()) {
+                mCurrentActivity?.signIn()
+            } else {
+                mCurrentActivity?.changeFragment(ComplainDetailFragment())
+            }
         }
     }
 }
