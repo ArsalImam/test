@@ -137,8 +137,8 @@ class JobRequestListFragment : Fragment() {
                         BottomSheetBehavior.STATE_EXPANDED -> {
                             Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                                     Constants.AnalyticsEvents.ON_LB_SWIPE_UP,
-                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_SWIPE_UP),
-                                    true)
+                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_SWIPE_UP)
+                                            .put("bookings_count", listAdapter.count), true)
                         }
                         BottomSheetBehavior.STATE_DRAGGING -> {
                         }

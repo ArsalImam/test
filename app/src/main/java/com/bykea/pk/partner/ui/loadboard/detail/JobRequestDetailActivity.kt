@@ -65,13 +65,19 @@ class JobRequestDetailActivity : BaseActivity() {
 
             dataLoading.observe(this@JobRequestDetailActivity, Observer {
                 if (it) Dialogs.INSTANCE.showLoader(this@JobRequestDetailActivity)
-                else Dialogs.INSTANCE.dismissDialog()
+                else {
+                    Dialogs.INSTANCE.dismissDialog()
+                    /*Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                            Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL,
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL, jobRequest.value),
+                            true)*/
+                }
             })
 
             acceptBookingCommand.observe(this@JobRequestDetailActivity, Observer {
                 Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT,
-                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, jobRequest?.value),
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, jobRequest.value),
                         true)
                 ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity, false)
             })
