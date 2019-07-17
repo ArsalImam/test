@@ -6,7 +6,14 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Utils
 import org.json.JSONObject
 
+/**
+ * Firebase Analytics Events = JSON Objects Creation
+ */
 object AnalyticsEventsJsonObjects {
+    /**
+     * @param eventLog : Firebase Event Name
+     * @param jobRequest : Loadboard Booking Detail Object
+     */
     fun getEventLoadBoardJson(eventLog: String, jobRequest: JobRequest? = null): JSONObject {
         return JSONObject().apply {
             put("current_location", Utils.getCurrentLocation())
@@ -21,35 +28,38 @@ object AnalyticsEventsJsonObjects {
                 Constants.AnalyticsEvents.ON_LB_REFRESH -> put("is_cash", AppPreferences.getIsCash())
 
                 Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL -> {
-                    put("trip_id", jobRequest?.id)
+                    put("trip_id", jobRequest?.trip_id)
                     put("trip_no", jobRequest?.booking_no)
+                    put("type", jobRequest?.trip_type)
                     put("cod_amount", jobRequest?.cod_value)
                     put("dropoff_location", "${jobRequest?.dropoff?.lat.toString()},${jobRequest?.dropoff?.lng.toString()}")
-                    put("dropoff_distance", AppPreferences.getEstimatedDistance())
+                    put("dropoff_distance", (jobRequest?.dropoff?.distance)?.div(1000))
                     put("fare", jobRequest?.fare_est)
                     put("pickup_location", "${jobRequest?.pickup?.lat.toString()},${jobRequest?.pickup?.lng.toString()}")
-                    put("pickup_eta", jobRequest?.pickup?.duration)
-                    put("trip_id", jobRequest?.trip_id)
-                    put("type", jobRequest?.trip_id)
+                    put("pickup_eta", jobRequest?.pickup?.duration?.div(60))
                     put("voice_message", jobRequest?.voice_note.isNullOrEmpty())
                 }
 
                 Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL -> {
                     put("trip_id", jobRequest?.trip_id)
+                    put("trip_no", jobRequest?.booking_no)
+                    put("type", jobRequest?.trip_type)
                     put("dropoff_location", "${jobRequest?.dropoff?.lat.toString()},${jobRequest?.dropoff?.lng.toString()}")
                 }
 
                 Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT -> {
-                    put("dropoff_location", "${jobRequest?.dropoff?.lat.toString()},${jobRequest?.dropoff?.lng.toString()}")
-                    put("pickup_location", "${jobRequest?.pickup?.lat.toString()},${jobRequest?.pickup?.lng.toString()}")
                     put("trip_id", jobRequest?.id)
                     put("trip_no", jobRequest?.booking_no)
+                    put("type", jobRequest?.trip_type)
+                    put("dropoff_location", "${jobRequest?.dropoff?.lat.toString()},${jobRequest?.dropoff?.lng.toString()}")
+                    put("pickup_location", "${jobRequest?.pickup?.lat.toString()},${jobRequest?.pickup?.lng.toString()}")
                     put("type", jobRequest?.trip_type)
                 }
 
                 Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION -> {
                     put("trip_id", jobRequest?.id)
                     put("trip_no", jobRequest?.booking_no)
+                    put("type", jobRequest?.trip_type)
                     put("sender_name", jobRequest?.sender?.name)
                     put("sender_phone", jobRequest?.sender?.phone)
                     put("sender_address", jobRequest?.sender?.address)
@@ -58,11 +68,12 @@ object AnalyticsEventsJsonObjects {
                 Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION -> {
                     put("trip_id", jobRequest?.id)
                     put("trip_no", jobRequest?.booking_no)
+                    put("type", jobRequest?.trip_type)
                     put("receiver_name", jobRequest?.receiver?.name)
                     put("receiver_phone", jobRequest?.receiver?.phone)
                     put("receiver_address", jobRequest?.receiver?.address)
                     put("dropoff_location", "${jobRequest?.dropoff?.lat.toString()},${jobRequest?.dropoff?.lng.toString()}")
-                    put("dropoff_distance", jobRequest?.dropoff?.distance)
+                    put("dropoff_distance", (jobRequest?.dropoff?.distance)?.div(1000))
                     put("dropoff_eta", jobRequest?.dropoff?.duration)
                 }
             }

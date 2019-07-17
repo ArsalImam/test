@@ -4,12 +4,17 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.dal.source.JobRequestsDataSource
 import com.bykea.pk.partner.dal.source.JobRequestsRepository
 import com.bykea.pk.partner.dal.source.pref.AppPref
+import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.ui.loadboard.common.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.ui.loadboard.common.Event
+import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.maps.model.LatLng
 
 /**
@@ -92,6 +97,12 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobRequestsRepos
     override fun onJobRequestLoaded(jobRequest: JobRequest) {
         setBooking(jobRequest)
         _dataLoading.value = false
+
+        if (jobRequest.isComplete)
+            Utils.logEvent(DriverApp.getContext(), AppPreferences.getDriverId(),
+                    Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL,
+                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL, jobRequest),
+                    true)
     }
 
     override fun onDataNotAvailable(message: String?) {
