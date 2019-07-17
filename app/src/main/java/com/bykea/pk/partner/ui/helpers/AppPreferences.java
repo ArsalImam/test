@@ -155,6 +155,10 @@ public class AppPreferences {
         return mSharedPreferences.getString(Keys.EMAIL, StringUtils.EMPTY);
     }
 
+    /**
+     * Set Email For Driver
+     * @param email : Requested Email
+     */
     public static void setDriverEmail(String email) {
         mSharedPreferences
                 .edit()
