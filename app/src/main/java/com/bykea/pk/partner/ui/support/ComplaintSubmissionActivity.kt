@@ -90,9 +90,8 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            if (!isTicketSubmitted)
-                supportFragmentManager.popBackStack()
+        if (supportFragmentManager.backStackEntryCount > 1 && !isTicketSubmitted) {
+            supportFragmentManager.popBackStack()
         } else if (supportFragmentManager.backStackEntryCount == 1) {
             finish()
         }
