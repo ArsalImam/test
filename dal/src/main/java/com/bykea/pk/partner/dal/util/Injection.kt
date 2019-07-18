@@ -18,10 +18,10 @@ package com.bykea.pk.partner.dal.util
 
 import android.content.Context
 import android.preference.PreferenceManager
-import com.bykea.pk.partner.dal.source.JobRequestsRepository
+import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.local.AppDatabase
-import com.bykea.pk.partner.dal.source.local.JobRequestsLocalDataSource
-import com.bykea.pk.partner.dal.source.remote.JobRequestsRemoteDataSource
+import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
+import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 
 /**
  * Enables injection of production implementations for
@@ -33,14 +33,14 @@ object Injection {
      * Provides Booking repository with all of it's dependencies resolved.
      *
      * @param context App Context
-     * @return [JobRequestsRepository]
+     * @return [JobsRepository]
      */
-    fun provideBookingsRepository(context: Context): JobRequestsRepository {
+    fun provideJobsRepository(context: Context): JobsRepository {
         val database = AppDatabase.getInstance(context)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return JobRequestsRepository.getInstance(
-                JobRequestsRemoteDataSource(),
-                JobRequestsLocalDataSource.getInstance(AppExecutors(), database.jobRequestsDao()),
+        return JobsRepository.getInstance(
+                JobsRemoteDataSource(),
+                JobsLocalDataSource.getInstance(AppExecutors(), database.jobRequestsDao()),
                 preferences)
     }
 }

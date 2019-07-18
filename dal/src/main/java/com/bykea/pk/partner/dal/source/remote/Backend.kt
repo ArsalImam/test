@@ -1,10 +1,11 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
-import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequestRequest
-import com.bykea.pk.partner.dal.source.remote.response.AcceptJobRequestResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
+import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.CancelJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -32,7 +33,7 @@ interface Backend {
      * @return Loadboard jobs list
      */
     @GET("/v1/bookings")
-    fun getJobRequestList(
+    fun getJobs(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
             @Query("lat") lat: Double,
@@ -48,7 +49,7 @@ interface Backend {
      * @return Loadboard job details
      */
     @GET("/v1/bookings/{booking_id}")
-    fun getJobRequestDetail(
+    fun getJob(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
             @Path("booking_id") jobRequestId: Long,
@@ -61,13 +62,36 @@ interface Backend {
      * @param token Driver access token
      * @return Loadboard job details
      */
-    @POST("/v1/bookings/{booking_id}/assign")
-    fun acceptJobRequest(
-            @Path("booking_id") bookingId: Long,
+    @POST("/v1/bookings/{job_request_id}/assign")
+    fun acceptJob(
+            @Path("job_request_id") jobId: Long,
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
-            @Body body: AcceptJobRequestRequest): Call<AcceptJobRequestResponse>
+            @Body body: AcceptJobRequest): Call<AcceptJobResponse>
 
+    /**
+     * Driver cancels active job
+     * @param body Body having details of job
+     * @return Server response
+     */
+    @POST("/api/v1/driver/cancel")
+    fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobResponse>
+
+    /**
+     * Driver finishes active job
+     * @param body Body having details of job
+     * @return Server response
+     */
+    @POST("/api/v1/trips/{job_id}/finish")
+    fun finishJob(@Path("job_id") jobId: String, @Body body: FinishJobRequest): Call<FinishJobResponse>
+
+    /**
+     * Driver sends feedback at the end of active job
+     * @param body Body having details of job
+     * @return Server response
+     */
+    @POST("/api/v1/trips/{job_id}/feedback")
+    fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobResponse>
 
     @GET
     fun getMockJobRequestList(

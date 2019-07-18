@@ -33,6 +33,11 @@ import androidx.core.content.ContextCompat;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
@@ -91,11 +96,13 @@ import com.squareup.picasso.Picasso;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -199,6 +206,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private BookingActivity mCurrentActivity;
     private NormalCallData callData;
+    JobsRepository repo;
     private UserRepository dataRepository;
     private String cancelReason = StringUtils.EMPTY;
 
@@ -234,6 +242,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         mCurrentActivity = this;
+        repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
         dataRepository = new UserRepository();
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(Constants.Extras.IS_CALLED_FROM_LOADBOARD)) {
@@ -517,10 +526,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Dialogs.INSTANCE.dismissDialog();
-                                Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                logMixPanelEvent(TripStatus.ON_FINISH_TRIP);
-                                dataRepository.requestEndRide(mCurrentActivity, driversDataHandler);
+                                sendFinishActiveJobCall();
                             }
                         }, new View.OnClickListener() {
                             @Override
@@ -2323,5 +2329,96 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         };
         countDownTimer.start();
+    }
+
+
+    /**
+     * Send Finish Active Job Call
+     */
+    private void sendFinishActiveJobCall() {
+        Dialogs.INSTANCE.dismissDialog();
+        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+        logMixPanelEvent(TripStatus.ON_FINISH_TRIP);
+
+        Integer serviceCode = callData.getServiceCode();
+        if (serviceCode != null && (serviceCode == Constants.ServiceType.SEND_CODE || serviceCode == Constants.ServiceType.SEND_COD_CODE)) {
+            sendFinishActiveJobCallRestApi();
+        } else {
+            dataRepository.requestEndRide(mCurrentActivity, driversDataHandler);
+        }
+
+    }
+
+    /**
+     * Send Finish Active Job Call To Rest API for Loadboard job
+     */
+    private void sendFinishActiveJobCallRestApi() {
+        String endLatString = AppPreferences.getLatitude() + "";
+        String endLngString = AppPreferences.getLongitude() + "";
+        String lastLat = AppPreferences.getPrevDistanceLatitude();
+        String lastLng = AppPreferences.getPrevDistanceLongitude();
+        if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
+            if (!Utils.isValidLocation(Double.parseDouble(endLatString), Double.parseDouble(endLngString), Double.parseDouble(lastLat), Double.parseDouble(lastLng))) {
+                endLatString = lastLat;
+                endLngString = lastLng;
+            }
+        }
+
+        LocCoordinatesInTrip startLatLng = new LocCoordinatesInTrip();
+        startLatLng.setLat(AppPreferences.getCallData().getStartLat());
+        startLatLng.setLng(AppPreferences.getCallData().getStartLng());
+        startLatLng.setDate(Utils.getIsoDate(AppPreferences.getStartTripTime()));
+
+        LocCoordinatesInTrip endLatLng = new LocCoordinatesInTrip();
+        endLatLng.setLat(endLatString);
+        endLatLng.setLng(endLngString);
+        endLatLng.setDate(Utils.getIsoDate());
+        ArrayList<LocCoordinatesInTrip> prevLatLngList = AppPreferences.getLocCoordinatesInTrip();
+        ArrayList<LocCoordinatesInTrip> latLngList = new ArrayList<>();
+        latLngList.add(startLatLng);
+        if (prevLatLngList != null && prevLatLngList.size() > 0) {
+            latLngList.addAll(prevLatLngList);
+        }
+        latLngList.add(endLatLng);
+
+        repo.finishJob(callData.getTripId(), latLngList, new JobsDataSource.FinishJobCallback() {
+            @Override
+            public void onJobFinished(@NotNull FinishJobResponseData data) {
+                Dialogs.INSTANCE.dismissDialog();
+                logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
+                endAddressTv.setEnabled(false);
+                callData = AppPreferences.getCallData();
+//                                            callData.setStartAddress(data.getStartAddress());
+//                                            callData.setEndAddress(data.getEndAddress());
+                callData.setTripNo(data.getTrip_no());
+                callData.setTotalFare(String.valueOf(data.getTrip_charges()));
+                callData.setTotalMins(String.valueOf(data.getMinutes()));
+                callData.setTotalAmount(String.valueOf(data.getTotal()));
+                callData.setDistanceCovered(String.valueOf(data.getKm()));
+                if (StringUtils.isNotBlank(String.valueOf(data.getWallet_deduction()))) {
+                    callData.setWallet_deduction(String.valueOf(data.getWallet_deduction()));
+                }
+                if (StringUtils.isNotBlank(String.valueOf(data.getPromo_deduction()))) {
+                    callData.setPromo_deduction(String.valueOf(data.getPromo_deduction()));
+                }
+//                                            if (StringUtils.isNotBlank(data.getDropoff_discount())) {
+//                                                callData.setDropoff_discount(data.getDropoff_discount());
+//                                            }
+                callData.setStatus(TripStatus.ON_FINISH_TRIP);
+                callData.setTrip_charges(String.valueOf(data.getTrip_charges()));
+                AppPreferences.setCallData(callData);
+                tvEstimation.setVisibility(View.GONE);
+                AppPreferences.clearTripDistanceData();
+                AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP);
+                ActivityStackManager.getInstance()
+                        .startFeedbackActivity(mCurrentActivity);
+                mCurrentActivity.finish();
+            }
+
+            @Override
+            public void onJobFinishFailed(String message) {
+                Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
+            }
+        });
     }
 }
