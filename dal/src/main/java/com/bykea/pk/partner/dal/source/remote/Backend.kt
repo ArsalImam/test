@@ -97,8 +97,16 @@ interface Backend {
 
     companion object {
 
-        val telos by lazy { invoke(BuildConfig.FLAVOR_URL_TELOS) }
-        val loadboard by lazy { invoke(BuildConfig.FLAVOR_URL_LOADBOARD) }
+        var FLAVOR_URL_TELOS: String = ""
+        var FLAVOR_URL_LOADBOARD: String = ""
+
+        val telos by lazy {
+            invoke(if (FLAVOR_URL_TELOS != "") FLAVOR_URL_TELOS else BuildConfig.FLAVOR_URL_TELOS)
+        }
+
+        val loadboard by lazy {
+            invoke(if (FLAVOR_URL_LOADBOARD != "") FLAVOR_URL_LOADBOARD else BuildConfig.FLAVOR_URL_LOADBOARD)
+        }
 
         private val loggingInterceptor = HttpLoggingInterceptor().apply {
             this.level = HttpLoggingInterceptor.Level.BODY
