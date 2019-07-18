@@ -5,6 +5,7 @@ import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
+import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
 import java.util.*
@@ -140,8 +141,9 @@ class JobsRepository(
         jobsRemoteDataSource.finishJob(jobId, body, callback)
     }
 
-    override fun concludeJob(callback: JobsDataSource.ConcludeJobCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun concludeJob(jobId: String, rate: Int, receivedAmount: Int, callback: JobsDataSource.ConcludeJobCallback, deliveryMessage: String?, deliveryStatus: Boolean?, purchaseAmount: Int?, receiverName: String?, receiverPhone: String?) {
+        val body = ConcludeJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), rate, receivedAmount, deliveryMessage, deliveryStatus, purchaseAmount, receiverName, receiverPhone)
+        jobsRemoteDataSource.concludeJob(jobId, body, callback)
     }
 
     private fun getJobsFromRemoteDataSource(callback: JobsDataSource.LoadJobsCallback) {

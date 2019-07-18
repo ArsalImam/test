@@ -1971,6 +1971,17 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "NOD");
     }
 
+    /**
+     * Checks if call type is from loadboard
+     *
+     * @param serviceCode Service Code
+     * @return Either loadboard service or not
+     */
+    public static boolean isLoadboardService(Integer serviceCode) {
+        return serviceCode != null && (serviceCode == Constants.ServiceType.SEND_CODE
+                || serviceCode == Constants.ServiceType.SEND_COD_CODE);
+    }
+
     public static boolean isRideService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Ride");
     }

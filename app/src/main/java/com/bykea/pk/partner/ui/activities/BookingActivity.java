@@ -242,7 +242,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         mCurrentActivity = this;
-        repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
         dataRepository = new UserRepository();
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(Constants.Extras.IS_CALLED_FROM_LOADBOARD)) {
@@ -2339,8 +2338,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         logMixPanelEvent(TripStatus.ON_FINISH_TRIP);
 
-        Integer serviceCode = callData.getServiceCode();
-        if (serviceCode != null && (serviceCode == Constants.ServiceType.SEND_CODE || serviceCode == Constants.ServiceType.SEND_COD_CODE)) {
+        if (Utils.isLoadboardService(callData.getServiceCode())) {
             sendFinishActiveJobCallRestApi();
         } else {
             dataRepository.requestEndRide(mCurrentActivity, driversDataHandler);
@@ -2380,6 +2378,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         latLngList.add(endLatLng);
 
+        repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
         repo.finishJob(callData.getTripId(), latLngList, new JobsDataSource.FinishJobCallback() {
             @Override
             public void onJobFinished(@NotNull FinishJobResponseData data) {

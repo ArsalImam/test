@@ -20,6 +20,10 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobResponse;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -40,6 +44,8 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -129,7 +135,7 @@ public class FeedbackActivity extends BaseActivity {
     private FeedbackActivity mCurrentActivity;
     private String totalCharges = StringUtils.EMPTY, lastKhareedariAmount = StringUtils.EMPTY;
     private int TOP_UP_LIMIT, AMOUNT_LIMIT;
-
+    private JobsRepository repo;
 
     private MixpanelAPI mixpanelAPI;
 
@@ -370,19 +376,72 @@ public class FeedbackActivity extends BaseActivity {
         if (valid()) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             logMPEvent();
+
+            JobsDataSource.ConcludeJobCallback jobCallback = new JobsDataSource.ConcludeJobCallback() {
+
+                @Override
+                public void onJobConcluded(@NotNull ConcludeJobResponse response) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    Dialogs.INSTANCE.showToast(response.getMessage());
+                    Utils.setCallIncomingState();
+                    AppPreferences.setWalletAmountIncreased(!response.isAvailable());
+                    AppPreferences.setAvailableStatus(response.isAvailable());
+                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                    mCurrentActivity.finish();
+                }
+
+
+                @Override
+                public void onJobConcludeFailed(@Nullable String message, @Nullable Integer code) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    if (code != null && code == HTTPStatus.UNAUTHORIZED) {
+                        EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    } else {
+                        Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, message);
+                    }
+
+                }
+            };
+
+            boolean isLoadboardJob = Utils.isLoadboardService(callData.getServiceCode());
+            if (isLoadboardJob)
+                repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+
             if (isDeliveryType) {
-                new UserRepository().requestFeedback(mCurrentActivity, handler,
-                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
-                        , selectedMsgPosition == 0, Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition], etReceiverName.getText().toString(),
-                        etReceiverMobileNo.getText().toString());
+                if (isLoadboardJob)
+                    repo.concludeJob(
+                            callData.getTripId(),
+                            (int) callerRb.getRating(),
+                            Integer.valueOf(receivedAmountEt.getText().toString()),
+                            jobCallback,
+                            Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                            selectedMsgPosition == 0,
+                            null,
+                            etReceiverName.getText().toString(),
+                            etReceiverMobileNo.getText().toString()
+                    );
+                else
+                    new UserRepository().requestFeedback(mCurrentActivity, handler,
+                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
+                            , selectedMsgPosition == 0, Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition], etReceiverName.getText().toString(),
+                            etReceiverMobileNo.getText().toString());
             } else if (isPurchaseType) {
-                new UserRepository().requestFeedback(mCurrentActivity, handler,
-                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString(),
-                        kharedariAmountEt.getText().toString());
+                if (isLoadboardJob)
+                    repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()),
+                            jobCallback, null, null,
+                            Integer.valueOf(kharedariAmountEt.getText().toString()), null, null);
+                else
+                    new UserRepository().requestFeedback(mCurrentActivity, handler,
+                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString(),
+                            kharedariAmountEt.getText().toString());
             } else {
-                new UserRepository().requestFeedback(mCurrentActivity, handler,
-                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
+                if (isLoadboardJob)
+                    repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()), jobCallback, null, null, null, null, null);
+                else
+                    new UserRepository().requestFeedback(mCurrentActivity, handler,
+                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
             }
+
         }
     }
 
