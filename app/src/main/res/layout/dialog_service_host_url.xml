@@ -26,7 +26,6 @@
             android:id="@+id/editTextIP"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false"
             android:textColor="@color/black"
             android:textSize="@dimen/_14sdp" />
 
@@ -43,7 +42,6 @@
             android:id="@+id/editTextLoadBoardIP"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false"
             android:textColor="@color/black"
             android:textSize="@dimen/_14sdp" />
 
