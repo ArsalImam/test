@@ -2011,7 +2011,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData.setTripNo(endRideResponse.getData().getTripNo());
                         callData.setTotalFare(endRideResponse.getData().getTotalFare());
                         callData.setTotalMins(endRideResponse.getData().getTotalMins());
-                        callData.setTotalAmount(endRideResponse.getData().getTotalAmount());
                         callData.setDistanceCovered(endRideResponse.getData().getDistanceCovered());
                         if (StringUtils.isNotBlank(endRideResponse.getData().getWallet_deduction())) {
                             callData.setWallet_deduction(endRideResponse.getData().getWallet_deduction());
@@ -2388,24 +2387,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
                 endAddressTv.setEnabled(false);
                 callData = AppPreferences.getCallData();
-//                                            callData.setStartAddress(data.getStartAddress());
-//                                            callData.setEndAddress(data.getEndAddress());
-                callData.setTripNo(data.getTrip_no());
-                callData.setTotalFare(String.valueOf(data.getTrip_charges()));
-                callData.setTotalMins(String.valueOf(data.getMinutes()));
-                callData.setTotalAmount(String.valueOf(data.getTotal()));
-                callData.setDistanceCovered(String.valueOf(data.getKm()));
-                if (StringUtils.isNotBlank(String.valueOf(data.getWallet_deduction()))) {
-                    callData.setWallet_deduction(String.valueOf(data.getWallet_deduction()));
+//                callData.setStartAddress(data.getStartAddress());
+                callData.setEndAddress(data.getTrip().getEnd_address());
+                callData.setTripNo(data.getInvoice().getTrip_no());
+                callData.setTotalFare(String.valueOf(data.getInvoice().getTotal()));
+                callData.setTotalMins(String.valueOf(data.getInvoice().getMinutes()));
+                callData.setDistanceCovered(String.valueOf(data.getInvoice().getKm()));
+                if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getWallet_deduction()))) {
+                    callData.setWallet_deduction(String.valueOf(data.getInvoice().getWallet_deduction()));
                 }
-                if (StringUtils.isNotBlank(String.valueOf(data.getPromo_deduction()))) {
-                    callData.setPromo_deduction(String.valueOf(data.getPromo_deduction()));
+                if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getPromo_deduction()))) {
+                    callData.setPromo_deduction(String.valueOf(data.getInvoice().getPromo_deduction()));
                 }
-//                                            if (StringUtils.isNotBlank(data.getDropoff_discount())) {
-//                                                callData.setDropoff_discount(data.getDropoff_discount());
-//                                            }
+//                if (StringUtils.isNotBlank(data.getDropoff_discount())) {
+//                    callData.setDropoff_discount(data.getDropoff_discount());
+//                }
                 callData.setStatus(TripStatus.ON_FINISH_TRIP);
-                callData.setTrip_charges(String.valueOf(data.getTrip_charges()));
+                callData.setTrip_charges(String.valueOf(data.getInvoice().getTrip_charges()));
                 AppPreferences.setCallData(callData);
                 tvEstimation.setVisibility(View.GONE);
                 AppPreferences.clearTripDistanceData();
