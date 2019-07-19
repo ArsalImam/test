@@ -2,6 +2,7 @@ package com.bykea.pk.partner.utils;
 
 
 import com.bykea.pk.partner.BuildConfig;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
@@ -504,5 +505,16 @@ public class Constants {
     public static class Amazon {
         public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
         public static String BUCKET_NAME = "loadboard";
+    }
+
+    /**
+     * Firebase Analytics Configuration
+     * Event Configurations Limits
+     */
+    public static class FirebaseAnalyticsConfigLimits {
+        public static final int EVENT_NAME_LENGTH = 40;
+        public static final int EVENT_PARAMETER_KEY_LENGTH = 40;
+        public static final int EVENT_MAX_STRING_VALUES = 10;
+        public static final int EVENT_MAX_NUMERIC_VALUES = 40;
     }
 }

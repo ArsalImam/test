@@ -129,7 +129,7 @@ class JobRequestListFragment : Fragment() {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
                             Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                                     Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN,
-                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN),
+                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN, null, listAdapter.count),
                                     true)
 
                             viewDataBinding.bookingsList.smoothScrollToPosition(0)
@@ -137,8 +137,8 @@ class JobRequestListFragment : Fragment() {
                         BottomSheetBehavior.STATE_EXPANDED -> {
                             Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                                     Constants.AnalyticsEvents.ON_LB_SWIPE_UP,
-                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_SWIPE_UP)
-                                            .put("bookings_count", listAdapter.count), true)
+                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_SWIPE_UP, null, listAdapter.count),
+                                    true)
                         }
                         BottomSheetBehavior.STATE_DRAGGING -> {
                         }

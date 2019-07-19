@@ -89,7 +89,7 @@ class JobRequestDetailActivity : BaseActivity() {
                 if (url != null) {
                     voiceClipPlayDownload(url)
                 } else {
-                    binding.viewmodel!!.showSnackbarMessage(R.string.no_voice_note_available)
+                    binding.viewmodel?.showSnackbarMessage(R.string.no_voice_note_available)
                 }
             }
 
@@ -118,7 +118,7 @@ class JobRequestDetailActivity : BaseActivity() {
             }
 
             override fun onAcceptBooking() {
-                binding.viewmodel!!.accept()
+                binding.viewmodel?.accept()
             }
 
             override fun onBackClicked() {
@@ -131,7 +131,7 @@ class JobRequestDetailActivity : BaseActivity() {
         }
         binding.lifecycleOwner = this
         bookingId = intent.getLongExtra(EXTRA_BOOKING_ID, 0)
-        binding.viewmodel!!.start(bookingId)
+        binding.viewmodel?.start(bookingId)
 
         try {
             loadBoardMapFragment.onCreate(savedInstanceState);
@@ -201,14 +201,14 @@ class JobRequestDetailActivity : BaseActivity() {
                     mediaPlayer = MediaPlayer()
                     mediaPlayer?.setDataSource(FileInputStream(obj).fd);
                     mediaPlayer?.prepare()
-                    progressBarForAudioPlay.setMax(mediaPlayer!!.duration);
+                    progressBarForAudioPlay.setMax(mediaPlayer?.duration!!);
                     mediaPlayer?.start()
                     startPlayProgressUpdater()
                 }
 
                 override fun fail(errorCode: Int, errorMsg: String) {
                     Dialogs.INSTANCE.dismissDialog()
-                    binding.viewmodel!!.showSnackbarMessage(R.string.no_voice_note_available)
+                    binding.viewmodel?.showSnackbarMessage(R.string.no_voice_note_available)
                 }
             })
         }
@@ -234,8 +234,8 @@ class JobRequestDetailActivity : BaseActivity() {
 
     private fun bitmapDescriptorFromVector(context: Context?, vectorResId: Int): BitmapDescriptor {
         val vectorDrawable = ContextCompat.getDrawable(context!!, vectorResId)
-        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
-        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        vectorDrawable?.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
+        val bitmap = Bitmap.createBitmap(vectorDrawable?.intrinsicWidth!!, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
@@ -310,8 +310,8 @@ class JobRequestDetailActivity : BaseActivity() {
     }
 
     fun startPlayProgressUpdater() {
-        progressBarForAudioPlay.setProgress(mediaPlayer!!.currentPosition);
-        if (mediaPlayer!!.isPlaying) {
+        progressBarForAudioPlay.setProgress(mediaPlayer?.currentPosition!!);
+        if (mediaPlayer?.isPlaying!!) {
             val notification = Runnable {
                 startPlayProgressUpdater();
             }
