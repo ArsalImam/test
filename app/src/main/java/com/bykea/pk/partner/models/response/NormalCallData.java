@@ -73,8 +73,6 @@ public class NormalCallData extends CommonResponse {
     private String distanceCovered;
     @SerializedName("minutes")
     private String totalMins;
-    @SerializedName("total_amount")
-    private String totalAmount;
     private String started_at;
 
 
@@ -184,14 +182,6 @@ public class NormalCallData extends CommonResponse {
 
     public void setTotalMins(String totalMins) {
         this.totalMins = totalMins;
-    }
-
-    public String getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(String totalAmount) {
-        this.totalAmount = totalAmount;
     }
 
     public String getStatus() {
