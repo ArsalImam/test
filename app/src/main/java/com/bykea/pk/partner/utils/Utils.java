@@ -150,6 +150,8 @@ import javax.net.ssl.TrustManagerFactory;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
+import zendesk.core.JwtIdentity;
+import zendesk.core.Zendesk;
 
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 
@@ -3146,4 +3148,7 @@ public class Utils {
         return format.format(ts);
     }
 
+    public static void setZendeskIdentity() {
+        Zendesk.INSTANCE.setIdentity(new JwtIdentity("5cd9213d2845d53da9479411"));
+    }
 }

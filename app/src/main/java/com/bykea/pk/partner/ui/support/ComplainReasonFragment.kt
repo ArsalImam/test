@@ -13,6 +13,9 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_complain_reason.*
+import zendesk.core.JwtIdentity
+import zendesk.core.Zendesk
+import zendesk.support.Support
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -85,6 +88,7 @@ class ComplainReasonFragment : Fragment() {
 
         mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
+            Utils.setZendeskIdentity()
             if (AppPreferences.getDriverEmail().isNullOrEmpty()) {
                 mCurrentActivity?.signIn()
             } else {
