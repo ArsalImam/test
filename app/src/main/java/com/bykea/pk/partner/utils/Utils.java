@@ -1720,10 +1720,11 @@ public class Utils {
 
     /**
      * Call To Trigger Firebase Event
+     *
      * @param context : Calling Activity
-     * @param userId : AppPreference Driver Id
-     * @param EVENT : Firebase Event Name
-     * @param data : JSON Object To Parse Into Bundle
+     * @param userId  : AppPreference Driver Id
+     * @param EVENT   : Firebase Event Name
+     * @param data    : JSON Object To Parse Into Bundle
      */
     public static void logFireBaseEvent(Context context, String userId, String EVENT, JSONObject data) {
         EVENT = EVENT.toLowerCase().replace("-", "_").replace(" ", "_");
@@ -1749,10 +1750,16 @@ public class Utils {
                     bundle.putString(key, value.toString());
                     stringParametersCounts++;
                 } else if (numericParametersCounts < Constants.FirebaseAnalyticsConfigLimits.EVENT_MAX_NUMERIC_VALUES) {
-                    if (value instanceof Integer || value instanceof Long) {
+                    if (value instanceof Integer) {
+                        bundle.putInt(key, ((Number) value).intValue());
+                        numericParametersCounts++;
+                    } else if (value instanceof Long) {
                         bundle.putLong(key, ((Number) value).longValue());
                         numericParametersCounts++;
-                    } else if (value instanceof Float || value instanceof Double) {
+                    } else if (value instanceof Float) {
+                        bundle.putFloat(key, ((Number) value).floatValue());
+                        numericParametersCounts++;
+                    } else if (value instanceof Double) {
                         bundle.putDouble(key, ((Number) value).doubleValue());
                         numericParametersCounts++;
                     } else if (value instanceof Boolean) {
@@ -1766,7 +1773,25 @@ public class Utils {
                 e.printStackTrace();
             }
         }
-        FirebaseAnalytics.getInstance(context).setUserId(userId);
+
+        FirebaseAnalytics.getInstance(context).setUserId(AppPreferences.getPilotData().getId());
+        FirebaseAnalytics.getInstance(context).setUserProperty("driver_id", AppPreferences.getPilotData().getId());
+
+        // SET PASSENGER_ID AS USER PROPERTY WHEN USER_ID IS NOT EQUALS TO DRIVER_ID
+        if (!userId.equals(AppPreferences.getPilotData().getId()))
+            FirebaseAnalytics.getInstance(context).setUserProperty("passenger_id", userId);
+
+        FirebaseAnalytics.getInstance(context).setUserProperty("cash_in_hand", String.valueOf(AppPreferences.getCashInHands()));
+        FirebaseAnalytics.getInstance(context).setUserProperty("device_imei", Utils.getDeviceId(context));
+        FirebaseAnalytics.getInstance(context).setUserProperty("driver_name", AppPreferences.getPilotData().getFullName());
+        FirebaseAnalytics.getInstance(context).setUserProperty("is_cash", AppPreferences.getIsCash() ? "1" : "0");
+        FirebaseAnalytics.getInstance(context).setUserProperty("service_type", AppPreferences.getPilotData().getService_type());
+        FirebaseAnalytics.getInstance(context).setUserProperty("singup_city", AppPreferences.getPilotData().getCity().getName());
+        if (AppPreferences.getDriverDestination() != null) {
+            FirebaseAnalytics.getInstance(context).setUserProperty("dd_lat", String.valueOf(AppPreferences.getDriverDestination().latitude));
+            FirebaseAnalytics.getInstance(context).setUserProperty("dd_lng", String.valueOf(AppPreferences.getDriverDestination().longitude));
+        }
+
         FirebaseAnalytics.getInstance(context).logEvent(EVENT, bundle);
     }
 

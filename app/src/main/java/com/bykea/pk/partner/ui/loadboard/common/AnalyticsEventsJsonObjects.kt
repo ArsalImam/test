@@ -17,14 +17,8 @@ object AnalyticsEventsJsonObjects {
     fun getEventLoadBoardJson(eventLog: String, jobRequest: JobRequest? = null, bookingCount: Int? = null): JSONObject {
         return JSONObject().apply {
             put("current_location", Utils.getCurrentLocation())
-            put("driver_id", AppPreferences.getPilotData().id)
-            put("driver_name", AppPreferences.getPilotData().fullName)
-            put("signup_city", AppPreferences.getPilotData().city.name)
-            put("timestamp", Utils.getIsoDate())
 
             when (eventLog) {
-                Constants.AnalyticsEvents.ON_LB_REFRESH -> put("is_cash", AppPreferences.getIsCash())
-
                 Constants.AnalyticsEvents.ON_LB_SWIPE_UP,
                 Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN -> put("bookings_count", bookingCount)
 
