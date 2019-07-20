@@ -12,13 +12,18 @@ import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
+import com.bykea.pk.partner.utils.Keys
+import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.android.synthetic.main.activity_problem.*
+import java.util.*
 
 
 class ComplaintSubmissionActivity : AppCompatActivity() {
@@ -117,13 +122,41 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)
                 if (!account?.email.isNullOrEmpty()) {
                     AppPreferences.setDriverEmail(account?.email)
+                    AppPreferences.setEmailVerified()
                     mGoogleSignInClient?.signOut()
-                    changeFragment(ComplainDetailFragment())
+                    checkStatusForZendesk()
                 }
             } catch (e: ApiException) {
 
             }
         }
+    }
 
+    /**
+     * Check Status For Zendesk SDK
+     * If Ready : Open Detail Fragment - To Submit Ticket
+     * If Not : Open Zendesk Identity Activity
+     */
+    internal fun checkStatusForZendesk() {
+        if (AppPreferences.isZendeskSDKReady()) {
+            //IF ZENDESK SDK IS READY
+            changeFragment(ComplainDetailFragment())
+        } else {
+            if (!AppPreferences.checkKeyExist(Keys.ZENDESK_IDENTITY_SETUP_TIME)) {
+                //INTIALIZE ZENDESK SDK
+                Utils.setZendeskIdentity()
+                AppPreferences.setZendeskSDKSetupTime()
+                ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
+            } else {
+                if ((Date().time - AppPreferences.getZendeskSDKSetupTime().time) < Constants.ZendeskConfigurations.ZENDESK_SETTING_IDENTITY_MAX_TIME) {
+                    //ZENDESK SDK NOT READY
+                    ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
+                } else {
+                    //ZENDESK SDK IS READY
+                    AppPreferences.setZendeskSDKReady()
+                    changeFragment(ComplainDetailFragment())
+                }
+            }
+        }
     }
 }

@@ -17,9 +17,14 @@ import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.BanksAccountActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
+import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -92,7 +97,25 @@ public class ContactUsFragment extends Fragment {
                 Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
                 break;
             case R.id.yourComplain:
-                ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+                if (AppPreferences.isZendeskSDKReady()) {
+                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+                } else {
+                    if (!AppPreferences.checkKeyExist(Keys.ZENDESK_IDENTITY_SETUP_TIME)) {
+                        //INTIALIZE ZENDESK SDK
+                        Utils.setZendeskIdentity();
+                        AppPreferences.setZendeskSDKSetupTime();
+                        ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity);
+                    } else {
+                        if ((new Date().getTime() - AppPreferences.getZendeskSDKSetupTime().getTime()) < Constants.ZendeskConfigurations.ZENDESK_SETTING_IDENTITY_MAX_TIME) {
+                            //ZENDESK SDK NOT READY
+                            ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity);
+                        } else {
+                            //ZENDESK SDK IS READY
+                            AppPreferences.setZendeskSDKReady();
+                            ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+                        }
+                    }
+                }
                 break;
             case R.id.supportEmail:
                 ActivityStackManager.getInstance().startProblemActivity(mCurrentActivity, null);

@@ -15,13 +15,11 @@ import org.apache.commons.lang3.StringUtils
 class ComplainSubmittedFragment : Fragment() {
 
     private lateinit var mCurrentActivity: ComplaintSubmissionActivity
-    private lateinit var rootView: View
     private lateinit var binding: FragmentComplainSubmittedBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_complain_submitted, container, false)
-        rootView = binding.root
         mCurrentActivity = activity as ComplaintSubmissionActivity
 
         mCurrentActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -35,7 +33,7 @@ class ComplainSubmittedFragment : Fragment() {
                 ActivityStackManager.getInstance().startHomeActivity(mCurrentActivity)
             }
         }
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

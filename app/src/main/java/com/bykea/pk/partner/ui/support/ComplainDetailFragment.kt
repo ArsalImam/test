@@ -12,6 +12,7 @@ import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.common.util.Strings.isEmptyOrWhitespace
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
@@ -25,7 +26,7 @@ import java.util.*
  */
 class ComplainDetailFragment : Fragment() {
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
-    private lateinit var requestProvider: RequestProvider
+    private var requestProvider: RequestProvider? = null
     private var ticketSubject: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +34,7 @@ class ComplainDetailFragment : Fragment() {
         val binding: FragmentComplainDetailBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_complain_detail, container, false)
         mCurrentActivity = activity as ComplaintSubmissionActivity?
 
-        requestProvider = Support.INSTANCE.provider()!!.requestProvider()
+        requestProvider = Support.INSTANCE.provider()?.requestProvider()
 
         binding.listener = object : GenericFragmentListener {
             override fun onSubmitClicked() {
@@ -72,7 +73,7 @@ class ComplainDetailFragment : Fragment() {
     private fun createRequest() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
 
-        requestProvider.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
+        requestProvider?.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
                 mCurrentActivity?.isTicketSubmitted = true
@@ -81,6 +82,7 @@ class ComplainDetailFragment : Fragment() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
+                Utils.setZendeskIdentity()
             }
         })
     }

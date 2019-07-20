@@ -9,13 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
+import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Keys
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_complain_reason.*
-import zendesk.core.JwtIdentity
-import zendesk.core.Zendesk
-import zendesk.support.Support
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -88,11 +88,12 @@ class ComplainReasonFragment : Fragment() {
 
         mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
-            Utils.setZendeskIdentity()
-            if (AppPreferences.getDriverEmail().isNullOrEmpty()) {
+
+            if(!AppPreferences.isEmailVerified()){
                 mCurrentActivity?.signIn()
-            } else {
-                mCurrentActivity?.changeFragment(ComplainDetailFragment())
+            }else{
+                //IF DRIVER HAS EMAIL
+                mCurrentActivity?.checkStatusForZendesk()
             }
         }
     }

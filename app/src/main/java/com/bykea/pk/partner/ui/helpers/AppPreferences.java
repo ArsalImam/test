@@ -17,7 +17,6 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
@@ -31,10 +30,8 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 public class AppPreferences {
 
@@ -52,6 +49,10 @@ public class AppPreferences {
                 .edit()
                 .putString(Keys.SETTING_DATA, new Gson().toJson(data))
                 .apply();
+    }
+
+    public static boolean checkKeyExist(String key) {
+        return mSharedPreferences.contains(key);
     }
 
     public static SettingsData getSettings() {
@@ -153,6 +154,54 @@ public class AppPreferences {
 
     public static String getDriverEmail() {
         return mSharedPreferences.getString(Keys.EMAIL, StringUtils.EMPTY);
+    }
+
+    /**
+     * @Boolean Is Email Verified
+     */
+    public static boolean isEmailVerified() {
+        return mSharedPreferences.getBoolean(Keys.EMAIL_VERIFIED, false);
+    }
+
+    /**
+     * Set Email Verified
+     */
+    public static void setEmailVerified() {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
+        ed.putBoolean(Keys.EMAIL_VERIFIED, true);
+        ed.commit();
+    }
+
+    /**
+     * @Date Get Zendesk SDK Initialization Time
+     */
+    public static Date getZendeskSDKSetupTime() {
+        return new Gson().fromJson(mSharedPreferences.getString(Keys.ZENDESK_IDENTITY_SETUP_TIME, StringUtils.EMPTY), Date.class);
+    }
+
+    /**
+     * Set Zendesk SDK Initialization Time  (Current Time)
+     */
+    public static void setZendeskSDKSetupTime() {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
+        ed.putString(Keys.ZENDESK_IDENTITY_SETUP_TIME, new Gson().toJson(new Date()));
+        ed.commit();
+    }
+
+    /**
+     * @Boolean Is Zendesk Is Ready Or Not
+     */
+    public static boolean isZendeskSDKReady() {
+        return mSharedPreferences.getBoolean(Keys.ZENDESK_SDK_READY, false);
+    }
+
+    /**
+     * Set Zendesk SDK Is Ready To Use
+     */
+    public static void setZendeskSDKReady() {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
+        ed.putBoolean(Keys.ZENDESK_SDK_READY, true);
+        ed.commit();
     }
 
     /**
@@ -419,6 +468,7 @@ public class AppPreferences {
 
     /**
      * Fetch TRIP_ACCEPT_TIME from App Shared Pref
+     *
      * @return TRIP_ACCEPT_TIME
      */
     public static long getTripAcceptTime() {
@@ -427,6 +477,7 @@ public class AppPreferences {
 
     /**
      * Put TRIP_ACCEPT_TIME to App Shared Pref
+     *
      * @param time TRIP_ACCEPT_TIME
      */
     public static void setTripAcceptTime(long time) {
@@ -942,6 +993,7 @@ public class AppPreferences {
 
     /**
      * getting driver's cash/non-cash status
+     *
      * @return
      */
     public static boolean getIsCash() {
@@ -950,6 +1002,7 @@ public class AppPreferences {
 
     /**
      * saving driver's cash/non-cash status to local storage
+     *
      * @param value true/false
      */
     public static void setCash(boolean value) {
@@ -1253,8 +1306,10 @@ public class AppPreferences {
                 .putString(Keys.BASE_URL_LOCAL, value)
                 .apply();
     }
+
     /**
      * This method gets app version stored in shared pref.
+     *
      * @return App Version String
      */
     public static String getAppVersion() {
@@ -1263,6 +1318,7 @@ public class AppPreferences {
 
     /**
      * This method saves app version in shared pref.
+     *
      * @param value value for app version
      */
     public static void setAppVersion(String value) {
@@ -1274,6 +1330,7 @@ public class AppPreferences {
 
     /**
      * This method gets app version code stored in shared pref.
+     *
      * @return App Version Code
      */
     public static int getAppVersionCode() {
@@ -1282,6 +1339,7 @@ public class AppPreferences {
 
     /**
      * This method saves app Version Code in shared pref.
+     *
      * @param value value for app Version Code
      */
     public static void setAppVersionCode(int value) {
@@ -1293,6 +1351,7 @@ public class AppPreferences {
 
     /**
      * This method saves a flag when shared pref is recently clear in case of dirty shared pref.
+     *
      * @param value isAlreadyCleared
      */
     public static void setIsAlreadyCleared(boolean value) {
@@ -1322,7 +1381,8 @@ public class AppPreferences {
 
     /**
      * save selected zone data for loadboard to local storage
-     * @param key Pickup/Dropoff key
+     *
+     * @param key      Pickup/Dropoff key
      * @param zoneData selected zone data
      */
     public static void setSelectedLoadboardZoneData(String key, ZoneData zoneData) {
@@ -1334,6 +1394,7 @@ public class AppPreferences {
 
     /**
      * get selected zone data for loadboard to local storage
+     *
      * @param key Pickup/Dropoff ket
      * @return ZoneData
      */
@@ -1349,7 +1410,7 @@ public class AppPreferences {
     /**
      * clear only loadboard selected zone data
      */
-    public static void clearLoadboardSelectedZoneData(){
+    public static void clearLoadboardSelectedZoneData() {
         mSharedPreferences
                 .edit()
                 .putString(Keys.LOADBOARD_SELECTED_PICKUP_ZONE, null)

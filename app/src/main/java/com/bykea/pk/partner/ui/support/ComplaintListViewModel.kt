@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Utils
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
 import zendesk.support.Request
@@ -26,9 +27,9 @@ class ComplaintListViewModel : ViewModel() {
     }
 
     fun start() {
-        val requestProvider = Support.INSTANCE.provider()!!.requestProvider()
+        val requestProvider = Support.INSTANCE.provider()?.requestProvider()
 
-        requestProvider.getAllRequests(object : ZendeskCallback<List<Request>>() {
+        requestProvider?.getAllRequests(object : ZendeskCallback<List<Request>>() {
             override fun onSuccess(requests: List<Request>) {
                 Dialogs.INSTANCE.dismissDialog()
                 Collections.sort(requests, object : Comparator<Request> {
@@ -41,6 +42,7 @@ class ComplaintListViewModel : ViewModel() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
+                Utils.setZendeskIdentity()
             }
         })
     }
