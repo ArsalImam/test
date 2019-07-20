@@ -395,4 +395,6 @@
         <item>Main haadse main manavas tha.</item>
     </string-array>
 
+    <string name="wait_for_zendesk">انتظار فرمائیں</string>
+
 </resources>

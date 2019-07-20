@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ui.support.ComplainZendeskIdentityActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/custom_toolbar" />
+
+            <View
+                android:id="@+id/toolbarLine"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_3sdp"
+                android:background="@drawable/toolbar_bottom_shadow_gray" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_8sdp">
+
+                <com.bykea.pk.partner.widgets.DonutProgress
+                    android:id="@+id/donut_progress"
+                    android:layout_width="@dimen/_94sdp"
+                    android:layout_height="@dimen/_94sdp"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="@dimen/_2sdp"
+                    app:donut_finished_color="@color/secondaryColorDark"
+                    app:donut_finished_stroke_width="@dimen/_4sdp"
+                    app:donut_unfinished_color="@color/colorAccent"
+                    app:donut_unfinished_stroke_width="@dimen/_4sdp" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/counterTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/secondaryColorDark"
+                    android:textSize="@dimen/_44sdp"
+                    tools:text="120" />
+            </RelativeLayout>
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/resendTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:gravity="center"
+                android:padding="@dimen/_6sdp"
+                android:text="@string/wait_for_zendesk"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+        </LinearLayout>
+    </FrameLayout>
+</layout>
