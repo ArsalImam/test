@@ -146,11 +146,11 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
                 //INTIALIZE ZENDESK SDK
                 Utils.setZendeskIdentity()
                 AppPreferences.setZendeskSDKSetupTime()
-//                ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
+                ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
             } else {
                 if ((Date().time - AppPreferences.getZendeskSDKSetupTime().time) < Constants.ZendeskConfigurations.ZENDESK_SETTING_IDENTITY_MAX_TIME) {
                     //ZENDESK SDK NOT READY
-//                    ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
+                    ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
                 } else {
                     //ZENDESK SDK IS READY
                     AppPreferences.setZendeskSDKReady()
