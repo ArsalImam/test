@@ -2,10 +2,11 @@ package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.CancelJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
-import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.source.remote.response.AcceptJobResponse
+import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponse
+import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
+import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -70,28 +71,12 @@ interface Backend {
             @Body body: AcceptJobRequest): Call<AcceptJobResponse>
 
     /**
-     * Driver cancels active job
-     * @param body Body having details of job
-     * @return Server response
-     */
-    @POST("/api/v1/driver/cancel")
-    fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobResponse>
-
-    /**
      * Driver finishes active job
      * @param body Body having details of job
      * @return Server response
      */
     @POST("/api/v1/trips/{job_id}/finish")
     fun finishJob(@Path("job_id") jobId: String, @Body body: FinishJobRequest): Call<FinishJobResponse>
-
-    /**
-     * Driver sends feedback at the end of active job
-     * @param body Body having details of job
-     * @return Server response
-     */
-    @POST("/api/v1/trips/{job_id}/feedback")
-    fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobResponse>
 
     @GET
     fun getMockJobRequestList(
