@@ -244,4 +244,18 @@ class JobRequestsRepository(
             INSTANCE = null
         }
     }
+
+    /**
+     * Get Email Update From Remote Data
+     */
+    override fun getEmailUpdate(emailId: String, callback: JobRequestsDataSource.EmailUpdateCallback) {
+        jobRequestsRemoteDataSource.getEmailUpdateRequest(emailId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
+    /**
+     * Check Is Email Updated From Remote Data
+     */
+    override fun checkEmailUpdate(callback: JobRequestsDataSource.EmailUpdateCheckCallback) {
+        jobRequestsRemoteDataSource.getCheckIsEmailUpdatedRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
 }

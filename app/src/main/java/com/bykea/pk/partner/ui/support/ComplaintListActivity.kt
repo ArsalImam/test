@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityComplainListBinding
+import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.common.LastAdapter
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.utils.Dialogs
@@ -21,7 +23,7 @@ import zendesk.support.request.RequestActivity
  *
  * @author: Yousuf Sohail
  */
-class ComplaintListActivity : AppCompatActivity() {
+class ComplaintListActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +42,10 @@ class ComplaintListActivity : AppCompatActivity() {
                             RequestActivity.builder().withRequest(item).show(this@ComplaintListActivity)
                         }
                     })
-            Dialogs.INSTANCE.showLoader(this@ComplaintListActivity)
-            this.start()
+            if (AppPreferences.isEmailVerified()) {
+                Dialogs.INSTANCE.showLoader(this@ComplaintListActivity)
+                this.start()
+            }
         }
     }
 

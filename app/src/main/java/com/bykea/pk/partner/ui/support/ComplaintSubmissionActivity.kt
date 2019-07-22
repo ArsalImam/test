@@ -2,7 +2,6 @@ package com.bykea.pk.partner.ui.support
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -10,12 +9,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.source.JobRequestsDataSource
+import com.bykea.pk.partner.dal.source.JobRequestsRepository
+import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
+import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
+import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Keys
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -26,11 +30,13 @@ import kotlinx.android.synthetic.main.activity_problem.*
 import java.util.*
 
 
-class ComplaintSubmissionActivity : AppCompatActivity() {
+class ComplaintSubmissionActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProblemBinding
     private lateinit var mCurrentActivity: ComplaintSubmissionActivity
     private var fragmentManager: FragmentManager? = null
+    private lateinit var jobRequestsRepository: JobRequestsRepository
+
     internal var isTicketSubmitted: Boolean = false
     var tripHistoryDate: TripHistoryData? = null
 
@@ -43,6 +49,7 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_problem)
         mCurrentActivity = this
+        jobRequestsRepository = Injection.provideBookingsRepository(this)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -119,17 +126,34 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account = task.getResult(ApiException::class.java)
-                if (!account?.email.isNullOrEmpty()) {
-                    AppPreferences.setDriverEmail(account?.email)
-                    AppPreferences.setEmailVerified()
-                    mGoogleSignInClient?.signOut()
-                    checkStatusForZendesk()
+                task?.getResult(ApiException::class.java)?.email?.let {
+                    updateEmailFromRemoteDataSource(it)
                 }
             } catch (e: ApiException) {
 
             }
         }
+    }
+
+    /**
+     * @param emailId : Driver Valid Email Id
+     */
+    private fun updateEmailFromRemoteDataSource(emailId: String) {
+        Dialogs.INSTANCE.showLoader(this@ComplaintSubmissionActivity)
+        jobRequestsRepository.getEmailUpdate(emailId, object : JobRequestsDataSource.EmailUpdateCallback {
+            override fun onSuccess() {
+                Dialogs.INSTANCE.dismissDialog()
+                AppPreferences.setDriverEmail(emailId)
+                AppPreferences.setEmailVerified()
+                mGoogleSignInClient?.signOut()
+                checkStatusForZendesk()
+            }
+
+            override fun onFail(message: String?) {
+                Dialogs.INSTANCE.dismissDialog()
+                Utils.appToast(this@ComplaintSubmissionActivity, getString(R.string.error_try_again))
+            }
+        })
     }
 
     /**

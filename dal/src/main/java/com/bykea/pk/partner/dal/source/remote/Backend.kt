@@ -2,15 +2,14 @@ package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequestRequest
-import com.bykea.pk.partner.dal.source.remote.response.AcceptJobRequestResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
+import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
@@ -68,6 +67,17 @@ interface Backend {
             @Header("x-lb-user-token") token: String,
             @Body body: AcceptJobRequestRequest): Call<AcceptJobRequestResponse>
 
+    @FormUrlEncoded
+    @PUT("/api/v1/driver/update/email")
+    fun getEmailUpdate(
+            @Field("email") emailId: String,
+            @Field("_id") driverId: String,
+            @Field("token_id") token: String): Call<GetEmailUpdateResponse>
+
+    @GET("/api/v1/driver/check/email")
+    fun checkIsEmailUpdated(
+            @Query("_id") driverId: String,
+            @Query("token_id") token: String): Call<CheckEmailUpdateResponse>
 
     @GET
     fun getMockJobRequestList(
@@ -84,7 +94,6 @@ interface Backend {
             @Query("booking_id") bookingId: Long,
             @Query("_id") driverId: String,
             @Query("token_id") token: String): Call<GetJobRequestDetailResponse>
-
 
     companion object {
 

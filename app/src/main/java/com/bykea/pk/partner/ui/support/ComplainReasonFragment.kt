@@ -9,10 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.source.JobRequestsDataSource
+import com.bykea.pk.partner.dal.source.JobRequestsRepository
+import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Keys
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_complain_reason.*
@@ -27,6 +31,7 @@ class ComplainReasonFragment : Fragment() {
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
     private var mAdapter: ProblemItemsAdapter? = null
     private var mLayoutManager: LinearLayoutManager? = null
+    private var jobRequestsRepository: JobRequestsRepository? = null
 
     private var complainReasonsAdapterList: ArrayList<String> = ArrayList()
     private lateinit var rideOrGeneralComplainReasonsList: Array<String>
@@ -34,7 +39,10 @@ class ComplainReasonFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_complain_reason, container, false)
+
         mCurrentActivity = activity as ComplaintSubmissionActivity?
+        jobRequestsRepository = Injection.provideBookingsRepository(mCurrentActivity!!)
+
         return rootView
     }
 
@@ -88,13 +96,35 @@ class ComplainReasonFragment : Fragment() {
 
         mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
-
-            if(!AppPreferences.isEmailVerified()){
-                mCurrentActivity?.signIn()
-            }else{
-                //IF DRIVER HAS EMAIL
+            if (AppPreferences.isEmailVerified()) {
                 mCurrentActivity?.checkStatusForZendesk()
+            } else {
+                checkIsEmailUpdatedFromRemoteDataSource()
             }
         }
+    }
+
+    /**
+     * Check Is Email Is Updated
+     */
+    private fun checkIsEmailUpdatedFromRemoteDataSource() {
+        Dialogs.INSTANCE.showLoader(mCurrentActivity)
+        jobRequestsRepository?.checkEmailUpdate(object : JobRequestsDataSource.EmailUpdateCheckCallback {
+            override fun onSuccess(isEmailUpdated: Boolean) {
+                Dialogs.INSTANCE.dismissDialog()
+                if (isEmailUpdated) {
+                    AppPreferences.isEmailVerified()
+                    Utils.setZendeskIdentity()
+                    mCurrentActivity?.checkStatusForZendesk()
+                } else {
+                    mCurrentActivity?.signIn()
+                }
+            }
+
+            override fun onFail(message: String?) {
+                Dialogs.INSTANCE.dismissDialog()
+                Utils.appToast(mCurrentActivity, mCurrentActivity?.getString(R.string.error_try_again))
+            }
+        })
     }
 }

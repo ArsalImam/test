@@ -11,6 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobRequestsDataSource;
+import com.bykea.pk.partner.dal.source.JobRequestsRepository;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -35,6 +38,7 @@ public class ContactUsFragment extends Fragment {
     private ContactNumbersResponse contactNumbers;
     private HomeActivity mCurrentActivity;
     private Unbinder unbinder;
+    private JobRequestsRepository jobRequestsRepository;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +54,9 @@ public class ContactUsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
+
+        jobRequestsRepository = Injection.INSTANCE.provideBookingsRepository(mCurrentActivity);
+
         mCurrentActivity.setToolbarTitle("Contact Us", "رابطہ");
         mCurrentActivity.hideToolbarLogo();
 
@@ -62,7 +69,6 @@ public class ContactUsFragment extends Fragment {
     }
 
     private UserDataHandler handler = new UserDataHandler() {
-
         @Override
         public void getContactNumbers(ContactNumbersResponse response) {
             Dialogs.INSTANCE.dismissDialog();
@@ -87,7 +93,7 @@ public class ContactUsFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.supportCall, R.id.yourComplain, R.id.supportEmail, R.id.bankAccountNumber})
+    @OnClick({R.id.supportCall, R.id.submittedComplains, R.id.reportComplain, R.id.bankAccountNumber})
     public void onClick(View view) {
         if (contactNumbers == null) {
             return;
@@ -96,33 +102,74 @@ public class ContactUsFragment extends Fragment {
             case R.id.supportCall:
                 Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
                 break;
-            case R.id.yourComplain:
-                if (AppPreferences.isZendeskSDKReady()) {
-                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+            case R.id.submittedComplains: {
+                if (AppPreferences.isEmailVerified()) {
+                    checkStatusForZendeskSDK();
                 } else {
-                    if (!AppPreferences.checkKeyExist(Keys.ZENDESK_IDENTITY_SETUP_TIME)) {
-                        //INTIALIZE ZENDESK SDK
-                        Utils.setZendeskIdentity();
-                        AppPreferences.setZendeskSDKSetupTime();
-                        ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity);
-                    } else {
-                        if ((new Date().getTime() - AppPreferences.getZendeskSDKSetupTime().getTime()) < Constants.ZendeskConfigurations.ZENDESK_SETTING_IDENTITY_MAX_TIME) {
-                            //ZENDESK SDK NOT READY
-                            ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity);
-                        } else {
-                            //ZENDESK SDK IS READY
-                            AppPreferences.setZendeskSDKReady();
-                            ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
-                        }
-                    }
+                    checkIsEmailUpdatedFromRemoteDataSource();
                 }
+            }
                 break;
-            case R.id.supportEmail:
-                ActivityStackManager.getInstance().startProblemActivity(mCurrentActivity, null);
+            case R.id.reportComplain: {
+                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
+            }
                 break;
             case R.id.bankAccountNumber:
                 startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
                 break;
+        }
+    }
+
+    /**
+     * Check Is Email Updated From Remote Data Source
+     */
+    private void checkIsEmailUpdatedFromRemoteDataSource() {
+        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+        jobRequestsRepository.checkEmailUpdate(new JobRequestsDataSource.EmailUpdateCheckCallback() {
+            @Override
+            public void onSuccess(boolean isEmailUpdated) {
+                Dialogs.INSTANCE.dismissDialog();
+                if (isEmailUpdated) {
+                    AppPreferences.isEmailVerified();
+                    Utils.setZendeskIdentity();
+                    checkStatusForZendeskSDK();
+                } else {
+                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+                }
+            }
+
+            @Override
+            public void onFail(@org.jetbrains.annotations.Nullable String message) {
+                Dialogs.INSTANCE.dismissDialog();
+                Utils.appToast(mCurrentActivity, mCurrentActivity.getString(R.string.error_try_again));
+            }
+        });
+    }
+
+    /**
+     * Check Status For Zendesk SDK
+     * If Ready : Open Detail Fragment - To Submit Ticket
+     * If Not : Open Zendesk Identity Activity
+     */
+    private void checkStatusForZendeskSDK() {
+        if (AppPreferences.isZendeskSDKReady()) {
+            ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+        } else {
+            if (!AppPreferences.checkKeyExist(Keys.ZENDESK_IDENTITY_SETUP_TIME)) {
+                //INTIALIZE ZENDESK SDK
+                Utils.setZendeskIdentity();
+                AppPreferences.setZendeskSDKSetupTime();
+                ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity);
+            } else {
+                if ((new Date().getTime() - AppPreferences.getZendeskSDKSetupTime().getTime()) < Constants.ZendeskConfigurations.ZENDESK_SETTING_IDENTITY_MAX_TIME) {
+                    //ZENDESK SDK NOT READY
+                    ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity);
+                } else {
+                    //ZENDESK SDK IS READY
+                    AppPreferences.setZendeskSDKReady();
+                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+                }
+            }
         }
     }
 }

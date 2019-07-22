@@ -110,4 +110,32 @@ interface JobRequestsDataSource {
 
         fun onJobRequestAcceptFailed(message: String?, taken: Boolean)
     }
+
+    /**
+     * Get Email Update
+     */
+    fun getEmailUpdate(emailId: String, callback: EmailUpdateCallback) {}
+
+    /**
+     * Callback interface for email update
+     */
+    interface EmailUpdateCallback {
+        fun onSuccess()
+
+        fun onFail(message: String?)
+    }
+
+    /**
+     * Check Email Update
+     */
+    fun checkEmailUpdate(callback: EmailUpdateCheckCallback) {}
+
+    /**
+     * Callback interface to check if email is updated
+     */
+    interface EmailUpdateCheckCallback {
+        fun onSuccess(isEmailUpdated: Boolean)
+
+        fun onFail(message: String?)
+    }
 }

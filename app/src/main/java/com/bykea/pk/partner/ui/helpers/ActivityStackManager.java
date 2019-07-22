@@ -429,7 +429,7 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-    /*public void startProblemActivity(Context context, String tripNo) {
+    /*public void startComplainSubmissionActivity(Context context, String tripNo) {
         Intent intent = new Intent(context, ProblemActivity.class);
         intent.putExtra("TRIP_ID", tripNo);
         context.startActivity(intent);
@@ -439,7 +439,7 @@ public class ActivityStackManager {
      * @param context         Calling Activity
      * @param tripHistoryData Model Send For Intent
      */
-    public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
+    public void startComplainSubmissionActivity(Context context, TripHistoryData tripHistoryData) {
         Intent intent = new Intent(context, ComplaintSubmissionActivity.class);
         if (tripHistoryData != null)
             intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
@@ -448,6 +448,7 @@ public class ActivityStackManager {
 
     /**
      * Screen for waiting, to get zendesk sdk setup.
+     *
      * @param context : Calling Activity
      */
     public void startZendeskIdentityActivity(Context context) {
