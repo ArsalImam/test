@@ -407,7 +407,6 @@ public class FeedbackActivity extends BaseActivity {
             if (isLoadboardJob)
                 repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
-            isLoadboardJob = false;
             if (isDeliveryType) {
                 if (isLoadboardJob)
                     repo.concludeJob(
