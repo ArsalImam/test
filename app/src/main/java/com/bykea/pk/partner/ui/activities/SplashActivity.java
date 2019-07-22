@@ -10,6 +10,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.dal.source.remote.Backend;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -281,6 +282,8 @@ public class SplashActivity extends BaseActivity {
 
                 AppPreferences.setLocalBaseUrl(ApiTags.BASE_SERVER_URL);
 //                ApiClient.INSTANCE.setAPI_BASE_URL(localLoadboardUrl);
+                Backend.Companion.setFLAVOR_URL_TELOS(localUrl);
+                Backend.Companion.setFLAVOR_URL_LOADBOARD(localLoadboardUrl);
 
                 WebIO.getInstance().clearConnectionData();
                 new RestRequestHandler().clearRetrofitClient();

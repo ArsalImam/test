@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.JobRequest
-import com.bykea.pk.partner.dal.source.JobRequestsDataSource
-import com.bykea.pk.partner.dal.source.JobRequestsRepository
+import com.bykea.pk.partner.dal.Job
+import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.ui.loadboard.common.Event
 import com.google.android.gms.maps.model.LatLng
@@ -17,14 +17,14 @@ import com.google.android.gms.maps.model.LatLng
  *
  * @Author: Yousuf Sohail
  */
-class JobRequestDetailViewModel(private val bookingsRepository: JobRequestsRepository) : ViewModel(), JobRequestsDataSource.GetJobRequestCallback, JobRequestsDataSource.AcceptJobRequestCallback {
+class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) : ViewModel(), JobsDataSource.GetJobRequestCallback, JobsDataSource.AcceptJobRequestCallback {
 
     private val _currentLatLng = MutableLiveData<LatLng>()
     val currentLatLng: LiveData<LatLng>
         get() = _currentLatLng
 
-    private val _booking = MutableLiveData<JobRequest>()
-    val jobRequest: LiveData<JobRequest>
+    private val _booking = MutableLiveData<Job>()
+    val job: LiveData<Job>
         get() = _booking
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
@@ -52,13 +52,13 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobRequestsRepos
 
 
     /**
-     * Start the ViewModel by fetching the [JobRequest] id
+     * Start the ViewModel by fetching the [Job] id
      *
-     * @param bookingId [JobRequest.id]
+     * @param bookingId [Job.id]
      */
     fun start(bookingId: Long) {
         _dataLoading.value = true
-        bookingsRepository.getJobRequest(bookingId, this)
+        bookingsRepository.getJob(bookingId, this)
         _currentLatLng.value = LatLng(AppPref.getLat(bookingsRepository.pref), AppPref.getLng(bookingsRepository.pref))
     }
 
@@ -73,24 +73,24 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobRequestsRepos
     }
 
     /**
-     * Refresh by loading the [JobRequest] details all over again
+     * Refresh by loading the [Job] details all over again
      */
     fun onRefresh() {
         bookingId?.let { start(it) }
     }
 
     /**
-     * Set hold [JobRequest] to be shown
+     * Set hold [Job] to be shown
      *
-     * @param jobRequest Updated [JobRequest] object
+     * @param job Updated [Job] object
      */
-    private fun setBooking(jobRequest: JobRequest?) {
-        this._booking.value = jobRequest
-        _isDataAvailable.value = jobRequest != null
+    private fun setBooking(job: Job?) {
+        this._booking.value = job
+        _isDataAvailable.value = job != null
     }
 
-    override fun onJobRequestLoaded(jobRequest: JobRequest) {
-        setBooking(jobRequest)
+    override fun onJobLoaded(job: Job) {
+        setBooking(job)
         _dataLoading.value = false
     }
 
