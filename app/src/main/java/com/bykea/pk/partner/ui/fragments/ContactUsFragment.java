@@ -130,7 +130,7 @@ public class ContactUsFragment extends Fragment {
             public void onSuccess(boolean isEmailUpdated) {
                 Dialogs.INSTANCE.dismissDialog();
                 if (isEmailUpdated) {
-                    AppPreferences.isEmailVerified();
+                    AppPreferences.setEmailVerified();
                     Utils.setZendeskIdentity();
                     checkStatusForZendeskSDK();
                 } else {

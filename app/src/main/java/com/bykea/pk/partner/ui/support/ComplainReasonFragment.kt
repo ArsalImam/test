@@ -113,7 +113,7 @@ class ComplainReasonFragment : Fragment() {
             override fun onSuccess(isEmailUpdated: Boolean) {
                 Dialogs.INSTANCE.dismissDialog()
                 if (isEmailUpdated) {
-                    AppPreferences.isEmailVerified()
+                    AppPreferences.setEmailVerified()
                     Utils.setZendeskIdentity()
                     mCurrentActivity?.checkStatusForZendesk()
                 } else {
