@@ -3148,6 +3148,9 @@ public class Utils {
         return format.format(ts);
     }
 
+    /**
+     * Setup Zendesk Identity - For JWT Authorization
+     */
     public static void setZendeskIdentity() {
         Zendesk.INSTANCE.setIdentity(new JwtIdentity("5cd9213d2845d53da9479411"));
     }

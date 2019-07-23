@@ -51,6 +51,11 @@ public class AppPreferences {
                 .apply();
     }
 
+
+    /**
+     * @param key : Required Key
+     * @return : true if key is present in shared preferences
+     */
     public static boolean checkKeyExist(String key) {
         return mSharedPreferences.contains(key);
     }
