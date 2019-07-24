@@ -9,10 +9,8 @@ import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.JobRequest
 import com.bykea.pk.partner.databinding.JobRequestDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
@@ -34,7 +32,6 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_confirm_drop_off_address.*
 import kotlinx.android.synthetic.main.job_request_detail_act.*
-import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
@@ -71,7 +68,7 @@ class JobRequestDetailActivity : BaseActivity() {
             acceptBookingCommand.observe(this@JobRequestDetailActivity, Observer {
                 Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT,
-                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, jobRequest.value),
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, job.value),
                         true)
                 ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity, false)
             })
@@ -106,12 +103,12 @@ class JobRequestDetailActivity : BaseActivity() {
                 if (isPickUp) //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE CURRENT TO PICKUP
                     Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION,
-                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.jobRequest?.value),
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.job?.value),
                             true)
                 else //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE PICKUP TO DROPOFF
                     Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION,
-                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.jobRequest?.value),
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.job?.value),
                             true)
 
                 Utils.navigateToGoogleMap(this@JobRequestDetailActivity, pickLat, pickLng, dropLat, dropLng)
@@ -124,7 +121,7 @@ class JobRequestDetailActivity : BaseActivity() {
             override fun onBackClicked() {
                 Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL,
-                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.jobRequest?.value),
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.job?.value),
                         true)
                 finish()
             }
@@ -149,29 +146,6 @@ class JobRequestDetailActivity : BaseActivity() {
                 getDriverRoadPosition(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 setMarkersForPickUpAndDropOff(p0)
             }
-        }
-    }
-
-    /**
-     * Generate Event Log For Accept/Taken LoadBoard Delivery
-     * @param logEvent : Event Name
-     * @param jobRequest : BookingModel
-     */
-    private fun generateAcceptOrTakenEventLog(logEvent: String, jobRequest: LiveData<JobRequest>?) {
-        Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
-                logEvent, getDataForAcceptOrTakenEvent(jobRequest), true)
-    }
-
-    /**
-     * Data For Accept/Taken LoadBoard Delivery
-     * @param jobRequest : BookingModel
-     */
-    private fun getDataForAcceptOrTakenEvent(jobRequest: LiveData<JobRequest>?): JSONObject {
-        return JSONObject().apply {
-            put("TripID", jobRequest?.value?.trip_id)
-            put("BookingId", jobRequest?.value?.booking_no)
-            put("EstimatedDistance", AppPreferences.getEstimatedDistance())
-            put("type", jobRequest?.value?.trip_type)
         }
     }
 
@@ -215,10 +189,10 @@ class JobRequestDetailActivity : BaseActivity() {
     }
 
     private fun setMarkersForPickUpAndDropOff(mMap: GoogleMap) {
-        val mLatLngPickUp = LatLng(binding.viewmodel?.jobRequest?.value?.pickup?.lat!!, binding.viewmodel?.jobRequest?.value?.pickup?.lng!!)
+        val mLatLngPickUp = LatLng(binding.viewmodel?.job?.value?.pickup?.lat!!, binding.viewmodel?.job?.value?.pickup?.lng!!)
         setMarker(mMap, mLatLngPickUp, R.drawable.ic_marker_pickup)
 
-        val mLatLngDropOff = LatLng(binding.viewmodel?.jobRequest?.value?.dropoff?.lat!!, binding.viewmodel?.jobRequest?.value?.dropoff?.lng!!)
+        val mLatLngDropOff = LatLng(binding.viewmodel?.job?.value?.dropoff?.lat!!, binding.viewmodel?.job?.value?.dropoff?.lng!!)
         setMarker(mMap, mLatLngDropOff, R.drawable.ic_marker_dropoff)
 
         setPickupBounds(mMap)

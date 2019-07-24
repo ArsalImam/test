@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.loadboard.common
 
-import com.bykea.pk.partner.dal.JobRequest
-import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Utils
 import org.json.JSONObject
@@ -14,7 +13,7 @@ object AnalyticsEventsJsonObjects {
      * @param eventLog : Firebase Event Name
      * @param jobRequest : Loadboard Booking Detail Object
      */
-    fun getEventLoadBoardJson(eventLog: String, jobRequest: JobRequest? = null, bookingCount: Int? = null): JSONObject {
+    fun getEventLoadBoardJson(eventLog: String, jobRequest: Job? = null, bookingCount: Int? = null): JSONObject {
         return JSONObject().apply {
             put("current_location", Utils.getCurrentLocation())
 

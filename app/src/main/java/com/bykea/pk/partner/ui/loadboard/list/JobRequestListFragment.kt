@@ -23,6 +23,8 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.common.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
+import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
@@ -211,26 +213,28 @@ class JobRequestListFragment : Fragment() {
      */
     private fun toggleBottomSheetToolbar(alpha: Float) {
         if (alpha > Constants.BOTTOM_SHEET_ALPHA_VALUE) {
-            bottomSheetToolbarLayout.visibility = View.VISIBLE
-            bottomSheetToolbarDivider.visibility = View.VISIBLE
-            bottomSheetPickDropLayout.visibility = View.VISIBLE
-            bottomSheetPickDropDivider.visibility = View.VISIBLE
-            bottomSheetToolbarLayout.alpha = alpha
-            bottomSheetToolbarDivider.alpha = alpha
-            bottomSheetPickDropLayout.alpha = alpha
-            bottomSheetPickDropDivider.alpha = alpha
+            setVisibility(View.VISIBLE)
+            setAlpha(alpha)
             viewDataBinding.viewmodel!!.isExpended.value = true
         } else {
-            bottomSheetToolbarLayout.visibility = View.GONE
-            bottomSheetToolbarDivider.visibility = View.GONE
-            bottomSheetPickDropLayout.visibility = View.GONE
-            bottomSheetPickDropDivider.visibility = View.GONE
-            bottomSheetToolbarLayout.alpha = alpha
-            bottomSheetToolbarDivider.alpha = alpha
-            bottomSheetPickDropLayout.alpha = alpha
-            bottomSheetPickDropDivider.alpha = alpha
+            setVisibility(View.GONE)
+            setAlpha(alpha)
             viewDataBinding.viewmodel!!.isExpended.value = false
         }
+    }
+
+    private fun setAlpha(alpha: Float) {
+        bottomSheetToolbarLayout?.alpha = alpha
+        bottomSheetToolbarDivider?.alpha = alpha
+        bottomSheetPickDropLayout?.alpha = alpha
+        bottomSheetPickDropDivider?.alpha = alpha
+    }
+
+    private fun setVisibility(visible: Int) {
+        bottomSheetToolbarLayout?.visibility = visible
+        bottomSheetToolbarDivider?.visibility = visible
+        bottomSheetPickDropLayout?.visibility = visible
+        bottomSheetPickDropDivider?.visibility = visible
     }
 
     companion object {

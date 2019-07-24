@@ -84,9 +84,11 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.AddressComponent;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.Result;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -151,6 +153,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
 
+import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 
 
@@ -1343,6 +1346,31 @@ public class Utils {
     public static String formatAddress(String place) {
         return StringUtils.isNotBlank(place) ? place.replace(", Pakistan", "").replace(", Punjab", "")
                 .replace(", Sindh", "").replace(", Islamabad Capital Territory", "").replace(", Islamic Republic of Pakistan", "") : StringUtils.EMPTY;
+    }
+
+
+    /**
+     * Cook displayable address from the response of GeoCode API
+     *
+     * @param result GeoCode API response
+     * @return Displayable Address
+     */
+    public static String cookAddressGeoCodeResult(Result result) {
+        StringBuilder builder = new StringBuilder(EMPTY_STRING);
+        boolean isFirstComp = true;
+        for (AddressComponent comp : result.getAddress_components()) {
+            String name = comp.getLong_name();
+            List<String> types = comp.getTypes();
+            if (!name.isEmpty()) {
+                if (types.contains("premise") || types.contains("street_number") || types.contains("route")
+                        || types.contains("sublocality_level_3") || types.contains("sublocality_level_2")
+                        || types.contains("sublocality_level_1") || types.contains("locality")) {
+                    builder.append(isFirstComp ? name : ", " + name);
+                    isFirstComp = false;
+                }
+            }
+        }
+        return builder.toString();
     }
 
     /**

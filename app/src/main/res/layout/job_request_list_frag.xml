@@ -40,10 +40,10 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_circle_white_arrow"
                 android:visibility="@{viewmodel.isExpended ? View.GONE: viewmodel.empty ? View.GONE : View.VISIBLE}"
                 app:layout_anchor="@+id/view1"
-                app:layout_anchorGravity="top|center" />
+                app:layout_anchorGravity="top|center"
+                app:srcCompat="@drawable/ic_circle_white_arrow" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
