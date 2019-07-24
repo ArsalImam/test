@@ -49,6 +49,7 @@ class JobRequestListFragment : Fragment() {
 
     var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
     var layoutParamRL: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+    var isExpanded = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
@@ -105,7 +106,7 @@ class JobRequestListFragment : Fragment() {
                 override fun onRefreshClicked() {
                     Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_REFRESH,
-                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_REFRESH),
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_REFRESH,null,listAdapter.count),
                             true)
                     viewDataBinding.viewmodel!!.refresh()
                 }
@@ -127,14 +128,17 @@ class JobRequestListFragment : Fragment() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
-                            Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
-                                    Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN,
-                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN, null, listAdapter.count),
-                                    true)
-
+                            if (isExpanded) {
+                                isExpanded = false
+                                Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
+                                        Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN,
+                                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN, null, listAdapter.count),
+                                        true)
+                            }
                             viewDataBinding.bookingsList.smoothScrollToPosition(0)
                         }
                         BottomSheetBehavior.STATE_EXPANDED -> {
+                            isExpanded = true
                             Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                                     Constants.AnalyticsEvents.ON_LB_SWIPE_UP,
                                     AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_SWIPE_UP, null, listAdapter.count),

@@ -20,7 +20,9 @@ object AnalyticsEventsJsonObjects {
 
             when (eventLog) {
                 Constants.AnalyticsEvents.ON_LB_SWIPE_UP,
-                Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN -> put("bookings_count", bookingCount)
+                Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN,
+                Constants.AnalyticsEvents.ON_LB_REFRESH -> put("bookings_count", bookingCount)
+
 
                 Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL -> {
                     put("cod_amount", jobRequest?.cod_value)
