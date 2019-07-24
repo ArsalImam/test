@@ -397,7 +397,6 @@
                 android:paddingLeft="@dimen/_10sdp"
                 android:paddingEnd="@dimen/_10sdp"
                 android:paddingRight="@dimen/_10sdp"
-                android:visibility="gone"
                 android:src="@drawable/ic_pencil_icon" />
 
             <View
