@@ -395,6 +395,7 @@
         <item>Main haadse main manavas tha.</item>
     </string-array>
 
-    <string name="wait_for_zendesk">انتظار فرمائیں</string>
+    <string name="wait_for_zendesk">\u0020انتظار فرمائیں\u0020</string>
+    <string name="wait_for_zendesk_for_duration">\u0020انتظار کیجیے ، آپ کی ریکویسٹ کے لیے 2–1 منٹ درکار ہیں\u0020</string>
 
 </resources>
