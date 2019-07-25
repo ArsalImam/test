@@ -907,6 +907,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (Utils.useServiceIconProvidedByAPI(callData.getCallType())) {
                 icon = callData.getIcon();
             }
+            //Driver can not change drop-off for the loadboard jobs
+            if (Utils.isLoadboardService(callData.getCallType()))
+                ivAddressEdit.setVisibility(View.GONE);
+
             //TODO: Rendering service icon sent from server in disabled, until icons get updated on server
             if (false && StringUtils.isNotBlank(icon)) {
                 Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
