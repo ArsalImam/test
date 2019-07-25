@@ -1050,7 +1050,7 @@ public class Utils {
         return Math.round(level);
     }
 
-    public static String getDeviceId(Context context) {
+    public static String getImei(Context context) {
         String identifier = StringUtils.EMPTY;
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null)
@@ -3213,6 +3213,16 @@ public class Utils {
         Timestamp ts = new Timestamp(date.getTime());
         Format format = new SimpleDateFormat("mm:ss");
         return format.format(ts);
+    }
+
+    /**
+     * Get the Android ID of current device
+     *
+     * @param context App Context
+     * @return Android ID
+     */
+    public static String getDeviceId(Context context) {
+        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
 }
