@@ -15,8 +15,10 @@ import com.bykea.pk.partner.databinding.JobRequestDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.ui.loadboard.common.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
@@ -64,6 +66,10 @@ class JobRequestDetailActivity : BaseActivity() {
             })
 
             acceptBookingCommand.observe(this@JobRequestDetailActivity, Observer {
+                Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT,
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, job.value),
+                        true)
                 ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity, false)
             })
 
@@ -80,7 +86,7 @@ class JobRequestDetailActivity : BaseActivity() {
                 if (url != null) {
                     voiceClipPlayDownload(url)
                 } else {
-                    binding.viewmodel!!.showSnackbarMessage(R.string.no_voice_note_available)
+                    binding.viewmodel?.showSnackbarMessage(R.string.no_voice_note_available)
                 }
             }
 
@@ -93,21 +99,36 @@ class JobRequestDetailActivity : BaseActivity() {
                 }
             }
 
-            override fun onNavigateToMap(pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double) {
+            override fun onNavigateToMap(isPickUp: Boolean, pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double) {
+                if (isPickUp) //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE CURRENT TO PICKUP
+                    Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                            Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION,
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.job?.value),
+                            true)
+                else //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE PICKUP TO DROPOFF
+                    Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                            Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION,
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.job?.value),
+                            true)
+
                 Utils.navigateToGoogleMap(this@JobRequestDetailActivity, pickLat, pickLng, dropLat, dropLng)
             }
 
             override fun onAcceptBooking() {
-                binding.viewmodel!!.accept()
+                binding.viewmodel?.accept()
             }
 
             override fun onBackClicked() {
+                Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL,
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.job?.value),
+                        true)
                 finish()
             }
         }
         binding.lifecycleOwner = this
         bookingId = intent.getLongExtra(EXTRA_BOOKING_ID, 0)
-        binding.viewmodel!!.start(bookingId)
+        binding.viewmodel?.start(bookingId)
 
         try {
             loadBoardMapFragment.onCreate(savedInstanceState);
@@ -154,14 +175,14 @@ class JobRequestDetailActivity : BaseActivity() {
                     mediaPlayer = MediaPlayer()
                     mediaPlayer?.setDataSource(FileInputStream(obj).fd);
                     mediaPlayer?.prepare()
-                    progressBarForAudioPlay.setMax(mediaPlayer!!.duration);
+                    progressBarForAudioPlay.setMax(mediaPlayer?.duration!!);
                     mediaPlayer?.start()
                     startPlayProgressUpdater()
                 }
 
                 override fun fail(errorCode: Int, errorMsg: String) {
                     Dialogs.INSTANCE.dismissDialog()
-                    binding.viewmodel!!.showSnackbarMessage(R.string.no_voice_note_available)
+                    binding.viewmodel?.showSnackbarMessage(R.string.no_voice_note_available)
                 }
             })
         }
@@ -187,8 +208,8 @@ class JobRequestDetailActivity : BaseActivity() {
 
     private fun bitmapDescriptorFromVector(context: Context?, vectorResId: Int): BitmapDescriptor {
         val vectorDrawable = ContextCompat.getDrawable(context!!, vectorResId)
-        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
-        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        vectorDrawable?.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
+        val bitmap = Bitmap.createBitmap(vectorDrawable?.intrinsicWidth!!, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
@@ -263,8 +284,8 @@ class JobRequestDetailActivity : BaseActivity() {
     }
 
     fun startPlayProgressUpdater() {
-        progressBarForAudioPlay.setProgress(mediaPlayer!!.currentPosition);
-        if (mediaPlayer!!.isPlaying) {
+        progressBarForAudioPlay.setProgress(mediaPlayer?.currentPosition!!);
+        if (mediaPlayer?.isPlaying!!) {
             val notification = Runnable {
                 startPlayProgressUpdater();
             }
