@@ -39,6 +39,7 @@ public class ContactUsFragment extends Fragment {
     private HomeActivity mCurrentActivity;
     private Unbinder unbinder;
     private JobsRepository jobsRepository;
+    private boolean doubleTap = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,26 +99,29 @@ public class ContactUsFragment extends Fragment {
         if (contactNumbers == null) {
             return;
         }
-        switch (view.getId()) {
-            case R.id.supportCall:
-                if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
-                    Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
-                break;
-            case R.id.submittedComplains: {
-                if (AppPreferences.isEmailVerified()) {
-                    checkStatusForZendeskSDK();
-                } else {
-                    checkIsEmailUpdatedFromRemoteDataSource();
+        if (!doubleTap) {
+            doubleTap = true;
+            switch (view.getId()) {
+                case R.id.supportCall:
+                    if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
+                        Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
+                    break;
+                case R.id.submittedComplains: {
+                    if (AppPreferences.isEmailVerified()) {
+                        checkStatusForZendeskSDK();
+                    } else {
+                        checkIsEmailUpdatedFromRemoteDataSource();
+                    }
                 }
+                break;
+                case R.id.reportComplain: {
+                    ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
+                }
+                break;
+                case R.id.bankAccountNumber:
+                    startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
+                    break;
             }
-                break;
-            case R.id.reportComplain: {
-                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
-            }
-                break;
-            case R.id.bankAccountNumber:
-                startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
-                break;
         }
     }
 
@@ -171,5 +175,11 @@ public class ContactUsFragment extends Fragment {
                 }
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        doubleTap = false;
     }
 }
