@@ -3154,6 +3154,6 @@ public class Utils {
      * Setup Zendesk Identity - For JWT Authorization
      */
     public static void setZendeskIdentity() {
-        Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverEmail()));
+        Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverId()));
     }
 }
