@@ -29,9 +29,11 @@ class ComplaintListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         val binding: ActivityComplainListBinding = DataBindingUtil.setContentView(this, R.layout.activity_complain_list)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        toolBar.setNavigationOnClickListener { onBackPressed() }
         toolbar_title.text = getString(R.string.title_new_complain)
 
         binding.lifecycleOwner = this
@@ -47,16 +49,5 @@ class ComplaintListActivity : BaseActivity() {
                 this.start()
             }
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.getItemId()
-
-        if (id == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
     }
 }

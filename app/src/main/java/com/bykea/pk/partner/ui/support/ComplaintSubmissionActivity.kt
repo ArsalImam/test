@@ -50,10 +50,11 @@ class ComplaintSubmissionActivity : BaseActivity() {
         mCurrentActivity = this
         jobRespository = Injection.provideJobsRepository(this)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        toolBar.setNavigationOnClickListener { onBackPressed() }
         if (intent?.extras != null) {
             if (intent.extras.containsKey(INTENT_TRIP_HISTORY_DATA))
                 tripHistoryDate = intent.getSerializableExtra(INTENT_TRIP_HISTORY_DATA) as TripHistoryData
@@ -86,20 +87,6 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 .commit()
     }
 
-    /**
-     * Trigger When Toolbar Back Button Is Tapped
-     */
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.getItemId()
-
-        if (id == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 1 && !isTicketSubmitted) {
             supportFragmentManager.popBackStack()
@@ -118,7 +105,6 @@ class ComplaintSubmissionActivity : BaseActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         startActivityForResult(mGoogleSignInClient?.getSignInIntent(), RC_SIGN_IN)
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
