@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.JobRequestsDataSource
 import com.bykea.pk.partner.dal.source.JobRequestsRepository
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.databinding.FragmentComplainReasonBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
@@ -38,12 +40,12 @@ class ComplainReasonFragment : Fragment() {
     private lateinit var financeComplainReasonsList: Array<String>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_complain_reason, container, false)
+        val binding: FragmentComplainReasonBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_complain_reason, container, false)
 
         mCurrentActivity = activity as ComplaintSubmissionActivity?
         jobRequestsRepository = Injection.provideBookingsRepository(mCurrentActivity!!)
 
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
