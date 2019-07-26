@@ -54,6 +54,11 @@ class ComplainDetailFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        editText_lay.setOnClickListener {  }
+    }
+
     /**
      * Check Is Details Are Empty Or Not
      */
