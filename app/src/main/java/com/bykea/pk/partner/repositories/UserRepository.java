@@ -8,8 +8,8 @@ import android.util.Log;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
-import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
 import com.bykea.pk.partner.models.data.PilotData;
@@ -216,6 +216,7 @@ public class UserRepository {
 
     /**
      * USE WHEN YOU WANT TO DISMISS WHEN THE SUCCESSFUL DATA IS RETRIEVE FOR THE ACTIVE TRIP
+     *
      * @param context : Calling Activity
      * @param handler : Override in Calling Acitivity
      */

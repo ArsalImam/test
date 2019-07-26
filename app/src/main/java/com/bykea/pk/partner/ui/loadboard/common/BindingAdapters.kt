@@ -6,7 +6,7 @@ import android.widget.ListView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.JobRequest
+import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.widgets.FontTextView
@@ -33,7 +33,7 @@ object BindingAdapters {
 
     @BindingAdapter("app:items")
     @JvmStatic
-    fun setItems(listView: ListView, items: List<JobRequest>) {
+    fun setItems(listView: ListView, items: List<Job>) {
         with(listView.adapter as JobRequestListAdapter) {
             replaceData(items)
         }

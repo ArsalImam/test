@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 36
-        versionName "5.6"
+        versionCode 40
+        versionName "5.9"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -163,7 +163,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
     implementation 'com.elvishew:xlog:1.4.1'
-    implementation 'com.facebook.android:facebook-android-sdk:4.19.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.42.0'
     implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
     implementation 'com.google.android.exoplayer:exoplayer:r1.5.3'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'

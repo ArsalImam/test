@@ -25,7 +25,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;

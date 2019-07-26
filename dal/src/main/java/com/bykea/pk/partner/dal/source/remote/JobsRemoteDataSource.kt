@@ -1,19 +1,21 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import android.util.Log
-import com.bykea.pk.partner.dal.source.JobRequestsDataSource
-import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequestRequest
-import com.bykea.pk.partner.dal.source.remote.response.AcceptJobRequestResponse
+import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.response.AcceptJobResponse
+import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class JobRequestsRemoteDataSource {
+class JobsRemoteDataSource {
 
     /**
-     * Fetch Booking listing from remote data source
+     * Fetch job listing from remote data source
      *
      * @param driverId Driver Id
      * @param token User access token
@@ -22,9 +24,9 @@ class JobRequestsRemoteDataSource {
      * @param limit Number of items to be fetched
      * @param callback Callback to be executed on response from remote data source
      */
-    fun getJobRequests(driverId: String, token: String, lat: Double, lng: Double, serviceCode: Int?, limit: Int, callback: JobRequestsDataSource.LoadJobRequestsCallback) {
+    fun getJobs(driverId: String, token: String, lat: Double, lng: Double, serviceCode: Int?, limit: Int, callback: JobsDataSource.LoadJobsCallback) {
 
-        Backend.loadboard.getJobRequestList(driverId, token, lat, lng, serviceCode).enqueue(object : Callback<GetJobRequestListResponse> {
+        Backend.loadboard.getJobs(driverId, token, lat, lng, serviceCode).enqueue(object : Callback<GetJobRequestListResponse> {
 
             override fun onFailure(call: Call<GetJobRequestListResponse>, t: Throwable) {
                 callback.onDataNotAvailable(t.message)
@@ -34,8 +36,8 @@ class JobRequestsRemoteDataSource {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.isSuccess()) {
-                            Log.v(JobRequestsRemoteDataSource::class.java.simpleName, "data ${it.data}")
-                            callback.onJobRequestsLoaded(it.data)
+                            Log.v(JobsRemoteDataSource::class.java.simpleName, "data ${it.data}")
+                            callback.onJobsLoaded(it.data)
                         } else {
                             callback.onDataNotAvailable(it.message)
                         }
@@ -48,7 +50,7 @@ class JobRequestsRemoteDataSource {
     }
 
     /**
-     * Fetch Booking details from remote data source
+     * Fetch job details from remote data source
      *
      * @param bookingId Booking id whose detail to be fetched
      * @param driverId Driver Id
@@ -57,9 +59,9 @@ class JobRequestsRemoteDataSource {
      * @param lng User's location longitude
      * @param callback Callback to be executed on response from remote data source
      */
-    fun getJobRequest(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobRequestsDataSource.GetJobRequestCallback) {
+    fun getJob(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.GetJobRequestCallback) {
 
-        Backend.loadboard.getJobRequestDetail(driverId, token, bookingId, lat, lng).enqueue(object : Callback<GetJobRequestDetailResponse> {
+        Backend.loadboard.getJob(driverId, token, bookingId, lat, lng).enqueue(object : Callback<GetJobRequestDetailResponse> {
 
             override fun onFailure(call: Call<GetJobRequestDetailResponse>, t: Throwable) {
                 callback.onDataNotAvailable(t.message)
@@ -68,8 +70,7 @@ class JobRequestsRemoteDataSource {
             override fun onResponse(call: Call<GetJobRequestDetailResponse>, response: Response<GetJobRequestDetailResponse>) {
                 response.body()?.let {
                     if (response.isSuccessful && it.isSuccess()) {
-                        Log.v(JobRequestsRemoteDataSource::class.java.simpleName, "data ${it.data}")
-                        callback.onJobRequestLoaded(it.data)
+                        callback.onJobLoaded(it.data)
                     } else {
                         callback.onDataNotAvailable(it.message)
                     }
@@ -78,20 +79,19 @@ class JobRequestsRemoteDataSource {
         })
     }
 
-
     /**
-     * Accept Job Request
+     * Accept job request
      *
      * @param jobRequestId Id of Booking to be accepted
      */
-    fun acceptJobRequest(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobRequestsDataSource.AcceptJobRequestCallback) {
-        Backend.loadboard.acceptJobRequest(jobRequestId, driverId, token, AcceptJobRequestRequest(lat, lng)).enqueue(object : Callback<AcceptJobRequestResponse> {
+    fun acceptJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobRequestCallback) {
+        Backend.loadboard.acceptJob(jobRequestId, driverId, token, AcceptJobRequest(lat, lng)).enqueue(object : Callback<AcceptJobResponse> {
 
-            override fun onFailure(call: Call<AcceptJobRequestResponse>, t: Throwable) {
+            override fun onFailure(call: Call<AcceptJobResponse>, t: Throwable) {
                 callback.onJobRequestAcceptFailed(t.message, false)
             }
 
-            override fun onResponse(call: Call<AcceptJobRequestResponse>, response: Response<AcceptJobRequestResponse>) {
+            override fun onResponse(call: Call<AcceptJobResponse>, response: Response<AcceptJobResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.isSuccess()) {
@@ -103,6 +103,35 @@ class JobRequestsRemoteDataSource {
                 } else {
                     callback.onJobRequestAcceptFailed("Booking is no longer available", true)
                 }
+            }
+        })
+    }
+
+    /**
+     * Finish job to remote data source
+     *
+     * @param jobId Job Id
+     * @param requestBody Request body
+     * @param callback Response callback
+     */
+    fun finishJob(jobId: String, requestBody: FinishJobRequest, callback: JobsDataSource.FinishJobCallback) {
+        Backend.telos.finishJob(jobId, requestBody).enqueue(object : Callback<FinishJobResponse> {
+            override fun onResponse(call: Call<FinishJobResponse>, response: Response<FinishJobResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.isSuccess()) {
+                            callback.onJobFinished(it.data)
+                        } else {
+                            callback.onJobFinishFailed(it.message)
+                        }
+                    }
+                } else {
+                    callback.onJobFinishFailed(response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<FinishJobResponse>, t: Throwable) {
+                callback.onJobFinishFailed(t.message)
             }
         })
     }

@@ -25,6 +25,7 @@ import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
+import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
@@ -285,6 +286,9 @@ interface IRestClient {
     @GET(ApiTags.PLACES_GEOCODER_EXT_URL)
     Call<GeocoderApi> callGeoCoderApi(@Query("latlng") String latLng,
                                       @Query("key") String key);
+
+    @GET(ApiTags.PLACES_GEOCODER_EXT_URL)
+    Call<GeoCodeApiResponse> callGeoCoderApiWithPlaceId(@Query("place_id") String placeId, @Query("key") String key);
 
     @FormUrlEncoded
     @POST(ApiTags.CHANGE_PIN)

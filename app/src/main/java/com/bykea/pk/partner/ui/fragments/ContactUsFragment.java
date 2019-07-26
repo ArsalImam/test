@@ -3,13 +3,12 @@ package com.bykea.pk.partner.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
@@ -106,7 +105,8 @@ public class ContactUsFragment extends Fragment {
         }
         switch (view.getId()) {
             case R.id.supportCall:
-                Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
+                if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
+                    Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
                 break;
             case R.id.supportEmail:
 //                Utils.contactViaEmail(mCurrentActivity, contactNumbers.getData().getSupports().getEmail());
