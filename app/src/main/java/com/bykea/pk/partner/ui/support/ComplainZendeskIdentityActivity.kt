@@ -94,8 +94,8 @@ class ComplainZendeskIdentityActivity : BaseActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         clearTimer()
     }
 }
