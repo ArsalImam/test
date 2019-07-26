@@ -15,11 +15,11 @@ interface JobRequestDetailActionsListener {
 
     /**
      * On navigation to Google map for route
-     *
+     * @param isPickUp Called For Current Location To PickUp Or PickUp to DropOff
      * @param lat Latitude
      * @param lng Longitude
      */
-    fun onNavigateToMap(pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double)
+    fun onNavigateToMap(isPickUp: Boolean, pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double)
 
     /**
      * On user attempt to accept booking

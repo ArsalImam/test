@@ -26,6 +26,8 @@
 -keep class org.jsoup.** { *; }
 -keep class com.github.jd.** { *; }
 -keep class com.bykea.pk.partner.models.** { *; }
+-keep class com.bykea.pk.partner.utils.audio.** { *; }
+-keep class com.bykea.pk.partner.dal.** { *; }
 -keep class top.oply.opuslib.** { *; }
 -keep class java.io.** { *; }
 -keep class id.zelory.** { *; }
@@ -79,6 +81,20 @@
 -keepnames class * implements android.os.Parcelable {
         public static final ** CREATOR;
 }
+
+# Class names are needed in reflection
+-keepnames class com.amazonaws.**
+-keepnames class com.amazon.**
+# Request handlers defined in request.handlers
+-keep class com.amazonaws.services.**.*Handler
+# The following are referenced but aren't required to run
+-dontwarn com.fasterxml.jackson.**
+-dontwarn org.apache.commons.logging.**
+# Android 6.0 release removes support for the Apache HTTP client
+-dontwarn org.apache.http.**
+# The SDK has several references of Apache HTTP client
+-dontwarn com.amazonaws.http.**
+-dontwarn com.amazonaws.metrics.**
 
 ##PROGUARD RULES FOR ZENDESK
 

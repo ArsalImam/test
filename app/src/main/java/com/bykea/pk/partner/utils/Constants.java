@@ -2,6 +2,7 @@ package com.bykea.pk.partner.utils;
 
 
 import com.bykea.pk.partner.BuildConfig;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
@@ -271,6 +272,16 @@ public class Constants {
         public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
         public final static String ON_RIDE_COMPLETE = "RideComplete";
 
+        public final static String ON_LB_SWIPE_UP = EYE_BALL + "LoadBoard-Swipe-Up";
+        public final static String ON_LB_REFRESH = EYE_BALL + "LoadBoard-Refreshed";
+        public final static String ON_LB_BACK_SWIPE_DOWN = EYE_BALL + "LoadBoard-Swipe-Down";
+
+        public final static String ON_LB_BOOKING_DETAIL = EYE_BALL + "LoadBoard-Booking-Detail";
+        public final static String ON_LB_BACK_FROM_BOOKING_DETAIL = EYE_BALL + "LoadBoard-Back-To-List";
+        public final static String ON_LB_PICKUP_DIRECTION = EYE_BALL + "LoadBoard-Direction-Pick";
+        public final static String ON_LB_DROPOFF_DIRECTION = EYE_BALL + "LoadBoard-Direction-Drop";
+        public final static String ON_LB_BOOKING_ACCEPT = EYE_BALL + "LoadBoard-Booking-Accept";
+//        public final static String ON_LB_TAKEN = EYE_BALL + "LoadBoard-Taken";
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
 //        public final static String ON_FEEDBACK = EYE_BALL+ REPLACE   + "-Feedback";//already logged against passenger
@@ -496,6 +507,9 @@ public class Constants {
         public static String BUCKET_NAME = "loadboard";
     }
 
+    /**
+     * Zendesk SDK Configurations
+     */
     public static class ZendeskConfigurations {
         public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
         public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
@@ -505,6 +519,20 @@ public class Constants {
 
     }
 
+    /**
+     * Firebase Analytics Configuration
+     * Event Configurations Limits
+     */
+    public static class FirebaseAnalyticsConfigLimits {
+        public static final int EVENT_NAME_LENGTH = 40;
+        public static final int EVENT_PARAMETER_KEY_LENGTH = 40;
+        public static final int EVENT_MAX_STRING_VALUES = 10;
+        public static final int EVENT_MAX_NUMERIC_VALUES = 40;
+    }
+
+    /**
+     * Zendesk Custom Fields
+     */
     public static class ZendeskCustomFields {
         public static long Subject = 360020102491L;
         public static long Description = 360020102511L;
