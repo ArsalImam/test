@@ -96,32 +96,30 @@ public class ContactUsFragment extends Fragment {
 
     @OnClick({R.id.supportCall, R.id.submittedComplains, R.id.reportComplain, R.id.bankAccountNumber})
     public void onClick(View view) {
-        if (contactNumbers == null) {
+        if (contactNumbers == null || doubleTap) {
             return;
         }
-        if (!doubleTap) {
-            doubleTap = true;
-            switch (view.getId()) {
-                case R.id.supportCall:
-                    if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
-                        Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
-                    break;
-                case R.id.submittedComplains: {
-                    if (AppPreferences.isEmailVerified()) {
-                        checkStatusForZendeskSDK();
-                    } else {
-                        checkIsEmailUpdatedFromRemoteDataSource();
-                    }
-                }
+        doubleTap = true;
+        switch (view.getId()) {
+            case R.id.supportCall:
+                if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
+                    Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
                 break;
-                case R.id.reportComplain: {
-                    ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
+            case R.id.submittedComplains: {
+                if (AppPreferences.isEmailVerified()) {
+                    checkStatusForZendeskSDK();
+                } else {
+                    checkIsEmailUpdatedFromRemoteDataSource();
                 }
-                break;
-                case R.id.bankAccountNumber:
-                    startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
-                    break;
             }
+            break;
+            case R.id.reportComplain: {
+                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
+            }
+            break;
+            case R.id.bankAccountNumber:
+                startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
+                break;
         }
     }
 
