@@ -9,7 +9,7 @@
 
         <variable
             name="booking"
-            type="com.bykea.pk.partner.dal.JobRequest" />
+            type="com.bykea.pk.partner.dal.Job" />
 
         <variable
             name="listener"

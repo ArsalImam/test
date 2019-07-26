@@ -84,9 +84,11 @@ import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
+import com.bykea.pk.partner.models.response.AddressComponent;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.Result;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -151,6 +153,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
 
+import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 
 
@@ -1047,7 +1050,7 @@ public class Utils {
         return Math.round(level);
     }
 
-    public static String getDeviceId(Context context) {
+    public static String getImei(Context context) {
         String identifier = StringUtils.EMPTY;
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null)
@@ -1343,6 +1346,31 @@ public class Utils {
     public static String formatAddress(String place) {
         return StringUtils.isNotBlank(place) ? place.replace(", Pakistan", "").replace(", Punjab", "")
                 .replace(", Sindh", "").replace(", Islamabad Capital Territory", "").replace(", Islamic Republic of Pakistan", "") : StringUtils.EMPTY;
+    }
+
+
+    /**
+     * Cook displayable address from the response of GeoCode API
+     *
+     * @param result GeoCode API response
+     * @return Displayable Address
+     */
+    public static String cookAddressGeoCodeResult(Result result) {
+        StringBuilder builder = new StringBuilder(EMPTY_STRING);
+        boolean isFirstComp = true;
+        for (AddressComponent comp : result.getAddress_components()) {
+            String name = comp.getLong_name();
+            List<String> types = comp.getTypes();
+            if (!name.isEmpty()) {
+                if (types.contains("premise") || types.contains("street_number") || types.contains("route")
+                        || types.contains("sublocality_level_3") || types.contains("sublocality_level_2")
+                        || types.contains("sublocality_level_1") || types.contains("locality")) {
+                    builder.append(isFirstComp ? name : ", " + name);
+                    isFirstComp = false;
+                }
+            }
+        }
+        return builder.toString();
     }
 
     /**
@@ -1718,31 +1746,80 @@ public class Utils {
     }
 
 
+    /**
+     * Call To Trigger Firebase Event
+     *
+     * @param context : Calling Activity
+     * @param userId  : AppPreference Driver Id
+     * @param EVENT   : Firebase Event Name
+     * @param data    : JSON Object To Parse Into Bundle
+     */
     public static void logFireBaseEvent(Context context, String userId, String EVENT, JSONObject data) {
         EVENT = EVENT.toLowerCase().replace("-", "_").replace(" ", "_");
-        if (EVENT.length() > 40) {
-            EVENT = EVENT.substring(EVENT.length() - 40, EVENT.length());
-        }
-        int count = 0;
+        if (EVENT.length() > Constants.FirebaseAnalyticsConfigLimits.EVENT_NAME_LENGTH)
+            EVENT = EVENT.substring(0, EVENT.length() - Constants.FirebaseAnalyticsConfigLimits.EVENT_NAME_LENGTH);
+
+        int stringParametersCounts = 0, numericParametersCounts = 0;
         Bundle bundle = new Bundle();
         Iterator iterator = data.keys();
         while (iterator.hasNext()) {
-            //Firebase can have max 10 TEXT properties
-            if (count == 10) {
-                break;
-            }
-            count++;
             String key = (String) iterator.next();
-            String value = null;
+            Object value;
             try {
-                value = data.getString(key);
+                value = data.get(key);
+
+                key = key.toLowerCase().replace("-", "_").replace(" ", "_");
+                if (key.length() > Constants.FirebaseAnalyticsConfigLimits.EVENT_PARAMETER_KEY_LENGTH)
+                    key = key.substring(0, key.length() - Constants.FirebaseAnalyticsConfigLimits.EVENT_PARAMETER_KEY_LENGTH);
+
+                if (value instanceof String) {
+                    if (stringParametersCounts == Constants.FirebaseAnalyticsConfigLimits.EVENT_MAX_STRING_VALUES)
+                        continue;
+                    bundle.putString(key, value.toString());
+                    stringParametersCounts++;
+                } else if (numericParametersCounts < Constants.FirebaseAnalyticsConfigLimits.EVENT_MAX_NUMERIC_VALUES) {
+                    if (value instanceof Integer) {
+                        bundle.putInt(key, ((Number) value).intValue());
+                        numericParametersCounts++;
+                    } else if (value instanceof Long) {
+                        bundle.putLong(key, ((Number) value).longValue());
+                        numericParametersCounts++;
+                    } else if (value instanceof Float) {
+                        bundle.putFloat(key, ((Number) value).floatValue());
+                        numericParametersCounts++;
+                    } else if (value instanceof Double) {
+                        bundle.putDouble(key, ((Number) value).doubleValue());
+                        numericParametersCounts++;
+                    } else if (value instanceof Boolean) {
+                        bundle.putInt(key, ((Boolean) value) ? 1 : 0);
+                        numericParametersCounts++;
+                    }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            key = key.toLowerCase().replace("-", "_").replace(" ", "_");
-            bundle.putString(key, value);
         }
-        FirebaseAnalytics.getInstance(context).setUserId(userId);
+
+        FirebaseAnalytics.getInstance(context).setUserId(AppPreferences.getPilotData().getId());
+        FirebaseAnalytics.getInstance(context).setUserProperty("driver_id", AppPreferences.getPilotData().getId());
+
+        // SET PASSENGER_ID AS USER PROPERTY WHEN USER_ID IS NOT EQUALS TO DRIVER_ID
+        if (!userId.equals(AppPreferences.getPilotData().getId()))
+            FirebaseAnalytics.getInstance(context).setUserProperty("passenger_id", userId);
+
+        FirebaseAnalytics.getInstance(context).setUserProperty("cash_in_hand", String.valueOf(AppPreferences.getCashInHands()));
+        FirebaseAnalytics.getInstance(context).setUserProperty("device_imei", Utils.getDeviceId(context));
+        FirebaseAnalytics.getInstance(context).setUserProperty("driver_name", AppPreferences.getPilotData().getFullName());
+        FirebaseAnalytics.getInstance(context).setUserProperty("is_cash", AppPreferences.getIsCash() ? "1" : "0");
+        FirebaseAnalytics.getInstance(context).setUserProperty("service_type", AppPreferences.getPilotData().getService_type());
+        FirebaseAnalytics.getInstance(context).setUserProperty("singup_city", AppPreferences.getPilotData().getCity().getName());
+        if (AppPreferences.getDriverDestination() != null) {
+            FirebaseAnalytics.getInstance(context).setUserProperty("dd_lat", String.valueOf(AppPreferences.getDriverDestination().latitude));
+            FirebaseAnalytics.getInstance(context).setUserProperty("dd_lng", String.valueOf(AppPreferences.getDriverDestination().longitude));
+        }
+
         FirebaseAnalytics.getInstance(context).logEvent(EVENT, bundle);
     }
 
@@ -2031,6 +2108,7 @@ public class Utils {
 
     /**
      * Return resource id of image for service icon on basis of call type
+     *
      * @param callData Call data
      * @return Resource id of service icon image
      */
@@ -3144,6 +3222,16 @@ public class Utils {
         Timestamp ts = new Timestamp(date.getTime());
         Format format = new SimpleDateFormat("mm:ss");
         return format.format(ts);
+    }
+
+    /**
+     * Get the Android ID of current device
+     *
+     * @param context App Context
+     * @return Android ID
+     */
+    public static String getDeviceId(Context context) {
+        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
 }

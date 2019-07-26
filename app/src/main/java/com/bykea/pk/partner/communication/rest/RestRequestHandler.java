@@ -33,6 +33,7 @@ import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
+import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
@@ -1523,6 +1524,39 @@ public class RestRequestHandler {
             public void onFailure(Call<GeocoderApi> call, Throwable t) {
                 AppPreferences.setGeoCoderApiKeyRequired(true);
                 Utils.redLog("GeoCode", t.getMessage() + "");
+            }
+        });
+    }
+
+    /**
+     * Call Geo Code Api via Place Id
+     *
+     * @param placeId       Place Id
+     * @param context       Caller context
+     * @param mDataCallback Result callback
+     */
+    public void callGeoCodeApiWithPlaceId(final String placeId, Context context, final IResponseCallback mDataCallback) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+        Call<GeoCodeApiResponse> call = restClient.callGeoCoderApiWithPlaceId(placeId, Utils.getApiKeyForGeoCoder());
+        call.enqueue(new Callback<GeoCodeApiResponse>() {
+            @Override
+            public void onResponse(Call<GeoCodeApiResponse> call, Response<GeoCodeApiResponse> geocoderApiResponse) {
+                if (geocoderApiResponse != null && geocoderApiResponse.isSuccessful()
+                        && geocoderApiResponse.body() != null
+                        && geocoderApiResponse.body().getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
+                        && geocoderApiResponse.body().getResults().size() > 0) {
+                    mDataCallback.onResponse(geocoderApiResponse.body());
+                } else {
+                    mDataCallback.onError(0, "" +
+                            mContext.getString(R.string.error_try_again) + " ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeoCodeApiResponse> call, Throwable t) {
+                mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                        mContext.getString(R.string.error_try_again) + " ");
             }
         });
     }
