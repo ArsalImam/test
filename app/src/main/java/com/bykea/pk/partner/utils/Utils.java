@@ -2033,6 +2033,7 @@ public class Utils {
 
     /**
      * Return resource id of image for service icon on basis of call type
+     *
      * @param callData Call data
      * @return Resource id of service icon image
      */
@@ -3110,6 +3111,7 @@ public class Utils {
 
     /**
      * Get Ride Complain Reasons List.
+     *
      * @param context : Calling Activity
      * @return
      */
@@ -3152,6 +3154,6 @@ public class Utils {
      * Setup Zendesk Identity - For JWT Authorization
      */
     public static void setZendeskIdentity() {
-        Zendesk.INSTANCE.setIdentity(new JwtIdentity("5cd9213d2845d53da9479411"));
+        Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverEmail()));
     }
 }
