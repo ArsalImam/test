@@ -1,8 +1,10 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
-import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequestRequest
-import com.bykea.pk.partner.dal.source.remote.response.AcceptJobRequestResponse
+import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.response.AcceptJobResponse
+import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
 import okhttp3.OkHttpClient
@@ -32,7 +34,7 @@ interface Backend {
      * @return Loadboard jobs list
      */
     @GET("/v1/bookings")
-    fun getJobRequestList(
+    fun getJobs(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
             @Query("lat") lat: Double,
@@ -48,7 +50,7 @@ interface Backend {
      * @return Loadboard job details
      */
     @GET("/v1/bookings/{booking_id}")
-    fun getJobRequestDetail(
+    fun getJob(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
             @Path("booking_id") jobRequestId: Long,
@@ -61,13 +63,20 @@ interface Backend {
      * @param token Driver access token
      * @return Loadboard job details
      */
-    @POST("/v1/bookings/{booking_id}/assign")
-    fun acceptJobRequest(
-            @Path("booking_id") bookingId: Long,
+    @POST("/v1/bookings/{job_request_id}/assign")
+    fun acceptJob(
+            @Path("job_request_id") jobId: Long,
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
-            @Body body: AcceptJobRequestRequest): Call<AcceptJobRequestResponse>
+            @Body body: AcceptJobRequest): Call<AcceptJobResponse>
 
+    /**
+     * Driver finishes active job
+     * @param body Body having details of job
+     * @return Server response
+     */
+    @POST("/api/v1/trips/{job_id}/finish")
+    fun finishJob(@Path("job_id") jobId: String, @Body body: FinishJobRequest): Call<FinishJobResponse>
 
     @GET
     fun getMockJobRequestList(
@@ -88,8 +97,16 @@ interface Backend {
 
     companion object {
 
-        val telos by lazy { invoke(BuildConfig.FLAVOR_URL_TELOS) }
-        val loadboard by lazy { invoke(BuildConfig.FLAVOR_URL_LOADBOARD) }
+        var FLAVOR_URL_TELOS: String = ""
+        var FLAVOR_URL_LOADBOARD: String = ""
+
+        val telos by lazy {
+            invoke(if (FLAVOR_URL_TELOS != "") FLAVOR_URL_TELOS else BuildConfig.FLAVOR_URL_TELOS)
+        }
+
+        val loadboard by lazy {
+            invoke(if (FLAVOR_URL_LOADBOARD != "") FLAVOR_URL_LOADBOARD else BuildConfig.FLAVOR_URL_LOADBOARD)
+        }
 
         private val loggingInterceptor = HttpLoggingInterceptor().apply {
             this.level = HttpLoggingInterceptor.Level.BODY

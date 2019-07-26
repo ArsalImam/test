@@ -1,6 +1,6 @@
 package com.bykea.pk.partner.ui.loadboard.list
 
-import com.bykea.pk.partner.dal.JobRequest
+import com.bykea.pk.partner.dal.Job
 
 /**
  * Listener used with data binding to process user actions.
@@ -10,9 +10,9 @@ import com.bykea.pk.partner.dal.JobRequest
 interface JobRequestListItemActionsListener {
 
     /**
-     * On user click the item of Booking listing to navigate to [JobRequest] detail screen
+     * On user click the item of Booking listing to navigate to [Job] detail screen
      *
-     * @param jobRequest [JobRequest] object
+     * @param job [Job] object
      */
-    fun onBookingClicked(jobRequest: JobRequest)
+    fun onBookingClicked(job: Job)
 }

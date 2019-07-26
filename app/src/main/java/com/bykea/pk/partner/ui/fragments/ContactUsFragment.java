@@ -94,7 +94,8 @@ public class ContactUsFragment extends Fragment {
         }
         switch (view.getId()) {
             case R.id.supportCall:
-                Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
+                if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
+                    Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
                 break;
             case R.id.yourComplain:
                 if (AppPreferences.isZendeskSDKReady()) {
