@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.bykea.pk.partner.dal.JobRequest
-import com.bykea.pk.partner.dal.source.JobRequestsDataSource
-import com.bykea.pk.partner.dal.source.JobRequestsRepository
+import com.bykea.pk.partner.dal.Job
+import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.ui.loadboard.common.Event
 import java.util.*
 
@@ -15,10 +15,10 @@ import java.util.*
  *
  * @Author: Yousuf Sohail
  */
-class JobRequestListViewModel internal constructor(private val bookingsRepository: JobRequestsRepository) : ViewModel() {
+class JobRequestListViewModel internal constructor(private val bookingsRepository: JobsRepository) : ViewModel() {
 
-    private val _items = MutableLiveData<List<JobRequest>>().apply { value = emptyList() }
-    val items: LiveData<List<JobRequest>>
+    private val _items = MutableLiveData<List<Job>>().apply { value = emptyList() }
+    val items: LiveData<List<Job>>
         get() = _items
 
     private val _dataLoading = MutableLiveData<Boolean>()
@@ -74,7 +74,7 @@ class JobRequestListViewModel internal constructor(private val bookingsRepositor
     /**
      * Load Booking list from Repository
      *
-     * @param forceUpdate Pass in true to refresh the data in the [JobRequestsDataSource]
+     * @param forceUpdate Pass in true to refresh the data in the [JobsDataSource]
      */
     private fun loadBookings(forceUpdate: Boolean) {
         loadBookings(forceUpdate, true)
@@ -83,7 +83,7 @@ class JobRequestListViewModel internal constructor(private val bookingsRepositor
     /**
      * Open Booking Detail screen. Called by the [JobRequestListAdapter].
      *
-     * @param bookingId [JobRequest] id
+     * @param bookingId [Job] id
      */
     internal fun openBooking(bookingId: Long) {
         _openBookingEvent.value = Event(bookingId)
@@ -92,7 +92,7 @@ class JobRequestListViewModel internal constructor(private val bookingsRepositor
     /**
      * Load Booking list from Repository
      *
-     * @param forceUpdate   Pass in true to refresh the data in the [JobRequestsDataSource]
+     * @param forceUpdate   Pass in true to refresh the data in the [JobsDataSource]
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
     private fun loadBookings(forceUpdate: Boolean, showLoadingUI: Boolean) {
@@ -103,10 +103,10 @@ class JobRequestListViewModel internal constructor(private val bookingsRepositor
             bookingsRepository.refreshJobRequestList()
         }
 
-        bookingsRepository.getJobRequests(object : JobRequestsDataSource.LoadJobRequestsCallback {
-            override fun onJobRequestsLoaded(jobRequests: List<JobRequest>) {
+        bookingsRepository.getJobs(object : JobsDataSource.LoadJobsCallback {
+            override fun onJobsLoaded(jobs: List<Job>) {
                 if (showLoadingUI) _dataLoading.value = false
-                _items.value = ArrayList(jobRequests)
+                _items.value = ArrayList(jobs)
             }
 
             override fun onDataNotAvailable(errorMsg: String?) {
