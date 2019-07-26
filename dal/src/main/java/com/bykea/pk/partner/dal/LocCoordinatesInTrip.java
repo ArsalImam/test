@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.models.data;
+package com.bykea.pk.partner.dal;
 
 public class LocCoordinatesInTrip {
     private String lat;
