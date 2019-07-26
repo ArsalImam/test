@@ -11,8 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.dal.source.JobRequestsDataSource;
-import com.bykea.pk.partner.dal.source.JobRequestsRepository;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -38,7 +38,7 @@ public class ContactUsFragment extends Fragment {
     private ContactNumbersResponse contactNumbers;
     private HomeActivity mCurrentActivity;
     private Unbinder unbinder;
-    private JobRequestsRepository jobRequestsRepository;
+    private JobsRepository jobsRepository;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +55,7 @@ public class ContactUsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (HomeActivity) getActivity();
 
-        jobRequestsRepository = Injection.INSTANCE.provideBookingsRepository(mCurrentActivity);
+        jobsRepository = Injection.INSTANCE.provideJobsRepository((mCurrentActivity));
 
         mCurrentActivity.setToolbarTitle("Contact Us", "رابطہ");
         mCurrentActivity.hideToolbarLogo();
@@ -100,7 +100,8 @@ public class ContactUsFragment extends Fragment {
         }
         switch (view.getId()) {
             case R.id.supportCall:
-                Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
+                if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
+                    Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
                 break;
             case R.id.submittedComplains: {
                 if (AppPreferences.isEmailVerified()) {
@@ -125,7 +126,7 @@ public class ContactUsFragment extends Fragment {
      */
     private void checkIsEmailUpdatedFromRemoteDataSource() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        jobRequestsRepository.checkEmailUpdate(new JobRequestsDataSource.EmailUpdateCheckCallback() {
+        jobsRepository.checkEmailUpdate(new JobsDataSource.EmailUpdateCheckCallback() {
             @Override
             public void onSuccess(boolean isEmailUpdated) {
                 Dialogs.INSTANCE.dismissDialog();

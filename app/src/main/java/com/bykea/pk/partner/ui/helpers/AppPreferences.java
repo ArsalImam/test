@@ -6,8 +6,9 @@ import android.util.Log;
 
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
 import com.bykea.pk.partner.models.data.CitiesData;
-import com.bykea.pk.partner.models.data.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;

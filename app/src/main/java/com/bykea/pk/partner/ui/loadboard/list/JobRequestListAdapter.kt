@@ -5,27 +5,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.databinding.DataBindingUtil
-import com.bykea.pk.partner.dal.JobRequest
+import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.databinding.JobRequestListItemBinding
 
 /**
- * List Adapter for [JobRequest] listing to be shown on Loadboard
+ * List Adapter for [Job] listing to be shown on Loadboard
  *
- * @property jobRequests List of booking
+ * @property jobs List of booking
  * @property bookingsViewModel ViewModel for [JobRequestListFragment]
  */
 class JobRequestListAdapter(
-        private var jobRequests: List<JobRequest>,
+        private var jobs: List<Job>,
         private val bookingsViewModel: JobRequestListViewModel
 ) : BaseAdapter() {
 
-    fun replaceData(jobRequests: List<JobRequest>) {
-        setList(jobRequests)
+    fun replaceData(jobs: List<Job>) {
+        setList(jobs)
     }
 
-    override fun getCount() = jobRequests.size
+    override fun getCount() = jobs.size
 
-    override fun getItem(position: Int) = jobRequests[position]
+    override fun getItem(position: Int) = jobs[position]
 
     override fun getItemId(position: Int) = position.toLong()
 
@@ -44,13 +44,13 @@ class JobRequestListAdapter(
 
         val userActionsListener = object : JobRequestListItemActionsListener {
 
-            override fun onBookingClicked(jobRequest: JobRequest) {
-                bookingsViewModel.openBooking(jobRequest.id)
+            override fun onBookingClicked(job: Job) {
+                bookingsViewModel.openBooking(job.id)
             }
         }
 
         with(binding) {
-            booking = jobRequests[position]
+            booking = jobs[position]
             listener = userActionsListener
             executePendingBindings()
         }
@@ -59,8 +59,8 @@ class JobRequestListAdapter(
     }
 
 
-    private fun setList(jobRequests: List<JobRequest>) {
-        this.jobRequests = jobRequests
+    private fun setList(jobs: List<Job>) {
+        this.jobs = jobs
         notifyDataSetChanged()
     }
 }

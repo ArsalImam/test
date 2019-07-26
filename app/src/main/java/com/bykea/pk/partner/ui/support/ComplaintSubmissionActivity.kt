@@ -4,13 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.source.JobRequestsDataSource
-import com.bykea.pk.partner.dal.source.JobRequestsRepository
+import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
@@ -35,7 +34,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
     private lateinit var binding: ActivityProblemBinding
     private lateinit var mCurrentActivity: ComplaintSubmissionActivity
     private var fragmentManager: FragmentManager? = null
-    private lateinit var jobRequestsRepository: JobRequestsRepository
+    private lateinit var jobRespository: JobsRepository
 
     internal var isTicketSubmitted: Boolean = false
     var tripHistoryDate: TripHistoryData? = null
@@ -49,7 +48,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_problem)
         mCurrentActivity = this
-        jobRequestsRepository = Injection.provideBookingsRepository(this)
+        jobRespository = Injection.provideJobsRepository(this)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -140,7 +139,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
      */
     private fun updateEmailFromRemoteDataSource(emailId: String) {
         Dialogs.INSTANCE.showLoader(this@ComplaintSubmissionActivity)
-        jobRequestsRepository.getEmailUpdate(emailId, object : JobRequestsDataSource.EmailUpdateCallback {
+        jobRespository.getEmailUpdate(emailId, object : JobsDataSource.EmailUpdateCallback {
             override fun onSuccess() {
                 Dialogs.INSTANCE.dismissDialog()
                 AppPreferences.setDriverEmail(emailId)

@@ -1,6 +1,8 @@
 package com.bykea.pk.partner.dal.source
 
-import com.bykea.pk.partner.dal.JobRequest
+import com.bykea.pk.partner.dal.Job
+import com.bykea.pk.partner.dal.LocCoordinatesInTrip
+import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData
 
 /**
  * Main entry point for accessing job requests data.
@@ -8,36 +10,29 @@ import com.bykea.pk.partner.dal.JobRequest
  *
  * @Author: Yousuf Sohail
  */
-interface JobRequestsDataSource {
+interface JobsDataSource {
 
     /**
-     * Get JobRequest Listing
+     * Get list of jobs
      *
      * @param callback Callback to executed
      */
-    fun getJobRequests(callback: LoadJobRequestsCallback)
+    fun getJobs(callback: LoadJobsCallback)
 
     /**
      * Fetch JobRequest details
      *
-     * @param jobRequestId Id of JobRequest to be fetched
+     * @param jobId Id of JobRequest to be fetched
      * @param callback Callback to executed
      */
-    fun getJobRequest(jobRequestId: Long, callback: GetJobRequestCallback)
+    fun getJob(jobId: Long, callback: GetJobRequestCallback)
 
     /**
      * Save JobRequest to data source
      *
-     * @param jobRequest
+     * @param job
      */
-    fun saveJobRequest(jobRequest: JobRequest)
-
-    /**
-     * Accept jobRequest
-     *
-     * @param jobRequestId Id of JobRequest to be accepted
-     */
-    fun acceptJobRequest(jobRequestId: Long, callback: AcceptJobRequestCallback)
+    fun saveJob(job: Job)
 
     /**
      * Re-fetch jobRequest listing
@@ -59,17 +54,41 @@ interface JobRequestsDataSource {
     fun deleteJobRequest(jobRequestId: Long)
 
     /**
+     * Accept jobRequest
+     *
+     * @param jobRequestId Id of JobRequest to be accepted
+     * @param callback Response callback
+     */
+    fun acceptJobRequest(jobRequestId: Long, callback: AcceptJobRequestCallback)
+
+    /**
+     * Finish active job
+     *
+     * @param jobId Job Id
+     * @param route Route taken for job
+     * @param callback Response callback
+     */
+    fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: FinishJobCallback)
+
+    /**
+     * Conclude active job
+     *
+     * @param callback Response callback
+     */
+    fun concludeJob(callback: ConcludeJobCallback)
+
+    /**
      * Callback interface used for fetch JobRequest listing
      *
      */
-    interface LoadJobRequestsCallback {
+    interface LoadJobsCallback {
 
         /**
          * On successfully JobRequest listing loaded
          *
-         * @param jobRequests
+         * @param jobs
          */
-        fun onJobRequestsLoaded(jobRequests: List<JobRequest>)
+        fun onJobsLoaded(jobs: List<Job>)
 
         /**
          * On data not available on data source
@@ -88,9 +107,9 @@ interface JobRequestsDataSource {
         /**
          * On successfully JobRequest detail loaded
          *
-         * @param jobRequest
+         * @param job
          */
-        fun onJobRequestLoaded(jobRequest: JobRequest)
+        fun onJobLoaded(job: Job)
 
         /**
          * On data not available on data source
@@ -101,7 +120,7 @@ interface JobRequestsDataSource {
     }
 
     /**
-     * Callback interface used for accepting JobRequest
+     * Callback interface used for accepting job
      *
      */
     interface AcceptJobRequestCallback {
@@ -109,6 +128,38 @@ interface JobRequestsDataSource {
         fun onJobRequestAccepted()
 
         fun onJobRequestAcceptFailed(message: String?, taken: Boolean)
+    }
+
+    /**
+     * Callback interface used for job finish
+     */
+    interface FinishJobCallback {
+
+        /**
+         * On job finish success
+         */
+        fun onJobFinished(data: FinishJobResponseData)
+
+        /**
+         * On job finish failed
+         */
+        fun onJobFinishFailed(message: String?)
+    }
+
+    /**
+     * Callback interface used for job finish
+     */
+    interface ConcludeJobCallback {
+
+        /**
+         * On job conclude success
+         */
+        fun onJobConcluded()
+
+        /**
+         * On job conclude success
+         */
+        fun onJobConcludeFailed()
     }
 
     /**
