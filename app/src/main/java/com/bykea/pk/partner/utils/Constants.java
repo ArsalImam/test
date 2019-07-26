@@ -497,10 +497,17 @@ public class Constants {
     }
 
     public static class ZendeskConfigurations {
-        public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
+        //OLD KEYS
+        /*public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
         public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
-        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";
-        public static long ZENDESK_SETTING_IDENTITY_MAX_TIME = 150 * 1000;//2 Minutes
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";*/
+
+        //PROD KEYS
+        public static String SUBDOMAIN_URL = "https://bykea.zendesk.com";
+        public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
+
+        public static long ZENDESK_SETTING_IDENTITY_MAX_TIME = 120 * 1000;//2 Minutes
         public static long ZENDESK_SETTING_IDENTITY_INTERVAL_TIME = 100;//0.1 Second
 
     }

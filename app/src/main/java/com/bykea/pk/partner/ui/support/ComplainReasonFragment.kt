@@ -114,7 +114,6 @@ class ComplainReasonFragment : Fragment() {
                 Dialogs.INSTANCE.dismissDialog()
                 if (isEmailUpdated) {
                     AppPreferences.setEmailVerified()
-                    Utils.setZendeskIdentity()
                     mCurrentActivity?.checkStatusForZendesk()
                 } else {
                     mCurrentActivity?.signIn()
