@@ -28,26 +28,25 @@ class ComplaintListViewModel : ViewModel() {
     }
 
     fun start() {
-        if (AppPreferences.isEmailVerified()) {
-            val requestProvider = Support.INSTANCE.provider()?.requestProvider()
+        val requestProvider = Support.INSTANCE.provider()?.requestProvider()
 
-            requestProvider?.getAllRequests(object : ZendeskCallback<List<Request>>() {
-                override fun onSuccess(requests: List<Request>) {
-                    Dialogs.INSTANCE.dismissDialog()
-                    Collections.sort(requests, object : Comparator<Request> {
-                        override fun compare(p1: Request, p2: Request): Int {
-                            return p2.createdAt!!.compareTo(p1.createdAt)
-                        }
-                    })
-                    _items.value = ArrayList(requests)
-                }
+        requestProvider?.getAllRequests(object : ZendeskCallback<List<Request>>() {
+            override fun onSuccess(requests: List<Request>) {
+                Dialogs.INSTANCE.dismissDialog()
+                Collections.sort(requests, object : Comparator<Request> {
+                    override fun compare(p1: Request, p2: Request): Int {
+                        return p2.createdAt!!.compareTo(p1.createdAt)
+                    }
+                })
+                _items.value = ArrayList(requests)
+            }
 
-                override fun onError(errorResponse: ErrorResponse) {
-                    Dialogs.INSTANCE.dismissDialog()
-                    Utils.setZendeskIdentity()
-                }
-            })
-        }
+            override fun onError(errorResponse: ErrorResponse) {
+                Dialogs.INSTANCE.dismissDialog()
+                Utils.setZendeskIdentity()
+            }
+        })
     }
+
 
 }
