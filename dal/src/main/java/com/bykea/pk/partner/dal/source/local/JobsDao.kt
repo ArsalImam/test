@@ -4,32 +4,32 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.bykea.pk.partner.dal.JobRequest
+import com.bykea.pk.partner.dal.Job
 
 /**
- * The Data Access Object for the [JobRequest] class.
+ * The Data Access Object for the [Job] class.
  *
  * @Author: Yousuf Sohail
  */
 @Dao
-interface JobRequestsDao {
+interface JobsDao {
 
     @Query("SELECT * FROM JobRequests")
-    fun getJobRequests(): List<JobRequest>
+    fun getJobs(): List<Job>
 
-    @Query("SELECT * FROM JobRequests WHERE id = :jobRequestId")
-    fun getJobRequest(jobRequestId: Long): JobRequest?
+    @Query("SELECT * FROM JobRequests WHERE id = :jobId")
+    fun getJob(jobId: Long): Job?
 
     /**
      * Insert a jobRequest in the database. If the jobRequest already exists, replace it.
      *
-     * @param jobRequest the jobRequest to be inserted.
+     * @param job the jobRequest to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(jobRequest: JobRequest)
+    fun insert(job: Job)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(jobRequests: List<JobRequest>)
+    fun insertAll(jobs: List<Job>)
 
     /**
      * Delete all jobRequests.

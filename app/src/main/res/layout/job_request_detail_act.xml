@@ -46,7 +46,7 @@
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"
                     android:layout_gravity="center_vertical"
-                    app:serviceCode="@{viewmodel.jobRequest.service_code}"
+                    app:serviceCode="@{viewmodel.job.service_code}"
                     tools:src="@drawable/bhejdo_no_caption" />
             </LinearLayout>
 
@@ -77,7 +77,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:text="@{`Rs. ` + (int)viewmodel.jobRequest.fare_est}"
+                    android:text="@{`Rs. ` + (int)viewmodel.job.fare_est}"
                     android:textColor="@color/color_06A833"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
@@ -94,7 +94,7 @@
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
                 android:orientation="vertical"
-                app:goneUnless="@{viewmodel.jobRequest.service_code==22}">
+                app:goneUnless="@{viewmodel.job.service_code==22}">
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:id="@+id/tVCODAmountLabel"
@@ -118,7 +118,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/_7sdp"
                     android:gravity="center"
-                    android:text="@{viewmodel.jobRequest.cod_value == null ? `?` : Integer.toString(viewmodel.jobRequest.cod_value)}"
+                    android:text="@{viewmodel.job.cod_value == null ? `?` : Integer.toString(viewmodel.job.cod_value)}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -168,7 +168,7 @@
                             android:layout_alignParentBottom="true"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_marginRight="@dimen/_10sdp"
-                            app:goneUnless="@{viewmodel.jobRequest.voice_note != null}">
+                            app:goneUnless="@{viewmodel.job.voice_note != null}">
 
                             <ImageView
                                 android:id="@+id/imgViewAudioPlay"
@@ -177,7 +177,7 @@
                                 android:layout_marginEnd="@dimen/_5sdp"
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_marginBottom="@dimen/_10sdp"
-                                android:onClick="@{() -> listener.onPlayAudio(viewmodel.jobRequest.voice_note)}"
+                                android:onClick="@{() -> listener.onPlayAudio(viewmodel.job.voice_note)}"
                                 app:srcCompat="@drawable/ic_audio_play" />
 
                             <ProgressBar
@@ -235,7 +235,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{Integer.toString(viewmodel.jobRequest.pickup.duration/60)}"
+                                        android:text="@{Integer.toString(viewmodel.job.pickup.duration/60)}"
                                         android:textColor="@color/color_06A833"
                                         android:textSize="@dimen/_18sdp"
                                         android:textStyle="bold"
@@ -264,7 +264,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewPickUp"
                                 android:layout_toLeftOf="@id/cardViewPickUp"
-                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.currentLatLng.latitude, viewmodel.currentLatLng.longitude, viewmodel.jobRequest.pickup.lat, viewmodel.jobRequest.pickup.lng)}"
+                                android:onClick="@{() -> listener.onNavigateToMap(true,viewmodel.currentLatLng.latitude, viewmodel.currentLatLng.longitude, viewmodel.job.pickup.lat, viewmodel.job.pickup.lng)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
@@ -275,10 +275,10 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:text="@{viewmodel.jobRequest.sender.name}"
+                            android:text="@{viewmodel.job.sender.name}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
-                            app:goneUnless="@{viewmodel.jobRequest.sender.name != null}"
+                            app:goneUnless="@{viewmodel.job.sender.name != null}"
                             tools:text="Sender Name" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
@@ -286,10 +286,10 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:text="@{viewmodel.jobRequest.sender.address}"
+                            android:text="@{viewmodel.job.sender.address}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
-                            app:goneUnless="@{viewmodel.jobRequest.sender.address != null}"
+                            app:goneUnless="@{viewmodel.job.sender.address != null}"
                             tools:text="Sender Address Sender Address" />
 
                     </LinearLayout>
@@ -336,7 +336,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{` ` + viewmodel.jobRequest.dropoff.zone_ur}"
+                                        android:text="@{` ` + viewmodel.job.dropoff.zone_ur}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         app:fontName="jameel_noori_nastaleeq.ttf"
@@ -347,7 +347,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{Integer.toString(viewmodel.jobRequest.dropoff.distance/1000)}"
+                                        android:text="@{Integer.toString(viewmodel.job.dropoff.distance/1000)}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         android:textStyle="bold"
@@ -376,7 +376,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
-                                android:onClick="@{() -> listener.onNavigateToMap(viewmodel.jobRequest.pickup.lat, viewmodel.jobRequest.pickup.lng, viewmodel.jobRequest.dropoff.lat, viewmodel.jobRequest.dropoff.lng)}"
+                                android:onClick="@{() -> listener.onNavigateToMap(false,viewmodel.job.pickup.lat, viewmodel.job.pickup.lng, viewmodel.job.dropoff.lat, viewmodel.job.dropoff.lng)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
@@ -387,10 +387,10 @@
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginBottom="@dimen/_5sdp"
-                            android:text="@{viewmodel.jobRequest.receiver.name}"
+                            android:text="@{viewmodel.job.receiver.name}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
-                            app:goneUnless="@{viewmodel.jobRequest.receiver.name != null}"
+                            app:goneUnless="@{viewmodel.job.receiver.name != null}"
                             tools:text="Receiver Name" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
@@ -399,10 +399,10 @@
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginBottom="@dimen/_5sdp"
-                            android:text="@{viewmodel.jobRequest.receiver.address}"
+                            android:text="@{viewmodel.job.receiver.address}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
-                            app:goneUnless="@{viewmodel.jobRequest.receiver.address != null}"
+                            app:goneUnless="@{viewmodel.job.receiver.address != null}"
                             tools:text="Drop Off Address Drop Off Address" />
 
                     </LinearLayout>
