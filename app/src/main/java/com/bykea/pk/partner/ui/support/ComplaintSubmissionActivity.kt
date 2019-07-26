@@ -52,9 +52,9 @@ class ComplaintSubmissionActivity : BaseActivity() {
 
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolBar.setNavigationOnClickListener { onBackPressed() }
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolBar.setNavigationOnClickListener { onBackPressed() }
         if (intent?.extras != null) {
             if (intent.extras.containsKey(INTENT_TRIP_HISTORY_DATA))
                 tripHistoryDate = intent.getSerializableExtra(INTENT_TRIP_HISTORY_DATA) as TripHistoryData
