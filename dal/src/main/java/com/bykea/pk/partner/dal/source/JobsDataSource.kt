@@ -165,7 +165,7 @@ interface JobsDataSource {
     /**
      * Get Email Update
      */
-    fun getEmailUpdate(emailId: String, callback: EmailUpdateCallback) {}
+    fun getEmailUpdate(emailId: String, callback: EmailUpdateCallback){}
 
     /**
      * Callback interface for email update
@@ -179,7 +179,7 @@ interface JobsDataSource {
     /**
      * Check Email Update
      */
-    fun checkEmailUpdate(callback: EmailUpdateCheckCallback) {}
+    fun checkEmailUpdate(callback: EmailUpdateCheckCallback){}
 
     /**
      * Callback interface to check if email is updated

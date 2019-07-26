@@ -132,7 +132,6 @@ public class ContactUsFragment extends Fragment {
                 Dialogs.INSTANCE.dismissDialog();
                 if (isEmailUpdated) {
                     AppPreferences.setEmailVerified();
-                    Utils.setZendeskIdentity();
                     checkStatusForZendeskSDK();
                 } else {
                     ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
