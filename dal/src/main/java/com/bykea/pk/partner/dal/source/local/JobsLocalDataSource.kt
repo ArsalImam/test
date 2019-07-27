@@ -71,7 +71,7 @@ class JobsLocalDataSource private constructor(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun concludeJob(callback: JobsDataSource.ConcludeJobCallback) {
+    override fun concludeJob(jobId: String, rate: Int, receivedAmount: Int, callback: JobsDataSource.ConcludeJobCallback, deliveryMessage: String?, deliveryStatus: Boolean?, purchaseAmount: Int?, receiverName: String?, receiverPhone: String?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

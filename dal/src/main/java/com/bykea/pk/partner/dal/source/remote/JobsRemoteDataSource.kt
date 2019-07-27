@@ -3,11 +3,9 @@ package com.bykea.pk.partner.dal.source.remote
 import android.util.Log
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
-import com.bykea.pk.partner.dal.source.remote.response.AcceptJobResponse
-import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
+import com.bykea.pk.partner.dal.source.remote.response.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -132,6 +130,35 @@ class JobsRemoteDataSource {
 
             override fun onFailure(call: Call<FinishJobResponse>, t: Throwable) {
                 callback.onJobFinishFailed(t.message)
+            }
+        })
+    }
+
+    /**
+     * Finish job to remote data source
+     *
+     * @param jobId Job Id
+     * @param requestBody Request body
+     * @param callback Response callback
+     */
+    fun concludeJob(jobId: String, requestBody: ConcludeJobRequest, callback: JobsDataSource.ConcludeJobCallback) {
+        Backend.telos.concludeJob(jobId, requestBody).enqueue(object : Callback<ConcludeJobResponse> {
+            override fun onResponse(call: Call<ConcludeJobResponse>, response: Response<ConcludeJobResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.isSuccess()) {
+                            callback.onJobConcluded(it)
+                        } else {
+                            callback.onJobConcludeFailed(it.message, it.code)
+                        }
+                    }
+                } else {
+                    callback.onJobConcludeFailed(response.message(), response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<ConcludeJobResponse>, t: Throwable) {
+                callback.onJobConcludeFailed(t.message, t.hashCode())
             }
         })
     }

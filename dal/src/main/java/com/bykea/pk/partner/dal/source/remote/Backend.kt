@@ -2,6 +2,10 @@ package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.CancelJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.CancelJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
@@ -116,7 +120,11 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/v1/driver/cancel")
-    fun cancelJob(@Body body: AcceptJobRequest): Call<BaseResponse>
+    fun cancelJobb(@Body body: AcceptJobRequest): Call<BaseResponse>
+
+    @POST("/api/v1/driver/cancel")
+    fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobResponse>
+
 
     /**
      * Requests to finish active job
@@ -134,7 +142,11 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/v1/trips/{job_id}/feedback")
-    fun concludeJob(@Path("job_id") jobId: Long, @Body body: AcceptJobRequest): Call<BaseResponse>
+    fun concludeJobb(@Path("job_id") jobId: Long, @Body body: AcceptJobRequest): Call<BaseResponse>
+
+    @POST("/api/v1/trips/{job_id}/feedback")
+    fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobResponse>
+
 
     @GET
     fun getMockJobRequestList(
