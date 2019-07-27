@@ -85,7 +85,7 @@ class JobsRemoteDataSource {
      * @param jobRequestId Id of Booking to be accepted
      */
     fun acceptJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobRequestCallback) {
-        Backend.loadboard.acceptJob(jobRequestId, driverId, token, AcceptJobRequest(lat, lng)).enqueue(object : Callback<AcceptJobResponse> {
+        Backend.loadboard.pickJob(jobRequestId, driverId, token, AcceptJobRequest(lat, lng)).enqueue(object : Callback<AcceptJobResponse> {
 
             override fun onFailure(call: Call<AcceptJobResponse>, t: Throwable) {
                 callback.onJobRequestAcceptFailed(t.message, false)
@@ -115,7 +115,7 @@ class JobsRemoteDataSource {
      * @param callback Response callback
      */
     fun finishJob(jobId: String, requestBody: FinishJobRequest, callback: JobsDataSource.FinishJobCallback) {
-        Backend.telos.finishJob(jobId, requestBody).enqueue(object : Callback<FinishJobResponse> {
+        Backend.talos.finishJob(jobId, requestBody).enqueue(object : Callback<FinishJobResponse> {
             override fun onResponse(call: Call<FinishJobResponse>, response: Response<FinishJobResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
