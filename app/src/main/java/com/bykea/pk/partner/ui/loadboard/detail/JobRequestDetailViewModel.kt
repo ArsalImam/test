@@ -73,7 +73,7 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
      */
     fun accept() {
         bookingId?.let {
-            bookingsRepository.acceptJobRequest(it, this)
+            bookingsRepository.pickJob(it, this)
         }
     }
 

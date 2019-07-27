@@ -62,6 +62,8 @@ interface JobsDataSource {
      */
     fun acceptJobRequest(jobRequestId: Long, callback: AcceptJobRequestCallback)
 
+    fun ackJobCall(jobId: String, callback: AckJobCallCallback)
+
     /**
      * Finish active job
      *
@@ -139,6 +141,14 @@ interface JobsDataSource {
         fun onJobRequestAccepted()
 
         fun onJobRequestAcceptFailed(message: String?, taken: Boolean)
+    }
+
+    /**
+     * Callback interface used for acknowledgement of receiving of job call
+     */
+    interface AckJobCallCallback {
+        fun onJobCallAcknowledged()
+        fun onJobCallAcknowledgeFailed()
     }
 
     /**

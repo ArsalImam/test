@@ -1,12 +1,7 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
-import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.CancelJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.CancelJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -65,17 +60,17 @@ interface Backend {
 
     /**
      * Requests Picking/self-assigning job request
-     * @param jobId Job Request ID
      * @param driverId Driver ID
      * @param token Driver access token
+     * @param jobRequestId Job Request ID
      * @param body AcceptJobRequest
      * @return Call<AcceptJobResponse>
      */
     @POST("/v1/bookings/{job_request_id}/assign")
     fun pickJob(
-            @Path("job_request_id") jobId: Long,
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
+            @Path("job_request_id") jobRequestId: Long,
             @Body body: AcceptJobRequest): Call<AcceptJobResponse>
 
     /**
@@ -84,8 +79,8 @@ interface Backend {
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("/v1/trips/{job_id}/acknowledgement")
-    fun acknowledgeJobCall(@Path("job_id") jobId: Long, @Body body: AcceptJobRequest): Call<BaseResponse>
+    @POST("/api/v1/trips/{job_id}/acknowledgement")
+    fun acknowledgeJobCall(@Path("job_id") jobId: String, @Body body: AckJobCallRequest): Call<AckJobCallResponse>
 
     /**
      * Requests to accept job call

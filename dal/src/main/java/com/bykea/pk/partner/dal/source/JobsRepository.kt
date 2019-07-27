@@ -3,6 +3,7 @@ package com.bykea.pk.partner.dal.source
 import android.content.SharedPreferences
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
+import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
@@ -21,7 +22,7 @@ import kotlin.collections.ArrayList
  */
 class JobsRepository(
         private val jobsRemoteDataSource: JobsRemoteDataSource,
-        private val jobsLocalDataSource: JobsDataSource,
+        private val jobsLocalDataSource: JobsLocalDataSource,
         val pref: SharedPreferences) : JobsDataSource {
 
     private val limit: Int = 20
@@ -132,8 +133,14 @@ class JobsRepository(
         cachedJobs.remove(jobRequestId)
     }
 
-    override fun acceptJobRequest(jobRequestId: Long, callback: JobsDataSource.AcceptJobRequestCallback) {
-        jobsRemoteDataSource.acceptJob(jobRequestId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    override fun pickJob(jobId: Long, callback: JobsDataSource.AcceptJobRequestCallback) {
+        jobsRemoteDataSource.pickJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
+    override fun ackJobCall(jobId: String, callback: JobsDataSource.AckJobCallCallback) {
+        jobsRemoteDataSource.acknowledgeJobCall(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
     }
 
     override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.FinishJobCallback) {
@@ -241,7 +248,7 @@ class JobsRepository(
          * @return the [JobsRepository] instance
          */
         @JvmStatic
-        fun getInstance(jobsRemoteDataSource: JobsRemoteDataSource, jobsLocalDataSource: JobsDataSource, preferences: SharedPreferences) =
+        fun getInstance(jobsRemoteDataSource: JobsRemoteDataSource, jobsLocalDataSource: JobsLocalDataSource, preferences: SharedPreferences) =
                 INSTANCE ?: synchronized(JobsRepository::class.java) {
                     INSTANCE
                             ?: JobsRepository(jobsRemoteDataSource, jobsLocalDataSource, preferences)
