@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils
 open class MultipleDeliveryPickupResponse {
     var lat: Float? = 0.0f
     var lng: Float? = 0.0f
-    @SerializedName("formatted")
+    @SerializedName("formatted", alternate = ["address"])
     var pickupAddress: String? = StringUtils.EMPTY
     var distance: Int? = 0 //distance in meter
     var duration: Int? = 0 //duration in seconds
@@ -18,10 +18,10 @@ open class MultipleDeliveryPickupResponse {
     @SerializedName("contact_number")
     var contactNumer: String? = StringUtils.EMPTY
 
-    @SerializedName("zone_name_en")
-    var zoneNameEn: String = StringUtils.EMPTY
+    @SerializedName("zone_name_en", alternate = ["zone_en"])
+    var zoneNameEn: String? = StringUtils.EMPTY
 
-    @SerializedName("zone_name_ur")
-    var zoneNameUr: String = StringUtils.EMPTY
+    @SerializedName("zone_name_ur", alternate = ["zone_ur"])
+    var zoneNameUr: String? = StringUtils.EMPTY
 
 }

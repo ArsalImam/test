@@ -3,6 +3,7 @@ package com.bykea.pk.partner.utils;
 //TODO: Suggestion: Make the Trip Statues as Integer for performance optimization
 public class TripStatus {
     public final static String ON_CALLING = "Call";
+    public final static String ON_CALLING_NEW = "Open";
     public final static String ON_FREE = "Free";
     public final static String ON_REVIEWED = "Reviewed";
     public final static String ON_ACCEPT_CALL = "Accepted";
