@@ -62,8 +62,19 @@ interface JobsDataSource {
      */
     fun pickJob(jobId: Long, callback: AcceptJobRequestCallback)
 
+    /**
+     * Post acknowledgement of job call
+     * @param jobId Job ID
+     * @param callback AckJobCallCallback
+     */
     fun ackJobCall(jobId: String, callback: AckJobCallCallback)
 
+    /**
+     * Requests accept job call
+     * @param jobId Job ID
+     * @param timeEclipsed Time eclipsed since job call received
+     * @param callback AcceptJobCallback
+     */
     fun acceptJob(jobId: String, timeEclipsed: Int, callback: AcceptJobCallback)
 
     fun arrivedAtJob(jobId: String, callback: ArrivedAtJobCallback)

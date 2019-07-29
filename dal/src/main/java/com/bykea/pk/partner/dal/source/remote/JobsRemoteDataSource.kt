@@ -131,6 +131,16 @@ class JobsRemoteDataSource {
         })
     }
 
+    /**
+     * Requests accept job call
+     * @param jobId Job ID
+     * @param timeEclipsed Int
+     * @param driverId Driver ID
+     * @param token Session token
+     * @param lat Driver's current lat
+     * @param lng Driver's current lng
+     * @param callback AcceptJobCallback
+     */
     fun acceptJob(jobId: String, timeEclipsed: Int, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobCallback) {
         Backend.talos.acceptJobCall(jobId, AcceptJobRequest(driverId, token, lat, lng, timeEclipsed)).enqueue(object : Callback<BaseResponse> {
             override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
