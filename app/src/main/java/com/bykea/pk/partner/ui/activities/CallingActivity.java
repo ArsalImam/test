@@ -187,9 +187,8 @@ public class CallingActivity extends BaseActivity {
             DriverApp.getApplication().connect();
             DriverApp.startLocationService(mCurrentActivity);
         }
-        //TODO: Make this ack call conditional
-        ackCall();
         setInitialData();
+        if (!Utils.isModernService(serviceCode)) ackCall();
 
 
     }
@@ -388,7 +387,7 @@ public class CallingActivity extends BaseActivity {
     private void acceptJob() {
         if (Utils.isModernService(serviceCode)) {
             JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
-            jobsRepo.acceptJob(tripId, new JobsDataSource.AcceptJobCallback() {
+            jobsRepo.acceptJob(tripId, Integer.valueOf(acceptSeconds), new JobsDataSource.AcceptJobCallback() {
                 @Override
                 public void onJobAccepted() {
                     onAcceptSuccess(true, "Job Accepted");

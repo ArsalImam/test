@@ -142,7 +142,7 @@ class JobsRepository(
     }
 
     override fun acceptJob(jobId: String, timeEclipsed: Int, callback: JobsDataSource.AcceptJobCallback) {
-
+        jobsRemoteDataSource.acceptJob(jobId, timeEclipsed, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
     override fun arrivedAtJob(jobId: String, callback: JobsDataSource.ArrivedAtJobCallback) {

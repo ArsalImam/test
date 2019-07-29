@@ -2,10 +2,7 @@ package com.bykea.pk.partner.dal.source.remote
 
 import android.util.Log
 import com.bykea.pk.partner.dal.source.JobsDataSource
-import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.AckJobCallRequest
-import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.response.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -84,13 +81,13 @@ class JobsRemoteDataSource {
      * @param jobRequestId Id of Booking to be accepted
      */
     fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobRequestCallback) {
-        Backend.loadboard.pickJob(driverId, token, jobRequestId, AcceptJobRequest(lat, lng)).enqueue(object : Callback<AcceptJobResponse> {
+        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng)).enqueue(object : Callback<PickJobResponse> {
 
-            override fun onFailure(call: Call<AcceptJobResponse>, t: Throwable) {
+            override fun onFailure(call: Call<PickJobResponse>, t: Throwable) {
                 callback.onJobRequestAcceptFailed(t.message, false)
             }
 
-            override fun onResponse(call: Call<AcceptJobResponse>, response: Response<AcceptJobResponse>) {
+            override fun onResponse(call: Call<PickJobResponse>, response: Response<PickJobResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.isSuccess()) {
@@ -124,11 +121,8 @@ class JobsRemoteDataSource {
             override fun onResponse(call: Call<AckJobCallResponse>, response: Response<AckJobCallResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        if (it.isSuccess()) {
-                            callback.onJobCallAcknowledged()
-                        } else {
-                            callback.onJobCallAcknowledgeFailed()
-                        }
+                        if (it.isSuccess()) callback.onJobCallAcknowledged()
+                        else callback.onJobCallAcknowledgeFailed()
                     }
                 } else {
                     callback.onJobCallAcknowledgeFailed()
@@ -137,8 +131,23 @@ class JobsRemoteDataSource {
         })
     }
 
-    fun acceptJob() {
-        TODO("not implemented")
+    fun acceptJob(jobId: String, timeEclipsed: Int, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobCallback) {
+        Backend.talos.acceptJobCall(jobId, AcceptJobRequest(driverId, token, lat, lng, timeEclipsed)).enqueue(object : Callback<BaseResponse> {
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                callback.onJobAcceptFailed()
+            }
+
+            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.isSuccess()) callback.onJobAccepted()
+                        else callback.onJobAcceptFailed()
+                    }
+                } else {
+                    callback.onJobAcceptFailed()
+                }
+            }
+        })
     }
 
     fun arrivedAtJob() {

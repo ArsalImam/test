@@ -71,7 +71,7 @@ interface Backend {
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
             @Path("job_request_id") jobRequestId: Long,
-            @Body body: AcceptJobRequest): Call<AcceptJobResponse>
+            @Body body: PickJobRequest): Call<PickJobResponse>
 
     /**
      * Requests acknowledgement on receiving job call
@@ -98,7 +98,7 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/trips/{job_id}/arrived")
-    fun arrivedForJob(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<BaseResponse>
+    fun arrivedForJob(@Path("job_id") jobId: String, @Body body: PickJobRequest): Call<BaseResponse>
 
     /**
      * Requests to start active job
@@ -107,7 +107,7 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/trips/{job_id}/start")
-    fun startJob(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<BaseResponse>
+    fun startJob(@Path("job_id") jobId: String, @Body body: PickJobRequest): Call<BaseResponse>
 
     /**
      * Requests to cancel active job
