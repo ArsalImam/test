@@ -560,44 +560,49 @@ public class WebIORequestHandler {
 //                    mContext = DriverApp.getContext();
 //                }
                 NormalCallData normalCallData = gson.fromJson(serverResponse, NormalCallData.class);
-                if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) && normalCallData.isSuccess()) {
-                    ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
-                } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                    if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
-
-                        /*
-                         * when Gps is off, we don't show Calling Screen so we don't need to show
-                         * Cancel notification either if passenger cancels it before booking.
-                         * If passenger has cancelled it after booking we will entertain this Cancel notification
-                         * */
-
-                        if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
-                            Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
-                            intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
-                            intent.putExtra("msg", normalCallData.getMessage());
-                            Utils.setCallIncomingState();
-                            if (AppPreferences.isJobActivityOnForeground() ||
-                                    AppPreferences.isCallingActivityOnForeground()) {
-//                                DriverApp.getContext().sendBroadcast(intent);
-                                EventBus.getDefault().post(intent);
-                            } else {
-                                EventBus.getDefault().post(intent);
-//                                DriverApp.getContext().sendBroadcast(intent);
-                                Notifications.createCancelNotification(DriverApp.getContext(), "Passenger has cancelled the Trip", 23);
-                            }
-                            getInstance().unRegisterChatListener();
-                        }
-                    } else {
-                        Utils.appToastDebug(DriverApp.getContext(), normalCallData.getMessage());
-                    }
-                } else {
-                    Utils.updateTripData(normalCallData);
-                }
+                setUIForStatus(normalCallData);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+    }
+
+    private static void setUIForStatus(NormalCallData normalCallData) {
+        if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) ||
+                normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_NEW)) {
+            ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
+        } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
+            if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
+
+                /*
+                 * when Gps is off, we don't show Calling Screen so we don't need to show
+                 * Cancel notification either if passenger cancels it before booking.
+                 * If passenger has cancelled it after booking we will entertain this Cancel notification
+                 * */
+
+                if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
+                    intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
+                    intent.putExtra("msg", normalCallData.getMessage());
+                    Utils.setCallIncomingState();
+                    if (AppPreferences.isJobActivityOnForeground() ||
+                            AppPreferences.isCallingActivityOnForeground()) {
+//                                DriverApp.getContext().sendBroadcast(intent);
+                        EventBus.getDefault().post(intent);
+                    } else {
+                        EventBus.getDefault().post(intent);
+//                                DriverApp.getContext().sendBroadcast(intent);
+                        Notifications.createCancelNotification(DriverApp.getContext(), "Passenger has cancelled the Trip", 23);
+                    }
+                    getInstance().unRegisterChatListener();
+                }
+            } else {
+                Utils.appToastDebug(DriverApp.getContext(), normalCallData.getMessage());
+            }
+        } else {
+            Utils.updateTripData(normalCallData);
+        }
     }
 
     /**
@@ -637,7 +642,9 @@ public class WebIORequestHandler {
                         MultipleDeliveryCallDriverResponse.class);
                 MultiDeliveryCallDriverData data = response.getData();
                 if (data != null) {
-                    if (data.getTrip_id() != null) {
+                    if (data.getBatchID() == null &&
+                            data.getType() != null && data.getType().equalsIgnoreCase("single")) {
+                        //region acknowledgeJobCall
                         JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
                         jobsRepo.ackJobCall(data.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
                             @Override
@@ -652,12 +659,16 @@ public class WebIORequestHandler {
                                     Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
                             }
                         });
-                    } else {
+                        //endregion
+
+                        setUIForStatus(data.toNormalCallData());
+                    } else if (data.getBatchID() != null) {
                         AppPreferences.setMultiDeliveryCallDriverData(data);
                         new UserRepository().requestDriverAcknowledged(handler);
                     }
                 }
-            } catch (Exception e) {
+            } catch (
+                    Exception e) {
                 e.printStackTrace();
             }
 
@@ -701,6 +712,7 @@ public class WebIORequestHandler {
             Utils.redLog(TAG, serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_BATCH_COMPLETED);
         }
+
     }
 
     private static IUserDataHandler handler = new UserDataHandler() {

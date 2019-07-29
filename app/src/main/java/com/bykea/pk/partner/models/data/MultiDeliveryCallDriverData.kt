@@ -2,9 +2,11 @@ package com.bykea.pk.partner.models.data
 
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse
 import com.bykea.pk.partner.models.response.MultipleDeliveryPickupResponse
+import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.utils.TripStatus
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
+import java.text.DecimalFormat
 
 /**
  * Multi Delivery Call Driver Data Class
@@ -33,11 +35,24 @@ data class MultiDeliveryCallDriverData(
         //duration in seconds
         @SerializedName("est_total_duration")
         var estTotalDuration: Int? = 0,
-        @SerializedName("est_fare")
+
+        // ALTERNATE ADDED BACAUSE OF SIMPLE RIDES
+        @SerializedName("est_fare", alternate = ["fare_est"])
         var estFare: Int? = 0,
         @SerializedName("est_cash_collection")
         var estCashCollection: Int? = 0,
-        var acceptTime: Long
+        var acceptTime: Long,
+
+        // PARAMETERS ADDED TO CATER, SIMPLE RIDES
+        @SerializedName("code")
+        var serverCode: Int?,
+        var trip_type: String?,
+        var service_code: Int?,
+        var booking_no: String?,
+        var customer_id: String?,
+        var dt: String?,
+        var type: String?,
+        var dropoff: MultipleDeliveryPickupResponse? = null
 ) {
     fun getAcceptedTime(): Long = if (acceptTime > 0) acceptTime else System.currentTimeMillis()
 
@@ -79,5 +94,45 @@ data class MultiDeliveryCallDriverData(
         }
 
         return false
+    }
+
+    fun toNormalCallData(): NormalCallData {
+        var normalCallData = NormalCallData().apply {
+            this.tripId = trip_id
+            this.callType = trip_type
+            this.serviceCode = service_code
+            this.tripNo = booking_no
+            this.kraiKiKamai = estFare!!
+            this.passId = customer_id
+            this.status = batchStatus
+            this.sub_type = type
+
+            this.startAddress = pickup?.pickupAddress
+            this.startLat = pickup?.lat?.toString()
+            this.startLng = pickup?.lng?.toString()
+
+            this.endAddress = dropoff?.pickupAddress
+            this.endLat = dropoff?.lat?.toString()
+            this.endLng = dropoff?.lng?.toString()
+
+            this.pickupStop = Stop()
+            pickup?.lat.let { this.pickupStop.setLat(pickup?.lat!!) }
+            pickup?.lng.let { this.pickupStop.setLng(pickup?.lng!!) }
+            this.pickupStop.distance = pickup?.distance
+            this.pickupStop.duration = pickup?.duration
+            this.pickupStop.address = pickup?.pickupAddress
+
+            this.dropoffStop = Stop()
+            dropoff?.lat.let { this.dropoffStop.setLat(dropoff?.lat!!) }
+            dropoff?.lng.let { this.dropoffStop.setLng(dropoff?.lng!!) }
+            this.dropoffStop.distance = dropoff?.distance
+            this.dropoffStop.duration = dropoff?.duration
+            this.dropoffStop.address = dropoff?.pickupAddress
+
+            pickup?.duration.let { this.arivalTime = (pickup?.duration!! / 60).toString() }
+            pickup?.distance.let { this.estimatedDistance = (pickup?.distance!!.toFloat() / 1000) }
+        }
+        normalCallData.data = normalCallData
+        return normalCallData
     }
 }
