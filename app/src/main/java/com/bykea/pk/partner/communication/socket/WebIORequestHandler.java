@@ -2,10 +2,15 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.communication.IResponseCallback;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
@@ -59,6 +64,8 @@ import java.net.HttpURLConnection;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
+import static com.bykea.pk.partner.DriverApp.getApplication;
 
 public class WebIORequestHandler {
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
@@ -232,11 +239,11 @@ public class WebIORequestHandler {
      * {@link ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED} and attach the
      * generic listener to listen the event.
      *
-     * @param driverStartData The json object that will be emit on the driver arrived event.
-     * @param responseCallBack  The callback that will be invoked when event response received.
+     * @param driverStartData  The json object that will be emit on the driver arrived event.
+     * @param responseCallBack The callback that will be invoked when event response received.
      */
     public void requestMultiDriverStartedRide(JSONObject driverStartData,
-                                                   IResponseCallback responseCallBack) {
+                                              IResponseCallback responseCallBack) {
         emitWithJObject(
                 ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_STARTED,
                 new MyGenericListener(
@@ -254,7 +261,7 @@ public class WebIORequestHandler {
      * generic listener to listen the event.
      *
      * @param driverFinishData The json object that will be emit on the driver finished event.
-     * @param responseCallBack  The callback that will be invoked when event response received.
+     * @param responseCallBack The callback that will be invoked when event response received.
      */
     public void requestMultiDriverFinishRide(JSONObject driverFinishData,
                                              IResponseCallback responseCallBack) {
@@ -275,7 +282,7 @@ public class WebIORequestHandler {
      * generic listener to listen the event.
      *
      * @param driverFeedbackData The json object that will be emit on the driver feedback event.
-     * @param responseCallBack  The callback that will be invoked when event response received.
+     * @param responseCallBack   The callback that will be invoked when event response received.
      */
     public void requestMultiDeliveryDriverFeedback(JSONObject driverFeedbackData,
                                                    IResponseCallback responseCallBack) {
@@ -296,10 +303,10 @@ public class WebIORequestHandler {
      * generic listener to listen the event.
      *
      * @param driverCancelData The json object that will be emit on the driver cancel batch event.
-     * @param responseCallBack  The callback that will be invoked when event response received.
+     * @param responseCallBack The callback that will be invoked when event response received.
      */
     public void requestMultideliveryCancelBatch(JSONObject driverCancelData,
-                                                  IResponseCallback responseCallBack) {
+                                                IResponseCallback responseCallBack) {
         emitWithJObject(
                 ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
                 new MyGenericListener(
@@ -355,7 +362,7 @@ public class WebIORequestHandler {
                 public void call(Object... args) {
                     try {
                         WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
-                        DriverApp.getApplication().attachListenersOnSocketConnected();
+                        getApplication().attachListenersOnSocketConnected();
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
@@ -373,7 +380,7 @@ public class WebIORequestHandler {
 
     private void emitWithJObject(final String eventName, MyGenericListener myGenericListener, final JSONObject json) {
         WebIO.getInstance().on(eventName, myGenericListener);
-        Log.d(TAG, "WebIO.getInstance().isSocketConnected(): "+WebIO.getInstance().isSocketConnected());
+        Log.d(TAG, "WebIO.getInstance().isSocketConnected(): " + WebIO.getInstance().isSocketConnected());
         if (WebIO.getInstance().isSocketConnected()) {
             Log.d(TAG, "Inside Normal if of connected socket: ");
             if (!WebIO.getInstance().emit(eventName, json)) {
@@ -382,7 +389,7 @@ public class WebIORequestHandler {
                     public void call(Object... args) {
                         try {
                             WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
-                            DriverApp.getApplication().attachListenersOnSocketConnected();
+                            getApplication().attachListenersOnSocketConnected();
                             //To avoid previous calls with wrong token_id
                             if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                                 WebIO.getInstance().emit(eventName, json);
@@ -403,7 +410,7 @@ public class WebIORequestHandler {
                 public void call(Object... args) {
                     try {
                         WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
-                        DriverApp.getApplication().attachListenersOnSocketConnected();
+                        getApplication().attachListenersOnSocketConnected();
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emit(eventName, json);
@@ -630,8 +637,25 @@ public class WebIORequestHandler {
                         MultipleDeliveryCallDriverResponse.class);
                 MultiDeliveryCallDriverData data = response.getData();
                 if (data != null) {
-                    AppPreferences.setMultiDeliveryCallDriverData(data);
-                    new UserRepository().requestDriverAcknowledged(handler);
+                    if (data.getTrip_id() != null) {
+                        JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+                        jobsRepo.ackJobCall(data.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
+                            @Override
+                            public void onJobCallAcknowledged() {
+                                if (BuildConfig.DEBUG)
+                                    Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onJobCallAcknowledgeFailed() {
+                                if (BuildConfig.DEBUG)
+                                    Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        AppPreferences.setMultiDeliveryCallDriverData(data);
+                        new UserRepository().requestDriverAcknowledged(handler);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

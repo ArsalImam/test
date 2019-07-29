@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils
  * Multi Delivery Call Driver Data Class
  */
 data class MultiDeliveryCallDriverData(
+        var trip_id: String?,
         var pickup: MultipleDeliveryPickupResponse? = null,
         var bookings: List<MultipleDeliveryBookingResponse>? = mutableListOf(),
         @SerializedName("status")
