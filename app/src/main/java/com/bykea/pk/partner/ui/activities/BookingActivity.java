@@ -2342,7 +2342,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         logMixPanelEvent(TripStatus.ON_FINISH_TRIP);
 
-        if (Utils.isLoadboardService(callData.getServiceCode())) {
+        if (Utils.isModernService(callData.getServiceCode())) {
             sendFinishActiveJobCallRestApi();
         } else {
             dataRepository.requestEndRide(mCurrentActivity, driversDataHandler);

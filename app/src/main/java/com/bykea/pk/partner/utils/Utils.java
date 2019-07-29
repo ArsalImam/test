@@ -2021,14 +2021,17 @@ public class Utils {
     }
 
     /**
-     * Checks if call type is from loadboard
+     * Checks if call type is among modern services
      *
      * @param serviceCode Service Code
-     * @return Either loadboard service or not
+     * @return Either modern service or not
      */
-    public static boolean isLoadboardService(Integer serviceCode) {
-        return serviceCode != null && (serviceCode == Constants.ServiceType.SEND_CODE
-                || serviceCode == Constants.ServiceType.SEND_COD_CODE);
+    public static boolean isModernService(Integer serviceCode) {
+        return serviceCode != null
+                && (serviceCode == Constants.ServiceType.SEND_CODE
+                || serviceCode == Constants.ServiceType.SEND_COD_CODE
+                || serviceCode == Constants.ServiceType.RIDE_CODE
+        );
     }
 
     public static boolean isRideService(String callType) {

@@ -403,7 +403,7 @@ public class FeedbackActivity extends BaseActivity {
                 }
             };
 
-            boolean isLoadboardJob = Utils.isLoadboardService(callData.getServiceCode());
+            boolean isLoadboardJob = Utils.isModernService(callData.getServiceCode());
             if (isLoadboardJob)
                 repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 

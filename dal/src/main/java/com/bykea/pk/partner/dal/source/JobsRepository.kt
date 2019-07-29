@@ -141,8 +141,8 @@ class JobsRepository(
         jobsRemoteDataSource.acknowledgeJobCall(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
-    override fun acceptJob(jobId: String, callback: JobsDataSource.AcceptJobCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun acceptJob(jobId: String, timeEclipsed: Int, callback: JobsDataSource.AcceptJobCallback) {
+
     }
 
     override fun arrivedAtJob(jobId: String, callback: JobsDataSource.ArrivedAtJobCallback) {

@@ -2,7 +2,6 @@ package com.bykea.pk.partner.utils;
 
 
 import com.bykea.pk.partner.BuildConfig;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
@@ -366,6 +365,7 @@ public class Constants {
         public static final String SEND_TITLE = "Delivery";
         public static final int SEND_CODE = 21;
         public static final int SEND_COD_CODE = 22;
+        public static final int RIDE_CODE = 23;
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";

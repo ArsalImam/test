@@ -64,7 +64,7 @@ interface JobsDataSource {
 
     fun ackJobCall(jobId: String, callback: AckJobCallCallback)
 
-    fun acceptJob(jobId: String, callback: AcceptJobCallback)
+    fun acceptJob(jobId: String, timeEclipsed: Int, callback: AcceptJobCallback)
 
     fun arrivedAtJob(jobId: String, callback: ArrivedAtJobCallback)
 

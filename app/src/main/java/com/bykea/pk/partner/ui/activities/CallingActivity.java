@@ -5,16 +5,20 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.AppCompatImageView;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+
+import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.FreeDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -71,38 +75,62 @@ public class CallingActivity extends BaseActivity {
     private MediaPlayer _mpSound;
     private CallingActivity mCurrentActivity;
     private float progress = 0;
+    private String tripId;
+    private Integer serviceCode;
 
     private boolean isFreeDriverApiCalled = false;
 
     public String TAG = CallingActivity.class.getSimpleName();
+    private UserDataHandler handler = new UserDataHandler() {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calling);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        mCurrentActivity = this;
-        ButterKnife.bind(this);
-        repository = new UserRepository();
-        Utils.unlockScreen(mCurrentActivity);
-        AppPreferences.setStatsApiCallRequired(true);
-        //To inactive driver during passenger calling state
-        AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
-
-        donutProgress.setProgress(20);
-        startAnimation();
-
-        if (null != getIntent() && getIntent().getBooleanExtra("isGcm", false)) {
-            Utils.redLog("FCM", "Calling Activity");
-            DriverApp.getApplication().connect();
-            DriverApp.startLocationService(mCurrentActivity);
+        @Override
+        public void onAck(final String msg) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.appToastDebug(mCurrentActivity, msg);
+                }
+            });
         }
-        ackCall();
-        setInitialData();
 
+        @Override
+        public void onFreeDriver(FreeDriverResponse freeDriverResponse) {
+            if (mCurrentActivity != null) {
+                mCurrentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                        stopSound();
+                        finishActivity();
+                    }
+                });
+            }
+        }
 
-    }
+        @Override
+        public void onAcceptCall(final AcceptCallResponse acceptCallResponse) {
+            onAcceptSuccess(acceptCallResponse.isSuccess(), acceptCallResponse.getMessage());
+        }
+
+        @Override
+        public void onRejectCall(final RejectCallResponse rejectCallResponse) {
+            onAcceptFailed(rejectCallResponse.getMessage());
+        }
+
+        @Override
+        public void onError(int errorCode, final String errorMessage) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.INSTANCE.dismissDialog();
+                    Dialogs.INSTANCE.showToast(errorMessage);
+                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                    stopSound();
+                    finishActivity();
+                }
+            });
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -137,6 +165,35 @@ public class CallingActivity extends BaseActivity {
     private long mLastClickTime;
     private String acceptSeconds = "0";
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_calling);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        mCurrentActivity = this;
+        ButterKnife.bind(this);
+        repository = new UserRepository();
+        Utils.unlockScreen(mCurrentActivity);
+        AppPreferences.setStatsApiCallRequired(true);
+        //To inactive driver during passenger calling state
+        AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
+        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
+        donutProgress.setProgress(20);
+        startAnimation();
+
+        if (null != getIntent() && getIntent().getBooleanExtra("isGcm", false)) {
+            Utils.redLog("FCM", "Calling Activity");
+            DriverApp.getApplication().connect();
+            DriverApp.startLocationService(mCurrentActivity);
+        }
+        //TODO: Make this ack call conditional
+        ackCall();
+        setInitialData();
+
+
+    }
+
     @OnClick({R.id.acceptCallBtn})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -150,109 +207,12 @@ public class CallingActivity extends BaseActivity {
                     stopSound();
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     acceptSeconds = counterTv.getText().toString();
-                    repository.requestAcceptCall(mCurrentActivity, acceptSeconds, handler);
+                    acceptJob();
                     timer.cancel();
                 }
                 break;
         }
     }
-
-    private UserDataHandler handler = new UserDataHandler() {
-
-        @Override
-        public void onAck(final String msg) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.appToastDebug(mCurrentActivity, msg);
-                }
-            });
-        }
-
-        @Override
-        public void onFreeDriver(FreeDriverResponse freeDriverResponse) {
-            if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                        stopSound();
-                        finishActivity();
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onAcceptCall(final AcceptCallResponse acceptCallResponse) {
-            if (mCurrentActivity != null) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showTempToast(acceptCallResponse.getMessage());
-                        if (acceptCallResponse.isSuccess()) {
-                            AppPreferences.clearTripDistanceData();
-                            AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
-
-                            NormalCallData callData = AppPreferences.getCallData();
-                            callData.setStatus(TripStatus.ON_ACCEPT_CALL);
-                            AppPreferences.setCallData(callData);
-                            AppPreferences.setTripAcceptTime(System.currentTimeMillis());
-                            AppPreferences.setEstimatedFare(callData.getKraiKiKamai());
-                            logMixpanelEvent(callData, true);
-
-                            AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
-
-                            AppPreferences.setIsOnTrip(true);
-                            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
-                            ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
-                            stopSound();
-                            finishActivity();
-                        } else {
-                            Utils.setCallIncomingState();
-                            Dialogs.INSTANCE.showToast(acceptCallResponse.getMessage());
-
-                        }
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onRejectCall(final RejectCallResponse rejectCallResponse) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.showToast(rejectCallResponse.getMessage());
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (AppPreferences.isOnTrip()) {
-                        AppPreferences.setIncomingCall(false);
-                        AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                    } else {
-                        AppPreferences.setIncomingCall(true);
-                    }
-                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                    stopSound();
-                    finishActivity();
-                }
-            });
-        }
-
-        @Override
-        public void onError(int errorCode, final String errorMessage) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(errorMessage);
-                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                    stopSound();
-                    finishActivity();
-                }
-            });
-        }
-    };
 
     private void finishActivity() {
         repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
@@ -363,6 +323,8 @@ public class CallingActivity extends BaseActivity {
         if (callData == null)
             return;
 
+        tripId = callData.getTripId();
+        serviceCode = callData.getServiceCode();
         Utils.redLog(TAG, "Call Data: " + new Gson().toJson(callData));
         logMixpanelEvent(callData, false);
         counterTv.setText("20");
@@ -420,6 +382,97 @@ public class CallingActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Inform server to accept the job request
+     */
+    private void acceptJob() {
+        if (Utils.isModernService(serviceCode)) {
+            JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+            jobsRepo.acceptJob(tripId, new JobsDataSource.AcceptJobCallback() {
+                @Override
+                public void onJobAccepted() {
+                    onAcceptSuccess(true, "Job Accepted");
+                    if (BuildConfig.DEBUG)
+                        Toast.makeText(getApplication().getApplicationContext(), "Job Accepted", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onJobAcceptFailed() {
+                    onAcceptFailed("Job Accept Failed");
+                    if (BuildConfig.DEBUG)
+                        Toast.makeText(getApplication().getApplicationContext(), "Job Accept Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Legacy accept call on socket
+            repository.requestAcceptCall(mCurrentActivity, acceptSeconds, handler);
+        }
+    }
+
+    /**
+     * On success of job call accept
+     *
+     * @param success Success status
+     * @param message Success message
+     */
+    private void onAcceptSuccess(Boolean success, String message) {
+        if (mCurrentActivity != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.INSTANCE.dismissDialog();
+                    Dialogs.INSTANCE.showTempToast(message);
+                    if (success) {
+                        AppPreferences.clearTripDistanceData();
+                        AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
+
+                        NormalCallData callData = AppPreferences.getCallData();
+                        callData.setStatus(TripStatus.ON_ACCEPT_CALL);
+                        AppPreferences.setCallData(callData);
+                        AppPreferences.setTripAcceptTime(System.currentTimeMillis());
+                        AppPreferences.setEstimatedFare(callData.getKraiKiKamai());
+                        logMixpanelEvent(callData, true);
+
+                        AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
+                        AppPreferences.setIsOnTrip(true);
+                        AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
+                        ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
+                        stopSound();
+                        finishActivity();
+                    } else {
+                        Utils.setCallIncomingState();
+                        Dialogs.INSTANCE.showToast(message);
+
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * On failure of accept call
+     *
+     * @param message Failure message
+     */
+    private void onAcceptFailed(String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dialogs.INSTANCE.showToast(message);
+                Dialogs.INSTANCE.dismissDialog();
+                if (AppPreferences.isOnTrip()) {
+                    AppPreferences.setIncomingCall(false);
+                    AppPreferences.setTripStatus(TripStatus.ON_FREE);
+                } else {
+                    AppPreferences.setIncomingCall(true);
+                }
+                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                stopSound();
+                finishActivity();
+            }
+        });
+    }
 
     @Subscribe
     public void onEvent(final Intent intent) {
