@@ -115,7 +115,7 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/driver/cancel")
-    fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobResponse>
+    fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobBadResponse>
 
     /**
      * Requests to finish active job

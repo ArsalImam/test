@@ -153,8 +153,8 @@ class JobsRepository(
         jobsRemoteDataSource.startJob(jobId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
-    override fun cancelJob(jobId: String, callback: JobsDataSource.CancelJobCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun cancelJob(jobId: String, reason: String, callback: JobsDataSource.CancelJobCallback) {
+        jobsRemoteDataSource.cancelJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), reason, callback)
     }
 
     override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.FinishJobCallback) {

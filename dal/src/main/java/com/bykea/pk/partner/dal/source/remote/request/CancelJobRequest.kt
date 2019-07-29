@@ -15,9 +15,9 @@ package com.bykea.pk.partner.dal.source.remote.request
  */
 data class CancelJobRequest(
         val _id: String,
-        val cancel_reason: String,
-        val lat: String,
-        val lng: String,
         val token_id: String,
-        val trip_id: String
+        val lat: Double,
+        val lng: Double,
+        val trip_id: String,
+        val cancel_reason: String
 )

@@ -260,43 +260,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         @Override
         public void onCancelRide(final CancelRideResponse cancelRideResponse) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (cancelRideResponse.isSuccess()) {
-                        try {
-                            JSONObject data = new JSONObject();
-                            data.put("DriverLocation", AppPreferences.getLatitude() + "," + AppPreferences.getLongitude());
-                            data.put("timestamp", Utils.getIsoDate());
-                            data.put("CancelBy", "Driver");
-                            data.put("TripID", callData.getTripId());
-                            data.put("TripNo", callData.getTripNo());
-                            data.put("PassengerName", callData.getPassName());
-                            data.put("PassengerID", callData.getPassId());
-                            data.put("DriverID", AppPreferences.getPilotData().getId());
-                            data.put("DriverName", AppPreferences.getPilotData().getFullName());
-                            data.put("CancelBeforeAcceptance", "No");
-                            data.put("CancelReason", cancelReason);
-                            data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
-
-                            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data, true);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Utils.appToast(mCurrentActivity, cancelRideResponse.getMessage());
-                        Utils.setCallIncomingState();
-                        AppPreferences.setWalletAmountIncreased(!cancelRideResponse.isAvailable());
-                        AppPreferences.setAvailableStatus(cancelRideResponse.isAvailable());
-                        dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
-                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                        finish();
-                    } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, cancelRideResponse.getMessage());
-                    }
-                    EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
-                }
-            });
+            onCancelled(cancelRideResponse.isSuccess(), cancelRideResponse.getMessage(), cancelRideResponse.isAvailable());
         }
 
         @Override
@@ -730,7 +694,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             public void onCallBack(String reasonMsg) {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 cancelReason = reasonMsg;
-                dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler, reasonMsg, callData.getServiceCode());
+                cancelJob(reasonMsg);
             }
         });
     }
@@ -2320,7 +2284,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         logMixPanelEvent(TripStatus.ON_START_TRIP);
     }
 
-    private void cancelJob() {
+    private void cancelJob(String reasonMsg) {
+        if (Utils.isModernService(callData.getServiceCode())) {
+            jobsRepo.cancelJob(callData.getTripId(), reasonMsg, new JobsDataSource.CancelJobCallback() {
+                @Override
+                public void onJobCancelled() {
+                    onCancelled(true, "Trip cancelled successfully", true);
+                }
+
+                @Override
+                public void onJobCancelFailed() {
+                    onStatusChangedFailed("Unable to cancel trip");
+                }
+            });
+        } else {
+            dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler, reasonMsg);
+        }
+
     }
 
     /**
@@ -2379,6 +2359,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             @Override
             public void onJobFinishFailed(String message) {
                 Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
+//                onStatusChangedFailed(message);
             }
         });
     }
@@ -2444,8 +2425,44 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         });
     }
 
-    private void onCancelled() {
-        //TODO: Implement
+    private void onCancelled(boolean isSuccess, String message, boolean isAvailable) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dialogs.INSTANCE.dismissDialog();
+                if (isSuccess) {
+                    try {
+                        JSONObject data = new JSONObject();
+                        data.put("DriverLocation", AppPreferences.getLatitude() + "," + AppPreferences.getLongitude());
+                        data.put("timestamp", Utils.getIsoDate());
+                        data.put("CancelBy", "Driver");
+                        data.put("TripID", callData.getTripId());
+                        data.put("TripNo", callData.getTripNo());
+                        data.put("PassengerName", callData.getPassName());
+                        data.put("PassengerID", callData.getPassId());
+                        data.put("DriverID", AppPreferences.getPilotData().getId());
+                        data.put("DriverName", AppPreferences.getPilotData().getFullName());
+                        data.put("CancelBeforeAcceptance", "No");
+                        data.put("CancelReason", cancelReason);
+                        data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
+
+                        Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data, true);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Utils.appToast(mCurrentActivity, message);
+                    Utils.setCallIncomingState();
+                    AppPreferences.setWalletAmountIncreased(!isAvailable);
+                    AppPreferences.setAvailableStatus(isAvailable);
+                    dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                    finish();
+                } else {
+                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
+                }
+                EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+            }
+        });
     }
 
     private void onFinished(FinishJobResponseData data) {

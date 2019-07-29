@@ -81,7 +81,7 @@ interface JobsDataSource {
 
     fun startJob(jobId: String, address: String, callback: StartJobCallback)
 
-    fun cancelJob(jobId: String, callback: CancelJobCallback)
+    fun cancelJob(jobId: String, reason: String, callback: CancelJobCallback)
 
     /**
      * Finish active job

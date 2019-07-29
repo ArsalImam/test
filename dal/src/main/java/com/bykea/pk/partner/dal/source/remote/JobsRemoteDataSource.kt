@@ -198,8 +198,23 @@ class JobsRemoteDataSource {
         })
     }
 
-    fun cancelJob() {
-        TODO("not implemented")
+    fun cancelJob(jobId: String, driverId: String, token: String, lat: Double, lng: Double, reason: String, callback: JobsDataSource.CancelJobCallback) {
+        Backend.talos.cancelJob(CancelJobRequest(driverId, token, lat, lng, jobId, reason)).enqueue(object : Callback<CancelJobBadResponse> {
+            override fun onFailure(call: Call<CancelJobBadResponse>, t: Throwable) {
+                callback.onJobCancelFailed()
+            }
+
+            override fun onResponse(call: Call<CancelJobBadResponse>, response: Response<CancelJobBadResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.isSuccess()) callback.onJobCancelled()
+                        else callback.onJobCancelFailed()
+                    }
+                } else {
+                    callback.onJobCancelFailed()
+                }
+            }
+        })
     }
 
     /**
