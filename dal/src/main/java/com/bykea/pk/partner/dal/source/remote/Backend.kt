@@ -89,7 +89,7 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/trips/{job_id}/accept")
-    fun acceptJobCall(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<BaseResponse>
+    fun acceptJobCall(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<AcceptJobCallResponse>
 
     /**
      * Requests to mark arrived for active job
@@ -98,7 +98,7 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/trips/{job_id}/arrived")
-    fun arrivedForJob(@Path("job_id") jobId: String, @Body body: PickJobRequest): Call<BaseResponse>
+    fun arrivedForJob(@Path("job_id") jobId: String, @Body body: ArrivedAtJobRequest): Call<ArriveAtJobResponse>
 
     /**
      * Requests to start active job
@@ -107,7 +107,7 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/trips/{job_id}/start")
-    fun startJob(@Path("job_id") jobId: String, @Body body: PickJobRequest): Call<BaseResponse>
+    fun startJob(@Path("job_id") jobId: String, @Body body: StartJobRequest): Call<StartJobResponse>
 
     /**
      * Requests to cancel active job
@@ -133,7 +133,7 @@ interface Backend {
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/trips/{job_id}/feedback")
-    fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobResponse>
+    fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobBadResponse>
 
     @GET
     fun getMockJobRequestList(

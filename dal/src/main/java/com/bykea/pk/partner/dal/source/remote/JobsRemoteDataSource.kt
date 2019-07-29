@@ -142,12 +142,12 @@ class JobsRemoteDataSource {
      * @param callback AcceptJobCallback
      */
     fun acceptJob(jobId: String, timeEclipsed: Int, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobCallback) {
-        Backend.talos.acceptJobCall(jobId, AcceptJobRequest(driverId, token, lat, lng, timeEclipsed)).enqueue(object : Callback<BaseResponse> {
-            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+        Backend.talos.acceptJobCall(jobId, AcceptJobRequest(driverId, token, lat, lng, timeEclipsed)).enqueue(object : Callback<AcceptJobCallResponse> {
+            override fun onFailure(call: Call<AcceptJobCallResponse>, t: Throwable) {
                 callback.onJobAcceptFailed()
             }
 
-            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+            override fun onResponse(call: Call<AcceptJobCallResponse>, response: Response<AcceptJobCallResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.isSuccess()) callback.onJobAccepted()
@@ -160,12 +160,42 @@ class JobsRemoteDataSource {
         })
     }
 
-    fun arrivedAtJob() {
-        TODO("not implemented")
+    fun arrivedAtJob(jobId: String, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.ArrivedAtJobCallback) {
+        Backend.talos.arrivedForJob(jobId, ArrivedAtJobRequest(driverId, token, lat, lng)).enqueue(object : Callback<ArriveAtJobResponse> {
+            override fun onFailure(call: Call<ArriveAtJobResponse>, t: Throwable) {
+                callback.onJobArriveFailed()
+            }
+
+            override fun onResponse(call: Call<ArriveAtJobResponse>, response: Response<ArriveAtJobResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.isSuccess()) callback.onJobArrived()
+                        else callback.onJobArriveFailed()
+                    }
+                } else {
+                    callback.onJobArriveFailed()
+                }
+            }
+        })
     }
 
-    fun startJob() {
-        TODO("not implemented")
+    fun startJob(jobId: String, address: String, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.StartJobCallback) {
+        Backend.talos.startJob(jobId, StartJobRequest(driverId, token, lat, lng, address)).enqueue(object : Callback<StartJobResponse> {
+            override fun onFailure(call: Call<StartJobResponse>, t: Throwable) {
+                callback.onJobStartFailed()
+            }
+
+            override fun onResponse(call: Call<StartJobResponse>, response: Response<StartJobResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.isSuccess()) callback.onJobStarted()
+                        else callback.onJobStartFailed()
+                    }
+                } else {
+                    callback.onJobStartFailed()
+                }
+            }
+        })
     }
 
     fun cancelJob() {
@@ -209,8 +239,8 @@ class JobsRemoteDataSource {
      * @param callback Response callback
      */
     fun concludeJob(jobId: String, requestBody: ConcludeJobRequest, callback: JobsDataSource.ConcludeJobCallback) {
-        Backend.talos.concludeJob(jobId, requestBody).enqueue(object : Callback<ConcludeJobResponse> {
-            override fun onResponse(call: Call<ConcludeJobResponse>, response: Response<ConcludeJobResponse>) {
+        Backend.talos.concludeJob(jobId, requestBody).enqueue(object : Callback<ConcludeJobBadResponse> {
+            override fun onResponse(call: Call<ConcludeJobBadResponse>, response: Response<ConcludeJobBadResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.isSuccess()) {
@@ -224,7 +254,7 @@ class JobsRemoteDataSource {
                 }
             }
 
-            override fun onFailure(call: Call<ConcludeJobResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ConcludeJobBadResponse>, t: Throwable) {
                 callback.onJobConcludeFailed(t.message, t.hashCode())
             }
         })

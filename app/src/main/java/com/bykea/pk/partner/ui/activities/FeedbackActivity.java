@@ -22,7 +22,7 @@ import android.widget.Spinner;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
-import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobResponse;
+import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -380,12 +380,12 @@ public class FeedbackActivity extends BaseActivity {
             JobsDataSource.ConcludeJobCallback jobCallback = new JobsDataSource.ConcludeJobCallback() {
 
                 @Override
-                public void onJobConcluded(@NotNull ConcludeJobResponse response) {
+                public void onJobConcluded(@NotNull ConcludeJobBadResponse response) {
                     Dialogs.INSTANCE.dismissDialog();
                     Dialogs.INSTANCE.showToast(response.getMessage());
                     Utils.setCallIncomingState();
-                    AppPreferences.setWalletAmountIncreased(!response.isAvailable());
-                    AppPreferences.setAvailableStatus(response.isAvailable());
+//                    AppPreferences.setWalletAmountIncreased(!response.isAvailable());
+//                    AppPreferences.setAvailableStatus(response.isAvailable());
                     ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     mCurrentActivity.finish();
                 }

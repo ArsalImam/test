@@ -2,7 +2,7 @@ package com.bykea.pk.partner.dal.source
 
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
-import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobResponse
+import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData
 
 /**
@@ -79,7 +79,7 @@ interface JobsDataSource {
 
     fun arrivedAtJob(jobId: String, callback: ArrivedAtJobCallback)
 
-    fun startJob(jobId: String, callback: StartJobCallback)
+    fun startJob(jobId: String, address: String, callback: StartJobCallback)
 
     fun cancelJob(jobId: String, callback: CancelJobCallback)
 
@@ -214,7 +214,7 @@ interface JobsDataSource {
         /**
          * On job conclude success
          */
-        fun onJobConcluded(it: ConcludeJobResponse)
+        fun onJobConcluded(it: ConcludeJobBadResponse)
 
         /**
          * On job conclude success
