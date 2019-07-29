@@ -146,11 +146,11 @@ class JobsRepository(
     }
 
     override fun arrivedAtJob(jobId: String, callback: JobsDataSource.ArrivedAtJobCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        jobsRemoteDataSource.arrivedAtJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
-    override fun startJob(jobId: String, callback: JobsDataSource.StartJobCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun startJob(jobId: String, address: String, callback: JobsDataSource.StartJobCallback) {
+        jobsRemoteDataSource.startJob(jobId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
     override fun cancelJob(jobId: String, callback: JobsDataSource.CancelJobCallback) {
@@ -163,7 +163,7 @@ class JobsRepository(
     }
 
     override fun concludeJob(jobId: String, rate: Int, receivedAmount: Int, callback: JobsDataSource.ConcludeJobCallback, deliveryMessage: String?, deliveryStatus: Boolean?, purchaseAmount: Int?, receiverName: String?, receiverPhone: String?) {
-        val body = ConcludeJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), rate, receivedAmount, deliveryMessage, deliveryStatus, purchaseAmount, receiverName, receiverPhone)
+        val body = ConcludeJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), rate, receivedAmount, deliveryMessage, deliveryStatus, purchaseAmount, receiverName, receiverPhone, "Good customer he was")
         jobsRemoteDataSource.concludeJob(jobId, body, callback)
     }
 

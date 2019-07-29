@@ -206,7 +206,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private BookingActivity mCurrentActivity;
     private NormalCallData callData;
-    JobsRepository repo;
+    JobsRepository jobsRepo;
     private UserRepository dataRepository;
     private String cancelReason = StringUtils.EMPTY;
 
@@ -234,51 +234,135 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
+    private UserDataHandler driversDataHandler = new UserDataHandler() {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_booking);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        ButterKnife.bind(this);
-        mCurrentActivity = this;
-        dataRepository = new UserRepository();
-
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(Constants.Extras.IS_CALLED_FROM_LOADBOARD)) {
-            IS_CALLED_FROM_LOADBOARD_VALUE = getIntent().getExtras().getBoolean(Constants.Extras.IS_CALLED_FROM_LOADBOARD);
+        @Override
+        public void onUpdateDropOff(final UpdateDropOffResponse data) {
+            if (mCurrentActivity != null) {
+                mCurrentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Dialogs.INSTANCE.dismissDialog();
+                        Utils.appToast(mCurrentActivity, data.getMessage());
+                        configCountDown();
+                        allowTripStatusCall = true;
+                        Utils.redLog(TAG, "driversDataHandler called: " + allowTripStatusCall);
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
+                    }
+                });
+            }
         }
-        if (IS_CALLED_FROM_LOADBOARD_VALUE) {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            dataRepository.getActiveTrip(mCurrentActivity, handler);
+
+        @Override
+        public void onArrived(final ArrivedResponse arrivedResponse) {
+            BookingActivity.this.onArrived(arrivedResponse.isSuccess(), arrivedResponse.getMessage());
         }
 
-        AppPreferences.setStatsApiCallRequired(true);
-        Utils.keepScreenOn(mCurrentActivity);
-        Notifications.removeAllNotifications(mCurrentActivity);
-//        mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
-//                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
-//                .addApi(Places.GEO_DATA_API)
-//                .build();
+        @Override
+        public void onCancelRide(final CancelRideResponse cancelRideResponse) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.INSTANCE.dismissDialog();
+                    if (cancelRideResponse.isSuccess()) {
+                        try {
+                            JSONObject data = new JSONObject();
+                            data.put("DriverLocation", AppPreferences.getLatitude() + "," + AppPreferences.getLongitude());
+                            data.put("timestamp", Utils.getIsoDate());
+                            data.put("CancelBy", "Driver");
+                            data.put("TripID", callData.getTripId());
+                            data.put("TripNo", callData.getTripNo());
+                            data.put("PassengerName", callData.getPassName());
+                            data.put("PassengerID", callData.getPassId());
+                            data.put("DriverID", AppPreferences.getPilotData().getId());
+                            data.put("DriverName", AppPreferences.getPilotData().getFullName());
+                            data.put("CancelBeforeAcceptance", "No");
+                            data.put("CancelReason", cancelReason);
+                            data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
 
-
-        mapView = (MapView) findViewById(R.id.jobMapFragment);
-        final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
-        mapView.onCreate(mapViewSavedInstanceState);
-        try {
-            MapsInitializer.initialize(getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
+                            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data, true);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Utils.appToast(mCurrentActivity, cancelRideResponse.getMessage());
+                        Utils.setCallIncomingState();
+                        AppPreferences.setWalletAmountIncreased(!cancelRideResponse.isAvailable());
+                        AppPreferences.setAvailableStatus(cancelRideResponse.isAvailable());
+                        dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                        finish();
+                    } else {
+                        Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, cancelRideResponse.getMessage());
+                    }
+                    EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+                }
+            });
         }
-        mapView.getMapAsync(mapReadyCallback);
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
 
-        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+        @Override
+        public void onEndRide(final EndRideResponse endRideResponse) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.INSTANCE.dismissDialog();
+//                    jobBtn.setEnabled(true);
+                    if (endRideResponse.isSuccess()) {
+                        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
+                        endAddressTv.setEnabled(false);
+                        callData = AppPreferences.getCallData();
+//                        endAddressTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_red_circle, 0, 0, 0);
+                        callData.setStartAddress(endRideResponse.getData().getStartAddress());
+                        callData.setEndAddress(endRideResponse.getData().getEndAddress());
+                        callData.setTripNo(endRideResponse.getData().getTripNo());
+                        callData.setTotalFare(endRideResponse.getData().getTotalFare());
+                        callData.setTotalMins(endRideResponse.getData().getTotalMins());
+                        callData.setDistanceCovered(endRideResponse.getData().getDistanceCovered());
+                        if (StringUtils.isNotBlank(endRideResponse.getData().getWallet_deduction())) {
+                            callData.setWallet_deduction(endRideResponse.getData().getWallet_deduction());
+                        }
+                        if (StringUtils.isNotBlank(endRideResponse.getData().getPromo_deduction())) {
+                            callData.setPromo_deduction(endRideResponse.getData().getPromo_deduction());
+                        }
+                        if (StringUtils.isNotBlank(endRideResponse.getData().getDropoff_discount())) {
+                            callData.setDropoff_discount(endRideResponse.getData().getDropoff_discount());
+                        }
+                        callData.setStatus(TripStatus.ON_FINISH_TRIP);
+                        callData.setTrip_charges(endRideResponse.getData().getTrip_charges());
+                        AppPreferences.setCallData(callData);
+                        tvEstimation.setVisibility(View.GONE);
+                        AppPreferences.clearTripDistanceData();
+                        AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP);
+                        ActivityStackManager.getInstance()
+                                .startFeedbackActivity(mCurrentActivity);
+                        mCurrentActivity.finish();
+                    } else {
+                        Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, endRideResponse.getMessage());
+                    }
+                }
+            });
+        }
 
-        if (!IS_CALLED_FROM_LOADBOARD_VALUE)
-            setInitialData();
-    }
+
+        @Override
+        public void onBeginRide(final BeginRideResponse beginRideResponse) {
+            onStarted(beginRideResponse.isSuccess(), beginRideResponse.getMessage());
+        }
+
+
+        @Override
+        public void onError(final int errorCode, final String error) {
+//            isFinishCalled = false;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.INSTANCE.dismissDialog();
+                    jobBtn.setEnabled(true);
+                    Utils.appToast(mCurrentActivity, error);
+//                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
+                }
+            });
+        }
+    };
 
 
     @Override
@@ -411,177 +495,50 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         cancelBtn.setVisibility(View.GONE);
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_booking);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        ButterKnife.bind(this);
+        mCurrentActivity = this;
+        dataRepository = new UserRepository();
+        jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
-    @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
-            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
-    public void onClick(View view) {
-
-        switch (view.getId()) {
-            case R.id.chatBtn:
-                if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
-                    Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
-                } else {
-                    ActivityStackManager.getInstance()
-                            .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
-                }
-                break;
-            case R.id.ivAddressEdit:
-                Intent intent1 = new Intent(mCurrentActivity, SelectPlaceActivity.class);
-                if (StringUtils.isNotBlank(callData.getEndLat()) &&
-                        StringUtils.isNotBlank(callData.getEndLng()) &&
-                        StringUtils.isNotBlank(callData.getEndAddress())) {
-                    PlacesResult placesResult = new PlacesResult(callData.getEndAddress(), callData.getEndAddress(),
-                            Double.parseDouble(callData.getEndLat()),
-                            Double.parseDouble(callData.getEndLng()));
-                    intent1.putExtra(Constants.Extras.SELECTED_ITEM, placesResult);
-                }
-                intent1.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
-                startActivityForResult(intent1, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
-//                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
-                break;
-            case R.id.callbtn:
-                if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
-                    showCallPassengerDialog();
-                } else {
-                    Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
-                }
-                break;
-            case R.id.tvCustomerPhone:
-                if (StringUtils.isNotBlank(tvCustomerPhone.getText().toString())) {
-                    Utils.callingIntent(mCurrentActivity, tvCustomerPhone.getText().toString());
-                }
-                break;
-            case R.id.cancelBtn:
-                if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
-                    String msg = "پہنچنے کے " + AppPreferences.getSettings()
-                            .getSettings().getCancel_time() +
-                            " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
-                    Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            cancelReasonDialog();
-                        }
-                    }, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Dialogs.INSTANCE.dismissDialog();
-                        }
-                    }, "Cancel Trip", msg);
-                } else {
-                    cancelReasonDialog();
-                }
-                break;
-            case R.id.jobBtn:
-                if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                    if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
-                            callData != null) {
-                        int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
-                                Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
-                        if (distance > 200) {
-                            boolean showTickBtn = distance < AppPreferences.getSettings().getSettings().getArrived_min_dist();
-                            Dialogs.INSTANCE.showConfirmArrivalDialog(mCurrentActivity, showTickBtn, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Dialogs.INSTANCE.dismissDialog();
-                                    requestArrived();
-                                }
-                            });
-                        } else {
-                            Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Dialogs.INSTANCE.dismissDialog();
-                                    requestArrived();
-                                }
-                            }, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Dialogs.INSTANCE.dismissDialog();
-                                }
-                            }, " پہنچ گئے؟");
-                        }
-                    }
-                    //CHECK FOR BEGIN TRIP BUTTON CLICK
-                    else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start)) && callData != null) {
-                        Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Dialogs.INSTANCE.dismissDialog();
-                                Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                                AppPreferences.clearTripDistanceData();
-                                dataRepository.requestBeginRide(mCurrentActivity, driversDataHandler,
-                                        callData.getEndLat(), callData.getEndLng(), callData.getEndAddress());
-                                logMixPanelEvent(TripStatus.ON_START_TRIP);
-                            }
-                        }, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Dialogs.INSTANCE.dismissDialog();
-                            }
-                        }, " اسٹارٹ؟");
-                    } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
-                        Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                sendFinishActiveJobCall();
-                            }
-                        }, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Dialogs.INSTANCE.dismissDialog();
-                            }
-                        }, " مکمل؟");
-                    }
-                } else {
-                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
-                }
-                updateMarkers(true);
-                break;
-            case R.id.cvDirections:
-                startGoogleDirectionsApp();
-                break;
-            case R.id.cvLocation:
-                setDriverLocation();
-                break;
-            case R.id.ivTopUp:
-                Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, Utils.isCourierService(callData.getCallType()), new StringCallBack() {
-                    @Override
-                    public void onCallBack(String msg) {
-                        if (StringUtils.isNotBlank(msg)) {
-                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                            dataRepository.topUpPassengerWallet(mCurrentActivity, callData, msg, new UserDataHandler() {
-                                @Override
-                                public void onTopUpPassWallet(final TopUpPassWalletResponse response) {
-                                    if (mCurrentActivity != null) {
-                                        mCurrentActivity.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Dialogs.INSTANCE.dismissDialog();
-                                                Utils.appToast(mCurrentActivity, response.getMessage());
-                                                if (response.getData() != null) {
-                                                    callData.setPassWallet(response.getData().getAmount());
-                                                    AppPreferences.setCallData(callData);
-                                                    tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
-                                                }
-                                            }
-                                        });
-                                    }
-
-                                }
-
-                                @Override
-                                public void onError(int errorCode, String errorMessage) {
-                                    Dialogs.INSTANCE.dismissDialog();
-                                    Utils.appToast(mCurrentActivity, errorMessage);
-                                }
-                            });
-                        }
-                    }
-                });
-                break;
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(Constants.Extras.IS_CALLED_FROM_LOADBOARD)) {
+            IS_CALLED_FROM_LOADBOARD_VALUE = getIntent().getExtras().getBoolean(Constants.Extras.IS_CALLED_FROM_LOADBOARD);
         }
+        if (IS_CALLED_FROM_LOADBOARD_VALUE) {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            dataRepository.getActiveTrip(mCurrentActivity, handler);
+        }
+
+        AppPreferences.setStatsApiCallRequired(true);
+        Utils.keepScreenOn(mCurrentActivity);
+        Notifications.removeAllNotifications(mCurrentActivity);
+//        mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
+//                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
+//                .addApi(Places.GEO_DATA_API)
+//                .build();
+
+
+        mapView = (MapView) findViewById(R.id.jobMapFragment);
+        final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
+        mapView.onCreate(mapViewSavedInstanceState);
+        try {
+            MapsInitializer.initialize(getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mapView.getMapAsync(mapReadyCallback);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
+
+        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+
+        if (!IS_CALLED_FROM_LOADBOARD_VALUE)
+            setInitialData();
     }
 
     private void startGoogleDirectionsApp() {
@@ -718,13 +675,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
 
     }*/
-
-    private void requestArrived() {
-        Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        dataRepository.requestArrived(mCurrentActivity, driversDataHandler);
-        logMixPanelEvent(TripStatus.ON_ARRIVED_TRIP);
-    }
-
 
     private void logMixPanelEvent(String status) {
         try {
@@ -1911,182 +1861,170 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
     }
 
-    private UserDataHandler driversDataHandler = new UserDataHandler() {
+    @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
+            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
+    public void onClick(View view) {
 
-        @Override
-        public void onUpdateDropOff(final UpdateDropOffResponse data) {
-            if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
+        switch (view.getId()) {
+            case R.id.chatBtn:
+                if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
+                    Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                } else {
+                    ActivityStackManager.getInstance()
+                            .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
+                }
+                break;
+            case R.id.ivAddressEdit:
+                Intent intent1 = new Intent(mCurrentActivity, SelectPlaceActivity.class);
+                if (StringUtils.isNotBlank(callData.getEndLat()) &&
+                        StringUtils.isNotBlank(callData.getEndLng()) &&
+                        StringUtils.isNotBlank(callData.getEndAddress())) {
+                    PlacesResult placesResult = new PlacesResult(callData.getEndAddress(), callData.getEndAddress(),
+                            Double.parseDouble(callData.getEndLat()),
+                            Double.parseDouble(callData.getEndLng()));
+                    intent1.putExtra(Constants.Extras.SELECTED_ITEM, placesResult);
+                }
+                intent1.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+                startActivityForResult(intent1, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
+//                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
+                break;
+            case R.id.callbtn:
+                if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
+                    showCallPassengerDialog();
+                } else {
+                    Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                }
+                break;
+            case R.id.tvCustomerPhone:
+                if (StringUtils.isNotBlank(tvCustomerPhone.getText().toString())) {
+                    Utils.callingIntent(mCurrentActivity, tvCustomerPhone.getText().toString());
+                }
+                break;
+            case R.id.cancelBtn:
+                if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
+                    String msg = "پہنچنے کے " + AppPreferences.getSettings()
+                            .getSettings().getCancel_time() +
+                            " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
+                    Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            cancelReasonDialog();
+                        }
+                    }, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Dialogs.INSTANCE.dismissDialog();
+                        }
+                    }, "Cancel Trip", msg);
+                } else {
+                    cancelReasonDialog();
+                }
+                break;
+            case R.id.jobBtn:
+                if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                    if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
+                            callData != null) {
+                        int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
+                                Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
+                        if (distance > 200) {
+                            boolean showTickBtn = distance < AppPreferences.getSettings().getSettings().getArrived_min_dist();
+                            Dialogs.INSTANCE.showConfirmArrivalDialog(mCurrentActivity, showTickBtn, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    arriveAtJob();
+                                }
+                            });
+                        } else {
+                            Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    arriveAtJob();
+                                }
+                            }, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                }
+                            }, " پہنچ گئے؟");
+                        }
+                    }
+                    //CHECK FOR BEGIN TRIP BUTTON CLICK
+                    else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start)) && callData != null) {
+                        Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startJob();
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        }, " اسٹارٹ؟");
+                    } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
+                        Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                finishJob();
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        }, " مکمل؟");
+                    }
+                } else {
+                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
+                }
+                updateMarkers(true);
+                break;
+            case R.id.cvDirections:
+                startGoogleDirectionsApp();
+                break;
+            case R.id.cvLocation:
+                setDriverLocation();
+                break;
+            case R.id.ivTopUp:
+                Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, Utils.isCourierService(callData.getCallType()), new StringCallBack() {
                     @Override
-                    public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Utils.appToast(mCurrentActivity, data.getMessage());
-                        configCountDown();
-                        allowTripStatusCall = true;
-                        Utils.redLog(TAG, "driversDataHandler called: " + allowTripStatusCall);
-                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
+                    public void onCallBack(String msg) {
+                        if (StringUtils.isNotBlank(msg)) {
+                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                            dataRepository.topUpPassengerWallet(mCurrentActivity, callData, msg, new UserDataHandler() {
+                                @Override
+                                public void onTopUpPassWallet(final TopUpPassWalletResponse response) {
+                                    if (mCurrentActivity != null) {
+                                        mCurrentActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Dialogs.INSTANCE.dismissDialog();
+                                                Utils.appToast(mCurrentActivity, response.getMessage());
+                                                if (response.getData() != null) {
+                                                    callData.setPassWallet(response.getData().getAmount());
+                                                    AppPreferences.setCallData(callData);
+                                                    tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                }
+
+                                @Override
+                                public void onError(int errorCode, String errorMessage) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                    Utils.appToast(mCurrentActivity, errorMessage);
+                                }
+                            });
+                        }
                     }
                 });
-            }
+                break;
         }
-
-        @Override
-        public void onArrived(final ArrivedResponse arrivedResponse) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (arrivedResponse.isSuccess()) {
-                        callData = AppPreferences.getCallData();
-                        callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
-                        AppPreferences.setCallData(callData);
-                        showDropOffAddress();
-                        llStartAddress.setVisibility(View.GONE);
-                        AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
-                        setOnArrivedData();
-                        // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
-                        changeDriverMarker();
-                        updateEtaAndCallData("0", "0");
-                        configCountDown();
-                    } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, arrivedResponse.getMessage());
-                    }
-                    EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
-                }
-            });
-        }
-
-        @Override
-        public void onCancelRide(final CancelRideResponse cancelRideResponse) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (cancelRideResponse.isSuccess()) {
-                        try {
-                            JSONObject data = new JSONObject();
-                            data.put("DriverLocation", AppPreferences.getLatitude() + "," + AppPreferences.getLongitude());
-                            data.put("timestamp", Utils.getIsoDate());
-                            data.put("CancelBy", "Driver");
-                            data.put("TripID", callData.getTripId());
-                            data.put("TripNo", callData.getTripNo());
-                            data.put("PassengerName", callData.getPassName());
-                            data.put("PassengerID", callData.getPassId());
-                            data.put("DriverID", AppPreferences.getPilotData().getId());
-                            data.put("DriverName", AppPreferences.getPilotData().getFullName());
-                            data.put("CancelBeforeAcceptance", "No");
-                            data.put("CancelReason", cancelReason);
-                            data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
-
-                            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data, true);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Utils.appToast(mCurrentActivity, cancelRideResponse.getMessage());
-                        Utils.setCallIncomingState();
-                        AppPreferences.setWalletAmountIncreased(!cancelRideResponse.isAvailable());
-                        AppPreferences.setAvailableStatus(cancelRideResponse.isAvailable());
-                        dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
-                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                        finish();
-                    } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, cancelRideResponse.getMessage());
-                    }
-                    EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
-                }
-            });
-        }
-
-        @Override
-        public void onEndRide(final EndRideResponse endRideResponse) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.dismissDialog();
-//                    jobBtn.setEnabled(true);
-                    if (endRideResponse.isSuccess()) {
-                        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
-                        endAddressTv.setEnabled(false);
-                        callData = AppPreferences.getCallData();
-//                        endAddressTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_red_circle, 0, 0, 0);
-                        callData.setStartAddress(endRideResponse.getData().getStartAddress());
-                        callData.setEndAddress(endRideResponse.getData().getEndAddress());
-                        callData.setTripNo(endRideResponse.getData().getTripNo());
-                        callData.setTotalFare(endRideResponse.getData().getTotalFare());
-                        callData.setTotalMins(endRideResponse.getData().getTotalMins());
-                        callData.setDistanceCovered(endRideResponse.getData().getDistanceCovered());
-                        if (StringUtils.isNotBlank(endRideResponse.getData().getWallet_deduction())) {
-                            callData.setWallet_deduction(endRideResponse.getData().getWallet_deduction());
-                        }
-                        if (StringUtils.isNotBlank(endRideResponse.getData().getPromo_deduction())) {
-                            callData.setPromo_deduction(endRideResponse.getData().getPromo_deduction());
-                        }
-                        if (StringUtils.isNotBlank(endRideResponse.getData().getDropoff_discount())) {
-                            callData.setDropoff_discount(endRideResponse.getData().getDropoff_discount());
-                        }
-                        callData.setStatus(TripStatus.ON_FINISH_TRIP);
-                        callData.setTrip_charges(endRideResponse.getData().getTrip_charges());
-                        AppPreferences.setCallData(callData);
-                        tvEstimation.setVisibility(View.GONE);
-                        AppPreferences.clearTripDistanceData();
-                        AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP);
-                        ActivityStackManager.getInstance()
-                                .startFeedbackActivity(mCurrentActivity);
-                        mCurrentActivity.finish();
-                    } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, endRideResponse.getMessage());
-                    }
-                }
-            });
-        }
-
-
-        @Override
-        public void onBeginRide(final BeginRideResponse beginRideResponse) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-//                    jobBtn.setEnabled(true);
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (beginRideResponse.isSuccess()) {
-                        hideButtonOnArrived();
-                        callData = AppPreferences.getCallData();
-                        callData.setStatus(TripStatus.ON_START_TRIP);
-                        setStartedState();
-                        long startTripTime = System.currentTimeMillis();
-                        AppPreferences.setStartTripTime(startTripTime);
-                        AppPreferences.setPrevDistanceLatLng(Double.parseDouble(callData.getStartLat()),
-                                Double.parseDouble(callData.getStartLng()), startTripTime);
-                        AppPreferences.setCallData(callData);
-                        AppPreferences.setTripStatus(TripStatus.ON_START_TRIP);
-                        // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
-                        changeDriverMarker();
-                        showEstimatedDistTime();
-                        updateDropOff();
-                        configCountDown();
-                    } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, beginRideResponse.getMessage());
-                    }
-                    EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
-                }
-            });
-        }
-
-
-        @Override
-        public void onError(final int errorCode, final String error) {
-//            isFinishCalled = false;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.dismissDialog();
-                    jobBtn.setEnabled(true);
-                    Utils.appToast(mCurrentActivity, error);
-//                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
-                }
-            });
-        }
-    };
+    }
 
     private NetworkChangeListener networkChangeListener = new NetworkChangeListener() {
         @Override
@@ -2333,27 +2271,77 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         countDownTimer.start();
     }
 
+    /**
+     * Requests server to mark arrive at job. Depending upon service types, it does this
+     * communication on either REST Api or socket
+     */
+    private void arriveAtJob() {
+        Dialogs.INSTANCE.dismissDialog();
+        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+        if (Utils.isModernService(callData.getServiceCode())) {
+            jobsRepo.arrivedAtJob(callData.getTripId(), new JobsDataSource.ArrivedAtJobCallback() {
+
+                @Override
+                public void onJobArrived() {
+                    onArrived(true, "Job arrived success");
+                }
+
+                @Override
+                public void onJobArriveFailed() {
+                    onStatusChangedFailed("Failed to mark arrived");
+                }
+            });
+        } else {
+            dataRepository.requestArrived(mCurrentActivity, driversDataHandler);
+        }
+        logMixPanelEvent(TripStatus.ON_ARRIVED_TRIP);
+    }
+
+    private void startJob() {
+        Dialogs.INSTANCE.dismissDialog();
+        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+        AppPreferences.clearTripDistanceData();
+        if (Utils.isModernService(callData.getServiceCode())) {
+            jobsRepo.startJob(callData.getTripId(), callData.getStartAddress(), new JobsDataSource.StartJobCallback() {
+                @Override
+                public void onJobStarted() {
+                    onStarted(true, "Job started successfully");
+                }
+
+                @Override
+                public void onJobStartFailed() {
+                    onStatusChangedFailed("Failed to mark started");
+                }
+            });
+        } else {
+            dataRepository.requestBeginRide(mCurrentActivity, driversDataHandler,
+                    callData.getEndLat(), callData.getEndLng(), callData.getEndAddress());
+        }
+        logMixPanelEvent(TripStatus.ON_START_TRIP);
+    }
+
+    private void cancelJob() {
+    }
 
     /**
      * Send Finish Active Job Call
      */
-    private void sendFinishActiveJobCall() {
+    private void finishJob() {
         Dialogs.INSTANCE.dismissDialog();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         logMixPanelEvent(TripStatus.ON_FINISH_TRIP);
 
         if (Utils.isModernService(callData.getServiceCode())) {
-            sendFinishActiveJobCallRestApi();
+            finishJobRestApi();
         } else {
             dataRepository.requestEndRide(mCurrentActivity, driversDataHandler);
         }
-
     }
 
     /**
      * Send Finish Active Job Call To Rest API for Loadboard job
      */
-    private void sendFinishActiveJobCallRestApi() {
+    private void finishJobRestApi() {
         String endLatString = AppPreferences.getLatitude() + "";
         String endLngString = AppPreferences.getLongitude() + "";
         String lastLat = AppPreferences.getPrevDistanceLatitude();
@@ -2382,43 +2370,123 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         latLngList.add(endLatLng);
 
-        repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
-        repo.finishJob(callData.getTripId(), latLngList, new JobsDataSource.FinishJobCallback() {
+        jobsRepo.finishJob(callData.getTripId(), latLngList, new JobsDataSource.FinishJobCallback() {
             @Override
             public void onJobFinished(@NotNull FinishJobResponseData data) {
-                Dialogs.INSTANCE.dismissDialog();
-                logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
-                endAddressTv.setEnabled(false);
-                callData = AppPreferences.getCallData();
-//                callData.setStartAddress(data.getStartAddress());
-                callData.setEndAddress(data.getTrip().getEnd_address());
-                callData.setTripNo(data.getInvoice().getTrip_no());
-                callData.setTotalFare(String.valueOf(data.getInvoice().getTotal()));
-                callData.setTotalMins(String.valueOf(data.getInvoice().getMinutes()));
-                callData.setDistanceCovered(String.valueOf(data.getInvoice().getKm()));
-                if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getWallet_deduction()))) {
-                    callData.setWallet_deduction(String.valueOf(data.getInvoice().getWallet_deduction()));
-                }
-                if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getPromo_deduction()))) {
-                    callData.setPromo_deduction(String.valueOf(data.getInvoice().getPromo_deduction()));
-                }
-//                if (StringUtils.isNotBlank(data.getDropoff_discount())) {
-//                    callData.setDropoff_discount(data.getDropoff_discount());
-//                }
-                callData.setStatus(TripStatus.ON_FINISH_TRIP);
-                callData.setTrip_charges(String.valueOf(data.getInvoice().getTrip_charges()));
-                AppPreferences.setCallData(callData);
-                tvEstimation.setVisibility(View.GONE);
-                AppPreferences.clearTripDistanceData();
-                AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP);
-                ActivityStackManager.getInstance()
-                        .startFeedbackActivity(mCurrentActivity);
-                mCurrentActivity.finish();
+                onFinished(data);
             }
 
             @Override
             public void onJobFinishFailed(String message) {
                 Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
+            }
+        });
+    }
+
+    /**
+     * On response of Arrived at Job call
+     *
+     * @param success Is response with success
+     * @param message message to show
+     */
+    private void onArrived(boolean success, String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dialogs.INSTANCE.dismissDialog();
+                if (success) {
+                    callData = AppPreferences.getCallData();
+                    callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
+                    AppPreferences.setCallData(callData);
+                    showDropOffAddress();
+                    llStartAddress.setVisibility(View.GONE);
+                    AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
+                    setOnArrivedData();
+                    // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
+                    changeDriverMarker();
+                    updateEtaAndCallData("0", "0");
+                    configCountDown();
+                } else {
+                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
+                }
+                EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+            }
+        });
+    }
+
+    private void onStarted(boolean success, String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                    jobBtn.setEnabled(true);
+                Dialogs.INSTANCE.dismissDialog();
+                if (success) {
+                    hideButtonOnArrived();
+                    callData = AppPreferences.getCallData();
+                    callData.setStatus(TripStatus.ON_START_TRIP);
+                    setStartedState();
+                    long startTripTime = System.currentTimeMillis();
+                    AppPreferences.setStartTripTime(startTripTime);
+                    AppPreferences.setPrevDistanceLatLng(Double.parseDouble(callData.getStartLat()),
+                            Double.parseDouble(callData.getStartLng()), startTripTime);
+                    AppPreferences.setCallData(callData);
+                    AppPreferences.setTripStatus(TripStatus.ON_START_TRIP);
+                    // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
+                    changeDriverMarker();
+                    showEstimatedDistTime();
+                    updateDropOff();
+                    configCountDown();
+                } else {
+                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
+                }
+                EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+            }
+        });
+    }
+
+    private void onCancelled() {
+        //TODO: Implement
+    }
+
+    private void onFinished(FinishJobResponseData data) {
+        Dialogs.INSTANCE.dismissDialog();
+        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
+        endAddressTv.setEnabled(false);
+        callData = AppPreferences.getCallData();
+//                callData.setStartAddress(data.getStartAddress());
+        callData.setEndAddress(data.getTrip().getEnd_address());
+        callData.setTripNo(data.getInvoice().getTrip_no());
+        callData.setTotalFare(String.valueOf(data.getInvoice().getTotal()));
+        callData.setTotalMins(String.valueOf(data.getInvoice().getMinutes()));
+        callData.setDistanceCovered(String.valueOf(data.getInvoice().getKm()));
+        if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getWallet_deduction()))) {
+            callData.setWallet_deduction(String.valueOf(data.getInvoice().getWallet_deduction()));
+        }
+        if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getPromo_deduction()))) {
+            callData.setPromo_deduction(String.valueOf(data.getInvoice().getPromo_deduction()));
+        }
+//                if (StringUtils.isNotBlank(data.getDropoff_discount())) {
+//                    callData.setDropoff_discount(data.getDropoff_discount());
+//                }
+        callData.setStatus(TripStatus.ON_FINISH_TRIP);
+        callData.setTrip_charges(String.valueOf(data.getInvoice().getTrip_charges()));
+        AppPreferences.setCallData(callData);
+        tvEstimation.setVisibility(View.GONE);
+        AppPreferences.clearTripDistanceData();
+        AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP);
+        ActivityStackManager.getInstance()
+                .startFeedbackActivity(mCurrentActivity);
+        mCurrentActivity.finish();
+    }
+
+    private void onStatusChangedFailed(String error) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dialogs.INSTANCE.dismissDialog();
+                jobBtn.setEnabled(true);
+                Utils.appToast(mCurrentActivity, error);
+//                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
             }
         });
     }

@@ -11,5 +11,6 @@ data class ConcludeJobRequest(
         val delivery_status: Boolean?,
         val purchase_amount: Int?,
         val received_by_name: String?,
-        val received_by_phone: String?
+        val received_by_phone: String?,
+        val feedback: String?
 )
