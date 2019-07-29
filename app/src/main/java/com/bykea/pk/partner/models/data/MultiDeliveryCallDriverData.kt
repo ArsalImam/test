@@ -6,7 +6,6 @@ import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.utils.TripStatus
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
-import java.text.DecimalFormat
 
 /**
  * Multi Delivery Call Driver Data Class
@@ -118,6 +117,7 @@ data class MultiDeliveryCallDriverData(
             this.pickupStop = Stop()
             pickup?.lat.let { this.pickupStop.setLat(pickup?.lat!!) }
             pickup?.lng.let { this.pickupStop.setLng(pickup?.lng!!) }
+            this.distance = pickup?.distance.toString()
             this.pickupStop.distance = pickup?.distance
             this.pickupStop.duration = pickup?.duration
             this.pickupStop.address = pickup?.pickupAddress
