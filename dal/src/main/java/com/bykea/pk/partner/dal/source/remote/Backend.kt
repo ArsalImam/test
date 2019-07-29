@@ -88,8 +88,8 @@ interface Backend {
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("/v1/trips/{job_id}/accept")
-    fun acceptJobCall(@Path("job_id") jobId: Long, @Body body: AcceptJobRequest): Call<BaseResponse>
+    @POST("/api/v1/trips/{job_id}/accept")
+    fun acceptJobCall(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<BaseResponse>
 
     /**
      * Requests to mark arrived for active job
@@ -97,8 +97,8 @@ interface Backend {
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("/v1/trips/{job_id}/arrived")
-    fun arrivedForJob(@Path("job_id") jobId: Long, @Body body: AcceptJobRequest): Call<BaseResponse>
+    @POST("/api/v1/trips/{job_id}/arrived")
+    fun arrivedForJob(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<BaseResponse>
 
     /**
      * Requests to start active job
@@ -106,20 +106,16 @@ interface Backend {
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("v1/trips/{job_id}/start")
-    fun startJob(@Path("job_id") jobId: Long, @Body body: AcceptJobRequest): Call<BaseResponse>
+    @POST("/api/v1/trips/{job_id}/start")
+    fun startJob(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<BaseResponse>
 
     /**
      * Requests to cancel active job
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("/v1/driver/cancel")
-    fun cancelJobb(@Body body: AcceptJobRequest): Call<BaseResponse>
-
     @POST("/api/v1/driver/cancel")
     fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobResponse>
-
 
     /**
      * Requests to finish active job
@@ -136,12 +132,8 @@ interface Backend {
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("/v1/trips/{job_id}/feedback")
-    fun concludeJobb(@Path("job_id") jobId: Long, @Body body: AcceptJobRequest): Call<BaseResponse>
-
     @POST("/api/v1/trips/{job_id}/feedback")
     fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobResponse>
-
 
     @GET
     fun getMockJobRequestList(

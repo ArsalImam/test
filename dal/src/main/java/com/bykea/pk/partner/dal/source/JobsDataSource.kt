@@ -55,14 +55,22 @@ interface JobsDataSource {
     fun deleteJobRequest(jobRequestId: Long)
 
     /**
-     * Accept jobRequest
+     * Picks job request
      *
-     * @param jobRequestId Id of JobRequest to be accepted
+     * @param jobId Id of JobRequest to be accepted
      * @param callback Response callback
      */
-    fun acceptJobRequest(jobRequestId: Long, callback: AcceptJobRequestCallback)
+    fun pickJob(jobId: Long, callback: AcceptJobRequestCallback)
 
     fun ackJobCall(jobId: String, callback: AckJobCallCallback)
+
+    fun acceptJob(jobId: String, callback: AcceptJobCallback)
+
+    fun arrivedAtJob(jobId: String, callback: ArrivedAtJobCallback)
+
+    fun startJob(jobId: String, callback: StartJobCallback)
+
+    fun cancelJob(jobId: String, callback: CancelJobCallback)
 
     /**
      * Finish active job
@@ -149,6 +157,26 @@ interface JobsDataSource {
     interface AckJobCallCallback {
         fun onJobCallAcknowledged()
         fun onJobCallAcknowledgeFailed()
+    }
+
+    interface AcceptJobCallback {
+        fun onJobAccepted()
+        fun onJobAcceptFailed()
+    }
+
+    interface ArrivedAtJobCallback {
+        fun onJobArrived()
+        fun onJobArriveFailed()
+    }
+
+    interface StartJobCallback {
+        fun onJobStarted()
+        fun onJobStartFailed()
+    }
+
+    interface CancelJobCallback {
+        fun onJobCancelled()
+        fun onJobCancelFailed()
     }
 
     /**
