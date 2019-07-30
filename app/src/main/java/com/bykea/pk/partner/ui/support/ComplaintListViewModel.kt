@@ -43,7 +43,6 @@ class ComplaintListViewModel : ViewModel() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.setZendeskIdentity()
             }
         })
     }

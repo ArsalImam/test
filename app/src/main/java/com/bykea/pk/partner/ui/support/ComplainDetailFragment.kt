@@ -87,7 +87,6 @@ class ComplainDetailFragment : Fragment() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.setZendeskIdentity()
             }
         })
     }

@@ -532,7 +532,7 @@ public class Constants {
         public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
         public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
 
-        public static long ZENDESK_SETTING_IDENTITY_MAX_TIME = 150 * 1000;//2.5 Minutes
+        public static long ZENDESK_SETTING_IDENTITY_MAX_TIME = 10 * 1000;//2.5 Minutes
         public static long ZENDESK_SETTING_IDENTITY_INTERVAL_TIME = 100;//0.1 Second
 
     }

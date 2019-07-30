@@ -39,7 +39,6 @@ public class ContactUsFragment extends Fragment {
     private HomeActivity mCurrentActivity;
     private Unbinder unbinder;
     private JobsRepository jobsRepository;
-    private boolean doubleTap = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,29 +98,26 @@ public class ContactUsFragment extends Fragment {
         if (contactNumbers == null) {
             return;
         }
-        if (!doubleTap) {
-            doubleTap = true;
-            switch (view.getId()) {
-                case R.id.supportCall:
-                    if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
-                        Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
-                    break;
-                case R.id.submittedComplains: {
-                    if (AppPreferences.isEmailVerified()) {
-                        checkStatusForZendeskSDK();
-                    } else {
-                        checkIsEmailUpdatedFromRemoteDataSource();
-                    }
-                }
+        switch (view.getId()) {
+            case R.id.supportCall:
+                if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
+                    Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
                 break;
-                case R.id.reportComplain: {
-                    ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
+            case R.id.submittedComplains: {
+                if (AppPreferences.isEmailVerified()) {
+                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+                } else {
+                    checkIsEmailUpdatedFromRemoteDataSource();
                 }
-                break;
-                case R.id.bankAccountNumber:
-                    startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
-                    break;
             }
+            break;
+            case R.id.reportComplain: {
+                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
+            }
+            break;
+            case R.id.bankAccountNumber:
+                startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
+                break;
         }
     }
 
@@ -134,12 +130,9 @@ public class ContactUsFragment extends Fragment {
             @Override
             public void onSuccess(boolean isEmailUpdated) {
                 Dialogs.INSTANCE.dismissDialog();
-                if (isEmailUpdated) {
+                if (isEmailUpdated)
                     AppPreferences.setEmailVerified();
-                    checkStatusForZendeskSDK();
-                } else {
-                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
-                }
+                ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
             }
 
             @Override
@@ -148,38 +141,5 @@ public class ContactUsFragment extends Fragment {
                 Utils.appToast(mCurrentActivity, mCurrentActivity.getString(R.string.error_try_again));
             }
         });
-    }
-
-    /**
-     * Check Status For Zendesk SDK
-     * If Ready : Open Detail Fragment - To Submit Ticket
-     * If Not : Open Zendesk Identity Activity
-     */
-    private void checkStatusForZendeskSDK() {
-        if (AppPreferences.isZendeskSDKReady()) {
-            ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
-        } else {
-            if (!AppPreferences.checkKeyExist(Keys.ZENDESK_IDENTITY_SETUP_TIME)) {
-                //INTIALIZE ZENDESK SDK
-                Utils.setZendeskIdentity();
-                AppPreferences.setZendeskSDKSetupTime();
-                ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity);
-            } else {
-                if ((new Date().getTime() - AppPreferences.getZendeskSDKSetupTime().getTime()) < Constants.ZendeskConfigurations.ZENDESK_SETTING_IDENTITY_MAX_TIME) {
-                    //ZENDESK SDK NOT READY
-                    ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity);
-                } else {
-                    //ZENDESK SDK IS READY
-                    AppPreferences.setZendeskSDKReady();
-                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        doubleTap = false;
     }
 }

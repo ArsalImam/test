@@ -107,6 +107,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Dialogs.INSTANCE.dismissDialog()
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -115,7 +116,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
                     updateEmailFromRemoteDataSource(it)
                 }
             } catch (e: ApiException) {
-
+                Dialogs.INSTANCE.dismissDialog()
             }
         }
     }
@@ -131,7 +132,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 AppPreferences.setDriverEmail(emailId)
                 AppPreferences.setEmailVerified()
                 mGoogleSignInClient?.signOut()
-                checkStatusForZendesk()
+                changeFragment(ComplainDetailFragment())
             }
 
             override fun onFail(message: String?) {
@@ -139,33 +140,5 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 Utils.appToast(this@ComplaintSubmissionActivity, getString(R.string.error_try_again))
             }
         })
-    }
-
-    /**
-     * Check Status For Zendesk SDK
-     * If Ready : Open Detail Fragment - To Submit Ticket
-     * If Not : Open Zendesk Identity Activity
-     */
-    internal fun checkStatusForZendesk() {
-        if (AppPreferences.isZendeskSDKReady()) {
-            //IF ZENDESK SDK IS READY
-            changeFragment(ComplainDetailFragment())
-        } else {
-            if (!AppPreferences.checkKeyExist(Keys.ZENDESK_IDENTITY_SETUP_TIME)) {
-                //INTIALIZE ZENDESK SDK
-                Utils.setZendeskIdentity()
-                AppPreferences.setZendeskSDKSetupTime()
-                ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
-            } else {
-                if ((Date().time - AppPreferences.getZendeskSDKSetupTime().time) < Constants.ZendeskConfigurations.ZENDESK_SETTING_IDENTITY_MAX_TIME) {
-                    //ZENDESK SDK NOT READY
-                    ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
-                } else {
-                    //ZENDESK SDK IS READY
-                    AppPreferences.setZendeskSDKReady()
-                    changeFragment(ComplainDetailFragment())
-                }
-            }
-        }
     }
 }
