@@ -568,9 +568,16 @@ public class WebIORequestHandler {
 
     }
 
+    /**
+     * Method Is Listening To Both The Sockets
+     *  1. Call From Trip  - 7
+     *  2. MultiDelivery Trip - 23
+     * @param normalCallData : Object Class
+     */
     private static void setUIForStatus(NormalCallData normalCallData) {
         if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) ||
-                normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_NEW)) {
+                normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_OPEN) ||
+                normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_SEARCHING)) {
             ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
         } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
             if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
