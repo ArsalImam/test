@@ -570,7 +570,7 @@ public class WebIORequestHandler {
 
     /**
      * Method Is Listening To Both The Sockets
-     *  1. Call From Trip Notifcation - 7
+     *  1. Call From Trip  - 7
      *  2. MultiDelivery Trip - 23
      * @param normalCallData : Object Class
      */

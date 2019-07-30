@@ -95,6 +95,9 @@ data class MultiDeliveryCallDriverData(
         return false
     }
 
+    /**
+     * Use to convert MultiDeliveryCallDriverData Object to NormalCallData
+     */
     fun toNormalCallData(): NormalCallData {
         var normalCallData = NormalCallData().apply {
             this.tripId = trip_id

@@ -182,6 +182,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    /**
+     * Method Is Listening To Both The Notification
+     *  1. Call From Trip Notifcation - 7
+     *  2. MultiDelivery Trip Notifcation - 23
+     * @param callData : Object Class
+     */
     private void setUIForStatus(NormalCallData callData) {
         if (StringUtils.isNotBlank(callData.getStatus())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
