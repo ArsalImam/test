@@ -77,14 +77,31 @@ interface JobsDataSource {
      */
     fun acceptJob(jobId: String, timeEclipsed: Int, callback: AcceptJobCallback)
 
+    /**
+     * Requests arrived at job
+     * @param jobId Job ID
+     * @param callback ArrivedAtJobCallback
+     */
     fun arrivedAtJob(jobId: String, callback: ArrivedAtJobCallback)
 
+    /**
+     * Requests start job
+     * @param jobId Job ID
+     * @param address Address at which started the job
+     * @param callback StartJobCallback
+     */
     fun startJob(jobId: String, address: String, callback: StartJobCallback)
 
+    /**
+     * Requests to cancel job
+     * @param jobId String
+     * @param reason String
+     * @param callback CancelJobCallback
+     */
     fun cancelJob(jobId: String, reason: String, callback: CancelJobCallback)
 
     /**
-     * Finish active job
+     * Requests to finish job
      *
      * @param jobId Job Id
      * @param route Route taken for job
@@ -93,9 +110,16 @@ interface JobsDataSource {
     fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: FinishJobCallback)
 
     /**
-     * Conclude active job
-     *
-     * @param callback Response callback
+     * Requests to conclude job
+     * @param jobId Job ID
+     * @param rate Rating from driver
+     * @param receivedAmount Received amount in rupees
+     * @param callback ConcludeJobCallback
+     * @param deliveryMessage Delivery message
+     * @param deliveryStatus Delivery status
+     * @param purchaseAmount Purchase amount
+     * @param receiverName Receiver name
+     * @param receiverPhone Receiver phone
      */
     fun concludeJob(
             jobId: String,
@@ -170,21 +194,33 @@ interface JobsDataSource {
         fun onJobCallAcknowledgeFailed()
     }
 
+    /**
+     * Callback interface for accept job
+     */
     interface AcceptJobCallback {
         fun onJobAccepted()
         fun onJobAcceptFailed()
     }
 
+    /**
+     * Callback interface for arrived at job
+     */
     interface ArrivedAtJobCallback {
         fun onJobArrived()
         fun onJobArriveFailed()
     }
 
+    /**
+     * Callback interface for start job
+     */
     interface StartJobCallback {
         fun onJobStarted()
         fun onJobStartFailed()
     }
 
+    /**
+     * Callback interface for cancel job
+     */
     interface CancelJobCallback {
         fun onJobCancelled()
         fun onJobCancelFailed()
