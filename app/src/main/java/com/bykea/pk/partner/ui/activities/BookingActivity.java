@@ -315,16 +315,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         @Override
         public void onError(final int errorCode, final String error) {
-//            isFinishCalled = false;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.INSTANCE.dismissDialog();
-                    jobBtn.setEnabled(true);
-                    Utils.appToast(mCurrentActivity, error);
-//                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
-                }
-            });
+            onStatusChangedFailed(error);
         }
     };
 
@@ -2236,7 +2227,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     /**
-     * Requests server to mark arrive at job. Depending upon service types, it does this
+     * Request server to mark arrive at job. Depending upon service types, it does this
      * communication on either REST Api or socket
      */
     private void arriveAtJob() {
@@ -2261,6 +2252,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         logMixPanelEvent(TripStatus.ON_ARRIVED_TRIP);
     }
 
+    /**
+     * Request server to start job. Depending upon service types, it does this
+     * communication on either REST Api or socket
+     */
     private void startJob() {
         Dialogs.INSTANCE.dismissDialog();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
@@ -2284,6 +2279,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         logMixPanelEvent(TripStatus.ON_START_TRIP);
     }
 
+    /**
+     * Request server to cancel job. Depending upon service types, it does this
+     * communication on either REST Api or socket
+     */
     private void cancelJob(String reasonMsg) {
         if (Utils.isModernService(callData.getServiceCode())) {
             jobsRepo.cancelJob(callData.getTripId(), reasonMsg, new JobsDataSource.CancelJobCallback() {
@@ -2304,7 +2303,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     /**
-     * Send Finish Active Job Call
+     * Request server to finish job. Depending upon service types, it does this
+     * communication on either REST Api or socket
      */
     private void finishJob() {
         Dialogs.INSTANCE.dismissDialog();
@@ -2319,7 +2319,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     /**
-     * Send Finish Active Job Call To Rest API for Loadboard job
+     * Request finish job on Rest API
      */
     private void finishJobRestApi() {
         String endLatString = AppPreferences.getLatitude() + "";
@@ -2367,8 +2367,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     /**
      * On response of Arrived at Job call
      *
-     * @param success Is response with success
-     * @param message message to show
+     * @param success is response with success
+     * @param message response message
      */
     private void onArrived(boolean success, String message) {
         runOnUiThread(new Runnable() {
@@ -2395,6 +2395,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         });
     }
 
+    /**
+     * On response of job start
+     *
+     * @param success is response with success
+     * @param message response message
+     */
     private void onStarted(boolean success, String message) {
         runOnUiThread(new Runnable() {
             @Override
@@ -2425,12 +2431,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         });
     }
 
-    private void onCancelled(boolean isSuccess, String message, boolean isAvailable) {
+    /**
+     * On response of cancel job
+     *
+     * @param success     is response with success
+     * @param isAvailable either to keep driver online
+     */
+    private void onCancelled(boolean success, String message, boolean isAvailable) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Dialogs.INSTANCE.dismissDialog();
-                if (isSuccess) {
+                if (success) {
                     try {
                         JSONObject data = new JSONObject();
                         data.put("DriverLocation", AppPreferences.getLatitude() + "," + AppPreferences.getLongitude());
@@ -2465,6 +2477,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         });
     }
 
+    /**
+     * On response of finish job
+     * @param data response data
+     */
     private void onFinished(FinishJobResponseData data) {
         Dialogs.INSTANCE.dismissDialog();
         logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
@@ -2496,15 +2512,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mCurrentActivity.finish();
     }
 
+    /**
+     * On failed response status change calls
+     * @param error Error message
+     */
     private void onStatusChangedFailed(String error) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Dialogs.INSTANCE.dismissDialog();
-                jobBtn.setEnabled(true);
-                Utils.appToast(mCurrentActivity, error);
-//                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, error);
-            }
+        runOnUiThread(() -> {
+            Dialogs.INSTANCE.dismissDialog();
+            jobBtn.setEnabled(true);
+            Utils.appToast(mCurrentActivity, error);
         });
     }
 }
