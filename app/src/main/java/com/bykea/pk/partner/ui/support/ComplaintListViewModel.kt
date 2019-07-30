@@ -43,6 +43,7 @@ class ComplaintListViewModel : ViewModel() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
+                Dialogs.INSTANCE.showToast(getString(R.string.error_try_again))
             }
         })
     }

@@ -87,6 +87,7 @@ class ComplainDetailFragment : Fragment() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
+                Dialogs.INSTANCE.showToast(mCurrentActivity?.getString(R.string.error_try_again))
             }
         })
     }

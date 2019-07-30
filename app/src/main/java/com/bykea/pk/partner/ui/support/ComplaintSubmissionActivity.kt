@@ -117,6 +117,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 }
             } catch (e: ApiException) {
                 Dialogs.INSTANCE.dismissDialog()
+                Dialogs.INSTANCE.showToast(this@ComplaintSubmissionActivity.getString(R.string.error_try_again))
             }
         }
     }
