@@ -38,7 +38,6 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
-import static com.bykea.pk.partner.DriverApp.getApplication;
 import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
@@ -222,7 +221,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                 }
             } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) ||
-                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_NEW)) {
+                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_OPEN) ||
+                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_SEARCHING)) {
                 Log.d(TAG, "Push Notification Received: With Status: " + callData.getStatus());
                 Utils.redLog(TAG, "On Call FCM");
                 ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
