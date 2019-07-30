@@ -72,7 +72,7 @@ android {
         productFlavors {
             local {
                 dimension "driver"
-                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.1.200:3000\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.1.108:3000\""
             }
             staging {
                 dimension "driver"
