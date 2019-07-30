@@ -138,7 +138,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
 
             override fun onFail(message: String?) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.appToast(this@ComplaintSubmissionActivity, getString(R.string.error_try_again))
+                Dialogs.INSTANCE.showToast(getString(R.string.error_try_again))
             }
         })
     }

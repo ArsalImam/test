@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
@@ -56,7 +57,7 @@ class ComplainDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        editText_lay.setOnClickListener {  }
+        editText_lay.setOnClickListener { }
     }
 
     /**
@@ -87,7 +88,7 @@ class ComplainDetailFragment : Fragment() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
-                Dialogs.INSTANCE.showToast(mCurrentActivity?.getString(R.string.error_try_again))
+                Utils.appToast(DriverApp.getContext(),getString(R.string.error_try_again))
             }
         })
     }
