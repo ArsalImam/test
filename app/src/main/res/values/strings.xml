@@ -361,4 +361,11 @@
     <string name="enter_valid_loadboard_ip">enter valid loadboard url</string>
     <string name="error_internet_connectivity">Please check your internet connection.</string>
     <string name="not_available">Number not available.</string>
+    <string name="withdrawal_title">رقم نکلوائیں</string>
+    <string name="label_amount_to_add">رقم درج کریں</string>
+    <string name="payment_method_label">یہاں جمع کروائیں</string>
+    <string name="withdrawal_submit_title">درخواست کریں</string>
+    <string name="nic">شناختی کارڈ</string>
+    <string name="fees_template_val">جیز کیش کے ذریعے پیسے اگلے دن موصول ہوں گے۔</string>
+    <string name="fees_currency_val">روپے فیس ۔</string>
 </resources>

@@ -223,11 +223,22 @@
         <activity
             android:name=".ui.activities.DeliveryScheduleDetailActivity"
             android:exported="true" />
+<<<<<<< Updated upstream
 
         <activity
             android:name=".ui.withdraw.ActivityWithDrawal"
             android:screenOrientation="portrait" />
 
+=======
+<<<<<<< Updated upstream
+=======
+
+        <activity
+            android:name=".ui.withdraw.detail.WithdrawalActivity"
+            android:screenOrientation="portrait" />
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         <activity android:name=".ui.activities.MapDetailsActivity" />
         <activity android:name=".ui.activities.ShahkarActivity" />
         <activity android:name=".ui.activities.RankingActivity" />
