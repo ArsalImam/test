@@ -39,7 +39,7 @@
                 android:layout_marginTop="@dimen/_16sdp"
                 android:gravity="center"
                 android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/_22sdp"
+                android:textSize="@dimen/_20sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf"
                 tools:text="@string/you_complain" />
 

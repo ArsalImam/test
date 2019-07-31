@@ -44,7 +44,7 @@ class ComplainSubmittedFragment : Fragment() {
 
         if (mCurrentActivity.tripHistoryDate != null) {
             tVIssueNumber.text = SpannableStringBuilder("")
-                    .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.you_complain), "jameel_noori_nastaleeq.ttf"))
+                    .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.you_complain_with_number), "jameel_noori_nastaleeq.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity.tripHistoryDate?.tripNo, "roboto_medium.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
