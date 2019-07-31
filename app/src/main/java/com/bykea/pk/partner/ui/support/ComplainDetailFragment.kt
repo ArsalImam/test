@@ -96,7 +96,7 @@ class ComplainDetailFragment : Fragment() {
     /**
      * Genereate Create Request Body For Zendesk
      */
-    private fun buildCreateRequest(): CreateRequest {
+    private fun buildCreateRequest(): CreateRequBest {
         return CreateRequest().apply {
             subject = ticketSubject
             description = etDetails.text.toString()
@@ -117,7 +117,7 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Group, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Assignee, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.trip_id))
-            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, StringUtils.EMPTY))
+            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, mCurrentActivity?.tripHistoryDate?.passenger?.name))
             add(CustomField(Constants.ZendeskCustomFields.Receivers_Number, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Trip_Time, StringUtils.EMPTY))
@@ -140,7 +140,7 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Trip_End_Address, mCurrentActivity?.tripHistoryDate?.endAddress))
             add(CustomField(Constants.ZendeskCustomFields.Received_Amount, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Wait_Time, mCurrentActivity?.tripHistoryDate?.invoice?.waitMins))
-            add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, StringUtils.EMPTY))
+            add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, mCurrentActivity?.selectedReason))
             add(CustomField(Constants.ZendeskCustomFields.Last_Trip_Status, StringUtils.EMPTY))
         }
     }
