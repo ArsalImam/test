@@ -141,6 +141,9 @@ class ComplaintSubmissionActivity : BaseActivity() {
         })
     }
 
+    /**
+     * User to hide or show, back button.
+     */
     fun setBackButtonVisibility(mVisibility: Int) {
         if (mVisibility == View.VISIBLE)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
