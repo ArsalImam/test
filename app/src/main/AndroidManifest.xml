@@ -57,11 +57,11 @@
             android:theme="@style/NewTheme" />
         <activity
             android:name=".ui.activities.HomeActivity"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
             android:exported="true"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
         <activity android:name=".ui.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -72,19 +72,19 @@
         <activity android:name=".ui.activities.BaseActivity" />
         <activity
             android:name=".ui.activities.CallingActivity"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.Base" />
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Base"
+            android:turnScreenOn="true" />
 
         <activity
             android:name=".ui.activities.MultiDeliveryCallingActivity"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.Base" />
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Base"
+            android:turnScreenOn="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -153,7 +153,7 @@
 
         <service
             android:name=".services.DriverETAService"
-            android:exported="false"/>
+            android:exported="false" />
 
         <service
             android:name=".services.OneSignalNotificationExtenderService"
@@ -223,21 +223,31 @@
         <activity
             android:name=".ui.activities.DeliveryScheduleDetailActivity"
             android:exported="true" />
+
+        <activity
+            android:name=".ui.withdraw.ActivityWithDrawal"
+            android:screenOrientation="portrait" />
+
         <activity android:name=".ui.activities.MapDetailsActivity" />
         <activity android:name=".ui.activities.ShahkarActivity" />
         <activity android:name=".ui.activities.RankingActivity" />
-        <activity android:name=".ui.activities.NumberVerificationActivity"
+        <activity
+            android:name=".ui.activities.NumberVerificationActivity"
             android:theme="@style/NewTheme" />
-        <activity android:name=".ui.activities.LandingActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activities.MultipleDeliveryBookingActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activities.LandingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.MultipleDeliveryBookingActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.activities.MultiDeliveryFeedbackActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.loadboard.detail.JobRequestDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />

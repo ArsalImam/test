@@ -1,14 +1,6 @@
 package com.bykea.pk.partner.ui.fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.WalletData;
@@ -26,8 +26,8 @@ import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
-import com.bykea.pk.partner.ui.helpers.adapters.WalletHistoryAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.adapters.WalletHistoryAdapter;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
@@ -85,10 +85,10 @@ public class WalletFragment extends Fragment {
         mCurrentActivity = (HomeActivity) getActivity();
         mCurrentActivity.setToolbarTitle("Wallet", "بٹوا");
         mCurrentActivity.hideToolbarLogo();
+        mCurrentActivity.hideStatusCompletely();
+        mCurrentActivity.showStatusLayout();
         mCurrentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
-        mCurrentActivity.findViewById(R.id.statusLayout).setVisibility(View.VISIBLE);
-        mCurrentActivity.hideStatusCompletely();
         initViews(view);
     }
 
@@ -131,21 +131,15 @@ public class WalletFragment extends Fragment {
                 }
             }
         });
-//        setWalletIcon();
+        setWalletIcon();
         getHistory();
 
     }
 
 
     private void setWalletIcon() {
-        mCurrentActivity.showWalletIcon(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityStackManager.getInstance().startRequestPaymentActivity(mCurrentActivity);
-            }
-        });
+        mCurrentActivity.showWalletIcon(v -> ActivityStackManager.getInstance().startWithDrawActivity(mCurrentActivity));
     }
-
 
     private void getHistory() {
         if (loader != null) {
@@ -160,7 +154,7 @@ public class WalletFragment extends Fragment {
         mCurrentActivity.hideUrduTitle();
         super.onDestroyView();
         unbinder.unbind();
-//        mCurrentActivity.hideWalletIcon();
+        mCurrentActivity.hideWalletIcon();
     }
 
 

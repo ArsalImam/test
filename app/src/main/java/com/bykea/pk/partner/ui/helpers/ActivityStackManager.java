@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.helpers;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
+import com.bykea.pk.partner.ui.withdraw.ActivityWithDrawal;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -482,6 +484,10 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
+    public void startWithDrawActivity(Activity activity) {
+        ActivityWithDrawal.openActivity(activity);
+    }
+
     /**
      * open loadboard booking screen
      *
@@ -508,5 +514,6 @@ public class ActivityStackManager {
             context.startService(intent);
         }
     }
+
 
 }
