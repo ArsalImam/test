@@ -363,7 +363,8 @@
     <string name="not_available">Number not available.</string>
 
     <string name="thanks">شکریہ</string>
-    <string name="issue_no">آپ کی شکایت نمبر</string>
+    <string name="you_complain">آپ کی شکایت</string>
+    <string name="you_complain_with_number">آپ کی شکایت نمبر</string>
     <string name="issue_submitted">درج کی جا چکی ہے</string>
     <string name="issue_submitted_detail">درج کردہ شکایت دیکھیں</string>
     <string name="move_to_home_screen">ہوم سکرین پر جائیں</string>

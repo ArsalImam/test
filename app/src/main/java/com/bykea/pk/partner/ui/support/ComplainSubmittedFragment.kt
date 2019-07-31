@@ -9,8 +9,11 @@ import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.FragmentComplainSubmittedBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
+import com.bykea.pk.partner.ui.helpers.FontUtils
 import kotlinx.android.synthetic.main.fragment_complain_submitted.*
 import org.apache.commons.lang3.StringUtils
+import android.text.SpannableStringBuilder
+
 
 class ComplainSubmittedFragment : Fragment() {
 
@@ -38,6 +41,17 @@ class ComplainSubmittedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tVIssueNumber.text = StringBuilder().append(context?.getString(R.string.issue_no)).append(StringUtils.SPACE).append(context?.getString(R.string.issue_submitted))
+
+        if (mCurrentActivity.tripHistoryDate != null) {
+            tVIssueNumber.text = SpannableStringBuilder("")
+                    .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.you_complain), "jameel_noori_nastaleeq.ttf"))
+                    .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
+                    .append(FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity.tripHistoryDate?.tripNo, "roboto_medium.ttf"))
+                    .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
+                    .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.issue_submitted), "jameel_noori_nastaleeq.ttf"))
+        } else {
+            tVIssueNumber.text = StringBuilder().append(context?.getString(R.string.you_complain))
+                    .append(StringUtils.SPACE).append(context?.getString(R.string.issue_submitted))
+        }
     }
 }

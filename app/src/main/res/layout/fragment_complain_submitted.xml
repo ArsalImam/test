@@ -41,7 +41,7 @@
                 android:textColor="@color/textColorPrimary"
                 android:textSize="@dimen/_22sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf"
-                tools:text="@string/issue_no" />
+                tools:text="@string/you_complain" />
 
 
             <com.bykea.pk.partner.widgets.FontButton
@@ -55,8 +55,8 @@
                 android:text="@string/issue_submitted_detail"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize.medium"
-                app:fontName="roboto_bold.ttf" />
+                android:textSize="@dimen/textsize.large"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <com.bykea.pk.partner.widgets.FontButton
                 android:id="@+id/navigateHomeScreen"
@@ -69,8 +69,8 @@
                 android:text="@string/move_to_home_screen"
                 android:textAllCaps="false"
                 android:textColor="@color/grey"
-                android:textSize="@dimen/textsize.medium"
-                app:fontName="roboto_bold.ttf" />
+                android:textSize="@dimen/textsize.large"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
 
         </LinearLayout>
 

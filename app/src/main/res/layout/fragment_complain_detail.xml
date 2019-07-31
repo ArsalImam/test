@@ -60,8 +60,8 @@
                 android:text="@string/submit"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize.medium"
-                app:fontName="roboto_bold.ttf" />
+                android:textSize="@dimen/textsize.large"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
 
         </LinearLayout>
     </FrameLayout>
