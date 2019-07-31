@@ -144,6 +144,14 @@ class JobsRepository(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun checkEmailUpdate(callback: JobsDataSource.EmailUpdateCheckCallback) {
+        jobsRemoteDataSource.getCheckIsEmailUpdatedRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
+    override fun getEmailUpdate(emailId: String, callback: JobsDataSource.EmailUpdateCallback) {
+        jobsRemoteDataSource.getEmailUpdateRequest(emailId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
     private fun getJobsFromRemoteDataSource(callback: JobsDataSource.LoadJobsCallback) {
 
         var serviceCode: Int? = null

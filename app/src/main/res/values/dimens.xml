@@ -92,5 +92,4 @@
     <dimen name="box_drop_off_pin_size">@dimen/_18sdp</dimen>
     <dimen name="booking_card_bottom_padding">@dimen/_100sdp</dimen>
     <dimen name="delivery_details_item_height">@dimen/_40sdp</dimen>
-
 </resources>
