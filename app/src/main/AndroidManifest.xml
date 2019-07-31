@@ -37,11 +37,6 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <activity
-            android:name=".ui.support.ProblemActivity"
-            android:label="@string/title_activity_problem_final"
-            android:theme="@style/AppTheme.NoActionBar" />
-
         <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
@@ -205,12 +200,6 @@
             android:name=".ui.activities.PostProblemActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.ReportActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.ReportPostActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activities.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -268,6 +257,15 @@
         <activity
             android:name=".ui.loadboard.detail.JobRequestDetailActivity"
             android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.support.ComplaintSubmissionActivity"
+            android:label="@string/title_activity_problem_final"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.support.ComplaintListActivity"
+            android:label="@string/title_complain_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.support.ComplainZendeskIdentityActivity" />
 
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>
