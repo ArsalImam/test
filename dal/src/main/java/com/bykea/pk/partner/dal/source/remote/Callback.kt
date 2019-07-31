@@ -24,7 +24,17 @@ interface Callback<T> : Callback<T> {
 
     override fun onFailure(call: Call<T>, t: Throwable) = onFail(t.hashCode(), t.message!!)
 
+    /**
+     * Positive response callback; will be called on success with response
+     * @param response Server response
+     */
     fun onSuccess(response: T)
+
+    /**
+     * Negative response callback; will be called on fail with server code and message
+     * @param code Server code
+     * @param message Server message
+     */
     fun onFail(code: Int, message: String)
 
 }
