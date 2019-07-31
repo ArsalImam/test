@@ -96,7 +96,7 @@ class ComplainDetailFragment : Fragment() {
     /**
      * Genereate Create Request Body For Zendesk
      */
-    private fun buildCreateRequest(): CreateRequBest {
+    private fun buildCreateRequest(): CreateRequest {
         return CreateRequest().apply {
             subject = ticketSubject
             description = etDetails.text.toString()
