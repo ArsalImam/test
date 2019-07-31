@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.support
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -107,7 +108,6 @@ class ComplaintSubmissionActivity : BaseActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Dialogs.INSTANCE.dismissDialog()
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -116,8 +116,6 @@ class ComplaintSubmissionActivity : BaseActivity() {
                     updateEmailFromRemoteDataSource(it)
                 }
             } catch (e: ApiException) {
-                Dialogs.INSTANCE.dismissDialog()
-                Dialogs.INSTANCE.showToast(this@ComplaintSubmissionActivity.getString(R.string.error_try_again))
             }
         }
     }
@@ -141,5 +139,12 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 Dialogs.INSTANCE.showToast(getString(R.string.error_try_again))
             }
         })
+    }
+
+    fun setBackButtonVisibility(mVisibility: Int) {
+        if (mVisibility == View.VISIBLE)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        else
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 }

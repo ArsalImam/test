@@ -114,7 +114,6 @@ class ComplainReasonFragment : Fragment() {
                     AppPreferences.setEmailVerified()
                     mCurrentActivity?.changeFragment(ComplainDetailFragment())
                 } else {
-                    Dialogs.INSTANCE.showLoader(mCurrentActivity)
                     mCurrentActivity?.signIn()
                 }
             }

@@ -22,7 +22,7 @@ class ComplainSubmittedFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_complain_submitted, container, false)
         mCurrentActivity = activity as ComplaintSubmissionActivity
 
-        mCurrentActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        mCurrentActivity.setBackButtonVisibility(View.GONE)
 
         binding.listener = object : GenericFragmentListener {
             override fun onRequestSubmittedTickets() {
