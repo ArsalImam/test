@@ -1553,35 +1553,37 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @return true if left side of map has more area
      */
     private boolean isLeftAreaGreater(LatLng markerPosition) {
-        boolean isLeftAreaGreater = false;
-        int rightDistance = 31, leftDistance = 31;
-        boolean TRUE = true, isRightDistanceCovered = false, isLeftDistanceCovered = false;
-        double airDistance = 200;
-        if (pickUpMarker != null && dropOffMarker != null) {
-            airDistance = Utils.calculateDistance(pickUpMarker.getPosition().latitude, pickUpMarker.getPosition().longitude,
-                    dropOffMarker.getPosition().latitude, dropOffMarker.getPosition().longitude);
-        }
-        int incrementFactor = MapUtil.getIncrementFactor(airDistance);
-        while (TRUE) {
-            if (MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(markerPosition, rightDistance, 90))) {
-                rightDistance = rightDistance + incrementFactor;
-                isRightDistanceCovered = false;
-            } else {
-                isRightDistanceCovered = true;
-            }
-            if (MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(markerPosition, leftDistance, 270))) {
-                leftDistance = leftDistance + incrementFactor;
-                isLeftDistanceCovered = false;
-            } else {
-                isLeftDistanceCovered = true;
-            }
+        return false;
 
-            if (isLeftDistanceCovered || isRightDistanceCovered) {
-                isLeftAreaGreater = rightDistance <= leftDistance;
-                TRUE = false;
-            }
-        }
-        return isLeftAreaGreater;
+//        boolean isLeftAreaGreater = false;
+//        int rightDistance = 31, leftDistance = 31;
+//        boolean TRUE = true, isRightDistanceCovered = false, isLeftDistanceCovered = false;
+//        double airDistance = 200;
+//        if (pickUpMarker != null && dropOffMarker != null) {
+//            airDistance = Utils.calculateDistance(pickUpMarker.getPosition().latitude, pickUpMarker.getPosition().longitude,
+//                    dropOffMarker.getPosition().latitude, dropOffMarker.getPosition().longitude);
+//        }
+//        int incrementFactor = MapUtil.getIncrementFactor(airDistance);
+//        while (TRUE) {
+//            if (MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(markerPosition, rightDistance, 90))) {
+//                rightDistance = rightDistance + incrementFactor;
+//                isRightDistanceCovered = false;
+//            } else {
+//                isRightDistanceCovered = true;
+//            }
+//            if (MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(markerPosition, leftDistance, 270))) {
+//                leftDistance = leftDistance + incrementFactor;
+//                isLeftDistanceCovered = false;
+//            } else {
+//                isLeftDistanceCovered = true;
+//            }
+//
+//            if (isLeftDistanceCovered || isRightDistanceCovered) {
+//                isLeftAreaGreater = rightDistance <= leftDistance;
+//                TRUE = false;
+//            }
+//        }
+//        return isLeftAreaGreater;
     }
 
     private void setPickupBounds() {
