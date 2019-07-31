@@ -55,6 +55,7 @@ class ComplainSubmittedFragment : Fragment() {
             tVIssueNumber.text = StringBuilder()
                     .append(StringUtils.SPACE)
                     .append(context?.getString(R.string.you_complain))
+                    .append(StringUtils.SPACE)
                     .append(context?.getString(R.string.issue_submitted))
                     .append(StringUtils.SPACE)
         }
