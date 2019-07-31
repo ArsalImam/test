@@ -117,7 +117,7 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Group, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Assignee, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.trip_id))
-            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, mCurrentActivity?.tripHistoryDate?.passenger?.name))
+            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, AppPreferences.getPilotData().phoneNo))
             add(CustomField(Constants.ZendeskCustomFields.Receivers_Number, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Trip_Time, StringUtils.EMPTY))
