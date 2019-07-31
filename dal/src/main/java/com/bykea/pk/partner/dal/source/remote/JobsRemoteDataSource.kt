@@ -86,6 +86,20 @@ class JobsRemoteDataSource {
     }
 
     /**
+     * Requests to change drop-off location of current job
+     * @param jobId Job ID
+     * @param driverId Driver ID
+     * @param token Driver access token
+     * @param dropOff Updated drop-off location
+     */
+    fun changeDropOff(jobId: String, driverId: String, token: String, dropOff: ChangeDropOffRequest.Stop, callback: JobsDataSource.DropOffChangeCallback) {
+        Backend.talos.changeDropOff(jobId, ChangeDropOffRequest(driverId, token, dropOff)).enqueue(object : Callback<AcceptJobCallResponse> {
+            override fun onSuccess(response: AcceptJobCallResponse) = callback.onDropOffChanged()
+            override fun onFail(code: Int, message: String) = callback.onDropOffChangeFailed()
+        })
+    }
+
+    /**
      * Requests to mark arrived for active job
      * @param jobId String
      * @param driverId String

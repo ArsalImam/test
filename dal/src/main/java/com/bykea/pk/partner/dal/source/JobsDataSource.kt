@@ -2,6 +2,7 @@ package com.bykea.pk.partner.dal.source
 
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
+import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
 import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData
 
@@ -76,6 +77,14 @@ interface JobsDataSource {
      * @param callback AcceptJobCallback
      */
     fun acceptJob(jobId: String, timeEclipsed: Int, callback: AcceptJobCallback)
+
+    /**
+     * Requests to change drop-off location
+     * @param jobId Job ID
+     * @param dropOff Drop off stop
+     * @param callback DropOffChangeCallback
+     */
+    fun changeDropOff(jobId: String, dropOff: ChangeDropOffRequest.Stop, callback: DropOffChangeCallback)
 
     /**
      * Requests arrived at job
@@ -200,6 +209,11 @@ interface JobsDataSource {
     interface AcceptJobCallback {
         fun onJobAccepted()
         fun onJobAcceptFailed()
+    }
+
+    interface DropOffChangeCallback {
+        fun onDropOffChanged()
+        fun onDropOffChangeFailed()
     }
 
     /**
