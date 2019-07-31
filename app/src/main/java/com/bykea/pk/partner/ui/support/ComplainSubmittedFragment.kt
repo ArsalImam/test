@@ -44,14 +44,19 @@ class ComplainSubmittedFragment : Fragment() {
 
         if (mCurrentActivity.tripHistoryDate != null) {
             tVIssueNumber.text = SpannableStringBuilder("")
+                    .append(StringUtils.SPACE)
                     .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.you_complain_with_number), "jameel_noori_nastaleeq.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity.tripHistoryDate?.tripNo, "roboto_medium.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.issue_submitted), "jameel_noori_nastaleeq.ttf"))
+                    .append(StringUtils.SPACE)
         } else {
-            tVIssueNumber.text = StringBuilder().append(context?.getString(R.string.you_complain))
-                    .append(StringUtils.SPACE).append(context?.getString(R.string.issue_submitted))
+            tVIssueNumber.text = StringBuilder()
+                    .append(StringUtils.SPACE)
+                    .append(context?.getString(R.string.you_complain))
+                    .append(context?.getString(R.string.issue_submitted))
+                    .append(StringUtils.SPACE)
         }
     }
 }
