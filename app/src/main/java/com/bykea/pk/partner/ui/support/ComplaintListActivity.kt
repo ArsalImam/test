@@ -31,9 +31,10 @@ class ComplaintListActivity : BaseActivity() {
 
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolBar.setNavigationOnClickListener { onBackPressed() }
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolBar.setNavigationOnClickListener { onBackPressed() }
+
         toolbar_title.text = getString(R.string.title_new_complain)
 
         binding.lifecycleOwner = this

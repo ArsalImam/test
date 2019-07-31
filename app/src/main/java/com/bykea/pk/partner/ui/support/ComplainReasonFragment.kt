@@ -95,7 +95,7 @@ class ComplainReasonFragment : Fragment() {
         mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
             if (AppPreferences.isEmailVerified()) {
-                mCurrentActivity?.checkStatusForZendesk()
+                mCurrentActivity?.changeFragment(ComplainDetailFragment())
             } else {
                 checkIsEmailUpdatedFromRemoteDataSource()
             }
@@ -112,7 +112,7 @@ class ComplainReasonFragment : Fragment() {
                 Dialogs.INSTANCE.dismissDialog()
                 if (isEmailUpdated) {
                     AppPreferences.setEmailVerified()
-                    mCurrentActivity?.checkStatusForZendesk()
+                    mCurrentActivity?.changeFragment(ComplainDetailFragment())
                 } else {
                     mCurrentActivity?.signIn()
                 }

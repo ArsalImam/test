@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.bykea.pk.partner.DriverApp
+import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
@@ -43,7 +45,7 @@ class ComplaintListViewModel : ViewModel() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.setZendeskIdentity()
+                Utils.appToast(DriverApp.getContext(),DriverApp.getContext().getString(R.string.error_try_again))
             }
         })
     }

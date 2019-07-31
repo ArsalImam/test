@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
@@ -54,6 +55,11 @@ class ComplainDetailFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        editText_lay.setOnClickListener { }
+    }
+
     /**
      * Check Is Details Are Empty Or Not
      */
@@ -82,7 +88,7 @@ class ComplainDetailFragment : Fragment() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.setZendeskIdentity()
+                Utils.appToast(DriverApp.getContext(),getString(R.string.error_try_again))
             }
         })
     }
@@ -111,7 +117,7 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Group, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Assignee, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.trip_id))
-            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, StringUtils.EMPTY))
+            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, AppPreferences.getPilotData().phoneNo))
             add(CustomField(Constants.ZendeskCustomFields.Receivers_Number, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Trip_Time, StringUtils.EMPTY))
@@ -134,7 +140,7 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Trip_End_Address, mCurrentActivity?.tripHistoryDate?.endAddress))
             add(CustomField(Constants.ZendeskCustomFields.Received_Amount, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Wait_Time, mCurrentActivity?.tripHistoryDate?.invoice?.waitMins))
-            add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, StringUtils.EMPTY))
+            add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, mCurrentActivity?.selectedReason))
             add(CustomField(Constants.ZendeskCustomFields.Last_Trip_Status, StringUtils.EMPTY))
         }
     }

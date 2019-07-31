@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.support
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -52,9 +53,9 @@ class ComplaintSubmissionActivity : BaseActivity() {
 
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolBar.setNavigationOnClickListener { onBackPressed() }
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolBar.setNavigationOnClickListener { onBackPressed() }
         if (intent?.extras != null) {
             if (intent.extras.containsKey(INTENT_TRIP_HISTORY_DATA))
                 tripHistoryDate = intent.getSerializableExtra(INTENT_TRIP_HISTORY_DATA) as TripHistoryData
@@ -115,7 +116,6 @@ class ComplaintSubmissionActivity : BaseActivity() {
                     updateEmailFromRemoteDataSource(it)
                 }
             } catch (e: ApiException) {
-
             }
         }
     }
@@ -131,41 +131,13 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 AppPreferences.setDriverEmail(emailId)
                 AppPreferences.setEmailVerified()
                 mGoogleSignInClient?.signOut()
-                checkStatusForZendesk()
+                changeFragment(ComplainDetailFragment())
             }
 
             override fun onFail(message: String?) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.appToast(this@ComplaintSubmissionActivity, getString(R.string.error_try_again))
+                Dialogs.INSTANCE.showToast(getString(R.string.error_try_again))
             }
         })
-    }
-
-    /**
-     * Check Status For Zendesk SDK
-     * If Ready : Open Detail Fragment - To Submit Ticket
-     * If Not : Open Zendesk Identity Activity
-     */
-    internal fun checkStatusForZendesk() {
-        if (AppPreferences.isZendeskSDKReady()) {
-            //IF ZENDESK SDK IS READY
-            changeFragment(ComplainDetailFragment())
-        } else {
-            if (!AppPreferences.checkKeyExist(Keys.ZENDESK_IDENTITY_SETUP_TIME)) {
-                //INTIALIZE ZENDESK SDK
-                Utils.setZendeskIdentity()
-                AppPreferences.setZendeskSDKSetupTime()
-                ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
-            } else {
-                if ((Date().time - AppPreferences.getZendeskSDKSetupTime().time) < Constants.ZendeskConfigurations.ZENDESK_SETTING_IDENTITY_MAX_TIME) {
-                    //ZENDESK SDK NOT READY
-                    ActivityStackManager.getInstance().startZendeskIdentityActivity(mCurrentActivity)
-                } else {
-                    //ZENDESK SDK IS READY
-                    AppPreferences.setZendeskSDKReady()
-                    changeFragment(ComplainDetailFragment())
-                }
-            }
-        }
     }
 }
