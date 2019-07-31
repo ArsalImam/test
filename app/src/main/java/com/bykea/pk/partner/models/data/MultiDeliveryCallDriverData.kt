@@ -109,11 +109,12 @@ data class MultiDeliveryCallDriverData(
             this.status = batchStatus
             this.sub_type = type
 
+            this.dropoffZoneNameUrdu = dropoff?.zoneNameUr
+
             this.startAddress = pickup?.pickupAddress
             this.startLat = pickup?.lat?.toString()
             this.startLng = pickup?.lng?.toString()
 
-            this.endAddress = dropoff?.pickupAddress
             this.endLat = dropoff?.lat?.toString()
             this.endLng = dropoff?.lng?.toString()
 
@@ -124,6 +125,7 @@ data class MultiDeliveryCallDriverData(
             this.pickupStop.distance = pickup?.distance
             this.pickupStop.duration = pickup?.duration
             this.pickupStop.address = pickup?.pickupAddress
+
 
             this.dropoffStop = Stop()
             dropoff?.lat.let { this.dropoffStop.setLat(dropoff?.lat!!) }
