@@ -17,13 +17,11 @@ import java.util.List;
 public class WithdrawalPaymentMethodsAdapter extends RecyclerView.Adapter<WithdrawalPaymentMethodsAdapter.ViewHolder> {
     private final ArrayList<WithdrawPaymentMethod> withdrawPaymentMethods;
     private final WithdrawalViewModel viewModel;
-    private String feesTemplate;
 
     public WithdrawalPaymentMethodsAdapter(ArrayList<WithdrawPaymentMethod> withdrawPaymentMethods,
                                            WithdrawalViewModel viewModel) {
         this.withdrawPaymentMethods = withdrawPaymentMethods;
         this.viewModel = viewModel;
-        this.feesTemplate = feesTemplate;
     }
 
     @NonNull
