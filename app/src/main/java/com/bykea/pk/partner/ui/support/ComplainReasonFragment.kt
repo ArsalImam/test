@@ -5,15 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.JobsRepository
+import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.databinding.FragmentComplainReasonBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
+import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_complain_reason.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -24,15 +29,19 @@ class ComplainReasonFragment : Fragment() {
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
     private var mAdapter: ProblemItemsAdapter? = null
     private var mLayoutManager: LinearLayoutManager? = null
+    private var jobsRepository: JobsRepository? = null
 
     private var complainReasonsAdapterList: ArrayList<String> = ArrayList()
     private lateinit var rideOrGeneralComplainReasonsList: Array<String>
     private lateinit var financeComplainReasonsList: Array<String>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_complain_reason, container, false)
+        val binding: FragmentComplainReasonBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_complain_reason, container, false)
+
         mCurrentActivity = activity as ComplaintSubmissionActivity?
-        return rootView
+        jobsRepository = Injection.provideJobsRepository(mCurrentActivity!!)
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +94,34 @@ class ComplainReasonFragment : Fragment() {
 
         mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
-            mCurrentActivity?.changeFragment(ComplainDetailFragment())
+            if (AppPreferences.isEmailVerified()) {
+                mCurrentActivity?.changeFragment(ComplainDetailFragment())
+            } else {
+                checkIsEmailUpdatedFromRemoteDataSource()
+            }
         }
+    }
+
+    /**
+     * Check Is Email Is Updated
+     */
+    private fun checkIsEmailUpdatedFromRemoteDataSource() {
+        Dialogs.INSTANCE.showLoader(mCurrentActivity)
+        jobsRepository?.checkEmailUpdate(object : JobsDataSource.EmailUpdateCheckCallback {
+            override fun onSuccess(isEmailUpdated: Boolean) {
+                Dialogs.INSTANCE.dismissDialog()
+                if (isEmailUpdated) {
+                    AppPreferences.setEmailVerified()
+                    mCurrentActivity?.changeFragment(ComplainDetailFragment())
+                } else {
+                    mCurrentActivity?.signIn()
+                }
+            }
+
+            override fun onFail(message: String?) {
+                Dialogs.INSTANCE.dismissDialog()
+                Utils.appToast(mCurrentActivity, mCurrentActivity?.getString(R.string.error_try_again))
+            }
+        })
     }
 }
