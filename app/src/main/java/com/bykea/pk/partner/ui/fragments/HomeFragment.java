@@ -29,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
@@ -965,8 +964,7 @@ public class HomeFragment extends Fragment {
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                ActivityStackManager.getInstance().startReportActivity(
-                                        view.getContext(), "s");
+                                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
                             }
                         });
                 break;

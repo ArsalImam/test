@@ -39,11 +39,11 @@ import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
-import com.bykea.pk.partner.ui.activities.ReportActivity;
-import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
+import com.bykea.pk.partner.ui.support.ComplainZendeskIdentityActivity;
+import com.bykea.pk.partner.ui.support.ComplaintListActivity;
 import com.bykea.pk.partner.ui.support.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -429,27 +429,31 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-    /*public void startProblemActivity(Context context, String tripNo) {
+    /*public void startComplainSubmissionActivity(Context context, String tripNo) {
         Intent intent = new Intent(context, ProblemActivity.class);
         intent.putExtra("TRIP_ID", tripNo);
         context.startActivity(intent);
     }*/
 
     /**
-     *
-     * @param context Calling Activity
+     * @param context         Calling Activity
      * @param tripHistoryData Model Send For Intent
      */
-    public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
+    public void startComplainSubmissionActivity(Context context, TripHistoryData tripHistoryData) {
         Intent intent = new Intent(context, ComplaintSubmissionActivity.class);
-        intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
+        if (tripHistoryData != null)
+            intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
         context.startActivity(intent);
     }
 
-    public void startReportActivity(Context mContext, String cTtype) {
-        Intent intent = new Intent(mContext, ReportActivity.class);
-        intent.putExtra(Constants.Extras.CONTACT_TYPE, cTtype);
-        mContext.startActivity(intent);
+    /**
+     * Screen for waiting, to get zendesk sdk setup.
+     *
+     * @param context : Calling Activity
+     */
+    public void startZendeskIdentityActivity(Context context) {
+        Intent intent = new Intent(context, ComplainZendeskIdentityActivity.class);
+        context.startActivity(intent);
     }
 
     /**
@@ -461,13 +465,6 @@ public class ActivityStackManager {
     public void startDeliveryScheduleDetailActivity(Context mContext, DeliveryScheduleModel deliveryScheduleData) {
         Intent intent = new Intent(mContext, DeliveryScheduleDetailActivity.class);
         intent.putExtra(Constants.Extras.SELECTED_ITEM, deliveryScheduleData);
-        mContext.startActivity(intent);
-    }
-
-    public void startReportPostActivity(Context mContext, String reason, String contactType) {
-        Intent intent = new Intent(mContext, ReportPostActivity.class);
-        intent.putExtra("reason", reason);
-        intent.putExtra(Constants.Extras.CONTACT_TYPE, contactType);
         mContext.startActivity(intent);
     }
 
@@ -520,6 +517,17 @@ public class ActivityStackManager {
             intent.putExtra(Constants.Extras.INACTIVE_PUSH_DATA, data);
             context.startService(intent);
         }
+    }
+
+
+    /**
+     * Submitted Tickets Activity
+     *
+     * @param context Calling Activity
+     */
+    public void startComplainListActivity(Context context) {
+        Intent intent = new Intent(context, ComplaintListActivity.class);
+        context.startActivity(intent);
     }
 
 }

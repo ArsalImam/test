@@ -200,12 +200,6 @@
             android:name=".ui.activities.PostProblemActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.ReportActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.ReportPostActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activities.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -271,6 +265,8 @@
             android:name=".ui.support.ComplaintListActivity"
             android:label="@string/title_complain_list"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.support.ComplainZendeskIdentityActivity" />
+
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
