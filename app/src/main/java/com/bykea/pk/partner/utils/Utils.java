@@ -152,6 +152,8 @@ import javax.net.ssl.TrustManagerFactory;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
+import zendesk.core.JwtIdentity;
+import zendesk.core.Zendesk;
 
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
@@ -3186,6 +3188,7 @@ public class Utils {
 
     /**
      * Get Ride Complain Reasons List.
+     *
      * @param context : Calling Activity
      * @return
      */
@@ -3234,4 +3237,10 @@ public class Utils {
         return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Setup Zendesk Identity - For JWT Authorization
+     */
+    public static void setZendeskIdentity() {
+        Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverId()));
+    }
 }

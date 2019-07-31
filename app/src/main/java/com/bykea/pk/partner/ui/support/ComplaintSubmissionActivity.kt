@@ -2,30 +2,41 @@ package com.bykea.pk.partner.ui.support
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.JobsRepository
+import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
+import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
+import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Keys
+import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.android.synthetic.main.activity_problem.*
+import java.util.*
 
 
-class ComplaintSubmissionActivity : AppCompatActivity() {
+class ComplaintSubmissionActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProblemBinding
     private lateinit var mCurrentActivity: ComplaintSubmissionActivity
     private var fragmentManager: FragmentManager? = null
+    private lateinit var jobRespository: JobsRepository
+
     internal var isTicketSubmitted: Boolean = false
     var tripHistoryDate: TripHistoryData? = null
 
@@ -38,9 +49,11 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_problem)
         mCurrentActivity = this
+        jobRespository = Injection.provideJobsRepository(this)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolBar.setNavigationOnClickListener { onBackPressed() }
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         if (intent?.extras != null) {
@@ -75,20 +88,6 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
                 .commit()
     }
 
-    /**
-     * Trigger When Toolbar Back Button Is Tapped
-     */
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.getItemId()
-
-        if (id == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 1 && !isTicketSubmitted) {
             supportFragmentManager.popBackStack()
@@ -108,22 +107,37 @@ class ComplaintSubmissionActivity : AppCompatActivity() {
         startActivityForResult(mGoogleSignInClient?.getSignInIntent(), RC_SIGN_IN)
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account = task.getResult(ApiException::class.java)
-                if (!account?.email.isNullOrEmpty()) {
-                    AppPreferences.setDriverEmail(account?.email)
-                    mGoogleSignInClient?.signOut()
-                    changeFragment(ComplainDetailFragment())
+                task?.getResult(ApiException::class.java)?.email?.let {
+                    updateEmailFromRemoteDataSource(it)
                 }
             } catch (e: ApiException) {
-
             }
         }
+    }
 
+    /**
+     * @param emailId : Driver Valid Email Id
+     */
+    private fun updateEmailFromRemoteDataSource(emailId: String) {
+        Dialogs.INSTANCE.showLoader(this@ComplaintSubmissionActivity)
+        jobRespository.getEmailUpdate(emailId, object : JobsDataSource.EmailUpdateCallback {
+            override fun onSuccess() {
+                Dialogs.INSTANCE.dismissDialog()
+                AppPreferences.setDriverEmail(emailId)
+                AppPreferences.setEmailVerified()
+                mGoogleSignInClient?.signOut()
+                changeFragment(ComplainDetailFragment())
+            }
+
+            override fun onFail(message: String?) {
+                Dialogs.INSTANCE.dismissDialog()
+                Dialogs.INSTANCE.showToast(getString(R.string.error_try_again))
+            }
+        })
     }
 }

@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.common.util.Strings.isEmptyOrWhitespace
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
@@ -25,7 +27,7 @@ import java.util.*
  */
 class ComplainDetailFragment : Fragment() {
     private var mCurrentActivity: ComplaintSubmissionActivity? = null
-    private lateinit var requestProvider: RequestProvider
+    private var requestProvider: RequestProvider? = null
     private var ticketSubject: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +35,7 @@ class ComplainDetailFragment : Fragment() {
         val binding: FragmentComplainDetailBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_complain_detail, container, false)
         mCurrentActivity = activity as ComplaintSubmissionActivity?
 
-        requestProvider = Support.INSTANCE.provider()!!.requestProvider()
+        requestProvider = Support.INSTANCE.provider()?.requestProvider()
 
         binding.listener = object : GenericFragmentListener {
             override fun onSubmitClicked() {
@@ -51,6 +53,11 @@ class ComplainDetailFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        editText_lay.setOnClickListener { }
     }
 
     /**
@@ -72,7 +79,7 @@ class ComplainDetailFragment : Fragment() {
     private fun createRequest() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
 
-        requestProvider.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
+        requestProvider?.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
             override fun onSuccess(request: Request) {
                 Dialogs.INSTANCE.dismissDialog()
                 mCurrentActivity?.isTicketSubmitted = true
@@ -81,6 +88,7 @@ class ComplainDetailFragment : Fragment() {
 
             override fun onError(errorResponse: ErrorResponse) {
                 Dialogs.INSTANCE.dismissDialog()
+                Utils.appToast(DriverApp.getContext(),getString(R.string.error_try_again))
             }
         })
     }
@@ -109,7 +117,7 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Group, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Assignee, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.trip_id))
-            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, StringUtils.EMPTY))
+            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, AppPreferences.getPilotData().phoneNo))
             add(CustomField(Constants.ZendeskCustomFields.Receivers_Number, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Trip_Time, StringUtils.EMPTY))
@@ -132,7 +140,7 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Trip_End_Address, mCurrentActivity?.tripHistoryDate?.endAddress))
             add(CustomField(Constants.ZendeskCustomFields.Received_Amount, StringUtils.EMPTY))
             add(CustomField(Constants.ZendeskCustomFields.Wait_Time, mCurrentActivity?.tripHistoryDate?.invoice?.waitMins))
-            add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, StringUtils.EMPTY))
+            add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, mCurrentActivity?.selectedReason))
             add(CustomField(Constants.ZendeskCustomFields.Last_Trip_Status, StringUtils.EMPTY))
         }
     }

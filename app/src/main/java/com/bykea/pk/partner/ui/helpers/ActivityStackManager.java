@@ -42,6 +42,7 @@ import com.bykea.pk.partner.ui.activities.RegistrationActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
+import com.bykea.pk.partner.ui.support.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.support.ComplaintListActivity;
 import com.bykea.pk.partner.ui.support.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -428,7 +429,7 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-    /*public void startProblemActivity(Context context, String tripNo) {
+    /*public void startComplainSubmissionActivity(Context context, String tripNo) {
         Intent intent = new Intent(context, ProblemActivity.class);
         intent.putExtra("TRIP_ID", tripNo);
         context.startActivity(intent);
@@ -438,12 +439,23 @@ public class ActivityStackManager {
      * @param context         Calling Activity
      * @param tripHistoryData Model Send For Intent
      */
-    public void startProblemActivity(Context context, TripHistoryData tripHistoryData) {
+    public void startComplainSubmissionActivity(Context context, TripHistoryData tripHistoryData) {
         Intent intent = new Intent(context, ComplaintSubmissionActivity.class);
         if (tripHistoryData != null)
             intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
         context.startActivity(intent);
     }
+
+    /**
+     * Screen for waiting, to get zendesk sdk setup.
+     *
+     * @param context : Calling Activity
+     */
+    public void startZendeskIdentityActivity(Context context) {
+        Intent intent = new Intent(context, ComplainZendeskIdentityActivity.class);
+        context.startActivity(intent);
+    }
+
     /**
      * This method will start details activity for Scheduled Delivery Service
      *
@@ -510,6 +522,7 @@ public class ActivityStackManager {
 
     /**
      * Submitted Tickets Activity
+     *
      * @param context Calling Activity
      */
     public void startComplainListActivity(Context context) {
