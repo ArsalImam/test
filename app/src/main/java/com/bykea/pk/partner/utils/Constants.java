@@ -507,16 +507,6 @@ public class Constants {
         public static String BUCKET_NAME = "loadboard";
     }
 
-
-    /**
-     * Zendesk SDK Configurations
-     */
-    public static class ZendeskConfigurations {
-        public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
-        public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
-        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";
-    }
-
     /**
      * Firebase Analytics Configuration
      * Event Configurations Limits
@@ -529,44 +519,70 @@ public class Constants {
     }
 
     /**
+     * Zendesk SDK Configurations
+     */
+    public static class ZendeskConfigurations {
+        //OLD KEYS
+        /*public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
+        public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";*/
+
+        //PROD KEYS
+        public static String SUBDOMAIN_URL = "https://bykea.zendesk.com";
+        public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
+
+        public static long ZENDESK_SETTING_IDENTITY_MAX_TIME = 10 * 1000;//2.5 Minutes
+        public static long ZENDESK_SETTING_IDENTITY_INTERVAL_TIME = 100;//0.1 Second
+
+    }
+
+    /**
      * Zendesk Custom Fields
      */
     public static class ZendeskCustomFields {
-        public static long Subject = 360020102491L;
-        public static long Description = 360020102511L;
-        public static long Status = 360020102531L;
-        public static long Type = 360020102551L;
-        public static long Priority = 360020102571L;
-        public static long Group = 360020102591L;
-        public static long Assignee = 360020102611L;
-        public static long Booking_ID = 360020167552L;
-        public static long Customer_Number = 360020244432L;
-        public static long Receivers_Number = 360020244492L;
-        public static long Receivers_Name = 360020244512L;
-        public static long Trip_Time = 360020244532L;
-        public static long Cancelled_by = 360020244552L;
-        public static long Cancellation_Reason = 360020244572L;
-        public static long Wallet_Deduction = 360020244592L;
-        public static long Customer_Penalty_Amount = 360020244612L;
-        public static long Partner_Penalty_Amount = 360020244632L;
-        public static long Distance_to_Pickup = 360020244652L;
-        public static long Customer_Name = 360020244992L;
-        public static long Partner_Number = 360020314791L;
-        public static long Partner_Name = 360020314811L;
-        public static long Partner_Email = 360020314831L;
-        public static long Booking_Type = 360020315151L;
-        public static long Parcel_Value = 360020315191L;
-        public static long COD_Amount = 360020315211L;
-        public static long Trip_Fare = 360020315231L;
-        public static long Trip_Distance = 360020315251L;
-        public static long Trip_Start_Address = 360020315291L;
-        public static long Trip_End_Address = 360020315331L;
-        public static long Received_Amount = 360020315351L;
-        public static long Wait_Time = 360020315391L;
-        public static long Problem_Topic_Selected = 360020315851L;
-        public static long Last_Trip_Status = 360020315871L;
-        public static long Testing = 360020317511L;
+        public static long Assignee = 360020675574L;
+        public static long Booking_ID = 360023253253L;
+        public static long Booking_Type = 360023253273L;
+        public static long Cancellation_Reason = 360023253733L;
+        public static long Cancelled_by = 360023230954L;
+        public static long COD_Amount = 360023253373L;
+        public static long Customer_Name = 360023230174L;
+        public static long Customer_Number = 360023253053L;
+        public static long Customer_Penalty_Amount = 360023231274L;
+        public static long Description = 360020675474L;
+        public static long Distance_to_Pickup = 360023254053L;
+        public static long Group = 360020675554L;
+        public static long Last_Trip_Status = 360023230914L;
+        public static long Parcel_Value = 360023253293L;
+        public static long Partner_Email = 360023230334L;
+        public static long Partner_Name = 360023253073L;
+        public static long Partner_Number = 360023253093L;
+        public static long Partner_Penalty_Amount = 360023231434L;
+        public static long Priority = 360020675534L;
+        public static long Problem_Topic_Selected = 360023230514L;
+        public static long Received_Amount = 360023230934L;
+        public static long Receivers_Name = 360023230674L;
+        public static long Receivers_Number = 360023253353L;
+        public static long Status = 360020675494L;
+        public static long Subject = 360020675454L;
+        public static long Trip_Distance = 360023253553L;
+        public static long Trip_End_Address = 360023253573L;
+        public static long Trip_Fare = 360023230694L;
+        public static long Trip_Start_Address = 360023230894L;
+        public static long Trip_Time = 360023230854L;
+        public static long Type = 360020675514L;
+        public static long Wait_Time = 360023230974L;
+        public static long Wallet_Deduction = 360023253753L;
     }
 
-    public static final String INTENT_TRIP_HISTORY_DATA = "INTENT_TRIP_HISTORY_DATA";
+    public static class ZendeskTicketStatus {
+        public static String New = "New";
+        public static String Open = "Open";
+        public static String Pending = "Pending";
+        public static String Solved = "Solved";
+    }
+
+    public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
+    public final static String REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a";
 }
