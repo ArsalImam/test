@@ -207,12 +207,31 @@ interface JobsDataSource {
      * Callback interface for accept job
      */
     interface AcceptJobCallback {
+
+        /**
+         * Will be called on job accept success
+         */
         fun onJobAccepted()
+
+        /**
+         * Will be called on job accept failure
+         */
         fun onJobAcceptFailed()
     }
 
+    /**
+     * Callback interface for drop off change of job
+     */
     interface DropOffChangeCallback {
+
+        /**
+         * Will be called on drop off change success
+         */
         fun onDropOffChanged()
+
+        /**
+         * Will be called on drop off change failure
+         */
         fun onDropOffChangeFailed()
     }
 
@@ -267,7 +286,7 @@ interface JobsDataSource {
         fun onJobConcluded(it: ConcludeJobBadResponse)
 
         /**
-         * On job conclude success
+         * On job conclude fail
          */
         fun onJobConcludeFailed(message: String?, code: Int?)
     }
