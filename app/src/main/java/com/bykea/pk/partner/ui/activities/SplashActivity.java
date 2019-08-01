@@ -73,6 +73,7 @@ public class SplashActivity extends BaseActivity {
         Utils.setOneSignalPlayerId();
     }
 
+
     //region General helper method
 
     /***
@@ -367,8 +368,8 @@ public class SplashActivity extends BaseActivity {
                                 EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
                                 splashTimer.onFinish();
                                 break;
-                                default:
-                                    splashTimer.onFinish();
+                            default:
+                                splashTimer.onFinish();
                         }
                     }
                 });
@@ -381,17 +382,17 @@ public class SplashActivity extends BaseActivity {
      * Check the Type of request is it batch request or single
      *
      * <p>
-     *
+     * <p>
      * Check if the type is single parse the single trip object i.e {@link NormalCallData}
      * other wise parse the batch trip i.e {@link MultiDeliveryCallDriverData}
-     *
+     * <p>
      * Check also for unfinished trips if there is unfinished trip remaining land
      * to "Feedback Screen" other wise booking screen according to the type
      *
      * <ul>
-     *     <li>Check if trip is null thats mean there is no active trip</li>
-     *     <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
-     *     <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
+     * <li>Check if trip is null thats mean there is no active trip</li>
+     * <li>Check if the type is {@linkplain Constants.CallType#SINGLE}</li>
+     * <li>Check if the trip status is {@linkplain TripStatus#ON_FINISH_TRIP}</li>
      * </ul>
      *
      * </p>
@@ -478,7 +479,6 @@ public class SplashActivity extends BaseActivity {
         }
         finish();
     }
-
 
 
     //region Life Cycle Methods
