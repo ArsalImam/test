@@ -149,6 +149,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             public void onJobCallAcknowledged() {
                                 if (BuildConfig.DEBUG)
                                     Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
+                                setUIForStatus(data.toNormalCallData());
                             }
 
                             @Override
@@ -158,7 +159,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             }
                         });
                         //endregion
-                        setUIForStatus(data.toNormalCallData());
                     } else if (data.getBatchID() != null) {
                         AppPreferences.setMultiDeliveryCallDriverData(data);
                         ActivityStackManager.getInstance().startMultiDeliveryCallingActivity(
