@@ -1,8 +1,8 @@
-package com.bykea.pk.partner.models.response;
+package com.bykea.pk.partner.dal.source.remote.response;
 
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData;
 
-public class GetProfileResponse extends CommonResponse {
+public class GetDriverProfile extends BaseResponse {
 
     private PersonalInfoData data;
 

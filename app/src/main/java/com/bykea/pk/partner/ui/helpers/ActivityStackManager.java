@@ -46,14 +46,7 @@ import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
-<<<<<<< Updated upstream
-import com.bykea.pk.partner.ui.withdraw.ActivityWithDrawal;
-=======
-<<<<<<< Updated upstream
-=======
 import com.bykea.pk.partner.ui.withdraw.detail.WithdrawalActivity;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -491,20 +484,10 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-<<<<<<< Updated upstream
-    public void startWithDrawActivity(Activity activity) {
-        ActivityWithDrawal.openActivity(activity);
-    }
-
-=======
-<<<<<<< Updated upstream
-=======
     public void startWithDrawActivity(Activity activity) {
         WithdrawalActivity.openActivity(activity);
     }
 
->>>>>>> Stashed changes
->>>>>>> Stashed changes
     /**
      * open loadboard booking screen
      *

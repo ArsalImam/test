@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.dal.source.remote.response.data.WithdrawPaymentMethod;
+import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +52,7 @@ public class WithdrawalPaymentMethodsAdapter extends RecyclerView.Adapter<Withdr
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
         private final TextView mCnicTextView;
         private final TextView mFeesTextView;
 

@@ -96,8 +96,22 @@ interface Backend {
     fun getMockWithdrawalPaymentMethods(
             @Url url: String = "http://www.mocky.io/v2/5d417cb83100007bc2539436",
             @Query("token_id") token: String,
-            @Query("_id") driverId: String): Call<GetWithdrawalPaymentMethods>
+            @Query("_id") driverId: String
+            ): Call<GetWithdrawalPaymentMethods>
+    @PUT
+    @FormUrlEncoded
+    fun getMockPerformWithdraw(
+            @Url url: String = "http://www.mocky.io/v2/5d42ee9a3200005700764438",
+            @Field("token_id") token: String,
+            @Field("_id") driverId: String,
+            @Field("payment_method") paymentMethod: String,
+            @Field("amount") amount: Number
+         ): Call<BaseResponse>
 
+    @GET("/api/v1/driver/getProfile")
+    fun getDriverProfile(@Query("_id") _id: String,
+                           @Query("token_id") token_id: String,
+                           @Query("user_type") userType: String): Call<GetDriverProfile>
 
     companion object {
 

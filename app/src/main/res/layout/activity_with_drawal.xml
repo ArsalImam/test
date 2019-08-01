@@ -7,10 +7,6 @@
         <variable
             name="viewmodel"
             type="com.bykea.pk.partner.ui.withdraw.detail.WithdrawalViewModel" />
-        <!--<variable
-            name="listener"
-            type="com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActionsListener" />-->
-
     </data>
 
     <LinearLayout
@@ -65,9 +61,10 @@
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <com.bykea.pk.partner.ui.helpers.FontTextView
+                android:id="@+id/balance_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rs. 1,212"
+                android:text="Rs. 0"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_18sdp"
                 android:textStyle="bold"
@@ -111,16 +108,50 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
-                        <com.bykea.pk.partner.ui.helpers.FontTextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rs. 0"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/_22sdp"
-                            app:fontName="jameel_noori_nastaleeq.ttf" />
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="@dimen/_8sdp">
 
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <com.bykea.pk.partner.ui.helpers.FontTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@null"
+                                    android:text="Rs. "
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_20sdp"
+                                    app:fontName="open_sans_semi_bold.ttf" />
+
+                                <com.bykea.pk.partner.widgets.FontEditText
+                                    android:id="@+id/balance_edittext"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:background="@null"
+                                    android:digits="0123456789"
+                                    android:hint="0"
+                                    android:inputType="number"
+                                    android:maxLength="6"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_20sdp"
+                                    app:fontName="open_sans_regular.ttf" />
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/color_graydcdcdc" />
+                        </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 

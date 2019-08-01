@@ -4,5 +4,5 @@ public interface WithdrawDataSource {
 
     void getAllPaymentMethods(WithdrawRepository.LoadWithdrawalCallback loadWithdrawalCallback);
 
-    String getDriverCnicNumber();
+    void getDriverProfile(WithdrawRepository.LoadWithdrawalCallback callback);
 }

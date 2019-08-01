@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.models.data;
+package com.bykea.pk.partner.dal.source.remote.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -60,6 +60,9 @@ public class PersonalInfoData implements Parcelable {
 
     @SerializedName("license_city")
     private String licenseCity;
+
+    @SerializedName("wallet")
+    private String wallet;
 
     @SerializedName("img_id")
     private String imgId;
@@ -283,6 +286,14 @@ public class PersonalInfoData implements Parcelable {
     }
 
     public String getAppVersion() { return appVersion; }
+
+    public String getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(String wallet) {
+        this.wallet = wallet;
+    }
     //endregion
 }
 

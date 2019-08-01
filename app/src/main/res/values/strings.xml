@@ -368,4 +368,10 @@
     <string name="nic">شناختی کارڈ</string>
     <string name="fees_template_val">جیز کیش کے ذریعے پیسے اگلے دن موصول ہوں گے۔</string>
     <string name="fees_currency_val">روپے فیس ۔</string>
+    <string name="withdraw_confirmation">کیا آپ یہ رقم نکالنا چاہتے ہیں؟</string>
+    <string name="amount_lbl">رقم</string>
+    <string name="fees_lbl">فیس</string>
+    <string name="total_lbl">ٹوٹل</string>
+    <string name="cancel">کینسل</string>
+    <string name="yes">ہاں</string>
 </resources>

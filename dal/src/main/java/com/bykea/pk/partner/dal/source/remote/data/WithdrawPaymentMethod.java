@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal.source.remote.response.data;
+package com.bykea.pk.partner.dal.source.remote.data;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

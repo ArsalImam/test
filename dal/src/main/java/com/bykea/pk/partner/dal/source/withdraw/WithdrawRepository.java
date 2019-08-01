@@ -2,9 +2,13 @@ package com.bykea.pk.partner.dal.source.withdraw;
 
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+
 import com.bykea.pk.partner.dal.source.local.WithdrawLocalDataSource;
+import com.bykea.pk.partner.dal.source.pref.AppPref;
 import com.bykea.pk.partner.dal.source.remote.WithdrawRemoteDataSource;
-import com.bykea.pk.partner.dal.source.remote.response.data.WithdrawPaymentMethod;
+import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData;
+import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,31 +53,66 @@ public class WithdrawRepository implements WithdrawDataSource {
         if (isCacheEnabled) {
             //TODO need to load from database
         }
-        getJobsFromRemoteDataSource(callback);
+        getPaymentMethodsFromRemoteSource(callback);
     }
 
     @Override
-    public String getDriverCnicNumber() {
-        return "42101"/*preferences.getString()*/;
+    public void getDriverProfile(WithdrawRepository.LoadWithdrawalCallback callback) {
+        this.remoteDataSource.getDriverProfile(
+                AppPref.INSTANCE.getDriverId(preferences),
+                AppPref.INSTANCE.getAccessToken(preferences),
+                new LoadWithdrawalCallback<PersonalInfoData>() {
+                    @Override
+                    public void onDataLoaded(PersonalInfoData data) {
+                        callback.onDataLoaded(data);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable(String errorMsg) {
+                        callback.onDataNotAvailable(errorMsg);
+                    }
+                });
     }
 
-    private void getJobsFromRemoteDataSource(LoadWithdrawalCallback callback) {
-        this.remoteDataSource.getAllPaymentMethods(new LoadWithdrawalCallback() {
-            @Override
-            public void onPaymentMethodsLoaded(List<WithdrawPaymentMethod> data) {
-                callback.onPaymentMethodsLoaded(data);
-            }
 
-            @Override
-            public void onDataNotAvailable(String errorMsg) {
-                callback.onDataNotAvailable(errorMsg);
-            }
-        });
+    private void getPaymentMethodsFromRemoteSource(LoadWithdrawalCallback callback) {
+        this.remoteDataSource.getAllPaymentMethods(
+                AppPref.INSTANCE.getDriverId(preferences),
+                AppPref.INSTANCE.getAccessToken(preferences),
+                new LoadWithdrawalCallback<List<WithdrawPaymentMethod>>() {
+                    @Override
+                    public void onDataLoaded(List<WithdrawPaymentMethod> data) {
+                        callback.onDataLoaded(data);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable(String errorMsg) {
+                        callback.onDataNotAvailable(errorMsg);
+                    }
+                });
     }
 
-    public interface LoadWithdrawalCallback {
+    public void performWithdraw(@NonNull int amount, @NonNull String paymentMethod, LoadWithdrawalCallback<Boolean> callback) {
+        this.remoteDataSource.performWithdraw(
+                amount,
+                AppPref.INSTANCE.getDriverId(preferences),
+                AppPref.INSTANCE.getAccessToken(preferences),
+                paymentMethod,
+                new LoadWithdrawalCallback<Boolean>() {
+                    @Override
+                    public void onDataLoaded(Boolean data) {
+                        callback.onDataLoaded(data);
+                    }
 
-        void onPaymentMethodsLoaded(List<WithdrawPaymentMethod> data);
+                    @Override
+                    public void onDataNotAvailable(String errorMsg) {
+                        callback.onDataNotAvailable(errorMsg);
+                    }
+                });
+    }
+
+    public interface LoadWithdrawalCallback<T> {
+        void onDataLoaded(T data);
 
         void onDataNotAvailable(String errorMsg);
     }
