@@ -184,8 +184,8 @@ interface Backend {
 
         operator fun invoke(baseUrl: String): Backend {
             return Retrofit.Builder()
-                    .client(client)
-//                    .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+//                    .client(client)
+                    .client(NetworkUtil.getUnsafeOkHttpClient())
                     .baseUrl(baseUrl)
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create())
