@@ -91,8 +91,8 @@ interface Backend {
     @POST("/api/v1/trips/{job_id}/accept")
     fun acceptJobCall(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<AcceptJobCallResponse>
 
-    @POST("/api/v1/trips/{job_id}/dropoff")
-    fun changeDropOff(@Path("job_id") jobId: String, changeDropOffRequest: ChangeDropOffRequest): Call<AcceptJobCallResponse>
+    @PUT("/api/v1/trips/{job_id}/dropoff/partner")
+    fun changeDropOff(@Path("job_id") jobId: String, @Body body: ChangeDropOffRequest): Call<AcceptJobCallResponse>
 
     /**
      * Requests to mark arrived for active job

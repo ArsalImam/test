@@ -30,8 +30,8 @@ android {
         productFlavors {
             local {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http:192.168.1.108:3000\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://192.168.1.108:3001\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://116.58.66.115:5556\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://116.58.66.115:5557\""
             }
             develop {
                 dimension "env"

@@ -36,6 +36,7 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest;
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.PlacesResult;
@@ -238,24 +239,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         @Override
         public void onUpdateDropOff(final UpdateDropOffResponse data) {
-            if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Utils.appToast(mCurrentActivity, data.getMessage());
-                        configCountDown();
-                        allowTripStatusCall = true;
-                        Utils.redLog(TAG, "driversDataHandler called: " + allowTripStatusCall);
-                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
-                    }
-                });
-            }
+            onDropOffUpdate(data.getMessage());
         }
 
         @Override
         public void onArrived(final ArrivedResponse arrivedResponse) {
-            BookingActivity.this.onArrived(arrivedResponse.isSuccess(), arrivedResponse.getMessage());
+            onArrive(arrivedResponse.isSuccess(), arrivedResponse.getMessage());
         }
 
         @Override
@@ -420,8 +409,24 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void updateDropOffToServer() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         updateDropOff();
-        dataRepository.updateDropOff(driversDataHandler, mCurrentActivity, callData.getTripId(),
-                callData.getEndAddress(), callData.getEndLat() + "", callData.getEndLng() + "");
+        if (Utils.isModernService(callData.getServiceCode())) {
+            jobsRepo.changeDropOff(callData.getTripId(), new ChangeDropOffRequest.Stop(Double.valueOf(callData.getEndLat()), Double.valueOf(callData.getEndLng()), callData.getEndAddress()), new JobsDataSource.DropOffChangeCallback() {
+
+                @Override
+                public void onDropOffChanged() {
+                    onDropOffUpdate("Drop-off updated");
+                }
+
+                @Override
+                public void onDropOffChangeFailed() {
+                    onStatusChangedFailed("Drop-off update failed");
+                }
+            });
+        } else {
+            dataRepository.updateDropOff(driversDataHandler, mCurrentActivity, callData.getTripId(),
+                    callData.getEndAddress(), callData.getEndLat() + "", callData.getEndLng() + "");
+        }
+
     }
 
     private void updateDropOff() {
@@ -2238,7 +2243,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                 @Override
                 public void onJobArrived() {
-                    onArrived(true, "Job arrived success");
+                    onArrive(true, "Job arrived success");
                 }
 
                 @Override
@@ -2370,7 +2375,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @param success is response with success
      * @param message response message
      */
-    private void onArrived(boolean success, String message) {
+    private void onArrive(boolean success, String message) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -2393,6 +2398,27 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
             }
         });
+    }
+
+    /**
+     * On response of job drop-off changed
+     *
+     * @param message response message
+     */
+    private void onDropOffUpdate(String message) {
+        if (mCurrentActivity != null) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.INSTANCE.dismissDialog();
+                    Utils.appToast(mCurrentActivity, message);
+                    configCountDown();
+                    allowTripStatusCall = true;
+                    Utils.redLog(TAG, "driversDataHandler called: " + allowTripStatusCall);
+                    dataRepository.requestRunningTrip(mCurrentActivity, handler);
+                }
+            });
+        }
     }
 
     /**
@@ -2479,6 +2505,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     /**
      * On response of finish job
+     *
      * @param data response data
      */
     private void onFinished(FinishJobResponseData data) {
@@ -2514,6 +2541,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     /**
      * On failed response status change calls
+     *
      * @param error Error message
      */
     private void onStatusChangedFailed(String error) {
