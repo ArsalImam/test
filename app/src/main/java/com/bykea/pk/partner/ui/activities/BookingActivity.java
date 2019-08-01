@@ -2002,7 +2002,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         isFirstTime = false;
                     }
                 } else {
-                    progressDialogJobActivity.show();
+                    if (progressDialogJobActivity != null) progressDialogJobActivity.show();
                 }
             }
         }
