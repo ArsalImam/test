@@ -280,7 +280,8 @@ public class CallingActivity extends BaseActivity {
             stopSound();
             if (!isFreeDriverApiCalled) {
                 Utils.setCallIncomingStateWithoutRestartingService();
-                repository.freeDriverStatus(mCurrentActivity, handler);
+                if (!Utils.isModernService(serviceCode))
+                    repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                 finishActivity();
@@ -491,6 +492,17 @@ public class CallingActivity extends BaseActivity {
                     }
                 }
             });
+        }
+    }
+
+    @Subscribe
+    public void onEvent(final String action) {
+        if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_MISSED_EVENT)) {
+            Utils.setCallIncomingState();
+            AppPreferences.setTripStatus(TripStatus.ON_FREE);
+            stopSound();
+            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
+            finishActivity();
         }
     }
 }
