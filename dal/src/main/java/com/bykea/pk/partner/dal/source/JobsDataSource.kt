@@ -2,6 +2,7 @@ package com.bykea.pk.partner.dal.source
 
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
+import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
 import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData
 
@@ -76,6 +77,14 @@ interface JobsDataSource {
      * @param callback AcceptJobCallback
      */
     fun acceptJob(jobId: String, timeEclipsed: Int, callback: AcceptJobCallback)
+
+    /**
+     * Requests to change drop-off location
+     * @param jobId Job ID
+     * @param dropOff Drop off stop
+     * @param callback DropOffChangeCallback
+     */
+    fun changeDropOff(jobId: String, dropOff: ChangeDropOffRequest.Stop, callback: DropOffChangeCallback)
 
     /**
      * Requests arrived at job
@@ -198,8 +207,32 @@ interface JobsDataSource {
      * Callback interface for accept job
      */
     interface AcceptJobCallback {
+
+        /**
+         * Will be called on job accept success
+         */
         fun onJobAccepted()
+
+        /**
+         * Will be called on job accept failure
+         */
         fun onJobAcceptFailed()
+    }
+
+    /**
+     * Callback interface for drop off change of job
+     */
+    interface DropOffChangeCallback {
+
+        /**
+         * Will be called on drop off change success
+         */
+        fun onDropOffChanged()
+
+        /**
+         * Will be called on drop off change failure
+         */
+        fun onDropOffChangeFailed()
     }
 
     /**
@@ -253,7 +286,7 @@ interface JobsDataSource {
         fun onJobConcluded(it: ConcludeJobBadResponse)
 
         /**
-         * On job conclude success
+         * On job conclude fail
          */
         fun onJobConcludeFailed(message: String?, code: Int?)
     }

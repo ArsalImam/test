@@ -6,6 +6,7 @@ import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
+import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
 import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
@@ -143,6 +144,10 @@ class JobsRepository(
 
     override fun acceptJob(jobId: String, timeEclipsed: Int, callback: JobsDataSource.AcceptJobCallback) {
         jobsRemoteDataSource.acceptJob(jobId, timeEclipsed, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
+    override fun changeDropOff(jobId: String, dropOff: ChangeDropOffRequest.Stop, callback: JobsDataSource.DropOffChangeCallback) {
+        jobsRemoteDataSource.changeDropOff(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), dropOff, callback)
     }
 
     override fun arrivedAtJob(jobId: String, callback: JobsDataSource.ArrivedAtJobCallback) {
