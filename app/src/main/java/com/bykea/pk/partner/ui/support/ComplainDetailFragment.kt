@@ -78,19 +78,25 @@ class ComplainDetailFragment : Fragment() {
      */
     private fun createRequest() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
+        requestProvider.let {
+            requestProvider?.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
+                override fun onSuccess(request: Request) {
+                    Dialogs.INSTANCE.dismissDialog()
+                    mCurrentActivity?.isTicketSubmitted = true
+                    mCurrentActivity?.changeFragment(ComplainSubmittedFragment());
+                }
 
-        requestProvider?.createRequest(buildCreateRequest(), object : ZendeskCallback<Request>() {
-            override fun onSuccess(request: Request) {
-                Dialogs.INSTANCE.dismissDialog()
-                mCurrentActivity?.isTicketSubmitted = true
-                mCurrentActivity?.changeFragment(ComplainSubmittedFragment());
-            }
-
-            override fun onError(errorResponse: ErrorResponse) {
-                Dialogs.INSTANCE.dismissDialog()
-                Utils.appToast(DriverApp.getContext(),getString(R.string.error_try_again))
-            }
-        })
+                override fun onError(errorResponse: ErrorResponse) {
+                    Utils.setZendeskIdentity()
+                    Dialogs.INSTANCE.dismissDialog()
+                    Utils.appToast(DriverApp.getContext(), getString(R.string.error_try_again))
+                }
+            })
+        } ?: run {
+            Utils.setZendeskIdentity()
+            Dialogs.INSTANCE.dismissDialog()
+            Utils.appToast(DriverApp.getContext(), getString(R.string.error_try_again))
+        }
     }
 
     /**
@@ -111,37 +117,52 @@ class ComplainDetailFragment : Fragment() {
         return ArrayList<CustomField>().apply {
             add(CustomField(Constants.ZendeskCustomFields.Subject, ticketSubject))
             add(CustomField(Constants.ZendeskCustomFields.Description, etDetails.text.toString()))
-            add(CustomField(Constants.ZendeskCustomFields.Status, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Type, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Priority, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Group, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Assignee, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.trip_id))
             add(CustomField(Constants.ZendeskCustomFields.Customer_Number, AppPreferences.getPilotData().phoneNo))
-            add(CustomField(Constants.ZendeskCustomFields.Receivers_Number, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Trip_Time, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Cancelled_by, mCurrentActivity?.tripHistoryDate?.cancel_by))
-            add(CustomField(Constants.ZendeskCustomFields.Cancellation_Reason, mCurrentActivity?.selectedReason))
-            add(CustomField(Constants.ZendeskCustomFields.Wallet_Deduction, mCurrentActivity?.tripHistoryDate?.invoice?.wallet_deduction))
-            add(CustomField(Constants.ZendeskCustomFields.Customer_Penalty_Amount, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Partner_Penalty_Amount, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Distance_to_Pickup, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Customer_Name, mCurrentActivity?.tripHistoryDate?.passenger?.name))
             add(CustomField(Constants.ZendeskCustomFields.Partner_Number, AppPreferences.getPilotData().phoneNo))
             add(CustomField(Constants.ZendeskCustomFields.Partner_Name, AppPreferences.getPilotData().fullName))
             add(CustomField(Constants.ZendeskCustomFields.Partner_Email, AppPreferences.getDriverEmail()))
-            add(CustomField(Constants.ZendeskCustomFields.Booking_Type, mCurrentActivity?.tripHistoryDate?.trip_type))
-            add(CustomField(Constants.ZendeskCustomFields.Parcel_Value, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.COD_Amount, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Trip_Fare, mCurrentActivity?.tripHistoryDate?.invoice?.tripCharges))
-            add(CustomField(Constants.ZendeskCustomFields.Trip_Distance, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Trip_Start_Address, mCurrentActivity?.tripHistoryDate?.startAddress))
-            add(CustomField(Constants.ZendeskCustomFields.Trip_End_Address, mCurrentActivity?.tripHistoryDate?.endAddress))
-            add(CustomField(Constants.ZendeskCustomFields.Received_Amount, StringUtils.EMPTY))
-            add(CustomField(Constants.ZendeskCustomFields.Wait_Time, mCurrentActivity?.tripHistoryDate?.invoice?.waitMins))
             add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, mCurrentActivity?.selectedReason))
-            add(CustomField(Constants.ZendeskCustomFields.Last_Trip_Status, StringUtils.EMPTY))
+
+            if (!mCurrentActivity?.tripHistoryDate?.cancel_by.isNullOrEmpty())
+                add(CustomField(Constants.ZendeskCustomFields.Cancelled_by, mCurrentActivity?.tripHistoryDate?.cancel_by))
+
+            mCurrentActivity?.tripHistoryDate.let {
+                add(CustomField(Constants.ZendeskCustomFields.Booking_Type, mCurrentActivity?.tripHistoryDate?.trip_type))
+                add(CustomField(Constants.ZendeskCustomFields.Trip_Start_Address, mCurrentActivity?.tripHistoryDate?.startAddress))
+                add(CustomField(Constants.ZendeskCustomFields.Trip_End_Address, mCurrentActivity?.tripHistoryDate?.endAddress))
+
+                mCurrentActivity?.tripHistoryDate?.invoice.let {
+                    if (!mCurrentActivity?.tripHistoryDate?.invoice?.wallet_deduction.isNullOrEmpty())
+                        add(CustomField(Constants.ZendeskCustomFields.Wallet_Deduction, mCurrentActivity?.tripHistoryDate?.invoice?.wallet_deduction))
+                    if (!mCurrentActivity?.tripHistoryDate?.invoice?.tripCharges.isNullOrEmpty())
+                        add(CustomField(Constants.ZendeskCustomFields.Trip_Fare, mCurrentActivity?.tripHistoryDate?.invoice?.tripCharges))
+                    if (!mCurrentActivity?.tripHistoryDate?.invoice?.waitMins.isNullOrEmpty())
+                        add(CustomField(Constants.ZendeskCustomFields.Wait_Time, mCurrentActivity?.tripHistoryDate?.invoice?.waitMins))
+                }
+                mCurrentActivity?.tripHistoryDate?.passenger.let {
+                    if (!mCurrentActivity?.tripHistoryDate?.passenger?.name.isNullOrEmpty())
+                        add(CustomField(Constants.ZendeskCustomFields.Customer_Name, mCurrentActivity?.tripHistoryDate?.passenger?.name))
+                }
+                mCurrentActivity?.tripHistoryDate?.trip_id.let {
+                    if (!mCurrentActivity?.tripHistoryDate?.trip_id?.trip_no.isNullOrEmpty())
+                        add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.trip_id?.trip_no))
+                }
+            }
+            //WILL SEE LATER ON
+//            add(CustomField(Constants.ZendeskCustomFields.COD_Amount, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Received_Amount, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Partner_Penalty_Amount, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Trip_Distance, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Trip_Time, StringUtils.EMPTY))
+
+            //NOT RECEIVING FROM API
+//            add(CustomField(Constants.ZendeskCustomFields.Cancellation_Reason, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Customer_Penalty_Amount, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Receivers_Number, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Distance_to_Pickup, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Last_Trip_Status, StringUtils.EMPTY))
+//            add(CustomField(Constants.ZendeskCustomFields.Parcel_Value, StringUtils.EMPTY))
         }
     }
 }

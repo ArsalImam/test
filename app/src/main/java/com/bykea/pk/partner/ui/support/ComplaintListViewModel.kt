@@ -31,24 +31,28 @@ class ComplaintListViewModel : ViewModel() {
 
     fun start() {
         val requestProvider = Support.INSTANCE.provider()?.requestProvider()
+        requestProvider.let {
+            requestProvider?.getAllRequests(object : ZendeskCallback<List<Request>>() {
+                override fun onSuccess(requests: List<Request>) {
+                    Dialogs.INSTANCE.dismissDialog()
+                    Collections.sort(requests, object : Comparator<Request> {
+                        override fun compare(p1: Request, p2: Request): Int {
+                            return p2.createdAt!!.compareTo(p1.createdAt)
+                        }
+                    })
+                    _items.value = ArrayList(requests)
+                }
 
-        requestProvider?.getAllRequests(object : ZendeskCallback<List<Request>>() {
-            override fun onSuccess(requests: List<Request>) {
-                Dialogs.INSTANCE.dismissDialog()
-                Collections.sort(requests, object : Comparator<Request> {
-                    override fun compare(p1: Request, p2: Request): Int {
-                        return p2.createdAt!!.compareTo(p1.createdAt)
-                    }
-                })
-                _items.value = ArrayList(requests)
-            }
-
-            override fun onError(errorResponse: ErrorResponse) {
-                Dialogs.INSTANCE.dismissDialog()
-                Utils.appToast(DriverApp.getContext(),DriverApp.getContext().getString(R.string.error_try_again))
-            }
-        })
+                override fun onError(errorResponse: ErrorResponse) {
+                    Utils.setZendeskIdentity()
+                    Dialogs.INSTANCE.dismissDialog()
+                    Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.error_try_again))
+                }
+            })
+        } ?: run {
+            Utils.setZendeskIdentity()
+            Dialogs.INSTANCE.dismissDialog()
+            Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.error_try_again))
+        }
     }
-
-
 }
