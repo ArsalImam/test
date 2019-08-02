@@ -38,6 +38,7 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED;
 import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
@@ -178,6 +179,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(MULTI_DELIVERY_SOCKET_TRIP_MISSED))) {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
             }
         }
     }
