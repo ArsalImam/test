@@ -570,8 +570,9 @@ public class WebIORequestHandler {
 
     /**
      * Method Is Listening To Both The Sockets
-     *  1. Call From Trip  - 7
-     *  2. MultiDelivery Trip - 23
+     * 1. Call From Trip  - 7
+     * 2. MultiDelivery Trip - 23
+     *
      * @param normalCallData : Object Class
      */
     private static void setUIForStatus(NormalCallData normalCallData) {
@@ -658,6 +659,7 @@ public class WebIORequestHandler {
                             public void onJobCallAcknowledged() {
                                 if (BuildConfig.DEBUG)
                                     Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
+                                setUIForStatus(data.toNormalCallData());
                             }
 
                             @Override
@@ -667,8 +669,6 @@ public class WebIORequestHandler {
                             }
                         });
                         //endregion
-
-                        setUIForStatus(data.toNormalCallData());
                     } else if (data.getBatchID() != null) {
                         AppPreferences.setMultiDeliveryCallDriverData(data);
                         new UserRepository().requestDriverAcknowledged(handler);
