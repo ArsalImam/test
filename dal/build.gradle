@@ -30,8 +30,8 @@ android {
         productFlavors {
             local {
                 dimension "driver"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http:192.168.1.200:3000\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://192.168.1.200:3001\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http:192.168.1.108:3000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://192.168.1.108:3001\""
             }
             staging {
                 dimension "driver"

@@ -183,7 +183,7 @@ interface JobsDataSource {
 
         fun onJobRequestAccepted()
 
-        fun onJobRequestAcceptFailed(message: String?, taken: Boolean)
+        fun onJobRequestAcceptFailed(code: Int, message: String?)
     }
 
     /**

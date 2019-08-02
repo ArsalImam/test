@@ -115,8 +115,8 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
         _acceptBookingCommand.value = Event(Unit)
     }
 
-    override fun onJobRequestAcceptFailed(message: String?, taken: Boolean) {
-        if (taken) {
+    override fun onJobRequestAcceptFailed(code: Int, message: String?) {
+        if (code == 422) {
             _bookingTakenCommand.value = Event(Unit)
         } else {
             showSnackbarMessage(R.string.error_try_again)
