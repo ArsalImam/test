@@ -649,7 +649,7 @@ public class WebIORequestHandler {
                         serverResponse,
                         MultipleDeliveryCallDriverResponse.class);
                 MultiDeliveryCallDriverData data = response.getData();
-                if (data != null) {
+                if (data != null && AppPreferences.getAvailableStatus()) {
                     if (data.getBatchID() == null &&
                             data.getType() != null && data.getType().equalsIgnoreCase("single")) {
                         //region acknowledgeJobCall

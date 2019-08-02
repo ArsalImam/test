@@ -139,7 +139,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         MultipleDeliveryCallDriverResponse.class);
 
                 MultiDeliveryCallDriverData data = response.getData();
-                if (data != null) {
+                if (data != null && AppPreferences.getAvailableStatus()) {
                     if (data.getBatchID() == null &&
                             data.getType() != null && data.getType().equalsIgnoreCase("single")) {
                         //region acknowledgeJobCall
@@ -184,8 +184,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     /**
      * Method Is Listening To Both The Notification
-     *  1. Call From Trip Notifcation - 7
-     *  2. MultiDelivery Trip Notifcation - 23
+     * 1. Call From Trip Notifcation - 7
+     * 2. MultiDelivery Trip Notifcation - 23
+     *
      * @param callData : Object Class
      */
     private void setUIForStatus(NormalCallData callData) {

@@ -790,12 +790,13 @@ public enum Dialogs {
      * This method shows a pop up dialog with Urdu text and Tick/Cross as Positive/Negative Button
      * Positive button will have Red background and negative will have green/colorAccent.
      *
-     * @param context         Calling Context
-     * @param msg             Message to show in String
-     * @param onClickListener Callback to notify that OK/Positive button is clicked
+     * @param context               Calling Context
+     * @param msg                   Message to show in String
+     * @param positiveClickListener Callback to notify that OK/Positive button is clicked
+     * @param negativeClickListener Callback to notify that Cancel/Negative button is clicked
      */
     public void showNegativeAlertDialog(Context context, String msg,
-                                        View.OnClickListener onClickListener) {
+                                        View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
@@ -805,14 +806,12 @@ public enum Dialogs {
             FontTextView tvMsg = mDialog.findViewById(R.id.tvMsg);
             tvMsg.setText(msg);
 
-            cancelIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mDialog.dismiss();
-                }
-            });
+            if (negativeClickListener == null)
+                cancelIv.setOnClickListener(v -> mDialog.dismiss());
+            else
+                cancelIv.setOnClickListener(negativeClickListener);
 
-            okIv.setOnClickListener(onClickListener);
+            okIv.setOnClickListener(positiveClickListener);
 
             showDialog();
         }
@@ -1090,7 +1089,8 @@ public enum Dialogs {
     /**
      * Dialog Called From Splash Activity
      * Enter Testing IP and LoadBoard IP
-     * @param activity : calling activity
+     *
+     * @param activity    : calling activity
      * @param dataHandler : Use for the callback of strings.
      */
     public void showAlertDialogForURL(final Activity activity, final StringCallBack dataHandler) {
