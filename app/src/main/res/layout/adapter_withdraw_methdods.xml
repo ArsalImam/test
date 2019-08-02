@@ -40,7 +40,7 @@
                         android:gravity="right|center_vertical"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_14sdp"
-                        app:fontName="jameel_noori_nastaleeq.ttf" />
+                        app:fontName="open_sans_regular.ttf" />
 
                     <com.bykea.pk.partner.ui.helpers.FontTextView
                         android:id="@+id/nic_textview"
@@ -69,6 +69,7 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/checkView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/_5sdp"

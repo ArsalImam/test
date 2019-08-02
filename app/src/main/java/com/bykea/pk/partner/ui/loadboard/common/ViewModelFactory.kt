@@ -10,7 +10,7 @@ import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailViewModel
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel
-import com.bykea.pk.partner.ui.withdraw.detail.WithdrawalViewModel
+import com.bykea.pk.partner.ui.withdraw.WithdrawalViewModel
 
 /**
  * A creator is used to inject the product ID into the ViewModel

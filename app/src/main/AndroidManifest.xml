@@ -225,7 +225,10 @@
             android:exported="true" />
 
         <activity
-            android:name=".ui.withdraw.detail.WithdrawalActivity"
+            android:name=".ui.withdraw.WithdrawalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.withdraw.WithdrawThankyouActivity"
             android:screenOrientation="portrait" />
 
         <activity android:name=".ui.activities.MapDetailsActivity" />

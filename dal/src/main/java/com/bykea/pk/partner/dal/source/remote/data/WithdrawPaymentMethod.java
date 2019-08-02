@@ -20,6 +20,12 @@ public class WithdrawPaymentMethod {
     @Expose
     private String comments;
 
+    private boolean isSelected;
+
+    public WithdrawPaymentMethod () {
+        isSelected = false;
+    }
+
     public Integer getCode() {
         return code;
     }
@@ -58,5 +64,13 @@ public class WithdrawPaymentMethod {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

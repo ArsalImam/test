@@ -374,4 +374,8 @@
     <string name="total_lbl">ٹوٹل</string>
     <string name="cancel">کینسل</string>
     <string name="yes">ہاں</string>
+    <string name="thanks">شکریہ</string>
+    <string name="thanks_details">آپ کی رقم 24 گھنٹوں کے اندر آپ کے جیذ کیش اکاؤنٹ میں جمع کردی جائیگی</string>
+    <string name="wallet">والٹ</string>
+
 </resources>

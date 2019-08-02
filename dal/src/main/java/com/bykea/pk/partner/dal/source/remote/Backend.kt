@@ -92,21 +92,20 @@ interface Backend {
             @Query("_id") driverId: String,
             @Query("token_id") token: String): Call<GetJobRequestDetailResponse>
 
-    @GET
-    fun getMockWithdrawalPaymentMethods(
-            @Url url: String = "http://www.mocky.io/v2/5d417cb83100007bc2539436",
+    @GET("/api/v1/driver/paymentmethods")
+    fun getWithdrawalPaymentMethods(
             @Query("token_id") token: String,
             @Query("_id") driverId: String
             ): Call<GetWithdrawalPaymentMethods>
-    @PUT
+
+    @PUT("/api/v1/driver/withdrawal")
     @FormUrlEncoded
-    fun getMockPerformWithdraw(
-            @Url url: String = "http://www.mocky.io/v2/5d42ee9a3200005700764438",
+    fun getPerformWithdraw(
             @Field("token_id") token: String,
             @Field("_id") driverId: String,
-            @Field("payment_method") paymentMethod: String,
+            @Field("payment_method") paymentMethod: Number,
             @Field("amount") amount: Number
-         ): Call<BaseResponse>
+         ): Call<WithdrawPostResponse>
 
     @GET("/api/v1/driver/getProfile")
     fun getDriverProfile(@Query("_id") _id: String,

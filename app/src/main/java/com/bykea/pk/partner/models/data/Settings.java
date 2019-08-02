@@ -31,12 +31,30 @@ public class Settings {
     private String partner_signup_url;
 
     @SerializedName("withdraw_partner_min_limit")
-    private String withdraw_partner_min_limit;
+    private double withdrawPartnerMinLimit;
+
+    public double getWithdrawPartnerMinLimit() {
+        return withdrawPartnerMinLimit;
+    }
+
+    public void setWithdrawPartnerMinLimit(double withdrawPartnerMinLimit) {
+        this.withdrawPartnerMinLimit = withdrawPartnerMinLimit;
+    }
+
+    public double getWithdrawPartnerMaxLimit() {
+        return withdrawPartnerMaxLimit;
+    }
+
+    public void setWithdrawPartnerMaxLimit(double withdrawPartnerMaxLimit) {
+        this.withdrawPartnerMaxLimit = withdrawPartnerMaxLimit;
+    }
 
     @SerializedName("withdraw_partner_max_limit")
-    private String withdraw_partner_max_limit;
+    private double withdrawPartnerMaxLimit;
 
     public Settings() {
+//        setWithdrawPartnerMinLimit(500);
+//        setWithdrawPartnerMaxLimit(7000);
     }
 
     public String getCancel_time() {
@@ -121,19 +139,4 @@ public class Settings {
         this.van_partner_topup_limit = van_partner_topup_limit;
     }
 
-    public String getWithdraw_partner_min_limit() {
-        return withdraw_partner_min_limit;
-    }
-
-    public void setWithdraw_partner_min_limit(String withdraw_partner_min_limit) {
-        this.withdraw_partner_min_limit = withdraw_partner_min_limit;
-    }
-
-    public String getWithdraw_partner_max_limit() {
-        return withdraw_partner_max_limit;
-    }
-
-    public void setWithdraw_partner_max_limit(String withdraw_partner_max_limit) {
-        this.withdraw_partner_max_limit = withdraw_partner_max_limit;
-    }
 }

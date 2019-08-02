@@ -46,7 +46,8 @@ import com.bykea.pk.partner.ui.activities.ReportPostActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
-import com.bykea.pk.partner.ui.withdraw.detail.WithdrawalActivity;
+import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
+import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -500,7 +501,6 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-
     /**
      * This method starts a service to handle Inactive Push Notification
      *
@@ -516,4 +516,8 @@ public class ActivityStackManager {
     }
 
 
+    public void startWithDrawCompleteActivity(Activity activity) {
+        Intent intent = new Intent(activity, WithdrawThankyouActivity.class);
+        activity.startActivity(intent);
+    }
 }

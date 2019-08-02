@@ -62,7 +62,7 @@ public class PersonalInfoData implements Parcelable {
     private String licenseCity;
 
     @SerializedName("wallet")
-    private String wallet;
+    private double wallet;
 
     @SerializedName("img_id")
     private String imgId;
@@ -287,13 +287,14 @@ public class PersonalInfoData implements Parcelable {
 
     public String getAppVersion() { return appVersion; }
 
-    public String getWallet() {
+    public double getWallet() {
         return wallet;
     }
 
-    public void setWallet(String wallet) {
+    public void setWallet(double wallet) {
         this.wallet = wallet;
     }
+
     //endregion
 }
 

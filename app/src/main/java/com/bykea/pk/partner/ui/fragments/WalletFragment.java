@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -69,6 +68,7 @@ public class WalletFragment extends Fragment {
     int firstVisibleItem, visibleItemCount, totalItemCount;
 
     private WalletHistoryAdapter mHistoryAdapter;
+    private boolean mIsRefreshRequired = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -138,7 +138,9 @@ public class WalletFragment extends Fragment {
 
 
     private void setWalletIcon() {
-        mCurrentActivity.showWalletIcon(v -> ActivityStackManager.getInstance().startWithDrawActivity(mCurrentActivity));
+        mCurrentActivity.showWalletIcon(v -> {
+            ActivityStackManager.getInstance().startWithDrawActivity(mCurrentActivity);
+        });
     }
 
     private void getHistory() {
@@ -148,7 +150,6 @@ public class WalletFragment extends Fragment {
         repository.requestWalletHistory(mCurrentActivity, callbackHandler, nextPage + "");
     }
 
-
     @Override
     public void onDestroyView() {
         mCurrentActivity.hideUrduTitle();
@@ -156,7 +157,6 @@ public class WalletFragment extends Fragment {
         unbinder.unbind();
         mCurrentActivity.hideWalletIcon();
     }
-
 
     private IUserDataHandler callbackHandler = new UserDataHandler() {
 
@@ -180,8 +180,14 @@ public class WalletFragment extends Fragment {
                                     rlTop.setVisibility(View.VISIBLE);
                                     nextPage = response.getPage();
                                     noDataIv.setVisibility(View.GONE);
+                                    if (mIsRefreshRequired) {
+                                        mIsRefreshRequired = false;
+                                        mHistoryList.clear();
+                                    }
                                     mHistoryList.addAll(response.getData());
                                     mHistoryAdapter.notifyDataSetChanged();
+
+
                                 } else {
                                     if (mLayoutManager.getItemCount() == 0) {
                                         showNoTripData();
@@ -226,4 +232,9 @@ public class WalletFragment extends Fragment {
         noDataIv.setVisibility(View.VISIBLE);
     }
 
+    public void updateHistory() {
+        mIsRefreshRequired = true;
+        nextPage = StringUtils.EMPTY;
+        getHistory();
+    }
 }
