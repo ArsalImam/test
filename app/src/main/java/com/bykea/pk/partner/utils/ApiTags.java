@@ -133,6 +133,7 @@ public class ApiTags {
     public static final String SOCKET_ARRIVED = "i-am-arrived";
     public static final String SOCKET_BEGIN_TRIP = "start-trip";
     public static final String SOCKET_END_TRIP = "finish-trip";
+    public static final String BOOKING_UPDATED_DROP_OFF = "BOOKING_UPDATED_DROPOFF";
 
     //region MULTI DELIVERY SOCKET EVENTS
     public static final String MULTI_DELIVERY_SOCKET_CALL_DRIVER = "CALL_DRIVER";

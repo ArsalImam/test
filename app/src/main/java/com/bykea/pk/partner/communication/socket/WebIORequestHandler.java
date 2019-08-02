@@ -696,6 +696,21 @@ public class WebIORequestHandler {
     }
 
     /**
+     * Socket listener for Job Drop Off Change
+     */
+    public static class JobDropOffChangeListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("DROP OFF CHANGED (Socket) ", serverResponse);
+            Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
+            intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+            EventBus.getDefault().post(intent);
+        }
+    }
+
+    /**
      * Multi Delivery Trip Batch Cancelled by admin onLoadBoardListFragmentInteractionListener
      */
     public static class MultiDeliveryBatchCancelledByAdminListener implements Emitter.Listener {
