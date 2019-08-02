@@ -117,7 +117,6 @@ class ComplainDetailFragment : Fragment() {
         return ArrayList<CustomField>().apply {
             add(CustomField(Constants.ZendeskCustomFields.Subject, ticketSubject))
             add(CustomField(Constants.ZendeskCustomFields.Description, etDetails.text.toString()))
-            add(CustomField(Constants.ZendeskCustomFields.Customer_Number, AppPreferences.getPilotData().phoneNo))
             add(CustomField(Constants.ZendeskCustomFields.Partner_Number, AppPreferences.getPilotData().phoneNo))
             add(CustomField(Constants.ZendeskCustomFields.Partner_Name, AppPreferences.getPilotData().fullName))
             add(CustomField(Constants.ZendeskCustomFields.Partner_Email, AppPreferences.getDriverEmail()))
@@ -156,6 +155,7 @@ class ComplainDetailFragment : Fragment() {
 //            add(CustomField(Constants.ZendeskCustomFields.Trip_Time, StringUtils.EMPTY))
 
             //NOT RECEIVING FROM API
+//            add(CustomField(Constants.ZendeskCustomFields.Customer_Number,StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Cancellation_Reason, StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Customer_Penalty_Amount, StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
