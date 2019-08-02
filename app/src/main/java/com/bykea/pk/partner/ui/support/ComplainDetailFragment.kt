@@ -137,6 +137,10 @@ class ComplainDetailFragment : Fragment() {
                         add(CustomField(Constants.ZendeskCustomFields.Trip_Fare, mCurrentActivity?.tripHistoryDate?.invoice?.tripCharges))
                     if (!mCurrentActivity?.tripHistoryDate?.invoice?.waitMins.isNullOrEmpty())
                         add(CustomField(Constants.ZendeskCustomFields.Wait_Time, mCurrentActivity?.tripHistoryDate?.invoice?.waitMins))
+                    if (!mCurrentActivity?.tripHistoryDate?.invoice?.km.isNullOrEmpty())
+                        add(CustomField(Constants.ZendeskCustomFields.Trip_Distance, mCurrentActivity?.tripHistoryDate?.invoice?.km))
+                    if (!mCurrentActivity?.tripHistoryDate?.invoice?.minutes.isNullOrEmpty())
+                        add(CustomField(Constants.ZendeskCustomFields.Trip_Time, mCurrentActivity?.tripHistoryDate?.invoice?.minutes))
                 }
                 mCurrentActivity?.tripHistoryDate?.passenger.let {
                     if (!mCurrentActivity?.tripHistoryDate?.passenger?.name.isNullOrEmpty())
@@ -151,8 +155,6 @@ class ComplainDetailFragment : Fragment() {
 //            add(CustomField(Constants.ZendeskCustomFields.COD_Amount, StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Received_Amount, StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Partner_Penalty_Amount, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Trip_Distance, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Trip_Time, StringUtils.EMPTY))
 
             //NOT RECEIVING FROM API
 //            add(CustomField(Constants.ZendeskCustomFields.Customer_Number,StringUtils.EMPTY))
