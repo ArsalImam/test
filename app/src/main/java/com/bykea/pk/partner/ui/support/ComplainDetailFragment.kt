@@ -127,10 +127,10 @@ class ComplainDetailFragment : Fragment() {
                 add(CustomField(Constants.ZendeskCustomFields.Trip_Start_Address, mCurrentActivity?.tripHistoryDate?.startAddress))
                 add(CustomField(Constants.ZendeskCustomFields.Trip_End_Address, mCurrentActivity?.tripHistoryDate?.endAddress))
 
-                if(!mCurrentActivity?.tripHistoryDate?.tripNo.isNullOrEmpty())
+                if (!mCurrentActivity?.tripHistoryDate?.tripNo.isNullOrEmpty())
                     add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.tripNo))
-                if (!mCurrentActivity?.tripHistoryDate?.cancel_by.isNullOrEmpty())
-                    add(CustomField(Constants.ZendeskCustomFields.Cancelled_by, mCurrentActivity?.tripHistoryDate?.cancel_by))
+                if (!mCurrentActivity?.tripHistoryDate?.cancelBy.isNullOrEmpty())
+                    add(CustomField(Constants.ZendeskCustomFields.Cancelled_by, mCurrentActivity?.tripHistoryDate?.cancelBy))
 
                 mCurrentActivity?.tripHistoryDate?.invoice.let {
                     if (!mCurrentActivity?.tripHistoryDate?.invoice?.wallet_deduction.isNullOrEmpty())
