@@ -29,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
@@ -1582,17 +1581,18 @@ public class HomeFragment extends Fragment {
      * {@link AppPreferences#setServerTimeDifference} against Time stamp provided by Server.
      */
     private void forceUpdatedLocationOnDriverStatus() {
-        new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
+        if (Utils.isConnected(getActivity(), false)) {
+            new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
 
-            @Override
-            public void onLocationUpdate(LocationResponse response) {
+                @Override
+                public void onLocationUpdate(LocationResponse response) {
 
-            }
+                }
 
-            @Override
-            public void onError(int errorCode, String errorMessage) {
-            }
-        }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                @Override
+                public void onError(int errorCode, String errorMessage) {
+                }
+            }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        }
     }
-
 }

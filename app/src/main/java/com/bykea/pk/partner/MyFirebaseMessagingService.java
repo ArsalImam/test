@@ -277,7 +277,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                                 @Override
                                 public void onError(int errorCode, String errorMessage) {
-//                                            countDownTimer.cancel();
                                     onLocationUpdateError(errorCode, errorMessage, data);
                                 }
                             }, AppPreferences.getLatitude(), AppPreferences.getLongitude());

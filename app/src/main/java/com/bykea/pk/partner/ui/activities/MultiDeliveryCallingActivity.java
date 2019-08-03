@@ -4,9 +4,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-
-import androidx.appcompat.widget.AppCompatImageView;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,10 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.MultiDeliveryAcceptCallResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -124,11 +123,13 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
         AppPreferences.setStatsApiCallRequired(true);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
-        repository.requestLocationUpdate(
-                mCurrentActivity,
-                handler,
-                AppPreferences.getLatitude(),
-                AppPreferences.getLongitude());
+        if (Utils.isConnected(this, false)) {
+            repository.requestLocationUpdate(
+                    mCurrentActivity,
+                    handler,
+                    AppPreferences.getLatitude(),
+                    AppPreferences.getLongitude());
+        }
         response = AppPreferences.getMultiDeliveryCallDriverData();
         donutProgress.setProgress(response.getTimer());
 
@@ -258,9 +259,11 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     };
 
     private void finishActivity() {
-        repository.requestLocationUpdate(mCurrentActivity, handler,
-                AppPreferences.getLatitude(),
-                AppPreferences.getLongitude());
+        if (Utils.isConnected(MultiDeliveryCallingActivity.this, false)) {
+            repository.requestLocationUpdate(mCurrentActivity, handler,
+                    AppPreferences.getLatitude(),
+                    AppPreferences.getLongitude());
+        }
         mCurrentActivity.finish();
     }
 
