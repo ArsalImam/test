@@ -182,7 +182,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(MULTI_DELIVERY_SOCKET_TRIP_MISSED))) {
-                EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+                try {
+                    MultipleDeliveryCallDriverResponse response =
+                            gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE),
+                                    MultipleDeliveryCallDriverResponse.class);
+                    MultiDeliveryCallDriverData data = response.getData();
+                    if (data != null && data.getTrip_type() != null && !data.getTrip_type().equalsIgnoreCase("single")) {
+                        EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(BOOKING_UPDATED_DROP_OFF))) {
                 Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
