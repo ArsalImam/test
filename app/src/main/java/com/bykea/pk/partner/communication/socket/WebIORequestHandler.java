@@ -690,8 +690,19 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
+            Gson gson = new Gson();
             Utils.redLog(TAG, serverResponse);
-            EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+            try {
+                MultipleDeliveryCallDriverResponse response = gson.fromJson(
+                        serverResponse,
+                        MultipleDeliveryCallDriverResponse.class);
+                MultiDeliveryCallDriverData data = response.getData();
+                if (data != null && data.getTrip_type() != null && !data.getTrip_type().equalsIgnoreCase("single")) {
+                    EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
