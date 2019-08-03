@@ -135,7 +135,7 @@ data class MultiDeliveryCallDriverData(
             this.dropoffStop.address = dropoff?.pickupAddress
 
             pickup?.duration.let { this.arivalTime = (pickup?.duration!! / 60).toString() }
-            pickup?.distance.let { this.estimatedDistance = (pickup?.distance!!.toFloat() / 1000) }
+            dropoffStop?.distance.let { this.estimatedDistance = (dropoffStop?.distance!!.toFloat() / 1000) }
         }
         normalCallData.data = normalCallData
         return normalCallData
