@@ -697,7 +697,10 @@ public class WebIORequestHandler {
                         serverResponse,
                         MultipleDeliveryCallDriverResponse.class);
                 MultiDeliveryCallDriverData data = response.getData();
-                if (data != null && data.getTrip_type() != null && !data.getTrip_type().equalsIgnoreCase("single")) {
+                if (data != null && data.getTrip_type() != null && data.getTrip_type().equalsIgnoreCase("single")) {
+                    Utils.setCallIncomingState();
+                    AppPreferences.setTripStatus(TripStatus.ON_FREE);
+                } else if (data != null && data.getTrip_type() != null && !data.getTrip_type().equalsIgnoreCase("single")) {
                     EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
                 }
             } catch (Exception e) {
