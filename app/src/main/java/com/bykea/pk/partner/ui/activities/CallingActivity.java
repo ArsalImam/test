@@ -51,6 +51,9 @@ import butterknife.OnClick;
 
 
 public class CallingActivity extends BaseActivity {
+
+    private boolean isCancelledByPassenger;
+
     @BindView(R.id.counterTv)
     FontTextView counterTv;
     @BindView(R.id.donut_progress)
@@ -191,8 +194,6 @@ public class CallingActivity extends BaseActivity {
         }
         setInitialData();
         if (!Utils.isModernService(serviceCode)) ackCall();
-
-
     }
 
     @OnClick({R.id.acceptCallBtn})
@@ -394,7 +395,11 @@ public class CallingActivity extends BaseActivity {
             jobsRepo.acceptJob(tripId, Integer.valueOf(acceptSeconds), new JobsDataSource.AcceptJobCallback() {
                 @Override
                 public void onJobAccepted() {
-                    onAcceptSuccess(true, "Job Accepted");
+                    if (!isCancelledByPassenger) {
+                        onAcceptSuccess(true, "Job Accepted");
+                    } else {
+                        cancelRide();
+                    }
                     if (BuildConfig.DEBUG)
                         Toast.makeText(getApplication().getApplicationContext(), "Job Accepted", Toast.LENGTH_SHORT).show();
                 }
@@ -419,34 +424,38 @@ public class CallingActivity extends BaseActivity {
      * @param message Success message
      */
     private void onAcceptSuccess(Boolean success, String message) {
+
         if (mCurrentActivity != null) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
                     Dialogs.INSTANCE.showTempToast(message);
-                    if (success) {
-                        AppPreferences.clearTripDistanceData();
-                        AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
+                    if (!isCancelledByPassenger) {
+                        if (success) {
+                            AppPreferences.clearTripDistanceData();
+                            AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
 
-                        NormalCallData callData = AppPreferences.getCallData();
-                        callData.setStatus(TripStatus.ON_ACCEPT_CALL);
-                        AppPreferences.setCallData(callData);
-                        AppPreferences.setTripAcceptTime(System.currentTimeMillis());
-                        AppPreferences.setEstimatedFare(callData.getKraiKiKamai());
-                        logMixpanelEvent(callData, true);
+                            NormalCallData callData = AppPreferences.getCallData();
+                            callData.setStatus(TripStatus.ON_ACCEPT_CALL);
+                            AppPreferences.setCallData(callData);
+                            AppPreferences.setTripAcceptTime(System.currentTimeMillis());
+                            AppPreferences.setEstimatedFare(callData.getKraiKiKamai());
+                            logMixpanelEvent(callData, true);
 
-                        AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                            AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
-                        AppPreferences.setIsOnTrip(true);
-                        AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
-                        ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
-                        stopSound();
-                        finishActivity();
+                            AppPreferences.setIsOnTrip(true);
+                            AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
+                            ActivityStackManager.getInstance().startJobActivity(mCurrentActivity);
+                            stopSound();
+                            finishActivity();
+                        } else {
+                            Utils.setCallIncomingState();
+                            Dialogs.INSTANCE.showToast(message);
+                        }
                     } else {
-                        Utils.setCallIncomingState();
-                        Dialogs.INSTANCE.showToast(message);
-
+                        cancelRide();
                     }
                 }
             });
@@ -479,6 +488,9 @@ public class CallingActivity extends BaseActivity {
 
     @Subscribe
     public void onEvent(final Intent intent) {
+
+        isCancelledByPassenger = true;
+
         if (mCurrentActivity != null) {
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -486,16 +498,21 @@ public class CallingActivity extends BaseActivity {
                     if (null != intent && null != intent.getExtras()) {
                         if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
                                 || intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
-                            Utils.setCallIncomingState();
-                            AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                            stopSound();
-                            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
-                            finishActivity();
+                            cancelRide();
                         }
                     }
                 }
+
             });
         }
+    }
+
+    private void cancelRide() {
+        Utils.setCallIncomingState();
+        AppPreferences.setTripStatus(TripStatus.ON_FREE);
+        stopSound();
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
+        finishActivity();
     }
 
     @Subscribe
