@@ -241,6 +241,7 @@ public class HomeFragment extends Fragment {
     private boolean isDialogDisplayingForBattery = false;
     private View view;
     private String currentVersion, latestVersion;
+    private boolean isOfflineDialogVisible = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -308,16 +309,26 @@ public class HomeFragment extends Fragment {
         mCurrentActivity.setToolbarLogoKhudaHafiz(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (AppPreferences.getAvailableStatus()) {
+                        AppPreferences.setAvailableStatus(false);
+                        isOfflineDialogVisible = true;
                         Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                isOfflineDialogVisible = false;
+                                makeDriverOffline = true;
                                 WEEK_STATUS = 0;
                                 getDriverPerformanceData();
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                isOfflineDialogVisible = false;
+                                Dialogs.INSTANCE.dismissDialog();
+                                AppPreferences.setAvailableStatus(true);
                             }
                         });
                     } else {
@@ -360,7 +371,7 @@ public class HomeFragment extends Fragment {
                                     Dialogs.INSTANCE.dismissDialog();
                                     callAvailableStatusAPI(false);
                                 }
-                            });
+                            }, null);
                         } else {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 // TODO call battery optimization
@@ -828,6 +839,7 @@ public class HomeFragment extends Fragment {
                             AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
                             if (makeDriverOffline) {
                                 AppPreferences.setAvailableStatus(false);
+                                makeDriverOffline = false;
                             } else {
                                 AppPreferences.setAvailableStatus(!AppPreferences.getAvailableStatus());
                             }
@@ -1333,6 +1345,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        if (isOfflineDialogVisible) AppPreferences.setAvailableStatus(true);
+
         isScreenInFront = false;
         isCalled = false;
         mCurrentActivity.unregisterReceiver(myReceiver);

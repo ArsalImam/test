@@ -54,8 +54,8 @@ public class DriverApp extends MultiDexApplication {
             new WebIORequestHandler.MultiDeliveryTripMissedListener();
     private Emitter.Listener mBatachCompletedListener =
             new WebIORequestHandler.MultiDeliveryTripBatchCompletedListener();
-    private Emitter.Listener mBatachCancelledListener =
-            new WebIORequestHandler.MultiDeliveryBatchCancelledByAdminListener();
+    private Emitter.Listener mBatachCancelledListener = new WebIORequestHandler.MultiDeliveryBatchCancelledByAdminListener();
+    private Emitter.Listener mDropOffChangeListener = new WebIORequestHandler.JobDropOffChangeListener();
 
     @Override
     public void onCreate() {
@@ -168,6 +168,7 @@ public class DriverApp extends MultiDexApplication {
                 mBatachCompletedListener);
         WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED,
                 mBatachCancelledListener);
+        WebIO.getInstance().on(ApiTags.BOOKING_UPDATED_DROP_OFF, mDropOffChangeListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
         }
