@@ -141,7 +141,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         MultipleDeliveryCallDriverResponse.class);
 
                 MultiDeliveryCallDriverData data = response.getData();
-                if (data != null) {
+                if (data != null && AppPreferences.getAvailableStatus()) {
                     if (data.getBatchID() == null &&
                             data.getType() != null && data.getType().equalsIgnoreCase("single")) {
                         //region acknowledgeJobCall
@@ -182,7 +182,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(MULTI_DELIVERY_SOCKET_TRIP_MISSED))) {
-                EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+                try {
+                    MultipleDeliveryCallDriverResponse response =
+                            gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE),
+                                    MultipleDeliveryCallDriverResponse.class);
+                    MultiDeliveryCallDriverData data = response.getData();
+                    if (data != null && data.getTrip_type() != null && data.getTrip_type().equalsIgnoreCase("single")) {
+                        Utils.setCallIncomingState();
+                        AppPreferences.setTripStatus(TripStatus.ON_FREE);
+                    } else if (data != null && data.getTrip_type() != null && !data.getTrip_type().equalsIgnoreCase("single")) {
+                        EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(BOOKING_UPDATED_DROP_OFF))) {
                 Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
@@ -194,8 +207,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     /**
      * Method Is Listening To Both The Notification
-     *  1. Call From Trip Notifcation - 7
-     *  2. MultiDelivery Trip Notifcation - 23
+     * 1. Call From Trip Notifcation - 7
+     * 2. MultiDelivery Trip Notifcation - 23
+     *
      * @param callData : Object Class
      */
     private void setUIForStatus(NormalCallData callData) {
@@ -287,7 +301,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                                 @Override
                                 public void onError(int errorCode, String errorMessage) {
-//                                            countDownTimer.cancel();
                                     onLocationUpdateError(errorCode, errorMessage, data);
                                 }
                             }, AppPreferences.getLatitude(), AppPreferences.getLongitude());

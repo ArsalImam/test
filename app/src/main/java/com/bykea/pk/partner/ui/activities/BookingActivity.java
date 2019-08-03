@@ -2492,7 +2492,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     Utils.setCallIncomingState();
                     AppPreferences.setWalletAmountIncreased(!isAvailable);
                     AppPreferences.setAvailableStatus(isAvailable);
-                    dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
+                    if (Utils.isConnected(BookingActivity.this, false))
+                        dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
                     ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     finish();
                 } else {
