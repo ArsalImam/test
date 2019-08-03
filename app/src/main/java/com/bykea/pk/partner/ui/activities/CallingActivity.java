@@ -177,7 +177,9 @@ public class CallingActivity extends BaseActivity {
         AppPreferences.setStatsApiCallRequired(true);
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
+        if (Utils.isConnected(CallingActivity.this, false))
+            repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
         donutProgress.setProgress(20);
         startAnimation();
@@ -214,7 +216,8 @@ public class CallingActivity extends BaseActivity {
     }
 
     private void finishActivity() {
-        repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        if (Utils.isConnected(CallingActivity.this, false))
+            repository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
         mCurrentActivity.finish();
     }
 
@@ -280,7 +283,8 @@ public class CallingActivity extends BaseActivity {
             stopSound();
             if (!isFreeDriverApiCalled) {
                 Utils.setCallIncomingStateWithoutRestartingService();
-                repository.freeDriverStatus(mCurrentActivity, handler);
+                if (!Utils.isModernService(serviceCode))
+                    repository.freeDriverStatus(mCurrentActivity, handler);
                 isFreeDriverApiCalled = true;
                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                 finishActivity();
@@ -491,6 +495,17 @@ public class CallingActivity extends BaseActivity {
                     }
                 }
             });
+        }
+    }
+
+    @Subscribe
+    public void onEvent(final String action) {
+        if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_MISSED_EVENT)) {
+            Utils.setCallIncomingState();
+            AppPreferences.setTripStatus(TripStatus.ON_FREE);
+            stopSound();
+            ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
+            finishActivity();
         }
     }
 }

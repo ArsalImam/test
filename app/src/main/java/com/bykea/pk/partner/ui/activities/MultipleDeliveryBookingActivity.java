@@ -10,13 +10,12 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.AppCompatImageView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -331,7 +330,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * show last saved time and distance on resume app
      */
     private void setTimeDistanceOnResume() {
-    	//getEta = 0 is a default value given by sharedPref
+        //getEta = 0 is a default value given by sharedPref
         if (AppPreferences.getEta().equalsIgnoreCase("0") || AppPreferences.getEstimatedDistance().equalsIgnoreCase("0")) {
             //when the booking screen comes first after accepting ride
             //the expected ETA and Distance would be 0, so in that case we have to show the data coming from callDriverData
@@ -1178,11 +1177,15 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             AppPreferences.setAvailableStatus(true);
             callDriverData.setBatchStatus(TripStatus.ON_FREE);
             AppPreferences.setMultiDeliveryCallDriverData(callDriverData);
-            dataRepository.requestLocationUpdate(
-                    mCurrentActivity,
-                    handler,
-                    AppPreferences.getLatitude(),
-                    AppPreferences.getLongitude());
+
+            if (Utils.isConnected(MultipleDeliveryBookingActivity.this, false)) {
+                dataRepository.requestLocationUpdate(
+                        mCurrentActivity,
+                        handler,
+                        AppPreferences.getLatitude(),
+                        AppPreferences.getLongitude());
+            }
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

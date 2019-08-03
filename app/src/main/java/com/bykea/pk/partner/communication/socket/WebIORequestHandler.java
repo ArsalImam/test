@@ -649,7 +649,7 @@ public class WebIORequestHandler {
                         serverResponse,
                         MultipleDeliveryCallDriverResponse.class);
                 MultiDeliveryCallDriverData data = response.getData();
-                if (data != null) {
+                if (data != null && AppPreferences.getAvailableStatus()) {
                     if (data.getBatchID() == null &&
                             data.getType() != null && data.getType().equalsIgnoreCase("single")) {
                         //region acknowledgeJobCall
@@ -690,8 +690,37 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
+            Gson gson = new Gson();
             Utils.redLog(TAG, serverResponse);
-            EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+            try {
+                MultipleDeliveryCallDriverResponse response = gson.fromJson(
+                        serverResponse,
+                        MultipleDeliveryCallDriverResponse.class);
+                MultiDeliveryCallDriverData data = response.getData();
+                if (data != null && data.getTrip_type() != null && data.getTrip_type().equalsIgnoreCase("single")) {
+                    Utils.setCallIncomingState();
+                    AppPreferences.setTripStatus(TripStatus.ON_FREE);
+                } else if (data != null && data.getTrip_type() != null && !data.getTrip_type().equalsIgnoreCase("single")) {
+                    EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Socket listener for Job Drop Off Change
+     */
+    public static class JobDropOffChangeListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("DROP OFF CHANGED (Socket) ", serverResponse);
+            Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
+            intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+            EventBus.getDefault().post(intent);
         }
     }
 

@@ -1120,7 +1120,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!isRightAreaVisible) {
                 showOnLeft = true;
             } else {
-                showOnLeft = isLeftAreaGreater(latLng);
+                showOnLeft = true; //isLeftAreaGreater(latLng);
             }
         }
         if (dropOffMarker != null) { // && StringUtils.isNotBlank(lastPickUpFlagOnLeft)) {
@@ -1129,7 +1129,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 dropOffMarker.remove();
                 dropOffMarker = mGoogleMap.addMarker(getDropOffMarker(latLng, showOnLeft));
             }
-        } else {
+        } else if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
             dropOffMarker = mGoogleMap.addMarker(getDropOffMarker(latLng, showOnLeft));
         }
     }
@@ -1152,7 +1152,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!isRightAreaVisible) {
                 showOnLeft = true;
             } else {
-                showOnLeft = isLeftAreaGreater(latLng);
+                showOnLeft = false; //isLeftAreaGreater(latLng);
             }
         }
         if (pickUpMarker != null) {
@@ -1462,37 +1462,35 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @return true if left side of map has more area
      */
     private boolean isLeftAreaGreater(LatLng markerPosition) {
-        return false;
+        boolean isLeftAreaGreater = false;
+        int rightDistance = 31, leftDistance = 31;
+        boolean TRUE = true, isRightDistanceCovered = false, isLeftDistanceCovered = false;
+        double airDistance = 200;
+        if (pickUpMarker != null && dropOffMarker != null) {
+            airDistance = Utils.calculateDistance(pickUpMarker.getPosition().latitude, pickUpMarker.getPosition().longitude,
+                    dropOffMarker.getPosition().latitude, dropOffMarker.getPosition().longitude);
+        }
+        int incrementFactor = MapUtil.getIncrementFactor(airDistance);
+        while (TRUE) {
+            if (MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(markerPosition, rightDistance, 90))) {
+                rightDistance = rightDistance + incrementFactor;
+                isRightDistanceCovered = false;
+            } else {
+                isRightDistanceCovered = true;
+            }
+            if (MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(markerPosition, leftDistance, 270))) {
+                leftDistance = leftDistance + incrementFactor;
+                isLeftDistanceCovered = false;
+            } else {
+                isLeftDistanceCovered = true;
+            }
 
-//        boolean isLeftAreaGreater = false;
-//        int rightDistance = 31, leftDistance = 31;
-//        boolean TRUE = true, isRightDistanceCovered = false, isLeftDistanceCovered = false;
-//        double airDistance = 200;
-//        if (pickUpMarker != null && dropOffMarker != null) {
-//            airDistance = Utils.calculateDistance(pickUpMarker.getPosition().latitude, pickUpMarker.getPosition().longitude,
-//                    dropOffMarker.getPosition().latitude, dropOffMarker.getPosition().longitude);
-//        }
-//        int incrementFactor = MapUtil.getIncrementFactor(airDistance);
-//        while (TRUE) {
-//            if (MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(markerPosition, rightDistance, 90))) {
-//                rightDistance = rightDistance + incrementFactor;
-//                isRightDistanceCovered = false;
-//            } else {
-//                isRightDistanceCovered = true;
-//            }
-//            if (MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(markerPosition, leftDistance, 270))) {
-//                leftDistance = leftDistance + incrementFactor;
-//                isLeftDistanceCovered = false;
-//            } else {
-//                isLeftDistanceCovered = true;
-//            }
-//
-//            if (isLeftDistanceCovered || isRightDistanceCovered) {
-//                isLeftAreaGreater = rightDistance <= leftDistance;
-//                TRUE = false;
-//            }
-//        }
-//        return isLeftAreaGreater;
+            if (isLeftDistanceCovered || isRightDistanceCovered) {
+                isLeftAreaGreater = rightDistance <= leftDistance;
+                TRUE = false;
+            }
+        }
+        return isLeftAreaGreater;
     }
 
     private void setPickupBounds() {
@@ -2494,7 +2492,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     Utils.setCallIncomingState();
                     AppPreferences.setWalletAmountIncreased(!isAvailable);
                     AppPreferences.setAvailableStatus(isAvailable);
-                    dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
+                    if (Utils.isConnected(BookingActivity.this, false))
+                        dataRepository.requestLocationUpdate(mCurrentActivity, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
                     ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                     finish();
                 } else {
