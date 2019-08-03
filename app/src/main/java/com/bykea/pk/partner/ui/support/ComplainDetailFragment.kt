@@ -122,13 +122,15 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Partner_Email, AppPreferences.getDriverEmail()))
             add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, mCurrentActivity?.selectedReason))
 
-            if (!mCurrentActivity?.tripHistoryDate?.cancel_by.isNullOrEmpty())
-                add(CustomField(Constants.ZendeskCustomFields.Cancelled_by, mCurrentActivity?.tripHistoryDate?.cancel_by))
-
             mCurrentActivity?.tripHistoryDate.let {
                 add(CustomField(Constants.ZendeskCustomFields.Booking_Type, mCurrentActivity?.tripHistoryDate?.trip_type))
                 add(CustomField(Constants.ZendeskCustomFields.Trip_Start_Address, mCurrentActivity?.tripHistoryDate?.startAddress))
                 add(CustomField(Constants.ZendeskCustomFields.Trip_End_Address, mCurrentActivity?.tripHistoryDate?.endAddress))
+
+                if(!mCurrentActivity?.tripHistoryDate?.tripNo.isNullOrEmpty())
+                    add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.tripNo))
+                if (!mCurrentActivity?.tripHistoryDate?.cancel_by.isNullOrEmpty())
+                    add(CustomField(Constants.ZendeskCustomFields.Cancelled_by, mCurrentActivity?.tripHistoryDate?.cancel_by))
 
                 mCurrentActivity?.tripHistoryDate?.invoice.let {
                     if (!mCurrentActivity?.tripHistoryDate?.invoice?.wallet_deduction.isNullOrEmpty())
@@ -142,13 +144,10 @@ class ComplainDetailFragment : Fragment() {
                     if (!mCurrentActivity?.tripHistoryDate?.invoice?.minutes.isNullOrEmpty())
                         add(CustomField(Constants.ZendeskCustomFields.Trip_Time, mCurrentActivity?.tripHistoryDate?.invoice?.minutes))
                 }
+
                 mCurrentActivity?.tripHistoryDate?.passenger.let {
                     if (!mCurrentActivity?.tripHistoryDate?.passenger?.name.isNullOrEmpty())
                         add(CustomField(Constants.ZendeskCustomFields.Customer_Name, mCurrentActivity?.tripHistoryDate?.passenger?.name))
-                }
-                mCurrentActivity?.tripHistoryDate?.trip_id.let {
-                    if (!mCurrentActivity?.tripHistoryDate?.trip_id?.trip_no.isNullOrEmpty())
-                        add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.trip_id?.trip_no))
                 }
             }
             //WILL SEE LATER ON
