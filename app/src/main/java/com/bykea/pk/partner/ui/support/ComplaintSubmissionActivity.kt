@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.support
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
@@ -17,6 +18,7 @@ import com.bykea.pk.partner.models.data.TripHistoryData
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
 import com.bykea.pk.partner.utils.Dialogs
@@ -27,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.android.synthetic.main.activity_problem.*
+import org.apache.commons.lang3.StringUtils
 import java.util.*
 
 
@@ -66,7 +69,12 @@ class ComplaintSubmissionActivity : BaseActivity() {
             toolbar_title.text = tripHistoryDate?.tripNo
         } else {
             //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
-            toolbar_title.text = getString(R.string.title_report)
+            toolbar_title.text = SpannableStringBuilder("")
+                    .append(StringUtils.SPACE)
+                    .append(FontUtils.getStyledTitle(this@ComplaintSubmissionActivity, getString(R.string.title_report_ur), "jameel_noori_nastaleeq.ttf"))
+                    .append(FontUtils.getStyledTitle(this@ComplaintSubmissionActivity, StringUtils.SPACE, "roboto_medium.ttf"))
+                    .append(FontUtils.getStyledTitle(this@ComplaintSubmissionActivity, getString(R.string.title_report_en), "roboto_medium.ttf"))
+                    .append(StringUtils.SPACE)
         }
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
