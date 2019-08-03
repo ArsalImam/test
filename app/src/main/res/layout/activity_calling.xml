@@ -9,55 +9,55 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivCallType"
             android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_60sdp"
-            android:layout_marginTop="@dimen/_20sdp"/>
+            android:layout_marginTop="@dimen/_20sdp" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="@dimen/_3sdp"
-            app:cardCornerRadius="@dimen/_5sdp"
-            app:cardUseCompatPadding="true"
-            app:cardPreventCornerOverlap="true"
-            android:layout_marginRight="@dimen/_8sdp"
             android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_4sdp"
-            >
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="@dimen/_3sdp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_margin="@dimen/_7sdp"
                 android:gravity="center"
-                android:layout_margin="@dimen/_7sdp">
+                android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/estArrivalTimeTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/_40sdp"
-                    android:textColor="@color/kelly_green"
                     android:gravity="center"
-                    app:fontName="open_sans_regular.ttf"/>
+                    android:text="0"
+                    android:textColor="@color/kelly_green"
+                    android:textSize="@dimen/_40sdp"
+                    android:textStyle="bold"
+                    app:fontName="open_sans_regular.ttf" />
+
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="منٹ"
-                    android:textSize="@dimen/_16sdp"
-                    android:textColor="@color/black"
                     android:gravity="center"
-                    app:fontName="jameel_noori_nastaleeq.ttf"/>
+                    android:text="منٹ"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_16sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -66,58 +66,59 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/_25sdp"
             android:layout_height="@dimen/_40sdp"
-            app:srcCompat="@drawable/icon_down_arrow_gray"/>
+            app:srcCompat="@drawable/icon_down_arrow_gray" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="@dimen/_3sdp"
-            app:cardCornerRadius="@dimen/_5sdp"
-            app:cardUseCompatPadding="true"
-            app:cardPreventCornerOverlap="true"
-            android:layout_marginRight="@dimen/_8sdp"
             android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_4sdp"
-            android:layout_marginBottom="@dimen/_4sdp">
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="@dimen/_3sdp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_margin="@dimen/_7sdp"
                 android:gravity="center"
-                android:layout_margin="@dimen/_7sdp">
+                android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.AutoFitFontTextView
                     android:id="@+id/dropZoneNameTV"
                     android:layout_width="@dimen/_240sdp"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:maxLines="1"
-                    android:textSize="@dimen/_27sdp"
-                    android:textColor="@color/color_blue3179c5"
                     android:gravity="center"
-                    app:fontName="jameel_noori_nastaleeq.ttf"/>
+                    android:maxLines="1"
+                    android:textColor="@color/color_blue3179c5"
+                    android:textSize="@dimen/_27sdp"
+                    android:textStyle="bold"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/estDistanceTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/_40sdp"
-                    android:textColor="@color/color_blue5b8fcd"
                     android:gravity="center"
-                    app:fontName="open_sans_regular.ttf"/>
+                    android:text="0"
+                    android:textColor="@color/color_blue5b8fcd"
+                    android:textSize="@dimen/_40sdp"
+                    android:textStyle="bold"
+                    app:fontName="open_sans_regular.ttf" />
+
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" کلو میٹر"
-                    android:textSize="@dimen/_16sdp"
-                    android:textColor="@color/black"
                     android:gravity="center"
-                    app:fontName="jameel_noori_nastaleeq.ttf"/>
+                    android:text=" کلو میٹر"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_16sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </LinearLayout>
 
@@ -127,35 +128,34 @@
     </LinearLayout>
 
     <View
-        android:layout_above="@+id/acceptCallBtn"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
-        android:background="@color/color_c8c8c8"/>
+        android:layout_above="@+id/acceptCallBtn"
+        android:background="@color/color_c8c8c8" />
 
     <RelativeLayout
         android:id="@+id/acceptCallBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        >
+        android:layout_alignParentBottom="true">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/_35sdp"
             android:layout_height="@dimen/_35sdp"
-            app:srcCompat="@drawable/tick_icon"
-            android:tint="@color/kelly_green"
             android:layout_centerInParent="true"
-            android:layout_margin="@dimen/_12sdp"/>
+            android:layout_margin="@dimen/_12sdp"
+            android:tint="@color/kelly_green"
+            app:srcCompat="@drawable/tick_icon" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/_15sdp"
             android:layout_marginRight="@dimen/_15sdp"
+            android:gravity="center"
             android:orientation="vertical">
 
             <FrameLayout
@@ -187,9 +187,9 @@
                     android:id="@+id/counterTv"
                     android:layout_width="@dimen/_42sdp"
                     android:layout_height="@dimen/_42sdp"
-                    android:gravity="center"
                     android:layout_gravity="center"
                     android:background="@drawable/white_circle_bg"
+                    android:gravity="center"
                     android:maxLength="2"
                     android:textColor="@color/kelly_green"
                     android:textSize="@dimen/_24sdp"
