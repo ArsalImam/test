@@ -455,51 +455,74 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         cancelBtn.setVisibility(View.GONE);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_booking);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        ButterKnife.bind(this);
-        mCurrentActivity = this;
-        dataRepository = new UserRepository();
-        jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+    private UserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onRunningTrips(final CheckDriverStatusResponse response) {
+            if (mCurrentActivity != null) {
+                mCurrentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Gson gson = new Gson();
+                            String trip = gson.toJson(response.getData().getTrip());
+                            Type type = new TypeToken<NormalCallData>() {
+                            }.getType();
+                            NormalCallData normalCallData = gson.fromJson(trip, type);
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(Constants.Extras.IS_CALLED_FROM_LOADBOARD)) {
-            IS_CALLED_FROM_LOADBOARD_VALUE = getIntent().getExtras().getBoolean(Constants.Extras.IS_CALLED_FROM_LOADBOARD);
+                            if (response.getData().getTrip() == null) {
+                                requestTripCounter++;
+                                if (requestTripCounter < MAX_LIMIT_LOAD_BOARD) {
+                                    new Handler().postDelayed(() -> {
+                                        dataRepository.getActiveTrip(mCurrentActivity, handler);
+                                    }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
+                                } else {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                    Dialogs.INSTANCE.showTempToast("Request trip limit Exceeded");
+                                    ActivityStackManager.getInstance().startHomeActivity(BookingActivity.this);
+                                }
+                                return;
+                            }
+
+                            Dialogs.INSTANCE.dismissDialog();
+
+                            AppPreferences.setTripAcceptTime(System.currentTimeMillis());
+                            AppPreferences.setEstimatedFare(normalCallData.getKraiKiKamai());
+                            AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                            AppPreferences.setIsOnTrip(true);
+
+                            if (normalCallData.getStatus() != null &&
+                                    shouldUpdateTripData(normalCallData.getStatus())) {
+                                AppPreferences.setCallData(normalCallData);
+                                AppPreferences.setTripStatus(normalCallData.getStatus());
+                                callData = normalCallData;
+                                updateDropOff();
+                                showWalletAmount();
+                            }
+
+                            setInitialData();
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
         }
-        if (IS_CALLED_FROM_LOADBOARD_VALUE) {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            dataRepository.getActiveTrip(mCurrentActivity, handler);
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            switch (errorCode) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    cancelByPassenger(false);
+                    break;
+                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                    EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                    break;
+            }
         }
-
-        AppPreferences.setStatsApiCallRequired(true);
-        Utils.keepScreenOn(mCurrentActivity);
-        Notifications.removeAllNotifications(mCurrentActivity);
-//        mGoogleApiClient = new GoogleApiClient.Builder(mCurrentActivity)
-//                .enableAutoManage(mCurrentActivity, 0 /* clientId */, mCurrentActivity)
-//                .addApi(Places.GEO_DATA_API)
-//                .build();
-
-
-        mapView = (MapView) findViewById(R.id.jobMapFragment);
-        final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
-        mapView.onCreate(mapViewSavedInstanceState);
-        try {
-            MapsInitializer.initialize(getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        mapView.getMapAsync(mapReadyCallback);
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
-
-        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
-
-        if (!IS_CALLED_FROM_LOADBOARD_VALUE)
-            setInitialData();
-    }
+    };
 
     private void startGoogleDirectionsApp() {
         if (callData != null) {
@@ -2008,77 +2031,38 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     };
 
-    private UserDataHandler handler = new UserDataHandler() {
-        @Override
-        public void onRunningTrips(final CheckDriverStatusResponse response) {
-            if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Gson gson = new Gson();
-                            String trip = gson.toJson(response.getData().getTrip());
-                            Type type = new TypeToken<NormalCallData>() {
-                            }.getType();
-                            NormalCallData normalCallData = gson.fromJson(trip, type);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_booking);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        ButterKnife.bind(this);
+        mCurrentActivity = this;
+        dataRepository = new UserRepository();
+        jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
-                            if (IS_CALLED_FROM_LOADBOARD_VALUE) {
-                                if (response.getData().getTrip() == null) {
-                                    requestTripCounter++;
-                                    if (requestTripCounter < MAX_LIMIT_LOAD_BOARD) {
-                                        new Handler().postDelayed(() -> {
-                                            dataRepository.getActiveTrip(mCurrentActivity, handler);
-                                        }, Constants.HANDLER_POST_DELAY_LOAD_BOARD);
-                                    } else {
-                                        Dialogs.INSTANCE.dismissDialog();
-                                        Dialogs.INSTANCE.showTempToast("Request trip limit Exceeded");
-                                        ActivityStackManager.getInstance().startHomeActivity(BookingActivity.this);
-                                    }
-                                    return;
-                                }
+        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+        dataRepository.getActiveTrip(mCurrentActivity, handler);
 
-                                Dialogs.INSTANCE.dismissDialog();
+        AppPreferences.setStatsApiCallRequired(true);
+        Utils.keepScreenOn(mCurrentActivity);
+        Notifications.removeAllNotifications(mCurrentActivity);
 
-                                AppPreferences.setTripAcceptTime(System.currentTimeMillis());
-                                AppPreferences.setEstimatedFare(normalCallData.getKraiKiKamai());
-                                AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
-                                AppPreferences.setIsOnTrip(true);
-                            }
-
-                            if (normalCallData.getStatus() != null &&
-                                    shouldUpdateTripData(normalCallData.getStatus())) {
-                                AppPreferences.setCallData(normalCallData);
-                                AppPreferences.setTripStatus(normalCallData.getStatus());
-                                callData = normalCallData;
-                                updateDropOff();
-                                showWalletAmount();
-                            }
-
-                            if (IS_CALLED_FROM_LOADBOARD_VALUE)
-                                setInitialData();
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
+        mapView = (MapView) findViewById(R.id.jobMapFragment);
+        final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
+        mapView.onCreate(mapViewSavedInstanceState);
+        try {
+            MapsInitializer.initialize(getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        mapView.getMapAsync(mapReadyCallback);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
 
-        @Override
-        public void onError(int errorCode, String errorMessage) {
-            switch (errorCode) {
-                case HttpURLConnection.HTTP_UNAUTHORIZED:
-                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
-                    break;
-                case HttpURLConnection.HTTP_NOT_FOUND:
-                    cancelByPassenger(false);
-                    break;
-                case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                    EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
-                    break;
-            }
-        }
-    };
+        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+    }
 
     private boolean shouldUpdateTripData(String tripStatusRunningApi) {
         if (callData == null) {

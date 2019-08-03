@@ -91,6 +91,20 @@ interface Backend {
     @POST("/api/v1/trips/{job_id}/accept")
     fun acceptJobCall(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<AcceptJobCallResponse>
 
+    /**
+     * Requests active job details
+     * @param driverId Driver ID
+     * @param token Driver access token
+     */
+//    @GET("/api/v1/driver/activeTrip")
+//    fun getActiveJob(@Query("_id") driverId: String, @Query("token_id") token: String): Call<GetActiveJobResponse>
+
+    /**
+     * Requests to change job drop-off
+     * @param jobId Job ID
+     * @param body ChangeDropOffRequest
+     * @return Call<AcceptJobCallResponse>
+     */
     @PUT("/api/v1/trips/{job_id}/dropoff/partner")
     fun changeDropOff(@Path("job_id") jobId: String, @Body body: ChangeDropOffRequest): Call<AcceptJobCallResponse>
 
