@@ -7,6 +7,7 @@ import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import org.apache.commons.lang3.StringUtils
 
 /**
  * This is the view model class of {WithdrawalActivity}
@@ -20,50 +21,37 @@ class WithdrawalViewModel
  */
 (private val withdrawRepository: WithdrawRepository) : ViewModel() {
 
-    private var mAvailablePaymentMethods: MutableLiveData<List<WithdrawPaymentMethod>>? = null
-    private var showConfirmationDialog: MutableLiveData<Boolean>? = null
-    private var onWithdrawCompleted: MutableLiveData<Boolean>? = null
-    private var showLoader: MutableLiveData<Boolean>? = null
-    private var balanceInt: MutableLiveData<Int>? = null
-    private var errorMessage: MutableLiveData<String>? = null
-    private var driverProfile: MutableLiveData<PersonalInfoData>? = null
+    private val _paymentMethods = MutableLiveData<List<WithdrawPaymentMethod>>().apply { value = emptyList() }
+    val paymentMethods: LiveData<List<WithdrawPaymentMethod>>
+        get() = _paymentMethods
+
+    private val _showConfirmationDialog = MutableLiveData<Boolean>().apply { value = false }
+    val showConfirmationDialog: LiveData<Boolean>
+        get() = _showConfirmationDialog
+
+    private val _onWithdrawCompleted = MutableLiveData<Boolean>().apply { value = false }
+    val onWithdrawCompleted: LiveData<Boolean>
+        get() = _onWithdrawCompleted
+
+    private val _showLoader = MutableLiveData<Boolean>().apply { value = false }
+    val showLoader: LiveData<Boolean>
+        get() = _showLoader
+
+    private val _balanceInt = MutableLiveData<Int>().apply { value = 0 }
+    val balanceInt: LiveData<Int>
+        get() = _balanceInt
+
+    private val _errorMessage = MutableLiveData<String>().apply { value = null }
+    val errorMessage: LiveData<String>
+        get() = _errorMessage
+
+    private val _driverProfile = MutableLiveData<PersonalInfoData>().apply { value = null }
+    val driverProfile: LiveData<PersonalInfoData>
+        get() = _driverProfile
+
+    private var _selectedPaymentMethod: WithdrawPaymentMethod? = null
     var selectedPaymentMethod: WithdrawPaymentMethod? = null
-
-    /**
-     * Return the cnic number from driver profile
-     * @return cnic number
-     */
-    val driverCnicNumber: String
-        get() = if (driverProfile!!.value == null)
-            ""
-        else
-            driverProfile!!.value!!.cnic
-
-    val isWithdrawCompleted: MutableLiveData<Boolean>
-        get() {
-            if (onWithdrawCompleted == null) {
-                onWithdrawCompleted = MutableLiveData()
-            }
-            return onWithdrawCompleted!!
-        }
-
-    val availablePaymentMethods: LiveData<List<WithdrawPaymentMethod>>
-        get() {
-            if (mAvailablePaymentMethods == null) {
-                mAvailablePaymentMethods = MutableLiveData()
-                loadWithdrawalMethods()
-            }
-            return mAvailablePaymentMethods!!
-        }
-
-    val balanceToWithdraw: MutableLiveData<Int>
-        get() {
-            if (balanceInt == null) {
-                balanceInt = MutableLiveData()
-            }
-            return balanceInt!!
-        }
-
+        get() = _selectedPaymentMethod
 
     init {
     }
@@ -71,34 +59,46 @@ class WithdrawalViewModel
     /**
      * Load user (driver) profile from repository
      */
-    private fun loadUserProfile() {
+    fun loadUserProfile() {
         withdrawRepository.getDriverProfile(object : WithdrawRepository.LoadWithdrawalCallback<PersonalInfoData?> {
             override fun onDataLoaded(data: PersonalInfoData?) {
-                driverProfile!!.value = data
+//                driverProfile!!.apply { this.value = data }
+                _driverProfile.value = data
             }
 
             override fun onDataNotAvailable(errorMsg: String) {
-                showLoader!!.value = false
+                _showLoader!!.value = false
             }
         })
+    }
+
+    fun getDriverCnicNumber(): String {
+        driverProfile.let {
+            driverProfile.value.let {
+                driverProfile.value?.cnic.let {
+                    return driverProfile.value?.cnic!!
+                }
+            }
+        }
+        return StringUtils.EMPTY
     }
 
     /**
      * Load all payment methods from repository
      */
-    private fun loadWithdrawalMethods() {
-        showLoader!!.value = true
+    fun loadWithdrawalMethods() {
+        _showLoader!!.value = true
         withdrawRepository.getAllPaymentMethods(object : WithdrawRepository.LoadWithdrawalCallback<List<WithdrawPaymentMethod>> {
             override fun onDataLoaded(data: List<WithdrawPaymentMethod>?) {
-                showLoader!!.value = false
+                _showLoader!!.value = false
                 data!![0].isSelected = true
-                selectedPaymentMethod = data[0]
-                mAvailablePaymentMethods!!.value = data
+                _selectedPaymentMethod = data[0]
+                _paymentMethods!!.value = data
             }
 
             override fun onDataNotAvailable(errorMsg: String) {
-                showLoader!!.value = false
-                errorMessage!!.value = "معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا"
+                _showLoader!!.value = false
+                _errorMessage!!.value = "معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا"
             }
         })
     }
@@ -108,17 +108,17 @@ class WithdrawalViewModel
      */
     fun confirmWithdraw() {
         val enteredBalance = balanceInt!!.value
-        showLoader!!.value = true
+        _showLoader!!.value = true
         withdrawRepository.performWithdraw(enteredBalance!!, selectedPaymentMethod!!.code!!, object : WithdrawRepository.LoadWithdrawalCallback<Boolean> {
 
             override fun onDataLoaded(data: Boolean?) {
-                showLoader!!.value = false
-                onWithdrawCompleted!!.value = true
+                _showLoader!!.value = false
+                _onWithdrawCompleted!!.value = true
             }
 
             override fun onDataNotAvailable(errorMsg: String) {
-                showLoader!!.value = false
-                errorMessage!!.value = "معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا"
+                _showLoader!!.value = false
+                _errorMessage!!.value = "معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا"
             }
         })
     }
@@ -131,15 +131,19 @@ class WithdrawalViewModel
         try {
             val amount = Integer.valueOf(amt)
             val errorMsg = validateContent(amount)
-            errorMessage!!.value = errorMsg
+            _errorMessage!!.value = errorMsg
             if (errorMsg == null) {
-                balanceInt!!.value = amount
-                showConfirmationDialog!!.value = true
+                _balanceInt!!.value = amount
+                _showConfirmationDialog!!.value = true
             }
         } catch (e: NumberFormatException) {
             e.printStackTrace()
         }
 
+    }
+
+    fun showConfirmationDialog(isShow: Boolean) {
+        _showConfirmationDialog.value = isShow
     }
 
     /**
@@ -170,32 +174,11 @@ class WithdrawalViewModel
     //----- Getters of the observers ------//
     //-------------------------------------//
 
-    fun getDriverProfile(): LiveData<PersonalInfoData> {
-        if (driverProfile == null) {
-            driverProfile = MutableLiveData()
-            loadUserProfile()
-        }
-        return driverProfile!!
-    }
-
-    fun getShowConfirmationDialog(): MutableLiveData<Boolean> {
-        if (showConfirmationDialog == null) {
-            showConfirmationDialog = MutableLiveData()
-        }
-        return showConfirmationDialog!!
-    }
-
-    fun getShowLoader(): MutableLiveData<Boolean> {
-        if (showLoader == null) {
-            showLoader = MutableLiveData()
-        }
-        return showLoader!!
-    }
-
-    fun getErrorMessage(): MutableLiveData<String> {
-        if (errorMessage == null) {
-            errorMessage = MutableLiveData()
-        }
-        return errorMessage!!
-    }
+//    fun getDriverProfile(): LiveData<PersonalInfoData> {
+//        if (driverProfile == null) {
+//            driverProfile = MutableLiveData()
+//            loadUserProfile()
+//        }
+//        return driverProfile!!
+//    }
 }

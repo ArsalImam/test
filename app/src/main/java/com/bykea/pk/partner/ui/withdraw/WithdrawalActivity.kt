@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.withdraw
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -10,6 +11,8 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -22,6 +25,7 @@ import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import java.util.*
+
 
 /**
  * This class will responsible to manage the complete withdrawal process
@@ -80,7 +84,7 @@ class WithdrawalActivity : BaseActivity() {
      * @see [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
      */
     private fun setupObservers() {
-        viewModel!!.getShowLoader().observe(this, Observer { it ->
+        viewModel!!.showLoader.observe(this, Observer { it ->
             if (it)
                 Dialogs.INSTANCE.showLoader(this@WithdrawalActivity)
             else
@@ -88,28 +92,35 @@ class WithdrawalActivity : BaseActivity() {
 
         })
 
-        viewModel!!.getShowLoader().observe(this, Observer {
-            if (it)
-                Dialogs.INSTANCE.showLoader(this@WithdrawalActivity)
-            else
-                Dialogs.INSTANCE.dismissDialog()
+//        viewModel!!.showLoader.observe(this, Observer {
+//            if (it)
+//                Dialogs.INSTANCE.showLoader(this@WithdrawalActivity)
+//            else
+//                Dialogs.INSTANCE.dismissDialog()
+//        })
+
+        viewModel!!.driverProfile.observe(this, Observer { it ->
+            if (it != null) {
+                binding!!.balanceTextview.text = String.format("Rs. %s", Math.round(it.wallet))
+                adapter!!.notifyDataSetChanged()
+            }
         })
 
-        viewModel!!.getDriverProfile().observe(this, Observer { it ->
-            binding!!.balanceTextview.text = String.format("Rs. %s", Math.round(it.wallet))
-            adapter!!.notifyDataSetChanged()
+        viewModel!!.paymentMethods.observe(this, Observer { it ->
+            if (it != null) {
+                adapter!!.notifyMethodsChanged(it)
+            }
         })
 
-        viewModel!!.availablePaymentMethods.observe(this, Observer { it -> adapter!!.notifyMethodsChanged(it) })
-
-        viewModel!!.getErrorMessage().observe(this, Observer { it ->
+        viewModel!!.errorMessage.observe(this, Observer { it ->
             val hasError = it == null
             binding!!.withdrawErrorLayout.visibility = if (hasError) View.GONE else View.VISIBLE
             binding!!.withdrawError.text = if (hasError) "" else it
         })
 
-        viewModel!!.getShowConfirmationDialog().observe(this, Observer { it ->
+        viewModel!!.showConfirmationDialog.observe(this, Observer { it ->
             if (it) {
+
                 confirmationDialog!!.show()
                 val lWindowParams = WindowManager.LayoutParams()
                 lWindowParams.copyFrom(confirmationDialog!!.window!!.attributes)
@@ -121,13 +132,16 @@ class WithdrawalActivity : BaseActivity() {
                 confirmationDialog!!.dismiss()
         })
 
-        viewModel!!.isWithdrawCompleted.observe(this, Observer { it ->
+        viewModel!!.onWithdrawCompleted.observe(this, Observer { it ->
             if (it) {
                 ActivityStackManager.getInstance().startWithDrawCompleteActivity(this@WithdrawalActivity)
                 setResult(Activity.RESULT_OK)
                 finish()
             }
         })
+
+        viewModel!!.loadUserProfile()
+        viewModel!!.loadWithdrawalMethods()
     }
 
     /**
@@ -207,5 +221,14 @@ class WithdrawalActivity : BaseActivity() {
             val i = Intent(activity, WithdrawalActivity::class.java)
             activity.startActivityForResult(i, REQ_CODE_WITH_DRAW)
         }
+    }
+
+    fun onCardClick(v: View) {
+//        Utils.
+//        binding!!.balanceEdittext!!.requestFocus()
+
+        val imm = this@WithdrawalActivity
+                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding!!.balanceEdittext!!, SHOW_IMPLICIT)
     }
 }

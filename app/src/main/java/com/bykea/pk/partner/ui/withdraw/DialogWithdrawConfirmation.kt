@@ -36,7 +36,7 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
      *
      * @param savedInstanceState obtained data sent by callee
      */
-    override fun onCreate(savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dialog_withdraw_confirmation)
 
@@ -47,16 +47,16 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
         val feesTextView = findViewById<TextView>(R.id.confirmation_fees_value)
         val amountTextView = findViewById<TextView>(R.id.confirmation_payment_value)
 
-        val amount = withdrawalViewModel!!.balanceToWithdraw.value!!
+        val amount = withdrawalViewModel!!.balanceInt.value!!
         val fees = Math.round(withdrawalViewModel!!.selectedPaymentMethod!!.fees!!)
 
         amountTextView!!.text = amount.toString()
         feesTextView!!.text = String.format("-%s", fees)
         totalTextView!!.text = (amount + fees).toString()
 
-        dismissTextView!!.setOnClickListener { withdrawalViewModel!!.getShowConfirmationDialog().setValue(false) }
+        dismissTextView!!.setOnClickListener { withdrawalViewModel!!.showConfirmationDialog(false) }
         confirmTextView!!.setOnClickListener {
-            withdrawalViewModel!!.getShowConfirmationDialog().setValue(false)
+            withdrawalViewModel!!.showConfirmationDialog(false)
             withdrawalViewModel!!.confirmWithdraw()
         }
     }

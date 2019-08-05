@@ -26,7 +26,7 @@ class WithdrawalPaymentMethodsAdapter(private val withdrawPaymentMethods: ArrayL
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.cnicTextView.text = viewModel.driverCnicNumber
+        holder.cnicTextView.text = viewModel.getDriverCnicNumber()
         holder.feesTextView.text = withdrawPaymentMethods[position].description
         holder.checkImageView.visibility = if (withdrawPaymentMethods[position].isSelected)
             View.VISIBLE

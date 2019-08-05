@@ -133,6 +133,7 @@
                         app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     <androidx.cardview.widget.CardView
+                        android:onClick="onCardClick"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:cardBackgroundColor="@color/white"
