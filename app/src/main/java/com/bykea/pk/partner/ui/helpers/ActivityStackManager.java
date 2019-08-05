@@ -52,8 +52,6 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
-import static com.bykea.pk.partner.ui.activities.JobCallActivity.KEY_CALL_DATA;
-import static com.bykea.pk.partner.ui.activities.JobCallActivity.KEY_IS_FROM_PUSH;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
 
 public class ActivityStackManager {
@@ -328,9 +326,9 @@ public class ActivityStackManager {
             callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             callIntent.setAction(Intent.ACTION_MAIN);
             callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-            callIntent.putExtra(KEY_CALL_DATA, jobCall);
+            callIntent.putExtra(JobCallActivity.Companion.getKEY_CALL_DATA(), jobCall);
             if (isFromGcm) {
-                callIntent.putExtra(KEY_IS_FROM_PUSH, true);
+                callIntent.putExtra(JobCallActivity.Companion.getKEY_IS_FROM_PUSH(), true);
                 Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
             }
             mContext.startActivity(callIntent);
