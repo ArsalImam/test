@@ -1684,8 +1684,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData.getPickupStop().setDuration(routeFirst.getDurationValue());
                         //TODO: Update zone name of re-render
                         // callData.getPickupStop().setZoneNameUr(routeFirst.getEndAddressText());
-                        callData.getDropoffStop().setDistance(routeSecondary.getDistanceValue());
-                        callData.getDropoffStop().setDuration(routeSecondary.getDurationValue());
+                        if (callData.getDropoffStop() != null) {
+                            callData.getDropoffStop().setDistance(routeSecondary.getDistanceValue());
+                            callData.getDropoffStop().setDuration(routeSecondary.getDurationValue());
+                        }
                         //TODO: Update zone name of re-render
                         // callData.getDropoffStop().setZoneNameUr(routeSecondary.getEndAddressText());
                     } else {
@@ -1695,8 +1697,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
 
-                        callData.getDropoffStop().setDistance(routeFirst.getDistanceValue());
-                        callData.getDropoffStop().setDuration(routeFirst.getDurationValue());
+                        if (callData.getDropoffStop() != null) {
+                            callData.getDropoffStop().setDistance(routeFirst.getDistanceValue());
+                            callData.getDropoffStop().setDuration(routeFirst.getDurationValue());
+                        }
                         //TODO: Update zone name of re-render
                         // callData.getDropoffStop().setZoneNameUr(routeFirst.getEndAddressText());
                     }

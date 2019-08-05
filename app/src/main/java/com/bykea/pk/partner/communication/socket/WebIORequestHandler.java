@@ -10,6 +10,8 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCallPayload;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -552,6 +554,42 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
+            Utils.redLog("BOOKING_REQUEST (Socket) ", serverResponse);
+            Gson gson = new Gson();
+            try {
+                JobCallPayload payload = gson.fromJson(serverResponse, JobCallPayload.class);
+                if (payload != null && AppPreferences.getAvailableStatus()) {
+                    JobCall jobCall = payload.getTrip();
+                    JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+                    jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
+                        @Override
+                        public void onJobCallAcknowledged() {
+                            if (BuildConfig.DEBUG)
+                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
+                            ActivityStackManager.getInstance().startCallingActivity(jobCall, false, DriverApp.getContext());
+                        }
+
+                        @Override
+                        public void onJobCallAcknowledgeFailed() {
+                            if (BuildConfig.DEBUG)
+                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            } catch (
+                    Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Deprecated
+    public static class JobCallOldListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
             Utils.redLog("TRIP NOTIFICATION (Socket) ", serverResponse);
 
             Gson gson = new Gson();
@@ -650,26 +688,7 @@ public class WebIORequestHandler {
                         MultipleDeliveryCallDriverResponse.class);
                 MultiDeliveryCallDriverData data = response.getData();
                 if (data != null && AppPreferences.getAvailableStatus()) {
-                    if (data.getBatchID() == null &&
-                            data.getType() != null && data.getType().equalsIgnoreCase("single")) {
-                        //region acknowledgeJobCall
-                        JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
-                        jobsRepo.ackJobCall(data.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
-                            @Override
-                            public void onJobCallAcknowledged() {
-                                if (BuildConfig.DEBUG)
-                                    Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
-                                setUIForStatus(data.toNormalCallData());
-                            }
-
-                            @Override
-                            public void onJobCallAcknowledgeFailed() {
-                                if (BuildConfig.DEBUG)
-                                    Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        //endregion
-                    } else if (data.getBatchID() != null) {
+                    if (data.getBatchID() != null) {
                         AppPreferences.setMultiDeliveryCallDriverData(data);
                         new UserRepository().requestDriverAcknowledged(handler);
                     }

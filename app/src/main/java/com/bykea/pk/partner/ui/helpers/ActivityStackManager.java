@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -28,6 +29,7 @@ import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
 import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.activities.JobCallActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
@@ -49,6 +51,9 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+
+import static com.bykea.pk.partner.ui.activities.JobCallActivity.KEY_CALL_DATA;
+import static com.bykea.pk.partner.ui.activities.JobCallActivity.KEY_IS_FROM_PUSH;
 
 
 public class ActivityStackManager {
@@ -317,6 +322,22 @@ public class ActivityStackManager {
         }
     }
 
+    public void startCallingActivity(JobCall jobCall, boolean isFromGcm, Context mContext) {
+        if (AppPreferences.getAvailableStatus() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
+            Intent callIntent = new Intent(DriverApp.getContext(), JobCallActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            callIntent.putExtra(KEY_CALL_DATA, jobCall);
+            if (isFromGcm) {
+                callIntent.putExtra(KEY_IS_FROM_PUSH, true);
+                Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
+            }
+            mContext.startActivity(callIntent);
+        }
+    }
+
+    @Deprecated
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
 
         Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +

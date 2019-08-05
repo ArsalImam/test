@@ -11,6 +11,8 @@ import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCallPayload;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -38,6 +40,7 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.bykea.pk.partner.utils.ApiTags.BOOKING_REQUEST;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_UPDATED_DROP_OFF;
 import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED;
 import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
@@ -134,34 +137,36 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase(BOOKING_REQUEST))) {
+                JobCallPayload payload = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), JobCallPayload.class);
+                JobCall jobCall = payload.getTrip();
+                if (payload.getType().equalsIgnoreCase("single")) {
+                    JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+                    jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
+                        @Override
+                        public void onJobCallAcknowledged() {
+                            if (BuildConfig.DEBUG)
+                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "Push Notification Received");
+                            Utils.redLog(TAG, "On Call FCM");
+                            ActivityStackManager.getInstance().startCallingActivity(jobCall, true, mContext);
+                        }
+
+                        @Override
+                        public void onJobCallAcknowledgeFailed() {
+                            if (BuildConfig.DEBUG)
+                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(FCM_EVENTS_MULTIDELIVER_INCOMING_CALL))) { //Multi delivery call
                 MultipleDeliveryCallDriverResponse response = gson.fromJson(
                         remoteMessage.getData().get(Constants.Notification.DATA_TYPE),
                         MultipleDeliveryCallDriverResponse.class);
-
                 MultiDeliveryCallDriverData data = response.getData();
                 if (data != null && AppPreferences.getAvailableStatus()) {
-                    if (data.getBatchID() == null &&
-                            data.getType() != null && data.getType().equalsIgnoreCase("single")) {
-                        //region acknowledgeJobCall
-                        JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
-                        jobsRepo.ackJobCall(data.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
-                            @Override
-                            public void onJobCallAcknowledged() {
-                                if (BuildConfig.DEBUG)
-                                    Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
-                                setUIForStatus(data.toNormalCallData());
-                            }
-
-                            @Override
-                            public void onJobCallAcknowledgeFailed() {
-                                if (BuildConfig.DEBUG)
-                                    Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        //endregion
-                    } else if (data.getBatchID() != null) {
+                    if (data.getBatchID() != null) {
                         AppPreferences.setMultiDeliveryCallDriverData(data);
                         ActivityStackManager.getInstance().startMultiDeliveryCallingActivity(
                                 AppPreferences.getMultiDeliveryCallDriverData(), true, DriverApp.getContext());
