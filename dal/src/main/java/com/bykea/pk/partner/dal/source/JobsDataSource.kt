@@ -91,7 +91,7 @@ interface JobsDataSource {
      * @param jobId Job ID
      * @param callback ArrivedAtJobCallback
      */
-    fun arrivedAtJob(jobId: String, callback: ArrivedAtJobCallback)
+    fun arrivedAtJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: ArrivedAtJobCallback)
 
     /**
      * Requests start job

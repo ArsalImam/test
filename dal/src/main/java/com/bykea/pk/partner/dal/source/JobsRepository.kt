@@ -150,8 +150,8 @@ class JobsRepository(
         jobsRemoteDataSource.changeDropOff(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), dropOff, callback)
     }
 
-    override fun arrivedAtJob(jobId: String, callback: JobsDataSource.ArrivedAtJobCallback) {
-        jobsRemoteDataSource.arrivedAtJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    override fun arrivedAtJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.ArrivedAtJobCallback) {
+        jobsRemoteDataSource.arrivedAtJob(jobId, route, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
     override fun startJob(jobId: String, address: String, callback: JobsDataSource.StartJobCallback) {
