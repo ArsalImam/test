@@ -2126,6 +2126,7 @@ public class Utils {
      * @param callData Call data
      * @return Resource id of service icon image
      */
+    @Deprecated
     public static Integer getServiceIcon(NormalCallData callData) {
         String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
         switch (callType) {
@@ -2181,6 +2182,7 @@ public class Utils {
         }
     }
 
+    @Deprecated
     public static String getServiceIcon(String serviceName) {
         String icon = StringUtils.EMPTY;
         ArrayList<VehicleListData> mList =

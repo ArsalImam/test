@@ -77,6 +77,13 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.Base" />
+        <activity
+            android:name=".ui.activities.JobCallActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Base"
+            android:turnScreenOn="true" />
 
         <activity
             android:name=".ui.activities.MultiDeliveryCallingActivity"

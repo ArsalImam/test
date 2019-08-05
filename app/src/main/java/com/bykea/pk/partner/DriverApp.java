@@ -43,17 +43,17 @@ public class DriverApp extends MultiDexApplication {
 
     private static DriverApp mContext;
     private BasicComponent mBasicComponent;
-    private Emitter.Listener mJobCallListener = new WebIORequestHandler.JobCallListener();
-    private Emitter.Listener mNewActiveJobListener = new WebIORequestHandler.NewActiveJobListener();
     /**
      * XLog Printer global object which would be used for writing logs on file.
      */
     public static Printer globalFilePrinter;
+
+    private Emitter.Listener mJobCallListener = new WebIORequestHandler.JobCallListener();
+    private Emitter.Listener mJobCallOldListener = new WebIORequestHandler.JobCallOldListener();
+    private Emitter.Listener mNewActiveJobListener = new WebIORequestHandler.NewActiveJobListener();
     private Emitter.Listener mCallDriverListener = new WebIORequestHandler.CallDriverListener();
-    private Emitter.Listener mTripMissedListener =
-            new WebIORequestHandler.MultiDeliveryTripMissedListener();
-    private Emitter.Listener mBatachCompletedListener =
-            new WebIORequestHandler.MultiDeliveryTripBatchCompletedListener();
+    private Emitter.Listener mTripMissedListener = new WebIORequestHandler.MultiDeliveryTripMissedListener();
+    private Emitter.Listener mBatachCompletedListener = new WebIORequestHandler.MultiDeliveryTripBatchCompletedListener();
     private Emitter.Listener mBatachCancelledListener = new WebIORequestHandler.MultiDeliveryBatchCancelledByAdminListener();
     private Emitter.Listener mDropOffChangeListener = new WebIORequestHandler.JobDropOffChangeListener();
 
@@ -156,18 +156,13 @@ public class DriverApp extends MultiDexApplication {
      */
     public void attachListenersOnSocketConnected() {
         EventBus.getDefault().post(Constants.ON_SOCKET_CONNECTED);
-        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL,
-                mJobCallListener);
-        WebIO.getInstance().on(ApiTags.SOCKET_NEW_JOB_CALL,
-                mNewActiveJobListener);
-        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER,
-                mCallDriverListener);
-        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED,
-                mTripMissedListener);
-        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_COMPLETED,
-                mBatachCompletedListener);
-        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED,
-                mBatachCancelledListener);
+        WebIO.getInstance().on(ApiTags.BOOKING_REQUEST, mJobCallListener);
+        WebIO.getInstance().on(ApiTags.SOCKET_PASSENGER_CALL, mJobCallOldListener);
+        WebIO.getInstance().on(ApiTags.SOCKET_NEW_JOB_CALL, mNewActiveJobListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_CALL_DRIVER, mCallDriverListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED, mTripMissedListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_COMPLETED, mBatachCompletedListener);
+        WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED, mBatachCancelledListener);
         WebIO.getInstance().on(ApiTags.BOOKING_UPDATED_DROP_OFF, mDropOffChangeListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
@@ -185,7 +180,7 @@ public class DriverApp extends MultiDexApplication {
     }
 
     public void disconnect(String trackingFrom) {
-        WebIO.getInstance().off(ApiTags.SOCKET_PASSENGER_CALL, mJobCallListener);
+        WebIO.getInstance().off(ApiTags.SOCKET_PASSENGER_CALL, mJobCallOldListener);
         WebIO.getInstance().getSocket().disconnect();
         WebIO.getInstance().getSocket().close();
     }
