@@ -3,15 +3,7 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.response.*
-import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
-import com.bykea.pk.partner.dal.source.remote.response.AcceptJobResponse
-import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
-import com.bykea.pk.partner.dal.source.remote.response.*
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 
 class JobsRemoteDataSource {
@@ -187,6 +179,7 @@ class JobsRemoteDataSource {
         })
     }
 
+    //TODO: move this method to user repo
     /**
      * Check If Email Id Is Updated from remote data source
      * @param driverId Driver Id
@@ -194,7 +187,7 @@ class JobsRemoteDataSource {
      * @param callback Callback to be executed on response from remote data source
      */
     fun getCheckIsEmailUpdatedRequest(driverId: String, token: String, callback: JobsDataSource.EmailUpdateCheckCallback) {
-        Backend.telos.checkIsEmailUpdated(driverId, token).enqueue(object : Callback<CheckEmailUpdateResponse> {
+        Backend.talos.checkIsEmailUpdated(driverId, token).enqueue(object : retrofit2.Callback<CheckEmailUpdateResponse> {
             override fun onResponse(call: Call<CheckEmailUpdateResponse>, response: Response<CheckEmailUpdateResponse>) {
                 response.body()?.let {
                     if (response.isSuccessful && it.isSuccess()) {
@@ -211,6 +204,7 @@ class JobsRemoteDataSource {
         })
     }
 
+    //TODO: move this method to user repo
     /**
      * Update Email Id from remote data source
      * @param emailId Email id to update
@@ -219,7 +213,7 @@ class JobsRemoteDataSource {
      * @param callback Callback to be executed on response from remote data source
      */
     fun getEmailUpdateRequest(emailId: String, driverId: String, token: String, callback: JobsDataSource.EmailUpdateCallback) {
-        Backend.telos.getEmailUpdate(emailId, driverId, token).enqueue(object : Callback<GetEmailUpdateResponse> {
+        Backend.talos.getEmailUpdate(emailId, driverId, token).enqueue(object : retrofit2.Callback<GetEmailUpdateResponse> {
             override fun onResponse(call: Call<GetEmailUpdateResponse>, response: Response<GetEmailUpdateResponse>) {
                 response.body()?.let {
                     if (response.isSuccessful && it.isSuccess()) {
