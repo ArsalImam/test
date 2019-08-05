@@ -976,8 +976,7 @@ public class HomeFragment extends Fragment {
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                ActivityStackManager.getInstance().startReportActivity(
-                                        view.getContext(), "s");
+                                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
                             }
                         });
                 break;

@@ -3,6 +3,16 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.response.AcceptJobResponse
+import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponse
+import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
+import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
+import com.bykea.pk.partner.dal.source.remote.response.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class JobsRemoteDataSource {
 
@@ -176,4 +186,54 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onJobConcludeFailed(message, hashCode())
         })
     }
+
+    /**
+     * Check If Email Id Is Updated from remote data source
+     * @param driverId Driver Id
+     * @param token User access token
+     * @param callback Callback to be executed on response from remote data source
+     */
+    fun getCheckIsEmailUpdatedRequest(driverId: String, token: String, callback: JobsDataSource.EmailUpdateCheckCallback) {
+        Backend.telos.checkIsEmailUpdated(driverId, token).enqueue(object : Callback<CheckEmailUpdateResponse> {
+            override fun onResponse(call: Call<CheckEmailUpdateResponse>, response: Response<CheckEmailUpdateResponse>) {
+                response.body()?.let {
+                    if (response.isSuccessful && it.isSuccess()) {
+                        callback.onSuccess(it.email_updated)
+                    } else {
+                        callback.onFail(response.message())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<CheckEmailUpdateResponse>, t: Throwable) {
+                callback.onFail("Email not updated")
+            }
+        })
+    }
+
+    /**
+     * Update Email Id from remote data source
+     * @param emailId Email id to update
+     * @param driverId Driver Id
+     * @param token User access token
+     * @param callback Callback to be executed on response from remote data source
+     */
+    fun getEmailUpdateRequest(emailId: String, driverId: String, token: String, callback: JobsDataSource.EmailUpdateCallback) {
+        Backend.telos.getEmailUpdate(emailId, driverId, token).enqueue(object : Callback<GetEmailUpdateResponse> {
+            override fun onResponse(call: Call<GetEmailUpdateResponse>, response: Response<GetEmailUpdateResponse>) {
+                response.body()?.let {
+                    if (response.isSuccessful && it.isSuccess()) {
+                        callback.onSuccess()
+                    } else {
+                        callback.onFail(response.message())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<GetEmailUpdateResponse>, t: Throwable) {
+                callback.onFail("Email not updated")
+            }
+        })
+    }
+
 }

@@ -172,6 +172,14 @@ class JobsRepository(
         jobsRemoteDataSource.concludeJob(jobId, body, callback)
     }
 
+    override fun checkEmailUpdate(callback: JobsDataSource.EmailUpdateCheckCallback) {
+        jobsRemoteDataSource.getCheckIsEmailUpdatedRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
+    override fun getEmailUpdate(emailId: String, callback: JobsDataSource.EmailUpdateCallback) {
+        jobsRemoteDataSource.getEmailUpdateRequest(emailId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
     private fun getJobsFromRemoteDataSource(callback: JobsDataSource.LoadJobsCallback) {
 
         var serviceCode: Int? = null

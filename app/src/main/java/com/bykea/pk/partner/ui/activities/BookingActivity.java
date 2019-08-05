@@ -1035,6 +1035,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             drawRouteToDropOff();
             callerNameTv.setText(callData.getPassName());
         }
+        
 
         if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
             startAddressTv.setText(callData.getStartAddress());

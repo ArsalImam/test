@@ -1,0 +1,68 @@
+<layout>
+
+    <data>
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.ui.support.GenericFragmentListener" />
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/editText_lay"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingTop="@dimen/_30sdp"
+                android:paddingRight="@dimen/_15sdp"
+                android:visibility="visible">
+
+                <com.bykea.pk.partner.widgets.FontEditText
+                    android:id="@+id/etDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_130sdp"
+                    android:background="@drawable/square_outline_bg"
+                    android:gravity="left"
+                    android:hint="Enter Details"
+                    android:inputType="textMultiLine"
+                    android:minLines="10"
+                    android:overScrollMode="always"
+                    android:padding="@dimen/_9sdp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/color_gray373737"
+                    android:textSize="@dimen/textsize.body1"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <com.bykea.pk.partner.widgets.FontButton
+                android:id="@+id/submitBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:background="@drawable/button_green_no_rounded_corner"
+                android:gravity="center"
+                android:onClick="@{() -> listener.onSubmitClicked()}"
+                android:text="@string/submit"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize.large"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        </LinearLayout>
+    </FrameLayout>
+</layout>

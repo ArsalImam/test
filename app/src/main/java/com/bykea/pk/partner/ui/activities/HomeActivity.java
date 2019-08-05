@@ -98,6 +98,9 @@ public class HomeActivity extends BaseActivity {
         mUserRepository = new UserRepository();
         pilotData = AppPreferences.getPilotData();
         setToolbarLogo();
+
+        Utils.setZendeskIdentity();
+
         initViews();
         setupDrawerToggle();
         Utils.unlockScreen(this);
