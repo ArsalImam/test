@@ -177,8 +177,6 @@
                     android:layout_gravity="center"
                     app:donut_finished_color="@color/windowBackground"
                     app:donut_finished_stroke_width="@dimen/_3sdp"
-                    app:donut_max="20"
-                    app:donut_progress="20"
                     app:donut_tick_stroke_width="@dimen/_3sdp"
                     app:donut_unfinished_stroke_width="@dimen/_3sdp" />
 

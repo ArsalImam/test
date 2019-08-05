@@ -5,7 +5,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -73,49 +72,19 @@ public class JobCallActivity extends BaseActivity {
     @BindView(R.id.acceptCallBtn)
     RelativeLayout acceptCallBtn;
     private MediaPlayer _mpSound;
-    private float progress = 0;
     private String tripId;
-    private Integer serviceCode;
     private boolean isCancelledByPassenger;
-    private boolean isFreeDriverApiCalled = false;
     private long mLastClickTime;
+    private int RIDE_ACCEPTANCE_TIMEOUT = 20;
+    int timerDuration = RIDE_ACCEPTANCE_TIMEOUT;
     private String acceptSeconds = "0";
     private JobCall jobCall;
-    private UserRepository repository;
-    private CountDownTimer timer = new CountDownTimer(Constants.RIDE_ACCEPTANCE_TIMEOUT, 100) {
+    private UserRepository userRepo;
 
-        @Override
-        public void onTick(long millisUntilFinished) {
-            progress = (Constants.RIDE_ACCEPTANCE_TIMEOUT - millisUntilFinished) / 1000;
-            Log.d("RIDE ACCEPT PROGRESS", millisUntilFinished + ":" + progress + ":" + counterTv.getText().toString());
-            if (progress >= 20) {
-                timer.onFinish();
-            } else {
-                if (!_mpSound.isPlaying()) _mpSound.start();
-                //progress = progress + 0.1f;
-                donutProgress.setProgress(progress);
-                try {
-                    counterTv.setText(String.valueOf((int) (millisUntilFinished / 1000)));
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        @Override
-        public void onFinish() {
-            donutProgress.setProgress(20);
-            counterTv.setText("0");
-            acceptCallBtn.setEnabled(false);
-            stopSound();
-            if (!isFreeDriverApiCalled) {
-                Utils.setCallIncomingStateWithoutRestartingService();
-                isFreeDriverApiCalled = true;
-                ActivityStackManager.getInstance().startHomeActivity(true, JobCallActivity.this);
-                finishActivity();
-            }
-        }
-    };
+    private CountDownTimer timer;
+    /**
+     * Response handler for rest calls
+     */
     private UserDataHandler handler = new UserDataHandler() {
 
         @Override
@@ -167,36 +136,6 @@ public class JobCallActivity extends BaseActivity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calling);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        ButterKnife.bind(this);
-        repository = new UserRepository();
-        Utils.unlockScreen(this);
-        AppPreferences.setStatsApiCallRequired(true);
-        //To inactive driver during passenger calling state
-        AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
-
-        if (Utils.isConnected(JobCallActivity.this, false))
-            repository.requestLocationUpdate(this, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
-
-        donutProgress.setProgress(20);
-        startAnimation();
-
-        if (getIntent() != null) {
-            jobCall = (JobCall) getIntent().getSerializableExtra(KEY_CALL_DATA);
-
-            if (getIntent().getBooleanExtra("isGcm", false)) {
-                Utils.redLog("FCM", "Calling Activity");
-                DriverApp.getApplication().connect();
-                DriverApp.startLocationService(this);
-            }
-        }
-        setInitialData();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         AppPreferences.setCallingActivityOnForeground(true);
@@ -221,6 +160,38 @@ public class JobCallActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_calling);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        ButterKnife.bind(this);
+
+        if (getIntent() != null) {
+            jobCall = (JobCall) getIntent().getSerializableExtra(KEY_CALL_DATA);
+            timerDuration = jobCall.getTimer();
+
+            if (getIntent().getBooleanExtra("isGcm", false)) {
+                Utils.redLog("FCM", "Calling Activity");
+                DriverApp.getApplication().connect();
+                DriverApp.startLocationService(this);
+            }
+        }
+
+        userRepo = new UserRepository();
+        Utils.unlockScreen(this);
+        AppPreferences.setStatsApiCallRequired(true);
+        //To inactive driver during passenger calling state
+        AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS);
+
+        if (Utils.isConnected(JobCallActivity.this, false))
+            userRepo.requestLocationUpdate(this, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+
+
+        setInitialData();
+        startTimer();
+    }
+
     @OnClick({R.id.acceptCallBtn})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -229,44 +200,44 @@ public class JobCallActivity extends BaseActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-
-                if (!isFreeDriverApiCalled) {
-                    stopSound();
-                    Dialogs.INSTANCE.showLoader(JobCallActivity.this);
-                    acceptSeconds = counterTv.getText().toString();
-                    acceptJob();
-                    timer.cancel();
-                }
+                stopSound();
+                Dialogs.INSTANCE.showLoader(JobCallActivity.this);
+                acceptSeconds = counterTv.getText().toString();
+                acceptJob();
+                timer.cancel();
                 break;
         }
     }
 
     @Subscribe
     public void onEvent(final Intent intent) {
-
         isCancelledByPassenger = true;
-
-        JobCallActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (null != intent && null != intent.getExtras()) {
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
-                            || intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
-                        cancelRide();
-                    }
+        JobCallActivity.this.runOnUiThread(() -> {
+            if (null != intent && null != intent.getExtras()) {
+                if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
+                        || intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
+                    onJobCallCancelled();
                 }
             }
-
         });
 
     }
 
+    /**
+     * Finish current screen
+     */
     private void finishActivity() {
         if (Utils.isConnected(JobCallActivity.this, false))
-            repository.requestLocationUpdate(this, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+            userRepo.requestLocationUpdate(this, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude());
         finish();
     }
 
+    /**
+     * Log call data to mix panel
+     *
+     * @param callData   Job call data
+     * @param isOnAccept is post accepted
+     */
     private void logMixPanelEvent(JobCall callData, boolean isOnAccept) {
         try {
 
@@ -290,13 +261,48 @@ public class JobCallActivity extends BaseActivity {
         }
     }
 
-    private void startAnimation() {
+    /**
+     * Start timer with dynamic timing, also play the calling sound
+     */
+    private void startTimer() {
+
         _mpSound = MediaPlayer.create(this, R.raw.ringtone);
         _mpSound.start();
-        timer.start();
 
+        donutProgress.setMax(timerDuration);
+        donutProgress.setProgress(0);
+
+        timer = new CountDownTimer(timerDuration * 1000, 1000) {
+            int progress = 0;
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                progress++;
+                if (progress < timerDuration) {
+                    donutProgress.setProgress(progress);
+                    counterTv.setText(String.valueOf(timerDuration - progress));
+                } else {
+                    timer.onFinish();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                donutProgress.setProgress(0);
+                counterTv.setText("0");
+                acceptCallBtn.setEnabled(false);
+                stopSound();
+                Utils.setCallIncomingStateWithoutRestartingService();
+                ActivityStackManager.getInstance().startHomeActivity(true, JobCallActivity.this);
+                finishActivity();
+            }
+        };
+        timer.start();
     }
 
+    /**
+     * Stop calling sound
+     */
     private void stopSound() {
         if (null != _mpSound && _mpSound.isPlaying()) {
             _mpSound.stop();
@@ -304,12 +310,14 @@ public class JobCallActivity extends BaseActivity {
         if (null != timer) timer.cancel();
     }
 
+    /**
+     * Render job calling data
+     */
     private void setInitialData() {
         tripId = jobCall.getTrip_id();
-        serviceCode = jobCall.getService_code();
         Utils.redLog(TAG, "Call Data: " + new Gson().toJson(jobCall));
         logMixPanelEvent(jobCall, false);
-        counterTv.setText("20");
+        counterTv.setText(String.valueOf(timerDuration));
 
         ivCallType.setImageDrawable(ContextCompat.getDrawable(this, getJobImage(jobCall.getService_code())));
         estArrivalTimeTV.setText(getArrivalTime(jobCall.getPickup()));
@@ -317,6 +325,12 @@ public class JobCallActivity extends BaseActivity {
         estDistanceTV.setText(getDropOffDistance(jobCall.getDropoff()));
     }
 
+    /**
+     * Get job service image
+     *
+     * @param service_code Job service code
+     * @return Drawable ID
+     */
     private int getJobImage(int service_code) {
         if (service_code == RIDE_CODE)
             return R.drawable.ride;
@@ -326,6 +340,12 @@ public class JobCallActivity extends BaseActivity {
             return R.drawable.ride;
     }
 
+    /**
+     * Get arrival time from current location to pickup
+     *
+     * @param pickup Pickup stop
+     * @return Displayable time in minutes
+     */
     private String getArrivalTime(Stop pickup) {
         if (pickup != null && pickup.getDuration() > 0)
             return String.valueOf(pickup.getDuration() / 60);
@@ -333,6 +353,12 @@ public class JobCallActivity extends BaseActivity {
             return "1";
     }
 
+    /**
+     * Get the drop-off zone name to show
+     *
+     * @param dropoff Drop-off stop
+     * @return Displayable zone name
+     */
     private String getDropOffZoneName(Stop dropoff) {
         if (dropoff != null) {
             if (dropoff.getZone_ur() != null && !dropoff.getZone_ur().isEmpty()) {
@@ -347,6 +373,12 @@ public class JobCallActivity extends BaseActivity {
             return getString(R.string.customer_btayega);
     }
 
+    /**
+     * Get the drop-off distance from pickup stop
+     *
+     * @param dropoff Drop-off stop
+     * @return Displayable distance in kilometer
+     */
     private String getDropOffDistance(Stop dropoff) {
         if (dropoff != null && dropoff.getDistance() != 0)
             return String.valueOf(dropoff.getDistance() / 1000);
@@ -364,7 +396,7 @@ public class JobCallActivity extends BaseActivity {
                 if (!isCancelledByPassenger) {
                     onAcceptSuccess(true, "Job Accepted");
                 } else {
-                    cancelRide();
+                    onJobCallCancelled();
                 }
                 if (BuildConfig.DEBUG)
                     Toast.makeText(getApplication().getApplicationContext(), "Job Accepted", Toast.LENGTH_SHORT).show();
@@ -386,37 +418,27 @@ public class JobCallActivity extends BaseActivity {
      * @param message Success message
      */
     private void onAcceptSuccess(Boolean success, String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Dialogs.INSTANCE.dismissDialog();
-                Dialogs.INSTANCE.showTempToast(message);
-                if (!isCancelledByPassenger) {
-                    if (success) {
-                        AppPreferences.clearTripDistanceData();
-                        AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
-
-//                            NormalCallData callData = AppPreferences.getCallData();
-//                            callData.setStatus(TripStatus.ON_ACCEPT_CALL);
-//                            AppPreferences.setCallData(callData);
-                        AppPreferences.setTripAcceptTime(System.currentTimeMillis());
-//                            AppPreferences.setEstimatedFare(callData.getKraiKiKamai());
-//                            logMixPanelEvent(callData, true);
-
-                        AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
-
-                        AppPreferences.setIsOnTrip(true);
-                        AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
-                        ActivityStackManager.getInstance().startJobActivity(JobCallActivity.this);
-                        stopSound();
-                        finishActivity();
-                    } else {
-                        Utils.setCallIncomingState();
-                        Dialogs.INSTANCE.showToast(message);
-                    }
+        runOnUiThread(() -> {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showTempToast(message);
+            if (!isCancelledByPassenger) {
+                if (success) {
+                    AppPreferences.clearTripDistanceData();
+                    AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL);
+                    AppPreferences.setTripAcceptTime(System.currentTimeMillis());
+                    logMixPanelEvent(jobCall, true);
+                    AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                    AppPreferences.setIsOnTrip(true);
+                    AppPreferences.setDeliveryType(Constants.CallType.SINGLE);
+                    ActivityStackManager.getInstance().startJobActivity(JobCallActivity.this);
+                    stopSound();
+                    finishActivity();
                 } else {
-                    cancelRide();
+                    Utils.setCallIncomingState();
+                    Dialogs.INSTANCE.showToast(message);
                 }
+            } else {
+                onJobCallCancelled();
             }
         });
 
@@ -428,25 +450,25 @@ public class JobCallActivity extends BaseActivity {
      * @param message Failure message
      */
     private void onAcceptFailed(String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Dialogs.INSTANCE.showToast(message);
-                Dialogs.INSTANCE.dismissDialog();
-                if (AppPreferences.isOnTrip()) {
-                    AppPreferences.setIncomingCall(false);
-                    AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                } else {
-                    AppPreferences.setIncomingCall(true);
-                }
-                ActivityStackManager.getInstance().startHomeActivity(true, JobCallActivity.this);
-                stopSound();
-                finishActivity();
+        runOnUiThread(() -> {
+            Dialogs.INSTANCE.showToast(message);
+            Dialogs.INSTANCE.dismissDialog();
+            if (AppPreferences.isOnTrip()) {
+                AppPreferences.setIncomingCall(false);
+                AppPreferences.setTripStatus(TripStatus.ON_FREE);
+            } else {
+                AppPreferences.setIncomingCall(true);
             }
+            ActivityStackManager.getInstance().startHomeActivity(true, JobCallActivity.this);
+            stopSound();
+            finishActivity();
         });
     }
 
-    private void cancelRide() {
+    /**
+     * On job call cancelled during job calling
+     */
+    private void onJobCallCancelled() {
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
         stopSound();
