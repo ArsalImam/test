@@ -1,14 +1,12 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import android.util.Log
-
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
-import com.bykea.pk.partner.dal.source.remote.response.BaseResponse
+import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
 import com.bykea.pk.partner.dal.source.remote.response.GetDriverProfile
 import com.bykea.pk.partner.dal.source.remote.response.GetWithdrawalPaymentMethods
 import com.bykea.pk.partner.dal.source.remote.response.WithdrawPostResponse
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,8 +20,8 @@ class WithdrawRemoteDataSource {
      * @param tokenId of driver
      * @param callback to get results in case of failure or success
      */
-    fun getAllPaymentMethods(userId: String, tokenId: String, callback: WithdrawRepository.LoadWithdrawalCallback<*>) {
-        Backend.telos.getWithdrawalPaymentMethods(/*"http://www.mocky.io/v2/5d417cb83100007bc2539436", */tokenId, userId)
+    fun getAllPaymentMethods(userId: String, tokenId: String, callback: WithdrawRepository.LoadWithdrawalCallback<List<WithdrawPaymentMethod>?>) {
+        Backend.telos.getWithdrawalPaymentMethods(tokenId, userId)
                 .enqueue(object : Callback<GetWithdrawalPaymentMethods> {
                     override fun onResponse(call: Call<GetWithdrawalPaymentMethods>, response: Response<GetWithdrawalPaymentMethods>) {
                         Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
@@ -81,7 +79,7 @@ class WithdrawRemoteDataSource {
      */
     fun performWithdraw(amount: Int, userId: String, tokenId: String, paymentMethod: Int,
                         callback: WithdrawRepository.LoadWithdrawalCallback<Boolean>) {
-        Backend.telos.getPerformWithdraw(/*"http://www.mocky.io/v2/5d42ee9a3200005700764438", */
+        Backend.telos.getPerformWithdraw(
                 tokenId, userId, paymentMethod, amount)
                 .enqueue(object : Callback<WithdrawPostResponse> {
                     override fun onResponse(call: Call<WithdrawPostResponse>, response: Response<WithdrawPostResponse>) {

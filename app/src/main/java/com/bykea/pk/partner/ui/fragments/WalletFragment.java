@@ -232,6 +232,10 @@ public class WalletFragment extends Fragment {
         noDataIv.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * This method will request to get the driver's updated history,
+     * It is invoking from {HomeActivity}
+     */
     public void updateHistory() {
         mIsRefreshRequired = true;
         nextPage = StringUtils.EMPTY;

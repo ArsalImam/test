@@ -485,8 +485,13 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
+    /**
+     * This method will open withdrawal activity
+     *
+     * @param activity context through which new activity can be launched
+     */
     public void startWithDrawActivity(Activity activity) {
-        WithdrawalActivity.openActivity(activity);
+        WithdrawalActivity.Companion.openActivity(activity);
     }
 
     /**
@@ -516,6 +521,11 @@ public class ActivityStackManager {
     }
 
 
+    /**
+     * This method will open withdrawal complete activity
+     *
+     * @param activity context through which new activity can be launched
+     */
     public void startWithDrawCompleteActivity(Activity activity) {
         Intent intent = new Intent(activity, WithdrawThankyouActivity.class);
         activity.startActivity(intent);

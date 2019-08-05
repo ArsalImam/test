@@ -52,11 +52,6 @@ public class Settings {
     @SerializedName("withdraw_partner_max_limit")
     private double withdrawPartnerMaxLimit;
 
-    public Settings() {
-//        setWithdrawPartnerMinLimit(500);
-//        setWithdrawPartnerMaxLimit(7000);
-    }
-
     public String getCancel_time() {
         return cancel_time;
     }

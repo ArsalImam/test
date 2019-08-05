@@ -13,6 +13,6 @@ class WithdrawThankyouActivity : BaseActivity() {
         setContentView(R.layout.activity_withdraw_thankyou)
 
         val mWalletTextView = findViewById<View>(R.id.withdraw_thankyou_wallet)
-        mWalletTextView.setOnClickListener { v -> finish() }
+        mWalletTextView.setOnClickListener { finish() }
     }
 }

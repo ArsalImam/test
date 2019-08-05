@@ -13,7 +13,7 @@ class WithdrawLocalDataSource(private val appExecutors: AppExecutors, private va
                     INSTANCE = WithdrawLocalDataSource(appExecutors, withDrawDao)
                 }
             }
-            return INSTANCE
+            return INSTANCE!!
         }
     }
 }

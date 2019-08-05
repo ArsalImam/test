@@ -47,12 +47,17 @@ object Injection {
                 preferences)
     }
 
+    /**
+     * Provides withdraw repository with all of it's dependencies resolved.
+     * @param applicationContext context of the application
+     * @return [WithdrawRepository]
+     */
     fun provideWithdrawRepository(applicationContext: Context): WithdrawRepository {
         val database = AppDatabase.getInstance(applicationContext)
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         return WithdrawRepository.getInstance(
                 WithdrawRemoteDataSource(),
                 WithdrawLocalDataSource.getInstance(AppExecutors(), database.withdrawDao()),
-                preferences)
+                preferences)!!
     }
 }

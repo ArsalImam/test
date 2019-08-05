@@ -35,25 +35,18 @@ class WithdrawRepository
         private val preferences: SharedPreferences) : WithdrawDataSource {
 
     /**
-     * Get all payment methods by executing server API or from local datasource
-     * @param callback to get results in case of failure or success
-     */
-    override fun getAllPaymentMethods(callback: WithdrawRepository.LoadWithdrawalCallback<*>) {
-        getPaymentMethodsFromRemoteSource(callback)
-    }
-
-    /**
      * Get driver's profile by executing server API
      * @param callback to get results in case of failure or success
      */
-    override fun getDriverProfile(callback: WithdrawRepository.LoadWithdrawalCallback<*>) {
+    override fun getDriverProfile(callback: LoadWithdrawalCallback<PersonalInfoData?>) {
         this.remoteDataSource.getDriverProfile(
                 AppPref.getDriverId(preferences),
                 AppPref.getAccessToken(preferences),
                 object : LoadWithdrawalCallback<PersonalInfoData> {
-                    override fun onDataLoaded(data: PersonalInfoData) {
+                    override fun onDataLoaded(data: PersonalInfoData?) {
                         callback.onDataLoaded(data)
                     }
+
 
                     override fun onDataNotAvailable(errorMsg: String) {
                         callback.onDataNotAvailable(errorMsg)
@@ -62,15 +55,24 @@ class WithdrawRepository
     }
 
     /**
+     * Get all payment methods by executing server API or from local datasource
+     * @param callback to get results in case of failure or success
+     */
+    override fun getAllPaymentMethods(callback: WithdrawRepository.LoadWithdrawalCallback<List<WithdrawPaymentMethod>>) {
+        getPaymentMethodsFromRemoteSource(callback)
+    }
+
+    /**
      * Get all payment methods by executing server API
      * @param callback to get results in case of failure or success
      */
-    private fun getPaymentMethodsFromRemoteSource(callback: LoadWithdrawalCallback<*>) {
+    private fun getPaymentMethodsFromRemoteSource(callback: LoadWithdrawalCallback<List<WithdrawPaymentMethod>>) {
         this.remoteDataSource.getAllPaymentMethods(
                 AppPref.getDriverId(preferences),
                 AppPref.getAccessToken(preferences),
-                object : LoadWithdrawalCallback<List<WithdrawPaymentMethod>> {
-                    override fun onDataLoaded(data: List<WithdrawPaymentMethod>) {
+                object : LoadWithdrawalCallback<List<WithdrawPaymentMethod>?> {
+
+                    override fun onDataLoaded(data: List<WithdrawPaymentMethod>?) {
                         callback.onDataLoaded(data)
                     }
 
@@ -137,7 +139,7 @@ class WithdrawRepository
          */
         fun getInstance(remoteDataSource: WithdrawRemoteDataSource,
                         localDataSource: WithdrawLocalDataSource,
-                        preferences: SharedPreferences): WithdrawRepository {
+                        preferences: SharedPreferences): WithdrawRepository? {
             if (INSTANCE == null) {
                 synchronized(WithdrawRepository::class.java) {
                     INSTANCE = WithdrawRepository(remoteDataSource,

@@ -4,24 +4,38 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-
 import com.bykea.pk.partner.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class DialogWithdrawConfirmation : BottomSheetDialog {
+/**
+ * This class will responsible to show withdrawal summary on a dialog
+ *
+ * @author Arsal Imam
+ */
+open class DialogWithdrawConfirmation : BottomSheetDialog {
+
+    /**
+     * viewModel of this view
+     */
     private var withdrawalViewModel: WithdrawalViewModel? = null
 
-    constructor(context: Context) : super(context) {}
+    /**
+     * contructor to create new instance of this class
+     */
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, theme: Int) : super(context, theme) {}
-
-
-    protected constructor(context: Context, cancelable: Boolean, cancelListener: DialogInterface.OnCancelListener) : super(context, cancelable, cancelListener) {}
-
+    /**
+     * Setter of viewModel object
+     */
     private fun setViewModel(withdrawalViewModel: WithdrawalViewModel) {
         this.withdrawalViewModel = withdrawalViewModel
     }
 
+    /**
+     * Invoke by system, when this dialog creates
+     *
+     * @param savedInstanceState obtained data sent by callee
+     */
     override fun onCreate(savedInstanceState: Bundle) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dialog_withdraw_confirmation)
@@ -40,8 +54,8 @@ class DialogWithdrawConfirmation : BottomSheetDialog {
         feesTextView!!.text = String.format("-%s", fees)
         totalTextView!!.text = (amount + fees).toString()
 
-        dismissTextView!!.setOnClickListener { v -> withdrawalViewModel!!.getShowConfirmationDialog().setValue(false) }
-        confirmTextView!!.setOnClickListener { v ->
+        dismissTextView!!.setOnClickListener { withdrawalViewModel!!.getShowConfirmationDialog().setValue(false) }
+        confirmTextView!!.setOnClickListener {
             withdrawalViewModel!!.getShowConfirmationDialog().setValue(false)
             withdrawalViewModel!!.confirmWithdraw()
         }
@@ -49,6 +63,12 @@ class DialogWithdrawConfirmation : BottomSheetDialog {
 
     companion object {
 
+        /**
+         * This will return a new instance of this class
+         *
+         * @param withdrawalActivity context to launch new instance
+         * @param withdrawalViewModel viewModel
+         */
         fun newInstance(withdrawalActivity: WithdrawalActivity,
                         withdrawalViewModel: WithdrawalViewModel): DialogWithdrawConfirmation {
             val dialogWithDrawConfirmation = DialogWithdrawConfirmation(withdrawalActivity)

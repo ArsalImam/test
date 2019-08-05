@@ -26,9 +26,9 @@ class WithdrawalPaymentMethodsAdapter(private val withdrawPaymentMethods: ArrayL
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.mCnicTextView.text = viewModel.driverCnicNumber
-        holder.mFeesTextView.text = withdrawPaymentMethods[position].description
-        holder.mCheckImageView.visibility = if (withdrawPaymentMethods[position].isSelected)
+        holder.cnicTextView.text = viewModel.driverCnicNumber
+        holder.feesTextView.text = withdrawPaymentMethods[position].description
+        holder.checkImageView.visibility = if (withdrawPaymentMethods[position].isSelected)
             View.VISIBLE
         else
             View.INVISIBLE
@@ -46,14 +46,11 @@ class WithdrawalPaymentMethodsAdapter(private val withdrawPaymentMethods: ArrayL
 
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
 
-        private val mCnicTextView: TextView
-        private val mFeesTextView: TextView
-        private val mCheckImageView: ImageView
+        val cnicTextView: TextView = v.findViewById(R.id.nic_val_textview)
+        val feesTextView: TextView = v.findViewById(R.id.fees_val_textview)
+        val checkImageView: ImageView = v.findViewById(R.id.checkView)
 
         init {
-            mCnicTextView = v.findViewById(R.id.nic_val_textview)
-            mFeesTextView = v.findViewById(R.id.fees_val_textview)
-            mCheckImageView = v.findViewById(R.id.checkView)
             v.setOnClickListener(this)
         }
 

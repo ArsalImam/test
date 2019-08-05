@@ -3,11 +3,9 @@ package com.bykea.pk.partner.ui.withdraw
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
-import com.bykea.pk.partner.models.data.SettingsData
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 
 /**
@@ -46,7 +44,7 @@ class WithdrawalViewModel
             if (onWithdrawCompleted == null) {
                 onWithdrawCompleted = MutableLiveData()
             }
-            return onWithdrawCompleted
+            return onWithdrawCompleted!!
         }
 
     val availablePaymentMethods: LiveData<List<WithdrawPaymentMethod>>
@@ -55,7 +53,7 @@ class WithdrawalViewModel
                 mAvailablePaymentMethods = MutableLiveData()
                 loadWithdrawalMethods()
             }
-            return mAvailablePaymentMethods
+            return mAvailablePaymentMethods!!
         }
 
     val balanceToWithdraw: MutableLiveData<Int>
@@ -63,25 +61,19 @@ class WithdrawalViewModel
             if (balanceInt == null) {
                 balanceInt = MutableLiveData()
             }
-            return balanceInt
+            return balanceInt!!
         }
 
 
     init {
-        showLoader = MutableLiveData()
-        balanceInt = MutableLiveData()
-        errorMessage = MutableLiveData()
-        onWithdrawCompleted = MutableLiveData()
-        showConfirmationDialog = MutableLiveData()
     }
 
     /**
      * Load user (driver) profile from repository
      */
     private fun loadUserProfile() {
-        withdrawRepository.getDriverProfile(object : WithdrawRepository.LoadWithdrawalCallback<PersonalInfoData> {
-
-            override fun onDataLoaded(data: PersonalInfoData) {
+        withdrawRepository.getDriverProfile(object : WithdrawRepository.LoadWithdrawalCallback<PersonalInfoData?> {
+            override fun onDataLoaded(data: PersonalInfoData?) {
                 driverProfile!!.value = data
             }
 
@@ -97,10 +89,9 @@ class WithdrawalViewModel
     private fun loadWithdrawalMethods() {
         showLoader!!.value = true
         withdrawRepository.getAllPaymentMethods(object : WithdrawRepository.LoadWithdrawalCallback<List<WithdrawPaymentMethod>> {
-
-            override fun onDataLoaded(data: List<WithdrawPaymentMethod>) {
+            override fun onDataLoaded(data: List<WithdrawPaymentMethod>?) {
                 showLoader!!.value = false
-                data[0].isSelected = true
+                data!![0].isSelected = true
                 selectedPaymentMethod = data[0]
                 mAvailablePaymentMethods!!.value = data
             }
@@ -184,27 +175,27 @@ class WithdrawalViewModel
             driverProfile = MutableLiveData()
             loadUserProfile()
         }
-        return driverProfile
+        return driverProfile!!
     }
 
     fun getShowConfirmationDialog(): MutableLiveData<Boolean> {
         if (showConfirmationDialog == null) {
             showConfirmationDialog = MutableLiveData()
         }
-        return showConfirmationDialog
+        return showConfirmationDialog!!
     }
 
     fun getShowLoader(): MutableLiveData<Boolean> {
         if (showLoader == null) {
             showLoader = MutableLiveData()
         }
-        return showLoader
+        return showLoader!!
     }
 
     fun getErrorMessage(): MutableLiveData<String> {
         if (errorMessage == null) {
             errorMessage = MutableLiveData()
         }
-        return errorMessage
+        return errorMessage!!
     }
 }

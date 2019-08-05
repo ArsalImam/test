@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.withdraw
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -11,20 +10,18 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
-
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-
+import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
 import com.bykea.pk.partner.databinding.ActivityWithDrawalBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
-import com.bykea.pk.partner.ui.loadboard.common.*
+import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
-
-import java.util.ArrayList
-
+import java.util.*
 
 /**
  * This class will responsible to manage the complete withdrawal process
@@ -69,7 +66,7 @@ class WithdrawalActivity : BaseActivity() {
         viewModel = this.obtainViewModel(WithdrawalViewModel::class.java)
         binding!!.viewmodel = viewModel
 
-        confirmationDialog = DialogWithdrawConfirmation.newInstance(this, viewModel)
+        confirmationDialog = DialogWithdrawConfirmation.newInstance(this, viewModel!!)
 
         initUi()
         setupObservers()
@@ -83,35 +80,35 @@ class WithdrawalActivity : BaseActivity() {
      * @see [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
      */
     private fun setupObservers() {
+        viewModel!!.getShowLoader().observe(this, Observer { it ->
+            if (it)
+                Dialogs.INSTANCE.showLoader(this@WithdrawalActivity)
+            else
+                Dialogs.INSTANCE.dismissDialog()
 
-        viewModel!!.getShowLoader().observe(this, { it ->
+        })
+
+        viewModel!!.getShowLoader().observe(this, Observer {
             if (it)
                 Dialogs.INSTANCE.showLoader(this@WithdrawalActivity)
             else
                 Dialogs.INSTANCE.dismissDialog()
         })
 
-        viewModel!!.getShowLoader().observe(this, { it ->
-            if (it)
-                Dialogs.INSTANCE.showLoader(this@WithdrawalActivity)
-            else
-                Dialogs.INSTANCE.dismissDialog()
-        })
-
-        viewModel!!.getDriverProfile().observe(this, { it ->
-            binding!!.balanceTextview.text = String.format("Rs. %s", Math.round(it.getWallet()))
+        viewModel!!.getDriverProfile().observe(this, Observer { it ->
+            binding!!.balanceTextview.text = String.format("Rs. %s", Math.round(it.wallet))
             adapter!!.notifyDataSetChanged()
         })
 
-        viewModel!!.availablePaymentMethods.observe(this, { it -> adapter!!.notifyMethodsChanged(it) })
+        viewModel!!.availablePaymentMethods.observe(this, Observer { it -> adapter!!.notifyMethodsChanged(it) })
 
-        viewModel!!.getErrorMessage().observe(this, { it ->
+        viewModel!!.getErrorMessage().observe(this, Observer { it ->
             val hasError = it == null
             binding!!.withdrawErrorLayout.visibility = if (hasError) View.GONE else View.VISIBLE
             binding!!.withdrawError.text = if (hasError) "" else it
         })
 
-        viewModel!!.getShowConfirmationDialog().observe(this, { it ->
+        viewModel!!.getShowConfirmationDialog().observe(this, Observer { it ->
             if (it) {
                 confirmationDialog!!.show()
                 val lWindowParams = WindowManager.LayoutParams()
@@ -124,7 +121,7 @@ class WithdrawalActivity : BaseActivity() {
                 confirmationDialog!!.dismiss()
         })
 
-        viewModel!!.getIsWithdrawCompleted().observe(this, { it ->
+        viewModel!!.isWithdrawCompleted.observe(this, Observer { it ->
             if (it) {
                 ActivityStackManager.getInstance().startWithDrawCompleteActivity(this@WithdrawalActivity)
                 setResult(Activity.RESULT_OK)
@@ -138,14 +135,14 @@ class WithdrawalActivity : BaseActivity() {
      * initialize events (related with views) to UI components
      */
     private fun initUi() {
-        binding!!.balanceEdittext.setOnEditorActionListener { v, actionId, event ->
+        binding!!.balanceEdittext.setOnEditorActionListener { _, actionId, event ->
             if (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
                 Utils.hideKeyboard(this@WithdrawalActivity)
             }
             false
         }
 
-        binding!!.withdrawalSubmitLayout.setOnClickListener { v -> viewModel!!.onSubmitClicked(binding!!.balanceEdittext.text!!.toString()) }
+        binding!!.withdrawalSubmitLayout.setOnClickListener { viewModel!!.onSubmitClicked(binding!!.balanceEdittext.text!!.toString()) }
 
         binding!!.balanceEdittext.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -173,13 +170,12 @@ class WithdrawalActivity : BaseActivity() {
         })
     }
 
-
     /**
      * Setting up payment's recyclerview
      */
     private fun setupRecyclerView() {
         adapter = WithdrawalPaymentMethodsAdapter(ArrayList<WithdrawPaymentMethod>(0),
-                viewModel)
+                viewModel!!)
         binding!!.paymentsRecyclerView.adapter = adapter
     }
 
@@ -188,7 +184,7 @@ class WithdrawalActivity : BaseActivity() {
      *
      * @param v back button
      */
-    fun finishActivity(v: View) {
+    fun finishActivity() {
         finish()
     }
 
@@ -198,7 +194,7 @@ class WithdrawalActivity : BaseActivity() {
          * Request code from which this activity is opening,
          * This is used to share data back to the last activity available in stack
          */
-        val REQ_CODE_WITH_DRAW = 12
+        const val REQ_CODE_WITH_DRAW = 12
 
         /**
          * This method is used to open withdrawal activity by using intent API mentioned by android docs.
