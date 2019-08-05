@@ -133,10 +133,10 @@ class ComplainDetailFragment : Fragment() {
                     add(CustomField(Constants.ZendeskCustomFields.Cancelled_by, mCurrentActivity?.tripHistoryDate?.cancelBy))
                     when (mCurrentActivity?.tripHistoryDate?.cancelBy?.toLowerCase()) {
                         mCurrentActivity?.getString(R.string.partner_label) -> {
-                            add(CustomField(Constants.ZendeskCustomFields.Partner_Penalty_Amount, StringUtils.EMPTY))
+                            add(CustomField(Constants.ZendeskCustomFields.Partner_Penalty_Amount, mCurrentActivity?.tripHistoryDate?.cancel_fee))
                         }
                         mCurrentActivity?.getString(R.string.customer_labee) -> {
-                            add(CustomField(Constants.ZendeskCustomFields.Customer_Penalty_Amount, StringUtils.EMPTY))
+                            add(CustomField(Constants.ZendeskCustomFields.Customer_Penalty_Amount, mCurrentActivity?.tripHistoryDate?.cancel_fee))
                         }
                     }
                 }
