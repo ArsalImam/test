@@ -129,9 +129,17 @@ class ComplainDetailFragment : Fragment() {
 
                 if (!mCurrentActivity?.tripHistoryDate?.tripNo.isNullOrEmpty())
                     add(CustomField(Constants.ZendeskCustomFields.Booking_ID, mCurrentActivity?.tripHistoryDate?.tripNo))
-                if (!mCurrentActivity?.tripHistoryDate?.cancelBy.isNullOrEmpty())
+                if (!mCurrentActivity?.tripHistoryDate?.cancelBy.isNullOrEmpty()) {
                     add(CustomField(Constants.ZendeskCustomFields.Cancelled_by, mCurrentActivity?.tripHistoryDate?.cancelBy))
-
+                    when (mCurrentActivity?.tripHistoryDate?.cancelBy?.toLowerCase()) {
+                        mCurrentActivity?.getString(R.string.partner_label) -> {
+                            add(CustomField(Constants.ZendeskCustomFields.Partner_Penalty_Amount, mCurrentActivity?.tripHistoryDate?.cancel_fee))
+                        }
+                        mCurrentActivity?.getString(R.string.customer_labee) -> {
+                            add(CustomField(Constants.ZendeskCustomFields.Customer_Penalty_Amount, mCurrentActivity?.tripHistoryDate?.cancel_fee))
+                        }
+                    }
+                }
                 mCurrentActivity?.tripHistoryDate?.invoice.let {
                     if (!mCurrentActivity?.tripHistoryDate?.invoice?.wallet_deduction.isNullOrEmpty())
                         add(CustomField(Constants.ZendeskCustomFields.Wallet_Deduction, mCurrentActivity?.tripHistoryDate?.invoice?.wallet_deduction))
@@ -153,12 +161,11 @@ class ComplainDetailFragment : Fragment() {
             //WILL SEE LATER ON
 //            add(CustomField(Constants.ZendeskCustomFields.COD_Amount, StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Received_Amount, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Partner_Penalty_Amount, StringUtils.EMPTY))
 
             //NOT RECEIVING FROM API
 //            add(CustomField(Constants.ZendeskCustomFields.Customer_Number,StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Cancellation_Reason, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Customer_Penalty_Amount, StringUtils.EMPTY))
+
 //            add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Receivers_Number, StringUtils.EMPTY))
 //            add(CustomField(Constants.ZendeskCustomFields.Distance_to_Pickup, StringUtils.EMPTY))
