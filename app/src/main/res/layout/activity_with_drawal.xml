@@ -133,9 +133,9 @@
                         app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     <androidx.cardview.widget.CardView
-                        android:onClick="onCardClick"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:onClick="onCardClick"
                         app:cardBackgroundColor="@color/white"
                         app:cardUseCompatPadding="true">
 
@@ -173,10 +173,10 @@
                                         android:layout_height="match_parent"
                                         android:background="@null"
                                         android:digits="0123456789"
-                                        android:paddingRight="@dimen/_10sdp"
                                         android:hint="0"
                                         android:inputType="number"
                                         android:maxLength="6"
+                                        android:paddingRight="@dimen/_10sdp"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_20sdp"
                                         app:fontName="open_sans_regular.ttf" />

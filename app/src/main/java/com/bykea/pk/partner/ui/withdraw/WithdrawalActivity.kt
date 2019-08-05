@@ -198,7 +198,7 @@ class WithdrawalActivity : BaseActivity() {
      *
      * @param v back button
      */
-    fun finishActivity() {
+    fun finishActivity(v: View) {
         finish()
     }
 
