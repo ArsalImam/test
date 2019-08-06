@@ -4,13 +4,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.SystemClock
-import android.view.View
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import butterknife.ButterKnife
-import butterknife.OnClick
-import com.bykea.pk.partner.BuildConfig
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Stop
@@ -32,29 +26,30 @@ import org.greenrobot.eventbus.Subscribe
 import org.json.JSONException
 import org.json.JSONObject
 
-
+/**
+ * Job call activity to be shown when BOOKING_REQUEST socket or push is recieved.
+ *
+ * @author Yousuf Sohail
+ */
 class JobCallActivity : BaseActivity() {
 
-    private var _mpSound: MediaPlayer? = null
-    private var tripId: String? = null
+    private lateinit var jobCall: JobCall
+    private lateinit var timer: CountDownTimer
+    private lateinit var _mpSound: MediaPlayer
+
+    private val DEFAULT_CALL_TIMEOUT = 20 //seconds
+    private var callTimeOut = DEFAULT_CALL_TIMEOUT
+    private var secondsEclipsed = 0
     private var isCancelledByPassenger: Boolean = false
-    private var mLastClickTime: Long = 0
-    private val RIDE_ACCEPTANCE_TIMEOUT = 20
-    internal var timerDuration = RIDE_ACCEPTANCE_TIMEOUT
-    private var acceptSeconds = "0"
-    private var jobCall: JobCall? = null
-    private var userRepo: UserRepository? = null
-    private var timer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_job_call)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-        ButterKnife.bind(this)
 
-        if (intent != null) {
+        intent?.let {
             jobCall = intent.getSerializableExtra(KEY_CALL_DATA) as JobCall
-            timerDuration = jobCall!!.timer
+            callTimeOut = jobCall.timer
 
             if (intent.getBooleanExtra(KEY_IS_FROM_PUSH, false)) {
                 DriverApp.getApplication().connect()
@@ -62,17 +57,15 @@ class JobCallActivity : BaseActivity() {
             }
         }
 
-        userRepo = UserRepository()
         Utils.unlockScreen(this)
         AppPreferences.setStatsApiCallRequired(true)
         //To inactive driver during passenger calling state
         AppPreferences.setTripStatus(TripStatus.ON_IN_PROGRESS)
 
         if (Utils.isConnected(this@JobCallActivity, false))
-            userRepo!!.requestLocationUpdate(this, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude())
+            UserRepository().requestLocationUpdate(this, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude())
 
-
-        setInitialData()
+        init()
         startTimer()
     }
 
@@ -98,34 +91,16 @@ class JobCallActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    @OnClick(R.id.acceptCallBtn)
-    fun onClick(view: View) {
-        when (view.id) {
-            R.id.acceptCallBtn -> {
-                if (mLastClickTime != 0L && SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                    return
-                }
-                mLastClickTime = SystemClock.elapsedRealtime()
-                stopSound()
-                Dialogs.INSTANCE.showLoader(this@JobCallActivity)
-                acceptSeconds = counterTv!!.text.toString()
-                acceptJob()
-                timer!!.cancel()
-            }
-        }
-    }
-
     @Subscribe
     fun onEvent(intent: Intent?) {
         isCancelledByPassenger = true
         this@JobCallActivity.runOnUiThread {
             if (null != intent && null != intent.extras) {
-                if (intent.getStringExtra("action").equals(Keys.BROADCAST_CANCEL_RIDE, ignoreCase = true) || intent.getStringExtra("action").equals(Keys.BROADCAST_CANCEL_BY_ADMIN, ignoreCase = true)) {
+                if (intent.getStringExtra(KEY_ACTION).equals(Keys.BROADCAST_CANCEL_RIDE, ignoreCase = true) || intent.getStringExtra(KEY_ACTION).equals(Keys.BROADCAST_CANCEL_BY_ADMIN, ignoreCase = true)) {
                     onJobCallCancelled()
                 }
             }
         }
-
     }
 
     /**
@@ -133,7 +108,7 @@ class JobCallActivity : BaseActivity() {
      */
     private fun finishActivity() {
         if (Utils.isConnected(this@JobCallActivity, false))
-            userRepo!!.requestLocationUpdate(this, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude())
+            UserRepository().requestLocationUpdate(this, handler, AppPreferences.getLatitude(), AppPreferences.getLongitude())
         finish()
     }
 
@@ -161,6 +136,14 @@ class JobCallActivity : BaseActivity() {
             data.put("CurrentLocation", Utils.getCurrentLocation())
             data.put("DriverName", AppPreferences.getPilotData().fullName)
             data.put("SignUpCity", AppPreferences.getPilotData().city.name)
+
+
+            if (isOnAccept) {
+                data.put("AcceptSeconds", secondsEclipsed)
+                Utils.logEvent(this, callData.customer_id, Constants.AnalyticsEvents.ON_ACCEPT, data, true)
+            } else {
+                Utils.logEvent(this, callData.customer_id, Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB, data, true)
+            }
         } catch (e: JSONException) {
             e.printStackTrace()
         }
@@ -173,21 +156,20 @@ class JobCallActivity : BaseActivity() {
     private fun startTimer() {
 
         _mpSound = MediaPlayer.create(this, R.raw.ringtone)
-        _mpSound!!.start()
+        _mpSound.start()
 
-        donut_progress!!.max = timerDuration
+        donut_progress!!.max = callTimeOut
         donut_progress!!.progress = 0f
 
-        timer = object : CountDownTimer((timerDuration * 1000).toLong(), 1000) {
-            internal var progress = 0
+        timer = object : CountDownTimer((callTimeOut * 1000).toLong(), 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
-                progress++
-                if (progress < timerDuration) {
-                    donut_progress!!.progress = progress.toFloat()
-                    counterTv!!.text = (timerDuration - progress).toString()
+                secondsEclipsed++
+                if (secondsEclipsed < callTimeOut) {
+                    donut_progress!!.progress = secondsEclipsed.toFloat()
+                    counterTv!!.text = (callTimeOut - secondsEclipsed).toString()
                 } else {
-                    timer!!.onFinish()
+                    timer.onFinish()
                 }
             }
 
@@ -201,32 +183,36 @@ class JobCallActivity : BaseActivity() {
                 finishActivity()
             }
         }
-        timer!!.start()
+        timer.start()
     }
 
     /**
      * Stop calling sound
      */
     private fun stopSound() {
-        if (null != _mpSound && _mpSound!!.isPlaying) {
-            _mpSound!!.stop()
-        }
-        if (null != timer) timer!!.cancel()
+        if (_mpSound.isPlaying) _mpSound.stop()
+        timer.cancel()
     }
 
     /**
      * Render job calling data
      */
-    private fun setInitialData() {
-        tripId = jobCall!!.trip_id
+    private fun init() {
         Utils.redLog(TAG, "Call Data: " + Gson().toJson(jobCall))
-        logMixPanelEvent(jobCall!!, false)
-        counterTv!!.text = timerDuration.toString()
+        logMixPanelEvent(jobCall, false)
+        counterTv.text = callTimeOut.toString()
 
-        ivCallType!!.setImageDrawable(ContextCompat.getDrawable(this, getJobImage(jobCall!!.service_code)))
-        estArrivalTimeTV!!.text = getArrivalTime(jobCall!!.pickup)
-        dropZoneNameTV!!.text = getDropOffZoneName(jobCall!!.dropoff) + ""
-        estDistanceTV!!.text = getDropOffDistance(jobCall!!.dropoff)
+        ivCallType.setImageDrawable(ContextCompat.getDrawable(this, getJobImage(jobCall.service_code)))
+        estArrivalTimeTV.text = getArrivalTime(jobCall.pickup)
+        dropZoneNameTV.text = getDropOffZoneName(jobCall.dropoff)
+        estDistanceTV.text = getDropOffDistance(jobCall.dropoff)
+
+        acceptCallBtn.setOnClickListener {
+            stopSound()
+            Dialogs.INSTANCE.showLoader(this@JobCallActivity)
+            acceptJob()
+            timer.cancel()
+        }
     }
 
     /**
@@ -263,18 +249,14 @@ class JobCallActivity : BaseActivity() {
      * @param dropoff Drop-off stop
      * @return Displayable zone name
      */
-    private fun getDropOffZoneName(dropoff: Stop?): String? {
-        return if (dropoff != null) {
-            if (dropoff.zone_ur != null && !dropoff.zone_ur!!.isEmpty()) {
-                dropoff.zone_ur
-            } else if (dropoff.zone_en != null && !dropoff.zone_en!!.isEmpty())
-                dropoff.zone_en
-            else if (dropoff.address != null && !dropoff.address!!.isEmpty())
-                dropoff.address
-            else
-                getString(R.string.customer_btayega)
-        } else
-            getString(R.string.customer_btayega)
+    private fun getDropOffZoneName(dropoff: Stop?): String {
+        return if (dropoff != null)
+            when {
+                dropoff.zone_ur != null && dropoff.zone_ur!!.isNotEmpty() -> dropoff.zone_ur!!
+                dropoff.zone_en != null && dropoff.zone_en!!.isNotEmpty() -> dropoff.zone_en!!
+                dropoff.address != null && dropoff.address!!.isNotEmpty() -> dropoff.address!!
+                else -> getString(R.string.customer_btayega)
+            } else getString(R.string.customer_btayega)
     }
 
     /**
@@ -295,21 +277,17 @@ class JobCallActivity : BaseActivity() {
      */
     private fun acceptJob() {
         val jobsRepo = Injection.provideJobsRepository(application.applicationContext)
-        jobsRepo.acceptJob(tripId!!, Integer.valueOf(acceptSeconds), object : JobsDataSource.AcceptJobCallback {
+        jobsRepo.acceptJob(jobCall.trip_id, secondsEclipsed, object : JobsDataSource.AcceptJobCallback {
             override fun onJobAccepted() {
                 if (!isCancelledByPassenger) {
                     onAcceptSuccess(true, "Job Accepted")
                 } else {
                     onJobCallCancelled()
                 }
-                if (BuildConfig.DEBUG)
-                    Toast.makeText(application.applicationContext, "Job Accepted", Toast.LENGTH_SHORT).show()
             }
 
             override fun onJobAcceptFailed() {
                 onAcceptFailed("Job Accept Failed")
-                if (BuildConfig.DEBUG)
-                    Toast.makeText(application.applicationContext, "Job Accept Failed", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -329,7 +307,7 @@ class JobCallActivity : BaseActivity() {
                     AppPreferences.clearTripDistanceData()
                     AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL)
                     AppPreferences.setTripAcceptTime(System.currentTimeMillis())
-                    logMixPanelEvent(jobCall!!, true)
+                    logMixPanelEvent(jobCall, true)
                     AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                     AppPreferences.setIsOnTrip(true)
                     AppPreferences.setDeliveryType(Constants.CallType.SINGLE)
@@ -418,6 +396,7 @@ class JobCallActivity : BaseActivity() {
 
     companion object {
         var TAG: String = JobCallActivity::class.java.simpleName
+        var KEY_ACTION = "action"
         var KEY_CALL_DATA = "KEY_CALL_DATA"
         var KEY_IS_FROM_PUSH = "isGcm"
     }
