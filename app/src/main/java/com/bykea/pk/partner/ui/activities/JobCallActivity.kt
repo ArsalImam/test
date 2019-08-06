@@ -240,6 +240,7 @@ class JobCallActivity : BaseActivity() {
         val jobsRepo = Injection.provideJobsRepository(application.applicationContext)
         jobsRepo.acceptJob(jobCall.trip_id, secondsEclipsed, object : JobsDataSource.AcceptJobCallback {
             override fun onJobAccepted() {
+                Dialogs.INSTANCE.dismissDialog()
                 if (!isCancelledByPassenger) {
                     onAcceptSuccess(true, "Job Accepted")
                 } else {
@@ -248,6 +249,7 @@ class JobCallActivity : BaseActivity() {
             }
 
             override fun onJobAcceptFailed() {
+                Dialogs.INSTANCE.dismissDialog()
                 onAcceptFailed("Job Accept Failed")
             }
         })
@@ -261,7 +263,6 @@ class JobCallActivity : BaseActivity() {
      */
     private fun onAcceptSuccess(success: Boolean, message: String) {
         runOnUiThread {
-            Dialogs.INSTANCE.dismissDialog()
             Dialogs.INSTANCE.showTempToast(message)
             if (!isCancelledByPassenger) {
                 if (success) {
@@ -294,7 +295,6 @@ class JobCallActivity : BaseActivity() {
     private fun onAcceptFailed(message: String) {
         runOnUiThread {
             Dialogs.INSTANCE.showToast(message)
-            Dialogs.INSTANCE.dismissDialog()
             if (AppPreferences.isOnTrip()) {
                 AppPreferences.setIncomingCall(false)
                 AppPreferences.setTripStatus(TripStatus.ON_FREE)
