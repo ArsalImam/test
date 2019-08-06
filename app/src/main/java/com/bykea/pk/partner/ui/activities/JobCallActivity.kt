@@ -120,25 +120,25 @@ class JobCallActivity : BaseActivity() {
         _mpSound = MediaPlayer.create(this, R.raw.ringtone)
         _mpSound.start()
 
-        donut_progress!!.max = callTimeOut
-        donut_progress!!.progress = 0f
+        donut_progress.max = callTimeOut
+        donut_progress.progress = 0f
 
         timer = object : CountDownTimer((callTimeOut * 1000).toLong(), 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
                 secondsEclipsed++
                 if (secondsEclipsed < callTimeOut) {
-                    donut_progress!!.progress = secondsEclipsed.toFloat()
-                    counterTv!!.text = (callTimeOut - secondsEclipsed).toString()
+                    donut_progress.progress = secondsEclipsed.toFloat()
+                    counterTv.text = (callTimeOut - secondsEclipsed).toString()
                 } else {
                     timer.onFinish()
                 }
             }
 
             override fun onFinish() {
-                donut_progress!!.progress = 0f
-                counterTv!!.text = "0"
-                acceptCallBtn!!.isEnabled = false
+                donut_progress.progress = 0f
+                counterTv.text = "0"
+                acceptCallBtn.isEnabled = false
                 stopSound()
                 Utils.setCallIncomingStateWithoutRestartingService()
                 ActivityStackManager.getInstance().startHomeActivity(true, this@JobCallActivity)
@@ -260,12 +260,12 @@ class JobCallActivity : BaseActivity() {
      * @param success Success status
      * @param message Success message
      */
-    private fun onAcceptSuccess(success: Boolean?, message: String) {
+    private fun onAcceptSuccess(success: Boolean, message: String) {
         runOnUiThread {
             Dialogs.INSTANCE.dismissDialog()
             Dialogs.INSTANCE.showTempToast(message)
             if (!isCancelledByPassenger) {
-                if (success!!) {
+                if (success) {
                     AppPreferences.clearTripDistanceData()
                     AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL)
                     AppPreferences.setTripAcceptTime(System.currentTimeMillis())
