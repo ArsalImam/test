@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.dal.source.remote
 
+import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.response.*
@@ -110,8 +111,8 @@ class JobsRemoteDataSource {
      * @param lng Double
      * @param callback ArrivedAtJobCallback
      */
-    fun arrivedAtJob(jobId: String, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.ArrivedAtJobCallback) {
-        Backend.talos.arrivedForJob(jobId, ArrivedAtJobRequest(driverId, token, lat, lng)).enqueue(object : Callback<ArriveAtJobResponse> {
+    fun arrivedAtJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.ArrivedAtJobCallback) {
+        Backend.talos.arrivedForJob(jobId, ArrivedAtJobRequest(driverId, token, lat, lng, route)).enqueue(object : Callback<ArriveAtJobResponse> {
             override fun onSuccess(response: ArriveAtJobResponse) = callback.onJobArrived()
             override fun onFail(code: Int, message: String?) = callback.onJobArriveFailed()
         })
