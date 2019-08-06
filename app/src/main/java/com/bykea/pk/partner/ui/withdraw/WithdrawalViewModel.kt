@@ -78,14 +78,6 @@ class WithdrawalViewModel
         } else {
             return StringUtils.EMPTY
         }
-//        driverProfile.let {
-//            driverProfile.value.let {
-//                driverProfile.value?.cnic.let {
-//                    return driverProfile.value?.cnic!!
-//                }
-//            }
-//        }
-//        return StringUtils.EMPTY
     }
 
     /**
@@ -103,7 +95,7 @@ class WithdrawalViewModel
 
             override fun onDataNotAvailable(errorMsg: String) {
                 _showLoader!!.value = false
-                _errorMessage!!.value = "معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا"
+                _errorMessage!!.value = "معذرت فی الحال آپ کی درخواست پر عمل نہیں کیا جا سکتا"
             }
         })
     }
@@ -123,7 +115,7 @@ class WithdrawalViewModel
 
             override fun onDataNotAvailable(errorMsg: String) {
                 _showLoader!!.value = false
-                _errorMessage!!.value = "معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا"
+                _errorMessage!!.value = "معذرت فی الحال آپ کی درخواست پر عمل نہیں کیا جا سکتا"
             }
         })
     }

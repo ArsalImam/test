@@ -136,7 +136,6 @@ public class WalletFragment extends Fragment {
 
     }
 
-
     private void setWalletIcon() {
         mCurrentActivity.showWalletIcon(v -> {
             ActivityStackManager.getInstance().startWithDrawActivity(mCurrentActivity);
