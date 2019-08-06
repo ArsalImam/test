@@ -111,7 +111,6 @@ class JobCallActivity : BaseActivity() {
         finish()
     }
 
-
     /**
      * Start timer with dynamic timing, also play the calling sound
      */
