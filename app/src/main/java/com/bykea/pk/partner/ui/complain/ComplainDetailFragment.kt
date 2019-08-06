@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.support
+package com.bykea.pk.partner.ui.complain
 
 
 import android.os.Bundle
@@ -18,7 +18,6 @@ import com.google.android.gms.common.util.Strings.isEmptyOrWhitespace
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
 import kotlinx.android.synthetic.main.fragment_complain_detail.*
-import org.apache.commons.lang3.StringUtils
 import zendesk.support.*
 import java.util.*
 

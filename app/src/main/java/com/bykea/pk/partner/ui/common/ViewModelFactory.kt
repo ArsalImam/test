@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.loadboard.common
+package com.bykea.pk.partner.ui.common
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.ui.complain.ComplaintListViewModel
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailViewModel
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel
-import com.bykea.pk.partner.ui.support.ComplaintListViewModel
 
 /**
  * A creator is used to inject the product ID into the ViewModel

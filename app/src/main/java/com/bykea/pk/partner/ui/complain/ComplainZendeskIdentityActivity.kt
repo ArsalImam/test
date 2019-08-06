@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.support
+package com.bykea.pk.partner.ui.complain
 
 import android.os.Bundle
 import android.os.CountDownTimer

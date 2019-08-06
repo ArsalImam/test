@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.loadboard.common
+package com.bykea.pk.partner.analytics
 
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.utils.Constants

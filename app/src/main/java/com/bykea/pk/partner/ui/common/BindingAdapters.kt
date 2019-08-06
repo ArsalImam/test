@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.loadboard.common
+package com.bykea.pk.partner.ui.common
 
 import android.view.View
 import android.widget.ImageView
@@ -12,9 +12,8 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.REQUIRED_DATE_FORMAT
 import com.bykea.pk.partner.widgets.FontTextView
 import zendesk.support.Request
-import java.lang.Exception
-import java.util.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**

@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.loadboard.common
+package com.bykea.pk.partner.ui.common
 
 /**
  * Various extension functions for AppCompatActivity.

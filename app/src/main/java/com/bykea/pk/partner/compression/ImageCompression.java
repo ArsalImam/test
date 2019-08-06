@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.Compression;
+package com.bykea.pk.partner.compression;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,7 +8,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
-import android.os.Environment;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.loadboard.common
+package com.bykea.pk.partner.ui.common
 
 /**
  * Extension functions for View and subclasses of View.

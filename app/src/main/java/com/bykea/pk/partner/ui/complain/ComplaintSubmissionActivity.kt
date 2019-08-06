@@ -1,10 +1,8 @@
-package com.bykea.pk.partner.ui.support
+package com.bykea.pk.partner.ui.complain
 
 import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.view.MenuItem
-import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -16,21 +14,16 @@ import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
 import com.bykea.pk.partner.ui.activities.BaseActivity
-import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
-import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
 import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.Keys
-import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.android.synthetic.main.activity_problem.*
 import org.apache.commons.lang3.StringUtils
-import java.util.*
 
 
 class ComplaintSubmissionActivity : BaseActivity() {

@@ -1,6 +1,7 @@
-package com.bykea.pk.partner.ui.support
+package com.bykea.pk.partner.ui.complain
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,6 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import kotlinx.android.synthetic.main.fragment_complain_submitted.*
 import org.apache.commons.lang3.StringUtils
-import android.text.SpannableStringBuilder
 
 
 class ComplainSubmittedFragment : Fragment() {

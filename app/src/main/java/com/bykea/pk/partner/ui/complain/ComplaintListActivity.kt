@@ -1,22 +1,18 @@
-package com.bykea.pk.partner.ui.support
+package com.bykea.pk.partner.ui.complain
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityComplainListBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.common.LastAdapter
+import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
-import com.bykea.pk.partner.ui.loadboard.common.LastAdapter
-import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
 import com.bykea.pk.partner.utils.Dialogs
 import kotlinx.android.synthetic.main.activity_problem.*
 import org.apache.commons.lang3.StringUtils
-import zendesk.commonui.UiConfig
 import zendesk.support.Request
 import zendesk.support.request.RequestActivity
 

@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.loadboard.common
+package com.bykea.pk.partner.ui.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

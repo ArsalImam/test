@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.support
+package com.bykea.pk.partner.ui.complain
 
 
 import android.os.Bundle
@@ -19,7 +19,6 @@ import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_complain_reason.*
-import kotlin.collections.ArrayList
 
 /**
  * Use For The Selection Of Reasons For Ticket Submission.

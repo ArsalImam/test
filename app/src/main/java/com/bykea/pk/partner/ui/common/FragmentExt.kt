@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.ui.loadboard.common
+package com.bykea.pk.partner.ui.common
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
