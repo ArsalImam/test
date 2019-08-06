@@ -2228,7 +2228,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.dismissDialog();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         if (Utils.isModernService(callData.getServiceCode())) {
-            jobsRepo.arrivedAtJob(callData.getTripId(), new JobsDataSource.ArrivedAtJobCallback() {
+            ArrayList<LocCoordinatesInTrip> route = AppPreferences.getLocCoordinatesInTrip();
+            jobsRepo.arrivedAtJob(callData.getTripId(), route, new JobsDataSource.ArrivedAtJobCallback() {
 
                 @Override
                 public void onJobArrived() {
