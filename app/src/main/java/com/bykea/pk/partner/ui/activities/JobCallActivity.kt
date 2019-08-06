@@ -7,6 +7,7 @@ import android.os.CountDownTimer
 import androidx.core.content.ContextCompat
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.analytics.Aog
 import com.bykea.pk.partner.dal.Stop
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall
@@ -23,8 +24,6 @@ import com.bykea.pk.partner.utils.Constants.ServiceType.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_job_call.*
 import org.greenrobot.eventbus.Subscribe
-import org.json.JSONException
-import org.json.JSONObject
 
 /**
  * Job call activity to be shown when BOOKING_REQUEST socket or push is recieved.
@@ -112,43 +111,6 @@ class JobCallActivity : BaseActivity() {
         finish()
     }
 
-    /**
-     * Log call data to mix panel
-     *
-     * @param callData   Job call data
-     * @param isOnAccept is post accepted
-     */
-    private fun logMixPanelEvent(callData: JobCall, isOnAccept: Boolean) {
-        try {
-
-            val data = JSONObject()
-            data.put("PassengerID", callData.customer_id)
-            data.put("DriverID", AppPreferences.getPilotData().id)
-            data.put("TripID", callData.trip_id)
-            data.put("TripNo", callData.booking_no)
-            data.put("PickUpLocation", callData.pickup.lat.toString() + "," + callData.pickup.lng)
-            data.put("timestamp", Utils.getIsoDate())
-            if (callData.dropoff != null) {
-                data.put("DropOffLocation", callData.dropoff!!.lat.toString() + "," + callData.dropoff!!.lng)
-            }
-            data.put("ETA", "" + callData.pickup.duration)
-            data.put("EstimatedDistance", AppPreferences.getEstimatedDistance())
-            data.put("CurrentLocation", Utils.getCurrentLocation())
-            data.put("DriverName", AppPreferences.getPilotData().fullName)
-            data.put("SignUpCity", AppPreferences.getPilotData().city.name)
-
-
-            if (isOnAccept) {
-                data.put("AcceptSeconds", secondsEclipsed)
-                Utils.logEvent(this, callData.customer_id, Constants.AnalyticsEvents.ON_ACCEPT, data, true)
-            } else {
-                Utils.logEvent(this, callData.customer_id, Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB, data, true)
-            }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-
-    }
 
     /**
      * Start timer with dynamic timing, also play the calling sound
@@ -199,7 +161,7 @@ class JobCallActivity : BaseActivity() {
      */
     private fun init() {
         Utils.redLog(TAG, "Call Data: " + Gson().toJson(jobCall))
-        logMixPanelEvent(jobCall, false)
+        Aog.onJobCallAndJobAccept(jobCall, false, secondsEclipsed)
         counterTv.text = callTimeOut.toString()
 
         ivCallType.setImageDrawable(ContextCompat.getDrawable(this, getJobImage(jobCall.service_code)))
@@ -269,7 +231,7 @@ class JobCallActivity : BaseActivity() {
         return if (dropoff != null && dropoff.distance != 0)
             (dropoff.distance / 1000).toString()
         else
-            "?"
+            getString(R.string.question_mark)
     }
 
     /**
@@ -307,7 +269,7 @@ class JobCallActivity : BaseActivity() {
                     AppPreferences.clearTripDistanceData()
                     AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL)
                     AppPreferences.setTripAcceptTime(System.currentTimeMillis())
-                    logMixPanelEvent(jobCall, true)
+                    Aog.onJobCallAndJobAccept(jobCall, true, secondsEclipsed)
                     AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                     AppPreferences.setIsOnTrip(true)
                     AppPreferences.setDeliveryType(Constants.CallType.SINGLE)
