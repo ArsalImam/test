@@ -133,8 +133,8 @@ public class WalletFragment extends Fragment {
         });
         setWalletIcon();
         getHistory();
-
     }
+
 
     private void setWalletIcon() {
         mCurrentActivity.showWalletIcon(v -> {

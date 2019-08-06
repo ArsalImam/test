@@ -76,7 +76,7 @@ public class WalletHistoryAdapter extends RecyclerView.Adapter<WalletHistoryAdap
             holder.tvDate.setVisibility(View.INVISIBLE);
         }
         if (StringUtils.isNotBlank(data.getTransactionId())) {
-            holder.tvTripStatus.setText("Reference no. ".concat(data.getTransactionId()));
+            holder.tvTripStatus.setText("Reference no: ".concat(data.getTransactionId()));
             holder.tvTripStatus.setVisibility(View.VISIBLE);
         } else if (StringUtils.isNotBlank(data.getComments())) {
             holder.tvTripStatus.setText("" + data.getComments());

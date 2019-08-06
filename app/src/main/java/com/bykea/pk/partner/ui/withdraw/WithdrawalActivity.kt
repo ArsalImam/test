@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -129,8 +128,7 @@ class WithdrawalActivity : BaseActivity() {
                 lWindowParams.width = WindowManager.LayoutParams.FILL_PARENT
                 lWindowParams.height = WindowManager.LayoutParams.WRAP_CONTENT
                 confirmationDialog!!.window!!.attributes = lWindowParams
-
-                confirmationDialog!!.updateContent()
+                confirmationDialog?.updateContent()
             } else
                 confirmationDialog!!.dismiss()
         })
@@ -228,6 +226,7 @@ class WithdrawalActivity : BaseActivity() {
             activity.startActivityForResult(i, REQ_CODE_WITH_DRAW)
         }
     }
+
 
     fun onCardClick(v: View) {
         val imm = this@WithdrawalActivity
