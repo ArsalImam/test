@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -21,10 +22,13 @@ import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
 import com.bykea.pk.partner.databinding.ActivityWithDrawalBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
+import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import java.util.*
+import kotlin.math.roundToLong
 
 
 /**
@@ -92,16 +96,14 @@ class WithdrawalActivity : BaseActivity() {
 
         })
 
-//        viewModel!!.showLoader.observe(this, Observer {
-//            if (it)
-//                Dialogs.INSTANCE.showLoader(this@WithdrawalActivity)
-//            else
-//                Dialogs.INSTANCE.dismissDialog()
-//        })
-
         viewModel!!.driverProfile.observe(this, Observer { it ->
             if (it != null) {
-                binding!!.balanceTextview.text = String.format("Rs. %s", Math.round(it.wallet))
+
+                val spannableStringBuilder =
+                        FontUtils.getStyledTitle(this@WithdrawalActivity,
+                                String.format("Rs. %,d", it.wallet.roundToLong()), Constants.FontNames.OPEN_SANS_BOLD)
+
+                binding!!.balanceTextview.text = spannableStringBuilder
                 adapter!!.notifyDataSetChanged()
             }
         })
@@ -120,7 +122,6 @@ class WithdrawalActivity : BaseActivity() {
 
         viewModel!!.showConfirmationDialog.observe(this, Observer { it ->
             if (it) {
-
                 confirmationDialog!!.show()
                 val lWindowParams = WindowManager.LayoutParams()
                 lWindowParams.copyFrom(confirmationDialog!!.window!!.attributes)
@@ -128,6 +129,8 @@ class WithdrawalActivity : BaseActivity() {
                 lWindowParams.width = WindowManager.LayoutParams.FILL_PARENT
                 lWindowParams.height = WindowManager.LayoutParams.WRAP_CONTENT
                 confirmationDialog!!.window!!.attributes = lWindowParams
+
+                confirmationDialog!!.updateContent()
             } else
                 confirmationDialog!!.dismiss()
         })
@@ -156,7 +159,9 @@ class WithdrawalActivity : BaseActivity() {
             false
         }
 
-        binding!!.withdrawalSubmitLayout.setOnClickListener { viewModel!!.onSubmitClicked(binding!!.balanceEdittext.text!!.toString()) }
+        binding!!.withdrawalSubmitLayout.setOnClickListener {
+            viewModel!!.onSubmitClicked(binding!!.balanceEdittext.text!!.toString())
+        }
 
         binding!!.balanceEdittext.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -177,6 +182,7 @@ class WithdrawalActivity : BaseActivity() {
                     binding!!.withdrawalSubmitLayout.setBackgroundColor(
                             ContextCompat.getColor(this@WithdrawalActivity, R.color.color_A7A7A7)
                     )
+                    viewModel?.removeWarnings()
                 }
                 binding!!.withdrawalSubmitLayout.isEnabled = hasText
                 binding!!.withdrawalSubmitLayout.isClickable = hasText
@@ -224,9 +230,6 @@ class WithdrawalActivity : BaseActivity() {
     }
 
     fun onCardClick(v: View) {
-//        Utils.
-//        binding!!.balanceEdittext!!.requestFocus()
-
         val imm = this@WithdrawalActivity
                 .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding!!.balanceEdittext!!, SHOW_IMPLICIT)

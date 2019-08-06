@@ -129,7 +129,7 @@ class WithdrawalViewModel
     }
 
     /**
-     * Binded with button component (in xml),
+     * Binded with button's onclick,
      * @param amt amount entered by the user
      */
     fun onSubmitClicked(amt: String) {
@@ -163,15 +163,21 @@ class WithdrawalViewModel
         val maxValue = settingsData.settings.withdrawPartnerMaxLimit
         val minValue = settingsData.settings.withdrawPartnerMinLimit
         val accountBalance = driverProfile!!.value!!.wallet
+
+        if (accountBalance < amount) {
+            return "درج کردہ رقم آپ کے موجودہ بیلنس سے زیادہ ہے"
+        }
         if (amount < minValue) {
-            return String.format("درج کردہ رقم" + " %s " + "سے کم نہیں ہوسکتی", Math.round(minValue))
+            return String.format("درج کردہ رقم" + " %,d " + "سے کم نہیں ہوسکتی", Math.round(minValue))
         }
         if (amount > maxValue) {
-            return String.format("ایک وقت میں" + " %s " + "سے زیادہ کی رقم نہیں نکالی جاسکتی", Math.round(maxValue))
+            return String.format("ایک وقت میں" + " %,d " + "سے زیادہ کی رقم نہیں نکالی جاسکتی", Math.round(maxValue))
         }
-        return if (accountBalance < amount) {
-            "درج کردہ رقم آپ کے موجودہ بیلنس سے زیادہ ہے"
-        } else null
+        return null
+    }
+
+    fun removeWarnings() {
+        _errorMessage.value = null
     }
 
 

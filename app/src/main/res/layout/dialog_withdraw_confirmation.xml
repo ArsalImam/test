@@ -13,7 +13,7 @@
         android:gravity="center"
         android:text="@string/withdraw_confirmation"
         android:textColor="@color/black"
-        android:textSize="@dimen/_16sdp"
+        android:textSize="@dimen/_19sdp"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
     <LinearLayout
@@ -52,8 +52,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginRight="@dimen/_10sdp"
             android:orientation="horizontal">
 
@@ -62,16 +62,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:alpha="0.7"
                 android:text="0"
-                android:textColor="@color/color_graya5a5a5"
+                android:textColor="@color/color_gray636363"
                 android:textSize="@dimen/_14sdp"
                 app:fontName="open_sans_regular.ttf" />
 
             <com.bykea.pk.partner.ui.helpers.FontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:alpha="0.7"
                 android:text="@string/fees_lbl"
-                android:textColor="@color/color_graya5a5a5"
+                android:textColor="@color/color_gray636363"
                 android:textSize="@dimen/_14sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
         </LinearLayout>
@@ -79,6 +81,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
             android:background="@color/color_graya5a5a5" />
 
         <LinearLayout
@@ -113,6 +117,7 @@
             android:orientation="horizontal">
 
             <com.bykea.pk.partner.ui.helpers.FontTextView
+                android:id="@+id/dismiss_withdraw_txtview"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginRight="@dimen/_5sdp"
@@ -121,18 +126,17 @@
                 android:gravity="center"
                 android:paddingTop="@dimen/_5sdp"
                 android:paddingBottom="@dimen/_5sdp"
-                android:id="@+id/dismiss_withdraw_txtview"
                 android:text="@string/cancel"
                 android:textColor="@color/color_AE2939"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_17sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
 
             <com.bykea.pk.partner.ui.helpers.FontTextView
+                android:id="@+id/confirm_withdraw_txtview"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/_5sdp"
-                android:id="@+id/confirm_withdraw_txtview"
                 android:layout_weight="1"
                 android:background="@color/colorAccent"
                 android:gravity="center"
@@ -140,7 +144,7 @@
                 android:paddingBottom="@dimen/_5sdp"
                 android:text="@string/yes"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_17sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
         </LinearLayout>

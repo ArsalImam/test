@@ -140,7 +140,7 @@
     <string name="unwan_text">عنوان</string>
     <string name="raqam_text">رقم</string>
     <string name="transfer_text">ٹرانسفر</string>
-    <string name="balance_text">بیلینس</string>
+    <string name="balance_text">بیلنس</string>
     <!-- %1$s is argument of type string and \u0020 is blank space, normal space doesn't work when
     string extracted from string.xml (added space with urdu text because Jameel nastaliqi font cuts some text)-->
     <string name="problem_item">\u0020%1$s\u0020</string>
@@ -375,7 +375,8 @@
     <string name="cancel">کینسل</string>
     <string name="yes">ہاں</string>
     <string name="thanks">شکریہ</string>
-    <string name="thanks_details">آپ کی رقم 24 گھنٹوں کے اندر آپ کے جیذ کیش اکاؤنٹ میں جمع کردی جائیگی</string>
+    <string name="thanks_details_1">آپ کی رقم 24 گھنٹوں کے اندر آپ</string>
+    <string name="thanks_details_2">کے جیذ کیش اکاؤنٹ میں جمع کردی جائیگی</string>
     <string name="wallet">والٹ</string>
 
 </resources>

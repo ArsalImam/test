@@ -6,11 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
-
-import java.util.ArrayList
+import java.util.*
 
 class WithdrawalPaymentMethodsAdapter(private val withdrawPaymentMethods: ArrayList<WithdrawPaymentMethod>,
                                       private val viewModel: WithdrawalViewModel) : RecyclerView.Adapter<WithdrawalPaymentMethodsAdapter.ViewHolder>() {

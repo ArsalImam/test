@@ -15,7 +15,10 @@ public enum Fonts {
     Roboto_Bold("roboto_bold.ttf"),
     Open_Sans_light("open_sans_light.ttf"),
     Jameel_Noori_Nastaleeq("jameel_noori_nastaleeq.ttf"),
-    Pak_Nastaleeq_Urdu("pak_nastaleeq_urdu.ttf");
+    Pak_Nastaleeq_Urdu("pak_nastaleeq_urdu.ttf"),
+    Open_Sans_Bold("open_sans_bold.ttf"),
+    Open_Sans_Semi_Bold("open_sans_semi_bold.ttf"),
+    Raleway_Semibold("raleway_semibold.ttf");
 
 
     private final String name;

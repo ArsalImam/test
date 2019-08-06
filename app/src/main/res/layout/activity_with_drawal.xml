@@ -70,11 +70,11 @@
                     android:id="@+id/balance_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_minus10sdp"
                     android:text="Rs. 0"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_18sdp"
-                    android:textStyle="bold"
-                    app:fontName="open_sans_bold.ttf" />
+                    app:fontName="open_sans_semi_bold.ttf" />
 
             </LinearLayout>
 
@@ -164,7 +164,7 @@
                                         android:background="@null"
                                         android:text="Rs. "
                                         android:textColor="@color/black"
-                                        android:textSize="@dimen/_20sdp"
+                                        android:textSize="@dimen/_18sdp"
                                         app:fontName="open_sans_semi_bold.ttf" />
 
                                     <com.bykea.pk.partner.widgets.FontEditText
@@ -176,9 +176,8 @@
                                         android:hint="0"
                                         android:inputType="number"
                                         android:maxLength="6"
-                                        android:paddingRight="@dimen/_10sdp"
                                         android:textColor="@color/black"
-                                        android:textSize="@dimen/_20sdp"
+                                        android:textSize="@dimen/_18sdp"
                                         app:fontName="open_sans_regular.ttf" />
 
                                 </LinearLayout>
@@ -216,7 +215,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/color_A7A7A7"
                     android:gravity="center"
-                    android:padding="@dimen/_10sdp">
+                    android:padding="@dimen/_5sdp">
 
                     <com.bykea.pk.partner.ui.helpers.FontTextView
                         android:id="@+id/withdrawal_submit_textview"
@@ -225,14 +224,12 @@
                         android:layout_centerInParent="true"
                         android:text="@string/withdrawal_submit_title"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_16sdp"
+                        android:textSize="@dimen/_20sdp"
                         android:textStyle="normal"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 </LinearLayout>
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
-
 </layout>

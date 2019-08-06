@@ -48,8 +48,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/nic"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/_14sdp"
-                        app:fontName="jameel_noori_nastaleeq.ttf" />
+                        android:textStyle="bold"
+                        app:fontName="jameel_noori_nastaleeq.ttf"
+                        android:textSize="@dimen/_14sdp" />
 
                 </LinearLayout>
 
@@ -58,7 +59,7 @@
                     android:id="@+id/fees_val_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-2dp"
+                    android:layout_marginTop="@dimen/_minus5sdp"
                     android:layout_weight="1"
                     android:gravity="right|center_vertical"
                     android:text="@string/fees_template_val"

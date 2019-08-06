@@ -14,6 +14,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
  */
 open class DialogWithdrawConfirmation : BottomSheetDialog {
 
+    private var amountTextView: TextView? = null
+    private var feesTextView: TextView? = null
+    private var totalTextView: TextView? = null
+
     /**
      * viewModel of this view
      */
@@ -43,22 +47,28 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
         val dismissTextView = findViewById<View>(R.id.dismiss_withdraw_txtview)
         val confirmTextView = findViewById<View>(R.id.confirm_withdraw_txtview)
 
-        val totalTextView = findViewById<TextView>(R.id.confirmation_total_value)
-        val feesTextView = findViewById<TextView>(R.id.confirmation_fees_value)
-        val amountTextView = findViewById<TextView>(R.id.confirmation_payment_value)
+        totalTextView = findViewById<TextView>(R.id.confirmation_total_value)
+        feesTextView = findViewById<TextView>(R.id.confirmation_fees_value)
+        amountTextView = findViewById<TextView>(R.id.confirmation_payment_value)
 
-        val amount = withdrawalViewModel!!.balanceInt.value!!
-        val fees = Math.round(withdrawalViewModel!!.selectedPaymentMethod!!.fees!!)
-
-        amountTextView!!.text = amount.toString()
-        feesTextView!!.text = String.format("-%s", fees)
-        totalTextView!!.text = (amount + fees).toString()
+        updateContent()
 
         dismissTextView!!.setOnClickListener { withdrawalViewModel!!.showConfirmationDialog(false) }
         confirmTextView!!.setOnClickListener {
             withdrawalViewModel!!.showConfirmationDialog(false)
             withdrawalViewModel!!.confirmWithdraw()
         }
+    }
+
+    fun updateContent() {
+        if (amountTextView == null) return
+
+        val amount = withdrawalViewModel!!.balanceInt.value!!
+        val fees = Math.round(withdrawalViewModel!!.selectedPaymentMethod!!.fees!!)
+
+        amountTextView!!.text = String.format("%,d", amount)
+        feesTextView!!.text = String.format("-%s", fees)
+        totalTextView!!.text = String.format("Rs. %,d", (amount - fees))
     }
 
     companion object {
