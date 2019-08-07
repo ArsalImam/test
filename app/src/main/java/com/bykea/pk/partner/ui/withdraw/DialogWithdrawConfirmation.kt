@@ -27,6 +27,8 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
 
     /**
      * contructor to create new instance of this class
+     *
+     * @param activity context of activity
      */
     constructor(activity: Activity) : super(activity) {
         initUi(activity = activity)
@@ -34,6 +36,8 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
 
     /**
      * this method will initialize the bottom sheet UI components
+     *
+     * @param activity context of activity
      */
     private fun initUi(activity: Activity) {
 
@@ -53,6 +57,8 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
 
     /**
      * Setter of viewModel object
+     *
+     * @param withdrawalViewModel view model of the screen
      */
     private fun setViewModel(withdrawalViewModel: WithdrawalViewModel?) {
         this.withdrawalViewModel = withdrawalViewModel

@@ -139,10 +139,9 @@ class WithdrawalViewModel
         if (enteredBalance != null) {
 
             val amount = balanceInt?.value!!
-            val fees = Math.round(selectedPaymentMethod?.fees!!)
-
             _showLoader?.value = true
-            withdrawRepository.performWithdraw((amount - fees).toInt(), selectedPaymentMethod?.code!!, object : WithdrawRepository.LoadWithdrawalCallback<Boolean> {
+
+            withdrawRepository.performWithdraw(amount, selectedPaymentMethod?.code!!, object : WithdrawRepository.LoadWithdrawalCallback<Boolean> {
 
                 override fun onDataLoaded(data: Boolean?) {
                     _showLoader?.value = false

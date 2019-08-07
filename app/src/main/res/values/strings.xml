@@ -389,5 +389,6 @@
     <string name="specifier_string">-%s</string>
     <string name="new_line">\n</string>
     <string name="withdraw_error_threshold_exceed">مزید بوکنگس لینے کے لئے پہلے پیسے جمع کروایں </string>
+    <string name="ref_no_lbl">Reference No: %s</string>
 
 </resources>
