@@ -520,7 +520,6 @@ public class ActivityStackManager {
         }
     }
 
-
     /**
      * This method will open withdrawal complete activity
      *

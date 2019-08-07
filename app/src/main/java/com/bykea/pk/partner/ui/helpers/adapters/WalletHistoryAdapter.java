@@ -1,13 +1,13 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.WalletData;
@@ -76,7 +76,7 @@ public class WalletHistoryAdapter extends RecyclerView.Adapter<WalletHistoryAdap
             holder.tvDate.setVisibility(View.INVISIBLE);
         }
         if (StringUtils.isNotBlank(data.getTransactionId())) {
-            holder.tvTripStatus.setText("Reference no: ".concat(data.getTransactionId()));
+            holder.tvTripStatus.setText("Reference No: ".concat(data.getTransactionId()));
             holder.tvTripStatus.setVisibility(View.VISIBLE);
         } else if (StringUtils.isNotBlank(data.getComments())) {
             holder.tvTripStatus.setText("" + data.getComments());

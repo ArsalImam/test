@@ -11,6 +11,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * This is the remote datasource class of withdrawal repository
+ *
+ * @author Arsal Imam
+ */
 class WithdrawRemoteDataSource {
 
     /**
@@ -27,8 +32,8 @@ class WithdrawRemoteDataSource {
                         Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
                         if (response.isSuccessful) {
                             val methods = response.body()
-                            Log.v(WithdrawRemoteDataSource::class.java.simpleName, methods!!.data!!.toString())
-                            callback.onDataLoaded(methods.data)
+                            Log.v(WithdrawRemoteDataSource::class.java.simpleName, methods?.data?.toString())
+                            callback.onDataLoaded(methods?.data)
                         } else {
                             callback.onDataNotAvailable("No Payment Methods Found")
                         }
@@ -55,7 +60,7 @@ class WithdrawRemoteDataSource {
                         Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
                         if (response.isSuccessful) {
                             val methods = response.body()
-                            callback.onDataLoaded(methods!!.data)
+                            callback.onDataLoaded(methods?.data)
                         } else {
                             callback.onDataNotAvailable("No Payment Methods Found")
                         }
@@ -83,12 +88,11 @@ class WithdrawRemoteDataSource {
                 tokenId, userId, paymentMethod, amount)
                 .enqueue(object : Callback<WithdrawPostResponse> {
                     override fun onResponse(call: Call<WithdrawPostResponse>, response: Response<WithdrawPostResponse>) {
-                        Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
                         if (response.isSuccessful) {
                             val baseResponse = response.body()
-                            callback.onDataLoaded(baseResponse!!.isSuccess())
+                            callback.onDataLoaded(baseResponse?.isSuccess())
                         } else {
-                            callback.onDataNotAvailable("No Payment Methods Found")
+                            callback.onDataNotAvailable(response.code().toString())
                         }
                     }
 
