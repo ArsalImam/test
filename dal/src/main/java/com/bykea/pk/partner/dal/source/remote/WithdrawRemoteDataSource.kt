@@ -3,10 +3,12 @@ package com.bykea.pk.partner.dal.source.remote
 import android.util.Log
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
+import com.bykea.pk.partner.dal.source.remote.response.BaseResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetDriverProfile
 import com.bykea.pk.partner.dal.source.remote.response.GetWithdrawalPaymentMethods
 import com.bykea.pk.partner.dal.source.remote.response.WithdrawPostResponse
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -92,7 +94,10 @@ class WithdrawRemoteDataSource {
                             val baseResponse = response.body()
                             callback.onDataLoaded(baseResponse?.isSuccess())
                         } else {
-                            callback.onDataNotAvailable(response.code().toString())
+                            val errorBody = response?.errorBody()?.string()!!
+
+                            val errorObject = Gson().fromJson(errorBody, WithdrawPostResponse::class.java)
+                            callback.onDataNotAvailable(errorObject.subcode?.toString())
                         }
                     }
 

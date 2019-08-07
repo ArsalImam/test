@@ -151,7 +151,7 @@ class WithdrawalViewModel
 
                 override fun onDataNotAvailable(errorMsg: String) {
                     _showLoader?.value = false
-                    if (errorMsg.contentEquals(Constants.ApiError.BUSINESS_LOGIC_ERROR.toString())) {
+                    if (errorMsg.contentEquals(Constants.ApiError.ERROR_MSG_CODE.toString())) {
                         _errorMessage?.value = DriverApp.getContext().getString(R.string.withdraw_error_threshold_exceed)
                     } else {
                         _errorMessage?.value = DriverApp.getContext().getString(R.string.something_went_wrong)

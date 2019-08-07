@@ -1,12 +1,8 @@
 package com.bykea.pk.partner.ui.withdraw
 
 import android.os.Bundle
-import android.view.View
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.databinding.ActivityWithDrawalBinding
 import com.bykea.pk.partner.databinding.ActivityWithdrawThankyouBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 

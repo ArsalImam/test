@@ -94,7 +94,6 @@ class WithdrawalActivity : BaseActivity() {
                 Dialogs.INSTANCE.showLoader(this@WithdrawalActivity)
             else
                 Dialogs.INSTANCE.dismissDialog()
-
         })
 
         viewModel?.driverProfile?.observe(this, Observer { it ->
