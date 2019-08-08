@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.source.remote.Backend
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
@@ -85,9 +84,11 @@ class WithdrawalViewModel
      * Load user (driver) profile from repository
      */
     fun loadUserProfile() {
+        _showLoader?.value = true
         withdrawRepository.getDriverProfile(object : WithdrawRepository.LoadWithdrawalCallback<PersonalInfoData?> {
             override fun onDataLoaded(data: PersonalInfoData?) {
                 _driverProfile.value = data
+                loadWithdrawalMethods()
             }
 
             override fun onDataNotAvailable(errorMsg: String) {
@@ -113,15 +114,14 @@ class WithdrawalViewModel
      * Load all payment methods from repository
      */
     fun loadWithdrawalMethods() {
-        _showLoader?.value = true
         withdrawRepository.getAllPaymentMethods(object : WithdrawRepository.LoadWithdrawalCallback<List<WithdrawPaymentMethod>> {
             override fun onDataLoaded(data: List<WithdrawPaymentMethod>?) {
-                _showLoader?.value = false
                 if (!data.isNullOrEmpty()) {
                     data[0].isSelected = true
                     _selectedPaymentMethod = data[0]
                     _paymentMethods?.value = data
                 }
+                _showLoader?.value = false
             }
 
             override fun onDataNotAvailable(errorMsg: String) {
@@ -195,29 +195,35 @@ class WithdrawalViewModel
      * @return **null** if validation done successfully, otherwise returns error message
      */
     private fun validateContent(amount: Int): String? {
-        val settingsData = AppPreferences.getSettings()
+        try {
+            val settingsData = AppPreferences.getSettings()
 
-        val maxValue = settingsData.settings.withdrawPartnerMaxLimit
-        val minValue = settingsData.settings.withdrawPartnerMinLimit
-        val accountBalance = driverProfile?.value?.wallet!!
+            val maxValue = settingsData.settings.withdrawPartnerMaxLimit
+            val minValue = settingsData.settings.withdrawPartnerMinLimit
 
-        if (accountBalance < amount) {
-            return DriverApp.getContext().getString(R.string.dont_have_enough_to_withdraw)
-        }
-        if (amount < minValue) {
-            return String.format(
-                    DriverApp.getContext().getString(R.string.minimum_amount_to_withdraw_2)
-                            + StringUtils.SPACE
-                            + DriverApp.getContext().getString(R.string.formatted_price)
-                            + StringUtils.SPACE
-                            + DriverApp.getContext().getString(R.string.minimum_amount_to_withdraw_1), Math.round(minValue))
-        }
-        if (amount > maxValue) {
-            return String.format(DriverApp.getContext().getString(R.string.maximum_amount_to_withdraw_1)
-                    + StringUtils.SPACE
-                    + DriverApp.getContext().getString(R.string.formatted_price)
-                    + StringUtils.SPACE
-                    + DriverApp.getContext().getString(R.string.maximum_amount_to_withdraw_2), Math.round(maxValue))
+            val accountBalance = driverProfile?.value?.wallet!!
+
+            if (accountBalance < amount) {
+                return DriverApp.getContext().getString(R.string.dont_have_enough_to_withdraw)
+            }
+            if (amount < minValue) {
+                return String.format(
+                        DriverApp.getContext().getString(R.string.minimum_amount_to_withdraw_2)
+                                + StringUtils.SPACE
+                                + DriverApp.getContext().getString(R.string.formatted_price)
+                                + StringUtils.SPACE
+                                + DriverApp.getContext().getString(R.string.minimum_amount_to_withdraw_1), Math.round(minValue))
+            }
+            if (amount > maxValue) {
+                return String.format(DriverApp.getContext().getString(R.string.maximum_amount_to_withdraw_1)
+                        + StringUtils.SPACE
+                        + DriverApp.getContext().getString(R.string.formatted_price)
+                        + StringUtils.SPACE
+                        + DriverApp.getContext().getString(R.string.maximum_amount_to_withdraw_2), Math.round(maxValue))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return DriverApp.getContext().getString(R.string.something_went_wrong)
         }
         return null
     }

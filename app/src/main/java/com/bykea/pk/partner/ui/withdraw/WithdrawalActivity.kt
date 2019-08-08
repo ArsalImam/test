@@ -137,7 +137,6 @@ class WithdrawalActivity : BaseActivity() {
         })
 
         viewModel?.loadUserProfile()
-        viewModel?.loadWithdrawalMethods()
     }
 
     /**

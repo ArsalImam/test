@@ -379,7 +379,7 @@
     <string name="thanks_details_2">کے جیز کیش اکاؤنٹ میں جمع کردی جائیگی</string>
     <string name="wallet">والٹ</string>
     <string name="rs_price">Rs. %,d</string>
-    <string name="something_went_wrong">معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا</string>
+    <string name="something_went_wrong">معذرت فی الحال آپ کی درخواست پر عمل نہیں کیا جا سکتا</string>
     <string name="dont_have_enough_to_withdraw">درج کردہ رقم آپ کے موجودہ بیلنس سے زیادہ ہے</string>
     <string name="minimum_amount_to_withdraw_1">سے کم نہیں ہوسکتی</string>
     <string name="minimum_amount_to_withdraw_2">درج کردہ رقم</string>
