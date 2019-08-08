@@ -76,6 +76,7 @@ public class WalletHistoryAdapter extends RecyclerView.Adapter<WalletHistoryAdap
         } else {
             holder.tvDate.setVisibility(View.INVISIBLE);
         }
+
         if (StringUtils.isNotBlank(data.getTransactionId())) {
 
             holder.tvTripStatus.setText(

@@ -226,7 +226,8 @@
 
         <activity
             android:name=".ui.withdraw.WithdrawalActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NewTheme" />
         <activity
             android:name=".ui.withdraw.WithdrawThankyouActivity"
             android:screenOrientation="portrait" />

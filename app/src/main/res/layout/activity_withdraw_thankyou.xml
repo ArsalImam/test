@@ -41,7 +41,19 @@
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
-                    android:id="@+id/description"
+                    android:id="@+id/description_line_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_minus5sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/color_636363"
+                    android:textSize="@dimen/_18sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <com.bykea.pk.partner.ui.helpers.FontTextView
+                    android:id="@+id/description_line_two"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_20sdp"

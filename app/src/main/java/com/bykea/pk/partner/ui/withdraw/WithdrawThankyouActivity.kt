@@ -27,7 +27,8 @@ class WithdrawThankyouActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         viewBinder = DataBindingUtil.setContentView(this, R.layout.activity_withdraw_thankyou)
-        viewBinder?.description?.text = getString(R.string.thanks_details_1) + getString(R.string.new_line) + getString(R.string.thanks_details_2)
+        viewBinder?.descriptionLineOne?.text = getString(R.string.thanks_details_1)
+        viewBinder?.descriptionLineTwo?.text = getString(R.string.thanks_details_2)
         viewBinder?.withdrawThankyouWallet?.setOnClickListener { finish() }
     }
 }
