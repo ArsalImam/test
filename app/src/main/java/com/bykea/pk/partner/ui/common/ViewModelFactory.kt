@@ -6,10 +6,13 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.bykea.pk.partner.dal.source.JobsRepository
+import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.ui.complain.ComplaintListViewModel
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailViewModel
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel
+import com.bykea.pk.partner.ui.withdraw.WithdrawalViewModel
+import com.bykea.pk.partner.ui.support.ComplaintListViewModel
 
 /**
  * A creator is used to inject the product ID into the ViewModel
@@ -18,12 +21,14 @@ import com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel
  * This creator is to showcase how to inject dependencies into ViewModels. It's not
  * actually necessary in this case, as the product ID can be passed in a public method.
  */
-class ViewModelFactory private constructor(private val bookingsRepository: JobsRepository) : ViewModelProvider.NewInstanceFactory() {
+class ViewModelFactory private constructor(private val bookingsRepository: JobsRepository,
+                                           private val withdrawRepository: WithdrawRepository) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>) =
             with(modelClass) {
                 when {
                     isAssignableFrom(JobRequestListViewModel::class.java) -> JobRequestListViewModel(bookingsRepository)
+                    isAssignableFrom(WithdrawalViewModel::class.java) -> WithdrawalViewModel(withdrawRepository)
                     isAssignableFrom(JobRequestDetailViewModel::class.java) -> JobRequestDetailViewModel(bookingsRepository)
                     isAssignableFrom(ComplaintListViewModel::class.java) -> ComplaintListViewModel()
                     else ->
@@ -40,7 +45,8 @@ class ViewModelFactory private constructor(private val bookingsRepository: JobsR
         fun getInstance(application: Application) =
                 INSTANCE ?: synchronized(ViewModelFactory::class.java) {
                     INSTANCE ?: ViewModelFactory(
-                            Injection.provideJobsRepository(application.applicationContext))
+                            Injection.provideJobsRepository(application.applicationContext),
+                            Injection.provideWithdrawRepository(application.applicationContext))
                             .also { INSTANCE = it }
                 }
 

@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.helpers;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +48,11 @@ import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
+import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
+import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
+import com.bykea.pk.partner.ui.support.ComplainZendeskIdentityActivity;
+import com.bykea.pk.partner.ui.support.ComplaintListActivity;
+import com.bykea.pk.partner.ui.support.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -510,6 +516,15 @@ public class ActivityStackManager {
     }
 
     /**
+     * This method will open withdrawal activity
+     *
+     * @param activity context through which new activity can be launched
+     */
+    public void startWithDrawActivity(Activity activity) {
+        WithdrawalActivity.Companion.openActivity(activity);
+    }
+
+    /**
      * open loadboard booking screen
      *
      * @param context   Context
@@ -520,7 +535,6 @@ public class ActivityStackManager {
         intent.putExtra(JobRequestDetailActivity.EXTRA_BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
-
 
     /**
      * This method starts a service to handle Inactive Push Notification
@@ -536,6 +550,15 @@ public class ActivityStackManager {
         }
     }
 
+    /**
+     * This method will open withdrawal complete activity
+     *
+     * @param activity context through which new activity can be launched
+     */
+    public void startWithDrawCompleteActivity(Activity activity) {
+        Intent intent = new Intent(activity, WithdrawThankyouActivity.class);
+        activity.startActivity(intent);
+    }
 
     /**
      * Submitted Tickets Activity
@@ -546,5 +569,4 @@ public class ActivityStackManager {
         Intent intent = new Intent(context, ComplaintListActivity.class);
         context.startActivity(intent);
     }
-
 }

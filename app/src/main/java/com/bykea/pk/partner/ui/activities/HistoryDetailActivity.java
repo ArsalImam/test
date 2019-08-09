@@ -1,28 +1,27 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.Predefine_rating;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.CommentsAdapter;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.Predefine_rating;
-import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 

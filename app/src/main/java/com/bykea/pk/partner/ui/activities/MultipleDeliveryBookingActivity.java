@@ -772,12 +772,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void showCancelationDialogWIthFee() {
         String msg = getString(R.string.cancelation_message,
                 AppPreferences.getSettings().getSettings().getCancel_time());
-        Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogs.INSTANCE.dismissDialog();
-                cancelReasonDialog();
-            }
+        Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, v -> {
+            Dialogs.INSTANCE.dismissDialog();
+            cancelReasonDialog();
         }, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
