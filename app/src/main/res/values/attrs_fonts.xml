@@ -8,6 +8,10 @@
         <attr name="fontName" />
     </declare-styleable>
 
+    <declare-styleable name="FontButton">
+        <attr name="fontName" />
+    </declare-styleable>
+
     <attr name="fontName" format="enum">
         <enum name="open_sans_regular.ttf" value="0" />
         <enum name="roboto_italic.ttf" value="1" />

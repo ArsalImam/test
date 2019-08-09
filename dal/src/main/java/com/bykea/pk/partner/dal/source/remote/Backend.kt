@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
+import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.source.remote.response.*
@@ -10,6 +11,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
@@ -75,6 +77,31 @@ interface Backend {
      */
     @POST("/api/v1/trips/{job_id}/finish")
     fun finishJob(@Path("job_id") jobId: String, @Body body: FinishJobRequest): Call<FinishJobResponse>
+
+    /**
+     * Get Driver Email Update
+     * @param email Driver email
+     * @param _id Driver id
+     * @param token_id Driver access token
+     * @return Email is successfully update or not
+     */
+    @FormUrlEncoded
+    @PUT("/api/v1/driver/update/email")
+    fun getEmailUpdate(
+            @Field("email") emailId: String,
+            @Field("_id") driverId: String,
+            @Field("token_id") token: String): Call<GetEmailUpdateResponse>
+
+    /**
+     * Get Is Driver Email Update
+     * @param _id Driver id
+     * @param token_id Driver access token
+     * @return true if updated
+     */
+    @GET("/api/v1/driver/check/email")
+    fun checkIsEmailUpdated(
+            @Query("_id") driverId: String,
+            @Query("token_id") token: String): Call<CheckEmailUpdateResponse>
 
     @GET
     fun getMockJobRequestList(
@@ -145,8 +172,8 @@ interface Backend {
 
         operator fun invoke(baseUrl: String): Backend {
             return Retrofit.Builder()
-                    .client(client)
-//                    .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+//                    .client(client)
+                    .client(NetworkUtil.getUnsafeOkHttpClient())
                     .baseUrl(baseUrl)
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create())

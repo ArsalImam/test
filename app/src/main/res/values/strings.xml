@@ -361,6 +361,7 @@
     <string name="enter_valid_loadboard_ip">enter valid loadboard url</string>
     <string name="error_internet_connectivity">Please check your internet connection.</string>
     <string name="not_available">Number not available.</string>
+
     <string name="withdrawal_title">رقم نکلوائیں</string>
     <string name="label_amount_to_add">رقم درج کریں</string>
     <string name="payment_method_label">یہاں جمع کروائیں</string>
@@ -390,5 +391,45 @@
     <string name="new_line">\n</string>
     <string name="withdraw_error_threshold_exceed">مزید بوکنگس لینے کے لئے پہلے پیسے جمع کروایں </string>
     <string name="ref_no_lbl">Reference No: %s</string>
+
+    <string name="you_complain">آپ کی شکایت</string>
+    <string name="you_complain_with_number">آپ کی شکایت نمبر</string>
+    <string name="issue_submitted">درج کی جا چکی ہے</string>
+    <string name="issue_submitted_detail">درج کردہ شکایت دیکھیں</string>
+    <string name="move_to_home_screen">ہوم سکرین پر جائیں</string>
+    <string name="title_activity_main123">MainActivity123</string>
+    <string name="title_activity_problem_final">ProblemActivityFinal</string>
+    <string name="submit">\u0020درج کریں\u0020</string>
+    <string name="title_complain_list">My Complaints</string>
+    <string name="title_complain_detail">Complaint Detail</string>
+    <string name="title_new_complain_en">Your Complaints</string>
+    <string name="title_new_complain_ur">\u0020آپ کی شکایات\u0020</string>
+    <string name="ticket_status_open">\u0020شکایت موصول ہوگئی ہے\u0020</string>
+    <string name="ticket_status_pending">\u0020تحقیق جاری ہے\u0020</string>
+    <string name="ticket_status_solved">\u0020شکایت حل ہوگئی ہے\u0020</string>
+    <string name="contact_fragment_title">\u0020شکایت پر بات چیت\u0020</string>
+    <string name="request_activity_title">\u0020شکایت پر بات چیت\u0020</string>
+
+    <string name="contact_us_your_complain">\u0020آپ کی  شکایات\u0020</string>
+    <string name="contact_us_report">\u0020رپورٹ\u0020</string>
+    <string name="contact_us_call">\u0020کال\u0020</string>
+    <string name="contact_us_bank_account">\u0020بینک اکاوٴنٹ\u0020</string>
+    <string name="title_report_en">Report</string>
+    <string name="title_report_ur">\u0020رپورٹ\u0020</string>
+    <string name="complains_not_found">\u0020آپ کی کوئی شکایت درج نہیں ہے\u0020</string>
+    <string name="enter_some_details">Please Enter Some Details</string>
+
+    <string-array name="ride_complain_reasons">
+        <item>Partner ka ravaiya gair ikhlaqi tha</item>
+        <item>Partner ne aik gair mansooba stop kia</item>
+        <item>Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair.</item>
+        <item>Parner ne baqaya raqam mere wallet me nahi daali</item>
+        <item>Main haadse main manavas tha.</item>
+    </string-array>
+
+    <string name="wait_for_zendesk">\u0020انتظار فرمائیں\u0020</string>
+    <string name="wait_for_zendesk_for_duration">\u0020انتظار کیجیے ، آپ کی ریکویسٹ کے لیے 2–1 منٹ درکار ہیں\u0020</string>
+    <string name="partner_label">partner</string>
+    <string name="customer_labee">customer</string>
 
 </resources>

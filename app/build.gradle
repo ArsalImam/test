@@ -23,7 +23,7 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 41
+        versionCode 42
         versionName "6.1"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -145,6 +145,7 @@ repositories {
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     maven { url "https://jitpack.io" }
     maven { url "https://maven.google.com" }
+    maven { url 'https://zendesk.jfrog.io/zendesk/repo' }
     /*maven {
         url 'http://artifactory.paysyslabs.com/instascan-complete'
         credentials {
@@ -153,7 +154,6 @@ repositories {
         }
     }*/
 }
-
 dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.10'
     kapt 'com.jakewharton:butterknife-compiler:10.1.0'
@@ -220,6 +220,7 @@ dependencies {
 
     //Amazon client sdk to upload file
     implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
+    implementation group: 'com.zendesk', name: 'support', version: '2.3.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

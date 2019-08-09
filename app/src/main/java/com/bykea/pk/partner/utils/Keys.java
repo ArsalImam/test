@@ -37,6 +37,10 @@ public class Keys {
     public static final String DEVICE_TYPE = "devicetype";
     public static final String REG_ID = "regid";
 
+    public static final String EMAIL_VERIFIED = "email_verified";
+    public static final String ZENDESK_IDENTITY_SETUP_TIME = "zendesk_identity_setup_time";
+    public static final String ZENDESK_SDK_READY = "zendesk_sdk_ready";
+
 
     /*IMAGE URL ALTERATION*/
     public static final String SQUARE_ROUND_IMAGE = "upload/c_thumb,r_10,g_face,h_100,w_120/e_improve,q_60/f_auto/";

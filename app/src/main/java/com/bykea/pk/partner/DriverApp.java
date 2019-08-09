@@ -29,6 +29,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.onesignal.OSNotification;
 import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
+import com.zendesk.logger.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -38,6 +39,11 @@ import java.io.File;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import zendesk.core.AnonymousIdentity;
+import zendesk.core.Identity;
+import zendesk.core.JwtIdentity;
+import zendesk.core.Zendesk;
+import zendesk.support.Support;
 
 public class DriverApp extends MultiDexApplication {
 
@@ -69,6 +75,8 @@ public class DriverApp extends MultiDexApplication {
         if (mContext == null) {
             mContext = this;
         }
+
+        setupZendeskConfiguration();
         AppEventsLogger.activateApp(this);
 
         mBasicComponent = DaggerBasicComponent.builder()
@@ -86,6 +94,15 @@ public class DriverApp extends MultiDexApplication {
                 .filterOtherGCMReceivers(true)
                 .init();
         setupLoggerConfigurations();
+    }
+
+    private void setupZendeskConfiguration() {
+        Logger.setLoggable(true);
+
+        Zendesk.INSTANCE.init(this, Constants.ZendeskConfigurations.SUBDOMAIN_URL,
+                Constants.ZendeskConfigurations.APPLICATION_ID,
+                Constants.ZendeskConfigurations.OAUTH_CLIENT_ID);
+        Support.INSTANCE.init(Zendesk.INSTANCE);
     }
 
     /***

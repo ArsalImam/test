@@ -11,6 +11,7 @@ import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailViewModel
 import com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel
 import com.bykea.pk.partner.ui.withdraw.WithdrawalViewModel
+import com.bykea.pk.partner.ui.support.ComplaintListViewModel
 
 /**
  * A creator is used to inject the product ID into the ViewModel
@@ -28,6 +29,7 @@ class ViewModelFactory private constructor(private val bookingsRepository: JobsR
                     isAssignableFrom(JobRequestListViewModel::class.java) -> JobRequestListViewModel(bookingsRepository)
                     isAssignableFrom(WithdrawalViewModel::class.java) -> WithdrawalViewModel(withdrawRepository)
                     isAssignableFrom(JobRequestDetailViewModel::class.java) -> JobRequestDetailViewModel(bookingsRepository)
+                    isAssignableFrom(ComplaintListViewModel::class.java) -> ComplaintListViewModel()
                     else ->
                         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
                 }
