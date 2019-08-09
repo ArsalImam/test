@@ -1,1 +1,1 @@
-include ':app', ':dal'
+include ':app', ':dal', ':location'
