@@ -12,8 +12,4 @@ data class WithdrawPaymentMethod(
 ) {
 
     var isSelected: Boolean = false
-
-    init {
-        isSelected = false
-    }
 }

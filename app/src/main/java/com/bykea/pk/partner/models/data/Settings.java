@@ -33,18 +33,34 @@ public class Settings {
     @SerializedName("withdraw_partner_min_limit")
     private double withdrawPartnerMinLimit;
 
+    /**
+     * getter withdraw partner max limit
+     * @return withdrawPartnerMinLimit
+     */
     public double getWithdrawPartnerMinLimit() {
         return withdrawPartnerMinLimit;
     }
 
+    /**
+     * setter of withdrawPartnerMinLimit
+     * @param withdrawPartnerMinLimit withdrawPartnerMinLimit
+     */
     public void setWithdrawPartnerMinLimit(double withdrawPartnerMinLimit) {
         this.withdrawPartnerMinLimit = withdrawPartnerMinLimit;
     }
 
+    /**
+     * getter withdraw partner max limit
+     * @return withdrawPartnerMaxLimit
+     */
     public double getWithdrawPartnerMaxLimit() {
         return withdrawPartnerMaxLimit;
     }
 
+    /**
+     * setter of withdrawPartnerMaxLimit
+     * @param withdrawPartnerMaxLimit withdrawPartnerMaxLimit
+     */
     public void setWithdrawPartnerMaxLimit(double withdrawPartnerMaxLimit) {
         this.withdrawPartnerMaxLimit = withdrawPartnerMaxLimit;
     }

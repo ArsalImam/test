@@ -1,18 +1,34 @@
 package com.bykea.pk.partner.ui.withdraw
 
 import android.os.Bundle
-import android.view.View
-
+import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.databinding.ActivityWithdrawThankyouBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 
+/**
+ * This class will responsible to manage the withdrawal thank you screen
+ *
+ * @author Arsal Imam
+ */
 class WithdrawThankyouActivity : BaseActivity() {
 
+    private var viewBinder: ActivityWithdrawThankyouBinding? = null
+
+    /**
+     * {@inheritDoc}
+     *
+     * This will calls on every new initialization of this activity,
+     * It can be used for any initializations or on start executions
+     *
+     * @param savedInstanceState to get data on activity state changed
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_withdraw_thankyou)
 
-        val mWalletTextView = findViewById<View>(R.id.withdraw_thankyou_wallet)
-        mWalletTextView.setOnClickListener { finish() }
+        viewBinder = DataBindingUtil.setContentView(this, R.layout.activity_withdraw_thankyou)
+        viewBinder?.descriptionLineOne?.text = getString(R.string.thanks_details_1)
+        viewBinder?.descriptionLineTwo?.text = getString(R.string.thanks_details_2)
+        viewBinder?.withdrawThankyouWallet?.setOnClickListener { finish() }
     }
 }

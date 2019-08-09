@@ -226,10 +226,9 @@
 
         <activity
             android:name=".ui.withdraw.WithdrawalActivity"
-            android:screenOrientation="portrait" />
+            android:theme="@style/NewTheme" />
         <activity
-            android:name=".ui.withdraw.WithdrawThankyouActivity"
-            android:screenOrientation="portrait" />
+            android:name=".ui.withdraw.WithdrawThankyouActivity"/>
 
         <activity android:name=".ui.activities.MapDetailsActivity" />
         <activity android:name=".ui.activities.ShahkarActivity" />

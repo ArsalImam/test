@@ -1,10 +1,11 @@
 package com.bykea.pk.partner.ui.withdraw
 
-import android.content.Context
-import android.os.Bundle
+import android.app.Activity
 import android.view.View
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.databinding.DialogWithdrawConfirmationBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 /**
@@ -15,50 +16,79 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 open class DialogWithdrawConfirmation : BottomSheetDialog {
 
     /**
+     * view binder all ui components present in xml
+     */
+    private var viewBinder: DialogWithdrawConfirmationBinding? = null
+
+    /**
      * viewModel of this view
      */
     private var withdrawalViewModel: WithdrawalViewModel? = null
 
     /**
      * contructor to create new instance of this class
+     *
+     * @param activity context of activity
      */
-    constructor(context: Context) : super(context)
+    constructor(activity: Activity) : super(activity) {
+        initUi(activity = activity)
+    }
+
+    /**
+     * this method will initialize the bottom sheet UI components
+     *
+     * @param activity context of activity
+     */
+    private fun initUi(activity: Activity) {
+
+        viewBinder = DataBindingUtil.inflate(activity.layoutInflater, R.layout.dialog_withdraw_confirmation,
+                        null, false)
+
+        ownerActivity = activity
+        window.setBackgroundDrawableResource(android.R.color.transparent)
+        setContentView(viewBinder?.root)
+
+        viewBinder?.dismissWithdrawTxtview?.setOnClickListener { withdrawalViewModel?.showConfirmationDialog(false) }
+        viewBinder?.confirmWithdrawTxtview?.setOnClickListener {
+            withdrawalViewModel?.showConfirmationDialog(false)
+            withdrawalViewModel?.confirmWithdraw()
+        }
+    }
 
     /**
      * Setter of viewModel object
+     *
+     * @param withdrawalViewModel view model of the screen
      */
-    private fun setViewModel(withdrawalViewModel: WithdrawalViewModel) {
+    private fun setViewModel(withdrawalViewModel: WithdrawalViewModel?) {
         this.withdrawalViewModel = withdrawalViewModel
     }
 
     /**
-     * Invoke by system, when this dialog creates
-     *
-     * @param savedInstanceState obtained data sent by callee
+     * open dialog and update the content of the dialog
      */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.dialog_withdraw_confirmation)
+    fun showDialog() {
+        show()
+        updateContent()
+    }
 
-        val dismissTextView = findViewById<View>(R.id.dismiss_withdraw_txtview)
-        val confirmTextView = findViewById<View>(R.id.confirm_withdraw_txtview)
+    /**
+     * update dialog everytime on popup opens...
+     */
+    private fun updateContent() {
+        if (viewBinder == null) return
 
-        val totalTextView = findViewById<TextView>(R.id.confirmation_total_value)
-        val feesTextView = findViewById<TextView>(R.id.confirmation_fees_value)
-        val amountTextView = findViewById<TextView>(R.id.confirmation_payment_value)
+        val amount = withdrawalViewModel?.balanceInt?.value!!
+        val fees = Math.round(withdrawalViewModel?.selectedPaymentMethod?.fees!!)
 
-        val amount = withdrawalViewModel!!.balanceInt.value!!
-        val fees = Math.round(withdrawalViewModel!!.selectedPaymentMethod!!.fees!!)
+        viewBinder!!.confirmationPaymentValue?.text =
+                String.format(ownerActivity.getString(R.string.formatted_price), amount)
 
-        amountTextView!!.text = amount.toString()
-        feesTextView!!.text = String.format("-%s", fees)
-        totalTextView!!.text = (amount + fees).toString()
+        viewBinder!!.confirmationFeesValue?.text =
+                String.format(ownerActivity.getString(R.string.specifier_string), fees)
 
-        dismissTextView!!.setOnClickListener { withdrawalViewModel!!.showConfirmationDialog(false) }
-        confirmTextView!!.setOnClickListener {
-            withdrawalViewModel!!.showConfirmationDialog(false)
-            withdrawalViewModel!!.confirmWithdraw()
-        }
+        viewBinder!!.confirmationTotalValue?.text =
+                String.format(ownerActivity.getString(R.string.rs_price), (amount - fees))
     }
 
     companion object {
@@ -70,7 +100,7 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
          * @param withdrawalViewModel viewModel
          */
         fun newInstance(withdrawalActivity: WithdrawalActivity,
-                        withdrawalViewModel: WithdrawalViewModel): DialogWithdrawConfirmation {
+                        withdrawalViewModel: WithdrawalViewModel?): DialogWithdrawConfirmation {
             val dialogWithDrawConfirmation = DialogWithdrawConfirmation(withdrawalActivity)
             dialogWithDrawConfirmation.setViewModel(withdrawalViewModel)
             return dialogWithDrawConfirmation

@@ -3,10 +3,13 @@ package com.bykea.pk.partner.ui.withdraw
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bykea.pk.partner.DriverApp
+import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants
 import org.apache.commons.lang3.StringUtils
 
 /**
@@ -21,89 +24,109 @@ class WithdrawalViewModel
  */
 (private val withdrawRepository: WithdrawRepository) : ViewModel() {
 
+    /**
+     * list of payment methods
+     */
     private val _paymentMethods = MutableLiveData<List<WithdrawPaymentMethod>>().apply { value = emptyList() }
     val paymentMethods: LiveData<List<WithdrawPaymentMethod>>
         get() = _paymentMethods
 
+    /**
+     * observable to show/hide confirmation dialog
+     */
     private val _showConfirmationDialog = MutableLiveData<Boolean>().apply { value = false }
     val showConfirmationDialog: LiveData<Boolean>
         get() = _showConfirmationDialog
 
+    /**
+     * callback event to view on withdrawal process completed
+     */
     private val _onWithdrawCompleted = MutableLiveData<Boolean>().apply { value = false }
     val onWithdrawCompleted: LiveData<Boolean>
         get() = _onWithdrawCompleted
 
+    /**
+     * observable to show/hide loader
+     */
     private val _showLoader = MutableLiveData<Boolean>().apply { value = false }
     val showLoader: LiveData<Boolean>
         get() = _showLoader
 
+    /**
+     * balance entered by user
+     */
     private val _balanceInt = MutableLiveData<Int>().apply { value = 0 }
     val balanceInt: LiveData<Int>
         get() = _balanceInt
 
+    /**
+     * validation message to show on view
+     */
     private val _errorMessage = MutableLiveData<String>().apply { value = null }
     val errorMessage: LiveData<String>
         get() = _errorMessage
 
+    /**
+     * driver profile obtained from API {@link #loadUserProfile()}
+     */
     private val _driverProfile = MutableLiveData<PersonalInfoData>().apply { value = null }
     val driverProfile: LiveData<PersonalInfoData>
         get() = _driverProfile
 
+    /**
+     * observable for selected payment method
+     */
     private var _selectedPaymentMethod: WithdrawPaymentMethod? = null
     var selectedPaymentMethod: WithdrawPaymentMethod? = null
         get() = _selectedPaymentMethod
-
-    init {
-    }
 
     /**
      * Load user (driver) profile from repository
      */
     fun loadUserProfile() {
+        _showLoader?.value = true
         withdrawRepository.getDriverProfile(object : WithdrawRepository.LoadWithdrawalCallback<PersonalInfoData?> {
             override fun onDataLoaded(data: PersonalInfoData?) {
-//                driverProfile!!.apply { this.value = data }
                 _driverProfile.value = data
+                loadWithdrawalMethods()
             }
 
             override fun onDataNotAvailable(errorMsg: String) {
-                _showLoader!!.value = false
+                _showLoader?.value = false
             }
         })
     }
 
+    /**
+     * returns driver's CNIC number if profile loaded
+     *
+     * @return cnic number
+     */
     fun getDriverCnicNumber(): String {
-        if (driverProfile != null && driverProfile.value != null) {
-            return driverProfile.value!!.cnic
+        return if (driverProfile != null && driverProfile.value != null) {
+            driverProfile.value!!.cnic
         } else {
-            return StringUtils.EMPTY
+            StringUtils.EMPTY
         }
-//        driverProfile.let {
-//            driverProfile.value.let {
-//                driverProfile.value?.cnic.let {
-//                    return driverProfile.value?.cnic!!
-//                }
-//            }
-//        }
-//        return StringUtils.EMPTY
     }
 
     /**
      * Load all payment methods from repository
      */
     fun loadWithdrawalMethods() {
-        _showLoader!!.value = true
         withdrawRepository.getAllPaymentMethods(object : WithdrawRepository.LoadWithdrawalCallback<List<WithdrawPaymentMethod>> {
             override fun onDataLoaded(data: List<WithdrawPaymentMethod>?) {
-                _showLoader!!.value = false
-                data!![0].isSelected = true
-                _selectedPaymentMethod = data[0]
-                _paymentMethods!!.value = data
+                if (!data.isNullOrEmpty()) {
+                    data[0].isSelected = true
+                    _selectedPaymentMethod = data[0]
+                    _paymentMethods?.value = data
+                }
+                _showLoader?.value = false
             }
 
             override fun onDataNotAvailable(errorMsg: String) {
-                _showLoader!!.value = false
-                _errorMessage!!.value = "معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا"
+                _showLoader?.value = false
+                _errorMessage?.value = DriverApp.getContext().getString(R.string.something_went_wrong)
             }
         })
     }
@@ -112,34 +135,43 @@ class WithdrawalViewModel
      * Executes withdrawal PUT API from repository to perform withdrawal operation.
      */
     fun confirmWithdraw() {
-        val enteredBalance = balanceInt!!.value
-        _showLoader!!.value = true
-        withdrawRepository.performWithdraw(enteredBalance!!, selectedPaymentMethod!!.code!!, object : WithdrawRepository.LoadWithdrawalCallback<Boolean> {
+        val enteredBalance = balanceInt?.value!!
+        if (enteredBalance != null) {
 
-            override fun onDataLoaded(data: Boolean?) {
-                _showLoader!!.value = false
-                _onWithdrawCompleted!!.value = true
-            }
+            val amount = balanceInt?.value!!
+            _showLoader?.value = true
 
-            override fun onDataNotAvailable(errorMsg: String) {
-                _showLoader!!.value = false
-                _errorMessage!!.value = "معذرت فی الحال آپ کی ردخواست پر عمل نہیں کیا جا سکتا"
-            }
-        })
+            withdrawRepository.performWithdraw(amount, selectedPaymentMethod?.code!!, object : WithdrawRepository.LoadWithdrawalCallback<Boolean> {
+
+                override fun onDataLoaded(data: Boolean?) {
+                    _showLoader?.value = false
+                    _onWithdrawCompleted?.value = true
+                }
+
+                override fun onDataNotAvailable(errorMsg: String) {
+                    _showLoader?.value = false
+                    if (errorMsg.contentEquals(Constants.ApiError.ERROR_MSG_CODE.toString())) {
+                        _errorMessage?.value = DriverApp.getContext().getString(R.string.withdraw_error_threshold_exceed)
+                    } else {
+                        _errorMessage?.value = DriverApp.getContext().getString(R.string.something_went_wrong)
+                    }
+                }
+            })
+        }
     }
 
     /**
-     * Binded with button component (in xml),
+     * Binded with button's onclick,
      * @param amt amount entered by the user
      */
-    fun onSubmitClicked(amt: String) {
+    fun onSubmitClicked(amt: String?) {
         try {
             val amount = Integer.valueOf(amt)
             val errorMsg = validateContent(amount)
-            _errorMessage!!.value = errorMsg
+            _errorMessage?.value = errorMsg
             if (errorMsg == null) {
-                _balanceInt!!.value = amount
-                _showConfirmationDialog!!.value = true
+                _balanceInt?.value = amount
+                _showConfirmationDialog?.value = true
             }
         } catch (e: NumberFormatException) {
             e.printStackTrace()
@@ -147,6 +179,11 @@ class WithdrawalViewModel
 
     }
 
+    /**
+     * this method will show/hide the confirmation dialog
+     *
+     * @param isShow show(true) / hide(false)
+     */
     fun showConfirmationDialog(isShow: Boolean) {
         _showConfirmationDialog.value = isShow
     }
@@ -157,33 +194,44 @@ class WithdrawalViewModel
      *
      * @return **null** if validation done successfully, otherwise returns error message
      */
-    fun validateContent(amount: Int): String? {
-        val settingsData = AppPreferences.getSettings()
+    private fun validateContent(amount: Int): String? {
+        try {
+            val settingsData = AppPreferences.getSettings()
 
-        val maxValue = settingsData.settings.withdrawPartnerMaxLimit
-        val minValue = settingsData.settings.withdrawPartnerMinLimit
-        val accountBalance = driverProfile!!.value!!.wallet
-        if (amount < minValue) {
-            return String.format("درج کردہ رقم" + " %s " + "سے کم نہیں ہوسکتی", Math.round(minValue))
+            val maxValue = settingsData.settings.withdrawPartnerMaxLimit
+            val minValue = settingsData.settings.withdrawPartnerMinLimit
+
+            val accountBalance = driverProfile?.value?.wallet!!
+
+            if (accountBalance < amount) {
+                return DriverApp.getContext().getString(R.string.dont_have_enough_to_withdraw)
+            }
+            if (amount < minValue) {
+                return String.format(
+                        DriverApp.getContext().getString(R.string.minimum_amount_to_withdraw_2)
+                                + StringUtils.SPACE
+                                + DriverApp.getContext().getString(R.string.formatted_price)
+                                + StringUtils.SPACE
+                                + DriverApp.getContext().getString(R.string.minimum_amount_to_withdraw_1), Math.round(minValue))
+            }
+            if (amount > maxValue) {
+                return String.format(DriverApp.getContext().getString(R.string.maximum_amount_to_withdraw_1)
+                        + StringUtils.SPACE
+                        + DriverApp.getContext().getString(R.string.formatted_price)
+                        + StringUtils.SPACE
+                        + DriverApp.getContext().getString(R.string.maximum_amount_to_withdraw_2), Math.round(maxValue))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return DriverApp.getContext().getString(R.string.something_went_wrong)
         }
-        if (amount > maxValue) {
-            return String.format("ایک وقت میں" + " %s " + "سے زیادہ کی رقم نہیں نکالی جاسکتی", Math.round(maxValue))
-        }
-        return if (accountBalance < amount) {
-            "درج کردہ رقم آپ کے موجودہ بیلنس سے زیادہ ہے"
-        } else null
+        return null
     }
 
-
-    //-------------------------------------//
-    //----- Getters of the observers ------//
-    //-------------------------------------//
-
-//    fun getDriverProfile(): LiveData<PersonalInfoData> {
-//        if (driverProfile == null) {
-//            driverProfile = MutableLiveData()
-//            loadUserProfile()
-//        }
-//        return driverProfile!!
-//    }
+    /**
+     * this method will hide the validation layout
+     */
+    fun removeWarnings() {
+        _errorMessage.value = null
+    }
 }

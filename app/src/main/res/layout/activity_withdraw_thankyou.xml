@@ -1,57 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_big_tick" />
-
-        <com.bykea.pk.partner.ui.helpers.FontTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:gravity="center_horizontal"
-            android:text="@string/thanks"
-            android:textColor="@color/color_636363"
-            android:textSize="@dimen/_26sdp"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-
-        <com.bykea.pk.partner.ui.helpers.FontTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:gravity="center_horizontal"
-            android:text="@string/thanks_details"
-            android:textColor="@color/color_636363"
-            android:textSize="@dimen/_14sdp"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
-
-    </LinearLayout>
-
-    <com.bykea.pk.partner.ui.helpers.FontTextView
-        android:id="@+id/withdraw_thankyou_wallet"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/color_02AA31"
-        android:gravity="center"
-        android:paddingTop="@dimen/_10sdp"
-        android:paddingBottom="@dimen/_10sdp"
-        android:text="@string/wallet"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_16sdp"
-        app:fontName="jameel_noori_nastaleeq.ttf" />
+        android:layout_height="match_parent"
+        android:nestedScrollingEnabled="true">
 
-</RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_big_tick" />
+
+                <com.bykea.pk.partner.ui.helpers.FontTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/thanks"
+                    android:textColor="@color/color_636363"
+                    android:textSize="@dimen/_34sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <com.bykea.pk.partner.ui.helpers.FontTextView
+                    android:id="@+id/description_line_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_minus5sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/color_636363"
+                    android:textSize="@dimen/_18sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <com.bykea.pk.partner.ui.helpers.FontTextView
+                    android:id="@+id/description_line_two"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_minus5sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/color_636363"
+                    android:textSize="@dimen/_18sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </LinearLayout>
+
+            <com.bykea.pk.partner.ui.helpers.FontTextView
+                android:id="@+id/withdraw_thankyou_wallet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/color_02AA31"
+                android:gravity="center"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"
+                android:text="@string/wallet"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_20sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

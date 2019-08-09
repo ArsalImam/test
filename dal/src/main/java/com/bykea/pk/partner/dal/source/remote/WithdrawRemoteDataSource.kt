@@ -3,14 +3,21 @@ package com.bykea.pk.partner.dal.source.remote
 import android.util.Log
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
+import com.bykea.pk.partner.dal.source.remote.response.BaseResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetDriverProfile
 import com.bykea.pk.partner.dal.source.remote.response.GetWithdrawalPaymentMethods
 import com.bykea.pk.partner.dal.source.remote.response.WithdrawPostResponse
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * This is the remote datasource class of withdrawal repository
+ *
+ * @author Arsal Imam
+ */
 class WithdrawRemoteDataSource {
 
     /**
@@ -27,8 +34,8 @@ class WithdrawRemoteDataSource {
                         Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
                         if (response.isSuccessful) {
                             val methods = response.body()
-                            Log.v(WithdrawRemoteDataSource::class.java.simpleName, methods!!.data!!.toString())
-                            callback.onDataLoaded(methods.data)
+                            Log.v(WithdrawRemoteDataSource::class.java.simpleName, methods?.data?.toString())
+                            callback.onDataLoaded(methods?.data)
                         } else {
                             callback.onDataNotAvailable("No Payment Methods Found")
                         }
@@ -55,7 +62,7 @@ class WithdrawRemoteDataSource {
                         Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
                         if (response.isSuccessful) {
                             val methods = response.body()
-                            callback.onDataLoaded(methods!!.data)
+                            callback.onDataLoaded(methods?.data)
                         } else {
                             callback.onDataNotAvailable("No Payment Methods Found")
                         }
@@ -83,12 +90,14 @@ class WithdrawRemoteDataSource {
                 tokenId, userId, paymentMethod, amount)
                 .enqueue(object : Callback<WithdrawPostResponse> {
                     override fun onResponse(call: Call<WithdrawPostResponse>, response: Response<WithdrawPostResponse>) {
-                        Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
                         if (response.isSuccessful) {
                             val baseResponse = response.body()
-                            callback.onDataLoaded(baseResponse!!.isSuccess())
+                            callback.onDataLoaded(baseResponse?.isSuccess())
                         } else {
-                            callback.onDataNotAvailable("No Payment Methods Found")
+                            val errorBody = response?.errorBody()?.string()!!
+
+                            val errorObject = Gson().fromJson(errorBody, WithdrawPostResponse::class.java)
+                            callback.onDataNotAvailable(errorObject.subcode?.toString())
                         }
                     }
 

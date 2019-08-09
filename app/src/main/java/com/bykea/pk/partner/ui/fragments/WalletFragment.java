@@ -133,7 +133,6 @@ public class WalletFragment extends Fragment {
         });
         setWalletIcon();
         getHistory();
-
     }
 
 
