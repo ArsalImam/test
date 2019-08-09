@@ -4,10 +4,7 @@ import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
-import com.bykea.pk.partner.dal.source.remote.response.AcceptJobResponse
-import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
+import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -25,6 +22,7 @@ import javax.net.ssl.SSLSocketFactory
  * @author Yousuf Sohail
  */
 interface Backend {
+
 
     /**
      * Getting loadboard list of all types in home screen when partner is active.
@@ -121,6 +119,26 @@ interface Backend {
             @Query("_id") driverId: String,
             @Query("token_id") token: String): Call<GetJobRequestDetailResponse>
 
+    @GET("/api/v1/driver/paymentmethods")
+    fun getWithdrawalPaymentMethods(
+            @Query("token_id") token: String,
+            @Query("_id") driverId: String
+            ): Call<GetWithdrawalPaymentMethods>
+
+    @PUT("/api/v1/driver/withdrawal")
+    @FormUrlEncoded
+    fun getPerformWithdraw(
+            @Field("token_id") token: String,
+            @Field("_id") driverId: String,
+            @Field("payment_method") paymentMethod: Number,
+            @Field("amount") amount: Number
+         ): Call<WithdrawPostResponse>
+
+    @GET("/api/v1/driver/getProfile")
+    fun getDriverProfile(@Query("_id") _id: String,
+                           @Query("token_id") token_id: String,
+                           @Query("user_type") userType: String): Call<GetDriverProfile>
+
     companion object {
 
         var FLAVOR_URL_TELOS: String = ""
@@ -148,7 +166,8 @@ interface Backend {
             readTimeout(1, TimeUnit.MINUTES)
             writeTimeout(1, TimeUnit.MINUTES)
             if (socketFactory != null) sslSocketFactory(socketFactory)
-            if (BuildConfig.DEBUG) addNetworkInterceptor(loggingInterceptor)
+            addNetworkInterceptor(loggingInterceptor)
+//            if (BuildConfig.DEBUG)
         }.build()
 
         operator fun invoke(baseUrl: String): Backend {

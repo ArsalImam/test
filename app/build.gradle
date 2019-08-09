@@ -68,22 +68,26 @@ android {
 
         }
 
-        flavorDimensions "driver"
+        flavorDimensions "env"
         productFlavors {
             local {
-                dimension "driver"
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
+            }
+            develop {
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
             }
             staging {
-                dimension "driver"
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://staging.bykea.net:3000\""
             }
             livetesting {
-                dimension "driver"
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3001\""
             }
             production {
-                dimension "driver"
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3000\""
             }
         }
