@@ -476,7 +476,7 @@ public class Constants {
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
         public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
         public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
-
+        public static final int ERROR_MSG_CODE = 1050;
     }
 
     /**

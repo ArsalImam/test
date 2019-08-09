@@ -376,7 +376,19 @@
     <string name="yes">ہاں</string>
     <string name="thanks">شکریہ</string>
     <string name="thanks_details_1">آپ کی رقم 24 گھنٹوں کے اندر آپ</string>
-    <string name="thanks_details_2">کے جیذ کیش اکاؤنٹ میں جمع کردی جائیگی</string>
+    <string name="thanks_details_2">کے جیز کیش اکاؤنٹ میں جمع کردی جائیگی</string>
     <string name="wallet">والٹ</string>
+    <string name="rs_price">Rs. %,d</string>
+    <string name="something_went_wrong">معذرت فی الحال آپ کی درخواست پر عمل نہیں کیا جا سکتا</string>
+    <string name="dont_have_enough_to_withdraw">درج کردہ رقم آپ کے موجودہ بیلنس سے زیادہ ہے</string>
+    <string name="minimum_amount_to_withdraw_1">سے کم نہیں ہوسکتی</string>
+    <string name="minimum_amount_to_withdraw_2">درج کردہ رقم</string>
+    <string name="maximum_amount_to_withdraw_1">ایک وقت میں</string>
+    <string name="maximum_amount_to_withdraw_2">سے زیادہ کی رقم نہیں نکالی جاسکتی</string>
+    <string name="formatted_price">%,d</string>
+    <string name="specifier_string">-%s</string>
+    <string name="new_line">\n</string>
+    <string name="withdraw_error_threshold_exceed">مزید بوکنگس لینے کے لئے پہلے پیسے جمع کروایں </string>
+    <string name="ref_no_lbl">Reference No: %s</string>
 
 </resources>
