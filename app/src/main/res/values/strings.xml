@@ -140,7 +140,7 @@
     <string name="unwan_text">عنوان</string>
     <string name="raqam_text">رقم</string>
     <string name="transfer_text">ٹرانسفر</string>
-    <string name="balance_text">بیلینس</string>
+    <string name="balance_text">بیلنس</string>
     <!-- %1$s is argument of type string and \u0020 is blank space, normal space doesn't work when
     string extracted from string.xml (added space with urdu text because Jameel nastaliqi font cuts some text)-->
     <string name="problem_item">\u0020%1$s\u0020</string>
@@ -362,7 +362,36 @@
     <string name="error_internet_connectivity">Please check your internet connection.</string>
     <string name="not_available">Number not available.</string>
 
+    <string name="withdrawal_title">رقم نکلوائیں</string>
+    <string name="label_amount_to_add">رقم درج کریں</string>
+    <string name="payment_method_label">یہاں جمع کروائیں</string>
+    <string name="withdrawal_submit_title">درخواست کریں</string>
+    <string name="nic">شناختی کارڈ</string>
+    <string name="fees_template_val">جیز کیش کے ذریعے پیسے اگلے دن موصول ہوں گے۔</string>
+    <string name="fees_currency_val">روپے فیس ۔</string>
+    <string name="withdraw_confirmation">کیا آپ یہ رقم نکالنا چاہتے ہیں؟</string>
+    <string name="amount_lbl">رقم</string>
+    <string name="fees_lbl">فیس</string>
+    <string name="total_lbl">ٹوٹل</string>
+    <string name="cancel">کینسل</string>
+    <string name="yes">ہاں</string>
     <string name="thanks">شکریہ</string>
+    <string name="thanks_details_1">آپ کی رقم 24 گھنٹوں کے اندر آپ</string>
+    <string name="thanks_details_2">کے جیز کیش اکاؤنٹ میں جمع کردی جائیگی</string>
+    <string name="wallet">والٹ</string>
+    <string name="rs_price">Rs. %,d</string>
+    <string name="something_went_wrong">معذرت فی الحال آپ کی درخواست پر عمل نہیں کیا جا سکتا</string>
+    <string name="dont_have_enough_to_withdraw">درج کردہ رقم آپ کے موجودہ بیلنس سے زیادہ ہے</string>
+    <string name="minimum_amount_to_withdraw_1">سے کم نہیں ہوسکتی</string>
+    <string name="minimum_amount_to_withdraw_2">درج کردہ رقم</string>
+    <string name="maximum_amount_to_withdraw_1">ایک وقت میں</string>
+    <string name="maximum_amount_to_withdraw_2">سے زیادہ کی رقم نہیں نکالی جاسکتی</string>
+    <string name="formatted_price">%,d</string>
+    <string name="specifier_string">-%s</string>
+    <string name="new_line">\n</string>
+    <string name="withdraw_error_threshold_exceed">مزید بوکنگس لینے کے لئے پہلے پیسے جمع کروایں </string>
+    <string name="ref_no_lbl">Reference No: %s</string>
+
     <string name="you_complain">آپ کی شکایت</string>
     <string name="you_complain_with_number">آپ کی شکایت نمبر</string>
     <string name="issue_submitted">درج کی جا چکی ہے</string>
@@ -402,4 +431,5 @@
     <string name="wait_for_zendesk_for_duration">\u0020انتظار کیجیے ، آپ کی ریکویسٹ کے لیے 2–1 منٹ درکار ہیں\u0020</string>
     <string name="partner_label">partner</string>
     <string name="customer_labee">customer</string>
+
 </resources>
