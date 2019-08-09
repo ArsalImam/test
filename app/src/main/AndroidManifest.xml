@@ -37,7 +37,11 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
+        <service
+            android:name=".services.TrackingService"
+            android:enabled="true"
+            android:exported="true" />
+        <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">

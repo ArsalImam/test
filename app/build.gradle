@@ -203,6 +203,7 @@ dependencies {
     implementation deps.markerClustering
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':dal')
+    implementation project(path: ':location')
 
 
 //    implementation project(path: ':loadboard')
