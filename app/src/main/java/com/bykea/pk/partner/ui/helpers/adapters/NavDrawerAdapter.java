@@ -1,10 +1,12 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
 import com.bykea.pk.partner.ui.fragments.ProfileFragment;
 import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
+import com.bykea.pk.partner.ui.fragments.WebViewFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -121,10 +124,13 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     }
                     break;
                 case 4:
-//                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN) {
-//                         updateCurrentFragment(new HowItWorksFragment(), Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN);
-//                     }
-                    Utils.startCustomWebViewActivity(mainActivity, HOW_IT_WORKS_WEB_URL, context.getString(R.string.how_it_works));
+                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN) {
+                        updateCurrentFragment(WebViewFragment
+                                        .Companion
+                                        .newInstance(context.getString(R.string.how_it_works_en),
+                                                context.getString(R.string.how_it_works_ur), HOW_IT_WORKS_WEB_URL),
+                                Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN);
+                    }
                     break;
                 case 5:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.CONTACT_US_SCREEN) {

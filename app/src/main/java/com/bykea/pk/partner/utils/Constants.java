@@ -585,4 +585,7 @@ public class Constants {
 
     public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
     public final static String REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a";
+
+    //ON PAGE FINISHED IS TAKING TIME, SO USE THIS. IN WHICH USER CAN GET SOMEHOW SOMETHING IS START TO APPEARS
+    public final static long DIMISS_DIALOG_WEBVIEW_LOADING = 3 * 1000;
 }
