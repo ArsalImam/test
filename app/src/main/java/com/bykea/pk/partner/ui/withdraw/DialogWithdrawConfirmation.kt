@@ -76,7 +76,7 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
      * update dialog everytime on popup opens...
      */
     private fun updateContent() {
-        if (viewBinder == null) return
+        if (viewBinder == null || withdrawalViewModel?.selectedPaymentMethod == null) return
 
         val amount = withdrawalViewModel?.balanceInt?.value!!
         val fees = Math.round(withdrawalViewModel?.selectedPaymentMethod?.fees!!)
