@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.support.ProblemActivityFinal"
+    tools:context=".ui.complain.ProblemActivityFinal"
     tools:showIn="@layout/activity_problem">
 
     <FrameLayout

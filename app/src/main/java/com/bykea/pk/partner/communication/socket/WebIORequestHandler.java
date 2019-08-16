@@ -2,10 +2,17 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.communication.IResponseCallback;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCallPayload;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
@@ -59,6 +66,8 @@ import java.net.HttpURLConnection;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
+import static com.bykea.pk.partner.DriverApp.getApplication;
 
 public class WebIORequestHandler {
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
@@ -232,11 +241,11 @@ public class WebIORequestHandler {
      * {@link ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED} and attach the
      * generic listener to listen the event.
      *
-     * @param driverStartData The json object that will be emit on the driver arrived event.
-     * @param responseCallBack  The callback that will be invoked when event response received.
+     * @param driverStartData  The json object that will be emit on the driver arrived event.
+     * @param responseCallBack The callback that will be invoked when event response received.
      */
     public void requestMultiDriverStartedRide(JSONObject driverStartData,
-                                                   IResponseCallback responseCallBack) {
+                                              IResponseCallback responseCallBack) {
         emitWithJObject(
                 ApiTags.MULTI_DELIVERY_SOCKET_DRIVER_STARTED,
                 new MyGenericListener(
@@ -254,7 +263,7 @@ public class WebIORequestHandler {
      * generic listener to listen the event.
      *
      * @param driverFinishData The json object that will be emit on the driver finished event.
-     * @param responseCallBack  The callback that will be invoked when event response received.
+     * @param responseCallBack The callback that will be invoked when event response received.
      */
     public void requestMultiDriverFinishRide(JSONObject driverFinishData,
                                              IResponseCallback responseCallBack) {
@@ -275,7 +284,7 @@ public class WebIORequestHandler {
      * generic listener to listen the event.
      *
      * @param driverFeedbackData The json object that will be emit on the driver feedback event.
-     * @param responseCallBack  The callback that will be invoked when event response received.
+     * @param responseCallBack   The callback that will be invoked when event response received.
      */
     public void requestMultiDeliveryDriverFeedback(JSONObject driverFeedbackData,
                                                    IResponseCallback responseCallBack) {
@@ -296,10 +305,10 @@ public class WebIORequestHandler {
      * generic listener to listen the event.
      *
      * @param driverCancelData The json object that will be emit on the driver cancel batch event.
-     * @param responseCallBack  The callback that will be invoked when event response received.
+     * @param responseCallBack The callback that will be invoked when event response received.
      */
     public void requestMultideliveryCancelBatch(JSONObject driverCancelData,
-                                                  IResponseCallback responseCallBack) {
+                                                IResponseCallback responseCallBack) {
         emitWithJObject(
                 ApiTags.MULTI_DELIVERY_SOCKET_BATCH_CANCELED,
                 new MyGenericListener(
@@ -355,7 +364,7 @@ public class WebIORequestHandler {
                 public void call(Object... args) {
                     try {
                         WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
-                        DriverApp.getApplication().attachListenersOnSocketConnected();
+                        getApplication().attachListenersOnSocketConnected();
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emitLocation(socket, json);
@@ -373,7 +382,7 @@ public class WebIORequestHandler {
 
     private void emitWithJObject(final String eventName, MyGenericListener myGenericListener, final JSONObject json) {
         WebIO.getInstance().on(eventName, myGenericListener);
-        Log.d(TAG, "WebIO.getInstance().isSocketConnected(): "+WebIO.getInstance().isSocketConnected());
+        Log.d(TAG, "WebIO.getInstance().isSocketConnected(): " + WebIO.getInstance().isSocketConnected());
         if (WebIO.getInstance().isSocketConnected()) {
             Log.d(TAG, "Inside Normal if of connected socket: ");
             if (!WebIO.getInstance().emit(eventName, json)) {
@@ -382,7 +391,7 @@ public class WebIORequestHandler {
                     public void call(Object... args) {
                         try {
                             WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
-                            DriverApp.getApplication().attachListenersOnSocketConnected();
+                            getApplication().attachListenersOnSocketConnected();
                             //To avoid previous calls with wrong token_id
                             if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                                 WebIO.getInstance().emit(eventName, json);
@@ -403,7 +412,7 @@ public class WebIORequestHandler {
                 public void call(Object... args) {
                     try {
                         WebIO.getInstance().off(Socket.EVENT_CONNECT, this);
-                        DriverApp.getApplication().attachListenersOnSocketConnected();
+                        getApplication().attachListenersOnSocketConnected();
                         //To avoid previous calls with wrong token_id
                         if (json.getString("token_id").equalsIgnoreCase(AppPreferences.getAccessToken())) {
                             WebIO.getInstance().emit(eventName, json);
@@ -545,6 +554,42 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
+            Utils.redLog("BOOKING_REQUEST (Socket) ", serverResponse);
+            Gson gson = new Gson();
+            try {
+                JobCallPayload payload = gson.fromJson(serverResponse, JobCallPayload.class);
+                if (payload != null && AppPreferences.getAvailableStatus()) {
+                    JobCall jobCall = payload.getTrip();
+                    JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+                    jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
+                        @Override
+                        public void onJobCallAcknowledged() {
+                            if (BuildConfig.DEBUG)
+                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
+                            ActivityStackManager.getInstance().startCallingActivity(jobCall, false, DriverApp.getContext());
+                        }
+
+                        @Override
+                        public void onJobCallAcknowledgeFailed() {
+                            if (BuildConfig.DEBUG)
+                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            } catch (
+                    Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Deprecated
+    public static class JobCallOldListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
             Utils.redLog("TRIP NOTIFICATION (Socket) ", serverResponse);
 
             Gson gson = new Gson();
@@ -553,44 +598,57 @@ public class WebIORequestHandler {
 //                    mContext = DriverApp.getContext();
 //                }
                 NormalCallData normalCallData = gson.fromJson(serverResponse, NormalCallData.class);
-                if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) && normalCallData.isSuccess()) {
-                    ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
-                } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                    if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
-
-                        /*
-                         * when Gps is off, we don't show Calling Screen so we don't need to show
-                         * Cancel notification either if passenger cancels it before booking.
-                         * If passenger has cancelled it after booking we will entertain this Cancel notification
-                         * */
-
-                        if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
-                            Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
-                            intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
-                            intent.putExtra("msg", normalCallData.getMessage());
-                            Utils.setCallIncomingState();
-                            if (AppPreferences.isJobActivityOnForeground() ||
-                                    AppPreferences.isCallingActivityOnForeground()) {
-//                                DriverApp.getContext().sendBroadcast(intent);
-                                EventBus.getDefault().post(intent);
-                            } else {
-                                EventBus.getDefault().post(intent);
-//                                DriverApp.getContext().sendBroadcast(intent);
-                                Notifications.createCancelNotification(DriverApp.getContext(), "Passenger has cancelled the Trip", 23);
-                            }
-                            getInstance().unRegisterChatListener();
-                        }
-                    } else {
-                        Utils.appToastDebug(DriverApp.getContext(), normalCallData.getMessage());
-                    }
-                } else {
-                    Utils.updateTripData(normalCallData);
-                }
+                setUIForStatus(normalCallData);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+    }
+
+    /**
+     * Method Is Listening To Both The Sockets
+     * 1. Call From Trip  - 7
+     * 2. MultiDelivery Trip - 23
+     *
+     * @param normalCallData : Object Class
+     */
+    private static void setUIForStatus(NormalCallData normalCallData) {
+        if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) ||
+                normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_OPEN) ||
+                normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_SEARCHING)) {
+            ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
+        } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
+            if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
+
+                /*
+                 * when Gps is off, we don't show Calling Screen so we don't need to show
+                 * Cancel notification either if passenger cancels it before booking.
+                 * If passenger has cancelled it after booking we will entertain this Cancel notification
+                 * */
+
+                if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
+                    intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
+                    intent.putExtra("msg", normalCallData.getMessage());
+                    Utils.setCallIncomingState();
+                    if (AppPreferences.isJobActivityOnForeground() ||
+                            AppPreferences.isCallingActivityOnForeground()) {
+//                                DriverApp.getContext().sendBroadcast(intent);
+                        EventBus.getDefault().post(intent);
+                    } else {
+                        EventBus.getDefault().post(intent);
+//                                DriverApp.getContext().sendBroadcast(intent);
+                        Notifications.createCancelNotification(DriverApp.getContext(), "Passenger has cancelled the Trip", 23);
+                    }
+                    getInstance().unRegisterChatListener();
+                }
+            } else {
+                Utils.appToastDebug(DriverApp.getContext(), normalCallData.getMessage());
+            }
+        } else {
+            Utils.updateTripData(normalCallData);
+        }
     }
 
     /**
@@ -629,11 +687,14 @@ public class WebIORequestHandler {
                         serverResponse,
                         MultipleDeliveryCallDriverResponse.class);
                 MultiDeliveryCallDriverData data = response.getData();
-                if (data != null) {
-                    AppPreferences.setMultiDeliveryCallDriverData(data);
-                    new UserRepository().requestDriverAcknowledged(handler);
+                if (data != null && AppPreferences.getAvailableStatus()) {
+                    if (data.getBatchID() != null) {
+                        AppPreferences.setMultiDeliveryCallDriverData(data);
+                        new UserRepository().requestDriverAcknowledged(handler);
+                    }
                 }
-            } catch (Exception e) {
+            } catch (
+                    Exception e) {
                 e.printStackTrace();
             }
 
@@ -648,8 +709,24 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
+            Gson gson = new Gson();
             Utils.redLog(TAG, serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+        }
+    }
+
+    /**
+     * Socket listener for Job Drop Off Change
+     */
+    public static class JobDropOffChangeListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("DROP OFF CHANGED (Socket) ", serverResponse);
+            Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
+            intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+            EventBus.getDefault().post(intent);
         }
     }
 
@@ -677,6 +754,7 @@ public class WebIORequestHandler {
             Utils.redLog(TAG, serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_BATCH_COMPLETED);
         }
+
     }
 
     private static IUserDataHandler handler = new UserDataHandler() {

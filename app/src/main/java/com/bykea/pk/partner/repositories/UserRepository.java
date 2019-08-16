@@ -24,7 +24,6 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
-import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptCallResponse;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AckCallResponse;
@@ -566,22 +565,8 @@ public class UserRepository {
      * @param context     App context
      * @param handler     Callback
      * @param reasonMsg   Reason to cancel
-     * @param serviceCode Booking service code
      */
-    public void requestCancelRide(Context context, IUserDataHandler handler, String reasonMsg, Integer serviceCode) {
-        if (serviceCode != null && (serviceCode == Constants.ServiceType.SEND_CODE || serviceCode == Constants.ServiceType.SEND_COD_CODE)) {
-            mRestRequestHandler.cancelLoadBoardBooking(
-                    context,
-                    new LoadBoardBookingCancelRequest(
-                            AppPreferences.getDriverId(),
-                            reasonMsg,
-                            AppPreferences.getLatitude() + "",
-                            AppPreferences.getLongitude() + "",
-                            AppPreferences.getAccessToken(),
-                            AppPreferences.getCallData().getTripId()),
-                    handler
-            );
-        } else {
+    public void requestCancelRide(Context context, IUserDataHandler handler, String reasonMsg) {
             JSONObject jsonObject = new JSONObject();
             mUserCallback = handler;
             mContext = context;
@@ -599,7 +584,6 @@ public class UserRepository {
                 ex.printStackTrace();
             }
             mWebIORequestHandler.cancelRide(jsonObject, mDataCallback);
-        }
     }
 
 

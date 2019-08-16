@@ -431,5 +431,6 @@
     <string name="wait_for_zendesk_for_duration">\u0020انتظار کیجیے ، آپ کی ریکویسٹ کے لیے 2–1 منٹ درکار ہیں\u0020</string>
     <string name="partner_label">partner</string>
     <string name="customer_labee">customer</string>
+    <string name="question_mark">\?</string>
 
 </resources>
