@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -29,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -39,6 +41,7 @@ import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest;
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
 import com.bykea.pk.partner.dal.util.Injection;
+import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
@@ -112,6 +115,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 
 //import com.google.android.gms.location.places.Place;
@@ -2553,22 +2557,25 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @param callNumber : Phone Number
      */
     private void openCallDialog(String callNumber) {
-        View view = getLayoutInflater().inflate(R.layout.dialog_call_booking, null);
         BottomSheetDialog dialog = new BottomSheetDialog(this);
-        dialog.setContentView(view);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_call_booking, null, false);
+        DialogCallBookingBinding mBinding = DialogCallBookingBinding.bind(view);
+        dialog.setContentView(mBinding.getRoot());
+        mBinding.setListener(new BookingCallListener() {
+            @Override
+            public void onCallOnPhone() {
+                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+            }
 
-        LinearLayout mLinLayoutCallOnMobile = dialog.findViewById(R.id.linLayoutCallOnMobile);
-        LinearLayout mLinLayoutCallOnWhatsapp = dialog.findViewById(R.id.linLayoutCallOnWhatsapp);
-
-        mLinLayoutCallOnMobile.setOnClickListener(view1 -> {
-            Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+            @Override
+            public void onCallOnWhatsapp() {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
+                startActivity(intent);
+            }
         });
-
-        mLinLayoutCallOnWhatsapp.setOnClickListener(view12 -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
-            startActivity(intent);
-        });
+        mBinding.iVCallOnMobile.setImageResource(R.drawable.ic_mobile_call);
+        mBinding.iVCallOnWhatsapp.setImageResource(R.drawable.ic_whatsapp_call);
         dialog.show();
     }
 }
