@@ -2549,6 +2549,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     /**
      * Call On Phone Number Using Whatsapp
+     *
      * @param callNumber : Phone Number
      */
     private void openCallDialog(String callNumber) {
@@ -2565,7 +2566,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         mLinLayoutCallOnWhatsapp.setOnClickListener(view12 -> {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://wa.me/" + Utils.phoneNumberForServer(callNumber)));
+            intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
             startActivity(intent);
         });
         dialog.show();

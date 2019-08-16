@@ -587,6 +587,8 @@ public class Constants {
     public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
     public final static String REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a";
 
+    public static String WHATSAPP_URI_PREFIX = "https://wa.me/";
+
     public static class ApplicationsPackageName {
         public static String WHATSAPP_PACKAGE = "com.whatsapp";
     }
