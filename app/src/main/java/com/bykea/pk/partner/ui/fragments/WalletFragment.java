@@ -131,7 +131,7 @@ public class WalletFragment extends Fragment {
                 }
             }
         });
-        setWalletIcon();
+//        setWalletIcon();
         getHistory();
     }
 
