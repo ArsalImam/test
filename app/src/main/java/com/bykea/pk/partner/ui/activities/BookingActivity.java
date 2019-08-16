@@ -88,6 +88,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
@@ -566,23 +567,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showCallPassengerDialog() {
-        Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+        Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, v -> {
+            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                openCallDialog(getSenderNumber());
+            } else {
                 Utils.callingIntent(mCurrentActivity, getSenderNumber());
-                Utils.redLog("BookingActivity", "Call Sender");
             }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Utils.callingIntent(mCurrentActivity, callData.getRec_no());
+            Utils.redLog("BookingActivity", "Call Sender");
+        }, v -> {
+            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                openCallDialog(getRecipientNumber());
+            } else {
                 Utils.callingIntent(mCurrentActivity, getRecipientNumber());
-                Utils.redLog("BookingActivity", "Call Recipient");
             }
+            Utils.redLog("BookingActivity", "Call Recipient");
         });
     }
-
 
     /***
      * Validates ride type for Food delivery.
@@ -1035,7 +1035,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             drawRouteToDropOff();
             callerNameTv.setText(callData.getPassName());
         }
-        
+
 
         if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
             startAddressTv.setText(callData.getStartAddress());
@@ -1879,6 +1879,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             case R.id.callbtn:
                 if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
                     showCallPassengerDialog();
+                } else if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                    openCallDialog(callData.getPhoneNo());
                 } else {
                     Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
                 }
@@ -2543,5 +2545,29 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             jobBtn.setEnabled(true);
             Utils.appToast(mCurrentActivity, error);
         });
+    }
+
+    /**
+     * Call On Phone Number Using Whatsapp
+     * @param callNumber : Phone Number
+     */
+    private void openCallDialog(String callNumber) {
+        View view = getLayoutInflater().inflate(R.layout.dialog_call_booking, null);
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(view);
+
+        LinearLayout mLinLayoutCallOnMobile = dialog.findViewById(R.id.linLayoutCallOnMobile);
+        LinearLayout mLinLayoutCallOnWhatsapp = dialog.findViewById(R.id.linLayoutCallOnWhatsapp);
+
+        mLinLayoutCallOnMobile.setOnClickListener(view1 -> {
+            Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+        });
+
+        mLinLayoutCallOnWhatsapp.setOnClickListener(view12 -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://wa.me/" + Utils.phoneNumberForServer(callNumber)));
+            startActivity(intent);
+        });
+        dialog.show();
     }
 }

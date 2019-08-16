@@ -3259,4 +3259,15 @@ public class Utils {
     public static void setZendeskIdentity() {
         Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverId()));
     }
+
+
+    public static boolean isAppInstalledWithPackageName(Context context, String uri) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
 }

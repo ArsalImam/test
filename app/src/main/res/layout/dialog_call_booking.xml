@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linLayoutCallOnMobile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|right"
+        android:onClick="@{() -> listener.onCallOnMobile()}"
+        android:orientation="horizontal"
+        android:padding="@dimen/_8sdp">
+
+        <com.bykea.pk.partner.ui.helpers.FontTextView
+            android:id="@+id/tVCallOnMobile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/call_mobile_no"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <ImageView
+            android:id="@+id/callbtn"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:padding="@dimen/_4sdp"
+            app:srcCompat="@drawable/ic_mobile_call" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_graya5a5a5" />
+
+    <LinearLayout
+        android:id="@+id/linLayoutCallOnWhatsapp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|right"
+        android:onClick="@{() -> listener.onCallOnWhatsapp()}"
+        android:orientation="horizontal"
+        android:padding="@dimen/_8sdp">
+
+        <com.bykea.pk.partner.ui.helpers.FontTextView
+            android:id="@+id/tVCallOnWhatsapp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/call_whatsapp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        <ImageView
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:padding="@dimen/_4sdp"
+            app:srcCompat="@drawable/ic_whatsapp_call" />
+    </LinearLayout>
+</LinearLayout>
