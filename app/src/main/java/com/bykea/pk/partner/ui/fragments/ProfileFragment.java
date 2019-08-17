@@ -16,7 +16,7 @@ import android.widget.ProgressBar;
 
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.PersonalInfoData;
+import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;

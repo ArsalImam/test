@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.bykea.pk.partner.R;
 
-import com.bykea.pk.partner.models.data.PersonalInfoData;
+import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;

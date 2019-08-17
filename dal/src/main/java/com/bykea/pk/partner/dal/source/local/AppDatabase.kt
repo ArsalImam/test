@@ -17,6 +17,7 @@ const val DATABASE_NAME = "bykea-db"
 @Database(entities = [Job::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun jobRequestsDao(): JobsDao
+    abstract fun withdrawDao(): WithDrawDao
 
     companion object {
 

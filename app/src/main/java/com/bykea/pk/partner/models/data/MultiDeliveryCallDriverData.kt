@@ -2,6 +2,7 @@ package com.bykea.pk.partner.models.data
 
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse
 import com.bykea.pk.partner.models.response.MultipleDeliveryPickupResponse
+import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.utils.TripStatus
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils
  * Multi Delivery Call Driver Data Class
  */
 data class MultiDeliveryCallDriverData(
+        var trip_id: String?,
         var pickup: MultipleDeliveryPickupResponse? = null,
         var bookings: List<MultipleDeliveryBookingResponse>? = mutableListOf(),
         @SerializedName("status")
@@ -32,11 +34,24 @@ data class MultiDeliveryCallDriverData(
         //duration in seconds
         @SerializedName("est_total_duration")
         var estTotalDuration: Int? = 0,
-        @SerializedName("est_fare")
+
+        // ALTERNATE ADDED BACAUSE OF SIMPLE RIDES
+        @SerializedName("est_fare", alternate = ["fare_est"])
         var estFare: Int? = 0,
         @SerializedName("est_cash_collection")
         var estCashCollection: Int? = 0,
-        var acceptTime: Long
+        var acceptTime: Long,
+
+        // PARAMETERS ADDED TO CATER, SIMPLE RIDES
+        @SerializedName("code")
+        var serverCode: Int?,
+        var trip_type: String?,
+        var service_code: Int?,
+        var booking_no: String?,
+        var customer_id: String?,
+        var dt: String?,
+        var type: String?,
+        var dropoff: MultipleDeliveryPickupResponse? = null
 ) {
     fun getAcceptedTime(): Long = if (acceptTime > 0) acceptTime else System.currentTimeMillis()
 

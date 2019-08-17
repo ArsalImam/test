@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.helpers;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -19,7 +21,6 @@ import com.bykea.pk.partner.services.HandleInactivePushService;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
-import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
@@ -31,7 +32,6 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
-import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.activities.MultiDeliveryFeedbackActivity;
 import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
@@ -41,17 +41,21 @@ import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
+import com.bykea.pk.partner.ui.calling.CallingActivity;
+import com.bykea.pk.partner.ui.calling.JobCallActivity;
+import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
+import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
+import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
+import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
-import com.bykea.pk.partner.ui.support.ComplainZendeskIdentityActivity;
-import com.bykea.pk.partner.ui.support.ComplaintListActivity;
-import com.bykea.pk.partner.ui.support.ComplaintSubmissionActivity;
+import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
+import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
-
 
 public class ActivityStackManager {
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
@@ -319,6 +323,22 @@ public class ActivityStackManager {
         }
     }
 
+    public void startCallingActivity(JobCall jobCall, boolean isFromGcm, Context mContext) {
+        if (AppPreferences.getAvailableStatus() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
+            Intent callIntent = new Intent(DriverApp.getContext(), JobCallActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            callIntent.putExtra(JobCallActivity.Companion.getKEY_CALL_DATA(), jobCall);
+            if (isFromGcm) {
+                callIntent.putExtra(JobCallActivity.Companion.getKEY_IS_FROM_PUSH(), true);
+                Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
+            }
+            mContext.startActivity(callIntent);
+        }
+    }
+
+    @Deprecated
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
 
         Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +
@@ -493,6 +513,15 @@ public class ActivityStackManager {
     }
 
     /**
+     * This method will open withdrawal activity
+     *
+     * @param activity context through which new activity can be launched
+     */
+    public void startWithDrawActivity(Activity activity) {
+        WithdrawalActivity.Companion.openActivity(activity);
+    }
+
+    /**
      * open loadboard booking screen
      *
      * @param context   Context
@@ -503,7 +532,6 @@ public class ActivityStackManager {
         intent.putExtra(JobRequestDetailActivity.EXTRA_BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
-
 
     /**
      * This method starts a service to handle Inactive Push Notification
@@ -519,6 +547,15 @@ public class ActivityStackManager {
         }
     }
 
+    /**
+     * This method will open withdrawal complete activity
+     *
+     * @param activity context through which new activity can be launched
+     */
+    public void startWithDrawCompleteActivity(Activity activity) {
+        Intent intent = new Intent(activity, WithdrawThankyouActivity.class);
+        activity.startActivity(intent);
+    }
 
     /**
      * Submitted Tickets Activity
@@ -529,5 +566,4 @@ public class ActivityStackManager {
         Intent intent = new Intent(context, ComplaintListActivity.class);
         context.startActivity(intent);
     }
-
 }
