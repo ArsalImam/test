@@ -1809,8 +1809,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                 //THIS CHECK IS TO SHOW DROP OFF ICON WHEN DRIVER PRESS ARRIVED BUTTON
                 if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                    if (StringUtils.isNotBlank(callData.getEndLat()) &&
-                            StringUtils.isNotBlank(callData.getEndLng())) {
+                    if (callData != null && (StringUtils.isNotBlank(callData.getEndLat()) &&
+                            StringUtils.isNotBlank(callData.getEndLng()))) {
                         updateMarkers(true);
                     } else if (pickUpMarker != null) {
                         pickUpMarker.remove();
