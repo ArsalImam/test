@@ -399,6 +399,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+
+    /**
+     * Handle for Acknowledge API Call
+     */
     private static IUserDataHandler handler = new UserDataHandler() {
         @Override
         public void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse
