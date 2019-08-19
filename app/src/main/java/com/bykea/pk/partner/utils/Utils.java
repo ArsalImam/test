@@ -3260,6 +3260,10 @@ public class Utils {
         Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverId()));
     }
 
+    /**
+     * Add DD Property (True/False)
+     * @param jsonObject : JSONObject To Add Priority
+     */
     public static void addDriverDestinationProperty(JSONObject jsonObject) {
         try {
             if (AppPreferences.getDriverDestination() != null)
