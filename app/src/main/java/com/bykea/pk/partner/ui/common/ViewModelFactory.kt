@@ -6,7 +6,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.bykea.pk.partner.dal.source.JobsRepository
-import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
+import com.bykea.pk.partner.dal.source.WithdrawRepository
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.ui.complain.ComplaintListViewModel
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailViewModel

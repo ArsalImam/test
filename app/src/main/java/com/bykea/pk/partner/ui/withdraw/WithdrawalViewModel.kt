@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.source.WithdrawRepository
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
-import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import org.apache.commons.lang3.StringUtils
