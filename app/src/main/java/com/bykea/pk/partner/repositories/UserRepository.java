@@ -343,6 +343,17 @@ public class UserRepository {
         locationRequest.setLatitude(lat + "");
         locationRequest.setLongitude(lon + "");
         String tripStatus = StringUtils.EMPTY;
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("lat", lat);
+            jsonObject.put("lng", lon);
+            Utils.addDriverDestinationProperty(jsonObject);
+            Utils.logEvent(context, AppPreferences.getDriverId(), Constants.AnalyticsEvents.ON_PARTNER_LOCATION_UPDATE, jsonObject, true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         if (AppPreferences.isOnTrip()) {
             if (AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.SINGLE)) {
                 tripStatus = AppPreferences.getCallData() != null
@@ -562,28 +573,28 @@ public class UserRepository {
     /**
      * Request to cancel driver booking either to goto socket or to REST server
      *
-     * @param context     App context
-     * @param handler     Callback
-     * @param reasonMsg   Reason to cancel
+     * @param context   App context
+     * @param handler   Callback
+     * @param reasonMsg Reason to cancel
      */
     public void requestCancelRide(Context context, IUserDataHandler handler, String reasonMsg) {
-            JSONObject jsonObject = new JSONObject();
-            mUserCallback = handler;
-            mContext = context;
-            try {
-                jsonObject.put("token_id", AppPreferences.getAccessToken());
-                jsonObject.put("driver_id", AppPreferences.getDriverId());
-                jsonObject.put("message", reasonMsg);
-                jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
-                jsonObject.put("tid", AppPreferences.getCallData().getTripId());
-                jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
-                jsonObject.put("_id", AppPreferences.getDriverId());
-                jsonObject.put("lat", AppPreferences.getLatitude() + "");
-                jsonObject.put("lng", AppPreferences.getLongitude() + "");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            mWebIORequestHandler.cancelRide(jsonObject, mDataCallback);
+        JSONObject jsonObject = new JSONObject();
+        mUserCallback = handler;
+        mContext = context;
+        try {
+            jsonObject.put("token_id", AppPreferences.getAccessToken());
+            jsonObject.put("driver_id", AppPreferences.getDriverId());
+            jsonObject.put("message", reasonMsg);
+            jsonObject.put("trips_id", AppPreferences.getCallData().getTripId());
+            jsonObject.put("tid", AppPreferences.getCallData().getTripId());
+            jsonObject.put("passenger_id", AppPreferences.getCallData().getPassId());
+            jsonObject.put("_id", AppPreferences.getDriverId());
+            jsonObject.put("lat", AppPreferences.getLatitude() + "");
+            jsonObject.put("lng", AppPreferences.getLongitude() + "");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        mWebIORequestHandler.cancelRide(jsonObject, mDataCallback);
     }
 
 
