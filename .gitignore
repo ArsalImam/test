@@ -13,3 +13,4 @@
 .idea/
 /app/*/release/output.json
 /app/release/output.json
+/location/build/
