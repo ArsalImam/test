@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal.source.withdraw
+package com.bykea.pk.partner.dal.source
 
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod

@@ -1,12 +1,12 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import android.util.Log
+import com.bykea.pk.partner.dal.source.WithdrawRepository
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
 import com.bykea.pk.partner.dal.source.remote.response.GetDriverProfile
 import com.bykea.pk.partner.dal.source.remote.response.GetWithdrawalPaymentMethods
 import com.bykea.pk.partner.dal.source.remote.response.WithdrawPostResponse
-import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
