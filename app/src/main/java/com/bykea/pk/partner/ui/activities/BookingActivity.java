@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -29,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -39,6 +41,7 @@ import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest;
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
 import com.bykea.pk.partner.dal.util.Injection;
+import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
@@ -88,6 +91,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
@@ -111,6 +115,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 
 //import com.google.android.gms.location.places.Place;
@@ -566,23 +571,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showCallPassengerDialog() {
-        Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+        Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, v -> {
+            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                openCallDialog(getSenderNumber());
+            } else {
                 Utils.callingIntent(mCurrentActivity, getSenderNumber());
-                Utils.redLog("BookingActivity", "Call Sender");
             }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Utils.callingIntent(mCurrentActivity, callData.getRec_no());
+            Utils.redLog("BookingActivity", "Call Sender");
+        }, v -> {
+            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                openCallDialog(getRecipientNumber());
+            } else {
                 Utils.callingIntent(mCurrentActivity, getRecipientNumber());
-                Utils.redLog("BookingActivity", "Call Recipient");
             }
+            Utils.redLog("BookingActivity", "Call Recipient");
         });
     }
-
 
     /***
      * Validates ride type for Food delivery.
@@ -1877,6 +1881,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             case R.id.callbtn:
                 if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
                     showCallPassengerDialog();
+                } else if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                    openCallDialog(callData.getPhoneNo());
                 } else {
                     Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
                 }
@@ -2541,5 +2547,42 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             jobBtn.setEnabled(true);
             Utils.appToast(error);
         });
+    }
+
+    /**
+     * Call On Phone Number Using Whatsapp
+     *
+     * @param callNumber : Phone Number
+     */
+    private void openCallDialog(String callNumber) {
+        if (StringUtils.isEmpty(callNumber)) {
+            Utils.appToastDebug("Number is empty");
+            return;
+        }
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_call_booking, null, false);
+        DialogCallBookingBinding mBinding = DialogCallBookingBinding.bind(view);
+        dialog.setContentView(mBinding.getRoot());
+        mBinding.setListener(new BookingCallListener() {
+            @Override
+            public void onCallOnPhone() {
+                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onCallOnWhatsapp() {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                if (callNumber.startsWith("92"))
+                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(callNumber))));
+                else
+                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+        mBinding.iVCallOnMobile.setImageResource(R.drawable.ic_mobile_call);
+        mBinding.iVCallOnWhatsapp.setImageResource(R.drawable.ic_whatsapp_call);
+        dialog.show();
     }
 }

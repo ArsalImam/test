@@ -3275,4 +3275,21 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+
+    /**
+     *
+     * @param context : Calling Activity
+     * @param uri : Package
+     * @return If Application Is Installed Return True Else False
+     */
+    public static boolean isAppInstalledWithPackageName(Context context, String uri) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
 }
