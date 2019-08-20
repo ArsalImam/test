@@ -92,7 +92,7 @@ public class CallingActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Utils.appToastDebug(mCurrentActivity, msg);
+                    Utils.appToastDebug(msg);
                 }
             });
         }
@@ -401,15 +401,13 @@ public class CallingActivity extends BaseActivity {
                     } else {
                         cancelRide();
                     }
-                    if (BuildConfig.DEBUG)
-                        Toast.makeText(getApplication().getApplicationContext(), "Job Accepted", Toast.LENGTH_SHORT).show();
+                    Utils.appToastDebug("Job Accepted");
                 }
 
                 @Override
                 public void onJobAcceptFailed() {
                     onAcceptFailed("Job Accept Failed");
-                    if (BuildConfig.DEBUG)
-                        Toast.makeText(getApplication().getApplicationContext(), "Job Accept Failed", Toast.LENGTH_SHORT).show();
+                    Utils.appToastDebug("Job Accept Failed");
                 }
             });
         } else {

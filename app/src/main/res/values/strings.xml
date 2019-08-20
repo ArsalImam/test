@@ -433,4 +433,6 @@
     <string name="customer_labee">customer</string>
     <string name="question_mark">\?</string>
 
+    <string name="call_whatsapp">\u0020واٹس ایپ پر کال کریں\u0020</string>
+    <string name="call_mobile_no">\u0020موبائل نمبر پر کال کریں\u0020</string>
 </resources>

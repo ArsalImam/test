@@ -62,13 +62,11 @@ public enum Dialogs {
     private Dialog mAdminNotifiationDialog;
 
     public void showToast(String message) {
-        Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_LONG).show();
+        Utils.appToast(message);
     }
 
     public void showTempToast(String message) {
-        if (BuildConfig.DEBUG) {
-            Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_LONG).show();
-        }
+        Utils.appToastDebug(message);
     }
 
     public void dismissDialog() {
@@ -505,7 +503,7 @@ public enum Dialogs {
                         dismissDialog();
                         callBack.onCallBack("" + cancelMessages.get(adapter.getSelectedIndex()));
                     } else {
-                        Utils.appToast(context, context.getString(R.string.cancel_reason));
+                        Utils.appToast(context.getString(R.string.cancel_reason));
                     }
                 }
             });
@@ -966,9 +964,9 @@ public enum Dialogs {
                             @Override
                             public void onClick(View view) {
                                 if (input.getText().length() == 0) {
-                                    Utils.appToast(activity, "enter your ip");
+                                    Utils.appToast("enter your ip");
                                 } else if (!Utils.isValidUrl(input.getText().toString())) {
-                                    Utils.appToast(activity, "enter valid url");
+                                    Utils.appToast("enter valid url");
                                 } else {
                                     dataHandler.onCallBack(input.getText().toString());
                                     alertDialog.dismiss();
@@ -1110,18 +1108,18 @@ public enum Dialogs {
 
                 mDialog.setOnShowListener(dialog -> mDialog.findViewById(R.id.imgViewClick).setOnClickListener(v -> {
                     if (mEditTextIP.getText().length() == 0) {
-                        Utils.appToast(activity, activity.getString(R.string.enter_your_ip));
+                        Utils.appToast(activity.getString(R.string.enter_your_ip));
                         return;
                     } else if (!Utils.isValidUrl(mEditTextIP.getText().toString())) {
-                        Utils.appToast(activity, activity.getString(R.string.enter_valid_ip));
+                        Utils.appToast(activity.getString(R.string.enter_valid_ip));
                         return;
                     }
 
                     if (mEditTextLoadBoardIP.getText().length() == 0) {
-                        Utils.appToast(activity, activity.getString(R.string.enter_your_loadboard_ip));
+                        Utils.appToast(activity.getString(R.string.enter_your_loadboard_ip));
                         return;
                     } else if (!Utils.isValidUrl(mEditTextLoadBoardIP.getText().toString())) {
-                        Utils.appToast(activity, activity.getString(R.string.enter_valid_loadboard_ip));
+                        Utils.appToast(activity.getString(R.string.enter_valid_loadboard_ip));
                         return;
                     }
 

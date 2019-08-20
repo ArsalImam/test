@@ -937,7 +937,7 @@ public class HomeFragment extends Fragment {
                     break;
                 }
                 default:
-                    Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
+                    Utils.appToast(driverStatusResponse.getMessage());
                     AppPreferences.setAvailableStatus(false);
                     AppPreferences.setDriverDestination(null);
                     setStatusBtn();
@@ -1009,7 +1009,7 @@ public class HomeFragment extends Fragment {
                 break;
             case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
             default:
-                Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
+                Utils.appToast(driverStatusResponse.getMessage());
         }
         AppPreferences.setAvailableStatus(false);
         AppPreferences.setDriverDestination(null);

@@ -223,7 +223,7 @@ public class HandleInactivePushService extends Service {
                     break;
                 }
                 default:
-                    Utils.appToast(this, locationResponse.getMessage());
+                    Utils.appToast(locationResponse.getMessage());
             }
         }
 

@@ -119,7 +119,7 @@ class ComplainReasonFragment : Fragment() {
 
             override fun onFail(message: String?) {
                 Dialogs.INSTANCE.dismissDialog()
-                Utils.appToast(mCurrentActivity, mCurrentActivity?.getString(R.string.error_try_again))
+                Utils.appToast(mCurrentActivity?.getString(R.string.error_try_again))
             }
         })
     }
