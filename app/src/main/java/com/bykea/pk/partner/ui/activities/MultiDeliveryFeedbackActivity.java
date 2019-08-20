@@ -3,7 +3,6 @@ package com.bykea.pk.partner.ui.activities;
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.os.SystemClock;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -282,7 +281,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                     setEtError(receivedAmountEt,getString(R.string.amount_error, AMOUNT_LIMIT));
                 }
             } else {
-                Utils.appToast(mCurrentActivity, getString(R.string.invalid_amout));
+                Utils.appToast(getString(R.string.invalid_amout));
             }
         }
     }

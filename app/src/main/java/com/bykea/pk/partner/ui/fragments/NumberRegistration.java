@@ -193,7 +193,7 @@ public class NumberRegistration extends Fragment {
         public void onError(int errorCode, String errorMessage) {
             if (mCurrentActivity != null && getView() != null) {
                 Dialogs.INSTANCE.dismissDialog();
-                Utils.appToast(mCurrentActivity, errorMessage);
+                Utils.appToast(errorMessage);
             }
         }
     };
@@ -224,7 +224,7 @@ public class NumberRegistration extends Fragment {
             cnicEt.requestFocus();
             isValid = false;
         } else if (mSelectedCity == null || mSelectedCity.get_id() == null || mSelectedCity.get_id().isEmpty()) {
-            Utils.appToast(mCurrentActivity, getString(R.string.please_select_city));
+            Utils.appToast(getString(R.string.please_select_city));
             spCities.requestFocus();
             isValid = false;
         }

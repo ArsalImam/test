@@ -79,7 +79,7 @@ public class Dialogs_new extends Dialog {
     }
 
     public void makeToast(String text) {
-        Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
+        Utils.appToast(text);
     }
 
     public void showReportDialog(OnClickListener listener) {

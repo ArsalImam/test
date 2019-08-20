@@ -145,8 +145,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
                         @Override
                         public void onJobCallAcknowledged() {
-                            if (BuildConfig.DEBUG)
-                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
+                            Utils.appToastDebug("Job Call Acknowledged");
                             Log.d(TAG, "Push Notification Received");
                             Utils.redLog(TAG, "On Call FCM");
                             ActivityStackManager.getInstance().startCallingActivity(jobCall, true, mContext);
@@ -154,8 +153,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                         @Override
                         public void onJobCallAcknowledgeFailed() {
-                            if (BuildConfig.DEBUG)
-                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
+                            Utils.appToastDebug("Job Call Acknowledgement Failed");
                         }
                     });
                 }
@@ -354,7 +352,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     break;
                 }
                 default:
-                    Utils.appToast(this, locationResponse.getMessage());
+                    Utils.appToast(locationResponse.getMessage());
             }
         }
 

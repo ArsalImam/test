@@ -325,7 +325,7 @@ class JobCallActivity : BaseActivity() {
     private val handler = object : UserDataHandler() {
 
         override fun onAck(msg: String) {
-            runOnUiThread { Utils.appToastDebug(this@JobCallActivity, msg) }
+            runOnUiThread { Utils.appToastDebug(msg) }
         }
 
         override fun onFreeDriver(freeDriverResponse: FreeDriverResponse) {
