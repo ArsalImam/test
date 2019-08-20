@@ -152,7 +152,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
         @Override
         public void onError(int errorCode, String errorMessage) {
             Dialogs.INSTANCE.dismissDialog();
-            Utils.appToast(mCurrentActivity, errorMessage);
+            Utils.appToast(errorMessage);
         }
     };
 

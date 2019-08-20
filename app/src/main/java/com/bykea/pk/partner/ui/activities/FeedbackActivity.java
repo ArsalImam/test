@@ -197,7 +197,7 @@ public class FeedbackActivity extends BaseActivity {
                     setEtError("Amount can't be more than " + AMOUNT_LIMIT);
                 }
             } else {
-                Utils.appToast(mCurrentActivity, "Please enter valid amount.");
+                Utils.appToast("Please enter valid amount.");
             }
         }
     }

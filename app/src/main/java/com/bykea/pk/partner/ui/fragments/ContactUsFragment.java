@@ -21,13 +21,9 @@ import com.bykea.pk.partner.ui.activities.BanksAccountActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
-import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
-
-import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -138,7 +134,7 @@ public class ContactUsFragment extends Fragment {
             @Override
             public void onFail(@org.jetbrains.annotations.Nullable String message) {
                 Dialogs.INSTANCE.dismissDialog();
-                Utils.appToast(mCurrentActivity, mCurrentActivity.getString(R.string.error_try_again));
+                Utils.appToast(mCurrentActivity.getString(R.string.error_try_again));
             }
         });
     }
