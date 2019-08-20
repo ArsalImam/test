@@ -219,7 +219,7 @@ public class LoginActivity extends BaseActivity {
                         Dialogs.INSTANCE.dismissDialog();
                         if (response != null) {
                             if (response.isSuccess()) {
-                                Utils.appToast(mCurrentActivity, response.getMessage());
+                                Utils.appToast(response.getMessage());
                                 ActivityStackManager.getInstance()
                                         .startPhoneNumberVerificationActivity(mCurrentActivity);
                                 mCurrentActivity.finish();

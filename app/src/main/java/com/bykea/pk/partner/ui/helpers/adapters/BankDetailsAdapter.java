@@ -112,7 +112,7 @@ public class BankDetailsAdapter extends
                         mapIntent.setPackage("com.google.android.apps.maps");
                         mContext.startActivity(mapIntent);
                     } catch (Exception ex) {
-                        Utils.appToast(mContext, "Please install Google Maps");
+                        Utils.appToast("Please install Google Maps");
                     }
                     break;
                 case R.id.llPhone:
