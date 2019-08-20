@@ -45,13 +45,13 @@ class ComplaintListViewModel : ViewModel() {
                 override fun onError(errorResponse: ErrorResponse) {
                     Utils.setZendeskIdentity()
                     Dialogs.INSTANCE.dismissDialog()
-                    Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.error_try_again))
+                    Utils.appToast(DriverApp.getContext().getString(R.string.error_try_again))
                 }
             })
         } ?: run {
             Utils.setZendeskIdentity()
             Dialogs.INSTANCE.dismissDialog()
-            Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.error_try_again))
+            Utils.appToast(DriverApp.getContext().getString(R.string.error_try_again))
         }
     }
 }

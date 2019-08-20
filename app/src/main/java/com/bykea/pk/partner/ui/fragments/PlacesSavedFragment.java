@@ -145,7 +145,7 @@ public class PlacesSavedFragment extends Fragment {
                                             @Override
                                             public void run() {
                                                 Dialogs.INSTANCE.dismissDialog();
-                                                Utils.appToast(mCurrentActivity, errorMessage);
+                                                Utils.appToast(errorMessage);
                                             }
                                         });
                                     }

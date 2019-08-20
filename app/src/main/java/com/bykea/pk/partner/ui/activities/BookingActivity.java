@@ -564,7 +564,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
             } catch (Exception ex) {
-                Toast.makeText(mCurrentActivity, "Please install Google Maps", Toast.LENGTH_LONG).show();
+                Utils.appToast("Please install Google Maps");
             }
 
         }
@@ -1781,9 +1781,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this,
-                "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
-                Toast.LENGTH_SHORT).show();
+        Utils.appToast("Could not connect to Google API Client: Error " + connectionResult.getErrorCode());
     }
 
     private BroadcastReceiver locationReceiver = new BroadcastReceiver() {
@@ -1813,8 +1811,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                 //THIS CHECK IS TO SHOW DROP OFF ICON WHEN DRIVER PRESS ARRIVED BUTTON
                 if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                    if (StringUtils.isNotBlank(callData.getEndLat()) &&
-                            StringUtils.isNotBlank(callData.getEndLng())) {
+                    if ((callData != null && callData.getEndLat() != null) && (StringUtils.isNotBlank(callData.getEndLat()) &&
+                            StringUtils.isNotBlank(callData.getEndLng()))) {
                         updateMarkers(true);
                     } else if (pickUpMarker != null) {
                         pickUpMarker.remove();
@@ -1995,7 +1993,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                             @Override
                                             public void run() {
                                                 Dialogs.INSTANCE.dismissDialog();
-                                                Utils.appToast(mCurrentActivity, response.getMessage());
+                                                Utils.appToast(response.getMessage());
                                                 if (response.getData() != null) {
                                                     callData.setPassWallet(response.getData().getAmount());
                                                     AppPreferences.setCallData(callData);
@@ -2010,7 +2008,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 @Override
                                 public void onError(int errorCode, String errorMessage) {
                                     Dialogs.INSTANCE.dismissDialog();
-                                    Utils.appToast(mCurrentActivity, errorMessage);
+                                    Utils.appToast(errorMessage);
                                 }
                             });
                         }
@@ -2114,14 +2112,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
                         playNotificationSound();
-                        Utils.appToast(mCurrentActivity, "Drop Off has been Updated by Passenger.");
+                        Utils.appToast("Drop Off has been Updated by Passenger.");
 //                        callData = AppPreferences.getCallData();
                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
                         playNotificationSound();
-                        Utils.appToast(mCurrentActivity, "Trip Details has been Added by Passenger.");
+                        Utils.appToast("Trip Details has been Added by Passenger.");
                         callData = AppPreferences.getCallData();
                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
@@ -2407,7 +2405,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 @Override
                 public void run() {
                     Dialogs.INSTANCE.dismissDialog();
-                    Utils.appToast(mCurrentActivity, message);
+                    Utils.appToast(message);
                     configCountDown();
                     allowTripStatusCall = true;
                     Utils.redLog(TAG, "driversDataHandler called: " + allowTripStatusCall);
@@ -2484,7 +2482,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Utils.appToast(mCurrentActivity, message);
+                    Utils.appToast(message);
                     Utils.setCallIncomingState();
                     AppPreferences.setWalletAmountIncreased(!isAvailable);
                     AppPreferences.setAvailableStatus(isAvailable);
@@ -2547,7 +2545,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         runOnUiThread(() -> {
             Dialogs.INSTANCE.dismissDialog();
             jobBtn.setEnabled(true);
-            Utils.appToast(mCurrentActivity, error);
+            Utils.appToast(error);
         });
     }
 
@@ -2558,7 +2556,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void openCallDialog(String callNumber) {
         if (StringUtils.isEmpty(callNumber)) {
-            Utils.appToastDebug(this, "Number is empty");
+            Utils.appToastDebug("Number is empty");
             return;
         }
         BottomSheetDialog dialog = new BottomSheetDialog(this);

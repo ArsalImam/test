@@ -564,15 +564,13 @@ public class WebIORequestHandler {
                     jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
                         @Override
                         public void onJobCallAcknowledged() {
-                            if (BuildConfig.DEBUG)
-                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledged", Toast.LENGTH_SHORT).show();
+                            Utils.appToastDebug("Job Call Acknowledged");
                             ActivityStackManager.getInstance().startCallingActivity(jobCall, false, DriverApp.getContext());
                         }
 
                         @Override
                         public void onJobCallAcknowledgeFailed() {
-                            if (BuildConfig.DEBUG)
-                                Toast.makeText(getApplication().getApplicationContext(), "Job Call Acknowledgement Failed", Toast.LENGTH_SHORT).show();
+                            Utils.appToastDebug("Job Call Acknowledgement Failed");
                         }
                     });
 
@@ -644,7 +642,7 @@ public class WebIORequestHandler {
                     getInstance().unRegisterChatListener();
                 }
             } else {
-                Utils.appToastDebug(DriverApp.getContext(), normalCallData.getMessage());
+                Utils.appToastDebug(normalCallData.getMessage());
             }
         } else {
             Utils.updateTripData(normalCallData);
