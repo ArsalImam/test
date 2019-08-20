@@ -21,7 +21,10 @@ import android.preference.PreferenceManager
 import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.local.AppDatabase
 import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
+import com.bykea.pk.partner.dal.source.local.WithdrawLocalDataSource
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
+import com.bykea.pk.partner.dal.source.remote.WithdrawRemoteDataSource
+import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 
 /**
  * Enables injection of production implementations for
@@ -42,5 +45,19 @@ object Injection {
                 JobsRemoteDataSource(),
                 JobsLocalDataSource.getInstance(AppExecutors(), database.jobRequestsDao()),
                 preferences)
+    }
+
+    /**
+     * Provides withdraw repository with all of it's dependencies resolved.
+     * @param applicationContext context of the application
+     * @return [WithdrawRepository]
+     */
+    fun provideWithdrawRepository(applicationContext: Context): WithdrawRepository {
+        val database = AppDatabase.getInstance(applicationContext)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return WithdrawRepository.getInstance(
+                WithdrawRemoteDataSource(),
+                WithdrawLocalDataSource.getInstance(AppExecutors(), database.withdrawDao()),
+                preferences)!!
     }
 }

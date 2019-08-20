@@ -26,25 +26,30 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
-        flavorDimensions "driver"
+        flavorDimensions "env"
         productFlavors {
             local {
-                dimension "driver"
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://192.168.0.122:3000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://192.168.0.122:4000\""
+            }
+            develop {
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://dev.bykea.net:3000\""
                 buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://dev.bykea.net:4000\""
             }
             staging {
-                dimension "driver"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging.bykea.net:3000\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging.bykea.net:4000\""
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-lb-talos.bykea.net\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-lb-loadboard.bykea.net\""
             }
             livetesting {
-                dimension "driver"
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3001\""
                 buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://loadboard.bykea.net:3000\""
             }
             production {
-                dimension "driver"
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3000\""
                 buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://loadboard.bykea.net:3000\""
             }

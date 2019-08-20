@@ -2022,6 +2022,20 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "NOD");
     }
 
+    /**
+     * Checks if call type is among modern services
+     *
+     * @param serviceCode Service Code
+     * @return Either modern service or not
+     */
+    public static boolean isModernService(Integer serviceCode) {
+        return serviceCode != null
+                && (serviceCode == Constants.ServiceType.SEND_CODE
+                || serviceCode == Constants.ServiceType.SEND_COD_CODE
+                || serviceCode == Constants.ServiceType.RIDE_CODE
+        );
+    }
+
     public static boolean isRideService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Ride");
     }
@@ -2114,6 +2128,7 @@ public class Utils {
      * @param callData Call data
      * @return Resource id of service icon image
      */
+    @Deprecated
     public static Integer getServiceIcon(NormalCallData callData) {
         String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
         switch (callType) {
@@ -2169,6 +2184,7 @@ public class Utils {
         }
     }
 
+    @Deprecated
     public static String getServiceIcon(String serviceName) {
         String icon = StringUtils.EMPTY;
         ArrayList<VehicleListData> mList =
@@ -3242,5 +3258,20 @@ public class Utils {
      */
     public static void setZendeskIdentity() {
         Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverId()));
+    }
+
+    /**
+     * Add DD Property (True/False)
+     * @param jsonObject : JSONObject To Add Priority
+     */
+    public static void addDriverDestinationProperty(JSONObject jsonObject) {
+        try {
+            if (AppPreferences.getDriverDestination() != null)
+                jsonObject.put("DD", true);
+            else
+                jsonObject.put("DD", false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

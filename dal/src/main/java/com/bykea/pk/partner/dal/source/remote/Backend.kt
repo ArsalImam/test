@@ -1,39 +1,38 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
+import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
-import com.bykea.pk.partner.dal.source.remote.response.AcceptJobResponse
-import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestDetailResponse
-import com.bykea.pk.partner.dal.source.remote.response.GetJobRequestListResponse
+import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 
 /**
- * API interface for Load Board
+ * Interface to communicate to Bykea's REST server
  *
  * @author Yousuf Sohail
  */
 interface Backend {
 
     /**
-     * Getting loadboard list of all types in home screen when partner is active.
-     * @param driverId Driver id
+     * Requests the list of job request
+     * @param driverId Driver ID
      * @param token Driver access token
-     * @param lat Driver current lat
+     * @param lat Driver's current lat
      * @param lng Driver current lng
-     * @param limit jobs limit - OPTIONAL
-     * @return Loadboard jobs list
+     * @param serviceCode Service code to filter list with
+     * @param distance Radius within which job request to be fetched
+     * @param sort Sorting filter
+     * @return Call<GetJobRequestListResponse>
      */
     @GET("/v1/bookings")
     fun getJobs(
@@ -46,41 +45,117 @@ interface Backend {
             @Query("sort") sort: String = "nearby"): Call<GetJobRequestListResponse>
 
     /**
-     * Getting loadboard job details
-     * @param driverId Driver id
+     * Requests job request detail
+     * @param driverId Driver ID
      * @param token Driver access token
-     * @return Loadboard job details
+     * @param jobRequestId Job Request ID to be fetched
+     * @param lat Driver's current lat
+     * @param lng Driver current lng
+     * @return Call<GetJobRequestDetailResponse>
      */
-    @GET("/v1/bookings/{booking_id}")
+    @GET("/v1/bookings/{job_request_id}")
     fun getJob(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
-            @Path("booking_id") jobRequestId: Long,
+            @Path("job_request_id") jobRequestId: Long,
             @Query("lat") lat: Double,
             @Query("lng") lng: Double): Call<GetJobRequestDetailResponse>
 
     /**
-     * Getting loadboard job details
-     * @param driverId Driver id
+     * Requests Picking/self-assigning job request
+     * @param driverId Driver ID
      * @param token Driver access token
-     * @return Loadboard job details
+     * @param jobRequestId Job Request ID
+     * @param body AcceptJobRequest
+     * @return Call<AcceptJobResponse>
      */
     @POST("/v1/bookings/{job_request_id}/assign")
-    fun acceptJob(
-            @Path("job_request_id") jobId: Long,
+    fun pickJob(
             @Header("x-lb-user-id") driverId: String,
             @Header("x-lb-user-token") token: String,
-            @Body body: AcceptJobRequest): Call<AcceptJobResponse>
+            @Path("job_request_id") jobRequestId: Long,
+            @Body body: PickJobRequest): Call<PickJobResponse>
 
     /**
-     * Driver finishes active job
-     * @param body Body having details of job
-     * @return Server response
+     * Requests acknowledgement on receiving job call
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/api/v1/trips/{job_id}/acknowledgement")
+    fun acknowledgeJobCall(@Path("job_id") jobId: String, @Body body: AckJobCallRequest): Call<AckJobCallResponse>
+
+    /**
+     * Requests to accept job call
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/api/v1/trips/{job_id}/accept")
+    fun acceptJobCall(@Path("job_id") jobId: String, @Body body: AcceptJobRequest): Call<AcceptJobCallResponse>
+
+    /**
+     * Requests active job details
+     * @param driverId Driver ID
+     * @param token Driver access token
+     */
+//    @GET("/api/v1/driver/activeTrip")
+//    fun getActiveJob(@Query("_id") driverId: String, @Query("token_id") token: String): Call<GetActiveJobResponse>
+
+    /**
+     * Requests to change job drop-off
+     * @param jobId Job ID
+     * @param body ChangeDropOffRequest
+     * @return Call<AcceptJobCallResponse>
+     */
+    @PUT("/api/v1/trips/{job_id}/dropoff/partner")
+    fun changeDropOff(@Path("job_id") jobId: String, @Body body: ChangeDropOffRequest): Call<AcceptJobCallResponse>
+
+    /**
+     * Requests to mark arrived for active job
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/api/v1/trips/{job_id}/arrived")
+    fun arrivedForJob(@Path("job_id") jobId: String, @Body body: ArrivedAtJobRequest): Call<ArriveAtJobResponse>
+
+    /**
+     * Requests to start active job
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/api/v1/trips/{job_id}/start")
+    fun startJob(@Path("job_id") jobId: String, @Body body: StartJobRequest): Call<StartJobResponse>
+
+    /**
+     * Requests to cancel active job
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/api/v1/driver/cancel")
+    fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobBadResponse>
+
+    /**
+     * Requests to finish active job
+     * @param jobId Job ID
+     * @param body FinishJobRequest
+     * @return Call<FinishJobResponse>
      */
     @POST("/api/v1/trips/{job_id}/finish")
     fun finishJob(@Path("job_id") jobId: String, @Body body: FinishJobRequest): Call<FinishJobResponse>
 
     /**
+     * Requests to conclude active job including feedback
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/api/v1/trips/{job_id}/feedback")
+    fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobBadResponse>
+
+     /**
      * Get Driver Email Update
      * @param email Driver email
      * @param _id Driver id
@@ -121,12 +196,32 @@ interface Backend {
             @Query("_id") driverId: String,
             @Query("token_id") token: String): Call<GetJobRequestDetailResponse>
 
+    @GET("/api/v1/driver/paymentmethods")
+    fun getWithdrawalPaymentMethods(
+            @Query("token_id") token: String,
+            @Query("_id") driverId: String
+            ): Call<GetWithdrawalPaymentMethods>
+
+    @PUT("/api/v1/driver/withdrawal")
+    @FormUrlEncoded
+    fun getPerformWithdraw(
+            @Field("token_id") token: String,
+            @Field("_id") driverId: String,
+            @Field("payment_method") paymentMethod: Number,
+            @Field("amount") amount: Number
+         ): Call<WithdrawPostResponse>
+
+    @GET("/api/v1/driver/getProfile")
+    fun getDriverProfile(@Query("_id") _id: String,
+                           @Query("token_id") token_id: String,
+                           @Query("user_type") userType: String): Call<GetDriverProfile>
+
     companion object {
 
         var FLAVOR_URL_TELOS: String = ""
         var FLAVOR_URL_LOADBOARD: String = ""
 
-        val telos by lazy {
+        val talos by lazy {
             invoke(if (FLAVOR_URL_TELOS != "") FLAVOR_URL_TELOS else BuildConfig.FLAVOR_URL_TELOS)
         }
 
@@ -162,5 +257,4 @@ interface Backend {
                     .create(Backend::class.java)
         }
     }
-
 }
