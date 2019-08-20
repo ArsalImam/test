@@ -33,15 +33,6 @@ data class Job(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
 
 }
 
-data class Stop(
-        val address: String?,
-        val zone_en: String?,
-        val zone_ur: String?,
-        val lat: Double,
-        val lng: Double,
-        val distance: Int,
-        val duration: Int
-)
 
 data class Contact(
         val name: String?,

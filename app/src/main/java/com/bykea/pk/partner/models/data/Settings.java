@@ -28,7 +28,45 @@ public class Settings {
     private String cih_range;
     private String partner_topup_limit;
     private String van_partner_topup_limit;
-    private String partner_signup_url ;
+    private String partner_signup_url;
+
+    @SerializedName("withdraw_partner_min_limit")
+    private double withdrawPartnerMinLimit;
+
+    /**
+     * getter withdraw partner max limit
+     * @return withdrawPartnerMinLimit
+     */
+    public double getWithdrawPartnerMinLimit() {
+        return withdrawPartnerMinLimit;
+    }
+
+    /**
+     * setter of withdrawPartnerMinLimit
+     * @param withdrawPartnerMinLimit withdrawPartnerMinLimit
+     */
+    public void setWithdrawPartnerMinLimit(double withdrawPartnerMinLimit) {
+        this.withdrawPartnerMinLimit = withdrawPartnerMinLimit;
+    }
+
+    /**
+     * getter withdraw partner max limit
+     * @return withdrawPartnerMaxLimit
+     */
+    public double getWithdrawPartnerMaxLimit() {
+        return withdrawPartnerMaxLimit;
+    }
+
+    /**
+     * setter of withdrawPartnerMaxLimit
+     * @param withdrawPartnerMaxLimit withdrawPartnerMaxLimit
+     */
+    public void setWithdrawPartnerMaxLimit(double withdrawPartnerMaxLimit) {
+        this.withdrawPartnerMaxLimit = withdrawPartnerMaxLimit;
+    }
+
+    @SerializedName("withdraw_partner_max_limit")
+    private double withdrawPartnerMaxLimit;
 
     public String getCancel_time() {
         return cancel_time;
@@ -111,4 +149,5 @@ public class Settings {
     public void setVan_partner_topup_limit(String van_partner_topup_limit) {
         this.van_partner_topup_limit = van_partner_topup_limit;
     }
+
 }

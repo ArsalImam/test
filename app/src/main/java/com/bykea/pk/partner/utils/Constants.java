@@ -2,7 +2,6 @@ package com.bykea.pk.partner.utils;
 
 
 import com.bykea.pk.partner.BuildConfig;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
@@ -68,6 +67,7 @@ public class Constants {
 
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
+    public static final String EVENT_ACTION_UPDATE_WITHDRAW = "EVENT_ACTION_UPDATE_WITHDRAW";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
@@ -271,6 +271,7 @@ public class Constants {
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
         public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
         public final static String ON_RIDE_COMPLETE = "RideComplete";
+        public final static String ON_PARTNER_LOCATION_UPDATE = "Partner-Pulse";
 
         public final static String ON_LB_SWIPE_UP = EYE_BALL + "LoadBoard-Swipe-Up";
         public final static String ON_LB_REFRESH = EYE_BALL + "LoadBoard-Refreshed";
@@ -366,6 +367,7 @@ public class Constants {
         public static final String SEND_TITLE = "Delivery";
         public static final int SEND_CODE = 21;
         public static final int SEND_COD_CODE = 22;
+        public static final int RIDE_CODE = 23;
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -476,7 +478,7 @@ public class Constants {
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
         public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
         public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
-
+        public static final int ERROR_MSG_CODE = 1050;
     }
 
     /**
