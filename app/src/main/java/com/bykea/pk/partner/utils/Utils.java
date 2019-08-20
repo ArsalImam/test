@@ -1807,7 +1807,8 @@ public class Utils {
         FirebaseAnalytics.getInstance(context).setUserProperty("driver_id", AppPreferences.getPilotData().getId());
 
         // SET PASSENGER_ID AS USER PROPERTY WHEN USER_ID IS NOT EQUALS TO DRIVER_ID
-        if (!userId.equals(AppPreferences.getPilotData().getId()))
+        if (StringUtils.isNotEmpty(userId) && StringUtils.isNotEmpty(AppPreferences.getPilotData().getId()) &&
+                !userId.equals(AppPreferences.getPilotData().getId()))
             FirebaseAnalytics.getInstance(context).setUserProperty("passenger_id", userId);
 
         FirebaseAnalytics.getInstance(context).setUserProperty("cash_in_hand", String.valueOf(AppPreferences.getCashInHands()));
