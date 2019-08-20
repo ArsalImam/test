@@ -2,7 +2,6 @@ package com.bykea.pk.partner.utils;
 
 
 import com.bykea.pk.partner.BuildConfig;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class Constants {
     public static final String GCM_PROJECT_NO = "764640458585";
@@ -68,6 +67,7 @@ public class Constants {
 
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
+    public static final String EVENT_ACTION_UPDATE_WITHDRAW = "EVENT_ACTION_UPDATE_WITHDRAW";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
@@ -271,6 +271,7 @@ public class Constants {
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
         public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
         public final static String ON_RIDE_COMPLETE = "RideComplete";
+        public final static String ON_PARTNER_LOCATION_UPDATE = "Partner-Pulse";
 
         public final static String ON_LB_SWIPE_UP = EYE_BALL + "LoadBoard-Swipe-Up";
         public final static String ON_LB_REFRESH = EYE_BALL + "LoadBoard-Refreshed";
@@ -366,6 +367,7 @@ public class Constants {
         public static final String SEND_TITLE = "Delivery";
         public static final int SEND_CODE = 21;
         public static final int SEND_COD_CODE = 22;
+        public static final int RIDE_CODE = 23;
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -476,7 +478,7 @@ public class Constants {
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
         public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
         public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
-
+        public static final int ERROR_MSG_CODE = 1050;
     }
 
     /**
@@ -517,4 +519,72 @@ public class Constants {
         public static final int EVENT_MAX_STRING_VALUES = 10;
         public static final int EVENT_MAX_NUMERIC_VALUES = 40;
     }
+
+    /**
+     * Zendesk SDK Configurations
+     */
+    public static class ZendeskConfigurations {
+        //OLD KEYS
+        /*public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
+        public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";*/
+
+        //PROD KEYS
+        public static String SUBDOMAIN_URL = "https://bykea.zendesk.com";
+        public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
+
+        public static long ZENDESK_SETTING_IDENTITY_MAX_TIME = 10 * 1000;//2.5 Minutes
+        public static long ZENDESK_SETTING_IDENTITY_INTERVAL_TIME = 100;//0.1 Second
+
+    }
+
+    /**
+     * Zendesk Custom Fields
+     */
+    public static class ZendeskCustomFields {
+        public static long Assignee = 360020675574L;
+        public static long Booking_ID = 360023253253L;
+        public static long Booking_Type = 360023253273L;
+        public static long Cancellation_Reason = 360023253733L;
+        public static long Cancelled_by = 360023230954L;
+        public static long COD_Amount = 360023253373L;
+        public static long Customer_Name = 360023230174L;
+        public static long Customer_Number = 360023253053L;
+        public static long Customer_Penalty_Amount = 360023231274L;
+        public static long Description = 360020675474L;
+        public static long Distance_to_Pickup = 360023254053L;
+        public static long Group = 360020675554L;
+        public static long Last_Trip_Status = 360023230914L;
+        public static long Parcel_Value = 360023253293L;
+        public static long Partner_Email = 360023230334L;
+        public static long Partner_Name = 360023253073L;
+        public static long Partner_Number = 360023253093L;
+        public static long Partner_Penalty_Amount = 360023231434L;
+        public static long Priority = 360020675534L;
+        public static long Problem_Topic_Selected = 360023230514L;
+        public static long Received_Amount = 360023230934L;
+        public static long Receivers_Name = 360023230674L;
+        public static long Receivers_Number = 360023253353L;
+        public static long Status = 360020675494L;
+        public static long Subject = 360020675454L;
+        public static long Trip_Distance = 360023253553L;
+        public static long Trip_End_Address = 360023253573L;
+        public static long Trip_Fare = 360023230694L;
+        public static long Trip_Start_Address = 360023230894L;
+        public static long Trip_Time = 360023230854L;
+        public static long Type = 360020675514L;
+        public static long Wait_Time = 360023230974L;
+        public static long Wallet_Deduction = 360023253753L;
+    }
+
+    public static class ZendeskTicketStatus {
+        public static String New = "New";
+        public static String Open = "Open";
+        public static String Pending = "Pending";
+        public static String Solved = "Solved";
+    }
+
+    public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
+    public final static String REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a";
 }

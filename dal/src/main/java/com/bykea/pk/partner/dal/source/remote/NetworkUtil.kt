@@ -1,8 +1,10 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import android.content.res.Resources
+import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.R
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.security.KeyStore
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
@@ -55,6 +57,10 @@ object NetworkUtil {
      * Obtain the Unsafe OkHttp Client
      */
     fun getUnsafeOkHttpClient(): OkHttpClient {
+
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            this.level = HttpLoggingInterceptor.Level.BODY
+        }
         try {
             // Create a trust manager that does not validate certificate chains
             val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
@@ -81,6 +87,7 @@ object NetworkUtil {
             val builder = OkHttpClient.Builder()
             builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
             builder.hostnameVerifier { hostname, session -> true }
+            if (BuildConfig.DEBUG) builder.addNetworkInterceptor(loggingInterceptor)
 
             return builder.build()
         } catch (e: Exception) {

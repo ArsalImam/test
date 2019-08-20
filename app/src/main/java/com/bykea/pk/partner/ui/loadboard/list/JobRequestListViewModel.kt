@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
-import com.bykea.pk.partner.ui.loadboard.common.Event
+import com.bykea.pk.partner.ui.common.Event
 import java.util.*
 
 /**

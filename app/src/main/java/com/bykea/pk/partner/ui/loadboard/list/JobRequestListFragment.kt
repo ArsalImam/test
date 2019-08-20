@@ -16,20 +16,19 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.databinding.JobRequestListFragBinding
 import com.bykea.pk.partner.ui.activities.HomeActivity
+import com.bykea.pk.partner.ui.common.obtainViewModel
+import com.bykea.pk.partner.ui.common.setupSnackbar
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
-import com.bykea.pk.partner.ui.loadboard.common.AnalyticsEventsJsonObjects
-import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
-import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.*
+import com.bykea.pk.partner.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.job_request_list_frag.*
-import org.json.JSONObject
 
 
 /**

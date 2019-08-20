@@ -30,9 +30,11 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.DataSaverDialogFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
+import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
+import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -98,6 +100,9 @@ public class HomeActivity extends BaseActivity {
         mUserRepository = new UserRepository();
         pilotData = AppPreferences.getPilotData();
         setToolbarLogo();
+
+        Utils.setZendeskIdentity();
+
         initViews();
         setupDrawerToggle();
         Utils.unlockScreen(this);
@@ -116,7 +121,6 @@ public class HomeActivity extends BaseActivity {
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
 
         Notifications.clearNotifications(mCurrentActivity);
-//        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
         Utils.clearSharedPrefIfDirty(mCurrentActivity);
     }
@@ -131,6 +135,11 @@ public class HomeActivity extends BaseActivity {
                 Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
             else {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+            }
+        } else if (requestCode == WithdrawalActivity.REQ_CODE_WITH_DRAW) {
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
+            if (currentFragment instanceof WalletFragment) {
+                ((WalletFragment) currentFragment).updateHistory();
             }
         }
     }
@@ -316,6 +325,7 @@ public class HomeActivity extends BaseActivity {
 
         }
     }
+
 
     /**
      * This method handles new intent when activity is started with Intent.FLAG_ACTIVITY_CLEAR_TOP.

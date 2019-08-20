@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.pref.AppPref
+import com.bykea.pk.partner.ui.common.Event
 import com.bykea.pk.partner.ui.helpers.AppPreferences
-import com.bykea.pk.partner.ui.loadboard.common.AnalyticsEventsJsonObjects
-import com.bykea.pk.partner.ui.loadboard.common.Event
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.maps.model.LatLng
@@ -73,7 +73,7 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
      */
     fun accept() {
         bookingId?.let {
-            bookingsRepository.acceptJobRequest(it, this)
+            bookingsRepository.pickJob(it, this)
         }
     }
 
@@ -115,8 +115,8 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
         _acceptBookingCommand.value = Event(Unit)
     }
 
-    override fun onJobRequestAcceptFailed(message: String?, taken: Boolean) {
-        if (taken) {
+    override fun onJobRequestAcceptFailed(code: Int, message: String?) {
+        if (code == 422) {
             _bookingTakenCommand.value = Event(Unit)
         } else {
             showSnackbarMessage(R.string.error_try_again)

@@ -11,13 +11,13 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.databinding.JobRequestDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.common.obtainViewModel
+import com.bykea.pk.partner.ui.common.setupSnackbar
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
-import com.bykea.pk.partner.ui.loadboard.common.AnalyticsEventsJsonObjects
-import com.bykea.pk.partner.ui.loadboard.common.obtainViewModel
-import com.bykea.pk.partner.ui.loadboard.common.setupSnackbar
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils

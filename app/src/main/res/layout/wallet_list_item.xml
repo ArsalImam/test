@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
     android:id="@+id/rlWalletItem"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/_14sdp"
+    android:background="@color/white"
     android:paddingTop="@dimen/_14sdp"
-    android:background="@color/white">
+    android:paddingBottom="@dimen/_14sdp">
 
     <LinearLayout
         android:id="@+id/llTop"
@@ -83,8 +83,8 @@
                 android:id="@+id/tvDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="21 Mar, 11:59 a.m."
                 android:gravity="center"
+                android:text="21 Mar, 11:59 a.m."
                 android:textColor="@color/textColorPrimary"
                 android:textSize="@dimen/textsize.wallet.item"
                 app:fontName="roboto_regular.ttf" />
@@ -141,8 +141,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/llTop"
         android:paddingLeft="@dimen/_7sdp"
-        android:paddingRight="@dimen/_7sdp"
         android:paddingTop="@dimen/_5sdp"
+        android:paddingRight="@dimen/_7sdp"
         android:text="Paid via Wallet"
         android:textColor="@color/textColorPrimary"
         android:textSize="@dimen/_9sdp"

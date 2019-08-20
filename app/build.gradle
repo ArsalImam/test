@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 41
-        versionName "6.0"
+        versionCode 44
+        versionName "6.3"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -68,22 +68,26 @@ android {
 
         }
 
-        flavorDimensions "driver"
+        flavorDimensions "env"
         productFlavors {
             local {
-                dimension "driver"
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.0.122:3000\""
+            }
+            develop {
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
             }
             staging {
-                dimension "driver"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging.bykea.net:3000\""
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL", "\"https://staging-lb-talos.bykea.net\""
             }
             livetesting {
-                dimension "driver"
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3001\""
             }
             production {
-                dimension "driver"
+                dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3000\""
             }
         }
@@ -141,6 +145,7 @@ repositories {
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     maven { url "https://jitpack.io" }
     maven { url "https://maven.google.com" }
+    maven { url 'https://zendesk.jfrog.io/zendesk/repo' }
     /*maven {
         url 'http://artifactory.paysyslabs.com/instascan-complete'
         credentials {
@@ -149,7 +154,6 @@ repositories {
         }
     }*/
 }
-
 dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.10'
     kapt 'com.jakewharton:butterknife-compiler:10.1.0'
@@ -216,6 +220,7 @@ dependencies {
 
     //Amazon client sdk to upload file
     implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
+    implementation group: 'com.zendesk', name: 'support', version: '2.3.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
