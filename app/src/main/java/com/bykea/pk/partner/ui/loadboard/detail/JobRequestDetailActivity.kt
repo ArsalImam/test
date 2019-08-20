@@ -20,6 +20,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
@@ -188,22 +189,30 @@ class JobRequestDetailActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Set Markers for PickUp and DropOff
+     */
     private fun setMarkersForPickUpAndDropOff(mMap: GoogleMap) {
-        val mLatLngPickUp = LatLng(binding.viewmodel?.job?.value?.pickup?.lat!!, binding.viewmodel?.job?.value?.pickup?.lng!!)
-        setMarker(mMap, mLatLngPickUp, R.drawable.ic_marker_pickup)
-
-        val mLatLngDropOff = LatLng(binding.viewmodel?.job?.value?.dropoff?.lat!!, binding.viewmodel?.job?.value?.dropoff?.lng!!)
-        setMarker(mMap, mLatLngDropOff, R.drawable.ic_marker_dropoff)
-
+        Util.safeLet(binding.viewmodel?.job?.value?.pickup?.lat, binding.viewmodel?.job?.value?.pickup?.lng) { lat, lng ->
+            setMarker(mMap, LatLng(lat, lng), R.drawable.ic_marker_pickup)
+        }
+        Util.safeLet(binding.viewmodel?.job?.value?.dropoff?.lat, binding.viewmodel?.job?.value?.dropoff?.lng) { lat, lng ->
+            setMarker(mMap, LatLng(lat, lng), R.drawable.ic_marker_dropoff)
+        }
         setPickupBounds(mMap)
     }
 
+    /**
+     * Set Markets For Latitude and Longitude
+     */
     private fun setMarker(mMap: GoogleMap, mLatLngPickUp: LatLng, drawable: Int) {
-        val mMarker = mMap
-                .addMarker(MarkerOptions()
-                        .icon(bitmapDescriptorFromVector(this, drawable))
-                        .position(mLatLngPickUp))
-        mMarkerList.add(mMarker)
+        mLatLngPickUp.let {
+            val mMarker = mMap
+                    .addMarker(MarkerOptions()
+                            .icon(bitmapDescriptorFromVector(this, drawable))
+                            .position(mLatLngPickUp))
+            mMarkerList.add(mMarker)
+        }
     }
 
     private fun bitmapDescriptorFromVector(context: Context?, vectorResId: Int): BitmapDescriptor {
