@@ -20,8 +20,10 @@ import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.BookingAcceptedResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
@@ -39,6 +41,8 @@ import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+
+import java.net.HttpURLConnection;
 
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_REQUEST;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_UPDATED_DROP_OFF;
@@ -166,8 +170,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (data != null && AppPreferences.getAvailableStatus()) {
                     if (data.getBatchID() != null) {
                         AppPreferences.setMultiDeliveryCallDriverData(data);
-                        ActivityStackManager.getInstance().startMultiDeliveryCallingActivity(
-                                AppPreferences.getMultiDeliveryCallDriverData(), true, DriverApp.getContext());
+                        new UserRepository().requestDriverAcknowledged(handler);
                     }
                 }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
@@ -393,4 +396,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             new UserRepository().updateRegid(this, new UserDataHandler());
         }
     }
+
+
+    /**
+     * Handle for Acknowledge API Call
+     */
+    private static IUserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse
+                                                        response) {
+            if (response != null) {
+                ActivityStackManager
+                        .getInstance()
+                        .startMultiDeliveryCallingActivity(
+                                AppPreferences.getMultiDeliveryCallDriverData(),
+                                true,
+                                DriverApp.getContext()
+                        );
+            }
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+            } else {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                Utils.redLog("Error:", errorMessage);
+            }
+        }
+    };
 }
