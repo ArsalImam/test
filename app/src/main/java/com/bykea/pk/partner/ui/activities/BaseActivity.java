@@ -661,7 +661,7 @@ public class BaseActivity extends AppCompatActivity {
             Utils.onUnauthorizedMockLocation(mCurrentActivity);
         } else if (Keys.MULTIDELIVERY_ERROR_BORADCAST.equalsIgnoreCase(action)) {
             //MULTI DELIVERY EVENT ERROR HANDLING
-            Utils.appToast(mCurrentActivity,
+            Utils.appToast(
                     mCurrentActivity.getString(R.string.error_try_again));
         } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
             Utils.multiDeliveryFreeDriverOnBatchComplete();

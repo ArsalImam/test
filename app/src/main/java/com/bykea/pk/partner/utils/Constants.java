@@ -271,6 +271,7 @@ public class Constants {
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
         public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
         public final static String ON_RIDE_COMPLETE = "RideComplete";
+        public final static String ON_PARTNER_LOCATION_UPDATE = "Partner-Pulse";
 
         public final static String ON_LB_SWIPE_UP = EYE_BALL + "LoadBoard-Swipe-Up";
         public final static String ON_LB_REFRESH = EYE_BALL + "LoadBoard-Refreshed";
@@ -586,4 +587,10 @@ public class Constants {
 
     public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
     public final static String REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a";
+
+    public static String WHATSAPP_URI_PREFIX = "https://wa.me/";
+
+    public static class ApplicationsPackageName {
+        public static String WHATSAPP_PACKAGE = "com.whatsapp";
+    }
 }

@@ -194,10 +194,10 @@ public class Utils {
         }
     }
 
-    public static void appToastDebug(Context context, String message) {
+    public static void appToastDebug(String message) {
         if (BuildConfig.DEBUG) {
             try {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                appToast(message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -219,16 +219,15 @@ public class Utils {
     /**
      * Show application toast
      *
-     * @param context Holding the reference of an activity.
      * @param message The message that will display in toast.
      */
-    public static void appToast(final Context context, final String message) {
+    public static void appToast(final String message) {
         try {
             if (StringUtils.isNotBlank(message)) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -888,7 +887,7 @@ public class Utils {
         try {
             context.startActivity(Intent.createChooser(i, "Send mail..."));
         } catch (ActivityNotFoundException ex) {
-            Toast.makeText(context, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+            appToast("There are no email clients installed.");
         }
     }
 
@@ -969,7 +968,7 @@ public class Utils {
         try {
             context.startActivity(sendIntent);
         } catch (ActivityNotFoundException ex) {
-            Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
+            appToastDebug("WhatsApp is not installed.");
         }
     }
 
@@ -990,7 +989,7 @@ public class Utils {
         try {
             context.startActivity(sendIntent);
         } catch (ActivityNotFoundException ex) {
-            Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
+            appToast("WhatsApp is not installed.");
         }
     }
 
@@ -1808,7 +1807,8 @@ public class Utils {
         FirebaseAnalytics.getInstance(context).setUserProperty("driver_id", AppPreferences.getPilotData().getId());
 
         // SET PASSENGER_ID AS USER PROPERTY WHEN USER_ID IS NOT EQUALS TO DRIVER_ID
-        if (!userId.equals(AppPreferences.getPilotData().getId()))
+        if (StringUtils.isNotEmpty(userId) && StringUtils.isNotEmpty(AppPreferences.getPilotData().getId()) &&
+                !userId.equals(AppPreferences.getPilotData().getId()))
             FirebaseAnalytics.getInstance(context).setUserProperty("passenger_id", userId);
 
         FirebaseAnalytics.getInstance(context).setUserProperty("cash_in_hand", String.valueOf(AppPreferences.getCashInHands()));
@@ -1834,7 +1834,7 @@ public class Utils {
                 if (intent.resolveActivityInfo(context.getPackageManager(), 0) != null) {
                     context.startActivity(intent);
                 } else {
-                    Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.no_browser_found_error));
+                    Utils.appToast(DriverApp.getContext().getString(R.string.no_browser_found_error));
                 }
             }
         }
@@ -2217,7 +2217,7 @@ public class Utils {
             return true;
         } else {
             if (showToast) {
-                appToast(context, context.getString(R.string.error_internet_connectivity));
+                appToast(context.getString(R.string.error_internet_connectivity));
             }
             return false;
         }
@@ -2432,7 +2432,7 @@ public class Utils {
                     errorReason.getErrorDialog(context, 1).show();
                 } else {
                     String errorMessage = errorReason.toString();
-                    Utils.appToast(context, errorMessage);
+                    Utils.appToast(errorMessage);
                 }
             }
         });
@@ -2494,7 +2494,7 @@ public class Utils {
                     errorReason.getErrorDialog(context, 1).show();
                 } else {
                     String errorMessage = errorReason.toString();
-                    Utils.appToast(context, errorMessage);
+                    Utils.appToast(errorMessage);
                 }
             }
         });
@@ -3112,7 +3112,7 @@ public class Utils {
             mapIntent.setPackage("com.google.android.apps.maps");
             context.startActivity(mapIntent);
         } catch (Exception ex) {
-            Utils.appToast(context, context.getString(R.string.google_maps_missing_error));
+            Utils.appToast(context.getString(R.string.google_maps_missing_error));
         }
 
     }
@@ -3258,5 +3258,38 @@ public class Utils {
      */
     public static void setZendeskIdentity() {
         Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverId()));
+    }
+
+    /**
+     * Add DD Property (True/False)
+     *
+     * @param jsonObject : JSONObject To Add Priority
+     */
+    public static void addDriverDestinationProperty(JSONObject jsonObject) {
+        try {
+            if (AppPreferences.getDriverDestination() != null)
+                jsonObject.put("DD", true);
+            else
+                jsonObject.put("DD", false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     *
+     * @param context : Calling Activity
+     * @param uri : Package
+     * @return If Application Is Installed Return True Else False
+     */
+    public static boolean isAppInstalledWithPackageName(Context context, String uri) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 }

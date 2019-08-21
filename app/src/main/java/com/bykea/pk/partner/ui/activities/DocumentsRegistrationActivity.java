@@ -319,7 +319,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             }
         }
         if (!valid) {
-            Utils.appToast(mCurrentActivity, "Please upload all documents");
+            Utils.appToast("Please upload all documents");
         } else if (StringUtils.isNotBlank(etEmail.getText().toString())
                 && !Utils.isValidEmail(etEmail.getText().toString())) {
             etEmail.setError("Enter valid Email");
@@ -432,7 +432,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Utils.appToast(mCurrentActivity, getString(R.string.error_try_again));
+                    Utils.appToast(getString(R.string.error_try_again));
                 }
             } else if (requestCode == Constants.REQUEST_CAMERA) {
                 try {
@@ -442,11 +442,11 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Utils.appToast(mCurrentActivity, getString(R.string.error_try_again));
+                    Utils.appToast(getString(R.string.error_try_again));
                 }
             }
         } else {
-            Utils.appToast(mCurrentActivity, getString(R.string.error_picture_not_selected));
+            Utils.appToast(getString(R.string.error_picture_not_selected));
         }
     }
 
@@ -607,7 +607,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                 Dialogs.INSTANCE.dismissDialog();
                 mAdapter.getItem(mAdapter.getSelectedItemIndex()).setUploading(false);
                 mAdapter.notifyItemChanged(mAdapter.getSelectedItemIndex());
-                Utils.appToast(mCurrentActivity, errorMessage);
+                Utils.appToast(errorMessage);
             }
         }
     };

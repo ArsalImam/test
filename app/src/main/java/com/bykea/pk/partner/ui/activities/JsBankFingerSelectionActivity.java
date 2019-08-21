@@ -22,12 +22,8 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class JsBankFingerSelectionActivity extends BaseActivity implements View.OnTouchListener {
     private String DRIVER_ID;
@@ -200,7 +196,7 @@ public class JsBankFingerSelectionActivity extends BaseActivity implements View.
         public void onError(int errorCode, String errorMessage) {
             if (mCurrentActivity != null) {
                 Dialogs.INSTANCE.dismissDialog();
-                Utils.appToast(mCurrentActivity, errorMessage);
+                Utils.appToast(errorMessage);
             }
         }
     };
