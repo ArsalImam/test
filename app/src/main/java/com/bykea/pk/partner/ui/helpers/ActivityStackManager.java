@@ -18,7 +18,8 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.HandleInactivePushService;
-import com.bykea.pk.partner.services.LocationService;
+import com.bykea.pk.partner.services.LocationTrackingService;
+import com.bykea.pk.partner.services.TrackingService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
@@ -243,11 +244,19 @@ public class ActivityStackManager {
     }
 
     public void startLocationService(Context mContext) {
-        if (!Utils.isServiceRunning(mContext, LocationService.class)) {
-            Intent intent = new Intent(mContext, LocationService.class);
+        if (!Utils.isServiceRunning(mContext, LocationTrackingService.class)) {
+            Intent intent = new Intent(mContext, LocationTrackingService.class);
             intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
             startService(mContext, intent);
 
+        }
+    }
+
+    public void startLocationServiceX(Context mContext) {
+        if (!Utils.isServiceRunning(mContext, TrackingService.class)) {
+            Intent intent = new Intent(mContext, TrackingService.class);
+            intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
+            startService(mContext, intent);
         }
     }
 
@@ -270,8 +279,16 @@ public class ActivityStackManager {
      * @see Constants.Actions#STOPFOREGROUND_ACTION
      */
     public synchronized void stopLocationService(Context context) {
-        if (Utils.isServiceRunning(context, LocationService.class)) {
-            Intent intent = new Intent(context, LocationService.class);
+        if (Utils.isServiceRunning(context, LocationTrackingService.class)) {
+            Intent intent = new Intent(context, LocationTrackingService.class);
+            intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
+            startService(context, intent);
+        }
+    }
+
+    public synchronized void stopLocationServiceX(Context context) {
+        if (Utils.isServiceRunning(context, TrackingService.class)) {
+            Intent intent = new Intent(context, TrackingService.class);
             intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
             startService(context, intent);
         }
@@ -293,8 +310,15 @@ public class ActivityStackManager {
                 startLocationService(context);
             }
         }, Constants.RESTART_LOCATION_SERVICE_DELAY);*/
-        Intent intent = new Intent(context, LocationService.class);
-        intent.setAction(Utils.isServiceRunning(context, LocationService.class) ?
+        Intent intent = new Intent(context, LocationTrackingService.class);
+        intent.setAction(Utils.isServiceRunning(context, LocationTrackingService.class) ?
+                Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
+        startService(context, intent);
+    }
+
+    public void restartLocationServiceX(final Context context) {
+        Intent intent = new Intent(context, TrackingService.class);
+        intent.setAction(Utils.isServiceRunning(context, TrackingService.class) ?
                 Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
         startService(context, intent);
     }
@@ -306,8 +330,16 @@ public class ActivityStackManager {
      * @param updateInterval interval in millis
      */
     public void restartLocationServiceWithCustomIntervals(final Context context, long updateInterval) {
-        Intent intent = new Intent(context, LocationService.class);
-        intent.setAction(Utils.isServiceRunning(context, LocationService.class) ?
+        Intent intent = new Intent(context, LocationTrackingService.class);
+        intent.setAction(Utils.isServiceRunning(context, LocationTrackingService.class) ?
+                Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
+        intent.putExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL, updateInterval);
+        startService(context, intent);
+    }
+
+    public void restartLocationServiceWithCustomIntervalsX(final Context context, long updateInterval) {
+        Intent intent = new Intent(context, TrackingService.class);
+        intent.setAction(Utils.isServiceRunning(context, TrackingService.class) ?
                 Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
         intent.putExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL, updateInterval);
         startService(context, intent);
@@ -315,8 +347,18 @@ public class ActivityStackManager {
 
     public void restartLocationService(Context mContext, String STATUS) {
         stopLocationService(mContext);
-        if (!Utils.isServiceRunning(mContext, LocationService.class)) {
-            Intent intent = new Intent(mContext, LocationService.class);
+        if (!Utils.isServiceRunning(mContext, LocationTrackingService.class)) {
+            Intent intent = new Intent(mContext, LocationTrackingService.class);
+            intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
+            intent.putExtra(Constants.Extras.LOCATION_SERVICE_STATUS, STATUS);
+            startService(mContext, intent);
+        }
+    }
+
+    public void restartLocationServiceX(Context mContext, String STATUS) {
+        stopLocationService(mContext);
+        if (!Utils.isServiceRunning(mContext, TrackingService.class)) {
+            Intent intent = new Intent(mContext, TrackingService.class);
             intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
             intent.putExtra(Constants.Extras.LOCATION_SERVICE_STATUS, STATUS);
             startService(mContext, intent);

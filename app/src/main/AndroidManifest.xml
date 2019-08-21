@@ -37,10 +37,10 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <service
-            android:name=".services.TrackingService"
-            android:enabled="true"
-            android:exported="true" />
+        <!--        <service-->
+        <!--            android:name=".services.TrackingService"-->
+        <!--            android:enabled="true"-->
+        <!--            android:exported="false" />-->
         <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
@@ -117,7 +117,7 @@
         </provider>
 
         <service
-            android:name=".services.LocationService"
+            android:name=".services.LocationTrackingService"
             android:enabled="true"
             android:exported="false" />
         <service android:name=".services.HandleInactivePushService" />
