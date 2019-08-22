@@ -137,24 +137,6 @@ public class LocationTrackingService extends Service {
                 case HTTPStatus.UNAUTHORIZED:
                     EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
                     break;
-                /*case HTTPStatus.FENCE_ERROR:
-                    AppPreferences.setOutOfFence(true);
-                    AppPreferences.setAvailableStatus(false);
-                    mBus.post(Keys.INACTIVE_FENCE);
-                    break;
-                case HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT:
-                    if (StringUtils.isNotBlank(errorMessage)) {
-                        AppPreferences.setWalletIncreasedError(errorMessage);
-                    }
-                    AppPreferences.setWalletAmountIncreased(true);
-                    AppPreferences.setAvailableStatus(false);
-                    mBus.post(Keys.INACTIVE_FENCE);
-                    break;
-                case HTTPStatus.FENCE_SUCCESS:
-                    AppPreferences.setOutOfFence(false);
-                    AppPreferences.setAvailableStatus(true);
-                    mBus.post(Keys.ACTIVE_FENCE);
-                    break;*/
             }
         }
     };
@@ -172,18 +154,9 @@ public class LocationTrackingService extends Service {
         mBus.register(this);
         mUserRepository = new UserRepository();
         mLocationListener = new LocationListener(LocationManager.GPS_PROVIDER);
-//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (mLocationManager == null) {
-//            mLocationManager = new MyLocationManager(this);
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
-/*        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                onNewLocation(locationResult.getLastLocation());
-            }
-        };*/
         getLastLocation();
         HandlerThread handlerThread = new HandlerThread(TAG);
         handlerThread.start();
@@ -194,7 +167,6 @@ public class LocationTrackingService extends Service {
     private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
-//            Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
             if (Connectivity.isConnectedFast(mContext)) {
                 if (AppPreferences.isLoggedIn()) {
                     DriverApp.getApplication().connect();
@@ -213,7 +185,6 @@ public class LocationTrackingService extends Service {
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         updateTripRouteList(lat, lon);
-                        //DriverETAService.startDriverETAUpdate(DriverApp.getContext());
 
                         //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
                         if (shouldCallLocApi) {
@@ -299,18 +270,8 @@ public class LocationTrackingService extends Service {
         Utils.redLogLocation(TAG, "Requesting location updates");
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-/*
             try {
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-            } catch (SecurityException unlikely) {
-                Utils.redLogLocation(TAG, "Lost location permission. Could not request updates. " + unlikely);
-            }
-            */
-
-            try {
-//            mLocationManager.requestLocationUpdates(MyLocationManager.UseProvider.GPS, FILTER_TIME, GPS_TIME, NET_TIME, mLocationListener, true);
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, mLocationListener);
-
             } catch (SecurityException ex) {
                 Log.i(TAG, "fail to request location update, ignore", ex);
             } catch (IllegalArgumentException ex) {
@@ -350,18 +311,6 @@ public class LocationTrackingService extends Service {
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 onNewLocation(location);
-/*                mFusedLocationClient.getLastLocation()
-                        .addOnCompleteListener(new OnCompleteListener<Location>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Location> task) {
-                                if (task.isSuccessful() && task.getResult() != null) {
-                                    onNewLocation(task.getResult());
-                                    Utils.redLogLocation(TAG, " getLastLocation() Success");
-                                } else {
-                                    Utils.redLogLocation(TAG, " getLastLocation() Error");
-                                }
-                            }
-                        });*/
             }
         } catch (SecurityException unlikely) {
             Utils.redLogLocation(TAG, "Lost location permission." + unlikely);
