@@ -353,7 +353,7 @@ public class TrackingService extends Service {
                     break;
                 }
                 default:
-                    Utils.appToast(this, locationResponse.getMessage());
+                    Utils.appToast(locationResponse.getMessage());
             }
         }
 
