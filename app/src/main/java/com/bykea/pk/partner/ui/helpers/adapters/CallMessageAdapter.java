@@ -26,10 +26,8 @@ public class CallMessageAdapter extends RecyclerView.Adapter<CallMessageAdapter.
     @NonNull
     @Override
     public CallMessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.single_item,
-                parent, false);
-        return new ViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_item, parent, false);
+        return new CallMessageAdapter.ViewHolder(view);
     }
 
     @Override
@@ -43,16 +41,19 @@ public class CallMessageAdapter extends RecyclerView.Adapter<CallMessageAdapter.
         return chatMessagesTranslatedArrayList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         FontTextView tVChatMessageUrdu;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tVChatMessageUrdu = itemView.findViewById(R.id.tVChatMessageUrdu);
-            itemView.setOnClickListener(view -> {
-                if (itemClickListener != null)
-                    itemClickListener.onItemClick(getItem(getAdapterPosition()));
-            });
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (itemClickListener != null)
+                itemClickListener.onItemClick(getItem(getAdapterPosition()));
         }
     }
 
