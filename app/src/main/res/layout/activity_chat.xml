@@ -139,7 +139,7 @@
             <LinearLayout
                 android:id="@+id/linLayoutChatMessages"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="@dimen/_200sdp"
                 android:orientation="vertical">
 
                 <View
