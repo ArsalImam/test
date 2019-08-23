@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.OpusPlayerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -119,15 +120,21 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             }
             viewHolder.audioLayout.setVisibility(View.GONE);
             if (chatMessages.get(position).getMessage().contains(TRANSALATION_SEPERATOR)) {
-                String[] strings = chatMessages.get(position).getMessage().split(TRANSALATION_SEPERATOR);
-                viewHolder.txtMessage.setText(new SpannableStringBuilder("")
-                        .append(StringUtils.SPACE)
-                        .append(FontUtils.getStyledTitle(context, strings[0], Fonts.Jameel_Noori_Nastaleeq.getName()))
-                        .append(StringUtils.SPACE));
-                if (StringUtils.isNotEmpty(strings[1])) {
-                    viewHolder.viewSeperator.setVisibility(View.VISIBLE);
-                    viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
-                    viewHolder.txtMessageSecond.setText(strings[1]);
+                try {
+                    String[] strings = chatMessages.get(position).getMessage().split(TRANSALATION_SEPERATOR);
+                    viewHolder.txtMessage.setText(new SpannableStringBuilder("")
+                            .append(StringUtils.SPACE)
+                            .append(FontUtils.getStyledTitle(context, strings[Constants.DIGIT_ZERO], Fonts.Jameel_Noori_Nastaleeq.getName()))
+                            .append(StringUtils.SPACE));
+                    if (StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+                        viewHolder.viewSeperator.setVisibility(View.VISIBLE);
+                        viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
+                        viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ONE]);
+                    }
+                } catch (Exception e) {
+                    viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+                    viewHolder.viewSeperator.setVisibility(View.GONE);
+                    viewHolder.txtMessageSecond.setVisibility(View.GONE);
                 }
             } else {
                 viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
@@ -361,7 +368,7 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtMessage;
+        public FontTextView txtMessage;
         public TextView txtMessageVoice;
         public ProgressBar loader;
         public SeekBar seekBar;
@@ -372,7 +379,7 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
         public FrameLayout contentLayout;
 
         public View viewSeperator;
-        public TextView txtMessageSecond;
+        public FontTextView txtMessageSecond;
 
         ImageView image;
         Context context;
@@ -382,15 +389,15 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             super(itemView);
             this.context = context;
             image = itemView.findViewById(R.id.image);
-            txtDate = (TextView) itemView.findViewById(R.id.txtDate);
-            txtMessage = (TextView) itemView.findViewById(R.id.txtMessage);
-            txtMessageVoice = (TextView) itemView.findViewById(R.id.txtMessageVoice);
-            loader = (ProgressBar) itemView.findViewById(R.id.loader);
-            contentLayout = (FrameLayout) itemView.findViewById(R.id.content);
-            audioLayout = (LinearLayout) itemView.findViewById(R.id.audioLayout);
-            seekBar = (SeekBar) itemView.findViewById(R.id.seekbar);
-            audioLength = (FontTextView) itemView.findViewById(R.id.audioLength);
-            imgPessanger = (ImageView) itemView.findViewById(R.id.imgPessenger);
+            txtDate = itemView.findViewById(R.id.txtDate);
+            txtMessage = itemView.findViewById(R.id.txtMessage);
+            txtMessageVoice = itemView.findViewById(R.id.txtMessageVoice);
+            loader = itemView.findViewById(R.id.loader);
+            contentLayout = itemView.findViewById(R.id.content);
+            audioLayout = itemView.findViewById(R.id.audioLayout);
+            seekBar = itemView.findViewById(R.id.seekbar);
+            audioLength = itemView.findViewById(R.id.audioLength);
+            imgPessanger = itemView.findViewById(R.id.imgPessenger);
             viewSeperator = itemView.findViewById(R.id.viewSeperator);
             txtMessageSecond = itemView.findViewById(R.id.txtMessageSecond);
         }

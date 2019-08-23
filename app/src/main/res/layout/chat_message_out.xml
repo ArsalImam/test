@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingLeft="@dimen/margin.small"
     android:paddingRight="@dimen/margin.small">
 
@@ -40,14 +41,14 @@
                 android:orientation="vertical">
 
 
-                <TextView
+                <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/txtMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|center_vertical"
                     android:layout_margin="@dimen/margin.small"
                     android:ellipsize="end"
-                    android:text="message"
+                    tools:text="message"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.small"
                     android:visibility="visible" />
@@ -59,14 +60,14 @@
                     android:background="@color/color_graya5a5a5"
                     android:visibility="gone" />
 
-                <TextView
+                <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/txtMessageSecond"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|center_vertical"
                     android:layout_margin="@dimen/margin.small"
                     android:ellipsize="end"
-                    android:text="message"
+                    tools:text="message"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.small"
                     android:visibility="gone" />

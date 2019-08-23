@@ -4,6 +4,10 @@ package com.bykea.pk.partner.utils;
 import com.bykea.pk.partner.BuildConfig;
 
 public class Constants {
+    public static final int DIGIT_ZERO = 0;
+    public static final int DIGIT_ONE = 1;
+    public static final int DIGIT_TWO = 2;
+
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
     public static final String APP_NAME = "BYKEA PARTNER";
