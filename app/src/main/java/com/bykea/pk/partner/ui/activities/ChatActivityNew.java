@@ -63,6 +63,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -195,6 +196,14 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
         lastAdapter = new LastAdapter(R.layout.chat_message_selection_single_item, item -> {
             ChatMessagesTranslated chatMessagesTranslated = (ChatMessagesTranslated) item;
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("chat_msg", Utils.getConcatenatedTransalation(chatMessagesTranslated));
+                Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_CHAT_TEMPLATE_TAPPED, jsonObject, true);
+            } catch (Exception e) {
+
+            }
             sendMessageRemoteRepository(Utils.getConcatenatedTransalation(chatMessagesTranslated));
         });
         lastAdapter.setItems(chatMessagesTranslatedArrayList);
