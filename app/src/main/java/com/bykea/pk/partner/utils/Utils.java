@@ -46,6 +46,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Pair;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -77,6 +78,7 @@ import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
@@ -3278,9 +3280,8 @@ public class Utils {
 
 
     /**
-     *
      * @param context : Calling Activity
-     * @param uri : Package
+     * @param uri     : Package
      * @return If Application Is Installed Return True Else False
      */
     public static boolean isAppInstalledWithPackageName(Context context, String uri) {
@@ -3291,5 +3292,52 @@ public class Utils {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    /**
+     * Chat Messages in Urdu
+     *
+     * @return List Of Chat Message In Urdu
+     */
+    public static String[] getChatMessageInUrdu(Context context) {
+        return context.getResources().getStringArray(R.array.chat_messages_urdu);
+    }
+
+    /**
+     * Chat Messages in English
+     *
+     * @return List Of Chat Message In English
+     */
+    public static String[] getChatMessageInEnglish(Context context) {
+        return context.getResources().getStringArray(R.array.chat_messages_english);
+    }
+
+    /**
+     * @param context Calling Context
+     * @return List Of ChatMessages With English Urdu Transalations
+     */
+    public static ArrayList<ChatMessagesTranslated> getAllChatMessageTranslated(Context context) {
+        ArrayList<ChatMessagesTranslated> chatMessagesTranslateds = new ArrayList<>();
+        String[] chatMessageInEnglish = Utils.getChatMessageInEnglish(context);
+        String[] chatMessageInUrdu = Utils.getChatMessageInUrdu(context);
+
+        for (int i = 0; i < chatMessageInEnglish.length; i++) {
+            if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(chatMessageInEnglish[i], chatMessageInUrdu[i]));
+        }
+        return chatMessagesTranslateds;
+    }
+
+    /**
+     * @param chatMessageInUrdu       Text to Match
+     * @param chatMessagesTranslateds List From Which To Text Match
+     * @return If Match, Return English Translation
+     */
+    public static Pair<Boolean, String> getTranslationIfExists(String chatMessageInUrdu, ArrayList<ChatMessagesTranslated> chatMessagesTranslateds) {
+        for (ChatMessagesTranslated chatMessagesTranslated : chatMessagesTranslateds) {
+            if (chatMessagesTranslated.getChatMessageInUrdu().contains(chatMessageInUrdu))
+                return new Pair<>(true, chatMessagesTranslated.getChatMessageInEnglish());
+        }
+        return new Pair<>(false, StringUtils.EMPTY);
     }
 }
