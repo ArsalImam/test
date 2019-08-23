@@ -2,7 +2,11 @@ package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.SpannableStringBuilder;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,7 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.ChatMessage;
+import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -25,14 +30,19 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.FontUtils;
+import com.bykea.pk.partner.widgets.Fonts;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusPlayer;
+
+import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.ViewHolder> {
 
@@ -49,11 +59,13 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
     private StringCallBack onStopCallBack;
 
     private final int FILE_LENGTH_SECONDS = -1; //-1 for live streaming
+    private ArrayList<ChatMessagesTranslated> chatMessagesTranslatedArrayList;
 
     @SuppressWarnings("deprecation")
-    public ChatAdapterNewDF(Context context, List<ChatMessage> chatMessages) {
+    public ChatAdapterNewDF(Context context, List<ChatMessage> chatMessages, ArrayList<ChatMessagesTranslated> chatMessagesTranslatedArrayList) {
         this.context = context;
         this.chatMessages = chatMessages;
+        this.chatMessagesTranslatedArrayList = chatMessagesTranslatedArrayList;
     }
 
 
@@ -106,7 +118,22 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
                 viewHolder.contentLayout.setBackgroundResource(R.drawable.green_chat_box);
             }
             viewHolder.audioLayout.setVisibility(View.GONE);
-            viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+            if (chatMessages.get(position).getMessage().contains(TRANSALATION_SEPERATOR)) {
+                String[] strings = chatMessages.get(position).getMessage().split(TRANSALATION_SEPERATOR);
+                viewHolder.txtMessage.setText(new SpannableStringBuilder("")
+                        .append(StringUtils.SPACE)
+                        .append(FontUtils.getStyledTitle(context, strings[0], Fonts.Jameel_Noori_Nastaleeq.getName()))
+                        .append(StringUtils.SPACE));
+                if (StringUtils.isNotEmpty(strings[1])) {
+                    viewHolder.viewSeperator.setVisibility(View.VISIBLE);
+                    viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
+                    viewHolder.txtMessageSecond.setText(strings[1]);
+                }
+            } else {
+                viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+                viewHolder.viewSeperator.setVisibility(View.GONE);
+                viewHolder.txtMessageSecond.setVisibility(View.GONE);
+            }
             viewHolder.txtMessage.setVisibility(View.VISIBLE);
             viewHolder.txtMessageVoice.setVisibility(View.GONE);
             viewHolder.image.setVisibility(View.GONE);
@@ -343,6 +370,10 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
         public ImageView imgPessanger;
         public LinearLayout audioLayout;
         public FrameLayout contentLayout;
+
+        public View viewSeperator;
+        public TextView txtMessageSecond;
+
         ImageView image;
         Context context;
 
@@ -360,6 +391,8 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             seekBar = (SeekBar) itemView.findViewById(R.id.seekbar);
             audioLength = (FontTextView) itemView.findViewById(R.id.audioLength);
             imgPessanger = (ImageView) itemView.findViewById(R.id.imgPessenger);
+            viewSeperator = itemView.findViewById(R.id.viewSeperator);
+            txtMessageSecond = itemView.findViewById(R.id.txtMessageSecond);
         }
     }
 

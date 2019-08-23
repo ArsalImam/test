@@ -160,6 +160,7 @@
 
         <activity
             android:name=".ui.activities.ChatActivityNew"
+            android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask" />
         <activity
             android:name=".ui.activities.PersonalActivity"

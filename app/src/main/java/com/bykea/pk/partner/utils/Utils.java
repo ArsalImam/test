@@ -157,8 +157,10 @@ import retrofit2.Response;
 import zendesk.core.JwtIdentity;
 import zendesk.core.Zendesk;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 
 public class Utils {
@@ -898,7 +900,7 @@ public class Utils {
     }
 
     public static void hideSoftKeyboard(Context context, View v) {
-        InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager manager = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
@@ -909,7 +911,7 @@ public class Utils {
     public static void hideSoftKeyboard(Fragment fragment) {
         try {
             final InputMethodManager imm = (InputMethodManager) fragment.getActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    .getSystemService(INPUT_METHOD_SERVICE);
             if (imm != null && fragment.getView() != null) {
                 imm.hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
             }
@@ -921,7 +923,7 @@ public class Utils {
     public static void hideKeyboard(Activity context) {
         View view = context.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
@@ -3339,5 +3341,23 @@ public class Utils {
                 return new Pair<>(true, chatMessagesTranslated.getChatMessageInEnglish());
         }
         return new Pair<>(false, StringUtils.EMPTY);
+    }
+
+    /**
+     *
+     * @param chatMessagesTranslated Object Containing English and Urdu Value
+     * @return
+     */
+    public static String getConcatenatedTransalation(ChatMessagesTranslated chatMessagesTranslated) {
+        return chatMessagesTranslated.getChatMessageInUrdu() + TRANSALATION_SEPERATOR + chatMessagesTranslated.getChatMessageInEnglish();
+    }
+
+    /**
+     * Shows the soft keyboard
+     */
+    public static void showSoftKeyboard(Context context, View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+        view.requestFocus();
+        inputMethodManager.showSoftInput(view, 0);
     }
 }

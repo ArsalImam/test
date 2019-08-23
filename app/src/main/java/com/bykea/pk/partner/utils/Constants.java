@@ -593,4 +593,6 @@ public class Constants {
     public static class ApplicationsPackageName {
         public static String WHATSAPP_PACKAGE = "com.whatsapp";
     }
+
+    public static final String TRANSALATION_SEPERATOR = "///";
 }
