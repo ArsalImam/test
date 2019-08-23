@@ -1208,8 +1208,8 @@ public class UserRepository {
             } else {
                 properties.put("DD", false);
             }
-            Utils.logEvent(context, pilotData.getId(),
-                    Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties, false);
+            /*Utils.logEvent(context, pilotData.getId(),
+                    Constants.AnalyticsEvents.ON_STATUS_UPDATE, properties, false);*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
