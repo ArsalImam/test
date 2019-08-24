@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.LocationRepository;
-import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -172,7 +171,7 @@ public class TrackingService extends Service {
 
     public void startTracking() {
         initializeLocationManager();
-        locationRepo = Injection.INSTANCE.provideLocationRepository(this);
+//        locationRepo = Injection.INSTANCE.provideLocationRepository(this);
         mUserRepository = new UserRepository();
         mLocationListener = new LocationListener(LocationManager.GPS_PROVIDER);
 
@@ -291,7 +290,7 @@ public class TrackingService extends Service {
      * @param location Location object which contains latest fetched location.
      */
     private void onNewLocationY(Location location) {
-        locationRepo.insert(location.getLatitude(), location.getLongitude());
+//        locationRepo.insert(location.getLatitude(), location.getLongitude());
         sendLocationBroadcast(location);
     }
 

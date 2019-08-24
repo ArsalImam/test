@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.bykea.pk.partner.dal.Job
-import com.bykea.pk.partner.dal.Location
 
 /**
  * The Room database for this app
@@ -15,11 +14,11 @@ import com.bykea.pk.partner.dal.Location
 
 const val DATABASE_NAME = "bykea-db"
 
-@Database(entities = [Job::class, Location::class], version = 2, exportSchema = false)
+@Database(entities = [Job::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun jobRequestsDao(): JobsDao
     abstract fun withdrawDao(): WithDrawDao
-    abstract fun locationDao(): LocationDao
+//    abstract fun locationDao(): LocationDao
 
     companion object {
 

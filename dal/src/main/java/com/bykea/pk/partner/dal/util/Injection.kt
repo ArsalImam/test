@@ -19,11 +19,9 @@ package com.bykea.pk.partner.dal.util
 import android.content.Context
 import android.preference.PreferenceManager
 import com.bykea.pk.partner.dal.source.JobsRepository
-import com.bykea.pk.partner.dal.source.LocationRepository
 import com.bykea.pk.partner.dal.source.WithdrawRepository
 import com.bykea.pk.partner.dal.source.local.AppDatabase
 import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
-import com.bykea.pk.partner.dal.source.local.LocationLocalDataSource
 import com.bykea.pk.partner.dal.source.local.WithdrawLocalDataSource
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.WithdrawRemoteDataSource
@@ -70,10 +68,10 @@ object Injection {
      * @param context Context
      * @return LocationRepository
      */
-    fun provideLocationRepository(context: Context): LocationRepository {
+/*    fun provideLocationRepository(context: Context): LocationRepository {
         val locationDao = AppDatabase.getInstance(context).locationDao()
         return LocationRepository.getInstance(
                 LocationLocalDataSource(AppExecutors(), locationDao)
         )
-    }
+    }*/
 }
