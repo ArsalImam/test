@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
+import com.bykea.pk.partner.location.LocationTrackingService;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -18,8 +19,6 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.HandleInactivePushService;
-import com.bykea.pk.partner.services.LocationTrackingService;
-import com.bykea.pk.partner.services.TrackingService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
@@ -252,14 +251,6 @@ public class ActivityStackManager {
         }
     }
 
-    public void startLocationServiceX(Context mContext) {
-        if (!Utils.isServiceRunning(mContext, TrackingService.class)) {
-            Intent intent = new Intent(mContext, TrackingService.class);
-            intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
-            startService(mContext, intent);
-        }
-    }
-
     /*
      * This method check for Android version of device and starts location service as foreground
      * service when OS is greater or equal to Android O
@@ -281,14 +272,6 @@ public class ActivityStackManager {
     public synchronized void stopLocationService(Context context) {
         if (Utils.isServiceRunning(context, LocationTrackingService.class)) {
             Intent intent = new Intent(context, LocationTrackingService.class);
-            intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
-            startService(context, intent);
-        }
-    }
-
-    public synchronized void stopLocationServiceX(Context context) {
-        if (Utils.isServiceRunning(context, TrackingService.class)) {
-            Intent intent = new Intent(context, TrackingService.class);
             intent.setAction(Constants.Actions.STOPFOREGROUND_ACTION);
             startService(context, intent);
         }
@@ -316,13 +299,6 @@ public class ActivityStackManager {
         startService(context, intent);
     }
 
-    public void restartLocationServiceX(final Context context) {
-        Intent intent = new Intent(context, TrackingService.class);
-        intent.setAction(Utils.isServiceRunning(context, TrackingService.class) ?
-                Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
-        startService(context, intent);
-    }
-
     /**
      * This method restarts location service with custom interval when partner is on trip
      *
@@ -337,28 +313,10 @@ public class ActivityStackManager {
         startService(context, intent);
     }
 
-    public void restartLocationServiceWithCustomIntervalsX(final Context context, long updateInterval) {
-        Intent intent = new Intent(context, TrackingService.class);
-        intent.setAction(Utils.isServiceRunning(context, TrackingService.class) ?
-                Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION : Constants.Actions.STARTFOREGROUND_ACTION);
-        intent.putExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL, updateInterval);
-        startService(context, intent);
-    }
-
     public void restartLocationService(Context mContext, String STATUS) {
         stopLocationService(mContext);
         if (!Utils.isServiceRunning(mContext, LocationTrackingService.class)) {
             Intent intent = new Intent(mContext, LocationTrackingService.class);
-            intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
-            intent.putExtra(Constants.Extras.LOCATION_SERVICE_STATUS, STATUS);
-            startService(mContext, intent);
-        }
-    }
-
-    public void restartLocationServiceX(Context mContext, String STATUS) {
-        stopLocationService(mContext);
-        if (!Utils.isServiceRunning(mContext, TrackingService.class)) {
-            Intent intent = new Intent(mContext, TrackingService.class);
             intent.setAction(Constants.Actions.STARTFOREGROUND_ACTION);
             intent.putExtra(Constants.Extras.LOCATION_SERVICE_STATUS, STATUS);
             startService(mContext, intent);

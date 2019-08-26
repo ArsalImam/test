@@ -36,8 +36,8 @@ import androidx.core.content.ContextCompat;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.location.LocationTrackingService;
 import com.bykea.pk.partner.models.data.NotificationData;
-import com.bykea.pk.partner.services.LocationTrackingService;
 import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;

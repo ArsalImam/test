@@ -1,1 +1,2 @@
-include ':app', ':dal', ':location'
+include ':app', ':dal', ':location', ':common'
+include ':map'
