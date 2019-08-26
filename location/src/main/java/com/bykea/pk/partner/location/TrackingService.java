@@ -1,3 +1,4 @@
+/*
 package com.bykea.pk.partner.location;
 
 import android.Manifest;
@@ -62,11 +63,11 @@ import java.util.List;
 //import com.bykea.pk.partner.R;
 
 
-public class LocationTrackingService extends Service {
+public class TrackingService extends Service {
     private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
     private final float DIRECTION_API_CALL_DISTANCE = 15; //meter
     private final int NOTIF_ID = 877;
-    private final String TAG = LocationTrackingService.class.getSimpleName();
+    private final String TAG = TrackingService.class.getSimpleName();
     private final IBinder mBinder = new LocalBinder();
     private String STATUS = StringUtils.EMPTY;
     private Context mContext;
@@ -85,23 +86,29 @@ public class LocationTrackingService extends Service {
     private LatLng lastApiCallLatLng;
 
 
-    /*private BroadcastReceiver mDozeModeStatusReceiver;
+    */
+/*private BroadcastReceiver mDozeModeStatusReceiver;
     private WifiManager.WifiLock mWifiLock = null;
-    private PowerManager.WakeLock mWakeLock = null;*/
+    private PowerManager.WakeLock mWakeLock = null;*//*
 
 
-    /**
+
+ */
+/**
      * Used to check whether the bound activity has really gone away and not unbound as part of an
      * orientation change. We create a foreground service notification only if the former takes
      * place.
-     */
+ *//*
+
     private boolean mChangingConfiguration = false;
 
     private Handler mServiceHandler;
 
-    /**
+    */
+/**
      * The current location.
-     */
+ *//*
+
     private Location mLocation;
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -144,14 +151,94 @@ public class LocationTrackingService extends Service {
     };
     //region  Countdown timer for sending location to server.
 
-    /***
-     * Setup service initial configuration process with following steps.
-     * 1) Fused Location provider client setup.
-     * 2) Register Location callback for fetch location.
-     * 3) Setup HandlerTread and Service Handler.
-     * 4) Register Event bus.
-     * 5) Create API Repository object.
-     */
+    */
+/**
+ * Setup service initial configuration process with following steps.
+ * 1) Fused Location provider client setup.
+ * 2) Register Location callback for fetch location.
+ * 3) Setup HandlerTread and Service Handler.
+ * 4) Register Event bus.
+ * 5) Create API Repository object.
+ * <p>
+ * Makes a request for location updates.
+ * {@link SecurityException}.
+ * <p>
+ * Send location broadcast.
+ *
+ * @param location Latest location fetched.
+ * <p>
+ * Get Last known location if its available in Fused Location client.
+ * <p>
+ * Stop foreground service
+ * <p>
+ * this method checks whether location update request should be customize when on trip
+ * @param intent is provide by onStartCommand with custom data
+ * <p>
+ * This method generates Foreground Notification when Location Service is Running.
+ * @return Notification
+ * <p>
+ * Create Notification message for driver foreground service.
+ * Message contains driver status i.e. (Active/In-Active/Fetching Location) and Trip status if its during trip.
+ * @return generated notification message which would be displayed to user.
+ * <p>
+ * This method checks if our fore ground notification is being displayed in notification bar or not
+ * <p>
+ * updates notification during trip according to its current status
+ * <p>
+ * Handles fetched location and save's it inside shared preference and send local broadcast.
+ * We filter out mock location.
+ * @param location Location object which contains latest fetched location.
+ * <p>
+ * Create location request with update interval and fastest update interval values.
+ * We always request location Priority as High Accuracy and has smallest displacement value as well for locations.
+ * <p>
+ * Create location update request with custom when ON TRIP
+ * @param updateInterval custom interval in millis
+ * <p>
+ * Update ETA time and distance in shared preference.
+ * @param time     updated time which needs to be saved.
+ * @param distance updated distance which needs to be saved.
+ * <p>
+ * Update latitude and longitude and distance preview time in shared preference.
+ * @param lat current latitude fetched.
+ * @param lon current longitude fetched.
+ * @param updatePrevTime should updated previous time.
+ * <p>
+ * when Booking Screen is in background & driver is in any trip then, we need to call distance
+ * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
+ * is already being handled via Direction API when we are showing Route to driver.
+ * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
+ * <p>
+ * check if last start latlng and current start latlng has at least 15 m difference
+ * @param currentApiCallLatLng current Latitude and Longitude returned from API
+ * @return True is current lat/lng and start lat/lng have 15m difference else return false
+ * <p>
+ * Send request to DistanceMatrix API.
+ * @param destination destination request address
+ * <p>
+ * Validate driver offline status against location socket event.
+ * If socket event is not received for more then allowed retry counter
+ * we forcefully turn off driver and update UI.
+ * <p>
+ * Sending driver offline status request to API server.
+ * When we don't receive any response from socket event for driver update
+ * latitude and longitude event after grace retry period
+ * we forcefully send driver offline request.
+ * <p>
+ * Cancel count down timer
+ * <p>
+ * Stops location updates and cancels countdown timer which is used to sending Lat/Lng value to API server via socket.
+ * And updates foreground notification to reflect driver offline status.
+ * <p>
+ * Handle Location API Error case for API failures.
+ * @param locationResponse latest response from server.
+ * <p>
+ * update location when socket is reconnected, this will sync/update socket id on server
+ * <p>
+ * Class used for the client Binder.  Since this service runs in the same process as its
+ * clients, we don't need to deal with IPC.
+ *//*
+
     private void configureInitialServiceProcess() {
         mBus.register(this);
         mUserRepository = new UserRepository();
@@ -179,7 +266,7 @@ public class LocationTrackingService extends Service {
 
         @Override
         public void onFinish() {
-            Utils.redLog(TAG, "CountDown Timer onFinish: called ");
+            Log.e(TAG, "CountDown Timer onFinish: called ");
             if (Utils.canSendLocation()) {
                 synchronized (this) {
                     double lat = AppPreferences.getLatitude();
@@ -197,7 +284,7 @@ public class LocationTrackingService extends Service {
                                 mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
 
                             } else {
-                                Utils.redLogLocation("request failed", "WiFi -> " +
+                                Log.e("request failed", "WiFi -> " +
                                         Connectivity.isConnectedFast(mContext)
                                         + " && GPS -> " + Utils.isGpsEnable());
                             }
@@ -220,7 +307,7 @@ public class LocationTrackingService extends Service {
         }
     };
 
-    public LocationTrackingService() {
+    public TrackingService() {
     }
 
 
@@ -229,7 +316,7 @@ public class LocationTrackingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Utils.redLogLocation(TAG, "onCreate");
+        Log.e(TAG, "onCreate");
         startForeground(NOTIF_ID, createForegroundNotification());
         configureInitialServiceProcess();
     }
@@ -238,10 +325,10 @@ public class LocationTrackingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         mContext = getApplicationContext();
         if (!hasForeGroundNotification()) {
-            Utils.redLogLocation(TAG, "onStartCommand (!hasForeGroundNotification)");
+            Log.e(TAG, "onStartCommand (!hasForeGroundNotification)");
             startForeground(NOTIF_ID, createForegroundNotification());
         } else {
-            Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
+            Log.e(TAG, "onStartCommand (hasForeGroundNotification)");
         }
         createLocationRequest();
         requestLocationUpdates();
@@ -264,12 +351,14 @@ public class LocationTrackingService extends Service {
         return START_STICKY;
     }
 
-    /**
+    */
+/**
      * Makes a request for location updates.
      * {@link SecurityException}.
-     */
+     *//*
+
     public void requestLocationUpdates() {
-        Utils.redLogLocation(TAG, "Requesting location updates");
+        Log.e(TAG, "Requesting location updates");
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             try {
@@ -286,11 +375,13 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    /**
+    */
+/**
      * Send location broadcast.
      *
      * @param location Latest location fetched.
-     */
+     *//*
+
     private void sendLocationBroadcast(Location location) {
         Intent locationIntent = new Intent(Keys.LOCATION_UPDATE_BROADCAST);
         locationIntent.putExtra("lng", location.getLongitude());
@@ -303,25 +394,29 @@ public class LocationTrackingService extends Service {
 
     //endregion
 
-    /***
+    */
+/***
      * Get Last known location if its available in Fused Location client.
-     */
+     *//*
+
     private void getLastLocation() {
         try {
-            Utils.redLogLocation(TAG, " getLastLocation() called");
+            Log.e(TAG, " getLastLocation() called");
             if (ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 onNewLocation(location);
             }
         } catch (SecurityException unlikely) {
-            Utils.redLogLocation(TAG, "Lost location permission." + unlikely);
+            Log.e(TAG, "Lost location permission." + unlikely);
         }
     }
 
-    /***
+    */
+/***
      * Stop foreground service
-     */
+     *//*
+
     private void stopForegroundService() {
         stopLocationUpdates();
         cancelTimer();
@@ -338,7 +433,7 @@ public class LocationTrackingService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Utils.redLogLocation(TAG, "in onBind()");
+        Log.e(TAG, "in onBind()");
         //stopForeground(true);
         mChangingConfiguration = false;
         return mBinder;
@@ -346,7 +441,7 @@ public class LocationTrackingService extends Service {
 
     @Override
     public void onRebind(Intent intent) {
-        Utils.redLogLocation(TAG, "in onRebind()");
+        Log.e(TAG, "in onRebind()");
         //stopForeground(true);
         mChangingConfiguration = false;
         super.onRebind(intent);
@@ -356,7 +451,7 @@ public class LocationTrackingService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Utils.redLogLocation(TAG, "Last client unbound from service");
+        Log.e(TAG, "Last client unbound from service");
         return true; // Ensures onRebind() is called when a client re-binds.
     }
 
@@ -364,18 +459,20 @@ public class LocationTrackingService extends Service {
 
     @Override
     public void onDestroy() {
-        Utils.redLogLocation(TAG, "onDestroy");
+        Log.e(TAG, "onDestroy");
         mServiceHandler.removeCallbacksAndMessages(null);
         stopForeground(true);
         stopLocationUpdates();
         cancelTimer();
     }
 
-    /**
+    */
+/**
      * this method checks whether location update request should be customize when on trip
      *
      * @param intent is provide by onStartCommand with custom data
-     */
+     *//*
+
     private void checkIfLocationUpdateCustomIntervalShouldSet(@Nullable Intent intent) {
         if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL)) {
             Utils.redLog(TAG, "------- Custom location update ON TRIP -------");
@@ -388,11 +485,13 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    /**
+    */
+/**
      * This method generates Foreground Notification when Location Service is Running.
      *
      * @return Notification
-     */
+     *//*
+
     private Notification createForegroundNotification() {
         Intent notificationIntent = new Intent(this, SplashActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -413,11 +512,13 @@ public class LocationTrackingService extends Service {
         return builder.build();
     }
 
-    /***
+    */
+/***
      * Create Notification message for driver foreground service.
      * Message contains driver status i.e. (Active/In-Active/Fetching Location) and Trip status if its during trip.
-     * @return generated notification message which would be displayed to user.
-     */
+ * @return generated notification message which would be displayed to user.
+ *//*
+
     private String getNotificationMsg() {
 
         boolean isDriverLogin = AppPreferences.isLoggedIn();
@@ -469,9 +570,11 @@ public class LocationTrackingService extends Service {
 
     //#region Helper methods for Location Permission and Request creation
 
-    /**
+    */
+/**
      * This method checks if our fore ground notification is being displayed in notification bar or not
-     */
+ *//*
+
 
     private boolean hasForeGroundNotification() {
         boolean hasForeGroundNotification = true;
@@ -493,9 +596,65 @@ public class LocationTrackingService extends Service {
 
     }
 
-    /**
-     * updates notification during trip according to its current status
-     */
+    */
+/**
+ * updates notification during trip according to its current status
+ * <p>
+ * Handles fetched location and save's it inside shared preference and send local broadcast.
+ * We filter out mock location.
+ *
+ * @param location Location object which contains latest fetched location.
+ * <p>
+ * Create location request with update interval and fastest update interval values.
+ * We always request location Priority as High Accuracy and has smallest displacement value as well for locations.
+ * <p>
+ * Create location update request with custom when ON TRIP
+ * @param updateInterval custom interval in millis
+ * <p>
+ * Update ETA time and distance in shared preference.
+ * @param time     updated time which needs to be saved.
+ * @param distance updated distance which needs to be saved.
+ * <p>
+ * Update latitude and longitude and distance preview time in shared preference.
+ * @param lat current latitude fetched.
+ * @param lon current longitude fetched.
+ * @param updatePrevTime should updated previous time.
+ * <p>
+ * when Booking Screen is in background & driver is in any trip then, we need to call distance
+ * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
+ * is already being handled via Direction API when we are showing Route to driver.
+ * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
+ * <p>
+ * check if last start latlng and current start latlng has at least 15 m difference
+ * @param currentApiCallLatLng current Latitude and Longitude returned from API
+ * @return True is current lat/lng and start lat/lng have 15m difference else return false
+ * <p>
+ * Send request to DistanceMatrix API.
+ * @param destination destination request address
+ * <p>
+ * Validate driver offline status against location socket event.
+ * If socket event is not received for more then allowed retry counter
+ * we forcefully turn off driver and update UI.
+ * <p>
+ * Sending driver offline status request to API server.
+ * When we don't receive any response from socket event for driver update
+ * latitude and longitude event after grace retry period
+ * we forcefully send driver offline request.
+ * <p>
+ * Cancel count down timer
+ * <p>
+ * Stops location updates and cancels countdown timer which is used to sending Lat/Lng value to API server via socket.
+ * And updates foreground notification to reflect driver offline status.
+ * <p>
+ * Handle Location API Error case for API failures.
+ * @param locationResponse latest response from server.
+ * <p>
+ * update location when socket is reconnected, this will sync/update socket id on server
+ * <p>
+ * Class used for the client Binder.  Since this service runs in the same process as its
+ * clients, we don't need to deal with IPC.
+ *//*
+
     private void updateForegroundNotification() {
         Notification notification = createForegroundNotification();
         NotificationManager mNotificationManager = (NotificationManager)
@@ -513,12 +672,14 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    /**
+    */
+/**
      * Handles fetched location and save's it inside shared preference and send local broadcast.
      * We filter out mock location.
      *
      * @param location Location object which contains latest fetched location.
-     */
+     *//*
+
     private void onNewLocation(Location location) {
         if (location != null) {
             if (!Utils.isMockLocation(location, mContext)) {
@@ -526,19 +687,21 @@ public class LocationTrackingService extends Service {
                                 location.getLongitude()), "" + location.getBearing(),
                         location.getAccuracy(), false);
                 sendLocationBroadcast(location);
-                Utils.redLogLocation(TAG, location.getLatitude() + "," +
+                Log.e(TAG, location.getLatitude() + "," +
                         location.getLongitude() + "  (" + Utils.getUTCDate(location.getTime()) + ")");
             } else {
-                Utils.redLogLocation(TAG, "Mock location Received...");
+                Log.e(TAG, "Mock location Received...");
                 EventBus.getDefault().post(Keys.MOCK_LOCATION);
             }
         }
     }
 
-    /**
+    */
+/**
      * Create location request with update interval and fastest update interval values.
      * We always request location Priority as High Accuracy and has smallest displacement value as well for locations.
-     */
+     *//*
+
     protected void createLocationRequest() {
         //int UPDATE_INTERVAL = 10000;
         //int FASTEST_INTERVAL = 5000;
@@ -551,20 +714,24 @@ public class LocationTrackingService extends Service {
             mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         }
 
-        /*if (Utils.hasLocationCoordinates()) {
+        */
+/*if (Utils.hasLocationCoordinates()) {
             mLocationRequest.setSmallestDisplacement(Constants.LOCATION_SMALLEST_DISPLACEMENT);
-        }*/
+        }*//*
+
     }
 
     //#endregion
 
     //region Helper methods for updating values in shared preference
 
-    /**
+    */
+/**
      * Create location update request with custom when ON TRIP
-     *
+ *
      * @param updateInterval custom interval in millis
-     */
+     *//*
+
     protected void createLocationRequestForOnTrip(long updateInterval) {
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(updateInterval);
@@ -605,24 +772,28 @@ public class LocationTrackingService extends Service {
 
     //endregion
 
-    /**
+    */
+/**
      * Update ETA time and distance in shared preference.
      *
      * @param time     updated time which needs to be saved.
      * @param distance updated distance which needs to be saved.
-     */
+     *//*
+
     private void updateETA(String time, String distance) {
         AppPreferences.setEta(time);
         AppPreferences.setEstimatedDistance(distance);
         mBus.post(Keys.ETA_IN_BG_UPDATED);
     }
 
-    /***
+    */
+/***
      *  Update latitude and longitude and distance preview time in shared preference.
      * @param lat current latitude fetched.
      * @param lon current longitude fetched.
      * @param updatePrevTime should updated previous time.
-     */
+     *//*
+
     private void addLatLng(double lat, double lon, boolean updatePrevTime) {
         AppPreferences.addLocCoordinateInTrip(lat, lon, STATUS);
         AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
@@ -631,7 +802,7 @@ public class LocationTrackingService extends Service {
 
     // region Helper methods for Trip/ETA/Distance API
     public void updateTripRouteList(double lat, double lon) {
-        Utils.redLogLocation("TripStatus", AppPreferences.getTripStatus());
+        Log.e("TripStatus", AppPreferences.getTripStatus());
         if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()) ||
                 TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus())) {
             synchronized (this) {
@@ -639,7 +810,9 @@ public class LocationTrackingService extends Service {
                 String lastLng = AppPreferences.getPrevDistanceLongitude();
                 if (!lastLat.equalsIgnoreCase("0.0") && !lastLng.equalsIgnoreCase("0.0")) {
                     float distance = Utils.calculateDistance(lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng));
-                    if (Utils.isValidLocation(/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), */distance)) {
+                    if (Utils.isValidLocation(*/
+/*lat, lon, Double.parseDouble(lastLat), Double.parseDouble(lastLng), *//*
+distance)) {
                         addLatLng(lat, lon, distance > 0f);
                         //Removing Google Directions API call to avoid duplicate GPS entries. Check https://bykeapk.atlassian.net/browse/BS-1042 for details
 //                        if ((distance > 1000) && !isDirectionApiRunning) {
@@ -657,19 +830,21 @@ public class LocationTrackingService extends Service {
 
     }
 
-    /**
+    */
+/**
      * when Booking Screen is in background & driver is in any trip then, we need to call distance
      * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
      * is already being handled via Direction API when we are showing Route to driver.
      * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
-     */
+     *//*
+
     private void updateETAIfRequired() {
         if (counter == DISTANCE_MATRIX_API_CALL_TIME) {
             counter = 0;
         }
         counter++;
         if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground() && counter == DISTANCE_MATRIX_API_CALL_TIME) {
-            Utils.redLogLocation("Direction -> Trip Status ", AppPreferences.getTripStatus());
+            Log.e("Direction -> Trip Status ", AppPreferences.getTripStatus());
             if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
                 NormalCallData callData = AppPreferences.getCallData();
                 if (callData != null && StringUtils.isNotBlank(callData.getEndLat()) &&
@@ -694,11 +869,13 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    /***
+    */
+/***
      * check if last start latlng and current start latlng has at least 15 m difference
      * @param currentApiCallLatLng current Latitude and Longitude returned from API
      * @return True is current lat/lng and start lat/lng have 15m difference else return false
-     */
+     *//*
+
     private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
         if (lastApiCallLatLng != null &&
                 Utils.calculateDistance(currentApiCallLatLng.latitude,
@@ -714,10 +891,12 @@ public class LocationTrackingService extends Service {
 
     //endregion
 
-    /***
+    */
+/***
      * Send request to DistanceMatrix API.
-     * @param destination destination request address
-     */
+ * @param destination destination request address
+     *//*
+
     private void callDistanceMatrixApi(String destination) {
         LatLng newLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
         if (isDirectionApiCallRequired(newLatLng) && Connectivity.isConnected(mContext)) {
@@ -739,7 +918,7 @@ public class LocationTrackingService extends Service {
                                         (response.getRows()[0].getElements()[0]
                                                 .getDistance().getValueInt() / 1000.0) + "", 1);
                                 updateETA(time, distance);
-                                Utils.redLogLocation("onDistanceMatrixResponse",
+                                Log.e("onDistanceMatrixResponse",
                                         "Time -> " + time + " Distance ->" + distance);
                             }
                         }
@@ -795,11 +974,13 @@ public class LocationTrackingService extends Service {
         routing.execute();
     }
 
-    /***
+    */
+/***
      * Validate driver offline status against location socket event.
      * If socket event is not received for more then allowed retry counter
      * we forcefully turn off driver and update UI.
-     */
+     *//*
+
     public void validateDriverOfflineStatus() {
         int socketResponseNotReceivedCount = AppPreferences.getSocketResponseNotReceivedCount();
         if (socketResponseNotReceivedCount >= Constants.LOCATION_RESPONSE_NOT_RECEIEVED_ALLOWED_COUNTER) {
@@ -827,20 +1008,24 @@ public class LocationTrackingService extends Service {
 
     }
 
-    /***
+    */
+/***
      * Sending driver offline status request to API server.
      * When we don't receive any response from socket event for driver update
      * latitude and longitude event after grace retry period
      * we forcefully send driver offline request.
-     */
+     *//*
+
     private void sendDriverOfflineStatusRequest() {
         AppPreferences.setAvailableAPICalling(true);
         mUserRepository.requestDriverUpdateStatus(this, handler, false);
     }
 
-    /***
+    */
+/***
      * Cancel count down timer
-     */
+     *//*
+
     private void cancelTimer() {
         if (mCountDownLocationTimer != null) {
             mCountDownLocationTimer.cancel();
@@ -850,10 +1035,12 @@ public class LocationTrackingService extends Service {
 
     //region Socket Events response Handler
 
-    /***
+    */
+/***
      * Stops location updates and cancels countdown timer which is used to sending Lat/Lng value to API server via socket.
      * And updates foreground notification to reflect driver offline status.
-     */
+     *//*
+
     private void updateServiceForDriverOfflineStatus() {
         stopLocationUpdates();
         cancelTimer();
@@ -861,10 +1048,12 @@ public class LocationTrackingService extends Service {
     }
     //endregion
 
-    /***
+    */
+/***
      * Handle Location API Error case for API failures.
      * @param locationResponse latest response from server.
-     */
+     *//*
+
     private void handleLocationErrorUseCase(LocationResponse locationResponse) {
         if (locationResponse != null) {
             switch (locationResponse.getCode()) {
@@ -887,9 +1076,11 @@ public class LocationTrackingService extends Service {
 
     //region Event bus socket
 
-    /**
+    */
+/**
      * update location when socket is reconnected, this will sync/update socket id on server
-     */
+     *//*
+
     @Subscribe
     public void onEvent(String event) {
         if (Constants.ON_SOCKET_CONNECTED.equalsIgnoreCase(event)) {
@@ -900,7 +1091,7 @@ public class LocationTrackingService extends Service {
                     boolean isMock = AppPreferences.isFromMockLocation();
                     if (lat != 0.0 && lon != 0.0 && !isMock) {
                         if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
-                            Utils.redLogLocation(TAG, "onSocketConnected");
+                            Log.e(TAG, "onSocketConnected");
 //                            mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                         }
                     }
@@ -913,14 +1104,17 @@ public class LocationTrackingService extends Service {
 
     //endregion
 
-    /**
+    */
+/**
      * Class used for the client Binder.  Since this service runs in the same process as its
      * clients, we don't need to deal with IPC.
-     */
+     *//*
+
     public class LocalBinder extends Binder {
-        public LocationTrackingService getService() {
-            return LocationTrackingService.this;
+        public TrackingService getService() {
+            return TrackingService.this;
         }
     }
 
 }
+*/

@@ -10,15 +10,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -49,14 +50,8 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -66,30 +61,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LocationService extends Service {
+public class LocationTrackingService extends Service {
+    private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
+    private final float DIRECTION_API_CALL_DISTANCE = 15; //meter
+    private final int NOTIF_ID = 877;
+    private final String TAG = LocationTrackingService.class.getSimpleName();
+    private final IBinder mBinder = new LocalBinder();
     private String STATUS = StringUtils.EMPTY;
     private Context mContext;
     private UserRepository mUserRepository;
     private LocationRequest mLocationRequest;
+    private final int LOCATION_INTERVAL = 5000;
     private boolean shouldCallLocApi = true;
-
     private int counter = 0;
     private EventBus mBus = EventBus.getDefault();
-
-    private FusedLocationProviderClient mFusedLocationClient;
-
-    private LocationCallback mLocationCallback;
-
-    private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
-
-    private final int NOTIF_ID = 877;
+    private final int LOCATION_DISTANCE = 100;
+    private LocationListener mLocationListener;
+    private boolean isDirectionApiRunning;
+    //    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationManager mLocationManager;
+    //    private LocationCallback mLocationCallback;
     private LatLng lastApiCallLatLng;
 
-    private final String TAG = LocationService.class.getSimpleName();
-
-    private final IBinder mBinder = new LocalBinder();
-
-    private boolean isDirectionApiRunning;
 
     /*private BroadcastReceiver mDozeModeStatusReceiver;
     private WifiManager.WifiLock mWifiLock = null;
@@ -109,10 +102,127 @@ public class LocationService extends Service {
      * The current location.
      */
     private Location mLocation;
+    //region  Countdown timer for sending location to server.
+    private UserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onLocationUpdate(LocationResponse response) {
+            super.onLocationUpdate(response);
+            if (response.isSuccess()) {
+                AppPreferences.setDriverOfflineForcefully(false);
+                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
+                mBus.post(Keys.ACTIVE_FENCE);
+            } else {
+                handleLocationErrorUseCase(response);
+            }
 
-    public LocationService() {
+        }
+
+        @Override
+        public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
+            if (pilotStatusResponse.isSuccess()) {
+                AppPreferences.setAvailableStatus(false);
+                AppPreferences.setAvailableAPICalling(false);
+                AppPreferences.setDriverDestination(null);
+                AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
+            } else {
+                AppPreferences.setAvailableStatus(false);
+                AppPreferences.setDriverDestination(null);
+            }
+            //make service offline as driver is offline now
+            updateServiceForDriverOfflineStatus();
+        }
+
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            switch (errorCode) {
+                case HTTPStatus.UNAUTHORIZED:
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+            }
+        }
+    };
+    //10000, 4990
+    private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            if (Connectivity.isConnectedFast(mContext)) {
+                if (AppPreferences.isLoggedIn()) {
+                    DriverApp.getApplication().connect();
+                }
+            }
+        }
+
+
+        @Override
+        public void onFinish() {
+            Utils.redLog(TAG, "CountDown Timer onFinish: called ");
+            if (Utils.canSendLocation()) {
+                synchronized (this) {
+                    double lat = AppPreferences.getLatitude();
+                    double lon = AppPreferences.getLongitude();
+                    boolean isMock = AppPreferences.isFromMockLocation();
+                    if (lat != 0.0 && lon != 0.0 && !isMock) {
+                        updateTripRouteList(lat, lon);
+
+                        //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
+                        if (shouldCallLocApi) {
+                            shouldCallLocApi = false;
+                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
+                                //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
+                                //validateDriverOfflineStatus();
+                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+
+                            } else {
+                                Utils.redLogLocation("request failed", "WiFi -> " +
+                                        Connectivity.isConnectedFast(mContext)
+                                        + " && GPS -> " + Utils.isGpsEnable());
+                            }
+                        } else {
+                            shouldCallLocApi = true;
+                        }
+                    }
+                    Utils.redLog(TAG, "CountDown Timer restarted: called ");
+                    mCountDownLocationTimer.start();
+                    Utils.redLog(TAG, "updateETAIfRequired: called ");
+                    updateETAIfRequired();
+                }
+            } else if (Utils.hasLocationCoordinates()) {
+                stopForegroundService();
+            } else {
+                Utils.redLog(TAG, "CountDown Timer restarted: called ");
+                mCountDownLocationTimer.start();
+            }
+
+        }
+    };
+
+    public LocationTrackingService() {
     }
 
+    /***
+     * Setup service initial configuration process with following steps.
+     * 1) Fused Location provider client setup.
+     * 2) Register Location callback for fetch location.
+     * 3) Setup HandlerTread and Service Handler.
+     * 4) Register Event bus.
+     * 5) Create API Repository object.
+     */
+    private void configureInitialServiceProcess() {
+        mBus.register(this);
+        mUserRepository = new UserRepository();
+        mLocationListener = new LocationListener(LocationManager.GPS_PROVIDER);
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        }
+        getLastLocation();
+        HandlerThread handlerThread = new HandlerThread(TAG);
+        handlerThread.start();
+        mServiceHandler = new Handler(handlerThread.getLooper());
+    }
+
+
+    //region General Helper methods for Service Setup and other methods
 
     @Override
     public void onCreate() {
@@ -152,32 +262,26 @@ public class LocationService extends Service {
         return START_STICKY;
     }
 
-
-    //region General Helper methods for Service Setup and other methods
-
-    /***
-     * Setup service initial configuration process with following steps.
-     * 1) Fused Location provider client setup.
-     * 2) Register Location callback for fetch location.
-     * 3) Setup HandlerTread and Service Handler.
-     * 4) Register Event bus.
-     * 5) Create API Repository object.
+    /**
+     * Makes a request for location updates.
+     * {@link SecurityException}.
      */
-    private void configureInitialServiceProcess() {
-        mBus.register(this);
-        mUserRepository = new UserRepository();
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                onNewLocation(locationResult.getLastLocation());
+    public void requestLocationUpdates() {
+        Utils.redLogLocation(TAG, "Requesting location updates");
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, mLocationListener);
+            } catch (SecurityException ex) {
+                Log.i(TAG, "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex) {
+                Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+            } catch (RuntimeException ex) {
+                Log.d(TAG, "Runtime exception " + ex.getMessage());
+            } catch (Exception ex) {
+                Log.d(TAG, "Generic exception " + ex.getMessage());
             }
-        };
-        getLastLocation();
-        HandlerThread handlerThread = new HandlerThread(TAG);
-        handlerThread.start();
-        mServiceHandler = new Handler(handlerThread.getLooper());
+        }
     }
 
     /**
@@ -194,20 +298,22 @@ public class LocationService extends Service {
         sendBroadcast(locationIntent);
     }
 
-    /**
-     * Makes a request for location updates.
-     * {@link SecurityException}.
+
+    //endregion
+
+    /***
+     * Get Last known location if its available in Fused Location client.
      */
-    public void requestLocationUpdates() {
-        Utils.redLogLocation(TAG, "Requesting location updates");
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                        mLocationCallback, Looper.myLooper());
-            } catch (SecurityException unlikely) {
-                Utils.redLogLocation(TAG, "Lost location permission. Could not request updates. " + unlikely);
+    private void getLastLocation() {
+        try {
+            Utils.redLogLocation(TAG, " getLastLocation() called");
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                onNewLocation(location);
             }
+        } catch (SecurityException unlikely) {
+            Utils.redLogLocation(TAG, "Lost location permission." + unlikely);
         }
     }
 
@@ -220,9 +326,6 @@ public class LocationService extends Service {
         stopForeground(true);
         stopSelf();
     }
-
-
-    //endregion
 
     //region Life Cycle events and binder override methods
     @Override
@@ -247,11 +350,15 @@ public class LocationService extends Service {
         super.onRebind(intent);
     }
 
+    //endregion
+
     @Override
     public boolean onUnbind(Intent intent) {
         Utils.redLogLocation(TAG, "Last client unbound from service");
         return true; // Ensures onRebind() is called when a client re-binds.
     }
+
+    //region Helper methods for notification messages and display logic
 
     @Override
     public void onDestroy() {
@@ -262,15 +369,14 @@ public class LocationService extends Service {
         cancelTimer();
     }
 
-    //endregion
-
     /**
      * this method checks whether location update request should be customize when on trip
+     *
      * @param intent is provide by onStartCommand with custom data
      */
-    private void checkIfLocationUpdateCustomIntervalShouldSet(@Nullable Intent intent){
-        if(intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL)){
-            Utils.redLog(TAG,"------- Custom location update ON TRIP -------");
+    private void checkIfLocationUpdateCustomIntervalShouldSet(@Nullable Intent intent) {
+        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL)) {
+            Utils.redLog(TAG, "------- Custom location update ON TRIP -------");
             long updateInterval = intent.getLongExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL,
                     Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS_DEFAULT);
             createLocationRequestForOnTrip(updateInterval);
@@ -279,8 +385,6 @@ public class LocationService extends Service {
             mCountDownLocationTimer.start();
         }
     }
-
-    //region Helper methods for notification messages and display logic
 
     /**
      * This method generates Foreground Notification when Location Service is Running.
@@ -307,7 +411,6 @@ public class LocationService extends Service {
         return builder.build();
     }
 
-
     /***
      * Create Notification message for driver foreground service.
      * Message contains driver status i.e. (Active/In-Active/Fetching Location) and Trip status if its during trip.
@@ -329,7 +432,7 @@ public class LocationService extends Service {
             if (AppPreferences.getDeliveryType().
                     equalsIgnoreCase(Constants.CallType.SINGLE)) {
                 NormalCallData callData = AppPreferences.getCallData();
-                if(callData != null){
+                if (callData != null) {
                     tripNo = (callData.getTripNo() != null) ? callData.getTripNo() : StringUtils.EMPTY;
                     status = (callData.getStatus() != null) ? callData.getStatus() : StringUtils.EMPTY;
                 }
@@ -360,6 +463,10 @@ public class LocationService extends Service {
     }
 
 
+    //endregion
+
+    //#region Helper methods for Location Permission and Request creation
+
     /**
      * This method checks if our fore ground notification is being displayed in notification bar or not
      */
@@ -384,7 +491,6 @@ public class LocationService extends Service {
 
     }
 
-
     /**
      * updates notification during trip according to its current status
      */
@@ -397,34 +503,11 @@ public class LocationService extends Service {
         }
     }
 
-
-    //endregion
-
-    //#region Helper methods for Location Permission and Request creation
-
-    /***
-     * Get Last known location if its available in Fused Location client.
-     */
-    private void getLastLocation() {
+    protected void stopLocationUpdates() {
         try {
-            Utils.redLogLocation(TAG, " getLastLocation() called");
-            if (ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mFusedLocationClient.getLastLocation()
-                        .addOnCompleteListener(new OnCompleteListener<Location>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Location> task) {
-                                if (task.isSuccessful() && task.getResult() != null) {
-                                    onNewLocation(task.getResult());
-                                    Utils.redLogLocation(TAG, " getLastLocation() Success");
-                                } else {
-                                    Utils.redLogLocation(TAG, " getLastLocation() Error");
-                                }
-                            }
-                        });
-            }
-        } catch (SecurityException unlikely) {
-            Utils.redLogLocation(TAG, "Lost location permission." + unlikely);
+//            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+            mLocationManager.removeUpdates(mLocationListener);
+        } catch (Exception ignored) {
         }
     }
 
@@ -471,27 +554,41 @@ public class LocationService extends Service {
         }*/
     }
 
+    //#endregion
+
+    //region Helper methods for updating values in shared preference
+
     /**
      * Create location update request with custom when ON TRIP
+     *
      * @param updateInterval custom interval in millis
      */
-    protected void createLocationRequestForOnTrip(long updateInterval){
+    protected void createLocationRequestForOnTrip(long updateInterval) {
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(updateInterval);
         mLocationRequest.setFastestInterval(updateInterval / Constants.ON_TRIP_UPDATE_INTERVAL_DIVISIBLE);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    protected void stopLocationUpdates() {
-        try {
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        } catch (Exception ignored) {
+    /***
+     * check if last start latlng and current start latlng has at least 15 m difference
+     * @param currentApiCallLatLng current Latitude and Longitude returned from API
+     * @return True is current lat/lng and start lat/lng have 15m difference else return false
+     */
+    private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
+        if (lastApiCallLatLng != null &&
+                Utils.calculateDistance(currentApiCallLatLng.latitude,
+                        currentApiCallLatLng.longitude,
+                        lastApiCallLatLng.latitude,
+                        lastApiCallLatLng.longitude
+                ) < DIRECTION_API_CALL_DISTANCE) {
+            return false;
+        } else {
+            return true;
         }
     }
 
-    //#endregion
-
-    //region Helper methods for updating values in shared preference
+    //endregion
 
     /**
      * Update ETA time and distance in shared preference.
@@ -516,8 +613,6 @@ public class LocationService extends Service {
         AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
         STATUS = StringUtils.EMPTY;
     }
-
-    //endregion
 
     // region Helper methods for Trip/ETA/Distance API
     public void updateTripRouteList(double lat, double lon) {
@@ -584,23 +679,38 @@ public class LocationService extends Service {
         }
     }
 
-    /***
-     * check if last start latlng and current start latlng has at least 15 m difference
-     * @param currentApiCallLatLng current Latitude and Longitude returned from API
-     * @return True is current lat/lng and start lat/lng have 15m difference else return false
-     */
-    private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
-        if (lastApiCallLatLng != null &&
-                Utils.calculateDistance(currentApiCallLatLng.latitude,
-                        currentApiCallLatLng.longitude,
-                        lastApiCallLatLng.latitude,
-                        lastApiCallLatLng.longitude
-                ) < 15) {
-            return false;
-        } else {
-            return true;
+    private class LocationListener implements android.location.LocationListener {
+        private final String TAG = "LocationListener";
+        private Location location;
+
+        public LocationListener(String provider) {
+            location = new Location(provider);
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.i(TAG, "LocationChanged: " + location);
+            this.location = location;
+            onNewLocation(this.location);
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.e(TAG, "onProviderDisabled: " + provider);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.e(TAG, "onProviderEnabled: " + provider);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.e(TAG, "onStatusChanged: " + status);
         }
     }
+
+    //endregion
 
     /***
      * Send request to DistanceMatrix API.
@@ -683,66 +793,6 @@ public class LocationService extends Service {
         routing.execute();
     }
 
-    //endregion
-
-    //region  Countdown timer for sending location to server.
-    //10000, 4990
-    private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-//            Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
-            if (Connectivity.isConnectedFast(mContext)) {
-                if (AppPreferences.isLoggedIn()) {
-                    DriverApp.getApplication().connect();
-                }
-            }
-        }
-
-
-        @Override
-        public void onFinish() {
-            Utils.redLog(TAG, "CountDown Timer onFinish: called ");
-            if (Utils.canSendLocation()) {
-                synchronized (this) {
-                    double lat = AppPreferences.getLatitude();
-                    double lon = AppPreferences.getLongitude();
-                    boolean isMock = AppPreferences.isFromMockLocation();
-                    if (lat != 0.0 && lon != 0.0 && !isMock) {
-                        updateTripRouteList(lat, lon);
-                        //DriverETAService.startDriverETAUpdate(DriverApp.getContext());
-
-                        //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
-                        if (shouldCallLocApi) {
-                            shouldCallLocApi = false;
-                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
-                                //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
-                                //validateDriverOfflineStatus();
-                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
-
-                            } else {
-                                Utils.redLogLocation("request failed", "WiFi -> " +
-                                        Connectivity.isConnectedFast(mContext)
-                                        + " && GPS -> " + Utils.isGpsEnable());
-                            }
-                        } else {
-                            shouldCallLocApi = true;
-                        }
-                    }
-                    Utils.redLog(TAG, "CountDown Timer restarted: called ");
-                    mCountDownLocationTimer.start();
-                    Utils.redLog(TAG, "updateETAIfRequired: called ");
-                    updateETAIfRequired();
-                }
-            } else if (Utils.hasLocationCoordinates()) {
-                stopForegroundService();
-            } else {
-                Utils.redLog(TAG, "CountDown Timer restarted: called ");
-                mCountDownLocationTimer.start();
-            }
-
-        }
-    };
-
     /***
      * Validate driver offline status against location socket event.
      * If socket event is not received for more then allowed retry counter
@@ -775,7 +825,6 @@ public class LocationService extends Service {
 
     }
 
-
     /***
      * Sending driver offline status request to API server.
      * When we don't receive any response from socket event for driver update
@@ -795,7 +844,9 @@ public class LocationService extends Service {
             mCountDownLocationTimer.cancel();
         }
     }
+    //endregion
 
+    //region Socket Events response Handler
 
     /***
      * Stops location updates and cancels countdown timer which is used to sending Lat/Lng value to API server via socket.
@@ -806,68 +857,6 @@ public class LocationService extends Service {
         cancelTimer();
         updateForegroundNotification();
     }
-    //endregion
-
-    //region Socket Events response Handler
-
-
-    private UserDataHandler handler = new UserDataHandler() {
-        @Override
-        public void onLocationUpdate(LocationResponse response) {
-            super.onLocationUpdate(response);
-            if (response.isSuccess()) {
-                AppPreferences.setDriverOfflineForcefully(false);
-                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
-                mBus.post(Keys.ACTIVE_FENCE);
-            } else {
-                handleLocationErrorUseCase(response);
-            }
-
-        }
-
-        @Override
-        public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
-            if (pilotStatusResponse.isSuccess()) {
-                AppPreferences.setAvailableStatus(false);
-                AppPreferences.setAvailableAPICalling(false);
-                AppPreferences.setDriverDestination(null);
-                AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
-            } else {
-                AppPreferences.setAvailableStatus(false);
-                AppPreferences.setDriverDestination(null);
-            }
-            //make service offline as driver is offline now
-            updateServiceForDriverOfflineStatus();
-        }
-
-
-        @Override
-        public void onError(int errorCode, String errorMessage) {
-            switch (errorCode) {
-                case HTTPStatus.UNAUTHORIZED:
-                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
-                    break;
-                /*case HTTPStatus.FENCE_ERROR:
-                    AppPreferences.setOutOfFence(true);
-                    AppPreferences.setAvailableStatus(false);
-                    mBus.post(Keys.INACTIVE_FENCE);
-                    break;
-                case HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT:
-                    if (StringUtils.isNotBlank(errorMessage)) {
-                        AppPreferences.setWalletIncreasedError(errorMessage);
-                    }
-                    AppPreferences.setWalletAmountIncreased(true);
-                    AppPreferences.setAvailableStatus(false);
-                    mBus.post(Keys.INACTIVE_FENCE);
-                    break;
-                case HTTPStatus.FENCE_SUCCESS:
-                    AppPreferences.setOutOfFence(false);
-                    AppPreferences.setAvailableStatus(true);
-                    mBus.post(Keys.ACTIVE_FENCE);
-                    break;*/
-            }
-        }
-    };
     //endregion
 
     /***
@@ -927,8 +916,8 @@ public class LocationService extends Service {
      * clients, we don't need to deal with IPC.
      */
     public class LocalBinder extends Binder {
-        public LocationService getService() {
-            return LocationService.this;
+        public LocationTrackingService getService() {
+            return LocationTrackingService.this;
         }
     }
 

@@ -281,6 +281,11 @@
             android:theme="@style/NewTheme" />
         <activity android:name=".ui.withdraw.WithdrawThankyouActivity"/>
 
+        <service
+            android:name=".services.LocationTrackingService"
+            android:enabled="true"
+            android:exported="false" />
+
     </application>
 
 </manifest>

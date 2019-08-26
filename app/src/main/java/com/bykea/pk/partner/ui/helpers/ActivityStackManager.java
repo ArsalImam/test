@@ -10,7 +10,6 @@ import android.os.Bundle;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
-import com.bykea.pk.partner.location.LocationTrackingService;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -19,6 +18,7 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.services.HandleInactivePushService;
+import com.bykea.pk.partner.services.LocationTrackingService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
