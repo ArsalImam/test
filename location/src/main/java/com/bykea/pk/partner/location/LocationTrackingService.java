@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.services;
+package com.bykea.pk.partner.location;
 
 import android.Manifest;
 import android.app.Notification;
@@ -24,9 +24,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
-import com.bykea.pk.partner.DriverApp;
-import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
+import com.bykea.pk.partner.map.tracking.AbstractRouting;
+import com.bykea.pk.partner.map.tracking.Route;
+import com.bykea.pk.partner.map.tracking.RouteException;
+import com.bykea.pk.partner.map.tracking.Routing;
+import com.bykea.pk.partner.map.tracking.RoutingListener;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -37,11 +40,6 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
-import com.bykea.pk.partner.tracking.AbstractRouting;
-import com.bykea.pk.partner.tracking.Route;
-import com.bykea.pk.partner.tracking.RouteException;
-import com.bykea.pk.partner.tracking.Routing;
-import com.bykea.pk.partner.tracking.RoutingListener;
 import com.bykea.pk.partner.ui.activities.SplashActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
@@ -59,6 +57,9 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+
+//import com.bykea.pk.partner.DriverApp;
+//import com.bykea.pk.partner.R;
 
 
 public class LocationTrackingService extends Service {
