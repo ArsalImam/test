@@ -63,6 +63,7 @@ import java.util.List;
 
 public class LocationTrackingService extends Service {
     private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
+    private final float DIRECTION_API_CALL_DISTANCE = 15; //meter
     private final int NOTIF_ID = 877;
     private final String TAG = LocationTrackingService.class.getSimpleName();
     private final IBinder mBinder = new LocalBinder();
@@ -703,7 +704,7 @@ public class LocationTrackingService extends Service {
                         currentApiCallLatLng.longitude,
                         lastApiCallLatLng.latitude,
                         lastApiCallLatLng.longitude
-                ) < 15) {
+                ) < DIRECTION_API_CALL_DISTANCE) {
             return false;
         } else {
             return true;
