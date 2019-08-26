@@ -122,8 +122,7 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             if (chatMessages.get(position).getMessage().contains(TRANSALATION_SEPERATOR)) {
                 try {
                     String[] strings = chatMessages.get(position).getMessage().split(TRANSALATION_SEPERATOR);
-                    viewHolder.txtMessage.setText(new SpannableStringBuilder("")
-                            .append(StringUtils.SPACE)
+                    viewHolder.txtMessage.setText(new SpannableStringBuilder(StringUtils.SPACE)
                             .append(FontUtils.getStyledTitle(context, strings[Constants.DIGIT_ZERO], Fonts.Jameel_Noori_Nastaleeq.getName()))
                             .append(StringUtils.SPACE));
                     if (StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {

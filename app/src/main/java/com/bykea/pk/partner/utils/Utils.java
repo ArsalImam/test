@@ -3332,8 +3332,8 @@ public class Utils {
 
     /**
      * @param chatMessageInUrdu       Text to Match
-     * @param chatMessagesTranslateds List From Which To Text Match
-     * @return If Match, Return English Translation
+     * @param chatMessagesTranslateds List From Which To Match
+     * @return If text matches return the english transalation against it.
      */
     public static Pair<Boolean, String> getTranslationIfExists(String chatMessageInUrdu, ArrayList<ChatMessagesTranslated> chatMessagesTranslateds) {
         for (ChatMessagesTranslated chatMessagesTranslated : chatMessagesTranslateds) {

@@ -438,17 +438,20 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         onActivityFinish();
         if (isFromNotification) {
             if (linLayoutChatMessages != null && linLayoutChatMessages.getVisibility() == View.VISIBLE) {
-                linLayoutChatMessages.setVisibility(View.GONE);
-                toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
+                hideChatMessageVisibleKeyboard();
             }
             ActivityStackManager.getInstance().startHomeActivity(false, mCurrentActivity);
             finish();
         } else if (linLayoutChatMessages != null && linLayoutChatMessages.getVisibility() == View.VISIBLE) {
-            linLayoutChatMessages.setVisibility(View.GONE);
-            toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
+            hideChatMessageVisibleKeyboard();
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void hideChatMessageVisibleKeyboard() {
+        linLayoutChatMessages.setVisibility(View.GONE);
+        toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
     }
 
     private boolean shouldUploadFile;
@@ -525,6 +528,9 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         );
     }
 
+    /**
+     * Used when the message text has to pick from edittext
+     */
     private void sendMessage() {
         String lastMsg = messageEdit.getText().toString();
         if (TextUtils.isEmpty(lastMsg)) {
@@ -534,6 +540,10 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         sendMessageRemoteRepository(lastMsg);
     }
 
+    /**
+     * Used when the message text has to pass
+     * @param messsage : Passing Message
+     */
     private void sendMessageRemoteRepository(String messsage) {
         repository.sendMessage(mCurrentActivity, chatHandler, messsage, mCoversationId,
                 mReceiversId, Keys.CHAT_TYPE_TEXT, AppPreferences.getCallData().getTripId());
