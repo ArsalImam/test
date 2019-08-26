@@ -105,24 +105,6 @@ public class TrackingService extends Service {
                 case HTTPStatus.UNAUTHORIZED:
                     EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
                     break;
-                /*case HTTPStatus.FENCE_ERROR:
-                    AppPreferences.setOutOfFence(true);
-                    AppPreferences.setAvailableStatus(false);
-                    mBus.post(Keys.INACTIVE_FENCE);
-                    break;
-                case HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT:
-                    if (StringUtils.isNotBlank(errorMessage)) {
-                        AppPreferences.setWalletIncreasedError(errorMessage);
-                    }
-                    AppPreferences.setWalletAmountIncreased(true);
-                    AppPreferences.setAvailableStatus(false);
-                    mBus.post(Keys.INACTIVE_FENCE);
-                    break;
-                case HTTPStatus.FENCE_SUCCESS:
-                    AppPreferences.setOutOfFence(false);
-                    AppPreferences.setAvailableStatus(true);
-                    mBus.post(Keys.ACTIVE_FENCE);
-                    break;*/
             }
         }
     };
