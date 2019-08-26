@@ -1531,7 +1531,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
         int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
         mGoogleMap.setPadding(0, padding, 0, padding);
-//        mGoogleMap.moveCamera(cu);
+        mGoogleMap.moveCamera(cu);
         drawRoutes();
     }
 
@@ -1716,7 +1716,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         if (mCurrentActivity != null && mGoogleMap != null) {
                             int padding = 40; // offset from edges of the map in pixels
                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(routeFirst.getLatLgnBounds(), padding);
-//                            mGoogleMap.moveCamera(cu);
+                            mGoogleMap.moveCamera(cu);
                         }
                     }
 
