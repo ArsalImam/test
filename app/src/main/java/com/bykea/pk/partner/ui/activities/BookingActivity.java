@@ -72,6 +72,7 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
@@ -2359,6 +2360,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         jobsRepo.finishJob(callData.getTripId(), latLngList, new JobsDataSource.FinishJobCallback() {
             @Override
             public void onJobFinished(@NotNull FinishJobResponseData data) {
+                Crashlytics.setString("Finish Job Request Trip ID", callData.getTripId());
+                Crashlytics.setString("Finish Job Request Route", latLngList.toString());
+                Crashlytics.setString("Finish Job Response", data.toString());
                 onFinished(data);
             }
 
