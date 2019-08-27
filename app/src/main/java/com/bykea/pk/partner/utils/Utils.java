@@ -2033,6 +2033,7 @@ public class Utils {
                 && (serviceCode == Constants.ServiceType.SEND_CODE
                 || serviceCode == Constants.ServiceType.SEND_COD_CODE
                 || serviceCode == Constants.ServiceType.RIDE_CODE
+                || serviceCode == Constants.ServiceType.OFFLINE_RIDE
         );
     }
 
@@ -3278,9 +3279,8 @@ public class Utils {
 
 
     /**
-     *
      * @param context : Calling Activity
-     * @param uri : Package
+     * @param uri     : Package
      * @return If Application Is Installed Return True Else False
      */
     public static boolean isAppInstalledWithPackageName(Context context, String uri) {
@@ -3290,6 +3290,19 @@ public class Utils {
             return true;
         } catch (PackageManager.NameNotFoundException e) {
             return false;
+        }
+    }
+
+    /**
+     * Set ImageView Drawable
+     * @param imageView : ImageView
+     * @param drawable : Drawable Id
+     */
+    public static void setImageDrawable(ImageView imageView, int drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(drawable, null));
+        } else {
+            imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(drawable));
         }
     }
 }

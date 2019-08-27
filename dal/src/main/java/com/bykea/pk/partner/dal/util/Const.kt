@@ -9,3 +9,8 @@ const val DRIVER_ID = "DRIVER_ID"
 const val ACCESS_TOKEN = "ACCESS_TOKEN"
 const val EMPTY_STRING = ""
 const val SERVICE_CODE_SEND = 21
+
+val OTP_SMS = "sms"
+val OTP_CALL = "call"
+
+val OFFLINE_RIDE = "Offline Ride"

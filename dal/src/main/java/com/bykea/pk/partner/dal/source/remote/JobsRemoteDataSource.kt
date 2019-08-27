@@ -1,9 +1,12 @@
 package com.bykea.pk.partner.dal.source.remote
 
+import androidx.room.util.StringUtil
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.EMPTY_STRING
 import retrofit2.Call
 import retrofit2.Response
 
@@ -231,4 +234,54 @@ class JobsRemoteDataSource {
         })
     }
 
+
+    /**
+     * @param userId Logged In Driver ID
+     * @param tokenId Logged In User
+     * @param startLat Start Location - Latitude
+     * @param startLng Start Location - Longitude
+     * @param endLat End Location - Latitude
+     * @param endLng End Location - Longitude
+     * @param distance Distance Between Start Location To End Location
+     * @param time Time Start Location To End Location
+     * @param type
+     * @param rideType Ride Type
+     * @param callback to get results in case of failure or success
+     */
+    fun requestFairEstimation(driverId: String, accessToken: String, startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
+        Backend.talos.requestFareEstimation(driverId, accessToken,
+                startLat, startLng, endLat, endLng, type, rideType).enqueue(object : Callback<FareEstimationResponse> {
+            override fun onSuccess(response: FareEstimationResponse) {
+                callback.onSuccess(response)
+            }
+
+            override fun onFail(code: Int, message: String?) {
+                callback.onFail(code,message)
+            }
+        })
+    }
+
+    fun requestOtpGenerate(_id: String, tokenId: String, phone: String, type: String, callback: JobsDataSource.OtpGenerateCallback) {
+        Backend.talos.generateDriverOTP(_id, tokenId, phone, type).enqueue(object : Callback<VerifyNumberResponse> {
+            override fun onSuccess(response: VerifyNumberResponse) {
+                callback.onSuccess(response)
+            }
+
+            override fun onFail(code: Int, message: String?) {
+                callback.onFail(code,message)
+            }
+        })
+    }
+
+    fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: JobsDataSource.CreateTripCallback) {
+        Backend.talos.initiateRide(rideCreateRequestObject).enqueue(object : Callback<RideCreateResponse> {
+            override fun onSuccess(response: RideCreateResponse) {
+                callback.onSuccess(response)
+            }
+
+            override fun onFail(code: Int, message: String?) {
+                callback.onFail(code,message)
+            }
+        })
+    }
 }

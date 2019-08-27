@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.ui.offlinerides.OfflineFragmentListener" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/_10sdp">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.bykea.pk.partner.ui.helpers.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:text="@string/enter_customer_mobile_no"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_14sdp"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/gray_bordered_bg"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/_5sdp"
+                        android:paddingRight="@dimen/_5sdp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_smartphone" />
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/text_input_layout_email"
+                            android:layout_width="match_parent"
+                            android:paddingBottom="@dimen/_8sdp"
+                            android:layout_height="wrap_content">
+
+                            <com.bykea.pk.partner.widgets.FontEditText
+                                android:id="@+id/eTMobileNumber"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:digits="1234567890"
+                                android:hint="@string/enter_mobile_no"
+                                android:inputType="numberSigned"
+                                android:maxLength="11"
+                                android:paddingTop="@dimen/_8sdp"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/_14sdp"
+                                app:fontName="open_sans_regular.ttf" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <com.bykea.pk.partner.ui.helpers.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:text="@string/code_sent_on_mentioned_no"
+                        android:textColor="@color/a2a2a2"
+                        android:textSize="@dimen/_14sdp"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_30sdp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardUseCompatPadding="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/_10sdp">
+
+
+                            <com.bykea.pk.partner.ui.helpers.FontTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="right"
+                                android:layout_marginBottom="@dimen/_5sdp"
+                                android:text="@string/enter_drop_off_for_fare"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/_14sdp"
+                                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:id="@+id/linLayoutDropOffAddress"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/_5sdp"
+                                    android:layout_marginRight="@dimen/_5sdp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/gray_bordered_bg"
+                                    android:gravity="center_vertical"
+                                    android:onClick="@{() -> listener.onDropOffClicked()}"
+                                    android:paddingLeft="@dimen/_5sdp"
+                                    android:paddingTop="@dimen/_8sdp"
+                                    android:paddingRight="@dimen/_5sdp"
+                                    android:paddingBottom="@dimen/_8sdp">
+
+                                    <ImageView
+                                        android:id="@+id/iVDropOffAddress"
+                                        android:layout_width="20dp"
+                                        android:layout_height="30dp"
+                                        android:layout_marginEnd="10dp"
+                                        android:layout_marginRight="10dp"
+                                        android:src="@drawable/ic_drop_off_pin_red" />
+
+                                    <com.bykea.pk.partner.ui.helpers.FontTextView
+                                        android:id="@+id/tVDropOffAddress"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:background="@null"
+                                        android:hint="@string/search_drop_off"
+                                        android:lines="1"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/_14sdp"
+                                        app:fontName="open_sans_regular.ttf" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="@dimen/_5sdp"
+                                    android:layout_marginLeft="@dimen/_5sdp"
+                                    android:background="@drawable/button_gray_unselected"
+
+                                    android:paddingLeft="@dimen/_5sdp"
+                                    android:paddingTop="@dimen/_8sdp"
+                                    android:paddingRight="@dimen/_5sdp"
+                                    android:paddingBottom="@dimen/_8sdp">
+
+                                    <com.bykea.pk.partner.ui.helpers.FontTextView
+                                        android:id="@+id/tVOfflineFare"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:gravity="center_vertical"
+                                        android:hint="@string/offline_ride_fare"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/_14sdp"
+                                        app:fontName="open_sans_regular.ttf" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+
+        <com.bykea.pk.partner.ui.helpers.FontTextView
+            android:id="@+id/tVReceiveCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_A7A7A7"
+            android:gravity="center"
+            android:onClick="@{() -> listener.onReceiveCodeClicked()}"
+            android:padding="@dimen/_5sdp"
+            android:text="@string/receive_code"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_20sdp"
+            android:textStyle="normal"
+            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    </LinearLayout>
+</layout>
