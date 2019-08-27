@@ -272,7 +272,7 @@ interface JobsDataSource {
         /**
          * On job finish failed
          */
-        fun onJobFinishFailed(message: String?)
+        fun onJobFinishFailed(message: String?, code: Int?)
     }
 
     /**
