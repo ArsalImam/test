@@ -239,6 +239,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean allowTripStatusCall = true;
     CountDownTimer countDownTimer;
 
+    private boolean isFinishedRetried = false;
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
     private UserDataHandler driversDataHandler = new UserDataHandler() {
@@ -2521,7 +2522,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @param data response data
      */
     private void onFinished(FinishJobResponseData data) {
-        if (data == null) {
+        if (data == null && !isFinishedRetried) {
+            isFinishedRetried = true;
             finishJobRestApi(); // retry to finish job
         } else {
             Dialogs.INSTANCE.dismissDialog();
