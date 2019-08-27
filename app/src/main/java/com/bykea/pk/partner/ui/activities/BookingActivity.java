@@ -115,6 +115,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.bykea.pk.partner.DriverApp.getContext;
+import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 
 //import com.google.android.gms.location.places.Place;
@@ -2363,7 +2364,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             @Override
             public void onJobFinishFailed(@Nullable String message, @Nullable Integer code) {
-                if (code != null && code == 422) {
+                if (code != null && code == BUSINESS_LOGIC_ERROR) {
                     dataRepository.getActiveTrip(mCurrentActivity, handler);
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
