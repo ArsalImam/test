@@ -26,12 +26,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
-import com.bykea.pk.partner.map.tracking.AbstractRouting;
-import com.bykea.pk.partner.map.tracking.Route;
-import com.bykea.pk.partner.map.tracking.RouteException;
-import com.bykea.pk.partner.map.tracking.Routing;
-import com.bykea.pk.partner.map.tracking.RoutingListener;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -57,76 +51,30 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LocationTrackingService extends Service {
-    private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
-    private final float DIRECTION_API_CALL_DISTANCE = 15; //meter
-    private final int NOTIF_ID = 877;
+
     private final String TAG = LocationTrackingService.class.getSimpleName();
+
     private final IBinder mBinder = new LocalBinder();
+    private final int DISTANCE_MATRIX_API_CALL_TIME = 6;
+    private final int LOCATION_INTERVAL = 5000;
+    private final int LOCATION_DISTANCE = 100;
+    private final int NOTIF_ID = 877;
+    private final float DIRECTION_API_CALL_DISTANCE = 15; //meter
+
     private String STATUS = StringUtils.EMPTY;
     private Context mContext;
     private UserRepository mUserRepository;
     private LocationRequest mLocationRequest;
-    private final int LOCATION_INTERVAL = 5000;
     private boolean shouldCallLocApi = true;
     private int counter = 0;
     private EventBus mBus = EventBus.getDefault();
-    private final int LOCATION_DISTANCE = 100;
     private LocationListener mLocationListener;
-    private boolean isDirectionApiRunning;
     private LocationManager mLocationManager;
     private LatLng lastApiCallLatLng;
     private Handler mServiceHandler;
-
-    private UserDataHandler handler = new UserDataHandler() {
-        @Override
-        public void onLocationUpdate(LocationResponse response) {
-            super.onLocationUpdate(response);
-            if (response.isSuccess()) {
-                AppPreferences.setDriverOfflineForcefully(false);
-                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
-                mBus.post(Keys.ACTIVE_FENCE);
-            } else {
-                handleLocationErrorUseCase(response);
-            }
-
-        }
-
-        @Override
-        public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
-            if (pilotStatusResponse.isSuccess()) {
-                AppPreferences.setAvailableStatus(false);
-                AppPreferences.setAvailableAPICalling(false);
-                AppPreferences.setDriverDestination(null);
-                AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
-            } else {
-                AppPreferences.setAvailableStatus(false);
-                AppPreferences.setDriverDestination(null);
-            }
-            //make service offline as driver is offline now
-            updateServiceForDriverOfflineStatus();
-        }
-
-
-        @Override
-        public void onError(int errorCode, String errorMessage) {
-            switch (errorCode) {
-                case HTTPStatus.UNAUTHORIZED:
-                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
-                    break;
-            }
-        }
-    };
-
-    //region Life Cycle events and binder override methods
-
-    public LocationTrackingService() {
-    }
-
-    //10000, 4990
     private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
@@ -180,6 +128,48 @@ public class LocationTrackingService extends Service {
 
         }
     };
+    private UserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onLocationUpdate(LocationResponse response) {
+            super.onLocationUpdate(response);
+            if (response.isSuccess()) {
+                AppPreferences.setDriverOfflineForcefully(false);
+                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
+                mBus.post(Keys.ACTIVE_FENCE);
+            } else {
+                handleLocationErrorUseCase(response);
+            }
+
+        }
+
+        @Override
+        public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
+            if (pilotStatusResponse.isSuccess()) {
+                AppPreferences.setAvailableStatus(false);
+                AppPreferences.setAvailableAPICalling(false);
+                AppPreferences.setDriverDestination(null);
+                AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
+            } else {
+                AppPreferences.setAvailableStatus(false);
+                AppPreferences.setDriverDestination(null);
+            }
+            //make service offline as driver is offline now
+            updateServiceForDriverOfflineStatus();
+        }
+
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            switch (errorCode) {
+                case HTTPStatus.UNAUTHORIZED:
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+            }
+        }
+    };
+
+    public LocationTrackingService() {
+    }
 
     @Override
     public void onCreate() {
@@ -228,7 +218,6 @@ public class LocationTrackingService extends Service {
     public IBinder onBind(Intent intent) {
         Utils.redLogLocation(TAG, "in onBind()");
         //stopForeground(true);
-        mChangingConfiguration = false;
         return mBinder;
     }
 
@@ -253,10 +242,6 @@ public class LocationTrackingService extends Service {
         stopLocationUpdates();
         cancelTimer();
     }
-
-    //endregion
-
-    //region General Helper methods for Service Setup and other methods
 
     /***
      * Setup service initial configuration process with following steps.
@@ -332,11 +317,7 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    //endregion
-
-    //region Helper methods for notification messages and display logic
-
-    /***
+    /**
      * Stop foreground service
      */
     private void stopForegroundService() {
@@ -446,10 +427,6 @@ public class LocationTrackingService extends Service {
 
     }
 
-    //endregion
-
-    //#region Helper methods for Location Permission and Request creation
-
     /**
      * updates notification during trip according to its current status
      */
@@ -533,10 +510,6 @@ public class LocationTrackingService extends Service {
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    //#endregion
-
-    //region Helper methods for updating values in shared preference
-
     protected void stopLocationUpdates() {
         try {
 //            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
@@ -545,7 +518,7 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    /***
+    /**
      *  Update latitude and longitude and distance preview time in shared preference.
      * @param lat current latitude fetched.
      * @param lon current longitude fetched.
@@ -556,10 +529,6 @@ public class LocationTrackingService extends Service {
         AppPreferences.setPrevDistanceLatLng(lat, lon, updatePrevTime);
         STATUS = StringUtils.EMPTY;
     }
-
-    //endregion
-
-    // region Helper methods for Trip/ETA/Distance API
 
     public void updateTripRouteList(double lat, double lon) {
         Utils.redLogLocation("TripStatus", AppPreferences.getTripStatus());
@@ -637,7 +606,7 @@ public class LocationTrackingService extends Service {
         mBus.post(Keys.ETA_IN_BG_UPDATED);
     }
 
-    /***
+    /**
      * Send request to DistanceMatrix API.
      * @param destination destination request address
      */
@@ -670,59 +639,7 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    private synchronized void getRouteLatLng(double lat, double lon, String lastLat, String lastLng) {
-        isDirectionApiRunning = true;
-        int index = AppPreferences.getLocCoordinatesInTrip().size();
-        index = index > 1 ? index - 1 : 0;
-        Routing.Builder builder = new Routing.Builder();
-        if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mContext))) {
-            builder.key(Utils.getApiKeyForDirections(mContext));
-        }
-        final int finalIndex = index;
-        builder.context(mContext)
-                .waypoints(new LatLng(Double.parseDouble(lastLat), Double.parseDouble(lastLng)), new LatLng(lat, lon))
-                .travelMode(AbstractRouting.TravelMode.DRIVING)
-                .withListener(new RoutingListener() {
-                    @Override
-                    public void onRoutingFailure(int routeType, RouteException e) {
-                        isDirectionApiRunning = false;
-                    }
-
-                    @Override
-                    public void onRoutingStart() {
-
-                    }
-
-                    @Override
-                    public void onRoutingSuccess(int routeType, List<Route> route, int shortestRouteIndex) {
-                        List<LatLng> latLngs = route.get(0).getPoints();
-                        ArrayList<LocCoordinatesInTrip> locCoordinatesLatLng = new ArrayList<>();
-                        for (LatLng latLng : latLngs) {
-                            LocCoordinatesInTrip currentLatLng = new LocCoordinatesInTrip();
-                            currentLatLng.setDate("" + Utils.getIsoDate());
-                            currentLatLng.setLat("" + latLng.latitude);
-                            currentLatLng.setLng("" + latLng.longitude);
-                            locCoordinatesLatLng.add(currentLatLng);
-                        }
-                        AppPreferences.addLocCoordinateInTrip(locCoordinatesLatLng, finalIndex);
-                        isDirectionApiRunning = false;
-                    }
-
-                    @Override
-                    public void onRoutingCancelled() {
-                        isDirectionApiRunning = false;
-                    }
-                })
-                .routeType(Routing.onChangeRoute);
-        Routing routing = builder.build();
-        routing.execute();
-    }
-
-    //endregion
-
-    //region  Countdown timer for sending location to server.
-
-    /***
+    /**
      * check if last start latlng and current start latlng has at least 15 m difference
      * @param currentApiCallLatLng current Latitude and Longitude returned from API
      * @return True is current lat/lng and start lat/lng have 15m difference else return false
@@ -740,39 +657,7 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    /***
-     * Validate driver offline status against location socket event.
-     * If socket event is not received for more then allowed retry counter
-     * we forcefully turn off driver and update UI.
-     */
-    public void validateDriverOfflineStatus() {
-        int socketResponseNotReceivedCount = AppPreferences.getSocketResponseNotReceivedCount();
-        if (socketResponseNotReceivedCount >= Constants.LOCATION_RESPONSE_NOT_RECEIEVED_ALLOWED_COUNTER) {
-            // check is app logged in and driver is not on currently running trip.
-            if (AppPreferences.isLoggedIn() && !AppPreferences.isOnTrip()) {
-                // Offline driver forcefully.
-                AppPreferences.setDriverOfflineForcefully(true);
-
-                //Todo test should we call this right after sending offline request to API or we should lose server on API success.
-                sendDriverOfflineStatusRequest();
-            }
-            // Check is driver logged in and is out of fence
-            else if (AppPreferences.isLoggedIn() && AppPreferences.isOutOfFence()) {
-                // Offline driver forcefully.
-                AppPreferences.setDriverOfflineForcefully(true);
-                sendDriverOfflineStatusRequest();
-
-                //Todo test should we call this right after sending offline request to API or we should lose server on API success.
-                updateServiceForDriverOfflineStatus();
-
-            }
-        } else {
-            AppPreferences.setLocationSocketNotReceivedCount(socketResponseNotReceivedCount++);
-        }
-
-    }
-
-    /***
+    /**
      * Sending driver offline status request to API server.
      * When we don't receive any response from socket event for driver update
      * latitude and longitude event after grace retry period
@@ -783,7 +668,7 @@ public class LocationTrackingService extends Service {
         mUserRepository.requestDriverUpdateStatus(this, handler, false);
     }
 
-    /***
+    /**
      * Cancel count down timer
      */
     private void cancelTimer() {
@@ -792,7 +677,7 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    /***
+    /**
      * Stops location updates and cancels countdown timer which is used to sending Lat/Lng value to API server via socket.
      * And updates foreground notification to reflect driver offline status.
      */
@@ -802,12 +687,33 @@ public class LocationTrackingService extends Service {
         updateForegroundNotification();
     }
 
-    //endregion
-
-    //region Socket Events response Handler
+    /**
+     * update location when socket is reconnected, this will sync/update socket id on server
+     */
+    @Subscribe
+    public void onEvent(String event) {
+        if (Constants.ON_SOCKET_CONNECTED.equalsIgnoreCase(event)) {
+            if (Utils.canSendLocation()) {
+                synchronized (this) {
+                    double lat = AppPreferences.getLatitude();
+                    double lon = AppPreferences.getLongitude();
+                    boolean isMock = AppPreferences.isFromMockLocation();
+                    if (lat != 0.0 && lon != 0.0 && !isMock) {
+                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
+                            Utils.redLogLocation(TAG, "onSocketConnected");
+//                            mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+                        }
+                    }
+                }
+            }
+        } else if (Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION.equalsIgnoreCase(event)) {
+            updateForegroundNotification();
+        }
+    }
 
     /**
      * Handle Location API Error case for API failures.
+     *
      * @param locationResponse latest response from server.
      */
     private void handleLocationErrorUseCase(LocationResponse locationResponse) {
@@ -829,6 +735,9 @@ public class LocationTrackingService extends Service {
 
     }
 
+    /**
+     * Implementation of Location Listener
+     */
     private class LocationListener implements android.location.LocationListener {
         private final String TAG = "LocationListener";
         private Location location;
@@ -859,36 +768,6 @@ public class LocationTrackingService extends Service {
             Log.e(TAG, "onStatusChanged: " + status);
         }
     }
-
-    //endregion
-
-    //region Event bus socket
-
-    /**
-     * update location when socket is reconnected, this will sync/update socket id on server
-     */
-    @Subscribe
-    public void onEvent(String event) {
-        if (Constants.ON_SOCKET_CONNECTED.equalsIgnoreCase(event)) {
-            if (Utils.canSendLocation()) {
-                synchronized (this) {
-                    double lat = AppPreferences.getLatitude();
-                    double lon = AppPreferences.getLongitude();
-                    boolean isMock = AppPreferences.isFromMockLocation();
-                    if (lat != 0.0 && lon != 0.0 && !isMock) {
-                        if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
-                            Utils.redLogLocation(TAG, "onSocketConnected");
-//                            mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
-                        }
-                    }
-                }
-            }
-        } else if (Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION.equalsIgnoreCase(event)) {
-            updateForegroundNotification();
-        }
-    }
-
-    //endregion
 
     /**
      * Class used for the client Binder.  Since this service runs in the same process as its
