@@ -24,13 +24,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -102,6 +100,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -504,7 +503,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 showWalletAmount();
                             }
 
-                            setInitialData();
+                            if (normalCallData.getStatus() != null && normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                                AppPreferences.setCallData(normalCallData);
+                                AppPreferences.setTripStatus(normalCallData.getStatus());
+                                ActivityStackManager.getInstance().startFeedbackFromResume(mCurrentActivity);
+                            } else {
+                                setInitialData();
+                            }
+
                         } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
@@ -2356,9 +2362,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
 
             @Override
-            public void onJobFinishFailed(String message) {
-                Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
+            public void onJobFinishFailed(@Nullable String message, @Nullable Integer code) {
+                if (code != null && code == 422) {
+                    dataRepository.getActiveTrip(mCurrentActivity, handler);
+                } else {
+                    Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
 //                onStatusChangedFailed(message);
+                }
             }
         });
     }
@@ -2506,34 +2516,38 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @param data response data
      */
     private void onFinished(FinishJobResponseData data) {
-        Dialogs.INSTANCE.dismissDialog();
-        logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
-        endAddressTv.setEnabled(false);
-        callData = AppPreferences.getCallData();
+        if (data == null) {
+            finishJobRestApi(); // retry to finish job
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
+            endAddressTv.setEnabled(false);
+            callData = AppPreferences.getCallData();
 //                callData.setStartAddress(data.getStartAddress());
-        callData.setEndAddress(data.getTrip().getEnd_address());
-        callData.setTripNo(data.getInvoice().getTrip_no());
-        callData.setTotalFare(String.valueOf(data.getInvoice().getTotal()));
-        callData.setTotalMins(String.valueOf(data.getInvoice().getMinutes()));
-        callData.setDistanceCovered(String.valueOf(data.getInvoice().getKm()));
-        if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getWallet_deduction()))) {
-            callData.setWallet_deduction(String.valueOf(data.getInvoice().getWallet_deduction()));
-        }
-        if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getPromo_deduction()))) {
-            callData.setPromo_deduction(String.valueOf(data.getInvoice().getPromo_deduction()));
-        }
+            callData.setEndAddress(data.getTrip().getEnd_address());
+            callData.setTripNo(data.getInvoice().getTrip_no());
+            callData.setTotalFare(String.valueOf(data.getInvoice().getTotal()));
+            callData.setTotalMins(String.valueOf(data.getInvoice().getMinutes()));
+            callData.setDistanceCovered(String.valueOf(data.getInvoice().getKm()));
+            if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getWallet_deduction()))) {
+                callData.setWallet_deduction(String.valueOf(data.getInvoice().getWallet_deduction()));
+            }
+            if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getPromo_deduction()))) {
+                callData.setPromo_deduction(String.valueOf(data.getInvoice().getPromo_deduction()));
+            }
 //                if (StringUtils.isNotBlank(data.getDropoff_discount())) {
 //                    callData.setDropoff_discount(data.getDropoff_discount());
 //                }
-        callData.setStatus(TripStatus.ON_FINISH_TRIP);
-        callData.setTrip_charges(String.valueOf(data.getInvoice().getTrip_charges()));
-        AppPreferences.setCallData(callData);
-        tvEstimation.setVisibility(View.GONE);
-        AppPreferences.clearTripDistanceData();
-        AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP);
-        ActivityStackManager.getInstance()
-                .startFeedbackActivity(mCurrentActivity);
-        mCurrentActivity.finish();
+            callData.setStatus(TripStatus.ON_FINISH_TRIP);
+            callData.setTrip_charges(String.valueOf(data.getInvoice().getTrip_charges()));
+            AppPreferences.setCallData(callData);
+            tvEstimation.setVisibility(View.GONE);
+            AppPreferences.clearTripDistanceData();
+            AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP);
+            ActivityStackManager.getInstance()
+                    .startFeedbackActivity(mCurrentActivity);
+            mCurrentActivity.finish();
+        }
     }
 
     /**
