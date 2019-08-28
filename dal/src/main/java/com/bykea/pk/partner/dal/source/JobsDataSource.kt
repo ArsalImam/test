@@ -267,12 +267,12 @@ interface JobsDataSource {
         /**
          * On job finish success
          */
-        fun onJobFinished(data: FinishJobResponseData)
+        fun onJobFinished(data: FinishJobResponseData, request: String, resp: String)
 
         /**
          * On job finish failed
          */
-        fun onJobFinishFailed(message: String?)
+        fun onJobFinishFailed(message: String?, code: Int?)
     }
 
     /**
