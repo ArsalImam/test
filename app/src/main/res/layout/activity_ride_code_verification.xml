@@ -33,6 +33,35 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <LinearLayout
+                        android:id="@+id/linLayoutOtpWrongEntered"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:background="@drawable/btn_red_round_unselected"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/_5sdp"
+                        android:visibility="gone">
+
+                        <com.bykea.pk.partner.ui.helpers.FontTextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_3sdp"
+                            android:layout_marginRight="@dimen/_3sdp"
+                            android:layout_weight="1"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_14sdp"
+                            android:text="@string/wrong_code_entered"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_info" />
+                    </LinearLayout>
+
+
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/titleMsg"
                         android:layout_width="match_parent"

@@ -12,9 +12,7 @@ import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.RideCreateResponse
-import com.bykea.pk.partner.dal.util.Injection
-import com.bykea.pk.partner.dal.util.OTP_CALL
-import com.bykea.pk.partner.dal.util.OTP_SMS
+import com.bykea.pk.partner.dal.util.*
 import com.bykea.pk.partner.databinding.ActivityRideCodeVerificationBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.utils.Constants
@@ -163,9 +161,10 @@ class RideCodeVerificationActivity : BaseActivity() {
 
     /* Handle button click when user has entered OTP code. */
     private fun handleDoneButtonClick() {
+        linLayoutOtpWrongEntered.visibility = View.GONE
         if (Utils.isConnected(this@RideCodeVerificationActivity, true)) {
             if (validateOtpCode()) {
-                requestCodeVerification(verificationCodeEt.text!!.toString().trim { it <= ' ' })
+                requestCodeVerificationTripCreation(verificationCodeEt.text!!.toString().trim { it <= ' ' })
             }
         }
     }
@@ -173,10 +172,11 @@ class RideCodeVerificationActivity : BaseActivity() {
     /* Handle request for resend code when user has failed to enter OTP in given time frame.
      * We give user the option to receive OTP via call. */
     fun handleResendCode(view: View) {
+        linLayoutOtpWrongEntered.visibility = View.GONE
         if (Utils.isConnected(this@RideCodeVerificationActivity, true)) {
             Dialogs.INSTANCE.showLoader(this@RideCodeVerificationActivity)
             animateDonutProgress()
-            requestVerificationCode()
+            requestGenerateCode()
         }
     }
 
@@ -231,7 +231,7 @@ class RideCodeVerificationActivity : BaseActivity() {
      * Send request to API server with provided OTP code entered by User.
      * @param enteredOTP Entered OTP
      */
-    private fun requestCodeVerification(enteredOTP: String) {
+    private fun requestCodeVerificationTripCreation(enteredOTP: String) {
         Dialogs.INSTANCE.showLoader(this@RideCodeVerificationActivity)
         rideCreateRequestObject.trip.code = enteredOTP
         jobsRepository.createTrip(rideCreateRequestObject, object : JobsDataSource.CreateTripCallback {
@@ -240,18 +240,17 @@ class RideCodeVerificationActivity : BaseActivity() {
                 ActivityStackManager.getInstance().startJobActivity(this@RideCodeVerificationActivity);
             }
 
-            override fun onFail(code: Int, message: String?) {
+            override fun onFail(code: Int, subCode: Int?, message: String?) {
                 Dialogs.INSTANCE.dismissDialog()
-                displayErrorToast(code, message)
+                displayErrorToast(code, subCode, message)
             }
         })
     }
 
-
     /**
      * Send Request to API server which tell OTP should be send to user via phone call
      */
-    private fun requestVerificationCode() {
+    private fun requestGenerateCode() {
         Dialogs.INSTANCE.showLoader(this@RideCodeVerificationActivity)
         jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(mobileNumber), OTP_SMS, object : JobsDataSource.OtpGenerateCallback {
             override fun onSuccess(verifyNumberResponse: com.bykea.pk.partner.dal.source.remote.response.VerifyNumberResponse) {
@@ -268,16 +267,42 @@ class RideCodeVerificationActivity : BaseActivity() {
 
     /**
      * Display Error Toast
+     * @param code : Server Code
+     * @param subCode : Server Sub Code
+     * @param message : Error Message For Toast
+     */
+    private fun displayErrorToast(code: Int, subCode: Int?, message: String?) {
+        if (subCode != null) {
+            when (subCode) {
+                SUB_CODE_1052 ->  Utils.appToast(SUB_CODE_1052_MSG)
+                SUB_CODE_1053 -> linLayoutOtpWrongEntered.visibility = View.VISIBLE
+                SUB_CODE_1054 -> Utils.appToast(SUB_CODE_1054_MSG)
+                SUB_CODE_1055 -> Utils.appToast(SUB_CODE_1055_MSG)
+                else -> Utils.appToast(getString(R.string.error_try_again))
+            }
+        } else {
+
+            if ((!message.isNullOrEmpty() && StringUtils.containsIgnoreCase(message, getString(R.string.invalid_code_error_message))) ||
+                    code.equals(Constants.ApiError.BUSINESS_LOGIC_ERROR)) {
+                linLayoutOtpWrongEntered.visibility = View.VISIBLE
+            } else {
+                Utils.appToast(getString(R.string.error_try_again))
+            }
+        }
+    }
+
+    /**
+     * Display Error Toast
+     * @param code : Server Code
      * @param message : Error Message For Toast
      */
     private fun displayErrorToast(code: Int, message: String?) {
-        val errorMessage: String?
         if ((!message.isNullOrEmpty() && StringUtils.containsIgnoreCase(message, getString(R.string.invalid_code_error_message))) ||
                 code.equals(Constants.ApiError.BUSINESS_LOGIC_ERROR)) {
-            errorMessage = getString(R.string.invalid_code_error_message)
+            linLayoutOtpWrongEntered.visibility = View.VISIBLE
         } else {
-            errorMessage = getString(R.string.error_try_again)
+            Utils.appToast(getString(R.string.error_try_again))
         }
-        Utils.appToast(errorMessage)
+
     }
 }

@@ -467,4 +467,5 @@
     <string name="pick_from_here_title">\u0020یہاں سے پِک کریں\u0020</string>
     <string name="select_location_title">\u0020مقام مقرر کریں\u0020</string>
     <string name="resend_code">\u0020دوبارہ کوڈ بھیجیں\u0020</string>
+    <string name="wrong_code_entered">\u0020درج کردہ کوڈ درست نہیں ہے\u0020</string>
 </resources>

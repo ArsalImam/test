@@ -363,7 +363,7 @@ interface JobsDataSource {
     interface CreateTripCallback {
         fun onSuccess(rideCreateResponse: RideCreateResponse)
 
-        fun onFail(code: Int, message: String?)
+        fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
 
 }
