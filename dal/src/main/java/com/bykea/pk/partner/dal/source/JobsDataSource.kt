@@ -348,7 +348,7 @@ interface JobsDataSource {
     interface OtpGenerateCallback {
         fun onSuccess(verifyNumberResponse: VerifyNumberResponse)
 
-        fun onFail(code: Int, message: String?)
+        fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
 
     /**

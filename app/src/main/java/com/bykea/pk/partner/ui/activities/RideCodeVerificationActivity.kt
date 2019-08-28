@@ -257,9 +257,9 @@ class RideCodeVerificationActivity : BaseActivity() {
                 Dialogs.INSTANCE.dismissDialog()
             }
 
-            override fun onFail(code: Int, message: String?) {
+            override fun onFail(code: Int, subCode: Int?, message: String?) {
                 Dialogs.INSTANCE.dismissDialog()
-                displayErrorToast(code, message)
+                displayErrorToast(code, subCode, message)
             }
         })
     }
@@ -274,6 +274,8 @@ class RideCodeVerificationActivity : BaseActivity() {
     private fun displayErrorToast(code: Int, subCode: Int?, message: String?) {
         if (subCode != null) {
             when (subCode) {
+                SUB_CODE_1009 -> Utils.appToast(message)
+                SUB_CODE_1028 -> Utils.appToast(message)
                 SUB_CODE_1052 -> Utils.appToast(SUB_CODE_1052_MSG)
                 SUB_CODE_1053 -> linLayoutOtpWrongEntered.visibility = View.VISIBLE
                 SUB_CODE_1054 -> Utils.appToast(SUB_CODE_1054_MSG)
@@ -284,7 +286,6 @@ class RideCodeVerificationActivity : BaseActivity() {
                 else -> Utils.appToast(getString(R.string.error_try_again))
             }
         } else {
-
             if ((!message.isNullOrEmpty() && StringUtils.containsIgnoreCase(message, getString(R.string.invalid_code_error_message))) ||
                     code.equals(Constants.ApiError.BUSINESS_LOGIC_ERROR)) {
                 linLayoutOtpWrongEntered.visibility = View.VISIBLE
@@ -292,20 +293,5 @@ class RideCodeVerificationActivity : BaseActivity() {
                 Utils.appToast(getString(R.string.error_try_again))
             }
         }
-    }
-
-    /**
-     * Display Error Toast
-     * @param code : Server Code
-     * @param message : Error Message For Toast
-     */
-    private fun displayErrorToast(code: Int, message: String?) {
-        if ((!message.isNullOrEmpty() && StringUtils.containsIgnoreCase(message, getString(R.string.invalid_code_error_message))) ||
-                code.equals(Constants.ApiError.BUSINESS_LOGIC_ERROR)) {
-            linLayoutOtpWrongEntered.visibility = View.VISIBLE
-        } else {
-            Utils.appToast(getString(R.string.error_try_again))
-        }
-
     }
 }

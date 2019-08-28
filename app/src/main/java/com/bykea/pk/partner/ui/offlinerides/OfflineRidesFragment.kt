@@ -22,8 +22,7 @@ import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObje
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateTripData
 import com.bykea.pk.partner.dal.source.remote.response.FareEstimationResponse
 import com.bykea.pk.partner.dal.source.remote.response.VerifyNumberResponse
-import com.bykea.pk.partner.dal.util.Injection
-import com.bykea.pk.partner.dal.util.OTP_SMS
+import com.bykea.pk.partner.dal.util.*
 import com.bykea.pk.partner.databinding.FragmentOfflineRidesBinding
 import com.bykea.pk.partner.models.data.PlacesResult
 import com.bykea.pk.partner.ui.activities.HomeActivity
@@ -40,6 +39,7 @@ import com.bykea.pk.partner.utils.Constants.USER_TYPE
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.FontTextView
+import kotlinx.android.synthetic.main.activity_ride_code_verification.*
 import kotlinx.android.synthetic.main.fragment_offline_rides.*
 import org.apache.commons.lang3.StringUtils
 
@@ -78,9 +78,9 @@ class OfflineRidesFragment : Fragment() {
                                                     binding.eTMobileNumber.text.toString())
                                 }
 
-                                override fun onFail(code: Int, message: String?) {
+                                override fun onFail(code: Int, subCode: Int?, message: String?) {
                                     Dialogs.INSTANCE.dismissDialog()
-                                    Utils.appToast(mCurrentActivity?.getString(R.string.error_try_again))
+                                    displayErrorToast(code, subCode, message)
                                 }
                             })
                 }
@@ -263,6 +263,32 @@ class OfflineRidesFragment : Fragment() {
             dropoff_info?.lat = mDropOffResult?.latLng?.latitude.toString()
             dropoff_info?.lng = mDropOffResult?.latLng?.longitude.toString()
             dropoff_info?.address = mDropOffResult?.address
+        }
+    }
+
+    /**
+     * Display Error Toast
+     * @param code : Server Code
+     * @param subCode : Server Sub Code
+     * @param message : Error Message For Toast
+     */
+    private fun displayErrorToast(code: Int, subCode: Int?, message: String?) {
+        if (subCode != null) {
+            when (subCode) {
+                SUB_CODE_1009 -> Utils.appToast(message)
+                SUB_CODE_1028 -> Utils.appToast(message)
+                SUB_CODE_1052 -> Utils.appToast(SUB_CODE_1052_MSG)
+                SUB_CODE_1053 -> linLayoutOtpWrongEntered.visibility = View.VISIBLE
+                SUB_CODE_1054 -> Utils.appToast(SUB_CODE_1054_MSG)
+                else -> Utils.appToast(getString(R.string.error_try_again))
+            }
+        } else {
+            if ((!message.isNullOrEmpty() && StringUtils.containsIgnoreCase(message, getString(R.string.invalid_code_error_message))) ||
+                    code.equals(Constants.ApiError.BUSINESS_LOGIC_ERROR)) {
+                linLayoutOtpWrongEntered.visibility = View.VISIBLE
+            } else {
+                Utils.appToast(getString(R.string.error_try_again))
+            }
         }
     }
 }

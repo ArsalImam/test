@@ -21,6 +21,8 @@ val SUB_CODE_1052 = 1052
 val SUB_CODE_1053 = 1053
 val SUB_CODE_1054 = 1054
 val SUB_CODE_1055 = 1055
+val SUB_CODE_1028 = 1028
+val SUB_CODE_1009 = 1009
 
 val SUB_CODE_1052_MSG = "Invalid phone number"
 val SUB_CODE_1054_MSG = "Driver has an active trip"

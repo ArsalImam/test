@@ -117,6 +117,7 @@ import butterknife.OnClick;
 
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
+import static com.bykea.pk.partner.utils.Constants.ServiceType.OFFLINE_RIDE;
 
 //import com.google.android.gms.location.places.Place;
 //import com.google.android.gms.location.places.Places;
@@ -500,6 +501,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 AppPreferences.setCallData(normalCallData);
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
                                 callData = normalCallData;
+                                if (callData != null && callData.getServiceCode() != null &&
+                                        callData.getServiceCode() == OFFLINE_RIDE) {
+                                    chatBtn.setVisibility(View.GONE);
+                                }
                                 updateDropOff();
                                 showWalletAmount();
                             }

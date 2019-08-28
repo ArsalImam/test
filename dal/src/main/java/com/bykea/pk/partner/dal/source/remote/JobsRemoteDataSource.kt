@@ -267,8 +267,8 @@ class JobsRemoteDataSource {
                 callback.onSuccess(response)
             }
 
-            override fun onFail(code: Int, message: String?) {
-                callback.onFail(code, message)
+            override fun onFail(code: Int, subCode: Int?, message: String?) {
+                callback.onFail(code, subCode, message)
             }
         })
     }
