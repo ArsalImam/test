@@ -41,7 +41,6 @@ import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.FontTextView
 import kotlinx.android.synthetic.main.fragment_offline_rides.*
-import kotlinx.android.synthetic.main.toolbar.*
 import org.apache.commons.lang3.StringUtils
 
 class OfflineRidesFragment : Fragment() {
@@ -108,19 +107,11 @@ class OfflineRidesFragment : Fragment() {
         mCurrentActivity?.hideWalletIcon()
         setFare()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            iVDropOffAddress.setImageDrawable(mCurrentActivity?.resources?.getDrawable(R.drawable.ic_pencil_icon, null))
-        } else {
-            iVDropOffAddress.setImageDrawable(mCurrentActivity?.resources?.getDrawable(R.drawable.ic_pencil_icon))
-        }
-
         eTMobileNumber.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {}
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (Utils.isValidNumber(eTMobileNumber) && !StringUtils.isEmpty(tVDropOffAddress.text)) {
-                    setBackgroundColor()
-                }
+                validateNumberSetButtonColor()
             }
         })
 
@@ -130,22 +121,33 @@ class OfflineRidesFragment : Fragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (!StringUtils.isEmpty(tVDropOffAddress.text)) {
                     Utils.setImageDrawable(iVDropOffAddress, R.drawable.ic_pencil_icon)
-                    if (Utils.isValidNumber(eTMobileNumber))
-                        setBackgroundColor()
+                    validateNumberSetButtonColor()
                 }
             }
         })
     }
 
     /**
-     * Set Background Color For Bottom Button
+     * Set Button Background According To The Validation Of Mobile Number
      */
-    private fun setBackgroundColor() {
+    private fun validateNumberSetButtonColor() {
+        if (Utils.isValidNumber(eTMobileNumber)) {
+            setBackgroundColor(R.color.colorAccent)
+        } else {
+            setBackgroundColor(R.color.color_A7A7A7)
+        }
+    }
+
+    /**
+     * Set Background Color For Bottom Button
+     * @param co
+     */
+    private fun setBackgroundColor(colorId: Int) {
         mCurrentActivity.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                tVReceiveCode.setBackgroundColor(mCurrentActivity!!.resources.getColor(R.color.colorAccent, null))
+                tVReceiveCode.setBackgroundColor(mCurrentActivity!!.resources.getColor(colorId, null))
             } else {
-                tVReceiveCode.setBackgroundColor(mCurrentActivity!!.resources.getColor(R.color.colorAccent))
+                tVReceiveCode.setBackgroundColor(mCurrentActivity!!.resources.getColor(colorId))
             }
         }
     }
@@ -168,6 +170,8 @@ class OfflineRidesFragment : Fragment() {
                     .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.offline_ride_fare), "jameel_noori_nastaleeq.ttf"))
                     .append(StringUtils.SPACE)
+
+            Utils.setImageDrawable(iVDropOffAddress, R.drawable.ic_pencil_icon)
         } else {
             tVOfflineFare.text = SpannableStringBuilder(StringUtils.EMPTY)
                     .append(FontUtils.getStyledTitle(mCurrentActivity, String.format(getString(R.string.amount_rs), StringUtils.EMPTY), "roboto_medium.ttf"))
@@ -176,7 +180,6 @@ class OfflineRidesFragment : Fragment() {
                     .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
                     .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.offline_ride_fare), "jameel_noori_nastaleeq.ttf"))
                     .append(StringUtils.SPACE)
-
         }
     }
 

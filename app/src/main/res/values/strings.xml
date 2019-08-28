@@ -461,7 +461,7 @@
     <string name="search_drop_off">Search Drop Off</string>
     <string name="receive_code">\u0020کوڈ وصول کریں\u0020</string>
     <string name="search_drop_off_toast">Please search drop off</string>
-    <string name="offline_ride_notice">\u0020برائے مہربانی آف لائن رائیدز لینے کے لئے ہوم اسکرین پر اپنی ایپ کو آف لائیں کریں\u0020</string>
+    <string name="offline_ride_notice">\u0020برائے مہربانی آف لائن رائیڈز لینے کے لئے ہوم اسکرین پر اپنی ایپ کو آف لائن کریں\u0020</string>
 
     <string name="select_dropoff_title">\u0020منزل منتخب کریں\u0020</string>
     <string name="pick_from_here_title">\u0020یہاں سے پِک کریں\u0020</string>
