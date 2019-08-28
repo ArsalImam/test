@@ -15,9 +15,37 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        flavorDimensions "env"
+        productFlavors {
+            local {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://192.168.0.122:3000\""
+            }
+            develop {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://dev.bykea.net:3000\""
+            }
+            staging {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-lb-talos.bykea.net\""
+            }
+            livetesting {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3001\""
+            }
+            production {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3000\""
+            }
         }
     }
 
