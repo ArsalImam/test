@@ -215,6 +215,10 @@ public class Constants {
         public final static String IS_CALLED_FROM_LOADBOARD = "IS_CALLED_FROM_LOADBOARD";
 
         public static final String RIDE_CREATE_DATA = "RIDE_CREATE_DATA";
+
+        public static final String FROM = "from";
+        public static final String FLOW_FOR = "FLOW_FOR";
+        public static final String OFFLINE_RIDE = "OFFLINE_RIDE";
     }
 
     public static class Broadcast {

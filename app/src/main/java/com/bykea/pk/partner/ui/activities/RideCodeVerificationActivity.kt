@@ -14,6 +14,7 @@ import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObje
 import com.bykea.pk.partner.dal.source.remote.response.RideCreateResponse
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.dal.util.OTP_CALL
+import com.bykea.pk.partner.dal.util.OTP_SMS
 import com.bykea.pk.partner.databinding.ActivityRideCodeVerificationBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.utils.Constants
@@ -83,12 +84,6 @@ class RideCodeVerificationActivity : BaseActivity() {
         findViewById<View>(R.id.ivBackBtn).setOnClickListener { onBackPressed() }
     }
 
-    /* This method Updates Title for Custom Tool bar when title has multiple fonts
-     * @param title SpannableStringBuilder */
-    fun updateTitleCustomToolbar(title: SpannableStringBuilder) {
-        (findViewById<View>(R.id.tvTitle) as FontTextView).text = title
-    }
-
 
     /* This method sets required listeners with verificationCodeEt */
     private fun initVerificationEditText() {
@@ -146,11 +141,6 @@ class RideCodeVerificationActivity : BaseActivity() {
                 donutProgress.progress = (Constants.VERIFICATION_WAIT_MAX_TIME / 100).toInt().toFloat()
 
                 llBottom.visibility = View.VISIBLE
-                val spannableStringBuilder = SpannableStringBuilder()
-                spannableStringBuilder.append(FontUtils.getStyledTitle(this@RideCodeVerificationActivity,
-                        R.string.verify_on_call_ur,
-                        Constants.FontNames.JAMEEL_NASTALEEQI))
-                this@RideCodeVerificationActivity.updateTitleCustomToolbar(spannableStringBuilder)
             }
         }
     }
@@ -186,7 +176,7 @@ class RideCodeVerificationActivity : BaseActivity() {
         if (Utils.isConnected(this@RideCodeVerificationActivity, true)) {
             Dialogs.INSTANCE.showLoader(this@RideCodeVerificationActivity)
             animateDonutProgress()
-            requestVerificationCodeViaCall()
+            requestVerificationCode()
         }
     }
 
@@ -261,9 +251,9 @@ class RideCodeVerificationActivity : BaseActivity() {
     /**
      * Send Request to API server which tell OTP should be send to user via phone call
      */
-    private fun requestVerificationCodeViaCall() {
+    private fun requestVerificationCode() {
         Dialogs.INSTANCE.showLoader(this@RideCodeVerificationActivity)
-        jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(mobileNumber), OTP_CALL, object : JobsDataSource.OtpGenerateCallback {
+        jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(mobileNumber), OTP_SMS, object : JobsDataSource.OtpGenerateCallback {
             override fun onSuccess(verifyNumberResponse: com.bykea.pk.partner.dal.source.remote.response.VerifyNumberResponse) {
                 Dialogs.INSTANCE.dismissDialog()
             }

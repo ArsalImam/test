@@ -33,6 +33,8 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.APP
+import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
+import com.bykea.pk.partner.utils.Constants.Extras.FROM
 import com.bykea.pk.partner.utils.Constants.ServiceType.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
 import com.bykea.pk.partner.utils.Dialogs
@@ -56,8 +58,11 @@ class OfflineRidesFragment : Fragment() {
 
         binding.listener = object : OfflineFragmentListener {
             override fun onDropOffClicked() {
+                if (StringUtils.isEmpty(eTMobileNumber.text?.trim()))
+                    eTMobileNumber.clearFocus()
                 val returndropoffIntent = Intent(mCurrentActivity, SelectPlaceActivity::class.java)
-                returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE)
+                returndropoffIntent.putExtra(FROM, Constants.CONFIRM_DROPOFF_REQUEST_CODE)
+                returndropoffIntent.putExtra(FLOW_FOR, Constants.Extras.OFFLINE_RIDE)
                 startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE)
             }
 
@@ -68,7 +73,6 @@ class OfflineRidesFragment : Fragment() {
                             object : JobsDataSource.OtpGenerateCallback {
                                 override fun onSuccess(verifyNumberResponse: VerifyNumberResponse) {
                                     Dialogs.INSTANCE.dismissDialog()
-
                                     ActivityStackManager
                                             .getInstance()
                                             .startWaitingActivity(mCurrentActivity, createRequestBody(),
@@ -133,6 +137,9 @@ class OfflineRidesFragment : Fragment() {
         })
     }
 
+    /**
+     * Set Background Color For Bottom Button
+     */
     private fun setBackgroundColor() {
         mCurrentActivity.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -149,6 +156,10 @@ class OfflineRidesFragment : Fragment() {
         super.onDestroyView()
     }
 
+    /**
+     * Set Fare In Drop Off Field
+     * @param fare : Return From FareEstimation API
+     */
     fun setFare(fare: String? = null) {
         if (fare != null) {
             tVOfflineFare.text = SpannableStringBuilder(StringUtils.EMPTY)
@@ -169,6 +180,10 @@ class OfflineRidesFragment : Fragment() {
         }
     }
 
+    /**
+     * Check If Drop Off Is Selected Or Not and Mobile Number is correctly entered or not
+     * return True:False, accordingly
+     */
     fun isValid(): Boolean {
         if (StringUtils.isEmpty(tVDropOffAddress.text)) {
             Utils.appToast(context?.getString(R.string.search_drop_off_toast))
@@ -179,16 +194,20 @@ class OfflineRidesFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (mCurrentActivity != null) {
-            if (resultCode == RESULT_OK && requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
-                mDropOffResult = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT)
-                if (mDropOffResult != null) {
-                    setCallForETA(mDropOffResult!!)
-                }
+        if (mCurrentActivity != null && resultCode == RESULT_OK && requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
+            mDropOffResult = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT)
+            if (mDropOffResult != null) {
+                setCallForETA(mDropOffResult!!)
+            } else {
+                Utils.appToast(mCurrentActivity?.getString(R.string.error_try_again))
             }
         }
     }
 
+    /**
+     * Set The DropOff and Fare Fields
+     * @param placesResult : Return On Activity Result
+     */
     private fun setCallForETA(placesResult: PlacesResult) {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
         jobsRepository.getFairEstimation(
@@ -197,11 +216,16 @@ class OfflineRidesFragment : Fragment() {
                 APP, Constants.ServiceType.OFFLINE_RIDE_STRING,
                 object : JobsDataSource.FareEstimationCallback {
                     override fun onSuccess(fareEstimationResponse: FareEstimationResponse) {
-                        if (fareEstimationResponse.callData != null) {
-                            tVDropOffAddress.text = mDropOffResult?.name
-                            setFare(fareEstimationResponse.callData?.maxLimitPrice?.toInt().toString())
+                        try {
+                            if (fareEstimationResponse.callData != null) {
+                                tVDropOffAddress.text = mDropOffResult?.name
+                                setFare(fareEstimationResponse.callData?.maxLimitPrice?.toInt().toString())
+                            }
+                            Dialogs.INSTANCE.dismissDialog()
+                        } catch (e: Exception) {
+                            Utils.appToast(mCurrentActivity?.getString(R.string.error_try_again))
+                            Dialogs.INSTANCE.dismissDialog()
                         }
-                        Dialogs.INSTANCE.dismissDialog()
                     }
 
                     override fun onFail(code: Int, message: String?) {
@@ -211,6 +235,10 @@ class OfflineRidesFragment : Fragment() {
                 })
     }
 
+    /**
+     * Create Request Body For Ride Create API
+     * Return Object Of Request Body - RideCreateRequestObject
+     */
     private fun createRequestBody(): RideCreateRequestObject {
         return RideCreateRequestObject().apply {
             user_type = USER_TYPE
