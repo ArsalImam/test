@@ -267,7 +267,7 @@ interface JobsDataSource {
         /**
          * On job finish success
          */
-        fun onJobFinished(data: FinishJobResponseData)
+        fun onJobFinished(data: FinishJobResponseData, request: String, resp: String)
 
         /**
          * On job finish failed
