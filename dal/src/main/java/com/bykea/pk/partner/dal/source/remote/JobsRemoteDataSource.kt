@@ -160,9 +160,11 @@ class JobsRemoteDataSource {
      * @param callback Response callback
      */
     fun finishJob(jobId: String, requestBody: FinishJobRequest, callback: JobsDataSource.FinishJobCallback) {
-        Backend.talos.finishJob(jobId, requestBody).enqueue(object : Callback<FinishJobResponse> {
-            override fun onSuccess(response: FinishJobResponse) = callback.onJobFinished(response.data)
-            override fun onFail(code: Int, message: String?) = callback.onJobFinishFailed(message)
+        Backend.talos.finishJob(jobId, requestBody).enqueue(object : LoggerCallback<FinishJobResponse> {
+            override fun onSuccess(response: FinishJobResponse, request: String, resp: String) =
+                    callback.onJobFinished(response.data, request, resp)
+
+            override fun onFail(code: Int, message: String?) = callback.onJobFinishFailed(message, code)
         })
     }
 
