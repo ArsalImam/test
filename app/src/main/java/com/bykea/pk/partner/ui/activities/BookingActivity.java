@@ -24,13 +24,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
@@ -117,9 +115,12 @@ import butterknife.OnClick;
 
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
+import static com.bykea.pk.partner.utils.Constants.ServiceType.OFFLINE_RIDE;
 
-//import com.google.android.gms.location.places.Place;
-//import com.google.android.gms.location.places.Places;
+/*
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+*/
 
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
         RoutingListener {
@@ -240,6 +241,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
+
     private UserDataHandler driversDataHandler = new UserDataHandler() {
 
         @Override
@@ -454,9 +456,20 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
+    /**
+     * Hide Cancel Button
+     */
     private void hideButtonOnArrived() {
 //        callbtn.setVisibility(View.GONE);
 //        chatBtn.setVisibility(View.GONE);
+        cancelBtn.setVisibility(View.GONE);
+    }
+
+    /**
+     * Hide Chat and Cancel Button For Offline Ride
+     */
+    private void hideChatAndCancelButton() {
+        chatBtn.setVisibility(View.GONE);
         cancelBtn.setVisibility(View.GONE);
     }
 
@@ -500,6 +513,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 AppPreferences.setCallData(normalCallData);
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
                                 callData = normalCallData;
+                                if (callData.getServiceCode() != null && callData.getServiceCode() == OFFLINE_RIDE)
+                                    hideChatAndCancelButton();
                                 updateDropOff();
                                 showWalletAmount();
                             }
