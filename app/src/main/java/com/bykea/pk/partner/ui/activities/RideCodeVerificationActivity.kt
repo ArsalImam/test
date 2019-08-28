@@ -274,10 +274,13 @@ class RideCodeVerificationActivity : BaseActivity() {
     private fun displayErrorToast(code: Int, subCode: Int?, message: String?) {
         if (subCode != null) {
             when (subCode) {
-                SUB_CODE_1052 ->  Utils.appToast(SUB_CODE_1052_MSG)
+                SUB_CODE_1052 -> Utils.appToast(SUB_CODE_1052_MSG)
                 SUB_CODE_1053 -> linLayoutOtpWrongEntered.visibility = View.VISIBLE
                 SUB_CODE_1054 -> Utils.appToast(SUB_CODE_1054_MSG)
-                SUB_CODE_1055 -> Utils.appToast(SUB_CODE_1055_MSG)
+                SUB_CODE_1055 -> {
+                    Utils.appToast(SUB_CODE_1055_MSG)
+                    finish()
+                }
                 else -> Utils.appToast(getString(R.string.error_try_again))
             }
         } else {
