@@ -42,10 +42,12 @@ import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Pair;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -77,6 +79,7 @@ import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
@@ -155,8 +158,10 @@ import retrofit2.Response;
 import zendesk.core.JwtIdentity;
 import zendesk.core.Zendesk;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 
 public class Utils {
@@ -907,7 +912,7 @@ public class Utils {
     public static void hideSoftKeyboard(Fragment fragment) {
         try {
             final InputMethodManager imm = (InputMethodManager) fragment.getActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    .getSystemService(INPUT_METHOD_SERVICE);
             if (imm != null && fragment.getView() != null) {
                 imm.hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
             }
@@ -919,7 +924,7 @@ public class Utils {
     public static void hideKeyboard(Activity context) {
         View view = context.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
@@ -3290,6 +3295,84 @@ public class Utils {
             return true;
         } catch (PackageManager.NameNotFoundException e) {
             return false;
+        }
+    }
+
+    /**
+     * Chat Messages in Urdu
+     *
+     * @return List Of Chat Message In Urdu
+     */
+    public static String[] getChatMessageInUrdu(Context context) {
+        return context.getResources().getStringArray(R.array.chat_messages_urdu);
+    }
+
+    /**
+     * Chat Messages in English
+     *
+     * @return List Of Chat Message In English
+     */
+    public static String[] getChatMessageInEnglish(Context context) {
+        return context.getResources().getStringArray(R.array.chat_messages_english);
+    }
+
+    /**
+     * @param context Calling Context
+     * @return List Of ChatMessages With English Urdu Transalations
+     */
+    public static ArrayList<ChatMessagesTranslated> getAllChatMessageTranslated(Context context) {
+        ArrayList<ChatMessagesTranslated> chatMessagesTranslateds = new ArrayList<>();
+        String[] chatMessageInEnglish = Utils.getChatMessageInEnglish(context);
+        String[] chatMessageInUrdu = Utils.getChatMessageInUrdu(context);
+
+        for (int i = 0; i < chatMessageInEnglish.length; i++) {
+            if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(chatMessageInEnglish[i], chatMessageInUrdu[i]));
+        }
+        return chatMessagesTranslateds;
+    }
+
+    /**
+     * @param chatMessageInUrdu       Text to Match
+     * @param chatMessagesTranslateds List From Which To Match
+     * @return If text matches return the english transalation against it.
+     */
+    public static Pair<Boolean, String> getTranslationIfExists(String chatMessageInUrdu, ArrayList<ChatMessagesTranslated> chatMessagesTranslateds) {
+        for (ChatMessagesTranslated chatMessagesTranslated : chatMessagesTranslateds) {
+            if (chatMessagesTranslated.getChatMessageInUrdu().contains(chatMessageInUrdu))
+                return new Pair<>(true, chatMessagesTranslated.getChatMessageInEnglish());
+        }
+        return new Pair<>(false, StringUtils.EMPTY);
+    }
+
+    /**
+     *
+     * @param chatMessagesTranslated Object Containing English and Urdu Value
+     * @return
+     */
+    public static String getConcatenatedTransalation(ChatMessagesTranslated chatMessagesTranslated) {
+        return chatMessagesTranslated.getChatMessageInUrdu() + TRANSALATION_SEPERATOR + chatMessagesTranslated.getChatMessageInEnglish();
+    }
+
+    /**
+     * Shows the soft keyboard
+     */
+    public static void showSoftKeyboard(Context context, View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        view.requestFocus();
+        inputMethodManager.showSoftInput(view, 0);
+    }
+
+    /**
+     * Get String Value After Applying HTML
+     * @param html
+     * @return String : After Applying HTML to String.
+     */
+    public static String getTextFromHTML(String html) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return  String.valueOf(Html.fromHtml(html));
+        } else {
+            return String.valueOf(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
         }
     }
 

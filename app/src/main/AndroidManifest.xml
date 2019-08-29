@@ -37,7 +37,9 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <activity android:name=".ui.activities.RideCodeVerificationActivity"></activity>
+        <activity
+            android:name=".ui.activities.RideCodeVerificationActivity"
+            android:launchMode="singleTop" />
         <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
@@ -161,7 +163,8 @@
 
         <activity
             android:name=".ui.activities.ChatActivityNew"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.PersonalActivity"
             android:screenOrientation="portrait" />

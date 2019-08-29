@@ -448,6 +448,27 @@
     <string name="call_whatsapp">\u0020واٹس ایپ پر کال کریں\u0020</string>
     <string name="call_mobile_no">\u0020موبائل نمبر پر کال کریں\u0020</string>
 
+
+    <string-array name="chat_messages_urdu">
+        <item>\u0020آپ کی لوکیشن صحیح ڈلی ہوئی ہے؟\u0020</item>
+        <item>\u0020میں آپ کی طرف آ رہا ہوں\u0020</item>
+        <item>\u0020راستہ سمجھا دیں یا نزدیک کوئی جگہ بتا دیں\u0020</item>
+        <item>\u0020میں راستے میں ہوں لیکن 5 منٹ لیٹ ہو سکتا ہوں\u0020</item>
+        <item>\u0020تھوڑا دور ہوں لیکن آپ کی طرف آ رہا ہوں\u0020</item>
+        <item>\u0020میں آپ کو کیسے پہچانوں گا؟\u0020</item>
+        <item>\u0020میں آپ کی لوکیشن پر پہنچ گیا ہوں\u0020</item>
+    </string-array>
+
+    <string-array name="chat_messages_english">
+        <item>Is your location pick accurate?</item>
+        <item>"I'm on my way"</item>
+        <item>Please provide more details about your pickup location</item>
+        <item>"I'm on my way but will run 5 minutes late"</item>
+        <item>I am slightly far away, but coming towards you</item>
+        <item>How do I recognize you\?</item>
+        <item>I have arrived</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

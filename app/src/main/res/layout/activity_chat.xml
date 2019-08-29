@@ -1,69 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/topLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/windowBackground"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center"
+            android:padding="@dimen/padding.small"
+            app:srcCompat="@drawable/ic_arrow_back_48px" />
 
-        <FrameLayout
-            android:id="@+id/topLayout"
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/titleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Title"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/textsize.title" />
+
+        <View
+            android:id="@+id/toolbarLine"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/windowBackground"
-            android:orientation="vertical">
+            android:layout_height="@dimen/_1sdp"
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimary" />
 
-            <!--  <include layout="@layout/toolbar" />-->
+    </FrameLayout>
 
-            <ImageView
-                android:id="@+id/backBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center"
-                android:padding="@dimen/padding.small"
-                app:srcCompat="@drawable/ic_arrow_back_48px" />
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/titleTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Title"
-                android:textColor="@color/colorAccent"
-                android:textSize="@dimen/textsize.title" />
-
-            <View
-                android:id="@+id/toolbarLine"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_1sdp"
-                android:layout_gravity="bottom"
-                android:background="@color/colorPrimary" />
-
-        </FrameLayout>
-
-        <RelativeLayout
-            android:id="@+id/container"
+        <LinearLayout
+            android:id="@+id/textLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/topLayout"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/textLayout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_56sdp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
                 android:background="@color/windowBackground"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/padding.tiny"
@@ -71,6 +66,15 @@
                 android:visibility="visible"
                 android:weightSum="3">
 
+                <ImageView
+                    android:id="@+id/toggleKeyboardMessage"
+                    android:layout_width="48sp"
+                    android:layout_height="48sp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_chat_keyboard"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -85,15 +89,21 @@
                         android:hint="Type your message ..."
                         android:inputType="textLongMessage"
                         android:lines="1"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:paddingStart="@dimen/padding.small"
                         android:paddingLeft="@dimen/padding.small"
-                        android:visibility="visible" />
+                        android:visibility="visible"
+                        tools:ignore="HardcodedText,RtlSymmetry" />
 
                     <FrameLayout
                         android:id="@+id/voiceMsgLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:paddingStart="@dimen/padding.small"
                         android:paddingLeft="@dimen/padding.small"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:ignore="RtlSymmetry">
 
                         <Chronometer
                             android:id="@+id/chronometer"
@@ -105,6 +115,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="right|center_vertical"
+                            android:layout_marginEnd="@dimen/margin.small"
                             android:layout_marginRight="@dimen/margin.small"
                             android:src="@drawable/slide_to_cancel" />
 
@@ -125,43 +136,58 @@
 
             </LinearLayout>
 
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/messagesContainer"
+            <LinearLayout
+                android:id="@+id/linLayoutChatMessages"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/textLayout"
-                android:background="@color/secondaryColorLight"
-                android:clickable="false"
-                android:divider="@android:color/transparent"
-                android:listSelector="@android:color/transparent"
-                android:paddingBottom="@dimen/_4sdp"
-                android:scrollbars="none"
-                android:stackFromBottom="true" />
+                android:layout_height="@dimen/_200sdp"
+                android:orientation="vertical">
 
-            <ProgressBar
-                android:id="@+id/loader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/margin.normal"
-                android:visibility="invisible" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/color_graya5a5a5" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rVChatMessages"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </LinearLayout>
 
 
-            <ProgressBar
-                android:id="@+id/loader_audio"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/textLayout"
-                android:layout_below="@+id/messagesContainer"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="-5dp"
-                android:layout_marginTop="-8dp"
-                android:indeterminate="true"
-                android:visibility="invisible" />
-        </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messagesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/textLayout"
+            android:background="@color/secondaryColorLight"
+            android:clickable="false"
+            android:divider="@android:color/transparent"
+            android:listSelector="@android:color/transparent"
+            android:paddingBottom="@dimen/_4sdp"
+            android:scrollbars="none"
+            android:stackFromBottom="true" />
 
-    </LinearLayout>
+        <ProgressBar
+            android:id="@+id/loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin.normal"
+            android:visibility="invisible" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <ProgressBar
+            android:id="@+id/loader_audio"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textLayout"
+            android:layout_below="@+id/messagesContainer"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="-8dp"
+            android:layout_marginBottom="-5dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+</LinearLayout>

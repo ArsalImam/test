@@ -4,6 +4,10 @@ package com.bykea.pk.partner.utils;
 import com.bykea.pk.partner.BuildConfig;
 
 public class Constants {
+    public static final int DIGIT_ZERO = 0;
+    public static final int DIGIT_ONE = 1;
+    public static final int DIGIT_TWO = 2;
+
 
     public static final String APP="APP";
     public static final String GCM_PROJECT_NO = "764640458585";
@@ -290,6 +294,8 @@ public class Constants {
         public final static String ON_LB_PICKUP_DIRECTION = EYE_BALL + "LoadBoard-Direction-Pick";
         public final static String ON_LB_DROPOFF_DIRECTION = EYE_BALL + "LoadBoard-Direction-Drop";
         public final static String ON_LB_BOOKING_ACCEPT = EYE_BALL + "LoadBoard-Booking-Accept";
+
+        public final static String ON_CHAT_TEMPLATE_TAPPED = "Chat-Template";
 //        public final static String ON_LB_TAKEN = EYE_BALL + "LoadBoard-Taken";
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
@@ -605,4 +611,6 @@ public class Constants {
     public static class ApplicationsPackageName {
         public static String WHATSAPP_PACKAGE = "com.whatsapp";
     }
+
+    public static final String TRANSALATION_SEPERATOR = "///";
 }

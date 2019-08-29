@@ -38,6 +38,7 @@ import com.bykea.pk.partner.compression.ImageCompression;
 import com.bykea.pk.partner.models.ChatMessage;
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.Sender;
+import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
 import com.bykea.pk.partner.models.response.ConversationChatResponse;
 import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -47,6 +48,7 @@ import com.bykea.pk.partner.models.response.UploadImageFile;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.common.LastAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.OpusPlayerCallBack;
@@ -61,6 +63,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -136,6 +139,19 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     private CardView mRevealView;
     private boolean hidden = true;
 
+    @BindView(R.id.linLayoutChatMessages)
+    LinearLayout linLayoutChatMessages;
+
+    @BindView(R.id.rVChatMessages)
+    RecyclerView rVChatMessages;
+
+    @BindView(R.id.toggleKeyboardMessage)
+    ImageView toggleKeyboardMessage;
+
+    private ArrayList<ChatMessagesTranslated> chatMessagesTranslatedArrayList;
+    private boolean isKeyBoardVisible = false;
+    private LastAdapter lastAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +161,8 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         ButterKnife.bind(this);
         opusRecorder = OpusRecorder.getInstance();
         opusRecorder.setEventSender(new OpusEvent(mCurrentActivity));
+
+        chatMessagesTranslatedArrayList = Utils.getAllChatMessageTranslated(mCurrentActivity);
         init();
         setListener();
         if (!Permissions.hasMicPermission(mCurrentActivity)) {
@@ -170,11 +188,28 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             detailsMsg.setSenderId(callData.getPassId());
             messageList.add(detailsMsg);
         }
-        chatAdapter = new ChatAdapterNewDF(mCurrentActivity, messageList);
+        chatAdapter = new ChatAdapterNewDF(mCurrentActivity, messageList, chatMessagesTranslatedArrayList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mCurrentActivity);
         linearLayoutManager.setStackFromEnd(true);
         messagesContainer.setLayoutManager(linearLayoutManager);
         messagesContainer.setAdapter(chatAdapter);
+
+        lastAdapter = new LastAdapter(R.layout.chat_message_selection_single_item, item -> {
+            ChatMessagesTranslated chatMessagesTranslated = (ChatMessagesTranslated) item;
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("chat_msg", Utils.getConcatenatedTransalation(chatMessagesTranslated));
+                Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_CHAT_TEMPLATE_TAPPED, jsonObject, true);
+            } catch (Exception e) {
+
+            }
+            sendMessageRemoteRepository(Utils.getConcatenatedTransalation(chatMessagesTranslated));
+        });
+        lastAdapter.setItems(chatMessagesTranslatedArrayList);
+
+        rVChatMessages.setLayoutManager(new LinearLayoutManager(this));
+        rVChatMessages.setAdapter(lastAdapter);
 
         repository = new UserRepository();
         if (AppPreferences.isOnTrip()) {
@@ -297,7 +332,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    try{
+                    try {
                         if (uploadImageFile.isSuccess()) {
                             messageList.add(makeMsg(uploadImageFile.getImagePath(), Keys.CHAT_TYPE_IMAGE
                                     , AppPreferences.getDriverId(),
@@ -309,7 +344,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                                     uploadImageFile.getImagePath(), mCoversationId, mReceiversId, Keys.CHAT_TYPE_IMAGE,
                                     AppPreferences.getCallData().getTripId());
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -402,11 +437,21 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     public void onBackPressed() {
         onActivityFinish();
         if (isFromNotification) {
+            if (linLayoutChatMessages != null && linLayoutChatMessages.getVisibility() == View.VISIBLE) {
+                hideChatMessageVisibleKeyboard();
+            }
             ActivityStackManager.getInstance().startHomeActivity(false, mCurrentActivity);
             finish();
+        } else if (linLayoutChatMessages != null && linLayoutChatMessages.getVisibility() == View.VISIBLE) {
+            hideChatMessageVisibleKeyboard();
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void hideChatMessageVisibleKeyboard() {
+        linLayoutChatMessages.setVisibility(View.GONE);
+        toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
     }
 
     private boolean shouldUploadFile;
@@ -483,22 +528,34 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         );
     }
 
+    /**
+     * Used when the message text has to pick from edittext
+     */
     private void sendMessage() {
         String lastMsg = messageEdit.getText().toString();
         if (TextUtils.isEmpty(lastMsg)) {
             return;
         }
         messageEdit.setText("");
-        repository.sendMessage(mCurrentActivity, chatHandler, lastMsg, mCoversationId,
+        sendMessageRemoteRepository(lastMsg);
+    }
+
+    /**
+     * Used when the message text has to pass
+     * @param messsage : Passing Message
+     */
+    private void sendMessageRemoteRepository(String messsage) {
+        repository.sendMessage(mCurrentActivity, chatHandler, messsage, mCoversationId,
                 mReceiversId, Keys.CHAT_TYPE_TEXT, AppPreferences.getCallData().getTripId());
 
-        messageList.add(makeMsg(lastMsg, Keys.CHAT_TYPE_TEXT,
+        messageList.add(makeMsg(messsage, Keys.CHAT_TYPE_TEXT,
                 AppPreferences.getDriverId(),
                 AppPreferences.getPilotData().getFullName(),
                 AppPreferences.getPilotData().getPilotImage(), false));
         chatAdapter.notifyDataSetChanged();
         scrollDown();
     }
+
 
     public static boolean isChatRunning() {
         return isChatActiviyRunning;
@@ -661,11 +718,38 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         }
     };
 
-    @OnClick()
+    @OnClick({R.id.toggleKeyboardMessage, R.id.messageEdit})
     public void onClick(View view) {
-
+        switch (view.getId()) {
+            case R.id.toggleKeyboardMessage:
+                if (isKeyBoardVisible) {
+                    isKeyBoardVisible = false;
+                    messageEdit.setFocusable(false);
+                    messageEdit.setFocusableInTouchMode(false);
+                    Utils.hideKeyboard(mCurrentActivity);
+                    toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
+                    linLayoutChatMessages.setVisibility(View.VISIBLE);
+                } else {
+                    isKeyBoardVisible = true;
+                    toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_messages);
+                    linLayoutChatMessages.setVisibility(View.GONE);
+                    messageEdit.setFocusable(true);
+                    messageEdit.setFocusableInTouchMode(true);
+                    Utils.showSoftKeyboard(mCurrentActivity, messageEdit);
+                }
+                break;
+            case R.id.messageEdit:
+                if (!isKeyBoardVisible) {
+                    isKeyBoardVisible = true;
+                    toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_messages);
+                    linLayoutChatMessages.setVisibility(View.GONE);
+                    messageEdit.setFocusable(true);
+                    messageEdit.setFocusableInTouchMode(true);
+                    Utils.showSoftKeyboard(mCurrentActivity, messageEdit);
+                }
+                break;
+        }
     }
-
 
 
     public void setCallBack(OpusPlayerCallBack mCallBack) {
@@ -685,7 +769,6 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         File file = new File(imagePath);
         repository.uploadImageFile(mCurrentActivity,
                 chatHandler, file);
-
 
 
     }
