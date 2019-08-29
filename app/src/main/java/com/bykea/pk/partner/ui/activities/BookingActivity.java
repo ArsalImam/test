@@ -2367,11 +2367,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             @Override
             public void onJobFinished(@NotNull FinishJobResponseData data, @NotNull String request, @NotNull String resp) {
 
+                Crashlytics.setUserIdentifier(AppPreferences.getPilotData().getId());
                 Crashlytics.setString("Finish Job Request Trip ID", callData.getTripId());
-                Crashlytics.setString("Finish Job Request Route", latLngList.toString());
-                Crashlytics.setString("Finish Job Request", request);
                 Crashlytics.setString("Finish Job Response", resp);
-                Crashlytics.setString("Finish Job Response Received", data.toString());
 
                 onFinished(data);
             }
