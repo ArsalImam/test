@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 
+
 /**
  * Interface to communicate to Bykea's REST server
  *
