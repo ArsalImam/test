@@ -122,13 +122,27 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             if (chatMessages.get(position).getMessage().contains(TRANSALATION_SEPERATOR)) {
                 try {
                     String[] strings = chatMessages.get(position).getMessage().split(TRANSALATION_SEPERATOR);
-                    viewHolder.txtMessage.setText(new SpannableStringBuilder(StringUtils.SPACE)
-                            .append(FontUtils.getStyledTitle(context, strings[Constants.DIGIT_ZERO], Fonts.Jameel_Noori_Nastaleeq.getName()))
-                            .append(StringUtils.SPACE));
-                    if (StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+
+                    if (strings.length == 2 && strings[Constants.DIGIT_ZERO] != null && strings[Constants.DIGIT_ONE] != null &&
+                            StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO]) && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+                        viewHolder.txtMessage.setText(new SpannableStringBuilder(StringUtils.SPACE)
+                                .append(FontUtils.getStyledTitle(context, strings[Constants.DIGIT_ZERO], Fonts.Jameel_Noori_Nastaleeq.getName()))
+                                .append(StringUtils.SPACE));
                         viewHolder.viewSeperator.setVisibility(View.VISIBLE);
                         viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
                         viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ONE]);
+                    } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO])) {
+                        viewHolder.txtMessage.setText(strings[Constants.DIGIT_ZERO]);
+                        viewHolder.viewSeperator.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                    } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+                        viewHolder.txtMessage.setText(strings[Constants.DIGIT_ONE]);
+                        viewHolder.viewSeperator.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                    } else {
+                        viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+                        viewHolder.viewSeperator.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
                     }
                 } catch (Exception e) {
                     viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
@@ -146,6 +160,8 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
         } else if (chatMessages.get(position).getMessageType().equalsIgnoreCase("Image")) {
             viewHolder.audioLayout.setVisibility(View.GONE);
             viewHolder.txtMessage.setVisibility(View.GONE);
+            viewHolder.viewSeperator.setVisibility(View.GONE);
+            viewHolder.txtMessageSecond.setVisibility(View.GONE);
             viewHolder.txtMessageVoice.setVisibility(View.GONE);
             viewHolder.image.setVisibility(View.VISIBLE);
             final String url = Utils.getFileLink(chatMessages.get(position)
