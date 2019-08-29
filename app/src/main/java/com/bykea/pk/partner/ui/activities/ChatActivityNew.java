@@ -63,6 +63,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -195,6 +196,14 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
         lastAdapter = new LastAdapter(R.layout.chat_message_selection_single_item, item -> {
             ChatMessagesTranslated chatMessagesTranslated = (ChatMessagesTranslated) item;
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("chat_msg", Utils.getConcatenatedTransalation(chatMessagesTranslated));
+                Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_CHAT_TEMPLATE_TAPPED, jsonObject, true);
+            } catch (Exception e) {
+
+            }
             sendMessageRemoteRepository(Utils.getConcatenatedTransalation(chatMessagesTranslated));
         });
         lastAdapter.setItems(chatMessagesTranslatedArrayList);
@@ -429,17 +438,20 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         onActivityFinish();
         if (isFromNotification) {
             if (linLayoutChatMessages != null && linLayoutChatMessages.getVisibility() == View.VISIBLE) {
-                linLayoutChatMessages.setVisibility(View.GONE);
-                toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
+                hideChatMessageVisibleKeyboard();
             }
             ActivityStackManager.getInstance().startHomeActivity(false, mCurrentActivity);
             finish();
         } else if (linLayoutChatMessages != null && linLayoutChatMessages.getVisibility() == View.VISIBLE) {
-            linLayoutChatMessages.setVisibility(View.GONE);
-            toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
+            hideChatMessageVisibleKeyboard();
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void hideChatMessageVisibleKeyboard() {
+        linLayoutChatMessages.setVisibility(View.GONE);
+        toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
     }
 
     private boolean shouldUploadFile;
@@ -516,6 +528,9 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         );
     }
 
+    /**
+     * Used when the message text has to pick from edittext
+     */
     private void sendMessage() {
         String lastMsg = messageEdit.getText().toString();
         if (TextUtils.isEmpty(lastMsg)) {
@@ -525,6 +540,10 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         sendMessageRemoteRepository(lastMsg);
     }
 
+    /**
+     * Used when the message text has to pass
+     * @param messsage : Passing Message
+     */
     private void sendMessageRemoteRepository(String messsage) {
         repository.sendMessage(mCurrentActivity, chatHandler, messsage, mCoversationId,
                 mReceiversId, Keys.CHAT_TYPE_TEXT, AppPreferences.getCallData().getTripId());

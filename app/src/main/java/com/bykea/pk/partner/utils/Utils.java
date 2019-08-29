@@ -42,6 +42,7 @@ import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -3333,8 +3334,8 @@ public class Utils {
 
     /**
      * @param chatMessageInUrdu       Text to Match
-     * @param chatMessagesTranslateds List From Which To Text Match
-     * @return If Match, Return English Translation
+     * @param chatMessagesTranslateds List From Which To Match
+     * @return If text matches return the english transalation against it.
      */
     public static Pair<Boolean, String> getTranslationIfExists(String chatMessageInUrdu, ArrayList<ChatMessagesTranslated> chatMessagesTranslateds) {
         for (ChatMessagesTranslated chatMessagesTranslated : chatMessagesTranslateds) {
@@ -3360,6 +3361,19 @@ public class Utils {
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         view.requestFocus();
         inputMethodManager.showSoftInput(view, 0);
+    }
+
+    /**
+     * Get String Value After Applying HTML
+     * @param html
+     * @return String : After Applying HTML to String.
+     */
+    public static String getTextFromHTML(String html) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return  String.valueOf(Html.fromHtml(html));
+        } else {
+            return String.valueOf(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
+        }
     }
 
     /**
