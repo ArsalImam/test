@@ -901,7 +901,7 @@ public class Utils {
     }
 
     public static void hideSoftKeyboard(Context context, View v) {
-        InputMethodManager manager = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+        InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
@@ -2038,6 +2038,7 @@ public class Utils {
                 && (serviceCode == Constants.ServiceType.SEND_CODE
                 || serviceCode == Constants.ServiceType.SEND_COD_CODE
                 || serviceCode == Constants.ServiceType.RIDE_CODE
+                || serviceCode == Constants.ServiceType.OFFLINE_RIDE
         );
     }
 
@@ -3357,7 +3358,7 @@ public class Utils {
      * Shows the soft keyboard
      */
     public static void showSoftKeyboard(Context context, View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         view.requestFocus();
         inputMethodManager.showSoftInput(view, 0);
     }
@@ -3372,6 +3373,19 @@ public class Utils {
             return  String.valueOf(Html.fromHtml(html));
         } else {
             return String.valueOf(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
+        }
+    }
+
+    /**
+     * Set ImageView Drawable
+     * @param imageView : ImageView
+     * @param drawable : Drawable Id
+     */
+    public static void setImageDrawable(ImageView imageView, int drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(drawable, null));
+        } else {
+            imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(drawable));
         }
     }
 }

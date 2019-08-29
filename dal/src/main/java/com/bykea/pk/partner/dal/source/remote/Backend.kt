@@ -1,10 +1,12 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.BuildConfig
+import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,6 +17,7 @@ import retrofit2.http.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
+
 
 /**
  * Interface to communicate to Bykea's REST server
@@ -155,7 +158,7 @@ interface Backend {
     @POST("/api/v1/trips/{job_id}/feedback")
     fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobBadResponse>
 
-     /**
+    /**
      * Get Driver Email Update
      * @param email Driver email
      * @param _id Driver id
@@ -200,7 +203,7 @@ interface Backend {
     fun getWithdrawalPaymentMethods(
             @Query("token_id") token: String,
             @Query("_id") driverId: String
-            ): Call<GetWithdrawalPaymentMethods>
+    ): Call<GetWithdrawalPaymentMethods>
 
     @PUT("/api/v1/driver/withdrawal")
     @FormUrlEncoded
@@ -209,12 +212,34 @@ interface Backend {
             @Field("_id") driverId: String,
             @Field("payment_method") paymentMethod: Number,
             @Field("amount") amount: Number
-         ): Call<WithdrawPostResponse>
+    ): Call<WithdrawPostResponse>
 
     @GET("/api/v1/driver/getProfile")
     fun getDriverProfile(@Query("_id") _id: String,
-                           @Query("token_id") token_id: String,
-                           @Query("user_type") userType: String): Call<GetDriverProfile>
+                         @Query("token_id") token_id: String,
+                         @Query("user_type") userType: String): Call<GetDriverProfile>
+
+
+    @GET("/api/v1/users/getFareEstimation")
+    fun requestFareEstimation(@Query(Fields.FareEstimation.ID) id: String,
+                              @Query(Fields.FareEstimation.TOKEN_ID) tokenId: String,
+                              @Query(Fields.FareEstimation.START_LAT) startLat: String,
+                              @Query(Fields.FareEstimation.START_LNG) startLng: String,
+                              @Query(Fields.FareEstimation.END_LAT) endLat: String,
+                              @Query(Fields.FareEstimation.END_LNG) endLng: String,
+                              @Query(Fields.FareEstimation.TYPE) type: String,
+                              @Query(Fields.FareEstimation.RIDE_TYPE) rideType: String): Call<FareEstimationResponse>
+
+    @FormUrlEncoded
+    @POST("/api/v1/driver/offline/ride/otp")
+    fun generateDriverOTP(@Field(Fields.OtpSend.ID) id: String,
+                      @Field(Fields.OtpSend.TOKEN_ID) tokenId: String,
+                      @Field(Fields.OtpSend.PHONE_NUMBER) phone: String,
+                      @Field(Fields.OtpSend.TYPE) type: String): Call<VerifyNumberResponse>
+
+    @POST("/api/v1/trips/create")
+    fun initiateRide(
+            @Body bodyObject: RideCreateRequestObject): Call<RideCreateResponse>
 
     companion object {
 

@@ -1,6 +1,6 @@
 package com.bykea.pk.partner.dal.source.remote.response
 
-abstract class BaseResponse {
+open class BaseResponse {
     var message: String = ""
     var code: Int = 0
     var subcode: Int = 0

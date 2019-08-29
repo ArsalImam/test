@@ -56,6 +56,7 @@ public class HomeActivity extends BaseActivity {
     private HomeActivity mCurrentActivity;
     public String navTitles[];
     public String navIcons[];
+    public String navDrawerNewText[];
     public NavDrawerAdapter recyclerViewAdapter;
     public ActionBarDrawerToggle drawerToggle;
     public static int visibleFragmentNumber = 1;
@@ -223,8 +224,9 @@ public class HomeActivity extends BaseActivity {
         //Setup Titles and Icons of Navigation Drawer
         navTitles = getResources().getStringArray(R.array.navDrawerItems);
         navIcons = getResources().getStringArray(R.array.navDrawerIcons);
+        navDrawerNewText = getResources().getStringArray(R.array.navDrawerNewText);
 
-        recyclerViewAdapter = new NavDrawerAdapter(navTitles, navIcons, mCurrentActivity);
+        recyclerViewAdapter = new NavDrawerAdapter(navTitles, navIcons,navDrawerNewText, mCurrentActivity);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
