@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,6 +31,9 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
+import static com.bykea.pk.partner.utils.Constants.Extras.OFFLINE_RIDE;
 
 public class SelectPlaceActivity extends BaseActivity {
     @BindView(R.id.vpFragments)
@@ -81,6 +85,9 @@ public class SelectPlaceActivity extends BaseActivity {
     @BindView(R.id.tvPick)
     FontTextView tvPick;
 
+    @BindView(R.id.llRecent)
+    LinearLayout llRecent;
+
 
     private CustomPagerAdapter mAdapter;
     private SelectPlaceActivity mCurrentActivity;
@@ -92,6 +99,8 @@ public class SelectPlaceActivity extends BaseActivity {
         return mAdapter;
     }
 
+    private boolean isFlowForOfflineRide = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +110,13 @@ public class SelectPlaceActivity extends BaseActivity {
         mCurrentActivity.setTitleCustomToolbarUrdu(getIntent() != null &&
                 StringUtils.isNotBlank(getIntent().getStringExtra(Constants.PLACES_TITLE)) ? getIntent().getStringExtra(Constants.PLACES_TITLE) : "مقام مقرر کریں");
         initViewPager();
+
+        if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(FLOW_FOR))
+            if (getIntent().getExtras().get(FLOW_FOR).equals(OFFLINE_RIDE)) {
+                llRecent.setVisibility(View.GONE);
+                isFlowForOfflineRide = true;
+            }
+
         if (showChangeButton()) {
             setTopBar(getIntent().getStringExtra("top_bar").equalsIgnoreCase("PICK_UP"));
         } else {
@@ -108,19 +124,33 @@ public class SelectPlaceActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Check If String Exist With Top_Bar
+     * @return True If Exit Else False
+     */
     public boolean showChangeButton() {
         return getIntent() != null &&
                 StringUtils.isNotBlank(getIntent().getStringExtra("top_bar"));
     }
 
+    /**
+     * @return True If PickUp Is Set To True Else False
+     */
     public boolean isPickUp() {
         return isPickUp;
     }
 
+    /**
+     * Set Title Bar Label
+     * @param pickup : Set According Layout According To True Or False
+     */
     private void setTopBar(boolean pickup) {
         llTopBarRight.setVisibility(View.VISIBLE);
         isPickUp = pickup;
-        mCurrentActivity.setTitleCustomToolbarUrdu(isPickUp ? "یہاں سے پِک کریں" : "مقام مقرر کریں");
+        if (isFlowForOfflineRide)
+            mCurrentActivity.setTitleCustomToolbarUrdu(getString(R.string.select_dropoff_title));
+        else
+            mCurrentActivity.setTitleCustomToolbarUrdu(isPickUp ? getString(R.string.select_location_title) : getString(R.string.pick_from_here_title));
 
         if (isPickUp) {
             tvPick.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.white));
@@ -205,13 +235,15 @@ public class SelectPlaceActivity extends BaseActivity {
 
     }
 
-    private void setSelected(ImageView imageView, int drawable, FontTextView textView, FontTextView textViewUrdu) {
+    private void setSelected(ImageView imageView, int drawable, FontTextView
+            textView, FontTextView textViewUrdu) {
         imageView.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, drawable, R.color.colorAccent));
         textView.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
         textViewUrdu.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
     }
 
-    private void setUnSelected(ImageView imageView, int drawable, FontTextView textView, FontTextView textViewUrdu) {
+    private void setUnSelected(ImageView imageView, int drawable, FontTextView
+            textView, FontTextView textViewUrdu) {
         imageView.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, drawable, R.color.secondaryColor4));
         textView.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.secondaryColor4));
         textViewUrdu.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.secondaryColor4));

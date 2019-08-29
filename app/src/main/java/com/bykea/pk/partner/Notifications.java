@@ -15,6 +15,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+
 import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.models.ReceivedMessage;
@@ -34,6 +35,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 public class Notifications {
 
@@ -245,12 +248,35 @@ public class Notifications {
                 + context.getPackageName() + "/"
                 + R.raw.notification_sound);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                context, Utils.getChannelID())
-                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-                .setContentTitle(Constants.BYKEA)
-                .setContentText("" + receivedMessage.getData().getMessage())
-                .setSound(soundUri).setAutoCancel(true);
+        NotificationCompat.Builder builder = null;
+        String newLineEscape = "<br>";
+        if (receivedMessage.getData().getMessage().contains(TRANSALATION_SEPERATOR)) {
+            try {
+                String messageToDisplay = StringUtils.EMPTY;
+                String[] strings = receivedMessage.getData().getMessage().split(TRANSALATION_SEPERATOR);
+
+                if (strings.length == 2 && strings[Constants.DIGIT_ZERO] != null && strings[Constants.DIGIT_ONE] != null &&
+                        StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO]) && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+                    messageToDisplay = messageToDisplay.concat(strings[Constants.DIGIT_ZERO]);
+                    messageToDisplay = messageToDisplay.concat(newLineEscape);
+                    messageToDisplay = messageToDisplay.concat(strings[Constants.DIGIT_ONE]);
+                    messageToDisplay = Utils.getTextFromHTML(messageToDisplay);
+                    receivedMessage.getData().setMessage(messageToDisplay);
+                } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO])) {
+                    messageToDisplay = messageToDisplay.concat(strings[Constants.DIGIT_ZERO]);
+                    receivedMessage.getData().setMessage(messageToDisplay);
+                } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+                    messageToDisplay = messageToDisplay.concat(strings[Constants.DIGIT_ONE]);
+                    receivedMessage.getData().setMessage(messageToDisplay);
+                }
+
+                builder = createNotificationForMessage(context, receivedMessage, soundUri);
+            } catch (Exception e) {
+                builder = createNotificationForMessage(context, receivedMessage, soundUri);
+            }
+        } else {
+            builder = createNotificationForMessage(context, receivedMessage, soundUri);
+        }
 
         Intent targetIntent = new Intent(context, ChatActivityNew.class);
         targetIntent.putExtra(Keys.CHAT_CONVERSATION_ID, receivedMessage.getData().getConversationId());
@@ -265,4 +291,23 @@ public class Notifications {
         nManager.notify(0, builder.build());
     }
 
+    /**
+     * Use To Create Notification When Chat Message Is Received
+     *
+     * @param context         : Calling Context
+     * @param receivedMessage : Notifcation Received Message Object
+     * @param soundUri        : Sound Uri To Play
+     * @return
+     */
+    private static NotificationCompat.Builder createNotificationForMessage(Context context, ReceivedMessage receivedMessage, Uri soundUri) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                context, Utils.getChannelID())
+                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
+                .setContentTitle(Constants.BYKEA)
+                .setContentText("" + receivedMessage.getData().getMessage())
+                .setSound(soundUri).setAutoCancel(true)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("" + receivedMessage.getData().getMessage()));
+        return builder;
+    }
 }

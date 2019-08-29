@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingLeft="@dimen/margin.small"
     android:paddingRight="@dimen/margin.small">
 
@@ -11,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="@dimen/margin.tiny"
         android:layout_marginTop="@dimen/margin.small"
+        android:layout_marginBottom="@dimen/margin.tiny"
         android:gravity="center"
         android:text="Date"
         android:textSize="@dimen/textsize.tiny" />
@@ -21,8 +22,8 @@
         android:id="@+id/parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_below="@id/txtDate"
+        android:layout_alignParentRight="true"
         android:gravity="right">
 
         <FrameLayout
@@ -34,23 +35,49 @@
             android:background="@drawable/white_chat_box"
             android:padding="@dimen/padding.small">
 
-            <TextView
-                android:id="@+id/txtMessage"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:layout_margin="@dimen/margin.small"
-                android:ellipsize="end"
-                android:text="message"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="@dimen/textsize.small"
-                android:visibility="visible" />
+                android:orientation="vertical">
+
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/txtMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_margin="@dimen/margin.small"
+                    android:ellipsize="end"
+                    tools:text="message"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.small"
+                    android:visibility="visible" />
+
+                <View
+                    android:id="@+id/viewSeperator"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/color_graya5a5a5"
+                    android:visibility="gone" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/txtMessageSecond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_margin="@dimen/margin.small"
+                    android:ellipsize="end"
+                    tools:text="message"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.small"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/image"
                 android:layout_width="@dimen/_250sdp"
-                android:layout_height="@dimen/_300sdp" />
+                android:layout_height="@dimen/_300sdp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/audioLayout"

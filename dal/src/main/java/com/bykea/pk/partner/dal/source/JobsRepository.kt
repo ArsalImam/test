@@ -9,6 +9,7 @@ import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
 import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
 import java.util.*
 import kotlin.collections.ArrayList
@@ -291,5 +292,18 @@ class JobsRepository(
         fun destroyInstance() {
             INSTANCE = null
         }
+    }
+
+    override fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
+        jobsRemoteDataSource.requestFairEstimation(AppPref.getDriverId(pref), AppPref.getAccessToken(pref),
+                startLat, startLng, endLat, endLng, type, rideType, callback)
+    }
+
+    override fun requestOtpGenerate(phone: String, type: String, callback: JobsDataSource.OtpGenerateCallback) {
+        jobsRemoteDataSource.requestOtpGenerate(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), phone, type, callback)
+    }
+
+    override fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: JobsDataSource.CreateTripCallback) {
+        jobsRemoteDataSource.createTrip(rideCreateRequestObject,callback)
     }
 }
