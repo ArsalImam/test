@@ -4,6 +4,8 @@ package com.bykea.pk.partner.utils;
 import com.bykea.pk.partner.BuildConfig;
 
 public class Constants {
+
+    public static final String APP="APP";
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
     public static final String APP_NAME = "BYKEA PARTNER";
@@ -211,6 +213,12 @@ public class Constants {
         public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
         public final static String ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL = "ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL";
         public final static String IS_CALLED_FROM_LOADBOARD = "IS_CALLED_FROM_LOADBOARD";
+
+        public static final String RIDE_CREATE_DATA = "RIDE_CREATE_DATA";
+
+        public static final String FROM = "from";
+        public static final String FLOW_FOR = "FLOW_FOR";
+        public static final String OFFLINE_RIDE = "OFFLINE_RIDE";
     }
 
     public static class Broadcast {
@@ -368,6 +376,8 @@ public class Constants {
         public static final int SEND_CODE = 21;
         public static final int SEND_COD_CODE = 22;
         public static final int RIDE_CODE = 23;
+        public static final int OFFLINE_RIDE = 24;
+        public static final String  OFFLINE_RIDE_STRING = "Offline Ride";
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -487,10 +497,12 @@ public class Constants {
     public static class ScreenRedirections {
         public static final int PROFILE_SCREEN = 0;
         public static final int HOME_SCREEN = 1;
-        public static final int TRIP_HISTORY_SCREEN = 2;
-        public static final int WALLET_SCREEN = 3;
-        public static final int HOW_IT_WORKS_SCREEN = 4;
-        public static final int CONTACT_US_SCREEN = 5;
+        public static final int OFFLINE_RIDES = 2;
+        public static final int TRIP_HISTORY_SCREEN = 3;
+        public static final int WALLET_SCREEN = 4;
+        public static final int HOW_IT_WORKS_SCREEN = 5;
+        public static final int CONTACT_US_SCREEN = 6;
+        public static final int LOGOUT = 7;
     }
 
     public static final int MARKER_INCREMENT_FACTOR_DEFAULT = 20;

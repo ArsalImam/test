@@ -37,7 +37,8 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
+        <activity android:name=".ui.activities.RideCodeVerificationActivity"></activity>
+        <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">
@@ -279,12 +280,11 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-		
-		
+
         <activity
             android:name=".ui.withdraw.WithdrawalActivity"
             android:theme="@style/NewTheme" />
-        <activity android:name=".ui.withdraw.WithdrawThankyouActivity"/>
+        <activity android:name=".ui.withdraw.WithdrawThankyouActivity" />
     </application>
 
 </manifest>

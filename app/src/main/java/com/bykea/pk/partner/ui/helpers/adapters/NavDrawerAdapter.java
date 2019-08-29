@@ -24,6 +24,7 @@ import com.bykea.pk.partner.ui.fragments.ProfileFragment;
 import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.offlinerides.OfflineRidesFragment;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -39,13 +40,15 @@ import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
     private String[] titles;
     private String[] icons;
+    private String[] newLabel;
     private Context context;
 
     // The default constructor to receive titles,icons and context from MainActivity.
-    public NavDrawerAdapter(String[] titles, String[] icons, Context context) {
+    public NavDrawerAdapter(String[] titles, String[] icons, String[] newLabel, Context context) {
 
         this.titles = titles;
         this.icons = icons;
+        this.newLabel = newLabel;
         this.context = context;
     }
 
@@ -65,6 +68,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         FontTextView driverName;
         RatingBar driverRb;
         FontTextView tvRating;
+        FontTextView newLabel;
 
         Context context;
         HomeActivity mainActivity;
@@ -81,6 +85,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             if (itemType == 1) {
                 navTitle = (FontTextView) itemView.findViewById(R.id.tv_NavTitle);
                 navIcon = (FontTextView) itemView.findViewById(R.id.iv_NavIcon);
+                newLabel = (FontTextView) itemView.findViewById(R.id.newLabel);
             } else if (itemType == 2)//footer Logout grey_square_bg_img
             {
                 logoutIv = (ImageView) itemView.findViewById(R.id.logoutIv);
@@ -102,39 +107,47 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             mainActivity.drawerLayout.closeDrawers();
 
             switch (getLayoutPosition()) {
-                case 0:// This case is for driver header part click.
+                case Constants.ScreenRedirections.PROFILE_SCREEN:// This case is for driver header part click.
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.PROFILE_SCREEN) {
                         updateCurrentFragment(new ProfileFragment(), Constants.ScreenRedirections.PROFILE_SCREEN);
                     }
                     break;
-                case 1:
+                case Constants.ScreenRedirections.HOME_SCREEN:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOME_SCREEN) {
                         updateCurrentFragment(new HomeFragment(), Constants.ScreenRedirections.HOME_SCREEN);
                     }
                     break;
-                case 2:
+                case Constants.ScreenRedirections.OFFLINE_RIDES:
+                    if (AppPreferences.getAvailableStatus()) {
+                        Dialogs.INSTANCE.showAlertDialogTick(context, StringUtils.EMPTY, context.getString(R.string.offline_ride_notice), view -> {
+                        });
+                    } else if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.OFFLINE_RIDES) {
+                        updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES);
+                    }
+                    break;
+                case Constants.ScreenRedirections.TRIP_HISTORY_SCREEN:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.TRIP_HISTORY_SCREEN) {
                         updateCurrentFragment(new TripHistoryFragment(), Constants.ScreenRedirections.TRIP_HISTORY_SCREEN);
                     }
                     break;
-                case 3:
+                case Constants.ScreenRedirections.WALLET_SCREEN:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.WALLET_SCREEN) {
                         updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN);
                     }
                     break;
-                case 4:
+                case Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN:
 //                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN) {
 //                         updateCurrentFragment(new HowItWorksFragment(), Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN);
 //                     }
                     Utils.startCustomWebViewActivity(mainActivity, HOW_IT_WORKS_WEB_URL, context.getString(R.string.how_it_works));
                     break;
-                case 5:
+                case Constants.ScreenRedirections.CONTACT_US_SCREEN:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.CONTACT_US_SCREEN) {
                         updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN);
                     }
                     break;
 
-                case 6://this case is for logout footer part click.
+                case Constants.ScreenRedirections.LOGOUT://this case is for logout footer part click.
                     Dialogs.INSTANCE.showNegativeAlertDialog(context, context.getString(R.string.logout_text_ur), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -217,7 +230,10 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             }
             holder.navTitle.setText(titles[position - 1]);
             holder.navIcon.setText(icons[position - 1]);
-
+            if(newLabel[position - 1].equals("1"))
+                holder.newLabel.setVisibility(View.VISIBLE);
+            else
+                holder.newLabel.setVisibility(View.INVISIBLE);
         } else if (position == 0) {
             holder.driverName.setText(((HomeActivity) context).getPilotData().getFullName());
             if (StringUtils.isNotBlank(((HomeActivity) context).getPilotData().getRating())) {

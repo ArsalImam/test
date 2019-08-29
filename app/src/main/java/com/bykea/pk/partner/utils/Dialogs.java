@@ -1062,12 +1062,16 @@ public enum Dialogs {
             mDialogTitle = mDialog.findViewById(R.id.dialogTitle);
             mDialogMessage = mDialog.findViewById(R.id.dialogMessage);
 
-            if (!Strings.isEmptyOrWhitespace(mTitle)) {
+            if (Strings.isEmptyOrWhitespace(mTitle)) {
+                mDialogTitle.setVisibility(View.GONE);
+            } else {
                 mDialogTitle.setText(mTitle);
                 mDialogTitle.setVisibility(View.VISIBLE);
             }
 
-            if (!Strings.isEmptyOrWhitespace(mMesssage)) {
+            if (Strings.isEmptyOrWhitespace(mMesssage)) {
+                mDialogMessage.setVisibility(View.GONE);
+            } else {
                 mDialogMessage.setText(mMesssage);
                 mDialogMessage.setVisibility(View.VISIBLE);
             }
