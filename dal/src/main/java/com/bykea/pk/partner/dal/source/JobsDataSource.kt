@@ -333,7 +333,7 @@ interface JobsDataSource {
     interface FareEstimationCallback {
         fun onSuccess(fareEstimationResponse: FareEstimationResponse)
 
-        fun onFail(code: Int, message: String?)
+        fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
 
     /**

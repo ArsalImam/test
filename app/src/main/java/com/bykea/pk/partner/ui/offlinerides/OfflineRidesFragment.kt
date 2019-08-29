@@ -231,9 +231,11 @@ class OfflineRidesFragment : Fragment() {
                         }
                     }
 
-                    override fun onFail(code: Int, message: String?) {
+                    override fun onFail(code: Int, subCode: Int?, message: String?) {
                         Dialogs.INSTANCE.dismissDialog()
-                        Utils.appToast(mCurrentActivity?.getString(R.string.error_try_again))
+                        tVDropOffAddress.text = StringUtils.EMPTY
+                        setFare()
+                        displayErrorToast(code, subCode, message)
                     }
                 })
     }
@@ -276,7 +278,9 @@ class OfflineRidesFragment : Fragment() {
         if (subCode != null) {
             when (subCode) {
                 SUB_CODE_1009 -> Utils.appToast(message)
+                SUB_CODE_1019 -> Utils.appToast(message)
                 SUB_CODE_1028 -> Utils.appToast(message)
+                SUB_CODE_1051 -> Utils.appToast(message)
                 SUB_CODE_1052 -> Utils.appToast(SUB_CODE_1052_MSG)
                 SUB_CODE_1053 -> linLayoutOtpWrongEntered.visibility = View.VISIBLE
                 SUB_CODE_1054 -> Utils.appToast(SUB_CODE_1054_MSG)
