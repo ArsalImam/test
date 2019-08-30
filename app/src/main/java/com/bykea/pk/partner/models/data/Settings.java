@@ -32,16 +32,18 @@ public class Settings {
 
     @SerializedName("withdraw_partner_min_limit")
     private double withdrawPartnerMinLimit;
-    private boolean offline_ride_display;
+
+    @SerializedName("offlineRideDisplay")
+    private boolean offlineRideDisplay;
 
 
     /**
      * getter offline ride display to show or not
      *
-     * @return offline_ride_display
+     * @return offlineRideDisplay
      */
     public boolean getOfflineRideDisplay() {
-        return offline_ride_display;
+        return offlineRideDisplay;
     }
 
     /**
