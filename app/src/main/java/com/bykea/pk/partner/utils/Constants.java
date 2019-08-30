@@ -9,7 +9,7 @@ public class Constants {
     public static final int DIGIT_TWO = 2;
 
 
-    public static final String APP="APP";
+    public static final String APP = "APP";
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
     public static final String APP_NAME = "BYKEA PARTNER";
@@ -383,7 +383,7 @@ public class Constants {
         public static final int SEND_COD_CODE = 22;
         public static final int RIDE_CODE = 23;
         public static final int OFFLINE_RIDE = 24;
-        public static final String  OFFLINE_RIDE_STRING = "Offline Ride";
+        public static final String OFFLINE_RIDE_STRING = "Offline Ride";
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -509,6 +509,15 @@ public class Constants {
         public static final int HOW_IT_WORKS_SCREEN = 5;
         public static final int CONTACT_US_SCREEN = 6;
         public static final int LOGOUT = 7;
+
+        public static final String PROFILE_SCREEN_S = "PROFILE_SCREEN";
+        public static final String HOME_SCREEN_S = "Home";
+        public static final String OFFLINE_RIDES_S = "Offline Rides";
+        public static final String TRIP_HISTORY_SCREEN_S = "Booking History";
+        public static final String WALLET_SCREEN_S = "Wallet";
+        public static final String HOW_IT_WORKS_SCREEN_S = "How it works";
+        public static final String CONTACT_US_SCREEN_S = "Contact Us";
+        public static final String LOGOUT_S = "LOGOUT";
     }
 
     public static final int MARKER_INCREMENT_FACTOR_DEFAULT = 20;

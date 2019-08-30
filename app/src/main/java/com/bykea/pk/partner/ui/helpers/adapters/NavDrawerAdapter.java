@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
     private String[] titles;
@@ -106,73 +107,56 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         public void onClick(View v) {
             mainActivity.drawerLayout.closeDrawers();
             int position = getLayoutPosition();
-            int positionSubtract = 0;
-            if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
-                    !AppPreferences.getSettings().getSettings().getOfflineRideDisplay() && getLayoutPosition() >= 2) {
-                position = getLayoutPosition() + 1;
-                positionSubtract = 1;
-            }
-            switch (position) {
-                case Constants.ScreenRedirections.PROFILE_SCREEN:// This case is for driver header part click.
-                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.PROFILE_SCREEN) {
-                        updateCurrentFragment(new ProfileFragment(), Constants.ScreenRedirections.PROFILE_SCREEN - positionSubtract);
-                    }
-                    break;
-                case Constants.ScreenRedirections.HOME_SCREEN:
-                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOME_SCREEN) {
-                        updateCurrentFragment(new HomeFragment(), Constants.ScreenRedirections.HOME_SCREEN - positionSubtract);
-                    }
-                    break;
-                case Constants.ScreenRedirections.OFFLINE_RIDES:
-                    if (AppPreferences.getAvailableStatus()) {
-                        Dialogs.INSTANCE.showAlertDialogTick(context, StringUtils.EMPTY, context.getString(R.string.offline_ride_notice), view -> {
-                        });
-                    } else if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.OFFLINE_RIDES) {
-                        updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES - positionSubtract);
-                    }
-                    break;
-                case Constants.ScreenRedirections.TRIP_HISTORY_SCREEN:
-                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.TRIP_HISTORY_SCREEN) {
-                        updateCurrentFragment(new TripHistoryFragment(), Constants.ScreenRedirections.TRIP_HISTORY_SCREEN - positionSubtract);
-                    }
-                    break;
-                case Constants.ScreenRedirections.WALLET_SCREEN:
-                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.WALLET_SCREEN) {
-                        updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN - positionSubtract);
-                    }
-                    break;
-                case Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN:
-//                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN) {
-//                         updateCurrentFragment(new HowItWorksFragment(), Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN);
-//                     }
-                    Utils.startCustomWebViewActivity(mainActivity, HOW_IT_WORKS_WEB_URL, context.getString(R.string.how_it_works));
-                    break;
-                case Constants.ScreenRedirections.CONTACT_US_SCREEN:
-                    if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.CONTACT_US_SCREEN) {
-                        updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN - positionSubtract);
-                    }
-                    break;
 
-                case Constants.ScreenRedirections.LOGOUT://this case is for logout footer part click.
-                    Dialogs.INSTANCE.showNegativeAlertDialog(context, context.getString(R.string.logout_text_ur), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (Connectivity.isConnectedFast(context)) {
-                                AppPreferences.setAvailableStatus(false);
-                                Dialogs.INSTANCE.dismissDialog();
-//                                Dialogs.INSTANCE.showLoader(context);
-                                UserRepository repository = new UserRepository();
-                                repository.requestPilotLogout(context, new UserDataHandler());
-                                Utils.logout(context);
-                            }
+            if (getLayoutPosition() == 0) {
+                updateCurrentFragment(new ProfileFragment(), Constants.ScreenRedirections.PROFILE_SCREEN_S);
+            } else if (getLayoutPosition() > 0 && getLayoutPosition() < getItemCount() - 1) {
+                switch (getItem(getLayoutPosition() - 1)) {
+                    case Constants.ScreenRedirections.PROFILE_SCREEN_S:// This case is for driver header part click.
+                        updateCurrentFragment(new ProfileFragment(), Constants.ScreenRedirections.PROFILE_SCREEN_S);
+                        break;
+                    case Constants.ScreenRedirections.HOME_SCREEN_S:
+                        updateCurrentFragment(new HomeFragment(), Constants.ScreenRedirections.HOME_SCREEN_S);
+                        break;
+                    case Constants.ScreenRedirections.OFFLINE_RIDES_S:
+                        if (AppPreferences.getAvailableStatus()) {
+                            Dialogs.INSTANCE.showAlertDialogTick(context, StringUtils.EMPTY, context.getString(R.string.offline_ride_notice), view -> {
+                            });
+                        } else {
+                            updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES_S);
                         }
-                    }, null);
-                    break;
+                        break;
+                    case Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S:
+                        updateCurrentFragment(new TripHistoryFragment(), Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S);
+                        break;
+                    case Constants.ScreenRedirections.WALLET_SCREEN_S:
+                        updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN_S);
+                        break;
+                    case Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN_S:
+                        Utils.startCustomWebViewActivity(mainActivity, HOW_IT_WORKS_WEB_URL, context.getString(R.string.how_it_works));
+                        break;
+                    case Constants.ScreenRedirections.CONTACT_US_SCREEN_S:
+                        updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN_S);
+                        break;
+                }
+            } else {
+                Dialogs.INSTANCE.showNegativeAlertDialog(context, context.getString(R.string.logout_text_ur), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Connectivity.isConnectedFast(context)) {
+                            AppPreferences.setAvailableStatus(false);
+                            Dialogs.INSTANCE.dismissDialog();
+//                                Dialogs.INSTANCE.showLoader(context);
+                            UserRepository repository = new UserRepository();
+                            repository.requestPilotLogout(context, new UserDataHandler());
+                            Utils.logout(context);
+                        }
+                    }
+                }, null);
             }
-
         }
 
-        private void updateCurrentFragment(Fragment fragment, int pos) {
+        private void updateCurrentFragment(Fragment fragment, String pos) {
             fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
@@ -183,7 +167,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
              * when navigation in on home screen, show bottom sheet and connection status
              * otherwise hide both
              */
-            if (pos == 1) {
+            if (pos.equals(HOME_SCREEN_S)) {
                 ((HomeActivity) context).toggleAchaConnection(View.VISIBLE);
                 //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
             } else {
@@ -228,7 +212,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     public void onBindViewHolder(NavDrawerAdapter.ViewHolder holder, int position) {
 
         if (position > 0 && position < getItemCount() - 1) {
-            if (position == HomeActivity.visibleFragmentNumber) {
+            if (getItem(position - 1).equals(HomeActivity.visibleFragmentNumber)) {
                 holder.navTitle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             } else {
                 holder.navTitle.setTextColor(ContextCompat.getColor(context, R.color.textColorPrimary));
@@ -291,4 +275,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         }
     }
 
+    private String getItem(int id) {
+        return titles[id];
+    }
 }

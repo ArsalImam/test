@@ -46,6 +46,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
+
 
 public class SplashActivity extends BaseActivity {
 
@@ -353,7 +355,7 @@ public class SplashActivity extends BaseActivity {
                                 AppPreferences.setTripStatus("");
                                 AppPreferences.saveLoginStatus(false);
                                 AppPreferences.setPilotData(null);
-                                HomeActivity.visibleFragmentNumber = 0;
+                                HomeActivity.visibleFragmentNumber = HOME_SCREEN_S;
                                 Dialogs.INSTANCE.showAlertDialog(mCurrentActivity, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
