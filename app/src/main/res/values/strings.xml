@@ -58,23 +58,21 @@
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <string-array name="navDrawerIcons">
-        <item>\u0020ہوم\u0020</item>
-        <item>\u0020آف لائن رائیڈز\u0020</item>
-        <item>\u0020تفصیل‎\u0020</item>
-        <item>\u0020بٹوا‎\u0020</item>
-        <item>\u0020طریقہ کار\u0020</item>
-        <item>\u0020رابطہ‎\u0020</item>
-        <item>\u0020ٹیسٹنگ\u0020</item>
+        <item>\u0020ہوم\u0020</item><!--Home-->
+        <item>\u0020آف لائن رائیڈز\u0020</item><!--Offline Rides-->
+        <item>\u0020تفصیل‎\u0020</item><!--Booking History-->
+        <item>\u0020بٹوا‎\u0020</item><!--Wallet-->
+        <item>\u0020طریقہ کار\u0020</item><!--How it works-->
+        <item>\u0020رابطہ‎\u0020</item><!--Contact Us-->
     </string-array>
 
     <string-array name="navDrawerNewText">
-        <item>0</item>
-        <item>1</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
+        <item>0</item> <!--Home-->
+        <item>1</item> <!--Offline Rides-->
+        <item>0</item> <!--Booking History-->
+        <item>0</item> <!--Wallet-->
+        <item>0</item> <!--How it works-->
+        <item>0</item> <!--Contact Us-->
     </string-array>
     <!--
     <string-array name="navDrawerIcons">
