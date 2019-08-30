@@ -37,7 +37,10 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
+        <activity
+            android:name=".ui.activities.RideCodeVerificationActivity"
+            android:launchMode="singleTop" />
+        <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">
@@ -160,7 +163,8 @@
 
         <activity
             android:name=".ui.activities.ChatActivityNew"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.PersonalActivity"
             android:screenOrientation="portrait" />
@@ -279,12 +283,11 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-		
-		
+
         <activity
             android:name=".ui.withdraw.WithdrawalActivity"
             android:theme="@style/NewTheme" />
-        <activity android:name=".ui.withdraw.WithdrawThankyouActivity"/>
+        <activity android:name=".ui.withdraw.WithdrawThankyouActivity" />
     </application>
 
 </manifest>

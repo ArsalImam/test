@@ -3,8 +3,8 @@ package com.bykea.pk.partner.dal.source
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
-import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse
-import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData
+import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
+import com.bykea.pk.partner.dal.source.remote.response.*
 
 /**
  * Main entry point for accessing job requests data.
@@ -294,7 +294,7 @@ interface JobsDataSource {
     /**
      * Get Email Update
      */
-    fun getEmailUpdate(emailId: String, callback: EmailUpdateCallback){}
+    fun getEmailUpdate(emailId: String, callback: EmailUpdateCallback) {}
 
     /**
      * Callback interface for email update
@@ -308,7 +308,7 @@ interface JobsDataSource {
     /**
      * Check Email Update
      */
-    fun checkEmailUpdate(callback: EmailUpdateCheckCallback){}
+    fun checkEmailUpdate(callback: EmailUpdateCheckCallback) {}
 
     /**
      * Callback interface to check if email is updated
@@ -318,4 +318,52 @@ interface JobsDataSource {
 
         fun onFail(message: String?)
     }
+
+    /**
+     * Get fair estimation
+     * @param callback to get results in case of failure or success
+     */
+    fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String,
+                          type: String, rideType: String, callback: FareEstimationCallback) {
+    }
+
+    /**
+     * Callback interface to get fair estimation
+     */
+    interface FareEstimationCallback {
+        fun onSuccess(fareEstimationResponse: FareEstimationResponse)
+
+        fun onFail(code: Int, subCode: Int?, message: String?) {}
+    }
+
+    /**
+     * Generate OTP
+     * @param callback to get results in case of failure or success
+     */
+    fun requestOtpGenerate(phone: String, type: String, callback: OtpGenerateCallback) {}
+
+    /**
+     * Callback interface to otp generate
+     */
+    interface OtpGenerateCallback {
+        fun onSuccess(verifyNumberResponse: VerifyNumberResponse)
+
+        fun onFail(code: Int, subCode: Int?, message: String?) {}
+    }
+
+    /**
+     * Create Trip and Verify OTP
+     * @param callback to get results in case of failure or success
+     */
+    fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: CreateTripCallback) {}
+
+    /**
+     * Callback interface to otp generate
+     */
+    interface CreateTripCallback {
+        fun onSuccess(rideCreateResponse: RideCreateResponse)
+
+        fun onFail(code: Int, subCode: Int?, message: String?) {}
+    }
+
 }

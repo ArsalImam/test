@@ -48,6 +48,7 @@
     <!-- Nav Drawer Menu Items -->
     <string-array name="navDrawerItems">
         <item>Home</item>
+        <item>Offline Rides</item>
         <item>Booking History</item>
         <item>Wallet</item>
         <item>How it works</item>
@@ -57,12 +58,21 @@
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <string-array name="navDrawerIcons">
-        <item>ہوم</item>
-        <item>تفصیل‎</item>
-        <item>بٹوا‎</item>
-        <item>طریقہ کار</item>
-        <item>رابطہ‎</item>
-        <item>ٹیسٹنگ</item>
+        <item>\u0020ہوم\u0020</item><!--Home-->
+        <item>\u0020آف لائن رائیڈز\u0020</item><!--Offline Rides-->
+        <item>\u0020تفصیل‎\u0020</item><!--Booking History-->
+        <item>\u0020بٹوا‎\u0020</item><!--Wallet-->
+        <item>\u0020طریقہ کار\u0020</item><!--How it works-->
+        <item>\u0020رابطہ‎\u0020</item><!--Contact Us-->
+    </string-array>
+
+    <string-array name="navDrawerNewText">
+        <item>0</item> <!--Home-->
+        <item>1</item> <!--Offline Rides-->
+        <item>0</item> <!--Booking History-->
+        <item>0</item> <!--Wallet-->
+        <item>0</item> <!--How it works-->
+        <item>0</item> <!--Contact Us-->
     </string-array>
     <!--
     <string-array name="navDrawerIcons">
@@ -435,4 +445,46 @@
 
     <string name="call_whatsapp">\u0020واٹس ایپ پر کال کریں\u0020</string>
     <string name="call_mobile_no">\u0020موبائل نمبر پر کال کریں\u0020</string>
+
+
+    <string-array name="chat_messages_urdu">
+        <item>\u0020آپ کی لوکیشن صحیح ڈلی ہوئی ہے؟\u0020</item>
+        <item>\u0020میں آپ کی طرف آ رہا ہوں\u0020</item>
+        <item>\u0020راستہ سمجھا دیں یا نزدیک کوئی جگہ بتا دیں\u0020</item>
+        <item>\u0020میں راستے میں ہوں لیکن 5 منٹ لیٹ ہو سکتا ہوں\u0020</item>
+        <item>\u0020تھوڑا دور ہوں لیکن آپ کی طرف آ رہا ہوں\u0020</item>
+        <item>\u0020میں آپ کو کیسے پہچانوں گا؟\u0020</item>
+        <item>\u0020میں آپ کی لوکیشن پر پہنچ گیا ہوں\u0020</item>
+    </string-array>
+
+    <string-array name="chat_messages_english">
+        <item>Is your location pick accurate?</item>
+        <item>"I'm on my way"</item>
+        <item>Please provide more details about your pickup location</item>
+        <item>"I'm on my way but will run 5 minutes late"</item>
+        <item>I am slightly far away, but coming towards you</item>
+        <item>How do I recognize you\?</item>
+        <item>I have arrived</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="offline_rides_en">Offline Rides</string>
+    <string name="offline_rides_ur">\u0020آف لائن رائیڈز\u0020</string>
+    <string name="enter_customer_mobile_no">\u0020کسٹمر کا موبائل نمبر درج کریں\u0020</string>
+    <string name="code_sent_on_mentioned_no">\u0020درج کردہ نمبر پر تصدیقی کوڈ بھیجا جائیگا\u0020</string>
+    <string name="enter_drop_off_for_fare">\u0020اندازاً  کرائے کے لئے منزل منتخب کریں\u0020</string>
+    <string name="offline_ride_fare">\u0020:کرایہ\u0020</string>
+    <string name="enter_mobile_no">Enter Mobile Number</string>
+    <string name="search_drop_off">Search Drop Off</string>
+    <string name="receive_code">\u0020کوڈ وصول کریں\u0020</string>
+    <string name="search_drop_off_toast">Please search drop off</string>
+    <string name="offline_ride_notice">\u0020برائے مہربانی آف لائن رائیڈز لینے کے لئے ہوم اسکرین پر اپنی ایپ کو آف لائن کریں\u0020</string>
+
+    <string name="select_dropoff_title">\u0020منزل منتخب کریں\u0020</string>
+    <string name="pick_from_here_title">\u0020یہاں سے پِک کریں\u0020</string>
+    <string name="select_location_title">\u0020مقام مقرر کریں\u0020</string>
+    <string name="resend_code">\u0020دوبارہ کوڈ بھیجیں\u0020</string>
+    <string name="wrong_code_entered">\u0020درج کردہ کوڈ درست نہیں ہے\u0020</string>
 </resources>
