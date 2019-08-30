@@ -64,12 +64,37 @@
         <item>\u0020بٹوا‎\u0020</item>
         <item>\u0020طریقہ کار\u0020</item>
         <item>\u0020رابطہ‎\u0020</item>
-        <item>\u0020ٹیسٹنگ\u0020</item>
     </string-array>
 
     <string-array name="navDrawerNewText">
         <item>0</item>
         <item>1</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+    </string-array>
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="navDrawerItemsWithoutOffline">
+        <item>Home</item>
+        <item>Booking History</item>
+        <item>Wallet</item>
+        <item>How it works</item>
+        <item>Contact Us</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <string-array name="navDrawerIconsWithoutOffline">
+        <item>\u0020ہوم\u0020</item>
+        <item>\u0020تفصیل‎\u0020</item>
+        <item>\u0020بٹوا‎\u0020</item>
+        <item>\u0020طریقہ کار\u0020</item>
+        <item>\u0020رابطہ‎\u0020</item>
+    </string-array>
+
+    <string-array name="navDrawerNewTextWithoutOffline">
         <item>0</item>
         <item>0</item>
         <item>0</item>

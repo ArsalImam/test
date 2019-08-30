@@ -105,16 +105,22 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         @Override
         public void onClick(View v) {
             mainActivity.drawerLayout.closeDrawers();
-
-            switch (getLayoutPosition()) {
+            int position = getLayoutPosition();
+            int positionSubtract = 0;
+            if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                    !AppPreferences.getSettings().getSettings().getOfflineRideDisplay() && getLayoutPosition() >= 2) {
+                position = getLayoutPosition() + 1;
+                positionSubtract = 1;
+            }
+            switch (position) {
                 case Constants.ScreenRedirections.PROFILE_SCREEN:// This case is for driver header part click.
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.PROFILE_SCREEN) {
-                        updateCurrentFragment(new ProfileFragment(), Constants.ScreenRedirections.PROFILE_SCREEN);
+                        updateCurrentFragment(new ProfileFragment(), Constants.ScreenRedirections.PROFILE_SCREEN - positionSubtract);
                     }
                     break;
                 case Constants.ScreenRedirections.HOME_SCREEN:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.HOME_SCREEN) {
-                        updateCurrentFragment(new HomeFragment(), Constants.ScreenRedirections.HOME_SCREEN);
+                        updateCurrentFragment(new HomeFragment(), Constants.ScreenRedirections.HOME_SCREEN - positionSubtract);
                     }
                     break;
                 case Constants.ScreenRedirections.OFFLINE_RIDES:
@@ -122,17 +128,17 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                         Dialogs.INSTANCE.showAlertDialogTick(context, StringUtils.EMPTY, context.getString(R.string.offline_ride_notice), view -> {
                         });
                     } else if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.OFFLINE_RIDES) {
-                        updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES);
+                        updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES - positionSubtract);
                     }
                     break;
                 case Constants.ScreenRedirections.TRIP_HISTORY_SCREEN:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.TRIP_HISTORY_SCREEN) {
-                        updateCurrentFragment(new TripHistoryFragment(), Constants.ScreenRedirections.TRIP_HISTORY_SCREEN);
+                        updateCurrentFragment(new TripHistoryFragment(), Constants.ScreenRedirections.TRIP_HISTORY_SCREEN - positionSubtract);
                     }
                     break;
                 case Constants.ScreenRedirections.WALLET_SCREEN:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.WALLET_SCREEN) {
-                        updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN);
+                        updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN - positionSubtract);
                     }
                     break;
                 case Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN:
@@ -143,7 +149,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     break;
                 case Constants.ScreenRedirections.CONTACT_US_SCREEN:
                     if (HomeActivity.visibleFragmentNumber != Constants.ScreenRedirections.CONTACT_US_SCREEN) {
-                        updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN);
+                        updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN - positionSubtract);
                     }
                     break;
 
@@ -222,7 +228,6 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     public void onBindViewHolder(NavDrawerAdapter.ViewHolder holder, int position) {
 
         if (position > 0 && position < getItemCount() - 1) {
-
             if (position == HomeActivity.visibleFragmentNumber) {
                 holder.navTitle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             } else {
@@ -230,7 +235,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             }
             holder.navTitle.setText(titles[position - 1]);
             holder.navIcon.setText(icons[position - 1]);
-            if(newLabel[position - 1].equals("1"))
+            if (newLabel[position - 1].equals("1"))
                 holder.newLabel.setVisibility(View.VISIBLE);
             else
                 holder.newLabel.setVisibility(View.INVISIBLE);

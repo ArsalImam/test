@@ -179,6 +179,8 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             viewHolder.contentLayout.setBackgroundResource(R.color.transparent);
             viewHolder.audioLayout.setVisibility(View.VISIBLE);
             viewHolder.txtMessage.setVisibility(View.GONE);
+            viewHolder.viewSeperator.setVisibility(View.GONE);
+            viewHolder.txtMessageSecond.setVisibility(View.GONE);
             viewHolder.txtMessageVoice.setVisibility(View.VISIBLE);
 
             viewHolder.seekBar.setClickable(false);

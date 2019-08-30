@@ -46,6 +46,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -221,12 +225,39 @@ public class HomeActivity extends BaseActivity {
 
         visibleFragmentNumber = 1;//FOR NAVIGATION DRAWER FRAGMENT
 
-        //Setup Titles and Icons of Navigation Drawer
-        navTitles = getResources().getStringArray(R.array.navDrawerItems);
-        navIcons = getResources().getStringArray(R.array.navDrawerIcons);
-        navDrawerNewText = getResources().getStringArray(R.array.navDrawerNewText);
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                !AppPreferences.getSettings().getSettings().getOfflineRideDisplay()) {
+            //Setup Titles and Icons of Navigation Drawer
+            navTitles = getResources().getStringArray(R.array.navDrawerItemsWithoutOffline);
+            navIcons = getResources().getStringArray(R.array.navDrawerIconsWithoutOffline);
+            navDrawerNewText = getResources().getStringArray(R.array.navDrawerNewTextWithoutOffline);
+        }else{
+            //Setup Titles and Icons of Navigation Drawer
+            navTitles = getResources().getStringArray(R.array.navDrawerItems);
+            navIcons = getResources().getStringArray(R.array.navDrawerIcons);
+            navDrawerNewText = getResources().getStringArray(R.array.navDrawerNewText);
+        }
 
-        recyclerViewAdapter = new NavDrawerAdapter(navTitles, navIcons,navDrawerNewText, mCurrentActivity);
+//            Setup Titles and Icons of Navigation Drawer
+//        navTitles = getResources().getStringArray(R.array.navDrawerItems);
+//        navIcons = getResources().getStringArray(R.array.navDrawerIcons);
+//        navDrawerNewText = getResources().getStringArray(R.array.navDrawerNewText);
+
+       /* if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                !AppPreferences.getSettings().getSettings().getOfflineRideDisplay()) {
+
+            List<String> titlesEnglishList = new ArrayList<>(Arrays.asList(navTitles));
+            List<String> titlesUrduList = new ArrayList<>(Arrays.asList(navIcons));
+            List<String> newLabelToShowList = new ArrayList<>(Arrays.asList(navDrawerNewText));
+
+            Utils.removeOrHideItemFromNavigationDrawerList(Constants.NavigationItems.OFFLINE_RIDE, titlesEnglishList, titlesUrduList, newLabelToShowList);
+
+            navTitles = titlesEnglishList.toArray(new String[0]);
+            navIcons = titlesUrduList.toArray(new String[0]);
+            navDrawerNewText = newLabelToShowList.toArray(new String[0]);
+        }*/
+
+        recyclerViewAdapter = new NavDrawerAdapter(navTitles, navIcons, navDrawerNewText, mCurrentActivity);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

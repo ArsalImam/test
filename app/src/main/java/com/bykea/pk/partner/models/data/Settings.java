@@ -32,9 +32,21 @@ public class Settings {
 
     @SerializedName("withdraw_partner_min_limit")
     private double withdrawPartnerMinLimit;
+    private boolean offline_ride_display;
+
+
+    /**
+     * getter offline ride display to show or not
+     *
+     * @return offline_ride_display
+     */
+    public boolean getOfflineRideDisplay() {
+        return offline_ride_display;
+    }
 
     /**
      * getter withdraw partner max limit
+     *
      * @return withdrawPartnerMinLimit
      */
     public double getWithdrawPartnerMinLimit() {
@@ -43,6 +55,7 @@ public class Settings {
 
     /**
      * setter of withdrawPartnerMinLimit
+     *
      * @param withdrawPartnerMinLimit withdrawPartnerMinLimit
      */
     public void setWithdrawPartnerMinLimit(double withdrawPartnerMinLimit) {
@@ -51,6 +64,7 @@ public class Settings {
 
     /**
      * getter withdraw partner max limit
+     *
      * @return withdrawPartnerMaxLimit
      */
     public double getWithdrawPartnerMaxLimit() {
@@ -59,6 +73,7 @@ public class Settings {
 
     /**
      * setter of withdrawPartnerMaxLimit
+     *
      * @param withdrawPartnerMaxLimit withdrawPartnerMaxLimit
      */
     public void setWithdrawPartnerMaxLimit(double withdrawPartnerMaxLimit) {
@@ -149,5 +164,6 @@ public class Settings {
     public void setVan_partner_topup_limit(String van_partner_topup_limit) {
         this.van_partner_topup_limit = van_partner_topup_limit;
     }
+
 
 }
