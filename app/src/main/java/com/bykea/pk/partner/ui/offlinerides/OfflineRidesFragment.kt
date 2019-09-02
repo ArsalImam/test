@@ -131,7 +131,7 @@ class OfflineRidesFragment : Fragment() {
      * Set Button Background According To The Validation Of Mobile Number
      */
     private fun validateNumberSetButtonColor() {
-        if (Utils.isValidNumber(eTMobileNumber)) {
+        if (Utils.isValidNumber(eTMobileNumber) && !StringUtils.isEmpty(tVDropOffAddress.text)) {
             setBackgroundColor(R.color.colorAccent)
         } else {
             setBackgroundColor(R.color.color_A7A7A7)
