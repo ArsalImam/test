@@ -23,6 +23,7 @@ import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
 import com.bykea.pk.partner.ui.fragments.ProfileFragment;
 import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
+import com.bykea.pk.partner.ui.fragments.WebViewFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.offlinerides.OfflineRidesFragment;
 import com.bykea.pk.partner.utils.Connectivity;

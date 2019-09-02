@@ -622,4 +622,7 @@ public class Constants {
     }
 
     public static final String TRANSALATION_SEPERATOR = "///";
+
+    //ON PAGE FINISHED IS TAKING TIME, SO USE THIS. IN WHICH USER CAN GET SOMEHOW SOMETHING IS START TO APPEARS
+    public final static long DIMISS_DIALOG_WEBVIEW_LOADING = 3 * 1000;
 }

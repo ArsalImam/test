@@ -466,6 +466,8 @@
         <item>How do I recognize you\?</item>
         <item>I have arrived</item>
     </string-array>
+    <string name="how_it_works_en">How it works</string>
+    <string name="how_it_works_ur">\u0020طریقہ کار\u0020</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
