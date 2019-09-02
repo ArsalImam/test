@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -20,7 +22,6 @@ import com.bykea.pk.partner.services.HandleInactivePushService;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
-import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
@@ -32,7 +33,6 @@ import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
-import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.activities.MultiDeliveryFeedbackActivity;
 import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
@@ -42,19 +42,22 @@ import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
+import com.bykea.pk.partner.ui.activities.RideCodeVerificationActivity;
+import com.bykea.pk.partner.ui.calling.CallingActivity;
+import com.bykea.pk.partner.ui.calling.JobCallActivity;
+import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
+import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
+import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
+import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
-import com.bykea.pk.partner.ui.support.ComplainZendeskIdentityActivity;
-import com.bykea.pk.partner.ui.support.ComplaintListActivity;
-import com.bykea.pk.partner.ui.support.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
-
 
 public class ActivityStackManager {
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
@@ -322,6 +325,22 @@ public class ActivityStackManager {
         }
     }
 
+    public void startCallingActivity(JobCall jobCall, boolean isFromGcm, Context mContext) {
+        if (AppPreferences.getAvailableStatus() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
+            Intent callIntent = new Intent(DriverApp.getContext(), JobCallActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            callIntent.putExtra(JobCallActivity.Companion.getKEY_CALL_DATA(), jobCall);
+            if (isFromGcm) {
+                callIntent.putExtra(JobCallActivity.Companion.getKEY_IS_FROM_PUSH(), true);
+                Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
+            }
+            mContext.startActivity(callIntent);
+        }
+    }
+
+    @Deprecated
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
 
         Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +
@@ -547,6 +566,17 @@ public class ActivityStackManager {
      */
     public void startComplainListActivity(Context context) {
         Intent intent = new Intent(context, ComplaintListActivity.class);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Ride Create Code Verification Activity
+     * @param phoneNumber : Phone Number For OTP Code Message and Call
+     */
+    public void startWaitingActivity(Context context, RideCreateRequestObject createRequestBody, String phoneNumber) {
+        Intent intent = new Intent(context, RideCodeVerificationActivity.class);
+        intent.putExtra(Constants.Extras.PHONE_NUMBER, phoneNumber);
+        intent.putExtra(Constants.Extras.RIDE_CREATE_DATA, createRequestBody);
         context.startActivity(intent);
     }
 }

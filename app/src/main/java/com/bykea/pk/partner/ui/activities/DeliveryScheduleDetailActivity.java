@@ -152,7 +152,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
         @Override
         public void onError(int errorCode, String errorMessage) {
             Dialogs.INSTANCE.dismissDialog();
-            Utils.appToast(mCurrentActivity, errorMessage);
+            Utils.appToast(errorMessage);
         }
     };
 
@@ -161,7 +161,8 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
      * This method updates driver location with updated trip status and finishes the activity
      */
     private void finishActivity() {
-        mRepository.requestLocationUpdate(mCurrentActivity, mCallBack, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        if (Utils.isConnected(DeliveryScheduleDetailActivity.this, false))
+            mRepository.requestLocationUpdate(mCurrentActivity, mCallBack, AppPreferences.getLatitude(), AppPreferences.getLongitude());
         mCurrentActivity.finish();
     }
 

@@ -37,7 +37,10 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
+        <activity
+            android:name=".ui.activities.RideCodeVerificationActivity"
+            android:launchMode="singleTop" />
+        <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">
@@ -65,14 +68,21 @@
         </activity>
         <activity android:name=".ui.activities.BaseActivity" />
         <activity
-            android:name=".ui.activities.CallingActivity"
+            android:name=".ui.calling.CallingActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:showWhenLocked="true"
             android:theme="@style/AppTheme.Base"
             android:turnScreenOn="true" />
         <activity
-            android:name=".ui.activities.MultiDeliveryCallingActivity"
+            android:name=".ui.calling.JobCallActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Base"
+            android:turnScreenOn="true" />
+        <activity
+            android:name=".ui.calling.MultiDeliveryCallingActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:showWhenLocked="true"
@@ -153,7 +163,8 @@
 
         <activity
             android:name=".ui.activities.ChatActivityNew"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.PersonalActivity"
             android:screenOrientation="portrait" />
@@ -258,26 +269,25 @@
             android:name=".ui.loadboard.detail.JobRequestDetailActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".ui.support.ComplaintSubmissionActivity"
+            android:name=".ui.complain.ComplaintSubmissionActivity"
             android:label="@string/title_activity_problem_final"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.support.ComplaintListActivity"
+            android:name=".ui.complain.ComplaintListActivity"
             android:label="@string/title_complain_list"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.support.ComplainZendeskIdentityActivity" />
+        <activity android:name=".ui.complain.ComplainZendeskIdentityActivity" />
 
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-		
-		
+
         <activity
             android:name=".ui.withdraw.WithdrawalActivity"
             android:theme="@style/NewTheme" />
-        <activity android:name=".ui.withdraw.WithdrawThankyouActivity"/>
+        <activity android:name=".ui.withdraw.WithdrawThankyouActivity" />
     </application>
 
 </manifest>

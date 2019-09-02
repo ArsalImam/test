@@ -3,7 +3,6 @@ package com.bykea.pk.partner.dal.source.remote
 import android.util.Log
 import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData
 import com.bykea.pk.partner.dal.source.remote.data.WithdrawPaymentMethod
-import com.bykea.pk.partner.dal.source.remote.response.BaseResponse
 import com.bykea.pk.partner.dal.source.remote.response.GetDriverProfile
 import com.bykea.pk.partner.dal.source.remote.response.GetWithdrawalPaymentMethods
 import com.bykea.pk.partner.dal.source.remote.response.WithdrawPostResponse
@@ -28,7 +27,7 @@ class WithdrawRemoteDataSource {
      * @param callback to get results in case of failure or success
      */
     fun getAllPaymentMethods(userId: String, tokenId: String, callback: WithdrawRepository.LoadWithdrawalCallback<List<WithdrawPaymentMethod>?>) {
-        Backend.telos.getWithdrawalPaymentMethods(tokenId, userId)
+        Backend.talos.getWithdrawalPaymentMethods(tokenId, userId)
                 .enqueue(object : Callback<GetWithdrawalPaymentMethods> {
                     override fun onResponse(call: Call<GetWithdrawalPaymentMethods>, response: Response<GetWithdrawalPaymentMethods>) {
                         Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
@@ -56,7 +55,7 @@ class WithdrawRemoteDataSource {
      * @param callback to get results in case of failure or success
      */
     fun getDriverProfile(userId: String, tokenId: String, callback: WithdrawRepository.LoadWithdrawalCallback<PersonalInfoData>) {
-        Backend.telos.getDriverProfile(userId, tokenId, "d")
+        Backend.talos.getDriverProfile(userId, tokenId, "d")
                 .enqueue(object : Callback<GetDriverProfile> {
                     override fun onResponse(call: Call<GetDriverProfile>, response: Response<GetDriverProfile>) {
                         Log.v(WithdrawRemoteDataSource::class.java.simpleName, response.toString())
@@ -86,7 +85,7 @@ class WithdrawRemoteDataSource {
      */
     fun performWithdraw(amount: Int, userId: String, tokenId: String, paymentMethod: Int,
                         callback: WithdrawRepository.LoadWithdrawalCallback<Boolean>) {
-        Backend.telos.getPerformWithdraw(
+        Backend.talos.getPerformWithdraw(
                 tokenId, userId, paymentMethod, amount)
                 .enqueue(object : Callback<WithdrawPostResponse> {
                     override fun onResponse(call: Call<WithdrawPostResponse>, response: Response<WithdrawPostResponse>) {

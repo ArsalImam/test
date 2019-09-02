@@ -2,7 +2,11 @@ package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.SpannableStringBuilder;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,7 @@ import android.widget.TextView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.ChatMessage;
+import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -22,17 +27,23 @@ import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.OpusPlayerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.FontUtils;
+import com.bykea.pk.partner.widgets.Fonts;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusPlayer;
+
+import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.ViewHolder> {
 
@@ -49,11 +60,13 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
     private StringCallBack onStopCallBack;
 
     private final int FILE_LENGTH_SECONDS = -1; //-1 for live streaming
+    private ArrayList<ChatMessagesTranslated> chatMessagesTranslatedArrayList;
 
     @SuppressWarnings("deprecation")
-    public ChatAdapterNewDF(Context context, List<ChatMessage> chatMessages) {
+    public ChatAdapterNewDF(Context context, List<ChatMessage> chatMessages, ArrayList<ChatMessagesTranslated> chatMessagesTranslatedArrayList) {
         this.context = context;
         this.chatMessages = chatMessages;
+        this.chatMessagesTranslatedArrayList = chatMessagesTranslatedArrayList;
     }
 
 
@@ -106,13 +119,49 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
                 viewHolder.contentLayout.setBackgroundResource(R.drawable.green_chat_box);
             }
             viewHolder.audioLayout.setVisibility(View.GONE);
-            viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+            if (chatMessages.get(position).getMessage().contains(TRANSALATION_SEPERATOR)) {
+                try {
+                    String[] strings = chatMessages.get(position).getMessage().split(TRANSALATION_SEPERATOR);
+
+                    if (strings.length == 2 && strings[Constants.DIGIT_ZERO] != null && strings[Constants.DIGIT_ONE] != null &&
+                            StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO]) && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+                        viewHolder.txtMessage.setText(new SpannableStringBuilder(StringUtils.SPACE)
+                                .append(FontUtils.getStyledTitle(context, strings[Constants.DIGIT_ZERO], Fonts.Jameel_Noori_Nastaleeq.getName()))
+                                .append(StringUtils.SPACE));
+                        viewHolder.viewSeperator.setVisibility(View.VISIBLE);
+                        viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
+                        viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ONE]);
+                    } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO])) {
+                        viewHolder.txtMessage.setText(strings[Constants.DIGIT_ZERO]);
+                        viewHolder.viewSeperator.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                    } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+                        viewHolder.txtMessage.setText(strings[Constants.DIGIT_ONE]);
+                        viewHolder.viewSeperator.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                    } else {
+                        viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+                        viewHolder.viewSeperator.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                    }
+                } catch (Exception e) {
+                    viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+                    viewHolder.viewSeperator.setVisibility(View.GONE);
+                    viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                }
+            } else {
+                viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+                viewHolder.viewSeperator.setVisibility(View.GONE);
+                viewHolder.txtMessageSecond.setVisibility(View.GONE);
+            }
             viewHolder.txtMessage.setVisibility(View.VISIBLE);
             viewHolder.txtMessageVoice.setVisibility(View.GONE);
             viewHolder.image.setVisibility(View.GONE);
         } else if (chatMessages.get(position).getMessageType().equalsIgnoreCase("Image")) {
             viewHolder.audioLayout.setVisibility(View.GONE);
             viewHolder.txtMessage.setVisibility(View.GONE);
+            viewHolder.viewSeperator.setVisibility(View.GONE);
+            viewHolder.txtMessageSecond.setVisibility(View.GONE);
             viewHolder.txtMessageVoice.setVisibility(View.GONE);
             viewHolder.image.setVisibility(View.VISIBLE);
             final String url = Utils.getFileLink(chatMessages.get(position)
@@ -130,6 +179,8 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             viewHolder.contentLayout.setBackgroundResource(R.color.transparent);
             viewHolder.audioLayout.setVisibility(View.VISIBLE);
             viewHolder.txtMessage.setVisibility(View.GONE);
+            viewHolder.viewSeperator.setVisibility(View.GONE);
+            viewHolder.txtMessageSecond.setVisibility(View.GONE);
             viewHolder.txtMessageVoice.setVisibility(View.VISIBLE);
 
             viewHolder.seekBar.setClickable(false);
@@ -334,7 +385,7 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtMessage;
+        public FontTextView txtMessage;
         public TextView txtMessageVoice;
         public ProgressBar loader;
         public SeekBar seekBar;
@@ -343,6 +394,10 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
         public ImageView imgPessanger;
         public LinearLayout audioLayout;
         public FrameLayout contentLayout;
+
+        public View viewSeperator;
+        public FontTextView txtMessageSecond;
+
         ImageView image;
         Context context;
 
@@ -351,15 +406,17 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             super(itemView);
             this.context = context;
             image = itemView.findViewById(R.id.image);
-            txtDate = (TextView) itemView.findViewById(R.id.txtDate);
-            txtMessage = (TextView) itemView.findViewById(R.id.txtMessage);
-            txtMessageVoice = (TextView) itemView.findViewById(R.id.txtMessageVoice);
-            loader = (ProgressBar) itemView.findViewById(R.id.loader);
-            contentLayout = (FrameLayout) itemView.findViewById(R.id.content);
-            audioLayout = (LinearLayout) itemView.findViewById(R.id.audioLayout);
-            seekBar = (SeekBar) itemView.findViewById(R.id.seekbar);
-            audioLength = (FontTextView) itemView.findViewById(R.id.audioLength);
-            imgPessanger = (ImageView) itemView.findViewById(R.id.imgPessenger);
+            txtDate = itemView.findViewById(R.id.txtDate);
+            txtMessage = itemView.findViewById(R.id.txtMessage);
+            txtMessageVoice = itemView.findViewById(R.id.txtMessageVoice);
+            loader = itemView.findViewById(R.id.loader);
+            contentLayout = itemView.findViewById(R.id.content);
+            audioLayout = itemView.findViewById(R.id.audioLayout);
+            seekBar = itemView.findViewById(R.id.seekbar);
+            audioLength = itemView.findViewById(R.id.audioLength);
+            imgPessanger = itemView.findViewById(R.id.imgPessenger);
+            viewSeperator = itemView.findViewById(R.id.viewSeperator);
+            txtMessageSecond = itemView.findViewById(R.id.txtMessageSecond);
         }
     }
 

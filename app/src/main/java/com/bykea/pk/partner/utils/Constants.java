@@ -4,6 +4,12 @@ package com.bykea.pk.partner.utils;
 import com.bykea.pk.partner.BuildConfig;
 
 public class Constants {
+    public static final int DIGIT_ZERO = 0;
+    public static final int DIGIT_ONE = 1;
+    public static final int DIGIT_TWO = 2;
+
+
+    public static final String APP = "APP";
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
     public static final String APP_NAME = "BYKEA PARTNER";
@@ -211,6 +217,12 @@ public class Constants {
         public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
         public final static String ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL = "ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL";
         public final static String IS_CALLED_FROM_LOADBOARD = "IS_CALLED_FROM_LOADBOARD";
+
+        public static final String RIDE_CREATE_DATA = "RIDE_CREATE_DATA";
+
+        public static final String FROM = "from";
+        public static final String FLOW_FOR = "FLOW_FOR";
+        public static final String OFFLINE_RIDE = "OFFLINE_RIDE";
     }
 
     public static class Broadcast {
@@ -271,6 +283,7 @@ public class Constants {
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
         public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
         public final static String ON_RIDE_COMPLETE = "RideComplete";
+        public final static String ON_PARTNER_LOCATION_UPDATE = "Partner-Pulse";
 
         public final static String ON_LB_SWIPE_UP = EYE_BALL + "LoadBoard-Swipe-Up";
         public final static String ON_LB_REFRESH = EYE_BALL + "LoadBoard-Refreshed";
@@ -281,6 +294,8 @@ public class Constants {
         public final static String ON_LB_PICKUP_DIRECTION = EYE_BALL + "LoadBoard-Direction-Pick";
         public final static String ON_LB_DROPOFF_DIRECTION = EYE_BALL + "LoadBoard-Direction-Drop";
         public final static String ON_LB_BOOKING_ACCEPT = EYE_BALL + "LoadBoard-Booking-Accept";
+
+        public final static String ON_CHAT_TEMPLATE_TAPPED = "Chat-Template";
 //        public final static String ON_LB_TAKEN = EYE_BALL + "LoadBoard-Taken";
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
@@ -366,6 +381,9 @@ public class Constants {
         public static final String SEND_TITLE = "Delivery";
         public static final int SEND_CODE = 21;
         public static final int SEND_COD_CODE = 22;
+        public static final int RIDE_CODE = 23;
+        public static final int OFFLINE_RIDE = 24;
+        public static final String OFFLINE_RIDE_STRING = "Offline Ride";
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -485,10 +503,21 @@ public class Constants {
     public static class ScreenRedirections {
         public static final int PROFILE_SCREEN = 0;
         public static final int HOME_SCREEN = 1;
-        public static final int TRIP_HISTORY_SCREEN = 2;
-        public static final int WALLET_SCREEN = 3;
-        public static final int HOW_IT_WORKS_SCREEN = 4;
-        public static final int CONTACT_US_SCREEN = 5;
+        public static final int OFFLINE_RIDES = 2;
+        public static final int TRIP_HISTORY_SCREEN = 3;
+        public static final int WALLET_SCREEN = 4;
+        public static final int HOW_IT_WORKS_SCREEN = 5;
+        public static final int CONTACT_US_SCREEN = 6;
+        public static final int LOGOUT = 7;
+
+        public static final String PROFILE_SCREEN_S = "PROFILE_SCREEN";
+        public static final String HOME_SCREEN_S = "Home";
+        public static final String OFFLINE_RIDES_S = "Offline Rides";
+        public static final String TRIP_HISTORY_SCREEN_S = "Booking History";
+        public static final String WALLET_SCREEN_S = "Wallet";
+        public static final String HOW_IT_WORKS_SCREEN_S = "How it works";
+        public static final String CONTACT_US_SCREEN_S = "Contact Us";
+        public static final String LOGOUT_S = "LOGOUT";
     }
 
     public static final int MARKER_INCREMENT_FACTOR_DEFAULT = 20;
@@ -585,6 +614,14 @@ public class Constants {
 
     public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
     public final static String REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a";
+
+    public static String WHATSAPP_URI_PREFIX = "https://wa.me/";
+
+    public static class ApplicationsPackageName {
+        public static String WHATSAPP_PACKAGE = "com.whatsapp";
+    }
+
+    public static final String TRANSALATION_SEPERATOR = "///";
 
     //ON PAGE FINISHED IS TAKING TIME, SO USE THIS. IN WHICH USER CAN GET SOMEHOW SOMETHING IS START TO APPEARS
     public final static long DIMISS_DIALOG_WEBVIEW_LOADING = 3 * 1000;
