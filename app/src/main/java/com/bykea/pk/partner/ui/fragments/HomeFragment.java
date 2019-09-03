@@ -102,6 +102,7 @@ import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 /**
  * Home landing screen which holds all the options for driver
@@ -284,7 +285,8 @@ public class HomeFragment extends Fragment {
                         .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                         .replace(R.id.containerView, fragment)
                         .commit();
-                HomeActivity.visibleFragmentNumber = 7;
+                //TODO : visibleFragmentNumber
+//                HomeActivity.visibleFragmentNumber = 7;
                 return;
             }
 
@@ -524,7 +526,7 @@ public class HomeFragment extends Fragment {
 
     private void onUnauthorizedLicenceExpire() {
         Utils.clearData(mCurrentActivity);
-        HomeActivity.visibleFragmentNumber = 0;
+        HomeActivity.visibleFragmentNumber = HOME_SCREEN_S;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                     @Override
                     public void onCallBack(String msg) {
@@ -1472,7 +1474,7 @@ public class HomeFragment extends Fragment {
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.containerView, new WalletFragment())
                 .commit();
-        HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
+        HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN_S;
     }
 
     /**

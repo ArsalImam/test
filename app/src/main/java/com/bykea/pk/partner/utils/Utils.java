@@ -161,6 +161,7 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 
@@ -354,7 +355,7 @@ public class Utils {
     public static void logout(Context context) {
         clearData(context);
         AppPreferences.clearLoadboardSelectedZoneData();
-        HomeActivity.visibleFragmentNumber = 0;
+        HomeActivity.visibleFragmentNumber = HOME_SCREEN_S;
         //ActivityStackManager.getInstance().startLoginActivity(context);
         ActivityStackManager.getInstance().startLandingActivity(context);
         ((Activity) context).finish();
@@ -3386,6 +3387,25 @@ public class Utils {
             imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(drawable, null));
         } else {
             imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(drawable));
+        }
+    }
+
+    /**
+     * Remove Navigation Drawer List Item
+     */
+    public static void removeOrHideItemFromNavigationDrawerList(String itemToRemove, List<String> titlesEnglish, List<String> titlesUrdu, List<String> newLabelToShow) {
+        int position = -1;
+        for (int i = 0; i < titlesEnglish.size(); i++) {
+            if (titlesEnglish.get(i).contains(itemToRemove)) {
+                position = i;
+                break;
+            }
+        }
+
+        if (position != -1) {
+            titlesEnglish.remove(position);
+            titlesUrdu.remove(position);
+            newLabelToShow.remove(position);
         }
     }
 }

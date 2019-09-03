@@ -36,6 +36,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
+
 public class TripHistoryFragment extends Fragment {
 
     //no_data
@@ -100,7 +102,7 @@ public class TripHistoryFragment extends Fragment {
                 if (!historyData.getStatus().equalsIgnoreCase("cancelled")) {
                     if (historyData.getInvoice() != null) {
                         ActivityStackManager.getInstance().startCompletedDetailsActivity(historyData, mCurrentActivity);
-                        HomeActivity.visibleFragmentNumber = 2;
+                        HomeActivity.visibleFragmentNumber = TRIP_HISTORY_SCREEN_S;
                     }
                 } else {
                     ActivityStackManager.getInstance().startCancelDetailsActivity(historyData, mCurrentActivity);
