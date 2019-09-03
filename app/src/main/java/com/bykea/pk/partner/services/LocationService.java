@@ -109,122 +109,47 @@ public class LocationService extends Service {
      * The current location.
      */
     private Location mLocation;
-    private UserDataHandler handler = new UserDataHandler() {
-        @Override
-        public void onLocationUpdate(LocationResponse response) {
-            super.onLocationUpdate(response);
-            if (response.isSuccess()) {
-                AppPreferences.setDriverOfflineForcefully(false);
-                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
-                mBus.post(Keys.ACTIVE_FENCE);
-            } else {
-                handleLocationErrorUseCase(response);
-            }
-
-        }
-
-        @Override
-        public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
-            if (pilotStatusResponse.isSuccess()) {
-                AppPreferences.setAvailableStatus(false);
-                AppPreferences.setAvailableAPICalling(false);
-                AppPreferences.setDriverDestination(null);
-                AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
-            } else {
-                AppPreferences.setAvailableStatus(false);
-                AppPreferences.setDriverDestination(null);
-            }
-            //make service offline as driver is offline now
-            updateServiceForDriverOfflineStatus();
-        }
-
-
-        @Override
-        public void onError(int errorCode, String errorMessage) {
-            switch (errorCode) {
-                case HTTPStatus.UNAUTHORIZED:
-                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
-                    break;
-                /*case HTTPStatus.FENCE_ERROR:
-                    AppPreferences.setOutOfFence(true);
-                    AppPreferences.setAvailableStatus(false);
-                    mBus.post(Keys.INACTIVE_FENCE);
-                    break;
-                case HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT:
-                    if (StringUtils.isNotBlank(errorMessage)) {
-                        AppPreferences.setWalletIncreasedError(errorMessage);
-                    }
-                    AppPreferences.setWalletAmountIncreased(true);
-                    AppPreferences.setAvailableStatus(false);
-                    mBus.post(Keys.INACTIVE_FENCE);
-                    break;
-                case HTTPStatus.FENCE_SUCCESS:
-                    AppPreferences.setOutOfFence(false);
-                    AppPreferences.setAvailableStatus(true);
-                    mBus.post(Keys.ACTIVE_FENCE);
-                    break;*/
-            }
-        }
-    };
-    //region  Countdown timer for sending location to server.
-    //10000, 4990
-    private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-//            Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
-            if (Connectivity.isConnectedFast(mContext)) {
-                if (AppPreferences.isLoggedIn()) {
-                    DriverApp.getApplication().connect();
-                }
-            }
-        }
-
-
-        @Override
-        public void onFinish() {
-            Utils.redLog(TAG, "CountDown Timer onFinish: called ");
-            if (Utils.canSendLocation()) {
-                synchronized (this) {
-                    double lat = AppPreferences.getLatitude();
-                    double lon = AppPreferences.getLongitude();
-                    boolean isMock = AppPreferences.isFromMockLocation();
-                    if (lat != 0.0 && lon != 0.0 && !isMock) {
-                        updateTripRouteList(lat, lon);
-                        //DriverETAService.startDriverETAUpdate(DriverApp.getContext());
-
-                        //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
-                        if (shouldCallLocApi) {
-                            shouldCallLocApi = false;
-                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
-                                //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
-                                //validateDriverOfflineStatus();
-                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
-
-                            } else {
-                                Utils.redLogLocation("request failed", "WiFi -> " +
-                                        Connectivity.isConnectedFast(mContext)
-                                        + " && GPS -> " + Utils.isGpsEnable());
-                            }
-                        } else {
-                            shouldCallLocApi = true;
-                        }
-                    }
-                    Utils.redLog(TAG, "CountDown Timer restarted: called ");
-                    mCountDownLocationTimer.start();
-                    Utils.redLog(TAG, "updateETAIfRequired: called ");
-                    updateETAIfRequired();
-                }
-            } else if (Utils.hasLocationCoordinates()) {
-                stopForegroundService();
-            } else {
-                Utils.redLog(TAG, "CountDown Timer restarted: called ");
-                mCountDownLocationTimer.start();
-            }
-
-        }
-    };
 
     public LocationService() {
+    }
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Utils.redLogLocation(TAG, "onCreate");
+        startForeground(NOTIF_ID, createForegroundNotification());
+        configureInitialServiceProcess();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mContext = getApplicationContext();
+        if (!hasForeGroundNotification()) {
+            Utils.redLogLocation(TAG, "onStartCommand (!hasForeGroundNotification)");
+            startForeground(NOTIF_ID, createForegroundNotification());
+        } else {
+            Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
+        }
+        createLocationRequest();
+        requestLocationUpdates();
+        cancelTimer();
+
+        mCountDownLocationTimer.start();
+        //DriverETAService.startDriverETAUpdate(this);
+        //DriverLocationUpdateJob.scheduleLocationUpdateJob();
+        //DriverETAUpdateJob.scheduleDriverETAJob();
+        if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
+            if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
+                STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
+            }
+        } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
+            stopForegroundService();
+        } else if (Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION.equals(intent.getAction())) {
+            updateForegroundNotification();
+        }
+        checkIfLocationUpdateCustomIntervalShouldSet(intent);
+        return START_STICKY;
     }
 
 
@@ -339,12 +264,21 @@ public class LocationService extends Service {
 
     //endregion
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Utils.redLogLocation(TAG, "onCreate");
-        startForeground(NOTIF_ID, createForegroundNotification());
-        configureInitialServiceProcess();
+    /**
+     * this method checks whether location update request should be customize when on trip
+     *
+     * @param intent is provide by onStartCommand with custom data
+     */
+    private void checkIfLocationUpdateCustomIntervalShouldSet(@Nullable Intent intent) {
+        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL)) {
+            Utils.redLog(TAG, "------- Custom location update ON TRIP -------");
+            long updateInterval = intent.getLongExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL,
+                    Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS_DEFAULT);
+            createLocationRequestForOnTrip(updateInterval);
+            requestLocationUpdates();
+            cancelTimer();
+            mCountDownLocationTimer.start();
+        }
     }
 
     //region Helper methods for notification messages and display logic
@@ -374,34 +308,56 @@ public class LocationService extends Service {
         return builder.build();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        mContext = getApplicationContext();
-        if (!hasForeGroundNotification()) {
-            Utils.redLogLocation(TAG, "onStartCommand (!hasForeGroundNotification)");
-            startForeground(NOTIF_ID, createForegroundNotification());
-        } else {
-            Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
-        }
-        createLocationRequest();
-        requestLocationUpdates();
-        cancelTimer();
 
-        mCountDownLocationTimer.start();
-        //DriverETAService.startDriverETAUpdate(this);
-        //DriverLocationUpdateJob.scheduleLocationUpdateJob();
-        //DriverETAUpdateJob.scheduleDriverETAJob();
-        if (intent == null || Constants.Actions.STARTFOREGROUND_ACTION.equals(intent.getAction())) {
-            if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.LOCATION_SERVICE_STATUS)) {
-                STATUS = intent.getStringExtra(Constants.Extras.LOCATION_SERVICE_STATUS);
+    /***
+     * Create Notification message for driver foreground service.
+     * Message contains driver status i.e. (Active/In-Active/Fetching Location) and Trip status if its during trip.
+     * @return generated notification message which would be displayed to user.
+     */
+    private String getNotificationMsg() {
+
+        boolean isDriverLogin = AppPreferences.isLoggedIn();
+        boolean driverStatusAvailable = AppPreferences.getAvailableStatus();
+        boolean driverOnTrip = AppPreferences.isOnTrip();
+        String notificationBodyMessage = "";
+
+        if (!isDriverLogin && !driverStatusAvailable) {
+            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_logout_location);
+        } else if (isDriverLogin && driverOnTrip) {
+            String tripNo = StringUtils.EMPTY;
+            String status = StringUtils.EMPTY;
+            if (StringUtils.isBlank(AppPreferences.getDeliveryType())) return StringUtils.EMPTY;
+            if (AppPreferences.getDeliveryType().
+                    equalsIgnoreCase(Constants.CallType.SINGLE)) {
+                NormalCallData callData = AppPreferences.getCallData();
+                if (callData != null) {
+                    tripNo = (callData.getTripNo() != null) ? callData.getTripNo() : StringUtils.EMPTY;
+                    status = (callData.getStatus() != null) ? callData.getStatus() : StringUtils.EMPTY;
+                }
+            } else {
+                MultiDeliveryCallDriverData callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
+                status = (callDriverData != null) ? callDriverData.getBatchStatus() : StringUtils.EMPTY;
+                List<MultipleDeliveryBookingResponse> bookingResponseList = callDriverData.getBookings();
+                int n = (bookingResponseList != null) ? bookingResponseList.size() : 0;
+
+                int i = 0;
+                while (i < n) {
+                    tripNo += bookingResponseList.get(i).getTrip().getTripNo();
+                    i++;
+                    if (i != n)
+                        tripNo += ", ";
+                }
             }
-        } else if (Constants.Actions.STOPFOREGROUND_ACTION.equals(intent.getAction())) {
-            stopForegroundService();
-        } else if (Constants.Actions.UPDATE_FOREGROUND_NOTIFICATION.equals(intent.getAction())) {
-            updateForegroundNotification();
+            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_trip,
+                    tripNo,
+                    StringUtils.capitalize(status));
+        } else if (isDriverLogin && driverStatusAvailable) {
+            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_status,
+                    Constants.Driver.STATUS_ACTIVE);
+        } else if (!driverStatusAvailable) {
+            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_login_location);
         }
-        checkIfLocationUpdateCustomIntervalShouldSet(intent);
-        return START_STICKY;
+        return notificationBodyMessage;
     }
 
 
@@ -517,19 +473,14 @@ public class LocationService extends Service {
     }
 
     /**
-     * this method checks whether location update request should be customize when on trip
-     * @param intent is provide by onStartCommand with custom data
+     * Create location update request with custom when ON TRIP
+     * @param updateInterval custom interval in millis
      */
-    private void checkIfLocationUpdateCustomIntervalShouldSet(@Nullable Intent intent) {
-        if (intent != null && intent.getExtras() != null && intent.hasExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL)) {
-            Utils.redLog(TAG, "------- Custom location update ON TRIP -------");
-            long updateInterval = intent.getLongExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL,
-                    Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS_DEFAULT);
-            createLocationRequestForOnTrip(updateInterval);
-            requestLocationUpdates();
-            cancelTimer();
-            mCountDownLocationTimer.start();
-        }
+    protected void createLocationRequestForOnTrip(long updateInterval) {
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(updateInterval);
+        mLocationRequest.setFastestInterval(updateInterval / Constants.ON_TRIP_UPDATE_INTERVAL_DIVISIBLE);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     protected void stopLocationUpdates() {
@@ -735,56 +686,63 @@ public class LocationService extends Service {
 
     //endregion
 
-    /***
-     * Create Notification message for driver foreground service.
-     * Message contains driver status i.e. (Active/In-Active/Fetching Location) and Trip status if its during trip.
-     * @return generated notification message which would be displayed to user.
-     */
-    private String getNotificationMsg() {
-
-        boolean isDriverLogin = AppPreferences.isLoggedIn();
-        boolean driverStatusAvailable = AppPreferences.getAvailableStatus();
-        boolean driverOnTrip = AppPreferences.isOnTrip();
-        String notificationBodyMessage = "";
-
-        if (!isDriverLogin && !driverStatusAvailable) {
-            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_logout_location);
-        } else if (isDriverLogin && driverOnTrip) {
-            String tripNo = StringUtils.EMPTY;
-            String status = StringUtils.EMPTY;
-            if (StringUtils.isBlank(AppPreferences.getDeliveryType())) return StringUtils.EMPTY;
-            if (AppPreferences.getDeliveryType().
-                    equalsIgnoreCase(Constants.CallType.SINGLE)) {
-                NormalCallData callData = AppPreferences.getCallData();
-                if (callData != null) {
-                    tripNo = (callData.getTripNo() != null) ? callData.getTripNo() : StringUtils.EMPTY;
-                    status = (callData.getStatus() != null) ? callData.getStatus() : StringUtils.EMPTY;
-                }
-            } else {
-                MultiDeliveryCallDriverData callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
-                status = (callDriverData != null) ? callDriverData.getBatchStatus() : StringUtils.EMPTY;
-                List<MultipleDeliveryBookingResponse> bookingResponseList = callDriverData.getBookings();
-                int n = (bookingResponseList != null) ? bookingResponseList.size() : 0;
-
-                int i = 0;
-                while (i < n) {
-                    tripNo += bookingResponseList.get(i).getTrip().getTripNo();
-                    i++;
-                    if (i != n)
-                        tripNo += ", ";
+    //region  Countdown timer for sending location to server.
+    //10000, 4990
+    private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+//            Utils.redLog(TAG, "Timer Tick: " + millisUntilFinished);
+            if (Connectivity.isConnectedFast(mContext)) {
+                if (AppPreferences.isLoggedIn()) {
+                    DriverApp.getApplication().connect();
                 }
             }
-            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_trip,
-                    tripNo,
-                    StringUtils.capitalize(status));
-        } else if (isDriverLogin && driverStatusAvailable) {
-            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_status,
-                    Constants.Driver.STATUS_ACTIVE);
-        } else if (!driverStatusAvailable) {
-            notificationBodyMessage = getResources().getString(R.string.notification_title_driver_login_location);
         }
-        return notificationBodyMessage;
-    }
+
+
+        @Override
+        public void onFinish() {
+            Utils.redLog(TAG, "CountDown Timer onFinish: called ");
+            if (Utils.canSendLocation()) {
+                synchronized (this) {
+                    double lat = AppPreferences.getLatitude();
+                    double lon = AppPreferences.getLongitude();
+                    boolean isMock = AppPreferences.isFromMockLocation();
+                    if (lat != 0.0 && lon != 0.0 && !isMock) {
+                        updateTripRouteList(lat, lon);
+                        //DriverETAService.startDriverETAUpdate(DriverApp.getContext());
+
+                        //we need to add Route LatLng in 10 sec, and call requestLocationUpdate after 20 sec
+                        if (shouldCallLocApi) {
+                            shouldCallLocApi = false;
+                            if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
+                                //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
+                                //validateDriverOfflineStatus();
+                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
+
+                            } else {
+                                Utils.redLogLocation("request failed", "WiFi -> " +
+                                        Connectivity.isConnectedFast(mContext)
+                                        + " && GPS -> " + Utils.isGpsEnable());
+                            }
+                        } else {
+                            shouldCallLocApi = true;
+                        }
+                    }
+                    Utils.redLog(TAG, "CountDown Timer restarted: called ");
+                    mCountDownLocationTimer.start();
+                    Utils.redLog(TAG, "updateETAIfRequired: called ");
+                    updateETAIfRequired();
+                }
+            } else if (Utils.hasLocationCoordinates()) {
+                stopForegroundService();
+            } else {
+                Utils.redLog(TAG, "CountDown Timer restarted: called ");
+                mCountDownLocationTimer.start();
+            }
+
+        }
+    };
 
     /***
      * Validate driver offline status against location socket event.
@@ -853,17 +811,64 @@ public class LocationService extends Service {
 
     //region Socket Events response Handler
 
-    /**
-     * Create location update request with custom when ON TRIP
-     *
-     * @param updateInterval custom interval in millis
-     */
-    protected void createLocationRequestForOnTrip(long updateInterval) {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(updateInterval);
-        mLocationRequest.setFastestInterval(updateInterval / Constants.ON_TRIP_UPDATE_INTERVAL_DIVISIBLE);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
+
+    private UserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onLocationUpdate(LocationResponse response) {
+            super.onLocationUpdate(response);
+            if (response.isSuccess()) {
+                AppPreferences.setDriverOfflineForcefully(false);
+                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
+                mBus.post(Keys.ACTIVE_FENCE);
+            } else {
+                handleLocationErrorUseCase(response);
+            }
+
+        }
+
+        @Override
+        public void onUpdateStatus(final PilotStatusResponse pilotStatusResponse) {
+            if (pilotStatusResponse.isSuccess()) {
+                AppPreferences.setAvailableStatus(false);
+                AppPreferences.setAvailableAPICalling(false);
+                AppPreferences.setDriverDestination(null);
+                AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
+            } else {
+                AppPreferences.setAvailableStatus(false);
+                AppPreferences.setDriverDestination(null);
+            }
+            //make service offline as driver is offline now
+            updateServiceForDriverOfflineStatus();
+        }
+
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            switch (errorCode) {
+                case HTTPStatus.UNAUTHORIZED:
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                    break;
+                /*case HTTPStatus.FENCE_ERROR:
+                    AppPreferences.setOutOfFence(true);
+                    AppPreferences.setAvailableStatus(false);
+                    mBus.post(Keys.INACTIVE_FENCE);
+                    break;
+                case HTTPStatus.INACTIVE_DUE_TO_WALLET_AMOUNT:
+                    if (StringUtils.isNotBlank(errorMessage)) {
+                        AppPreferences.setWalletIncreasedError(errorMessage);
+                    }
+                    AppPreferences.setWalletAmountIncreased(true);
+                    AppPreferences.setAvailableStatus(false);
+                    mBus.post(Keys.INACTIVE_FENCE);
+                    break;
+                case HTTPStatus.FENCE_SUCCESS:
+                    AppPreferences.setOutOfFence(false);
+                    AppPreferences.setAvailableStatus(true);
+                    mBus.post(Keys.ACTIVE_FENCE);
+                    break;*/
+            }
+        }
+    };
     //endregion
 
     /***
