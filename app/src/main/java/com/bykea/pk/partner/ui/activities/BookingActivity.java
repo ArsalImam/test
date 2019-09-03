@@ -162,8 +162,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     RelativeLayout llTopMiddle;
     @BindView(R.id.llTopRight)
     RelativeLayout llTopRight;
-    @BindView(R.id.callbtn)
-    ImageView callbtn;
     @BindView(R.id.cancelBtn)
     FontTextView cancelBtn;
     @BindView(R.id.chatBtn)
@@ -463,7 +461,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void hideButtonOnArrived() {
-//        callbtn.setVisibility(View.GONE);
 //        chatBtn.setVisibility(View.GONE);
         cancelBtn.setVisibility(View.GONE);
     }
@@ -589,24 +586,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    private void showCallPassengerDialog() {
-        Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, v -> {
-            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                openCallDialog(getSenderNumber());
-            } else {
-                Utils.callingIntent(mCurrentActivity, getSenderNumber());
-            }
-            Utils.redLog("BookingActivity", "Call Sender");
-        }, v -> {
-            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                openCallDialog(getRecipientNumber());
-            } else {
-                Utils.callingIntent(mCurrentActivity, getRecipientNumber());
-            }
-            Utils.redLog("BookingActivity", "Call Recipient");
-        });
-    }
-
     /***
      * Validates ride type for Food delivery.
      * @return if service type is Food delivery return true, otherwise false.
@@ -617,70 +596,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         return false;
     }
-
-    /***
-     * Get Sender phone number according to Service type.
-     * @return Phone number for Sender
-     */
-    private String getSenderNumber() {
-        if (callData != null) {
-            if (isServiceTypeFoodDelivery()) {
-                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
-                        || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())
-                        || TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getReceiverPhone();
-                }
-            } else {
-                return callData.getPhoneNo();
-            }
-        }
-        return StringUtils.EMPTY;
-    }
-
-    /***
-     * Get Receiver phone number according to Service type.
-     * @return Phone number for Receiver
-     */
-    private String getRecipientNumber() {
-        if (callData != null) {
-            if (isServiceTypeFoodDelivery()) {
-                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
-                        || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getReceiverPhone();
-                } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getPhoneNo();
-                }
-            } else {
-                return callData.getReceiverPhone();
-            }
-        }
-        return StringUtils.EMPTY;
-    }
-/*
-    private void logMixPanelEvent(String status) {
-        JSONObject properties = new JSONObject();
-        try {
-            properties.put("TripNo", callData.getTripNo());
-            properties.put("PassengerID", callData.getPassId());
-            properties.put("DriverID", AppPreferences.getPilotData().getId());
-            properties.put("timestamp", Utils.getIsoDate());
-            properties.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
-            properties.put("PassengerName", callData.getPassName());
-            properties.put("DriverName", AppPreferences.getPilotData().getFullName());
-            properties.put("TripID", callData.getTripId());
-            properties.put("type", callData.getCallType());
-            if (StringUtils.isNotBlank(Utils.getCurrentLocation())) {
-                properties.put("endDropOff", Utils.getCurrentLocation());
-            }
-
-            Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_COMPLETE.replace("_R_", callData.getCallType()), properties);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-    }*/
 
     private void logMixPanelEvent(String status) {
         try {
@@ -1873,7 +1788,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
     }
 
-    @OnClick({/*R.id.callbtn,*/ R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
+    @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
             R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
     public void onClick(View view) {
 
@@ -1901,15 +1816,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 intent1.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
                 startActivityForResult(intent1, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
-                break;
-            case R.id.callbtn:
-                if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
-                    showCallPassengerDialog();
-                } else if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                    openCallDialog(callData.getPhoneNo());
-                } else {
-                    Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
-                }
                 break;
             case R.id.tvCustomerPhone:
                 if (StringUtils.isNotBlank(tvCustomerPhone.getText().toString())) {
@@ -2076,7 +1982,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
 
         // FOR CHAT NOTIFCATION BADGE ICON HANDLING
-        if(AppPreferences.getReceivedMessageCount()!=null){
+        if (AppPreferences.getReceivedMessageCount() != null) {
             cartBadge.setVisibility(View.VISIBLE);
             cartBadge.setText(String.valueOf(AppPreferences.getReceivedMessageCount().getConversationMessageCount()));
         }
@@ -2597,44 +2503,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             Utils.appToast(error);
         });
     }
-
-    /**
-     * Call On Phone Number Using Whatsapp
-     *
-     * @param callNumber : Phone Number
-     */
-    private void openCallDialog(String callNumber) {
-        if (StringUtils.isEmpty(callNumber)) {
-            Utils.appToastDebug("Number is empty");
-            return;
-        }
-        BottomSheetDialog dialog = new BottomSheetDialog(this);
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_call_booking, null, false);
-        DialogCallBookingBinding mBinding = DialogCallBookingBinding.bind(view);
-        dialog.setContentView(mBinding.getRoot());
-        mBinding.setListener(new BookingCallListener() {
-            @Override
-            public void onCallOnPhone() {
-                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onCallOnWhatsapp() {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                if (callNumber.startsWith("92"))
-                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(callNumber))));
-                else
-                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
-                startActivity(intent);
-                dialog.dismiss();
-            }
-        });
-        mBinding.iVCallOnMobile.setImageResource(R.drawable.ic_mobile_call);
-        mBinding.iVCallOnWhatsapp.setImageResource(R.drawable.ic_whatsapp_call);
-        dialog.show();
-    }
-
 
     //region
 
