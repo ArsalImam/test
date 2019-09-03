@@ -252,8 +252,8 @@
                     android:layout_height="@dimen/_36sdp"
                     android:layout_marginRight="@dimen/_2sdp"
                     android:padding="@dimen/_4sdp"
-                    app:srcCompat="@drawable/ic_call_icon" />
-
+                    app:srcCompat="@drawable/ic_user" />
+                <!--app:srcCompat="@drawable/ic_call_icon"-->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

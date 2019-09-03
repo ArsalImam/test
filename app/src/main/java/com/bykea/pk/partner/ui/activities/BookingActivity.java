@@ -1873,7 +1873,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);
     }
 
-    @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
+    @OnClick({/*R.id.callbtn,*/ R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvDirections,
             R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
     public void onClick(View view) {
 

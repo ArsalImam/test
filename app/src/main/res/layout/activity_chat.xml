@@ -33,6 +33,16 @@
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/textsize.title" />
 
+        <ImageView
+            android:id="@+id/callbtn"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="right|center"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:layout_marginRight="@dimen/_2sdp"
+            android:padding="@dimen/_6sdp"
+            app:srcCompat="@drawable/ic_call_icon" />
+
         <View
             android:id="@+id/toolbarLine"
             android:layout_width="match_parent"
@@ -86,11 +96,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/windowBackground"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:hint="Type your message ..."
                         android:inputType="textLongMessage"
                         android:lines="1"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
                         android:paddingStart="@dimen/padding.small"
                         android:paddingLeft="@dimen/padding.small"
                         android:visibility="visible"
