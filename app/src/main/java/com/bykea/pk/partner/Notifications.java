@@ -19,8 +19,10 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.models.ReceivedMessage;
+import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
@@ -276,6 +278,35 @@ public class Notifications {
             }
         } else {
             builder = createNotificationForMessage(context, receivedMessage, soundUri);
+        }
+
+        ReceivedMessageCount receivedMessageAppPref = AppPreferences.getReceivedMessageCount();
+        if (DriverApp.isChatActivityVisible()) {
+            if (receivedMessageAppPref != null)
+                AppPreferences.removeReceivedMessageCount();
+        } else {
+            ReceivedMessageCount receivedMessageCount = null;
+            if (receivedMessageAppPref == null) {
+                receivedMessageCount = new ReceivedMessageCount(receivedMessage.getData().getConversationId(), Constants.DIGIT_ONE);
+                AppPreferences.setReceivedMessageCount(receivedMessageCount);
+                context.sendBroadcast(new Intent(Constants.Broadcast.CHAT_MESSAGE_RECEIVED));
+            } else {
+                if (!StringUtils.isEmpty(receivedMessageAppPref.getConversationId()) && !StringUtils.isEmpty(receivedMessage.getData().getConversationId())
+                        && receivedMessageAppPref.getConversationId().equals(receivedMessage.getData().getConversationId())) {
+                    if (receivedMessage.getData().getStatus().equalsIgnoreCase("unread")) {
+                        receivedMessageCount
+                                = new ReceivedMessageCount(receivedMessage.getData().getConversationId(),
+                                receivedMessageAppPref.getConversationMessageCount() + Constants.DIGIT_ONE);
+                        AppPreferences.setReceivedMessageCount(receivedMessageCount);
+                        context.sendBroadcast(new Intent(Constants.Broadcast.CHAT_MESSAGE_RECEIVED));
+                    }
+                } else if (!StringUtils.isEmpty(receivedMessageAppPref.getConversationId()) && !StringUtils.isEmpty(receivedMessage.getData().getConversationId())
+                        && !receivedMessageAppPref.getConversationId().equals(receivedMessage.getData().getConversationId())) {
+                    receivedMessageCount = new ReceivedMessageCount(receivedMessage.getData().getConversationId(), Constants.DIGIT_ONE);
+                    AppPreferences.setReceivedMessageCount(receivedMessageCount);
+                    context.sendBroadcast(new Intent(Constants.Broadcast.CHAT_MESSAGE_RECEIVED));
+                }
+            }
         }
 
         Intent targetIntent = new Intent(context, ChatActivityNew.class);

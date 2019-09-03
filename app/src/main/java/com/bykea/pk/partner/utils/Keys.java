@@ -65,6 +65,9 @@ public class Keys {
     /*Added this to control feedback screen to go back or not*/
     public static final String MULTIDELIVERY_FEEDBACK_SCREEN = "MULTIDELIVERY_FEEDBACK_SCREEN";
 
+    /*Chat Message Count Using Conversation ID*/
+    public static final String CONVERSATION_BADGE_COUNT = "CONVERSATION_BADGE_COUNT";
+
 
     //endregion
 

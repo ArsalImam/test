@@ -31,6 +31,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -158,6 +159,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         setContentView(R.layout.activity_chat);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
+        DriverApp.setChatActivityVisible(true);
         ButterKnife.bind(this);
         opusRecorder = OpusRecorder.getInstance();
         opusRecorder.setEventSender(new OpusEvent(mCurrentActivity));
@@ -429,8 +431,8 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
+        DriverApp.setChatActivityVisible(false);
     }
 
     @Override
