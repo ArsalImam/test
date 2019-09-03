@@ -3328,7 +3328,7 @@ public class Utils {
 
         for (int i = 0; i < chatMessageInEnglish.length; i++) {
             if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
-                chatMessagesTranslateds.add(new ChatMessagesTranslated(chatMessageInEnglish[i], chatMessageInUrdu[i]));
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish[i], chatMessageInUrdu[i]));
         }
         return chatMessagesTranslateds;
     }
@@ -3347,7 +3347,6 @@ public class Utils {
     }
 
     /**
-     *
      * @param chatMessagesTranslated Object Containing English and Urdu Value
      * @return
      */
@@ -3366,12 +3365,13 @@ public class Utils {
 
     /**
      * Get String Value After Applying HTML
+     *
      * @param html
      * @return String : After Applying HTML to String.
      */
     public static String getTextFromHTML(String html) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            return  String.valueOf(Html.fromHtml(html));
+            return String.valueOf(Html.fromHtml(html));
         } else {
             return String.valueOf(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
         }
@@ -3379,8 +3379,9 @@ public class Utils {
 
     /**
      * Set ImageView Drawable
+     *
      * @param imageView : ImageView
-     * @param drawable : Drawable Id
+     * @param drawable  : Drawable Id
      */
     public static void setImageDrawable(ImageView imageView, int drawable) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
