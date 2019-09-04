@@ -23,6 +23,10 @@ public class Settings {
     private String notice;
     private String top_up_limit;
     private String amount_limit;
+
+    @SerializedName("partner_topup_limit_positive")
+    private String partnerTopUpLimitPositive;
+
     @SerializedName("terms_driver")
     private String terms;
     private String cih_range;
@@ -36,6 +40,10 @@ public class Settings {
     @SerializedName("offline_ride_display")
     private boolean offlineRideDisplay;
 
+
+    public int getPartnerTopUpLimitPositive() {
+        return StringUtils.isNotBlank(partnerTopUpLimitPositive) ? Integer.parseInt(partnerTopUpLimitPositive) : 500;
+    }
 
     /**
      * getter offline ride display to show or not
@@ -116,7 +124,7 @@ public class Settings {
     }
 
     public int getTop_up_limit() {
-        return StringUtils.isNotBlank(top_up_limit) ? Integer.parseInt(top_up_limit) : 500;
+        return StringUtils.isNotBlank(top_up_limit) ? Integer.parseInt(top_up_limit) : 50;
     }
 
     public int getAmount_limit() {

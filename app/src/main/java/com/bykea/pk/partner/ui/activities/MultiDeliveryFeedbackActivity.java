@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.MultiDeliveryInvoiceData;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryFeedbackResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -140,8 +141,9 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     FontEditText etReceiverMobileNo;
 
     private long totalCharges;
-    private int TOP_UP_LIMIT;
+    private int PARTNER_TOP_UP_NEGATIVE_LIMIT;
     private int AMOUNT_LIMIT;
+    private int PARTNER_TOP_UP_POSITIVE_LIMIT;
 
     private MultiDeliveryFeedbackActivity mCurrentActivity;
     private long mLastClickTime;
@@ -152,6 +154,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     private String TAG = MultiDeliveryFeedbackResponse.class.getSimpleName();
     private boolean isComingFromOnGoingRide;
     private int selectedMsgPosition = 0; //delivery status message selection position from drop down
+    int driverWallet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +162,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         setContentView(R.layout.activity_multi_delivery_feedback);
         mCurrentActivity = this;
         ButterKnife.bind(this);
+        driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
         repository = new UserRepository();
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
         updateScroll();
@@ -169,8 +173,10 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      * Initialize the data and map data into view.
      */
     private void init() {
-        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
+        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
+        PARTNER_TOP_UP_POSITIVE_LIMIT = AppPreferences.getSettings().getSettings().getPartnerTopUpLimitPositive();
+
         tripCounts = AppPreferences.getMultiDeliveryCallDriverData().getBookings().size();
 
         MultiDeliveryCallDriverData callDriverData = AppPreferences.
@@ -191,14 +197,14 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             }
             if (tripInfo != null) {
                 try {
-                    if(tripInfo.getTripDistance() != null && !tripInfo.getTripDistance().isEmpty())
+                    if (tripInfo.getTripDistance() != null && !tripInfo.getTripDistance().isEmpty())
                         tvTotalDistance.setText(getString(R.string.distance_covered, tripInfo.getTripDistance()));
-                    if(tripInfo.getTripDuration() != null && !tripInfo.getTripDuration().isEmpty())
+                    if (tripInfo.getTripDuration() != null && !tripInfo.getTripDuration().isEmpty())
                         tvTotalTime.setText(getString(R.string.duration, tripInfo.getTripDuration()));
                     startAddressTv.setText(tripInfo.getStartAddress());
                     endAddressTv.setText(tripInfo.getEndAddress());
                     tvTripId.setText(tripInfo.getTripNo());
-                    if(tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY)
+                    if (tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY)
                         updateUIICODelivery();
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
@@ -266,7 +272,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      * Text watcher for listening text changes in amount edit text.
      *
      * @param editable This is the interface for text whose content and markup
-     *    can be changed (as opposed to immutable text like Strings).
+     *                 can be changed (as opposed to immutable text like Strings).
      */
     @OnTextChanged(value = R.id.receivedAmountEt,
             callback = Callback.AFTER_TEXT_CHANGED)
@@ -274,11 +280,23 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         if (StringUtils.isNotBlank(editable) &&
                 StringUtils.isNotBlank(receivedAmountEt.getText().toString())) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
-                if (Integer.parseInt(editable.toString()) >
-                        (totalCharges) + TOP_UP_LIMIT) {
-                    setEtError(receivedAmountEt,getString(R.string.amount_error, (totalCharges) + TOP_UP_LIMIT));
+                if (driverWallet < Constants.DIGIT_ZERO
+                        && Integer.parseInt(editable.toString()) > (totalCharges + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
+                    //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
+                    setEtError(receivedAmountEt, getString(R.string.amount_error, totalCharges + PARTNER_TOP_UP_NEGATIVE_LIMIT));
+                } else if (driverWallet >= Constants.DIGIT_ZERO &&
+                        driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                        Integer.parseInt(editable.toString()) > (totalCharges + driverWallet)) {
+                    //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
+                    //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
+                    setEtError(receivedAmountEt, getString(R.string.amount_error, totalCharges + driverWallet));
+                } else if (driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                        Integer.parseInt(editable.toString()) > (totalCharges + PARTNER_TOP_UP_POSITIVE_LIMIT)) {
+                    //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
+                    //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
+                    setEtError(receivedAmountEt, getString(R.string.amount_error, totalCharges + PARTNER_TOP_UP_POSITIVE_LIMIT));
                 } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
-                    setEtError(receivedAmountEt,getString(R.string.amount_error, AMOUNT_LIMIT));
+                    setEtError(receivedAmountEt, getString(R.string.amount_error, AMOUNT_LIMIT));
                 }
             } else {
                 Utils.appToast(getString(R.string.invalid_amout));
@@ -305,7 +323,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      * Request feed back for a passenger against the completed tripInfo.
      */
     private void requestFeedback() {
-        if(tripInfo != null){
+        if (tripInfo != null) {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             int receivedAmount = 0;
             try {
@@ -372,37 +390,52 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             e.printStackTrace();
         }
         //require receiver name and phone number if feedback screen is for delivery ride
-        if(tripInfo != null && tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY &&
-                selectedMsgPosition == Constants.KAMYAB_DELIVERY && llReceiverInfo.getVisibility() == View.VISIBLE){
-            if(StringUtils.isBlank(etReceiverName.getText().toString())){
-                setEtError(etReceiverName,getString(R.string.receiver_name));
+        if (tripInfo != null && tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY &&
+                selectedMsgPosition == Constants.KAMYAB_DELIVERY && llReceiverInfo.getVisibility() == View.VISIBLE) {
+            if (StringUtils.isBlank(etReceiverName.getText().toString())) {
+                setEtError(etReceiverName, getString(R.string.receiver_name));
                 return false;
             }
-            if(!Utils.isValidNumber(etReceiverMobileNo)){
-                setEtError(etReceiverMobileNo,getString(R.string.error_phone_number_1));
+            if (!Utils.isValidNumber(etReceiverMobileNo)) {
+                setEtError(etReceiverMobileNo, getString(R.string.error_phone_number_1));
                 return false;
             }
 
         }
-        if(selectedMsgPosition != Constants.KAMYAB_DELIVERY && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
-                && !Utils.isValidNumber(etReceiverMobileNo)){
-            setEtError(etReceiverMobileNo,getString(R.string.error_phone_number_1));
+        if (selectedMsgPosition != Constants.KAMYAB_DELIVERY && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
+                && !Utils.isValidNumber(etReceiverMobileNo)) {
+            setEtError(etReceiverMobileNo, getString(R.string.error_phone_number_1));
             return false;
         }
         if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
-            setEtError(receivedAmountEt,getString(R.string.error_invalid_amount));
+            setEtError(receivedAmountEt, getString(R.string.error_invalid_amount));
             return false;
-        } else if (charges.matches(Constants.REG_EX_DIGIT)
-                && Integer.parseInt(receivedAmountEt.getText().toString()) < totalCharges) {
-            setEtError(receivedAmountEt,getString(R.string.error_amount_greater_than_total));
+        } else if (charges.matches(Constants.REG_EX_DIGIT) && Integer.parseInt(receivedAmountEt.getText().toString()) < totalCharges) {
+            setEtError(receivedAmountEt, getString(R.string.error_amount_greater_than_total));
             return false;
-        } else if (charges.matches(Constants.REG_EX_DIGIT)
-                && Integer.parseInt(receivedAmountEt.getText().toString()) >
-                (totalCharges + TOP_UP_LIMIT)) {
-            setEtError(receivedAmountEt,getString(R.string.amount_error, (totalCharges + TOP_UP_LIMIT)));
+        } else if (charges.matches(Constants.REG_EX_DIGIT) && driverWallet < Constants.DIGIT_ZERO
+                && Integer.parseInt(receivedAmountEt.getText().toString()) > (totalCharges + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
+            //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
+            setEtError(receivedAmountEt, getString(R.string.amount_error, totalCharges + PARTNER_TOP_UP_NEGATIVE_LIMIT));
+            return false;
+        } else if (charges.matches(Constants.REG_EX_DIGIT) && driverWallet >= Constants.DIGIT_ZERO && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                Integer.parseInt(receivedAmountEt.getText().toString()) > (totalCharges + driverWallet)) {
+            //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
+            //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
+            setEtError(receivedAmountEt, getString(R.string.amount_error, totalCharges + driverWallet));
+            return false;
+        } else if (charges.matches(Constants.REG_EX_DIGIT) && driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                Integer.parseInt(receivedAmountEt.getText().toString()) > (totalCharges + PARTNER_TOP_UP_POSITIVE_LIMIT)) {
+            //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
+            //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
+            setEtError(receivedAmountEt, getString(R.string.amount_error, totalCharges + PARTNER_TOP_UP_POSITIVE_LIMIT));
+            return false;
+        } else if (charges.matches(Constants.REG_EX_DIGIT) && Integer.parseInt(receivedAmountEt.getText().toString()) >
+                (totalCharges + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
+            setEtError(receivedAmountEt, getString(R.string.amount_error, (totalCharges + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
             return false;
         } else if (Integer.parseInt(receivedAmountEt.getText().toString()) > AMOUNT_LIMIT) {
-            setEtError(receivedAmountEt,getString(R.string.amount_error, AMOUNT_LIMIT));
+            setEtError(receivedAmountEt, getString(R.string.amount_error, AMOUNT_LIMIT));
             return false;
         } else if (callerRb.getRating() <= 0.0) {
             Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn,
@@ -412,11 +445,11 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             try {
                 int receivedPrice = Integer.parseInt(receivedAmountEt.getText().toString());
                 if (receivedPrice < 0) {
-                    setEtError(receivedAmountEt,getString(R.string.amount_not_acceptable));
+                    setEtError(receivedAmountEt, getString(R.string.amount_not_acceptable));
                     return false;
                 }
             } catch (Exception e) {
-                setEtError(receivedAmountEt,getString(R.string.amount_not_acceptable));
+                setEtError(receivedAmountEt, getString(R.string.amount_not_acceptable));
                 return false;
             }
         }
@@ -501,11 +534,10 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      * overrided because user must complete feedback without going back
      * user cannot go back to previous screen
      * if Feedback screen is not coming from ongoing complete ride screen then this will behave normally.
-     *
      */
     @Override
     public void onBackPressed() {
-        if(!isComingFromOnGoingRide)
+        if (!isComingFromOnGoingRide)
             super.onBackPressed();
     }
 
@@ -520,10 +552,10 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
         initAdapter(tripInfo);
 
-        if(tripInfo.getDeliveryInfo() != null){
+        if (tripInfo.getDeliveryInfo() != null) {
             if (tripInfo.getDeliveryInfo().isCashOnDelivery()) {
                 cashOnDeliveryRL.setVisibility(View.VISIBLE);
-                cashOnDeliveryTV.setText(getString(R.string.display_integer_value,tripInfo.getDeliveryInfo().getAmount()));
+                cashOnDeliveryTV.setText(getString(R.string.display_integer_value, tripInfo.getDeliveryInfo().getAmount()));
             } else {
                 cashOnDeliveryRL.setVisibility(View.GONE);
             }
@@ -535,6 +567,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
     /**
      * initialize delivery feedback message in dropdown list
+     *
      * @param tripInfo current trip info
      */
     private void initAdapter(final MultiDeliveryTrip tripInfo) {
@@ -564,11 +597,13 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                 selectedMsgPosition = position;
                 if (tripInfo.getDeliveryInfo() != null && tripInfo.getDeliveryInfo().isCashOnDelivery()) {
                     if (position == 0) {
-                        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + tripInfo.getDeliveryInfo().getAmount();
+                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + tripInfo.getDeliveryInfo().getAmount();
+                        PARTNER_TOP_UP_POSITIVE_LIMIT = AppPreferences.getSettings().getSettings().getPartnerTopUpLimitPositive() + tripInfo.getDeliveryInfo().getAmount();
                         cashOnDeliveryTV.setPaintFlags(cashOnDeliveryTV.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                         totalCharges = (invoice.getTotal() + tripInfo.getDeliveryInfo().getAmount());
                     } else {
-                        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
+                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
+                        PARTNER_TOP_UP_POSITIVE_LIMIT = AppPreferences.getSettings().getSettings().getPartnerTopUpLimitPositive();
                         cashOnDeliveryTV.setPaintFlags(cashOnDeliveryTV.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         totalCharges = invoice.getTotal();
                     }

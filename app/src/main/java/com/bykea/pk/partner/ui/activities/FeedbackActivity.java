@@ -24,6 +24,7 @@ import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse;
 import com.bykea.pk.partner.dal.util.Injection;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -134,10 +135,11 @@ public class FeedbackActivity extends BaseActivity {
 
     private FeedbackActivity mCurrentActivity;
     private String totalCharges = StringUtils.EMPTY, lastKhareedariAmount = StringUtils.EMPTY;
-    private int TOP_UP_LIMIT, AMOUNT_LIMIT;
+    private int PARTNER_TOP_UP_NEGATIVE_LIMIT, AMOUNT_LIMIT, PARTNER_TOP_UP_POSITIVE_LIMIT;
     private JobsRepository repo;
 
     private MixpanelAPI mixpanelAPI;
+    int driverWallet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +147,7 @@ public class FeedbackActivity extends BaseActivity {
         setContentView(R.layout.activity_feedback_new);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
+        driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
         initViews();
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -153,7 +156,6 @@ public class FeedbackActivity extends BaseActivity {
         mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
         updateScroll();
-
     }
 
     /**
@@ -191,13 +193,25 @@ public class FeedbackActivity extends BaseActivity {
     void afterTextChanged(Editable editable) {
         if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
-                if (Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
-                    setEtError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
+                if (driverWallet < Constants.DIGIT_ZERO
+                        && Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
+                    //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
+                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
+                } else if (driverWallet >= Constants.DIGIT_ZERO && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                        Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + driverWallet)) {
+                    //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
+                    //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
+                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
+                } else if (driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                        Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)) {
+                    //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
+                    //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
+                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)));
                 } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
-                    setEtError("Amount can't be more than " + AMOUNT_LIMIT);
+                    setEtError(getString(R.string.amount_error, +AMOUNT_LIMIT));
                 }
             } else {
-                Utils.appToast("Please enter valid amount.");
+                Utils.appToast(getString(R.string.invalid_amout));
             }
         }
     }
@@ -217,8 +231,9 @@ public class FeedbackActivity extends BaseActivity {
         if (StringUtils.isNotBlank(callData.getTotalFare())) {
             totalCharges = callData.getTotalFare();
         }
-        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
+        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
         AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
+        PARTNER_TOP_UP_POSITIVE_LIMIT = AppPreferences.getSettings().getSettings().getPartnerTopUpLimitPositive();
 //        totalAmountTv.setText((StringUtils.isNotBlank(totalCharges) ? totalCharges : "N/A"));
         totalAmountTv.setText((StringUtils.isNotBlank(callData.getTrip_charges()) ? callData.getTrip_charges() : "N/A"));
         startAddressTv.setText(callData.getStartAddress());
@@ -341,11 +356,11 @@ public class FeedbackActivity extends BaseActivity {
                 selectedMsgPosition = position;
                 if (StringUtils.isNotBlank(callData.getCodAmount()) && callData.isCod()) {
                     if (position == 0) {
-//                        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
+//                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                         totalCharges = "" + (Integer.parseInt(callData.getTotalFare()) + Integer.parseInt(callData.getCodAmountNotFormatted()));
                     } else {
-//                        TOP_UP_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
+//                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         totalCharges = callData.getTotalFare();
                     }
@@ -530,11 +545,11 @@ public class FeedbackActivity extends BaseActivity {
 
     private boolean valid() {
         if (isPurchaseType && StringUtils.isBlank(kharedariAmountEt.getText().toString())) {
-            kharedariAmountEt.setError("Enter amount");
+            kharedariAmountEt.setError(getString(R.string.enter_amount));
             kharedariAmountEt.requestFocus();
             return false;
         } else if (StringUtils.isBlank(receivedAmountEt.getText().toString())) {
-            setEtError("Enter received amount");
+            setEtError(getString(R.string.enter_received_amount));
             return false;
         } else if (isDeliveryType && selectedMsgPosition == Constants.KAMYAB_DELIVERY && StringUtils.isBlank(etReceiverName.getText().toString())) {
             etReceiverName.setError(getString(R.string.error_field_empty));
@@ -548,31 +563,44 @@ public class FeedbackActivity extends BaseActivity {
                 && !Utils.isValidNumber(mCurrentActivity, etReceiverMobileNo)) {
             return false;
         } else if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
-            setEtError("Invalid amount");
+            setEtError(getString(R.string.error_invalid_amount));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)) {
-            setEtError("Amount can't be less than Total Charges");
+            setEtError(getString(R.string.error_amount_greater_than_total));
             return false;
-        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
-                && Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + TOP_UP_LIMIT)) {
-            setEtError("Amount can't be more than " + (Integer.parseInt(totalCharges) + TOP_UP_LIMIT));
+        } else if (driverWallet < Constants.DIGIT_ZERO
+                && Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
+            //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
+            setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
+            return false;
+        } else if (driverWallet >= Constants.DIGIT_ZERO && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + driverWallet)) {
+            //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
+            //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
+            setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
+            return false;
+        } else if (driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)) {
+            //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
+            //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
+            setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)));
             return false;
         } else if (Integer.parseInt(receivedAmountEt.getText().toString()) > AMOUNT_LIMIT) {
-            setEtError("Amount can't be more than " + AMOUNT_LIMIT);
+            setEtError(getString(R.string.amount_error, AMOUNT_LIMIT));
             return false;
         } else if (callerRb.getRating() <= 0.0) {
-            Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, "Please Rate Passenger.");
+            Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, getString(R.string.passenger_rating));
             return false;
         } else if (StringUtils.isNotBlank(receivedAmountEt.getText().toString())) {
             try {
                 int receivedPrice = Integer.parseInt(receivedAmountEt.getText().toString());
                 if (receivedPrice < 0) {
-                    setEtError("Amount is not acceptable");
+                    setEtError(getString(R.string.amount_not_acceptable));
                     return false;
                 }
             } catch (Exception e) {
-                setEtError("Amount is not acceptable");
+                setEtError(getString(R.string.amount_not_acceptable));
                 return false;
             }
         }
