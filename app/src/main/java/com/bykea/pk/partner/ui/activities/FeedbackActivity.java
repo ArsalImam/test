@@ -543,6 +543,21 @@ public class FeedbackActivity extends BaseActivity {
         }
     };
 
+    /**
+     * Feedback validation on the following cases.
+     *
+     * <ul>
+     * <li>Check that the amount lie in the digit only regix</li>
+     * <li>Check that the entered amount should be same to the total charges</li>
+     * <li>Check that the entered amount should not be greater than
+     * {@link MultiDeliveryFeedbackActivity#AMOUNT_LIMIT}</li>
+     * <li>Check that the entered amount should be same to the total charges</li>
+     * <li>Check that the rating should be given</li>
+     * <li>Check that the amount should be entered & should not less than 0</li>
+     * </ul>
+     *
+     * @return true if all the validation is true otherwise false
+     */
     private boolean valid() {
         if (isPurchaseType && StringUtils.isBlank(kharedariAmountEt.getText().toString())) {
             kharedariAmountEt.setError(getString(R.string.enter_amount));
