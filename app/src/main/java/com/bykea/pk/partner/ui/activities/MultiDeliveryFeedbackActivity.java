@@ -162,6 +162,11 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         setContentView(R.layout.activity_multi_delivery_feedback);
         mCurrentActivity = this;
         ButterKnife.bind(this);
+
+        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
+        AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
+        PARTNER_TOP_UP_POSITIVE_LIMIT = AppPreferences.getSettings().getSettings().getPartnerTopUpLimitPositive();
+
         try {
             driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
         } catch (Exception e) {
@@ -177,10 +182,6 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
      * Initialize the data and map data into view.
      */
     private void init() {
-        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
-        AMOUNT_LIMIT = AppPreferences.getSettings().getSettings().getAmount_limit();
-        PARTNER_TOP_UP_POSITIVE_LIMIT = AppPreferences.getSettings().getSettings().getPartnerTopUpLimitPositive();
-
         tripCounts = AppPreferences.getMultiDeliveryCallDriverData().getBookings().size();
 
         MultiDeliveryCallDriverData callDriverData = AppPreferences.
@@ -603,13 +604,9 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                 selectedMsgPosition = position;
                 if (tripInfo.getDeliveryInfo() != null && tripInfo.getDeliveryInfo().isCashOnDelivery()) {
                     if (position == 0) {
-                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + tripInfo.getDeliveryInfo().getAmount();
-                        PARTNER_TOP_UP_POSITIVE_LIMIT = AppPreferences.getSettings().getSettings().getPartnerTopUpLimitPositive() + tripInfo.getDeliveryInfo().getAmount();
                         cashOnDeliveryTV.setPaintFlags(cashOnDeliveryTV.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                         totalCharges = (invoice.getTotal() + tripInfo.getDeliveryInfo().getAmount());
                     } else {
-                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
-                        PARTNER_TOP_UP_POSITIVE_LIMIT = AppPreferences.getSettings().getSettings().getPartnerTopUpLimitPositive();
                         cashOnDeliveryTV.setPaintFlags(cashOnDeliveryTV.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         totalCharges = invoice.getTotal();
                     }
