@@ -197,11 +197,11 @@ public class FeedbackActivity extends BaseActivity {
     void afterTextChanged(Editable editable) {
         if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
-                if (driverWallet < Constants.DIGIT_ZERO
+                if (driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT
                         && Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
                     //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
-                } else if (driverWallet >= Constants.DIGIT_ZERO && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                } else if ((driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
                         Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + driverWallet)) {
                     //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
                     //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
@@ -554,7 +554,7 @@ public class FeedbackActivity extends BaseActivity {
      * <li>Check that the amount lie in the digit only regix</li>
      * <li>Check that the entered amount should be same to the total charges</li>
      * <li>Check that the entered amount should not be greater than
-     * {@link MultiDeliveryFeedbackActivity#AMOUNT_LIMIT}</li>
+     * {@link FeedbackActivity#AMOUNT_LIMIT}</li>
      * <li>Check that the entered amount should be same to the total charges</li>
      * <li>Check that the rating should be given</li>
      * <li>Check that the amount should be entered & should not less than 0</li>
@@ -588,18 +588,21 @@ public class FeedbackActivity extends BaseActivity {
                 && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)) {
             setEtError(getString(R.string.error_amount_greater_than_total));
             return false;
-        } else if (driverWallet < Constants.DIGIT_ZERO
-                && Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
+        } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
+                driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT &&
+                Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
             //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
             return false;
-        } else if (driverWallet >= Constants.DIGIT_ZERO && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT &&
+        } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
+                (driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
                 Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + driverWallet)) {
             //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
             //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
             return false;
-        } else if (driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+        } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
+                driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
                 Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)) {
             //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
             //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
