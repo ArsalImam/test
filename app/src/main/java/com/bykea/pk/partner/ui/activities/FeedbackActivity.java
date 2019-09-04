@@ -147,7 +147,11 @@ public class FeedbackActivity extends BaseActivity {
         setContentView(R.layout.activity_feedback_new);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
-        driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
+        try {
+            driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
+        } catch (Exception e) {
+            driverWallet = -1;
+        }
         initViews();
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

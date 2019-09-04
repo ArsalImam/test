@@ -162,7 +162,11 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         setContentView(R.layout.activity_multi_delivery_feedback);
         mCurrentActivity = this;
         ButterKnife.bind(this);
-        driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
+        try {
+            driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
+        } catch (Exception e) {
+            driverWallet = -1;
+        }
         repository = new UserRepository();
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
         updateScroll();
