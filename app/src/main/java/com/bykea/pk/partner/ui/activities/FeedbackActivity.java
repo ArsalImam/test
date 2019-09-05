@@ -198,21 +198,21 @@ public class FeedbackActivity extends BaseActivity {
         if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
                 if (driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT
-                        && Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
+                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE)) {
                     //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
                 } else if ((driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
-                        Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + driverWallet)) {
+                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE)) {
                     //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
                     //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
                 } else if (driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
-                        Integer.parseInt(editable.toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)) {
+                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT + Constants.DIGIT_ONE)) {
                     //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
                     //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)));
-                } else if (Integer.parseInt(editable.toString()) > AMOUNT_LIMIT) {
-                    setEtError(getString(R.string.amount_error, +AMOUNT_LIMIT));
+                } else if (Integer.parseInt(editable.toString()) >= (AMOUNT_LIMIT + Constants.DIGIT_ONE)) {
+                    setEtError(getString(R.string.amount_error, AMOUNT_LIMIT));
                 }
             } else {
                 Utils.appToast(getString(R.string.invalid_amout));
@@ -590,25 +590,25 @@ public class FeedbackActivity extends BaseActivity {
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT &&
-                Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)) {
+                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE)) {
             //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 (driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
-                Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + driverWallet)) {
+                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE)) {
             //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
             //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
-                Integer.parseInt(receivedAmountEt.getText().toString()) > (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)) {
+                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT + Constants.DIGIT_ONE)) {
             //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
             //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)));
             return false;
-        } else if (Integer.parseInt(receivedAmountEt.getText().toString()) > AMOUNT_LIMIT) {
+        } else if (Integer.parseInt(receivedAmountEt.getText().toString()) >= (AMOUNT_LIMIT + Constants.DIGIT_ONE)) {
             setEtError(getString(R.string.amount_error, AMOUNT_LIMIT));
             return false;
         } else if (callerRb.getRating() <= 0.0) {
