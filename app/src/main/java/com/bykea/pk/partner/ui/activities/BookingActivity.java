@@ -243,6 +243,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean isFinishedRetried = false;
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
+    private boolean isAutoZoomInOutAllowed = true;
+
     private UserDataHandler driversDataHandler = new UserDataHandler() {
 
         @Override
@@ -1090,8 +1092,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         .zoom(16f)
                         .build();
 
-        mGoogleMap.moveCamera(
-                CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     private void updateDriverMarker(String snappedLatitude, String snappedLongitude) {
@@ -1834,7 +1835,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         pickUpMarker = null;
                     }
                 } else {
-                    updateMarkers(true);
+                    if (isAutoZoomInOutAllowed) {
+                        isAutoZoomInOutAllowed = false;
+                        updateMarkers(true);
+                        new Handler().postDelayed(() -> {
+                            isAutoZoomInOutAllowed = true;
+                        }, Constants.MAP_AUTO_ZOOM_IN_OUT_DELAY);
+                    }
                 }
 //                drawRoutes();
                 showEstimatedDistTime();
