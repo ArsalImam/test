@@ -622,4 +622,13 @@ public class Constants {
     }
 
     public static final String TRANSALATION_SEPERATOR = "///";
+
+    //ON PAGE FINISHED IS TAKING TIME, SO USE THIS. IN WHICH USER CAN GET SOMEHOW SOMETHING IS START TO APPEARS
+    public final static long DIMISS_DIALOG_WEBVIEW_LOADING = 3 * 1000;
+
+    public final static int PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK = 50;
+    public final static int PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK = 500;
+    public final static int AMOUNT_LIMIT = 35000;
+
+    public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
 }
