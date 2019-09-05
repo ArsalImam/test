@@ -120,11 +120,7 @@ import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 import static com.bykea.pk.partner.utils.Constants.ServiceType.OFFLINE_RIDE;
 
-//import com.google.android.gms.location.places.Place;
-//import com.google.android.gms.location.places.Places;
-
-public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener,
-        RoutingListener {
+public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener {
 
     private final String TAG = BookingActivity.class.getSimpleName();
 
