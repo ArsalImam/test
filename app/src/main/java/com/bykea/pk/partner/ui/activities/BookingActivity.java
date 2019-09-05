@@ -716,6 +716,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
+    /**
+     * Takes map's camera to Driver's current location
+     */
     private void setCameraToDriverLocation() {
         if (null != mGoogleMap) {
             Utils.formatMap(mGoogleMap);
@@ -724,6 +727,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             , AppPreferences.getLongitude())
                     , 16f));
         }
+    }
+
+    /**
+     * Sets map's camera to view whole trip route
+     */
+    private void setCameraToTripView() {
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
+        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
+        mGoogleMap.setPadding(0, padding, 0, padding);
+        mGoogleMap.animateCamera(cu);
     }
 
 
@@ -1535,21 +1548,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
         return isLeftAreaGreater;
-    }
-
-    private void setCameraToTripView() {
-        /*int padding = 80;
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(driverMarker.getPosition());
-        builder.include(pickUpMarker.getPosition());
-        LatLngBounds bounds = builder.build();
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        mGoogleMap.moveCamera(cu);*/
-
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
-        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
-        mGoogleMap.setPadding(0, padding, 0, padding);
-        mGoogleMap.animateCamera(cu);
     }
 
     private LatLngBounds getCurrentLatLngBounds() {
