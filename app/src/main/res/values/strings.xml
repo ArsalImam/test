@@ -489,4 +489,6 @@
     <string name="select_location_title">\u0020مقام مقرر کریں\u0020</string>
     <string name="resend_code">\u0020دوبارہ کوڈ بھیجیں\u0020</string>
     <string name="wrong_code_entered">\u0020درج کردہ کوڈ درست نہیں ہے\u0020</string>
+    <string name="enter_received_amount">Enter received amount</string>
+    <string name="enter_amount">Enter amount</string>
 </resources>

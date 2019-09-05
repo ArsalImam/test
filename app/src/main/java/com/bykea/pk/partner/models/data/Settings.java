@@ -4,6 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
+import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
+import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK;
+import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK;
+
 public class Settings {
     @SerializedName("cancel_time_driver")
     private String cancel_time;
@@ -23,6 +27,10 @@ public class Settings {
     private String notice;
     private String top_up_limit;
     private String amount_limit;
+
+    @SerializedName("partner_topup_limit_positive")
+    private String partnerTopUpLimitPositive;
+
     @SerializedName("terms_driver")
     private String terms;
     private String cih_range;
@@ -36,6 +44,15 @@ public class Settings {
     @SerializedName("offline_ride_display")
     private boolean offlineRideDisplay;
 
+
+    /**
+     * getter partner topup limit positive
+     *
+     * @return partnerTopUpLimitPositive
+     */
+    public int getPartnerTopUpLimitPositive() {
+        return StringUtils.isNotBlank(partnerTopUpLimitPositive) ? Integer.parseInt(partnerTopUpLimitPositive) : PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK;
+    }
 
     /**
      * getter offline ride display to show or not
@@ -115,12 +132,17 @@ public class Settings {
 
     }
 
+    /**
+     * getter partner topup limit negative
+     *
+     * @return top_up_limit
+     */
     public int getTop_up_limit() {
-        return StringUtils.isNotBlank(top_up_limit) ? Integer.parseInt(top_up_limit) : 500;
+        return StringUtils.isNotBlank(top_up_limit) ? Integer.parseInt(top_up_limit) : PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK;
     }
 
     public int getAmount_limit() {
-        return StringUtils.isNotBlank(amount_limit) ? Integer.parseInt(amount_limit) : 35000;
+        return StringUtils.isNotBlank(amount_limit) ? Integer.parseInt(amount_limit) : AMOUNT_LIMIT;
     }
 
     public String getTerms() {
