@@ -1170,9 +1170,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             boolean isRightAreaVisible = MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(latLng, proposedDistance, 90));
             if (!isRightAreaVisible) {
-                showOnLeft = false;
+                showOnLeft = true;
             } else {
-                showOnLeft = false; //isLeftAreaGreater(latLng);
+                showOnLeft = true; //isLeftAreaGreater(latLng);
             }
         }
         if (dropOffMarker != null) { // && StringUtils.isNotBlank(lastPickUpFlagOnLeft)) {
