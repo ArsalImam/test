@@ -238,6 +238,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean allowTripStatusCall = true;
     CountDownTimer countDownTimer;
 
+    private boolean shouldCameraFollowCurrentLocation = false;
     private boolean isFinishedRetried = false;
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
@@ -337,9 +338,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         AppPreferences.getLatitude(), AppPreferences.getLongitude()) < 500) {
                     cvLocation.setVisibility(View.INVISIBLE);
                     cvRouteView.setVisibility(View.VISIBLE);
+                    shouldCameraFollowCurrentLocation = true;
                 } else {
                     cvLocation.setVisibility(View.VISIBLE);
                     cvRouteView.setVisibility(View.INVISIBLE);
+                    shouldCameraFollowCurrentLocation = false;
                 }
 
 
@@ -1302,7 +1305,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
         }
+
         if (shouldUpdateCamera) setCameraToTripView();
+        else if (shouldCameraFollowCurrentLocation) setCameraToDriverLocation();
     }
 
     private boolean isLastAnimationComplete = true;
@@ -1822,7 +1827,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                     if ((callData != null && callData.getEndLat() != null) && (StringUtils.isNotBlank(callData.getEndLat()) &&
                             StringUtils.isNotBlank(callData.getEndLng()))) {
-                        updateMarkers(true);
+                        updateMarkers(false);
                     } else if (pickUpMarker != null) {
                         pickUpMarker.remove();
                         pickUpMarker = null;
@@ -1987,9 +1992,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.cvLocation:
                 setCameraToDriverLocation();
+                shouldCameraFollowCurrentLocation = true;
                 break;
             case R.id.cvRouteView:
                 setCameraToTripView();
+                shouldCameraFollowCurrentLocation = false;
                 break;
             case R.id.ivTopUp:
                 Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, Utils.isCourierService(callData.getCallType()), new StringCallBack() {

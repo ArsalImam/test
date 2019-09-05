@@ -630,7 +630,7 @@
                     android:layout_width="@dimen/_38sdp"
                     android:layout_height="@dimen/_38sdp"
                     android:padding="@dimen/_4sdp"
-                    android:src="@drawable/ic_drop_off_green" />
+                    android:src="@drawable/ic_active_booking_track_view" />
 
             </androidx.cardview.widget.CardView>
 
