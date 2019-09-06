@@ -706,10 +706,11 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.length() == 0) {
+            if (s.toString().trim().length() == 0) {
                 showMic();
             } else {
                 showSendText();
+
             }
         }
 
