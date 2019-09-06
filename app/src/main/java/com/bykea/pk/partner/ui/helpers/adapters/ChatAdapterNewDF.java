@@ -120,7 +120,15 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             } else {
                 viewHolder.contentLayout.setBackgroundResource(R.drawable.green_chat_box);
             }
+
+            viewHolder.txtMessage.setVisibility(View.GONE);
+            viewHolder.viewSeperator.setVisibility(View.GONE);
+            viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
+
             viewHolder.audioLayout.setVisibility(View.GONE);
+            viewHolder.image.setVisibility(View.GONE);
+            viewHolder.txtMessageVoice.setVisibility(View.GONE);
+
             if (chatMessages.get(position).getMessage().contains(TRANSALATION_SEPERATOR)) {
                 try {
                     String[] strings = chatMessages.get(position).getMessage().split(TRANSALATION_SEPERATOR);
@@ -129,20 +137,15 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
                         viewHolder.txtMessage.setText(new SpannableStringBuilder(StringUtils.SPACE)
                                 .append(FontUtils.getStyledTitle(context, strings[Constants.DIGIT_ZERO], Fonts.Jameel_Noori_Nastaleeq.getName()))
                                 .append(StringUtils.SPACE));
+                        viewHolder.txtMessage.setVisibility(View.VISIBLE);
                         viewHolder.viewSeperator.setVisibility(View.VISIBLE);
                         viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
                         viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ONE]);
                     } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO])) {
-                        viewHolder.txtMessage.setVisibility(View.GONE);
-                        viewHolder.viewSeperator.setVisibility(View.GONE);
                         viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ZERO]);
                     } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
-                        viewHolder.txtMessage.setVisibility(View.GONE);
-                        viewHolder.viewSeperator.setVisibility(View.GONE);
                         viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ONE]);
                     } else {
-                        viewHolder.txtMessage.setVisibility(View.GONE);
-                        viewHolder.viewSeperator.setVisibility(View.GONE);
                         viewHolder.txtMessageSecond.setText(chatMessages.get(position).getMessage());
                     }
                 } catch (Exception e) {
@@ -155,9 +158,6 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
                 viewHolder.viewSeperator.setVisibility(View.GONE);
                 viewHolder.txtMessageSecond.setText(chatMessages.get(position).getMessage());
             }
-            viewHolder.txtMessage.setVisibility(View.VISIBLE);
-            viewHolder.txtMessageVoice.setVisibility(View.GONE);
-            viewHolder.image.setVisibility(View.GONE);
         } else if (chatMessages.get(position).getMessageType().equalsIgnoreCase("Image")) {
             viewHolder.audioLayout.setVisibility(View.GONE);
             viewHolder.txtMessage.setVisibility(View.GONE);
