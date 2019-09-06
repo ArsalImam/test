@@ -66,7 +66,7 @@ class OfflineRidesFragment : Fragment() {
             }
 
             override fun onReceiveCodeClicked() {
-                if (isValid()) {
+                if (Utils.isValidNumber(mCurrentActivity, eTMobileNumber)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity)
                     jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
                             object : JobsDataSource.OtpGenerateCallback {
@@ -114,24 +114,13 @@ class OfflineRidesFragment : Fragment() {
                 validateNumberSetButtonColor()
             }
         })
-
-        tVDropOffAddress.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (!StringUtils.isEmpty(tVDropOffAddress.text)) {
-                    Utils.setImageDrawable(iVDropOffAddress, R.drawable.ic_pencil_icon)
-                    validateNumberSetButtonColor()
-                }
-            }
-        })
     }
 
     /**
      * Set Button Background According To The Validation Of Mobile Number
      */
     private fun validateNumberSetButtonColor() {
-        if (Utils.isValidNumber(eTMobileNumber) && !StringUtils.isEmpty(tVDropOffAddress.text)) {
+        if (Utils.isValidNumber(eTMobileNumber)) {
             setBackgroundColor(R.color.colorAccent)
         } else {
             setBackgroundColor(R.color.color_A7A7A7)
@@ -181,18 +170,6 @@ class OfflineRidesFragment : Fragment() {
                     .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.offline_ride_fare), "jameel_noori_nastaleeq.ttf"))
                     .append(StringUtils.SPACE)
         }
-    }
-
-    /**
-     * Check If Drop Off Is Selected Or Not and Mobile Number is correctly entered or not
-     * return True:False, accordingly
-     */
-    fun isValid(): Boolean {
-        if (StringUtils.isEmpty(tVDropOffAddress.text)) {
-            Utils.appToast(context?.getString(R.string.search_drop_off_toast))
-            return false
-        }
-        return Utils.isValidNumber(mCurrentActivity, eTMobileNumber)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -261,10 +238,12 @@ class OfflineRidesFragment : Fragment() {
             pickup_info.lng = AppPreferences.getLongitude().toString()
             pickup_info.address = Utils.getLocationAddress(AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(), mCurrentActivity)
 
-            dropoff_info = RideCreateLocationInfoData()
-            dropoff_info?.lat = mDropOffResult?.latLng?.latitude.toString()
-            dropoff_info?.lng = mDropOffResult?.latLng?.longitude.toString()
-            dropoff_info?.address = mDropOffResult?.address
+            if (mDropOffResult != null) {
+                dropoff_info = RideCreateLocationInfoData()
+                dropoff_info?.lat = mDropOffResult?.latLng?.latitude.toString()
+                dropoff_info?.lng = mDropOffResult?.latLng?.longitude.toString()
+                dropoff_info?.address = mDropOffResult?.address
+            }
         }
     }
 
