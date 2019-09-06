@@ -81,7 +81,7 @@ public class ZoneFragment extends Fragment {
 
         if (mCurrentActivity != null && mCurrentActivity.getIntent() != null && mCurrentActivity.getIntent().getExtras() != null
                 && mCurrentActivity.getIntent().getExtras().containsKey(FLOW_FOR))
-            if (getActivity().getIntent().getExtras().get(FLOW_FOR).equals(OFFLINE_RIDE)) {
+            if (mCurrentActivity.getIntent().getExtras().get(FLOW_FOR).equals(OFFLINE_RIDE)) {
                 rlFromCity.setVisibility(View.GONE);
                 viewSeperator.setVisibility(View.VISIBLE);
             }

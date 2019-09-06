@@ -97,7 +97,7 @@ public class ZoneAreasFragment extends Fragment {
 
         if (mCurrentActivity != null && mCurrentActivity.getIntent() != null && mCurrentActivity.getIntent().getExtras() != null
                 && mCurrentActivity.getIntent().getExtras().containsKey(FLOW_FOR))
-            if (getActivity().getIntent().getExtras().get(FLOW_FOR).equals(OFFLINE_RIDE)) {
+            if (mCurrentActivity.getIntent().getExtras().get(FLOW_FOR).equals(OFFLINE_RIDE)) {
                 isCalledFromOfflineRide = true;
                 mSelectedZone = getArguments().getParcelable(Constants.Extras.SELECTED_ITEM);
                 mSelectedCity = getArguments().getParcelable(Constants.Extras.SELECTED_CITY);
