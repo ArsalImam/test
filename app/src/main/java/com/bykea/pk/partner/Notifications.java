@@ -287,22 +287,22 @@ public class Notifications {
         } else {
             ReceivedMessageCount receivedMessageCount = null;
             if (receivedMessageAppPref == null) {
-                receivedMessageCount = new ReceivedMessageCount(receivedMessage.getData().getConversationId(), Constants.DIGIT_ONE);
+                receivedMessageCount = new ReceivedMessageCount(receivedMessage.getData().getTripId(), Constants.DIGIT_ONE);
                 AppPreferences.setReceivedMessageCount(receivedMessageCount);
                 context.sendBroadcast(new Intent(Constants.Broadcast.CHAT_MESSAGE_RECEIVED));
             } else {
-                if (!StringUtils.isEmpty(receivedMessageAppPref.getConversationId()) && !StringUtils.isEmpty(receivedMessage.getData().getConversationId())
-                        && receivedMessageAppPref.getConversationId().equals(receivedMessage.getData().getConversationId())) {
+                if (!StringUtils.isEmpty(receivedMessageAppPref.getTripId()) && !StringUtils.isEmpty(receivedMessage.getData().getTripId())
+                        && receivedMessageAppPref.getTripId().equals(receivedMessage.getData().getTripId())) {
                     if (receivedMessage.getData().getStatus().equalsIgnoreCase("unread")) {
                         receivedMessageCount
-                                = new ReceivedMessageCount(receivedMessage.getData().getConversationId(),
+                                = new ReceivedMessageCount(receivedMessage.getData().getTripId(),
                                 receivedMessageAppPref.getConversationMessageCount() + Constants.DIGIT_ONE);
                         AppPreferences.setReceivedMessageCount(receivedMessageCount);
                         context.sendBroadcast(new Intent(Constants.Broadcast.CHAT_MESSAGE_RECEIVED));
                     }
-                } else if (!StringUtils.isEmpty(receivedMessageAppPref.getConversationId()) && !StringUtils.isEmpty(receivedMessage.getData().getConversationId())
-                        && !receivedMessageAppPref.getConversationId().equals(receivedMessage.getData().getConversationId())) {
-                    receivedMessageCount = new ReceivedMessageCount(receivedMessage.getData().getConversationId(), Constants.DIGIT_ONE);
+                } else if (!StringUtils.isEmpty(receivedMessageAppPref.getTripId()) && !StringUtils.isEmpty(receivedMessage.getData().getTripId())
+                        && !receivedMessageAppPref.getTripId().equals(receivedMessage.getData().getTripId())) {
+                    receivedMessageCount = new ReceivedMessageCount(receivedMessage.getData().getTripId(), Constants.DIGIT_ONE);
                     AppPreferences.setReceivedMessageCount(receivedMessageCount);
                     context.sendBroadcast(new Intent(Constants.Broadcast.CHAT_MESSAGE_RECEIVED));
                 }

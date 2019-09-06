@@ -1,22 +1,20 @@
 package com.bykea.pk.partner.models;
 
-import com.google.gson.annotations.SerializedName;
-
 public class ReceivedMessageCount {
-    private String conversationId;
+    private String tripId;
     private int conversationMessageCount;
 
-    public ReceivedMessageCount(String conversationId, int conversationMessageCount) {
-        this.conversationId = conversationId;
+    public ReceivedMessageCount(String tripId, int conversationMessageCount) {
+        this.tripId = tripId;
         this.conversationMessageCount = conversationMessageCount;
     }
 
-    public String getConversationId() {
-        return conversationId;
+    public String getTripId() {
+        return tripId;
     }
 
-    public void setConversationId(String conversationId) {
-        this.conversationId = conversationId;
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
     }
 
     public int getConversationMessageCount() {

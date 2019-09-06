@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -40,7 +39,6 @@ import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest;
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
 import com.bykea.pk.partner.dal.util.Injection;
-import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
 import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Stop;
@@ -92,7 +90,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
@@ -117,7 +114,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 import static com.bykea.pk.partner.utils.Constants.ServiceType.OFFLINE_RIDE;
@@ -679,6 +675,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         WebIORequestHandler.getInstance().registerChatListener();
         isJobActivityLive = true;
         AppPreferences.setJobActivityOnForeground(true);
+        setNotificationChatBadge();
         super.onResume();
     }
 
@@ -1802,8 +1799,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         switch (view.getId()) {
             case R.id.chatBtn:
-                cartBadge.setVisibility(View.GONE);
-                AppPreferences.removeReceivedMessageCount();
                 if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
                     Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                 } else {
@@ -2520,17 +2515,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private BroadcastReceiver mMessageNotificationBadgeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ReceivedMessageCount receivedMessageCount = AppPreferences.getReceivedMessageCount();
-            if (!DriverApp.isChatActivityVisible() && receivedMessageCount != null) {
-                if (receivedMessageCount.getConversationMessageCount() > 0) {
-                    cartBadge.setVisibility(View.VISIBLE);
-                    cartBadge.setText(String.valueOf(receivedMessageCount.getConversationMessageCount()));
-                }
-            } else if (receivedMessageCount != null) {
-                cartBadge.setVisibility(View.GONE);
-                AppPreferences.setReceivedMessageCount(new ReceivedMessageCount(receivedMessageCount.getConversationId(), Constants.DIGIT_ZERO));
-            }
+            setNotificationChatBadge();
         }
     };
+
+    public void setNotificationChatBadge() {
+        ReceivedMessageCount receivedMessageCount = AppPreferences.getReceivedMessageCount();
+        if (!DriverApp.isChatActivityVisible() && receivedMessageCount != null) {
+            if (receivedMessageCount.getConversationMessageCount() > 0) {
+                cartBadge.setVisibility(View.VISIBLE);
+                cartBadge.setText(String.valueOf(receivedMessageCount.getConversationMessageCount()));
+            }
+        } else if (receivedMessageCount != null) {
+            cartBadge.setVisibility(View.GONE);
+            AppPreferences.setReceivedMessageCount(new ReceivedMessageCount(receivedMessageCount.getTripId(), Constants.DIGIT_ZERO));
+        } else if (receivedMessageCount == null) {
+            cartBadge.setVisibility(View.GONE);
+        }
+    }
     //endregion
 }

@@ -260,6 +260,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                     loader.setVisibility(View.INVISIBLE);
                     if (response.isSuccess() &&
                             null != response.getData() && response.getData().size() > 0) {
+                        AppPreferences.removeReceivedMessageCount();
 //                        messageList.clear();
                         messageList.addAll(response.getData());
                         chatAdapter.notifyDataSetChanged();
@@ -280,6 +281,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 //                    Dialogs.INSTANCE.dismissDialog();
                     loader.setVisibility(View.INVISIBLE);
                     if (response.isSuccess() && StringUtils.isNotBlank(response.getConversationId())) {
+                        AppPreferences.removeReceivedMessageCount();
                         loader.setVisibility(View.VISIBLE);
                         mCoversationId = response.getConversationId();
                         repository.getConversationChat(mCurrentActivity, chatHandler,
@@ -546,7 +548,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             return;
         }
         messageEdit.setText("");
-        sendMessageRemoteRepository(lastMsg);
+        sendMessageRemoteRepository(lastMsg.trim());
     }
 
     /**
