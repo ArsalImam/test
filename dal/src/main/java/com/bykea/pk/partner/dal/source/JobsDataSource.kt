@@ -37,12 +37,6 @@ interface JobsDataSource {
     fun saveJob(job: Job)
 
     /**
-     * Re-fetch jobRequest listing
-     *
-     */
-    fun refreshJobRequestList()
-
-    /**
      * Delete all jobRequest from data source
      *
      */
@@ -61,7 +55,7 @@ interface JobsDataSource {
      * @param jobId Id of JobRequest to be accepted
      * @param callback Response callback
      */
-    fun pickJob(jobId: Long, callback: AcceptJobRequestCallback)
+    fun pickJob(job: Job, callback: AcceptJobRequestCallback)
 
     /**
      * Post acknowledgement of job call
@@ -141,6 +135,35 @@ interface JobsDataSource {
             receiverName: String?,
             receiverPhone: String?
     )
+
+    /**
+     * Get Email Update
+     */
+    fun getEmailUpdate(emailId: String, callback: EmailUpdateCallback)
+
+    /**
+     * Check Email Update
+     */
+    fun checkEmailUpdate(callback: EmailUpdateCheckCallback)
+
+    /**
+     * Get fair estimation
+     * @param callback to get results in case of failure or success
+     */
+    fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String,
+                          type: String, rideType: String, callback: FareEstimationCallback)
+
+    /**
+     * Generate OTP
+     * @param callback to get results in case of failure or success
+     */
+    fun requestOtpGenerate(phone: String, type: String, callback: OtpGenerateCallback)
+
+    /**
+     * Create Trip and Verify OTP
+     * @param callback to get results in case of failure or success
+     */
+    fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: CreateTripCallback)
 
     /**
      * Callback interface used for fetch JobRequest listing
@@ -292,11 +315,6 @@ interface JobsDataSource {
     }
 
     /**
-     * Get Email Update
-     */
-    fun getEmailUpdate(emailId: String, callback: EmailUpdateCallback) {}
-
-    /**
      * Callback interface for email update
      */
     interface EmailUpdateCallback {
@@ -306,25 +324,12 @@ interface JobsDataSource {
     }
 
     /**
-     * Check Email Update
-     */
-    fun checkEmailUpdate(callback: EmailUpdateCheckCallback) {}
-
-    /**
      * Callback interface to check if email is updated
      */
     interface EmailUpdateCheckCallback {
         fun onSuccess(isEmailUpdated: Boolean)
 
         fun onFail(message: String?)
-    }
-
-    /**
-     * Get fair estimation
-     * @param callback to get results in case of failure or success
-     */
-    fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String,
-                          type: String, rideType: String, callback: FareEstimationCallback) {
     }
 
     /**
@@ -337,12 +342,6 @@ interface JobsDataSource {
     }
 
     /**
-     * Generate OTP
-     * @param callback to get results in case of failure or success
-     */
-    fun requestOtpGenerate(phone: String, type: String, callback: OtpGenerateCallback) {}
-
-    /**
      * Callback interface to otp generate
      */
     interface OtpGenerateCallback {
@@ -350,12 +349,6 @@ interface JobsDataSource {
 
         fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
-
-    /**
-     * Create Trip and Verify OTP
-     * @param callback to get results in case of failure or success
-     */
-    fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: CreateTripCallback) {}
 
     /**
      * Callback interface to otp generate

@@ -13,7 +13,7 @@
 
         <variable
             name="listener"
-            type="com.bykea.pk.partner.ui.loadboard.list.JobRequestListItemActionsListener" />
+            type="com.bykea.pk.partner.ui.loadboard.list.JobListItemActionsListener" />
 
     </data>
 

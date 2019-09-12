@@ -7,7 +7,7 @@ import com.bykea.pk.partner.dal.Job
  *
  * @author
  */
-interface JobRequestListItemActionsListener {
+interface JobListItemActionsListener {
 
     /**
      * On user click the item of Booking listing to navigate to [Job] detail screen

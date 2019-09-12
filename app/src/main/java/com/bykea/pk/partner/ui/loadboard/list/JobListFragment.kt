@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
-import com.bykea.pk.partner.databinding.JobRequestListFragBinding
+import com.bykea.pk.partner.databinding.JobListFragBinding
 import com.bykea.pk.partner.ui.activities.HomeActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.common.setupSnackbar
@@ -28,7 +28,7 @@ import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.job_request_list_frag.*
+import kotlinx.android.synthetic.main.job_list_frag.*
 
 
 /**
@@ -41,10 +41,10 @@ import kotlinx.android.synthetic.main.job_request_list_frag.*
  * </pre>
  *
  */
-class JobRequestListFragment : Fragment() {
+class JobListFragment : Fragment() {
 
-    private lateinit var viewDataBinding: JobRequestListFragBinding
-    private lateinit var listAdapter: JobRequestListAdapter
+    private lateinit var viewDataBinding: JobListFragBinding
+    private lateinit var listAdapter: JobListAdapter
     private lateinit var mCurrentActivity: HomeActivity
     private var mBehavior: BottomSheetBehavior<*>? = null
 
@@ -58,10 +58,10 @@ class JobRequestListFragment : Fragment() {
 
         mCurrentActivity = activity as HomeActivity
 
-        viewDataBinding = JobRequestListFragBinding.inflate(inflater, container, false).apply {
+        viewDataBinding = JobListFragBinding.inflate(inflater, container, false).apply {
 
-            viewmodel = obtainViewModel(JobRequestListViewModel::class.java).apply {
-                openBookingEvent.observe(this@JobRequestListFragment, Observer {
+            viewmodel = obtainViewModel(JobListViewModel::class.java).apply {
+                openBookingEvent.observe(this@JobListFragment, Observer {
                     if (mBehavior != null && mBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
                         mBehavior!!.setState(BottomSheetBehavior.STATE_EXPANDED)
                     } else {
@@ -69,25 +69,25 @@ class JobRequestListFragment : Fragment() {
                     }
                 })
 
-                dataLoading.observe(this@JobRequestListFragment, Observer {
+                dataLoading.observe(this@JobListFragment, Observer {
                     if (it) Dialogs.INSTANCE.showLoader(activity)
                     else Dialogs.INSTANCE.dismissDialog()
                 })
-                isExpended.observe(this@JobRequestListFragment, Observer {
+                isExpended.observe(this@JobListFragment, Observer {
                     if (it) {
                         relativeLayoutBottomView.visibility = View.VISIBLE
-                        relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+                        relativeLayoutBottomSheet.layoutParams = layoutParamRLZero;
                     } else {
                         relativeLayoutBottomView.visibility = View.GONE
                         if (viewmodel?.empty?.value!!) {
-                            relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
+                            relativeLayoutBottomSheet.layoutParams = layoutParamRLZero;
                         } else {
-                            relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
+                            relativeLayoutBottomSheet.layoutParams = layoutParamRL;
                         }
                     }
                 })
 
-                empty.observe(this@JobRequestListFragment, Observer {
+                empty.observe(this@JobListFragment, Observer {
                     if (it) {
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
@@ -99,7 +99,7 @@ class JobRequestListFragment : Fragment() {
 
             }
 
-            listener = object : JobRequestListActionsListener {
+            listener = object : JobListActionsListener {
                 override fun onBackClicked() {
                     mBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
@@ -198,7 +198,7 @@ class JobRequestListFragment : Fragment() {
         val viewModel = viewDataBinding.viewmodel
         if (viewModel != null) {
             ViewCompat.setNestedScrollingEnabled(viewDataBinding.bookingsList, true)
-            listAdapter = JobRequestListAdapter(java.util.ArrayList(0), viewModel)
+            listAdapter = JobListAdapter(java.util.ArrayList(0), viewModel)
             viewDataBinding.bookingsList.adapter = listAdapter
         } else {
             Log.w(TAG, "ViewModel not initialized when attempting to set up adapter.")
@@ -237,7 +237,7 @@ class JobRequestListFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = JobRequestListFragment()
+        fun newInstance() = JobListFragment()
         private const val TAG = "BookingsFragment"
     }
 

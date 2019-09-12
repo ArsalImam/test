@@ -7,11 +7,11 @@
 
         <variable
             name="viewmodel"
-            type="com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailViewModel" />
+            type="com.bykea.pk.partner.ui.loadboard.detail.JobDetailViewModel" />
 
         <variable
             name="listener"
-            type="com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActionsListener" />
+            type="com.bykea.pk.partner.ui.loadboard.detail.JobDetailActionsListener" />
 
     </data>
 
