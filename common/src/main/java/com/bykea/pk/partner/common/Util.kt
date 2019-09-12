@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.utils
+package com.bykea.pk.partner.common
 
 /**
  * Util Class
