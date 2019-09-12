@@ -136,15 +136,15 @@ class JobsRepository(
     }
 
     override fun pickJob(jobId: Long, callback: JobsDataSource.AcceptJobRequestCallback) {
-        jobsRemoteDataSource.pickJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+        jobsRemoteDataSource.pickJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), callback)
     }
 
     override fun ackJobCall(jobId: String, callback: JobsDataSource.AckJobCallCallback) {
-        jobsRemoteDataSource.acknowledgeJobCall(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+        jobsRemoteDataSource.acknowledgeJobCall(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), callback)
     }
 
     override fun acceptJob(jobId: String, timeEclipsed: Int, callback: JobsDataSource.AcceptJobCallback) {
-        jobsRemoteDataSource.acceptJob(jobId, timeEclipsed, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+        jobsRemoteDataSource.acceptJob(jobId, timeEclipsed, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), callback)
     }
 
     override fun changeDropOff(jobId: String, dropOff: ChangeDropOffRequest.Stop, callback: JobsDataSource.DropOffChangeCallback) {
@@ -152,24 +152,24 @@ class JobsRepository(
     }
 
     override fun arrivedAtJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.ArrivedAtJobCallback) {
-        jobsRemoteDataSource.arrivedAtJob(jobId, route, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+        jobsRemoteDataSource.arrivedAtJob(jobId, route, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), callback)
     }
 
     override fun startJob(jobId: String, address: String, callback: JobsDataSource.StartJobCallback) {
-        jobsRemoteDataSource.startJob(jobId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+        jobsRemoteDataSource.startJob(jobId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), callback)
     }
 
     override fun cancelJob(jobId: String, reason: String, callback: JobsDataSource.CancelJobCallback) {
-        jobsRemoteDataSource.cancelJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), reason, callback)
+        jobsRemoteDataSource.cancelJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), reason, callback)
     }
 
     override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.FinishJobCallback) {
-        val body = FinishJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), route)
+        val body = FinishJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), route)
         jobsRemoteDataSource.finishJob(jobId, body, callback)
     }
 
     override fun concludeJob(jobId: String, rate: Int, receivedAmount: Int, callback: JobsDataSource.ConcludeJobCallback, deliveryMessage: String?, deliveryStatus: Boolean?, purchaseAmount: Int?, receiverName: String?, receiverPhone: String?) {
-        val body = ConcludeJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), rate, receivedAmount, deliveryMessage, deliveryStatus, purchaseAmount, receiverName, receiverPhone, "Good customer he was")
+        val body = ConcludeJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), rate, receivedAmount, deliveryMessage, deliveryStatus, purchaseAmount, receiverName, receiverPhone, "Good customer he was")
         jobsRemoteDataSource.concludeJob(jobId, body, callback)
     }
 
@@ -186,7 +186,7 @@ class JobsRepository(
         var serviceCode: Int? = null
         if (!AppPref.getIsCash(pref)) serviceCode = SERVICE_CODE_SEND
 
-        jobsRemoteDataSource.getJobs(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), serviceCode, limit, object : JobsDataSource.LoadJobsCallback {
+        jobsRemoteDataSource.getJobs(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), serviceCode, limit, object : JobsDataSource.LoadJobsCallback {
             override fun onJobsLoaded(jobs: List<Job>) {
                 refreshCache(jobs)
                 refreshLocalDataSource(jobs)
@@ -202,7 +202,7 @@ class JobsRepository(
     }
 
     private fun getJobRequestFromRemoteDataSource(jobRequestId: Long, callback: JobsDataSource.GetJobRequestCallback) {
-        jobsRemoteDataSource.getJob(jobRequestId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : JobsDataSource.GetJobRequestCallback {
+        jobsRemoteDataSource.getJob(jobRequestId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(), AppPref.getLng(), object : JobsDataSource.GetJobRequestCallback {
             override fun onJobLoaded(job: Job) {
                 // Do in memory cache update to keep the app UI up to date
                 job.isComplete = true
