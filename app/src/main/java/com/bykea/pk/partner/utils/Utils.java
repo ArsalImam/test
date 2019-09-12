@@ -115,6 +115,7 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.picasso.Callback;
@@ -3063,6 +3064,10 @@ public class Utils {
             return new Gson().fromJson(response.errorBody().string(), type);
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -3347,7 +3352,6 @@ public class Utils {
     }
 
     /**
-     *
      * @param chatMessagesTranslated Object Containing English and Urdu Value
      * @return
      */
@@ -3366,12 +3370,13 @@ public class Utils {
 
     /**
      * Get String Value After Applying HTML
+     *
      * @param html
      * @return String : After Applying HTML to String.
      */
     public static String getTextFromHTML(String html) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            return  String.valueOf(Html.fromHtml(html));
+            return String.valueOf(Html.fromHtml(html));
         } else {
             return String.valueOf(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
         }
@@ -3379,8 +3384,9 @@ public class Utils {
 
     /**
      * Set ImageView Drawable
+     *
      * @param imageView : ImageView
-     * @param drawable : Drawable Id
+     * @param drawable  : Drawable Id
      */
     public static void setImageDrawable(ImageView imageView, int drawable) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
