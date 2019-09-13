@@ -206,11 +206,7 @@ dependencies {
     implementation 'top.oply.opuslib:opuslib:1.0.2'
     implementation deps.markerClustering
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':common')
     implementation project(path: ':dal')
-    implementation project(path: ':location')
-    implementation project(path: ':map')
-
 
 //    implementation project(path: ':loadboard')
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"

@@ -12,7 +12,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
-import com.bykea.pk.partner.common.Util
 import com.bykea.pk.partner.databinding.JobRequestDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
@@ -21,6 +20,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
