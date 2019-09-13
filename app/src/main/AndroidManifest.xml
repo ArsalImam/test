@@ -286,7 +286,7 @@
         <activity android:name=".ui.withdraw.WithdrawThankyouActivity" />
 
         <service
-            android:name=".services.LocationTrackingService"
+            android:name=".services.LocationService"
             android:enabled="true"
             android:exported="false" />
 

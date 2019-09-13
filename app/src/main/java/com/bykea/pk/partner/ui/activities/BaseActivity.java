@@ -37,7 +37,7 @@ import androidx.core.content.ContextCompat;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NotificationData;
-import com.bykea.pk.partner.services.LocationTrackingService;
+import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -89,7 +89,7 @@ public class BaseActivity extends AppCompatActivity {
     private RelativeLayout statusLayout;
 
     // A reference to the service used to get location updates.
-    private LocationTrackingService mService = null;
+    private LocationService mService = null;
 //    private TrackingService mService = null;
 
     // Tracks the bound state of the service.
@@ -867,7 +867,7 @@ public class BaseActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             String name = componentName.getClassName();
             if (name.endsWith("LocationTrackingService")) {
-                LocationTrackingService.LocalBinder binder = (LocationTrackingService.LocalBinder) service;
+                LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
 //                TrackingService.LocalBinder binder = (TrackingService.LocalBinder) service;
                 mService = binder.getService();
                 mBound = true;
