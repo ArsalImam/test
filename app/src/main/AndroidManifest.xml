@@ -115,6 +115,10 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <service
+            android:name=".services.LocationService"
+            android:enabled="true"
+            android:exported="false" />
         <service android:name=".services.HandleInactivePushService" />
 
         <activity
@@ -284,12 +288,6 @@
             android:name=".ui.withdraw.WithdrawalActivity"
             android:theme="@style/NewTheme" />
         <activity android:name=".ui.withdraw.WithdrawThankyouActivity" />
-
-        <service
-            android:name=".services.LocationService"
-            android:enabled="true"
-            android:exported="false" />
-
     </application>
 
 </manifest>

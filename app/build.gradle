@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 47
-        versionName "6.67"
+        versionCode 49
+        versionName "6.8"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -207,6 +207,7 @@ dependencies {
     implementation deps.markerClustering
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':dal')
+
 
 //    implementation project(path: ':loadboard')
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"

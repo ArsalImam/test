@@ -19,12 +19,12 @@ package com.bykea.pk.partner.dal.util
 import android.content.Context
 import android.preference.PreferenceManager
 import com.bykea.pk.partner.dal.source.JobsRepository
-import com.bykea.pk.partner.dal.source.WithdrawRepository
 import com.bykea.pk.partner.dal.source.local.AppDatabase
 import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
 import com.bykea.pk.partner.dal.source.local.WithdrawLocalDataSource
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.WithdrawRemoteDataSource
+import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 
 /**
  * Enables injection of production implementations at compile time.

@@ -41,7 +41,7 @@ public class GoogleParser extends XMLParser implements Parser {
         List<Route> routes = new ArrayList<>();
 
         // turn the stream into a string
-        final String result = convertStreamToString(getInputStream());
+        final String result = convertStreamToString(this.getInputStream());
         if (result == null) {
             throw new RouteException("Result is null");
         }

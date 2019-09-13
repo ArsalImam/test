@@ -1,4 +1,4 @@
-package com.bykea.pk.partner.dal.source
+package com.bykea.pk.partner.dal.source.withdraw
 
 import android.content.SharedPreferences
 
@@ -58,7 +58,7 @@ class WithdrawRepository
      * Get all payment methods by executing server API or from local datasource
      * @param callback to get results in case of failure or success
      */
-    override fun getAllPaymentMethods(callback: LoadWithdrawalCallback<List<WithdrawPaymentMethod>>) {
+    override fun getAllPaymentMethods(callback: WithdrawRepository.LoadWithdrawalCallback<List<WithdrawPaymentMethod>>) {
         getPaymentMethodsFromRemoteSource(callback)
     }
 

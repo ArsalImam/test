@@ -2,10 +2,10 @@ package com.bykea.pk.partner.tracking;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.DisplayMetrics;
 
 import androidx.core.content.ContextCompat;
 
+import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -130,17 +130,6 @@ public abstract class AbstractRouting extends AsyncTask<Void, Void, List<Route>>
         dispatchOnStart();
     }
 
-    private static int dpToPx(Context context, int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float px = dp * ((float) displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return Math.round(px);
-    }
-
-    @Override
-    protected void onCancelled() {
-        dispatchOnCancelled();
-    }
-
     @Override
     protected void onPostExecute(List<Route> result) {
         if (!result.isEmpty()) {
@@ -163,7 +152,7 @@ public abstract class AbstractRouting extends AsyncTask<Void, Void, List<Route>>
                 }
                 int colorIndex = i % Routing.COLORS.length;
                 mOptions.color(ContextCompat.getColor(mContext, Routing.COLORS[colorIndex]));
-                mOptions.width(dpToPx(mContext, 10 + i * 3));
+                mOptions.width(Utils.dpToPx(mContext, 10 + i * 3));
                 result.get(i).setPolyOptions(mOptions);
             }
             dispatchOnSuccess(result, shortestRouteIndex);
@@ -171,5 +160,10 @@ public abstract class AbstractRouting extends AsyncTask<Void, Void, List<Route>>
             dispatchOnFailure(mException);
         }
     }//end onPostExecute method
+
+    @Override
+    protected void onCancelled() {
+        dispatchOnCancelled();
+    }
 
 }

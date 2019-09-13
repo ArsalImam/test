@@ -90,7 +90,6 @@ public class BaseActivity extends AppCompatActivity {
 
     // A reference to the service used to get location updates.
     private LocationService mService = null;
-//    private TrackingService mService = null;
 
     // Tracks the bound state of the service.
     private boolean mBound = false;
