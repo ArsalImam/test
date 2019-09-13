@@ -2,12 +2,11 @@ package com.bykea.pk.partner.tracking;
 
 import android.content.Context;
 import android.os.AsyncTask;
-
 import androidx.core.content.ContextCompat;
 
-import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.bykea.pk.partner.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

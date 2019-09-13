@@ -2,8 +2,8 @@ package com.bykea.pk.partner.tracking;
 
 import android.content.Context;
 
-import com.bykea.pk.partner.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.bykea.pk.partner.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
