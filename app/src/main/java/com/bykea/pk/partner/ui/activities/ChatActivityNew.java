@@ -488,7 +488,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
                                                               break;
                                                           case MotionEvent.ACTION_UP:
-                                                              if (messageEdit.getText().length() > 0) {
+                                                              if (messageEdit.getText().toString().trim().length() > 0) {
                                                                   sendMessage();
                                                                   break;
                                                               } else {
@@ -514,7 +514,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                                                               break;
                                                           case MotionEvent.ACTION_MOVE:
                                                               if (!isRecording && System.currentTimeMillis() - 200 >= startTime
-                                                                      && messageEdit.getText().toString().length() == 0) {
+                                                                      && messageEdit.getText().toString().trim().length() == 0) {
                                                                   Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                                                                   vibrator.vibrate(100);
                                                                   voiceMsgLayout.setVisibility(View.VISIBLE);
