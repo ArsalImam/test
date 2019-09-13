@@ -64,7 +64,7 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
     fun start(bookingId: Long) {
         _dataLoading.value = true
         bookingsRepository.getJob(bookingId, this)
-        _currentLatLng.value = LatLng(AppPref.getLat(), AppPref.getLng())
+        _currentLatLng.value = LatLng(AppPref.getLat(bookingsRepository.pref), AppPref.getLng(bookingsRepository.pref))
     }
 
     /**

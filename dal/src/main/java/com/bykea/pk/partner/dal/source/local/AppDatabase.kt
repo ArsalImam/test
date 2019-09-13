@@ -18,7 +18,6 @@ const val DATABASE_NAME = "bykea-db"
 abstract class AppDatabase : RoomDatabase() {
     abstract fun jobRequestsDao(): JobsDao
     abstract fun withdrawDao(): WithDrawDao
-//    abstract fun locationDao(): LocationDao
 
     companion object {
 

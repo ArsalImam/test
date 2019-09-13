@@ -27,9 +27,8 @@ import com.bykea.pk.partner.dal.source.remote.WithdrawRemoteDataSource
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 
 /**
- * Enables injection of production implementations at compile time.
- *
- * @author Yousuf Sohail
+ * Enables injection of production implementations for
+ * [BookingsDataSource] at compile time.
  */
 object Injection {
 
@@ -61,17 +60,4 @@ object Injection {
                 WithdrawLocalDataSource.getInstance(AppExecutors(), database.withdrawDao()),
                 preferences)!!
     }
-
-    /**
-     * Provides Location repository with all of it's dependencies resolved
-     *
-     * @param context Context
-     * @return LocationRepository
-     */
-/*    fun provideLocationRepository(context: Context): LocationRepository {
-        val locationDao = AppDatabase.getInstance(context).locationDao()
-        return LocationRepository.getInstance(
-                LocationLocalDataSource(AppExecutors(), locationDao)
-        )
-    }*/
 }

@@ -9,7 +9,6 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dagger2.component.BasicComponent;
 import com.bykea.pk.partner.dagger2.component.DaggerBasicComponent;
 import com.bykea.pk.partner.dagger2.module.SharedPrefModule;
-import com.bykea.pk.partner.dal.source.pref.AppPref;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -40,6 +39,9 @@ import java.io.File;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import zendesk.core.AnonymousIdentity;
+import zendesk.core.Identity;
+import zendesk.core.JwtIdentity;
 import zendesk.core.Zendesk;
 import zendesk.support.Support;
 
@@ -80,8 +82,6 @@ public class DriverApp extends MultiDexApplication {
         mBasicComponent = DaggerBasicComponent.builder()
                 .sharedPrefModule(new SharedPrefModule())
                 .build();
-
-        AppPref.INSTANCE.initialize(mContext);
 
         if (AppPreferences.isLoggedIn() && (AppPreferences.getAvailableStatus() || AppPreferences.isOutOfFence()))
             ActivityStackManager.getInstance().startLocationService(mContext);
