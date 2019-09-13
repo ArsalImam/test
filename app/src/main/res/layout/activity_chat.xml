@@ -68,8 +68,9 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_56sdp"
+                android:layout_height="wrap_content"
                 android:background="@color/windowBackground"
+                android:minHeight="@dimen/_56sdp"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/padding.tiny"
                 android:paddingRight="@dimen/padding.tiny"
@@ -88,21 +89,21 @@
 
                 <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="3">
 
                     <com.bykea.pk.partner.widgets.FontEditText
                         android:id="@+id/messageEdit"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:background="@color/windowBackground"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         android:hint="Type your message ..."
-                        android:inputType="textLongMessage"
-                        android:lines="1"
+                        android:lines="3"
                         android:paddingStart="@dimen/padding.small"
                         android:paddingLeft="@dimen/padding.small"
+                        android:textSize="@dimen/_16sdp"
                         android:visibility="visible"
                         tools:ignore="HardcodedText,RtlSymmetry" />
 
