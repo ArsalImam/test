@@ -174,7 +174,7 @@
             android:clickable="false"
             android:divider="@android:color/transparent"
             android:listSelector="@android:color/transparent"
-            android:paddingBottom="@dimen/_4sdp"
+            android:paddingBottom="@dimen/_10sdp"
             android:scrollbars="none"
             android:stackFromBottom="true" />
 
