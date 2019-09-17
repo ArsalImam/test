@@ -447,7 +447,7 @@ public class LocationService extends Service {
             Utils.redLogLocation(TAG, " getLastLocation() called");
             if (ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                Location location = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
                 onNewLocation(location);
             }
         } catch (SecurityException unlikely) {
