@@ -297,6 +297,10 @@ public class Constants {
         public final static String ON_LB_BOOKING_ACCEPT = EYE_BALL + "LoadBoard-Booking-Accept";
 
         public final static String ON_CHAT_TEMPLATE_TAPPED = "Chat-Template";
+
+        public final static String ON_CALL_BUTTON_CLICK = "Call-button-Click";
+        public final static String ON_CALL_BUTTON_CLICK_MOBILE = "Call-button-Click-Mobile";
+        public final static String ON_CALL_BUTTON_CLICK_WHATSAPP = "Call-button-Click-Whatsapp";
 //        public final static String ON_LB_TAKEN = EYE_BALL + "LoadBoard-Taken";
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
