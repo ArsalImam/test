@@ -35,6 +35,7 @@ public class ContactUsFragment extends Fragment {
     private HomeActivity mCurrentActivity;
     private Unbinder unbinder;
     private JobsRepository jobsRepository;
+    private UserRepository repository;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,9 +60,8 @@ public class ContactUsFragment extends Fragment {
         mCurrentActivity.findViewById(R.id.toolbarLine).setVisibility(View.VISIBLE);
         mCurrentActivity.findViewById(R.id.statusLayout).setVisibility(View.VISIBLE);
         mCurrentActivity.hideStatusCompletely();
-        UserRepository repository = new UserRepository();
-        Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        repository.requestContactNumbers(mCurrentActivity, handler);
+
+        repository = new UserRepository();
     }
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -69,6 +69,7 @@ public class ContactUsFragment extends Fragment {
         public void getContactNumbers(ContactNumbersResponse response) {
             Dialogs.INSTANCE.dismissDialog();
             contactNumbers = response;
+            checkContactNumberAndCall(false);
         }
 
         @Override
@@ -78,7 +79,6 @@ public class ContactUsFragment extends Fragment {
             if (errorCode == HTTPStatus.UNAUTHORIZED) {
                 Utils.logout(mCurrentActivity);
             }
-
         }
     };
 
@@ -91,13 +91,9 @@ public class ContactUsFragment extends Fragment {
 
     @OnClick({R.id.supportCall, R.id.submittedComplains, R.id.reportComplain, R.id.bankAccountNumber})
     public void onClick(View view) {
-        if (contactNumbers == null) {
-            return;
-        }
         switch (view.getId()) {
             case R.id.supportCall:
-                if (contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null)
-                    Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
+                checkContactNumberAndCall(true);
                 break;
             case R.id.submittedComplains: {
                 if (AppPreferences.isEmailVerified()) {
@@ -114,6 +110,16 @@ public class ContactUsFragment extends Fragment {
             case R.id.bankAccountNumber:
                 startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
                 break;
+        }
+    }
+
+    private void checkContactNumberAndCall(boolean generateApiCall) {
+        if (contactNumbers != null && contactNumbers.getData() != null &&
+                contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null) {
+            Utils.callingIntent(mCurrentActivity, contactNumbers.getData().getSupports().getCall());
+        } else if (generateApiCall) {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            repository.requestContactNumbers(mCurrentActivity, handler);
         }
     }
 
