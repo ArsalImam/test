@@ -18,6 +18,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Chronometer;
@@ -31,10 +32,12 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.compression.ImageCompression;
+import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
 import com.bykea.pk.partner.models.ChatMessage;
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.Sender;
@@ -57,9 +60,11 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
@@ -76,6 +81,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusRecorder;
+
+import static com.bykea.pk.partner.DriverApp.getContext;
 //import top.oply.opuslib.OpusService;
 
 public class ChatActivityNew extends BaseActivity implements ImageCompression.onImageCompressListener {
@@ -151,6 +158,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     private ArrayList<ChatMessagesTranslated> chatMessagesTranslatedArrayList;
     private boolean isKeyBoardVisible = false;
     private LastAdapter lastAdapter;
+    private NormalCallData callData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +166,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         setContentView(R.layout.activity_chat);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         mCurrentActivity = this;
+        DriverApp.setChatActivityVisible(true);
         ButterKnife.bind(this);
         opusRecorder = OpusRecorder.getInstance();
         opusRecorder.setEventSender(new OpusEvent(mCurrentActivity));
@@ -178,7 +187,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     private void init() {
 
         messageList = new ArrayList<>();
-        NormalCallData callData = AppPreferences.getCallData();
+        callData = AppPreferences.getCallData();
         String details = callData.getDetails();
         if (StringUtils.isNotBlank(details)) {
             ChatMessage detailsMsg = new ChatMessage();
@@ -251,6 +260,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                     loader.setVisibility(View.INVISIBLE);
                     if (response.isSuccess() &&
                             null != response.getData() && response.getData().size() > 0) {
+                        AppPreferences.removeReceivedMessageCount();
 //                        messageList.clear();
                         messageList.addAll(response.getData());
                         chatAdapter.notifyDataSetChanged();
@@ -271,6 +281,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 //                    Dialogs.INSTANCE.dismissDialog();
                     loader.setVisibility(View.INVISIBLE);
                     if (response.isSuccess() && StringUtils.isNotBlank(response.getConversationId())) {
+                        AppPreferences.removeReceivedMessageCount();
                         loader.setVisibility(View.VISIBLE);
                         mCoversationId = response.getConversationId();
                         repository.getConversationChat(mCurrentActivity, chatHandler,
@@ -429,8 +440,8 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
+        DriverApp.setChatActivityVisible(false);
     }
 
     @Override
@@ -477,7 +488,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
                                                               break;
                                                           case MotionEvent.ACTION_UP:
-                                                              if (messageEdit.getText().length() > 0) {
+                                                              if (messageEdit.getText().toString().trim().length() > 0) {
                                                                   sendMessage();
                                                                   break;
                                                               } else {
@@ -503,7 +514,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                                                               break;
                                                           case MotionEvent.ACTION_MOVE:
                                                               if (!isRecording && System.currentTimeMillis() - 200 >= startTime
-                                                                      && messageEdit.getText().toString().length() == 0) {
+                                                                      && messageEdit.getText().toString().trim().length() == 0) {
                                                                   Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                                                                   vibrator.vibrate(100);
                                                                   voiceMsgLayout.setVisibility(View.VISIBLE);
@@ -537,11 +548,12 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             return;
         }
         messageEdit.setText("");
-        sendMessageRemoteRepository(lastMsg);
+        sendMessageRemoteRepository(lastMsg.trim());
     }
 
     /**
      * Used when the message text has to pass
+     *
      * @param messsage : Passing Message
      */
     private void sendMessageRemoteRepository(String messsage) {
@@ -696,10 +708,11 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.length() == 0) {
+            if (s.toString().trim().length() == 0) {
                 showMic();
             } else {
                 showSendText();
+
             }
         }
 
@@ -718,9 +731,20 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         }
     };
 
-    @OnClick({R.id.toggleKeyboardMessage, R.id.messageEdit})
+    @OnClick({R.id.toggleKeyboardMessage, R.id.messageEdit, R.id.callbtn})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.callbtn:
+                if (callData != null) {
+                    if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
+                        showCallPassengerDialog();
+                    } else if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                        openCallDialog(callData.getPhoneNo());
+                    } else {
+                        Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                    }
+                }
+                break;
             case R.id.toggleKeyboardMessage:
                 if (isKeyBoardVisible) {
                     isKeyBoardVisible = false;
@@ -859,5 +883,110 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         Log.d("path", cursor.getString(idx));
         return cursor.getString(idx);
+    }
+
+    private void showCallPassengerDialog() {
+        Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, v -> {
+            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                openCallDialog(getSenderNumber());
+            } else {
+                Utils.callingIntent(mCurrentActivity, getSenderNumber());
+            }
+            Utils.redLog("BookingActivity", "Call Sender");
+        }, v -> {
+            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                openCallDialog(getRecipientNumber());
+            } else {
+                Utils.callingIntent(mCurrentActivity, getRecipientNumber());
+            }
+            Utils.redLog("BookingActivity", "Call Recipient");
+        });
+    }
+
+    /**
+     * Call On Phone Number Using Whatsapp
+     *
+     * @param callNumber : Phone Number
+     */
+    private void openCallDialog(String callNumber) {
+        if (StringUtils.isEmpty(callNumber)) {
+            Utils.appToastDebug("Number is empty");
+            return;
+        }
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_call_booking, null, false);
+        DialogCallBookingBinding mBinding = DialogCallBookingBinding.bind(view);
+        dialog.setContentView(mBinding.getRoot());
+        mBinding.setListener(new BookingCallListener() {
+            @Override
+            public void onCallOnPhone() {
+                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onCallOnWhatsapp() {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                if (callNumber.startsWith("92"))
+                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(callNumber))));
+                else
+                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+        mBinding.iVCallOnMobile.setImageResource(R.drawable.ic_mobile_call);
+        mBinding.iVCallOnWhatsapp.setImageResource(R.drawable.ic_whatsapp_call);
+        dialog.show();
+    }
+
+    /***
+     * Get Sender phone number according to Service type.
+     * @return Phone number for Sender
+     */
+    private String getSenderNumber() {
+        if (callData != null) {
+            if (isServiceTypeFoodDelivery()) {
+                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
+                        || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())
+                        || TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
+                    return callData.getReceiverPhone();
+                }
+            } else {
+                return callData.getPhoneNo();
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /***
+     * Get Receiver phone number according to Service type.
+     * @return Phone number for Receiver
+     */
+    private String getRecipientNumber() {
+        if (callData != null) {
+            if (isServiceTypeFoodDelivery()) {
+                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
+                        || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
+                    return callData.getReceiverPhone();
+                } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
+                    return callData.getPhoneNo();
+                }
+            } else {
+                return callData.getReceiverPhone();
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /***
+     * Validates ride type for Food delivery.
+     * @return if service type is Food delivery return true, otherwise false.
+     */
+    private boolean isServiceTypeFoodDelivery() {
+        if (callData != null) {
+            return Constants.RIDE_TYPE_FOOD_DELIVERY.equalsIgnoreCase(callData.getCallType());
+        }
+        return false;
     }
 }

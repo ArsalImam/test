@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingLeft="@dimen/margin.small"
     android:paddingRight="@dimen/margin.small">
@@ -53,10 +53,10 @@
                     android:layout_gravity="left"
                     android:layout_margin="@dimen/padding.small"
                     android:ellipsize="end"
-                    tools:text="Message"
                     android:textColor="@color/buttonTextColor"
-                    android:textSize="@dimen/textsize.small"
-                    android:visibility="visible" />
+                    android:textSize="@dimen/textsize.small.medium"
+                    android:visibility="gone"
+                    tools:text="Message" />
 
                 <View
                     android:id="@+id/viewSeperator"
@@ -72,10 +72,9 @@
                     android:layout_gravity="left"
                     android:layout_margin="@dimen/padding.small"
                     android:ellipsize="end"
-                    tools:text="Message"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="@dimen/textsize.small"
-                    android:visibility="gone" />
+                    tools:text="Message" />
             </LinearLayout>
 
             <ImageView

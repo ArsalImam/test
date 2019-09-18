@@ -228,6 +228,7 @@ public class Constants {
     public static class Broadcast {
         public static final String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
         public static final String UPDATE_LOADBOARD_BOOKINGS_REQUEST = "UPDATE_LOADBOARD_BOOKINGS_REQUEST";
+        public static final String CHAT_MESSAGE_RECEIVED = "CHAT_MESSAGE_RECEIVED";
     }
 
     public static class Actions {

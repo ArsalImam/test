@@ -3333,7 +3333,7 @@ public class Utils {
 
         for (int i = 0; i < chatMessageInEnglish.length; i++) {
             if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
-                chatMessagesTranslateds.add(new ChatMessagesTranslated(chatMessageInEnglish[i], chatMessageInUrdu[i]));
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish[i], chatMessageInUrdu[i]));
         }
         return chatMessagesTranslateds;
     }
