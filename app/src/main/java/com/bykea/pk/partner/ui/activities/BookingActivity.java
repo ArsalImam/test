@@ -29,6 +29,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -39,6 +40,7 @@ import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest;
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
+import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
@@ -186,6 +188,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView tvCustomerPhone;
     @BindView(R.id.tvDetailsAddress)
     FontTextView tvDetailsAddress;
+    @BindView(R.id.cartBadge)
+    TextView cartBadge;
 
     public static boolean isJobActivityLive = false;
 
@@ -516,6 +520,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         dataRepository = new UserRepository();
         jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
+        // FOR CHAT NOTIFCATION BADGE ICON HANDLING
+        if (AppPreferences.getReceivedMessageCount() != null) {
+            cartBadge.setVisibility(View.VISIBLE);
+            cartBadge.setText(String.valueOf(AppPreferences.getReceivedMessageCount().getConversationMessageCount()));
+        }
+
+        mCurrentActivity.registerReceiver(mMessageNotificationBadgeReceiver,
+                new IntentFilter(Constants.Broadcast.CHAT_MESSAGE_RECEIVED));
+
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         dataRepository.getActiveTrip(mCurrentActivity, handler);
 
@@ -559,6 +572,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         WebIORequestHandler.getInstance().registerChatListener();
         isJobActivityLive = true;
         AppPreferences.setJobActivityOnForeground(true);
+        setNotificationChatBadge();
         super.onResume();
     }
 
@@ -597,6 +611,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         unregisterReceiver(locationReceiver);
 //        unregisterReceiver(cancelRideReceiver);
         unregisterReceiver(networkChangeListener);
+        unregisterReceiver(mMessageNotificationBadgeReceiver);
         mapView.onDestroy();
         super.onDestroy();
     }
@@ -651,7 +666,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    @OnClick({R.id.callbtn, R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections,
+    @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections,
             R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
     public void onClick(View view) {
 
@@ -677,15 +692,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 intent1.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
                 startActivityForResult(intent1, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
-                break;
-            case R.id.callbtn:
-                if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
-                    showCallPassengerDialog();
-                } else if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                    openCallDialog(callData.getPhoneNo());
-                } else {
-                    Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
-                }
                 break;
             case R.id.tvCustomerPhone:
                 if (StringUtils.isNotBlank(tvCustomerPhone.getText().toString())) {
@@ -1069,26 +1075,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    private void showCallPassengerDialog() {
-        Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, v -> {
-            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                openCallDialog(getSenderNumber());
-            } else {
-                Utils.callingIntent(mCurrentActivity, getSenderNumber());
-            }
-            Utils.redLog("BookingActivity", "Call Sender");
-        }, v -> {
-            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                openCallDialog(getRecipientNumber());
-            } else {
-                Utils.callingIntent(mCurrentActivity, getRecipientNumber());
-            }
-            Utils.redLog("BookingActivity", "Call Recipient");
-        });
-    }
-
     /**
      * Validates ride type for Food delivery.
+     *
      * @return if service type is Food delivery return true, otherwise false.
      */
     private boolean isServiceTypeFoodDelivery() {
@@ -1096,45 +1085,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             return Constants.RIDE_TYPE_FOOD_DELIVERY.equalsIgnoreCase(callData.getCallType());
         }
         return false;
-    }
-
-    /**
-     * Get Sender phone number according to Service type.
-     * @return Phone number for Sender
-     */
-    private String getSenderNumber() {
-        if (callData != null) {
-            if (isServiceTypeFoodDelivery()) {
-                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
-                        || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())
-                        || TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getReceiverPhone();
-                }
-            } else {
-                return callData.getPhoneNo();
-            }
-        }
-        return StringUtils.EMPTY;
-    }
-
-    /**
-     * Get Receiver phone number according to Service type.
-     * @return Phone number for Receiver
-     */
-    private String getRecipientNumber() {
-        if (callData != null) {
-            if (isServiceTypeFoodDelivery()) {
-                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(callData.getStatus())
-                        || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getReceiverPhone();
-                } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
-                    return callData.getPhoneNo();
-                }
-            } else {
-                return callData.getReceiverPhone();
-            }
-        }
-        return StringUtils.EMPTY;
     }
 
     private void logMixPanelEvent(String status) {
@@ -2055,6 +2005,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void cancelByPassenger(boolean isCanceledByAdmin) {
+        AppPreferences.removeReceivedMessageCount();
         playNotificationSound();
         Utils.setCallIncomingState();
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
@@ -2063,6 +2014,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void onCompleteByAdmin(String msg) {
+        AppPreferences.removeReceivedMessageCount();
         Utils.setCallIncomingState();
 
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
@@ -2260,6 +2212,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * communication on either REST Api or socket
      */
     private void finishJob() {
+        AppPreferences.removeReceivedMessageCount();
         Dialogs.INSTANCE.dismissDialog();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         logMixPanelEvent(TripStatus.ON_FINISH_TRIP);
@@ -2275,6 +2228,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Request finish job on Rest API
      */
     private void finishJobRestApi() {
+        AppPreferences.removeReceivedMessageCount();
         String endLatString = AppPreferences.getLatitude() + "";
         String endLngString = AppPreferences.getLongitude() + "";
         String lastLat = AppPreferences.getPrevDistanceLatitude();
@@ -2306,7 +2260,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         jobsRepo.finishJob(callData.getTripId(), latLngList, new JobsDataSource.FinishJobCallback() {
             @Override
             public void onJobFinished(@NotNull FinishJobResponseData data, @NotNull String request, @NotNull String resp) {
-
+                AppPreferences.removeReceivedMessageCount();
                 Crashlytics.setUserIdentifier(AppPreferences.getPilotData().getId());
                 Crashlytics.setString("Finish Job Request Trip ID", callData.getTripId());
                 Crashlytics.setString("Finish Job Response", resp);
@@ -2517,40 +2471,31 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         });
     }
 
-    /**
-     * Call On Phone Number Using Whatsapp
-     *
-     * @param callNumber : Phone Number
-     */
-    private void openCallDialog(String callNumber) {
-        if (StringUtils.isEmpty(callNumber)) {
-            Utils.appToastDebug("Number is empty");
-            return;
-        }
-        BottomSheetDialog dialog = new BottomSheetDialog(this);
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_call_booking, null, false);
-        DialogCallBookingBinding mBinding = DialogCallBookingBinding.bind(view);
-        dialog.setContentView(mBinding.getRoot());
-        mBinding.setListener(new BookingCallListener() {
-            @Override
-            public void onCallOnPhone() {
-                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
-                dialog.dismiss();
-            }
+    //region
 
-            @Override
-            public void onCallOnWhatsapp() {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                if (callNumber.startsWith("92"))
-                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(callNumber))));
-                else
-                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
-                startActivity(intent);
-                dialog.dismiss();
+    /**
+     * Broadcast Receiver to updated the message badge count.
+     */
+    private BroadcastReceiver mMessageNotificationBadgeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setNotificationChatBadge();
+        }
+    };
+
+    public void setNotificationChatBadge() {
+        ReceivedMessageCount receivedMessageCount = AppPreferences.getReceivedMessageCount();
+        if (!DriverApp.isChatActivityVisible() && receivedMessageCount != null) {
+            if (receivedMessageCount.getConversationMessageCount() > 0) {
+                cartBadge.setVisibility(View.VISIBLE);
+                cartBadge.setText(String.valueOf(receivedMessageCount.getConversationMessageCount()));
             }
-        });
-        mBinding.iVCallOnMobile.setImageResource(R.drawable.ic_mobile_call);
-        mBinding.iVCallOnWhatsapp.setImageResource(R.drawable.ic_whatsapp_call);
-        dialog.show();
+        } else if (receivedMessageCount != null) {
+            cartBadge.setVisibility(View.GONE);
+            AppPreferences.setReceivedMessageCount(new ReceivedMessageCount(receivedMessageCount.getTripId(), Constants.DIGIT_ZERO));
+        } else {
+            cartBadge.setVisibility(View.GONE);
+        }
     }
+    //endregion
 }
