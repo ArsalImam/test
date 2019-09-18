@@ -113,6 +113,12 @@ public class ContactUsFragment extends Fragment {
         }
     }
 
+    /**
+     * Check ContactNumber object
+     * if it not null, get support contact number and land to mobile calling screen
+     * if null, generate call if @param generateApiCall is True
+     * @param generateApiCall : Call API If True
+     */
     private void checkContactNumberAndCall(boolean generateApiCall) {
         if (contactNumbers != null && contactNumbers.getData() != null &&
                 contactNumbers.getData().getSupports() != null && contactNumbers.getData().getSupports().getCall() != null) {
