@@ -103,8 +103,8 @@ class WithdrawalViewModel
      * @return cnic number
      */
     fun getDriverCnicNumber(): String {
-        return if (driverProfile != null && driverProfile.value != null) {
-            driverProfile.value!!.cnic
+        return if (driverProfile.value != null && driverProfile.value!!.cnic != null) {
+            driverProfile.value!!.cnic!!
         } else {
             StringUtils.EMPTY
         }
