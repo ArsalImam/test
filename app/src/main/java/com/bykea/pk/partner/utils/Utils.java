@@ -3333,7 +3333,7 @@ public class Utils {
 
         for (int i = 0; i < chatMessageInEnglish.length; i++) {
             if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
-                chatMessagesTranslateds.add(new ChatMessagesTranslated(chatMessageInEnglish[i], chatMessageInUrdu[i]));
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish[i], chatMessageInUrdu[i]));
         }
         return chatMessagesTranslateds;
     }
@@ -3412,6 +3412,29 @@ public class Utils {
             titlesEnglish.remove(position);
             titlesUrdu.remove(position);
             newLabelToShow.remove(position);
+        }
+    }
+
+    /**
+     * Generate firebase event for the synergy of calling.
+     *
+     * @param context   : Calling Context
+     * @param callData  : Current Trip Model Deta
+     * @param eventName : Firebase Event Name
+     */
+    public static void generateFirebaseEventForCalling(Context context, NormalCallData callData, String eventName) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("lat", AppPreferences.getLatitude());
+            jsonObject.put("lng", AppPreferences.getLongitude());
+            jsonObject.put("whatsapp_installed", Utils.isAppInstalledWithPackageName(context, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE));
+            if (callData != null) {
+                jsonObject.put("category", callData.getServiceCode());
+                jsonObject.put("booking_id", callData.getTripId());
+                Utils.logEvent(context, callData.getPassId(), eventName, jsonObject, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

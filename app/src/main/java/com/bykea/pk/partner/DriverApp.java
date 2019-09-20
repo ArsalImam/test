@@ -63,6 +63,8 @@ public class DriverApp extends MultiDexApplication {
     private Emitter.Listener mBatachCancelledListener = new WebIORequestHandler.MultiDeliveryBatchCancelledByAdminListener();
     private Emitter.Listener mDropOffChangeListener = new WebIORequestHandler.JobDropOffChangeListener();
 
+    private static boolean isChatActivityVisible = false;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -258,5 +260,13 @@ public class DriverApp extends MultiDexApplication {
                 }
             }
         }
+    }
+
+    public static boolean isChatActivityVisible() {
+        return isChatActivityVisible;
+    }
+
+    public static void setChatActivityVisible(boolean chatActivityVisible) {
+        isChatActivityVisible = chatActivityVisible;
     }
 }

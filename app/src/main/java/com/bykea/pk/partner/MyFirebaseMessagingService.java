@@ -105,12 +105,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     //Do not open Chat activity when the trip is of Batch i.e Multi Delivery Trip
                     if (StringUtils.isNotBlank(receivedMessage.getData().getBatchID()))
                         return;
-                    Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivityNew.class);
-                    chatIntent.putExtra("chat", true);
-                    chatIntent.putExtra("fromNotification", true);
-                    chatIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    chatIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(chatIntent);
+
+                    if (!AppPreferences.isChatActivityOnForeground()) {
+                        Notifications.createChatNotification(DriverApp.getContext(), receivedMessage);
+                    }
+                    Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
+                    intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
+                    intent.putExtra("msg", receivedMessage);
+                    EventBus.getDefault().post(intent);
+                    AppPreferences.setLastMessageID(receivedMessage.getData().getMessageId());
                     WebIORequestHandler.getInstance().registerChatListener();
                 }
             } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
