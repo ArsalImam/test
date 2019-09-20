@@ -7,6 +7,7 @@ import android.util.Log;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
+import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.NotificationData;
@@ -212,6 +213,7 @@ public class AppPreferences {
 
     /**
      * Set Email For Driver
+     *
      * @param email : Requested Email
      */
     public static void setDriverEmail(String email) {
@@ -1497,4 +1499,42 @@ public class AppPreferences {
     }
 
     //endregion
+
+
+    /**
+     * Save Chat Message Count Using Conversation ID
+     *
+     * @param receivedMessageCount The {@link ReceivedMessageCount} object.
+     */
+    public static void setReceivedMessageCount(ReceivedMessageCount receivedMessageCount) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.CONVERSATION_BADGE_COUNT, new Gson().toJson(receivedMessageCount))
+                .apply();
+    }
+
+    /**
+     * Fetch the Chat Message Count
+     *
+     * @return The {@link ReceivedMessageCount} object.
+     */
+    public static ReceivedMessageCount getReceivedMessageCount() {
+        String data = mSharedPreferences.getString(Keys.CONVERSATION_BADGE_COUNT, StringUtils.EMPTY);
+        ReceivedMessageCount object = null;
+        if (StringUtils.isNotEmpty(data)) {
+            Gson gson = new Gson();
+            object = gson.fromJson(data, ReceivedMessageCount.class);
+        }
+        return object;
+    }
+
+    /**
+     * Remove Chat Message Count
+     */
+    public static void removeReceivedMessageCount() {
+        mSharedPreferences
+                .edit()
+                .remove(Keys.CONVERSATION_BADGE_COUNT)
+                .apply();
+    }
 }

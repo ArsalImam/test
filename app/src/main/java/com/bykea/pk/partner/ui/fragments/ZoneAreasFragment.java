@@ -2,10 +2,12 @@ package com.bykea.pk.partner.ui.fragments;
 
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 
@@ -38,6 +41,9 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
+import static com.bykea.pk.partner.utils.Constants.Extras.OFFLINE_RIDE;
+
 public class ZoneAreasFragment extends Fragment {
 
     @BindView(R.id.spCities)
@@ -48,6 +54,13 @@ public class ZoneAreasFragment extends Fragment {
 
     @BindView(R.id.ivRight0)
     ImageView ivRight0;
+
+    @BindView(R.id.rlFromCity)
+    RelativeLayout rlFromCity;
+
+    @BindView(R.id.viewSeperator)
+    View viewSeperator;
+
 
     private ZoneAreaAdapter mZoneAreaAdapter;
     private ArrayList<ZoneAreaData> mZoneAreaList = new ArrayList<>();
@@ -60,6 +73,8 @@ public class ZoneAreasFragment extends Fragment {
 
     private CitiesData mSelectedCity;
     private UserRepository mRepository;
+
+    private boolean isCalledFromOfflineRide = false;
 
     public ZoneAreasFragment() {
         // Required empty public constructor
@@ -79,12 +94,25 @@ public class ZoneAreasFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (SelectPlaceActivity) getActivity();
+
+        if (mCurrentActivity != null && mCurrentActivity.getIntent() != null && mCurrentActivity.getIntent().getExtras() != null
+                && mCurrentActivity.getIntent().getExtras().containsKey(FLOW_FOR))
+            if (mCurrentActivity.getIntent().getExtras().get(FLOW_FOR).equals(OFFLINE_RIDE)) {
+                isCalledFromOfflineRide = true;
+                mSelectedZone = getArguments().getParcelable(Constants.Extras.SELECTED_ITEM);
+                mSelectedCity = getArguments().getParcelable(Constants.Extras.SELECTED_CITY);
+                rlFromCity.setVisibility(View.GONE);
+                viewSeperator.setVisibility(View.VISIBLE);
+            }
+
         mRepository = new UserRepository();
         if (zones.size() == 0) {
-            setZonesAdapter();
+            if (!isCalledFromOfflineRide)
+                setZonesAdapter();
             initZoneAreasAdapter();
         } else {
-            initZonesAdapter();
+            if (!isCalledFromOfflineRide)
+                initZonesAdapter();
             initZoneAreasRv();
         }
         Utils.hideSoftKeyboard(this);
@@ -182,6 +210,9 @@ public class ZoneAreasFragment extends Fragment {
         rvZoneAreas.setLayoutManager(new LinearLayoutManager(mCurrentActivity));
         rvZoneAreas.setHasFixedSize(true);
         rvZoneAreas.setAdapter(mZoneAreaAdapter);
+
+        if (isCalledFromOfflineRide)
+            getZoneAreas(mSelectedZone);
     }
 
     private void getZoneAreas(ZoneData zone) {

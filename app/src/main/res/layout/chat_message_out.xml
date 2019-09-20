@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:paddingLeft="@dimen/margin.small"
     android:paddingRight="@dimen/margin.small">
 
@@ -48,10 +48,10 @@
                     android:layout_gravity="right|center_vertical"
                     android:layout_margin="@dimen/margin.small"
                     android:ellipsize="end"
-                    tools:text="message"
                     android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.small"
-                    android:visibility="visible" />
+                    android:textSize="@dimen/textsize.normal"
+                    android:visibility="gone"
+                    tools:text="message" />
 
                 <View
                     android:id="@+id/viewSeperator"
@@ -67,10 +67,9 @@
                     android:layout_gravity="right|center_vertical"
                     android:layout_margin="@dimen/margin.small"
                     android:ellipsize="end"
-                    tools:text="message"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.small"
-                    android:visibility="gone" />
+                    tools:text="message" />
             </LinearLayout>
 
             <ImageView

@@ -550,6 +550,8 @@ public class HomeFragment extends Fragment {
         myRangeBar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
+                if (myRangeBar == null || myRangeBar.getViewTreeObserver() == null || !myRangeBar.getViewTreeObserver().isAlive())
+                    return true;
                 myRangeBar.getViewTreeObserver().removeOnPreDrawListener(this);
                 myRangeBar.updateUI();
                 return true;

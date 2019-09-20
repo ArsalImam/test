@@ -251,9 +251,9 @@
                     android:layout_width="@dimen/_36sdp"
                     android:layout_height="@dimen/_36sdp"
                     android:layout_marginRight="@dimen/_2sdp"
-                    android:padding="@dimen/_4sdp"
-                    app:srcCompat="@drawable/ic_call_icon" />
-
+                    android:padding="@dimen/_3sdp"
+                    app:srcCompat="@drawable/ic_user" />
+                <!--app:srcCompat="@drawable/ic_call_icon"-->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -300,12 +300,33 @@
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/chatBtn"
-                    android:layout_width="@dimen/_36sdp"
-                    android:layout_height="@dimen/_36sdp"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/voice_icon" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/chatBtn"
+                        android:layout_width="@dimen/_36sdp"
+                        android:layout_height="@dimen/_36sdp"
+                        android:padding="@dimen/_3sdp"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_chat_msg" />
+
+                    <TextView
+                        android:id="@+id/cartBadge"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="right"
+                        android:background="@drawable/bg_notification_badge"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:visibility="gone" />
+                </FrameLayout>
 
             </LinearLayout>
 
