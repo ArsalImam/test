@@ -736,6 +736,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         switch (view.getId()) {
             case R.id.callbtn:
                 if (callData != null) {
+                    Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK);
                     if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
                         showCallPassengerDialog();
                     } else if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
@@ -920,12 +921,14 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         mBinding.setListener(new BookingCallListener() {
             @Override
             public void onCallOnPhone() {
+                Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_MOBILE);
                 Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
                 dialog.dismiss();
             }
 
             @Override
             public void onCallOnWhatsapp() {
+                Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_WHATSAPP);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 if (callNumber.startsWith("92"))
                     intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(callNumber))));
