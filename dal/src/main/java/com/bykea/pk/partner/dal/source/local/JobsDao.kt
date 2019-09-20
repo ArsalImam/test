@@ -14,10 +14,10 @@ import com.bykea.pk.partner.dal.Job
 @Dao
 interface JobsDao {
 
-    @Query("SELECT * FROM JobRequests")
+    @Query("SELECT * FROM Jobs")
     fun getJobs(): List<Job>
 
-    @Query("SELECT * FROM JobRequests WHERE id = :jobId")
+    @Query("SELECT * FROM Jobs WHERE id = :jobId")
     fun getJob(jobId: Long): Job?
 
     /**
@@ -34,12 +34,12 @@ interface JobsDao {
     /**
      * Delete all jobRequests.
      */
-    @Query("DELETE FROM JobRequests")
+    @Query("DELETE FROM Jobs")
     fun deleteAll()
 
     /**
      * Delete a jobRequest by id.
      */
-    @Query("DELETE FROM JobRequests WHERE id = :jobRequestId")
+    @Query("DELETE FROM Jobs WHERE id = :jobRequestId")
     fun delete(jobRequestId: Long)
 }
