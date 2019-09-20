@@ -116,7 +116,7 @@ import butterknife.OnClick;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
-import static com.bykea.pk.partner.utils.Constants.ServiceType.OFFLINE_RIDE;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
 
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener {
 

@@ -2037,10 +2037,10 @@ public class Utils {
      */
     public static boolean isModernService(Integer serviceCode) {
         return serviceCode != null
-                && (serviceCode == Constants.ServiceType.SEND_CODE
-                || serviceCode == Constants.ServiceType.SEND_COD_CODE
-                || serviceCode == Constants.ServiceType.RIDE_CODE
-                || serviceCode == Constants.ServiceType.OFFLINE_RIDE
+                && (serviceCode == Constants.ServiceCode.SEND
+                || serviceCode == Constants.ServiceCode.SEND_COD
+                || serviceCode == Constants.ServiceCode.RIDE
+                || serviceCode == Constants.ServiceCode.OFFLINE_RIDE
         );
     }
 

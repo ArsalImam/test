@@ -10,6 +10,7 @@ import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.REQUIRED_DATE_FORMAT
+import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.widgets.FontTextView
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,10 +43,10 @@ object BindingAdapters {
     @JvmStatic
     fun setServiceCode(imageView: ImageView, serviceCode: Int) {
         when (serviceCode) {
-            21 -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
-            22 -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
-            23 -> imageView.setImageResource(R.drawable.lay_ao_no_caption)
-            24 -> imageView.setImageResource(R.drawable.courier_no_caption)
+            SEND -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            SEND_COD -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            RIDE -> imageView.setImageResource(R.drawable.ride_right)
+            MART -> imageView.setImageResource(R.drawable.ic_purchase)
             else -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
         }
     }
