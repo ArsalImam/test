@@ -29,6 +29,8 @@ android {
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'
+        signingConfig signingConfigs.debug
     }
 
     signingConfigs {
@@ -46,50 +48,30 @@ android {
         }
     }
     buildTypes {
-        release {
-            //key for live apps
-            resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'
-
+        local {
+            buildConfigField "String", "FLAVOR_URL", "\"http://192.168.0.122:3000\""
+            debuggable true
+        }
+        develop {
+            buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
+            debuggable true
+        }
+        staging {
+            buildConfigField "String", "FLAVOR_URL", "\"https://staging-lb-talos.bykea.net\""
             signingConfig signingConfigs.release
-            // to remove unused resources. This will reduce APK size.
+            debuggable true
             shrinkResources true
-            //To obfuscate the code and to remove unused code. This will improve code security and will reduce APK size.
             minifyEnabled true
-            // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
-        debug {
-            //key for staging apps
-            resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'
-            //Latest staging 9 Feb
-            signingConfig signingConfigs.debug
-
-        }
-
-        flavorDimensions "env"
-        productFlavors {
-            local {
-                dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.1.223:3000\""
-            }
-            develop {
-                dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
-            }
-            staging {
-                dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging-lb-talos.bykea.net\""
-            }
-            livetesting {
-                dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3001\""
-            }
-            production {
-                dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3000\""
-            }
+        production {
+            buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3000\""
+            resValue "string", "google_api_client_key", '"AIzaSyChh76y3B-yKcyV_76W3S52Wkru7YjLhCM"'
+            signingConfig signingConfigs.release
+            debuggable false
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
