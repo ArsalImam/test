@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|right"
             android:padding="@dimen/_8sdp"
-            android:text="@{item.chatMessageInUrdu}"
+            android:text="@{item.position +`) `+item.chatMessageInUrdu }"
             android:textColor="@color/black"
             android:textSize="@dimen/_16sdp"
             app:fontName="jameel_noori_nastaleeq.ttf"

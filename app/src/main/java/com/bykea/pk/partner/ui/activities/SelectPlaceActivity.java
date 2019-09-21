@@ -117,8 +117,11 @@ public class SelectPlaceActivity extends BaseActivity {
                 isFlowForOfflineRide = true;
             }
 
+
         if (showChangeButton()) {
             setTopBar(getIntent().getStringExtra("top_bar").equalsIgnoreCase("PICK_UP"));
+        } else if (isFlowForOfflineRide) {
+            setTopBar(false);
         } else {
             llTopBarRight.setVisibility(View.GONE);
         }
@@ -126,6 +129,7 @@ public class SelectPlaceActivity extends BaseActivity {
 
     /**
      * Check If String Exist With Top_Bar
+     *
      * @return True If Exit Else False
      */
     public boolean showChangeButton() {
@@ -142,13 +146,16 @@ public class SelectPlaceActivity extends BaseActivity {
 
     /**
      * Set Title Bar Label
+     *
      * @param pickup : Set According Layout According To True Or False
      */
     private void setTopBar(boolean pickup) {
         llTopBarRight.setVisibility(View.VISIBLE);
         isPickUp = pickup;
-        if (isFlowForOfflineRide)
+        if (isFlowForOfflineRide) {
             mCurrentActivity.setTitleCustomToolbarUrdu(getString(R.string.select_dropoff_title));
+            llTopBarRight.setVisibility(View.GONE);
+        }
         else
             mCurrentActivity.setTitleCustomToolbarUrdu(isPickUp ? getString(R.string.select_location_title) : getString(R.string.pick_from_here_title));
 

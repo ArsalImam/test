@@ -2,14 +2,17 @@ package com.bykea.pk.partner.ui.fragments;
 
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 
 import com.bykea.pk.partner.R;
@@ -32,6 +35,9 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
+import static com.bykea.pk.partner.utils.Constants.Extras.OFFLINE_RIDE;
+
 public class ZoneFragment extends Fragment {
 
     @BindView(R.id.spCities)
@@ -40,6 +46,11 @@ public class ZoneFragment extends Fragment {
     @BindView(R.id.rvZones)
     RecyclerView rvZones;
 
+    @BindView(R.id.rlFromCity)
+    RelativeLayout rlFromCity;
+
+    @BindView(R.id.viewSeperator)
+    View viewSeperator;
 
     private ZoneAdapter mZoneAdapter;
     private ArrayList<ZoneData> mZoneList = new ArrayList<>();
@@ -67,6 +78,14 @@ public class ZoneFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentActivity = (SelectPlaceActivity) getActivity();
+
+        if (mCurrentActivity != null && mCurrentActivity.getIntent() != null && mCurrentActivity.getIntent().getExtras() != null
+                && mCurrentActivity.getIntent().getExtras().containsKey(FLOW_FOR))
+            if (mCurrentActivity.getIntent().getExtras().get(FLOW_FOR).equals(OFFLINE_RIDE)) {
+                rlFromCity.setVisibility(View.GONE);
+                viewSeperator.setVisibility(View.VISIBLE);
+            }
+
         mRepository = new UserRepository();
         if (mZoneList.size() == 0) {
             initZoneAdapter();

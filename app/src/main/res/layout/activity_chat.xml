@@ -33,6 +33,16 @@
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/textsize.title" />
 
+        <ImageView
+            android:id="@+id/callbtn"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="right|center"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:layout_marginRight="@dimen/_2sdp"
+            android:padding="@dimen/_6sdp"
+            app:srcCompat="@drawable/ic_call_icon" />
+
         <View
             android:id="@+id/toolbarLine"
             android:layout_width="match_parent"
@@ -58,10 +68,11 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_56sdp"
+                android:layout_height="wrap_content"
                 android:background="@color/windowBackground"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/padding.tiny"
+                android:minHeight="@dimen/_56sdp"
                 android:paddingRight="@dimen/padding.tiny"
                 android:visibility="visible"
                 android:weightSum="3">
@@ -86,11 +97,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/windowBackground"
-                        android:hint="Type your message ..."
-                        android:inputType="textLongMessage"
-                        android:lines="1"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
+                        android:hint="Type your message ..."
+                        android:maxLines="3"
                         android:paddingStart="@dimen/padding.small"
                         android:paddingLeft="@dimen/padding.small"
                         android:visibility="visible"
@@ -164,7 +174,7 @@
             android:clickable="false"
             android:divider="@android:color/transparent"
             android:listSelector="@android:color/transparent"
-            android:paddingBottom="@dimen/_4sdp"
+            android:paddingBottom="@dimen/_10sdp"
             android:scrollbars="none"
             android:stackFromBottom="true" />
 

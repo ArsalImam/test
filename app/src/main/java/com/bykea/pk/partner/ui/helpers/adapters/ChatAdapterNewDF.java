@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.SpannableStringBuilder;
+import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,7 @@ import java.util.List;
 import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusPlayer;
 
+import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.ViewHolder> {
@@ -118,45 +120,44 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             } else {
                 viewHolder.contentLayout.setBackgroundResource(R.drawable.green_chat_box);
             }
+
+            viewHolder.txtMessage.setVisibility(View.GONE);
+            viewHolder.viewSeperator.setVisibility(View.GONE);
+            viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
+
             viewHolder.audioLayout.setVisibility(View.GONE);
+            viewHolder.image.setVisibility(View.GONE);
+            viewHolder.txtMessageVoice.setVisibility(View.GONE);
+
             if (chatMessages.get(position).getMessage().contains(TRANSALATION_SEPERATOR)) {
                 try {
                     String[] strings = chatMessages.get(position).getMessage().split(TRANSALATION_SEPERATOR);
-
                     if (strings.length == 2 && strings[Constants.DIGIT_ZERO] != null && strings[Constants.DIGIT_ONE] != null &&
                             StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO]) && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
                         viewHolder.txtMessage.setText(new SpannableStringBuilder(StringUtils.SPACE)
                                 .append(FontUtils.getStyledTitle(context, strings[Constants.DIGIT_ZERO], Fonts.Jameel_Noori_Nastaleeq.getName()))
                                 .append(StringUtils.SPACE));
+                        viewHolder.txtMessage.setVisibility(View.VISIBLE);
                         viewHolder.viewSeperator.setVisibility(View.VISIBLE);
                         viewHolder.txtMessageSecond.setVisibility(View.VISIBLE);
                         viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ONE]);
                     } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO])) {
-                        viewHolder.txtMessage.setText(strings[Constants.DIGIT_ZERO]);
-                        viewHolder.viewSeperator.setVisibility(View.GONE);
-                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ZERO]);
                     } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
-                        viewHolder.txtMessage.setText(strings[Constants.DIGIT_ONE]);
-                        viewHolder.viewSeperator.setVisibility(View.GONE);
-                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setText(strings[Constants.DIGIT_ONE]);
                     } else {
-                        viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
-                        viewHolder.viewSeperator.setVisibility(View.GONE);
-                        viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                        viewHolder.txtMessageSecond.setText(chatMessages.get(position).getMessage());
                     }
                 } catch (Exception e) {
-                    viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+                    viewHolder.txtMessage.setVisibility(View.GONE);
                     viewHolder.viewSeperator.setVisibility(View.GONE);
-                    viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                    viewHolder.txtMessageSecond.setText(chatMessages.get(position).getMessage());
                 }
             } else {
-                viewHolder.txtMessage.setText(chatMessages.get(position).getMessage());
+                viewHolder.txtMessage.setVisibility(View.GONE);
                 viewHolder.viewSeperator.setVisibility(View.GONE);
-                viewHolder.txtMessageSecond.setVisibility(View.GONE);
+                viewHolder.txtMessageSecond.setText(chatMessages.get(position).getMessage());
             }
-            viewHolder.txtMessage.setVisibility(View.VISIBLE);
-            viewHolder.txtMessageVoice.setVisibility(View.GONE);
-            viewHolder.image.setVisibility(View.GONE);
         } else if (chatMessages.get(position).getMessageType().equalsIgnoreCase("Image")) {
             viewHolder.audioLayout.setVisibility(View.GONE);
             viewHolder.txtMessage.setVisibility(View.GONE);
