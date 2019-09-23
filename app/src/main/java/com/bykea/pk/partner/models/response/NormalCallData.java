@@ -107,12 +107,17 @@ public class NormalCallData extends CommonResponse {
 
     @SerializedName("receiver_phone")
     private String receiverPhone;
-
     @SerializedName("receiver_name")
     private String receiverName;
-
     @SerializedName("receiver_address")
     private String receiverAddress;
+
+    @SerializedName("sender_name")
+    private String senderName;
+    @SerializedName("sender_phone")
+    private String senderPhone;
+    @SerializedName("sender_address")
+    private String senderAddress;
 
     @Deprecated
     private String recName;
@@ -709,5 +714,29 @@ public class NormalCallData extends CommonResponse {
 
     public void setReceiverAddress(String receiverAddress) {
         this.receiverAddress = receiverAddress;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getSenderPhone() {
+        return senderPhone;
+    }
+
+    public void setSenderPhone(String senderPhone) {
+        this.senderPhone = senderPhone;
+    }
+
+    public String getSenderAddress() {
+        return senderAddress;
+    }
+
+    public void setSenderAddress(String senderAddress) {
+        this.senderAddress = senderAddress;
     }
 }
