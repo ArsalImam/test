@@ -72,7 +72,7 @@ android {
         productFlavors {
             local {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.0.122:3000\""
             }
             develop {
                 dimension "env"
