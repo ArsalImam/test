@@ -19,30 +19,40 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-        }
-        release {
-            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        local {
-            buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://192.168.0.122:3000\""
-            buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://192.168.0.122:4000\""
-            debuggable true
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        develop {
-            buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://dev.bykea.net:3000\""
-            buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://dev.bykea.net:4000\""
-            debuggable true
-        }
-        staging {
-            buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-lb-talos.bykea.net\""
-            buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-lb-loadboard.bykea.net\""
-            debuggable true
-        }
-        production {
-            buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3000\""
-            buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://loadboard.bykea.net:3000\""
-            debuggable false
+
+        flavorDimensions "env"
+        productFlavors {
+            local {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://dev.bykea.net:3000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://dev.bykea.net:4000\""
+            }
+            develop {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://dev.bykea.net:3000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://dev.bykea.net:4000\""
+            }
+            staging {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-lb-talos.bykea.net\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-lb-loadboard.bykea.net\""
+            }
+            livetesting {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3001\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://loadboard.bykea.net:3000\""
+            }
+            production {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://loadboard.bykea.net:3000\""
+            }
         }
     }
     compileOptions {
