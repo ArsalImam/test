@@ -2148,6 +2148,7 @@ public class Utils {
                 return R.drawable.bhejdo_no_caption;
             case "bring":
             case "purchase":
+            case "mart":
                 return R.drawable.lay_ao_no_caption;
             case "ride":
                 return R.drawable.ride_right;

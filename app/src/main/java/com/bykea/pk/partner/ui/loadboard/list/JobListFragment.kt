@@ -91,7 +91,7 @@ class JobListFragment : Fragment() {
                     if (it) {
                         relativeLayoutBottomSheet.setLayoutParams(layoutParamRLZero);
                     } else {
-                        if (!viewmodel?.isExpended?.value!!)
+                        if (viewmodel?.isExpended?.value != null && !viewmodel?.isExpended?.value!!)
                             relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
                     }
                 })
