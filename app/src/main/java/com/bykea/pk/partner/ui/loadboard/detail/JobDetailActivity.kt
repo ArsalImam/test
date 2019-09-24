@@ -197,7 +197,8 @@ class JobDetailActivity : BaseActivity() {
             setMarker(mMap, LatLng(lat, lng), R.drawable.ic_marker_pickup)
         }
         Util.safeLet(binding.viewmodel?.job?.value?.dropoff?.lat, binding.viewmodel?.job?.value?.dropoff?.lng) { lat, lng ->
-            setMarker(mMap, LatLng(lat, lng), R.drawable.ic_marker_dropoff)
+            if (binding.viewmodel?.job?.value?.dropoff?.lat != 0.0)
+                setMarker(mMap, LatLng(lat, lng), R.drawable.ic_marker_dropoff)
         }
         setPickupBounds(mMap)
     }
