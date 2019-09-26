@@ -412,7 +412,7 @@
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/acceptBookingBtn"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_height="@dimen/_50sdp"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/button_green_square"
                 android:gravity="center"
