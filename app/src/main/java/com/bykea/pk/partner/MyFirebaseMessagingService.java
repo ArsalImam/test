@@ -5,17 +5,25 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCallPayload;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
 import com.bykea.pk.partner.models.response.BookingAcceptedResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
+import com.bykea.pk.partner.models.response.MultiDeliveryCallDriverAcknowledgeResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryCallDriverResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
@@ -34,6 +42,11 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import java.net.HttpURLConnection;
+
+import static com.bykea.pk.partner.utils.ApiTags.BOOKING_REQUEST;
+import static com.bykea.pk.partner.utils.ApiTags.BOOKING_UPDATED_DROP_OFF;
+import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED;
 import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
@@ -81,53 +94,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase("1")) {
                 NormalCallData callData = gson.fromJson(remoteMessage.getData()
                         .get(Constants.Notification.DATA_TYPE), NormalCallData.class);
-                if (StringUtils.isNotBlank(callData.getStatus())) {
-                    if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                        if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
-                            Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
-                            Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
-                            intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
-                            intent.putExtra("msg", callData.getMessage());
-                            Utils.setCallIncomingState();
-                            if (AppPreferences.isJobActivityOnForeground() ||
-                                    AppPreferences.isCallingActivityOnForeground()) {
-//                                mContext.sendBroadcast(intent);
-                                EventBus.getDefault().post(intent);
-                            } else {
-                                EventBus.getDefault().post(intent);
-                                Notifications.createCancelNotification(mContext, callData.getMessage(), 23);
-                            }
-                        }
-                    } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) && AppPreferences.getAvailableStatus()) {
 
-                        /*
-                         * when Gps is off, we don't show Calling Screen so we don't need to show
-                         * Cancel notification either if passenger cancels it before booking.
-                         * If passenger has cancelled it after booking we will entertain this Cancel notification
-                         * */
+                setUIForStatus(callData);
 
-                        if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
-                            Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
-                            intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
-                            intent.putExtra("msg", callData.getMessage());
-                            if (AppPreferences.isJobActivityOnForeground()) {
-                                EventBus.getDefault().post(intent);
-//                            mContext.sendBroadcast(intent);
-                            } else {
-                                Utils.setCallIncomingState();
-                                Notifications.createNotification(mContext, callData.getMessage(), 23);
-                            }
-                        }
-                    } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING)) {
-
-                        Log.d(TAG, "Push Notification Received: With Status: " + callData.getStatus());
-
-                        Utils.redLog(TAG, "On Call FCM");
-                        ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
-                    } else {
-                        Utils.updateTripData(callData);
-                    }
-                }
             } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase("2")) {
                 ReceivedMessage receivedMessage = gson.fromJson(remoteMessage.getData().
@@ -136,12 +105,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     //Do not open Chat activity when the trip is of Batch i.e Multi Delivery Trip
                     if (StringUtils.isNotBlank(receivedMessage.getData().getBatchID()))
                         return;
-                    Intent chatIntent = new Intent(DriverApp.getContext(), ChatActivityNew.class);
-                    chatIntent.putExtra("chat", true);
-                    chatIntent.putExtra("fromNotification", true);
-                    chatIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    chatIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(chatIntent);
+
+                    if (!AppPreferences.isChatActivityOnForeground()) {
+                        Notifications.createChatNotification(DriverApp.getContext(), receivedMessage);
+                    }
+                    Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
+                    intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
+                    intent.putExtra("msg", receivedMessage);
+                    EventBus.getDefault().post(intent);
+                    AppPreferences.setLastMessageID(receivedMessage.getData().getMessageId());
                     WebIORequestHandler.getInstance().registerChatListener();
                 }
             } else if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
@@ -172,17 +144,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                     mBus.post(Constants.ON_NEW_NOTIFICATION);
                 }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase(BOOKING_REQUEST))) {
+                JobCallPayload payload = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), JobCallPayload.class);
+                JobCall jobCall = payload.getTrip();
+                if (payload.getType().equalsIgnoreCase("single")) {
+                    JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+                    jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
+                        @Override
+                        public void onJobCallAcknowledged() {
+                            Utils.appToastDebug("Job Call Acknowledged");
+                            Log.d(TAG, "Push Notification Received");
+                            Utils.redLog(TAG, "On Call FCM");
+                            ActivityStackManager.getInstance().startCallingActivity(jobCall, true, mContext);
+                        }
+
+                        @Override
+                        public void onJobCallAcknowledgeFailed() {
+                            Utils.appToastDebug("Job Call Acknowledgement Failed");
+                        }
+                    });
+                }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(FCM_EVENTS_MULTIDELIVER_INCOMING_CALL))) { //Multi delivery call
                 MultipleDeliveryCallDriverResponse response = gson.fromJson(
                         remoteMessage.getData().get(Constants.Notification.DATA_TYPE),
                         MultipleDeliveryCallDriverResponse.class);
-
                 MultiDeliveryCallDriverData data = response.getData();
-                if (data != null) {
-                    AppPreferences.setMultiDeliveryCallDriverData(data);
-                    ActivityStackManager.getInstance().startMultiDeliveryCallingActivity(
-                            AppPreferences.getMultiDeliveryCallDriverData(), true, DriverApp.getContext());
+                if (data != null && AppPreferences.getAvailableStatus()) {
+                    if (data.getBatchID() != null) {
+                        AppPreferences.setMultiDeliveryCallDriverData(data);
+                        new UserRepository().requestDriverAcknowledged(handler);
+                    }
                 }
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN))) { //Multi delivery cancel by admin
@@ -197,6 +189,71 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(MULTI_DELIVERY_SOCKET_TRIP_MISSED))) {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(BOOKING_UPDATED_DROP_OFF))) {
+                Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
+                intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                EventBus.getDefault().post(intent);
+            }
+        }
+    }
+
+    /**
+     * Method Is Listening To Both The Notification
+     * 1. Call From Trip Notifcation - 7
+     * 2. MultiDelivery Trip Notifcation - 23
+     *
+     * @param callData : Object Class
+     */
+    private void setUIForStatus(NormalCallData callData) {
+        if (StringUtils.isNotBlank(callData.getStatus())) {
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
+                if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
+                    Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
+                    intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
+                    intent.putExtra("msg", callData.getMessage());
+                    Utils.setCallIncomingState();
+                    if (AppPreferences.isJobActivityOnForeground() ||
+                            AppPreferences.isCallingActivityOnForeground()) {
+//                                mContext.sendBroadcast(intent);
+                        EventBus.getDefault().post(intent);
+                    } else {
+                        EventBus.getDefault().post(intent);
+                        Notifications.createCancelNotification(mContext, callData.getMessage(), 23);
+                    }
+                }
+            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) && AppPreferences.getAvailableStatus()) {
+
+                /*
+                 * when Gps is off, we don't show Calling Screen so we don't need to show
+                 * Cancel notification either if passenger cancels it before booking.
+                 * If passenger has cancelled it after booking we will entertain this Cancel notification
+                 * */
+
+                if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
+                    intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
+                    intent.putExtra("msg", callData.getMessage());
+                    if (AppPreferences.isJobActivityOnForeground()) {
+                        EventBus.getDefault().post(intent);
+//                            mContext.sendBroadcast(intent);
+                    } else {
+                        Utils.setCallIncomingState();
+                        Notifications.createNotification(mContext, callData.getMessage(), 23);
+                    }
+                }
+            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING) ||
+                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_OPEN) ||
+                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_SEARCHING)) {
+                Log.d(TAG, "Push Notification Received: With Status: " + callData.getStatus());
+                Utils.redLog(TAG, "On Call FCM");
+                ActivityStackManager.getInstance().startCallingActivity(callData, true, mContext);
+            } else {
+                Utils.updateTripData(callData);
             }
         }
     }
@@ -240,7 +297,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                                 @Override
                                 public void onError(int errorCode, String errorMessage) {
-//                                            countDownTimer.cancel();
                                     onLocationUpdateError(errorCode, errorMessage, data);
                                 }
                             }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
@@ -302,7 +358,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     break;
                 }
                 default:
-                    Utils.appToast(this, locationResponse.getMessage());
+                    Utils.appToast(locationResponse.getMessage());
             }
         }
 
@@ -343,4 +399,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             new UserRepository().updateRegid(this, new UserDataHandler());
         }
     }
+
+
+    /**
+     * Handle for Acknowledge API Call
+     */
+    private static IUserDataHandler handler = new UserDataHandler() {
+        @Override
+        public void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse
+                                                        response) {
+            if (response != null) {
+                ActivityStackManager
+                        .getInstance()
+                        .startMultiDeliveryCallingActivity(
+                                AppPreferences.getMultiDeliveryCallDriverData(),
+                                true,
+                                DriverApp.getContext()
+                        );
+            }
+        }
+
+        @Override
+        public void onError(int errorCode, String errorMessage) {
+            if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+            } else {
+                EventBus.getDefault().post(Keys.MULTIDELIVERY_ERROR_BORADCAST);
+                Utils.redLog("Error:", errorMessage);
+            }
+        }
+    };
 }

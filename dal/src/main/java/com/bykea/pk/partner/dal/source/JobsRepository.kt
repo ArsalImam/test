@@ -3,9 +3,13 @@ package com.bykea.pk.partner.dal.source
 import android.content.SharedPreferences
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
+import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
+import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
+import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
 import java.util.*
 import kotlin.collections.ArrayList
@@ -20,7 +24,7 @@ import kotlin.collections.ArrayList
  */
 class JobsRepository(
         private val jobsRemoteDataSource: JobsRemoteDataSource,
-        private val jobsLocalDataSource: JobsDataSource,
+        private val jobsLocalDataSource: JobsLocalDataSource,
         val pref: SharedPreferences) : JobsDataSource {
 
     private val limit: Int = 20
@@ -131,8 +135,32 @@ class JobsRepository(
         cachedJobs.remove(jobRequestId)
     }
 
-    override fun acceptJobRequest(jobRequestId: Long, callback: JobsDataSource.AcceptJobRequestCallback) {
-        jobsRemoteDataSource.acceptJob(jobRequestId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    override fun pickJob(jobId: Long, callback: JobsDataSource.AcceptJobRequestCallback) {
+        jobsRemoteDataSource.pickJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
+    override fun ackJobCall(jobId: String, callback: JobsDataSource.AckJobCallCallback) {
+        jobsRemoteDataSource.acknowledgeJobCall(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
+    override fun acceptJob(jobId: String, timeEclipsed: Int, callback: JobsDataSource.AcceptJobCallback) {
+        jobsRemoteDataSource.acceptJob(jobId, timeEclipsed, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
+    override fun changeDropOff(jobId: String, dropOff: ChangeDropOffRequest.Stop, callback: JobsDataSource.DropOffChangeCallback) {
+        jobsRemoteDataSource.changeDropOff(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), dropOff, callback)
+    }
+
+    override fun arrivedAtJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.ArrivedAtJobCallback) {
+        jobsRemoteDataSource.arrivedAtJob(jobId, route, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
+    override fun startJob(jobId: String, address: String, callback: JobsDataSource.StartJobCallback) {
+        jobsRemoteDataSource.startJob(jobId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
+    override fun cancelJob(jobId: String, reason: String, callback: JobsDataSource.CancelJobCallback) {
+        jobsRemoteDataSource.cancelJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), reason, callback)
     }
 
     override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.FinishJobCallback) {
@@ -140,8 +168,17 @@ class JobsRepository(
         jobsRemoteDataSource.finishJob(jobId, body, callback)
     }
 
-    override fun concludeJob(callback: JobsDataSource.ConcludeJobCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun concludeJob(jobId: String, rate: Int, receivedAmount: Int, callback: JobsDataSource.ConcludeJobCallback, deliveryMessage: String?, deliveryStatus: Boolean?, purchaseAmount: Int?, receiverName: String?, receiverPhone: String?) {
+        val body = ConcludeJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), rate, receivedAmount, deliveryMessage, deliveryStatus, purchaseAmount, receiverName, receiverPhone, "Good customer he was")
+        jobsRemoteDataSource.concludeJob(jobId, body, callback)
+    }
+
+    override fun checkEmailUpdate(callback: JobsDataSource.EmailUpdateCheckCallback) {
+        jobsRemoteDataSource.getCheckIsEmailUpdatedRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
+    override fun getEmailUpdate(emailId: String, callback: JobsDataSource.EmailUpdateCallback) {
+        jobsRemoteDataSource.getEmailUpdateRequest(emailId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
     private fun getJobsFromRemoteDataSource(callback: JobsDataSource.LoadJobsCallback) {
@@ -239,7 +276,7 @@ class JobsRepository(
          * @return the [JobsRepository] instance
          */
         @JvmStatic
-        fun getInstance(jobsRemoteDataSource: JobsRemoteDataSource, jobsLocalDataSource: JobsDataSource, preferences: SharedPreferences) =
+        fun getInstance(jobsRemoteDataSource: JobsRemoteDataSource, jobsLocalDataSource: JobsLocalDataSource, preferences: SharedPreferences) =
                 INSTANCE ?: synchronized(JobsRepository::class.java) {
                     INSTANCE
                             ?: JobsRepository(jobsRemoteDataSource, jobsLocalDataSource, preferences)
@@ -255,5 +292,18 @@ class JobsRepository(
         fun destroyInstance() {
             INSTANCE = null
         }
+    }
+
+    override fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
+        jobsRemoteDataSource.requestFairEstimation(AppPref.getDriverId(pref), AppPref.getAccessToken(pref),
+                startLat, startLng, endLat, endLng, type, rideType, callback)
+    }
+
+    override fun requestOtpGenerate(phone: String, type: String, callback: JobsDataSource.OtpGenerateCallback) {
+        jobsRemoteDataSource.requestOtpGenerate(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), phone, type, callback)
+    }
+
+    override fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: JobsDataSource.CreateTripCallback) {
+        jobsRemoteDataSource.createTrip(rideCreateRequestObject,callback)
     }
 }

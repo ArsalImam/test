@@ -29,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
@@ -103,6 +102,7 @@ import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 /**
  * Home landing screen which holds all the options for driver
@@ -242,6 +242,7 @@ public class HomeFragment extends Fragment {
     private boolean isDialogDisplayingForBattery = false;
     private View view;
     private String currentVersion, latestVersion;
+    private boolean isOfflineDialogVisible = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -284,7 +285,8 @@ public class HomeFragment extends Fragment {
                         .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                         .replace(R.id.containerView, fragment)
                         .commit();
-                HomeActivity.visibleFragmentNumber = 7;
+                //TODO : visibleFragmentNumber
+//                HomeActivity.visibleFragmentNumber = 7;
                 return;
             }
 
@@ -309,16 +311,26 @@ public class HomeFragment extends Fragment {
         mCurrentActivity.setToolbarLogoKhudaHafiz(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (AppPreferences.getAvailableStatus()) {
+                        AppPreferences.setAvailableStatus(false);
+                        isOfflineDialogVisible = true;
                         Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                isOfflineDialogVisible = false;
+                                makeDriverOffline = true;
                                 WEEK_STATUS = 0;
                                 getDriverPerformanceData();
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                isOfflineDialogVisible = false;
+                                Dialogs.INSTANCE.dismissDialog();
+                                AppPreferences.setAvailableStatus(true);
                             }
                         });
                     } else {
@@ -361,7 +373,7 @@ public class HomeFragment extends Fragment {
                                     Dialogs.INSTANCE.dismissDialog();
                                     callAvailableStatusAPI(false);
                                 }
-                            });
+                            }, null);
                         } else {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 // TODO call battery optimization
@@ -514,7 +526,7 @@ public class HomeFragment extends Fragment {
 
     private void onUnauthorizedLicenceExpire() {
         Utils.clearData(mCurrentActivity);
-        HomeActivity.visibleFragmentNumber = 0;
+        HomeActivity.visibleFragmentNumber = HOME_SCREEN_S;
         Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity, new StringCallBack() {
                     @Override
                     public void onCallBack(String msg) {
@@ -538,6 +550,8 @@ public class HomeFragment extends Fragment {
         myRangeBar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
+                if (myRangeBar == null || myRangeBar.getViewTreeObserver() == null || !myRangeBar.getViewTreeObserver().isAlive())
+                    return true;
                 myRangeBar.getViewTreeObserver().removeOnPreDrawListener(this);
                 myRangeBar.updateUI();
                 return true;
@@ -829,6 +843,7 @@ public class HomeFragment extends Fragment {
                             AppPreferences.setCash(pilotStatusResponse.getPilotStatusData().isCashValue());
                             if (makeDriverOffline) {
                                 AppPreferences.setAvailableStatus(false);
+                                makeDriverOffline = false;
                             } else {
                                 AppPreferences.setAvailableStatus(!AppPreferences.getAvailableStatus());
                             }
@@ -926,7 +941,7 @@ public class HomeFragment extends Fragment {
                     break;
                 }
                 default:
-                    Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
+                    Utils.appToast(driverStatusResponse.getMessage());
                     AppPreferences.setAvailableStatus(false);
                     AppPreferences.setDriverDestination(null);
                     setStatusBtn();
@@ -965,8 +980,7 @@ public class HomeFragment extends Fragment {
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                ActivityStackManager.getInstance().startReportActivity(
-                                        view.getContext(), "s");
+                                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
                             }
                         });
                 break;
@@ -999,7 +1013,7 @@ public class HomeFragment extends Fragment {
                 break;
             case Constants.ApiError.STATUS_CHANGE_DURING_RIDE:
             default:
-                Utils.appToast(mCurrentActivity, driverStatusResponse.getMessage());
+                Utils.appToast(driverStatusResponse.getMessage());
         }
         AppPreferences.setAvailableStatus(false);
         AppPreferences.setDriverDestination(null);
@@ -1334,6 +1348,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        if (isOfflineDialogVisible) AppPreferences.setAvailableStatus(true);
+
         isScreenInFront = false;
         isCalled = false;
         mCurrentActivity.unregisterReceiver(myReceiver);
@@ -1460,7 +1476,7 @@ public class HomeFragment extends Fragment {
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.containerView, new WalletFragment())
                 .commit();
-        HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN;
+        HomeActivity.visibleFragmentNumber = Constants.ScreenRedirections.WALLET_SCREEN_S;
     }
 
     /**
@@ -1582,17 +1598,18 @@ public class HomeFragment extends Fragment {
      * {@link AppPreferences#setServerTimeDifference} against Time stamp provided by Server.
      */
     private void forceUpdatedLocationOnDriverStatus() {
-        new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
+        if (Utils.isConnected(getActivity(), false)) {
+            new UserRepository().requestLocationUpdate(DriverApp.getApplication(), new UserDataHandler() {
 
-            @Override
-            public void onLocationUpdate(LocationResponse response) {
+                @Override
+                public void onLocationUpdate(LocationResponse response) {
 
-            }
+                }
 
-            @Override
-            public void onError(int errorCode, String errorMessage) {
-            }
-        }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                @Override
+                public void onError(int errorCode, String errorMessage) {
+                }
+            }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        }
     }
-
 }

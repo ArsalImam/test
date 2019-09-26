@@ -2,9 +2,14 @@ package com.bykea.pk.partner.utils;
 
 
 import com.bykea.pk.partner.BuildConfig;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class Constants {
+    public static final int DIGIT_ZERO = 0;
+    public static final int DIGIT_ONE = 1;
+    public static final int DIGIT_TWO = 2;
+
+
+    public static final String APP = "APP";
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
     public static final String APP_NAME = "BYKEA PARTNER";
@@ -68,6 +73,7 @@ public class Constants {
 
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
+    public static final String EVENT_ACTION_UPDATE_WITHDRAW = "EVENT_ACTION_UPDATE_WITHDRAW";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
@@ -211,11 +217,18 @@ public class Constants {
         public static final String INACTIVE_PUSH_DATA = "INACTIVE_PUSH_DATA";
         public final static String ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL = "ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL";
         public final static String IS_CALLED_FROM_LOADBOARD = "IS_CALLED_FROM_LOADBOARD";
+
+        public static final String RIDE_CREATE_DATA = "RIDE_CREATE_DATA";
+
+        public static final String FROM = "from";
+        public static final String FLOW_FOR = "FLOW_FOR";
+        public static final String OFFLINE_RIDE = "OFFLINE_RIDE";
     }
 
     public static class Broadcast {
         public static final String UPDATE_FOREGROUND_NOTIFICATION = "UPDATE_FOREGROUND_NOTIFICATION";
         public static final String UPDATE_LOADBOARD_BOOKINGS_REQUEST = "UPDATE_LOADBOARD_BOOKINGS_REQUEST";
+        public static final String CHAT_MESSAGE_RECEIVED = "CHAT_MESSAGE_RECEIVED";
     }
 
     public static class Actions {
@@ -271,6 +284,7 @@ public class Constants {
         public final static String ON_SIGN_UP_COMPLETE = "SignupComplete";
         public final static String ON_LOGIN_SUCCESS = "LoginSuccessful";
         public final static String ON_RIDE_COMPLETE = "RideComplete";
+        public final static String ON_PARTNER_LOCATION_UPDATE = "Partner-Pulse";
 
         public final static String ON_LB_SWIPE_UP = EYE_BALL + "LoadBoard-Swipe-Up";
         public final static String ON_LB_REFRESH = EYE_BALL + "LoadBoard-Refreshed";
@@ -281,6 +295,12 @@ public class Constants {
         public final static String ON_LB_PICKUP_DIRECTION = EYE_BALL + "LoadBoard-Direction-Pick";
         public final static String ON_LB_DROPOFF_DIRECTION = EYE_BALL + "LoadBoard-Direction-Drop";
         public final static String ON_LB_BOOKING_ACCEPT = EYE_BALL + "LoadBoard-Booking-Accept";
+
+        public final static String ON_CHAT_TEMPLATE_TAPPED = "Chat-Template";
+
+        public final static String ON_CALL_BUTTON_CLICK = "Call-button-Click";
+        public final static String ON_CALL_BUTTON_CLICK_MOBILE = "Call-button-Click-Mobile";
+        public final static String ON_CALL_BUTTON_CLICK_WHATSAPP = "Call-button-Click-Whatsapp";
 //        public final static String ON_LB_TAKEN = EYE_BALL + "LoadBoard-Taken";
 
 //        public final static String ON_FINISH = EYE_BALL + REPLACE  + "-Finished";//already logged against passenger
@@ -366,6 +386,9 @@ public class Constants {
         public static final String SEND_TITLE = "Delivery";
         public static final int SEND_CODE = 21;
         public static final int SEND_COD_CODE = 22;
+        public static final int RIDE_CODE = 23;
+        public static final int OFFLINE_RIDE = 24;
+        public static final String OFFLINE_RIDE_STRING = "Offline Ride";
 
         public static final String BRING_NAME = "Bring";
         public static final String BRING_TITLE = "Purchase";
@@ -476,7 +499,7 @@ public class Constants {
         public static final int STATUS_CHANGE_DURING_RIDE = 1011;
         public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
         public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
-
+        public static final int ERROR_MSG_CODE = 1050;
     }
 
     /**
@@ -485,10 +508,21 @@ public class Constants {
     public static class ScreenRedirections {
         public static final int PROFILE_SCREEN = 0;
         public static final int HOME_SCREEN = 1;
-        public static final int TRIP_HISTORY_SCREEN = 2;
-        public static final int WALLET_SCREEN = 3;
-        public static final int HOW_IT_WORKS_SCREEN = 4;
-        public static final int CONTACT_US_SCREEN = 5;
+        public static final int OFFLINE_RIDES = 2;
+        public static final int TRIP_HISTORY_SCREEN = 3;
+        public static final int WALLET_SCREEN = 4;
+        public static final int HOW_IT_WORKS_SCREEN = 5;
+        public static final int CONTACT_US_SCREEN = 6;
+        public static final int LOGOUT = 7;
+
+        public static final String PROFILE_SCREEN_S = "PROFILE_SCREEN";
+        public static final String HOME_SCREEN_S = "Home";
+        public static final String OFFLINE_RIDES_S = "Offline Rides";
+        public static final String TRIP_HISTORY_SCREEN_S = "Booking History";
+        public static final String WALLET_SCREEN_S = "Wallet";
+        public static final String HOW_IT_WORKS_SCREEN_S = "How it works";
+        public static final String CONTACT_US_SCREEN_S = "Contact Us";
+        public static final String LOGOUT_S = "LOGOUT";
     }
 
     public static final int MARKER_INCREMENT_FACTOR_DEFAULT = 20;
@@ -517,4 +551,89 @@ public class Constants {
         public static final int EVENT_MAX_STRING_VALUES = 10;
         public static final int EVENT_MAX_NUMERIC_VALUES = 40;
     }
+
+    /**
+     * Zendesk SDK Configurations
+     */
+    public static class ZendeskConfigurations {
+        //OLD KEYS
+        /*public static String SUBDOMAIN_URL = "https://bykea-help.zendesk.com";
+        public static String APPLICATION_ID = "fb44d30b787144a79589dd8e89080daa46458dbff84d92ef";
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_67c82b4799db889e3113";*/
+
+        //PROD KEYS
+        public static String SUBDOMAIN_URL = "https://bykea.zendesk.com";
+        public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
+        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
+
+        public static long ZENDESK_SETTING_IDENTITY_MAX_TIME = 10 * 1000;//2.5 Minutes
+        public static long ZENDESK_SETTING_IDENTITY_INTERVAL_TIME = 100;//0.1 Second
+
+    }
+
+    /**
+     * Zendesk Custom Fields
+     */
+    public static class ZendeskCustomFields {
+        public static long Assignee = 360020675574L;
+        public static long Booking_ID = 360023253253L;
+        public static long Booking_Type = 360023253273L;
+        public static long Cancellation_Reason = 360023253733L;
+        public static long Cancelled_by = 360023230954L;
+        public static long COD_Amount = 360023253373L;
+        public static long Customer_Name = 360023230174L;
+        public static long Customer_Number = 360023253053L;
+        public static long Customer_Penalty_Amount = 360023231274L;
+        public static long Description = 360020675474L;
+        public static long Distance_to_Pickup = 360023254053L;
+        public static long Group = 360020675554L;
+        public static long Last_Trip_Status = 360023230914L;
+        public static long Parcel_Value = 360023253293L;
+        public static long Partner_Email = 360023230334L;
+        public static long Partner_Name = 360023253073L;
+        public static long Partner_Number = 360023253093L;
+        public static long Partner_Penalty_Amount = 360023231434L;
+        public static long Priority = 360020675534L;
+        public static long Problem_Topic_Selected = 360023230514L;
+        public static long Received_Amount = 360023230934L;
+        public static long Receivers_Name = 360023230674L;
+        public static long Receivers_Number = 360023253353L;
+        public static long Status = 360020675494L;
+        public static long Subject = 360020675454L;
+        public static long Trip_Distance = 360023253553L;
+        public static long Trip_End_Address = 360023253573L;
+        public static long Trip_Fare = 360023230694L;
+        public static long Trip_Start_Address = 360023230894L;
+        public static long Trip_Time = 360023230854L;
+        public static long Type = 360020675514L;
+        public static long Wait_Time = 360023230974L;
+        public static long Wallet_Deduction = 360023253753L;
+    }
+
+    public static class ZendeskTicketStatus {
+        public static String New = "New";
+        public static String Open = "Open";
+        public static String Pending = "Pending";
+        public static String Solved = "Solved";
+    }
+
+    public static final String INTENT_TRIP_HISTORY_DATA = "TRIP_HISTORY_DATA";
+    public final static String REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a";
+
+    public static String WHATSAPP_URI_PREFIX = "https://wa.me/";
+
+    public static class ApplicationsPackageName {
+        public static String WHATSAPP_PACKAGE = "com.whatsapp";
+    }
+
+    public static final String TRANSALATION_SEPERATOR = "///";
+
+    //ON PAGE FINISHED IS TAKING TIME, SO USE THIS. IN WHICH USER CAN GET SOMEHOW SOMETHING IS START TO APPEARS
+    public final static long DIMISS_DIALOG_WEBVIEW_LOADING = 3 * 1000;
+
+    public final static int PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK = 50;
+    public final static int PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK = 500;
+    public final static int AMOUNT_LIMIT = 35000;
+
+    public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
 }

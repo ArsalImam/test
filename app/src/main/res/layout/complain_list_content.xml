@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="zendesk.support.Request" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:id="@+id/llTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginLeft="@dimen/_12sdp"
+            android:layout_toStartOf="@+id/ivRight"
+            android:layout_toLeftOf="@+id/ivRight"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/_16sdp"
+            android:paddingBottom="@dimen/_16sdp"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:id="@+id/llLeft"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tVTripNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@{item.subject}"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="bold"
+                    app:fontName="roboto_bold.ttf"
+                    tools:text="KHI1602092092" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tVIssueDateTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:dateFormat="@{item.createdAt}"
+                    app:fontName="roboto_light.ttf"
+                    tools:text="24 Jun, 10:53 PM" />
+            </LinearLayout>
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tVReason"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                app:ticketStatus="@{item.status.toString()}"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf"
+                tools:text="@string/issue_no" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginRight="@dimen/_12sdp"
+            android:src="@drawable/right_arrow_history" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_below="@+id/llTop"
+            android:background="@color/divider" />
+    </RelativeLayout>
+
+</layout>

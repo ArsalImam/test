@@ -887,7 +887,7 @@ public class LocationService extends Service {
                     break;
                 }
                 default:
-                    Utils.appToast(this, locationResponse.getMessage());
+                    Utils.appToast(locationResponse.getMessage());
             }
         }
 

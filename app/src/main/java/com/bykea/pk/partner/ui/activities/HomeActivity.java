@@ -30,9 +30,11 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.fragments.DataSaverDialogFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
+import com.bykea.pk.partner.ui.fragments.WalletFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.NavDrawerAdapter;
+import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -44,8 +46,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 public class HomeActivity extends BaseActivity {
 
@@ -54,9 +62,10 @@ public class HomeActivity extends BaseActivity {
     private HomeActivity mCurrentActivity;
     public String navTitles[];
     public String navIcons[];
+    public String navDrawerNewText[];
     public NavDrawerAdapter recyclerViewAdapter;
     public ActionBarDrawerToggle drawerToggle;
-    public static int visibleFragmentNumber = 1;
+    public static String visibleFragmentNumber = HOME_SCREEN_S;
     private EventBus mBus = EventBus.getDefault();
     private PilotData pilotData;
     private UserRepository mUserRepository;
@@ -98,6 +107,9 @@ public class HomeActivity extends BaseActivity {
         mUserRepository = new UserRepository();
         pilotData = AppPreferences.getPilotData();
         setToolbarLogo();
+
+        Utils.setZendeskIdentity();
+
         initViews();
         setupDrawerToggle();
         Utils.unlockScreen(this);
@@ -116,7 +128,6 @@ public class HomeActivity extends BaseActivity {
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
 
         Notifications.clearNotifications(mCurrentActivity);
-//        Utils.setMixPanelUserId(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
         Utils.clearSharedPrefIfDirty(mCurrentActivity);
     }
@@ -131,6 +142,11 @@ public class HomeActivity extends BaseActivity {
                 Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
             else {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+            }
+        } else if (requestCode == WithdrawalActivity.REQ_CODE_WITH_DRAW) {
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
+            if (currentFragment instanceof WalletFragment) {
+                ((WalletFragment) currentFragment).updateHistory();
             }
         }
     }
@@ -174,11 +190,12 @@ public class HomeActivity extends BaseActivity {
             if (bottomSheetBehavior != null && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             } else {
-                if (visibleFragmentNumber == 1) {
+                if (visibleFragmentNumber.equals(HOME_SCREEN_S)) {
                     super.onBackPressed();
                 } else {
 
-                    if (visibleFragmentNumber == 3) showToolbar();
+                    if (visibleFragmentNumber.equals(Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S))
+                        showToolbar();
                     //Add the Very First i.e Squad Fragment to the Container
                     showHomeFragment();
                 }
@@ -197,7 +214,7 @@ public class HomeActivity extends BaseActivity {
         fragmentTransaction.replace(R.id.containerView, homeFragment, null);
         fragmentTransaction.commit();
         recyclerViewAdapter.notifyDataSetChanged();
-        visibleFragmentNumber = 1;
+        visibleFragmentNumber = HOME_SCREEN_S;
     }
 
     @Override
@@ -209,13 +226,28 @@ public class HomeActivity extends BaseActivity {
     private void initViews() {
         Utils.keepScreenOn(mCurrentActivity);
 
-        visibleFragmentNumber = 1;//FOR NAVIGATION DRAWER FRAGMENT
+        visibleFragmentNumber = HOME_SCREEN_S;//FOR NAVIGATION DRAWER FRAGMENT
 
         //Setup Titles and Icons of Navigation Drawer
         navTitles = getResources().getStringArray(R.array.navDrawerItems);
         navIcons = getResources().getStringArray(R.array.navDrawerIcons);
+        navDrawerNewText = getResources().getStringArray(R.array.navDrawerNewText);
 
-        recyclerViewAdapter = new NavDrawerAdapter(navTitles, navIcons, mCurrentActivity);
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                !AppPreferences.getSettings().getSettings().getOfflineRideDisplay()) {
+
+            List<String> titlesEnglishList = new ArrayList<>(Arrays.asList(navTitles));
+            List<String> titlesUrduList = new ArrayList<>(Arrays.asList(navIcons));
+            List<String> newLabelToShowList = new ArrayList<>(Arrays.asList(navDrawerNewText));
+
+            Utils.removeOrHideItemFromNavigationDrawerList(Constants.ScreenRedirections.OFFLINE_RIDES_S, titlesEnglishList, titlesUrduList, newLabelToShowList);
+
+            navTitles = titlesEnglishList.toArray(new String[0]);
+            navIcons = titlesUrduList.toArray(new String[0]);
+            navDrawerNewText = newLabelToShowList.toArray(new String[0]);
+        }
+
+        recyclerViewAdapter = new NavDrawerAdapter(navTitles, navIcons, navDrawerNewText, mCurrentActivity);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -316,6 +348,7 @@ public class HomeActivity extends BaseActivity {
 
         }
     }
+
 
     /**
      * This method handles new intent when activity is started with Intent.FLAG_ACTIVITY_CLEAR_TOP.

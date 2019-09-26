@@ -42,10 +42,12 @@ import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Pair;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -77,6 +79,7 @@ import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
@@ -112,6 +115,7 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.picasso.Callback;
@@ -152,9 +156,14 @@ import javax.net.ssl.TrustManagerFactory;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
+import zendesk.core.JwtIdentity;
+import zendesk.core.Zendesk;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
+import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 
 public class Utils {
@@ -192,10 +201,10 @@ public class Utils {
         }
     }
 
-    public static void appToastDebug(Context context, String message) {
+    public static void appToastDebug(String message) {
         if (BuildConfig.DEBUG) {
             try {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                appToast(message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -217,16 +226,15 @@ public class Utils {
     /**
      * Show application toast
      *
-     * @param context Holding the reference of an activity.
      * @param message The message that will display in toast.
      */
-    public static void appToast(final Context context, final String message) {
+    public static void appToast(final String message) {
         try {
             if (StringUtils.isNotBlank(message)) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DriverApp.getContext(), message, Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -348,7 +356,7 @@ public class Utils {
     public static void logout(Context context) {
         clearData(context);
         AppPreferences.clearLoadboardSelectedZoneData();
-        HomeActivity.visibleFragmentNumber = 0;
+        HomeActivity.visibleFragmentNumber = HOME_SCREEN_S;
         //ActivityStackManager.getInstance().startLoginActivity(context);
         ActivityStackManager.getInstance().startLandingActivity(context);
         ((Activity) context).finish();
@@ -886,7 +894,7 @@ public class Utils {
         try {
             context.startActivity(Intent.createChooser(i, "Send mail..."));
         } catch (ActivityNotFoundException ex) {
-            Toast.makeText(context, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+            appToast("There are no email clients installed.");
         }
     }
 
@@ -906,7 +914,7 @@ public class Utils {
     public static void hideSoftKeyboard(Fragment fragment) {
         try {
             final InputMethodManager imm = (InputMethodManager) fragment.getActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    .getSystemService(INPUT_METHOD_SERVICE);
             if (imm != null && fragment.getView() != null) {
                 imm.hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
             }
@@ -918,7 +926,7 @@ public class Utils {
     public static void hideKeyboard(Activity context) {
         View view = context.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
@@ -967,7 +975,7 @@ public class Utils {
         try {
             context.startActivity(sendIntent);
         } catch (ActivityNotFoundException ex) {
-            Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
+            appToastDebug("WhatsApp is not installed.");
         }
     }
 
@@ -988,7 +996,7 @@ public class Utils {
         try {
             context.startActivity(sendIntent);
         } catch (ActivityNotFoundException ex) {
-            Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show();
+            appToast("WhatsApp is not installed.");
         }
     }
 
@@ -1050,7 +1058,7 @@ public class Utils {
         return Math.round(level);
     }
 
-    public static String getDeviceId(Context context) {
+    public static String getImei(Context context) {
         String identifier = StringUtils.EMPTY;
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null)
@@ -1806,7 +1814,8 @@ public class Utils {
         FirebaseAnalytics.getInstance(context).setUserProperty("driver_id", AppPreferences.getPilotData().getId());
 
         // SET PASSENGER_ID AS USER PROPERTY WHEN USER_ID IS NOT EQUALS TO DRIVER_ID
-        if (!userId.equals(AppPreferences.getPilotData().getId()))
+        if (StringUtils.isNotEmpty(userId) && StringUtils.isNotEmpty(AppPreferences.getPilotData().getId()) &&
+                !userId.equals(AppPreferences.getPilotData().getId()))
             FirebaseAnalytics.getInstance(context).setUserProperty("passenger_id", userId);
 
         FirebaseAnalytics.getInstance(context).setUserProperty("cash_in_hand", String.valueOf(AppPreferences.getCashInHands()));
@@ -1832,7 +1841,7 @@ public class Utils {
                 if (intent.resolveActivityInfo(context.getPackageManager(), 0) != null) {
                     context.startActivity(intent);
                 } else {
-                    Utils.appToast(DriverApp.getContext(), DriverApp.getContext().getString(R.string.no_browser_found_error));
+                    Utils.appToast(DriverApp.getContext().getString(R.string.no_browser_found_error));
                 }
             }
         }
@@ -2020,6 +2029,21 @@ public class Utils {
                 || StringUtils.containsIgnoreCase(callType, "NOD");
     }
 
+    /**
+     * Checks if call type is among modern services
+     *
+     * @param serviceCode Service Code
+     * @return Either modern service or not
+     */
+    public static boolean isModernService(Integer serviceCode) {
+        return serviceCode != null
+                && (serviceCode == Constants.ServiceType.SEND_CODE
+                || serviceCode == Constants.ServiceType.SEND_COD_CODE
+                || serviceCode == Constants.ServiceType.RIDE_CODE
+                || serviceCode == Constants.ServiceType.OFFLINE_RIDE
+        );
+    }
+
     public static boolean isRideService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "Ride");
     }
@@ -2112,6 +2136,7 @@ public class Utils {
      * @param callData Call data
      * @return Resource id of service icon image
      */
+    @Deprecated
     public static Integer getServiceIcon(NormalCallData callData) {
         String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
         switch (callType) {
@@ -2167,6 +2192,7 @@ public class Utils {
         }
     }
 
+    @Deprecated
     public static String getServiceIcon(String serviceName) {
         String icon = StringUtils.EMPTY;
         ArrayList<VehicleListData> mList =
@@ -2199,7 +2225,7 @@ public class Utils {
             return true;
         } else {
             if (showToast) {
-                appToast(context, context.getString(R.string.error_internet_connectivity));
+                appToast(context.getString(R.string.error_internet_connectivity));
             }
             return false;
         }
@@ -2414,7 +2440,7 @@ public class Utils {
                     errorReason.getErrorDialog(context, 1).show();
                 } else {
                     String errorMessage = errorReason.toString();
-                    Utils.appToast(context, errorMessage);
+                    Utils.appToast(errorMessage);
                 }
             }
         });
@@ -2476,7 +2502,7 @@ public class Utils {
                     errorReason.getErrorDialog(context, 1).show();
                 } else {
                     String errorMessage = errorReason.toString();
-                    Utils.appToast(context, errorMessage);
+                    Utils.appToast(errorMessage);
                 }
             }
         });
@@ -3038,6 +3064,10 @@ public class Utils {
             return new Gson().fromJson(response.errorBody().string(), type);
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -3094,7 +3124,7 @@ public class Utils {
             mapIntent.setPackage("com.google.android.apps.maps");
             context.startActivity(mapIntent);
         } catch (Exception ex) {
-            Utils.appToast(context, context.getString(R.string.google_maps_missing_error));
+            Utils.appToast(context.getString(R.string.google_maps_missing_error));
         }
 
     }
@@ -3184,6 +3214,16 @@ public class Utils {
         return context.getResources().getStringArray(R.array.delivery_messages);
     }
 
+    /**
+     * Get Ride Complain Reasons List.
+     *
+     * @param context : Calling Activity
+     * @return
+     */
+    public static String[] getRideComplainReasonsList(Context context) {
+        return context.getResources().getStringArray(R.array.ride_complain_reasons);
+    }
+
     //endregion
 
 
@@ -3215,4 +3255,186 @@ public class Utils {
         return format.format(ts);
     }
 
+    /**
+     * Get the Android ID of current device
+     *
+     * @param context App Context
+     * @return Android ID
+     */
+    public static String getDeviceId(Context context) {
+        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    /**
+     * Setup Zendesk Identity - For JWT Authorization
+     */
+    public static void setZendeskIdentity() {
+        Zendesk.INSTANCE.setIdentity(new JwtIdentity(AppPreferences.getDriverId()));
+    }
+
+    /**
+     * Add DD Property (True/False)
+     *
+     * @param jsonObject : JSONObject To Add Priority
+     */
+    public static void addDriverDestinationProperty(JSONObject jsonObject) {
+        try {
+            if (AppPreferences.getDriverDestination() != null)
+                jsonObject.put("DD", true);
+            else
+                jsonObject.put("DD", false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * @param context : Calling Activity
+     * @param uri     : Package
+     * @return If Application Is Installed Return True Else False
+     */
+    public static boolean isAppInstalledWithPackageName(Context context, String uri) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Chat Messages in Urdu
+     *
+     * @return List Of Chat Message In Urdu
+     */
+    public static String[] getChatMessageInUrdu(Context context) {
+        return context.getResources().getStringArray(R.array.chat_messages_urdu);
+    }
+
+    /**
+     * Chat Messages in English
+     *
+     * @return List Of Chat Message In English
+     */
+    public static String[] getChatMessageInEnglish(Context context) {
+        return context.getResources().getStringArray(R.array.chat_messages_english);
+    }
+
+    /**
+     * @param context Calling Context
+     * @return List Of ChatMessages With English Urdu Transalations
+     */
+    public static ArrayList<ChatMessagesTranslated> getAllChatMessageTranslated(Context context) {
+        ArrayList<ChatMessagesTranslated> chatMessagesTranslateds = new ArrayList<>();
+        String[] chatMessageInEnglish = Utils.getChatMessageInEnglish(context);
+        String[] chatMessageInUrdu = Utils.getChatMessageInUrdu(context);
+
+        for (int i = 0; i < chatMessageInEnglish.length; i++) {
+            if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish[i], chatMessageInUrdu[i]));
+        }
+        return chatMessagesTranslateds;
+    }
+
+    /**
+     * @param chatMessageInUrdu       Text to Match
+     * @param chatMessagesTranslateds List From Which To Match
+     * @return If text matches return the english transalation against it.
+     */
+    public static Pair<Boolean, String> getTranslationIfExists(String chatMessageInUrdu, ArrayList<ChatMessagesTranslated> chatMessagesTranslateds) {
+        for (ChatMessagesTranslated chatMessagesTranslated : chatMessagesTranslateds) {
+            if (chatMessagesTranslated.getChatMessageInUrdu().contains(chatMessageInUrdu))
+                return new Pair<>(true, chatMessagesTranslated.getChatMessageInEnglish());
+        }
+        return new Pair<>(false, StringUtils.EMPTY);
+    }
+
+    /**
+     * @param chatMessagesTranslated Object Containing English and Urdu Value
+     * @return
+     */
+    public static String getConcatenatedTransalation(ChatMessagesTranslated chatMessagesTranslated) {
+        return chatMessagesTranslated.getChatMessageInUrdu() + TRANSALATION_SEPERATOR + chatMessagesTranslated.getChatMessageInEnglish();
+    }
+
+    /**
+     * Shows the soft keyboard
+     */
+    public static void showSoftKeyboard(Context context, View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        view.requestFocus();
+        inputMethodManager.showSoftInput(view, 0);
+    }
+
+    /**
+     * Get String Value After Applying HTML
+     *
+     * @param html
+     * @return String : After Applying HTML to String.
+     */
+    public static String getTextFromHTML(String html) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return String.valueOf(Html.fromHtml(html));
+        } else {
+            return String.valueOf(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
+        }
+    }
+
+    /**
+     * Set ImageView Drawable
+     *
+     * @param imageView : ImageView
+     * @param drawable  : Drawable Id
+     */
+    public static void setImageDrawable(ImageView imageView, int drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(drawable, null));
+        } else {
+            imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(drawable));
+        }
+    }
+
+    /**
+     * Remove Navigation Drawer List Item
+     */
+    public static void removeOrHideItemFromNavigationDrawerList(String itemToRemove, List<String> titlesEnglish, List<String> titlesUrdu, List<String> newLabelToShow) {
+        int position = -1;
+        for (int i = 0; i < titlesEnglish.size(); i++) {
+            if (titlesEnglish.get(i).contains(itemToRemove)) {
+                position = i;
+                break;
+            }
+        }
+
+        if (position != -1) {
+            titlesEnglish.remove(position);
+            titlesUrdu.remove(position);
+            newLabelToShow.remove(position);
+        }
+    }
+
+    /**
+     * Generate firebase event for the synergy of calling.
+     *
+     * @param context   : Calling Context
+     * @param callData  : Current Trip Model Deta
+     * @param eventName : Firebase Event Name
+     */
+    public static void generateFirebaseEventForCalling(Context context, NormalCallData callData, String eventName) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("lat", AppPreferences.getLatitude());
+            jsonObject.put("lng", AppPreferences.getLongitude());
+            jsonObject.put("whatsapp_installed", Utils.isAppInstalledWithPackageName(context, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE));
+            if (callData != null) {
+                jsonObject.put("category", callData.getServiceCode());
+                jsonObject.put("booking_id", callData.getTripId());
+                Utils.logEvent(context, callData.getPassId(), eventName, jsonObject, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

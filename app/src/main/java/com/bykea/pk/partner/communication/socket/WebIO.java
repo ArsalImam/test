@@ -60,7 +60,6 @@ public class WebIO {
 
     private WebIO() {
         try {
-
             IO.Options options = new IO.Options();
             options.query = getConnectionString();
             options.timeout = 15 * 1000;

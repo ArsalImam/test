@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+
 import androidx.annotation.Nullable;
 
 import com.bykea.pk.partner.Notifications;
@@ -145,8 +146,10 @@ public class HandleInactivePushService extends Service {
                     //countDownTimer.cancel();
                     //countDownTimer.start();
                     isCountDownTimerRunning = true;
-                    mUserRepository.requestLocationUpdate(mContext, responseHandler,
-                            AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                    if (Utils.isConnected(this, false)) {
+                        mUserRepository.requestLocationUpdate(mContext, responseHandler,
+                                AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                    }
                    /* new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
@@ -190,7 +193,7 @@ public class HandleInactivePushService extends Service {
                 AppPreferences.setDriverOfflineForcefully(false);
                 AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
                 ActivityStackManager.getInstance().restartLocationService(mContext);
-            }else{
+            } else {
                 handleLocationErrorUseCase(response);
             }
         }
@@ -211,7 +214,7 @@ public class HandleInactivePushService extends Service {
         if (locationResponse != null) {
             switch (locationResponse.getCode()) {
                 case Constants.ApiError.BUSINESS_LOGIC_ERROR: {
-                    Utils.handleLocationBusinessLogicErrors(mBus,locationResponse);
+                    Utils.handleLocationBusinessLogicErrors(mBus, locationResponse);
                     break;
                 }
                 //TODO Will update unauthorized check on error callback when API team adds 401 status code in their middle layer.
@@ -220,7 +223,7 @@ public class HandleInactivePushService extends Service {
                     break;
                 }
                 default:
-                    Utils.appToast(this, locationResponse.getMessage());
+                    Utils.appToast(locationResponse.getMessage());
             }
         }
 

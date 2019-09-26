@@ -37,9 +37,9 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_5sdp"
                         android:layout_marginTop="@dimen/_6sdp"
                         android:layout_marginRight="@dimen/_8sdp"
-                        android:layout_marginLeft="@dimen/_5sdp"
                         android:background="@color/blue_light"
                         android:paddingLeft="@dimen/_5sdp"
                         android:paddingTop="@dimen/_5sdp"
@@ -110,8 +110,8 @@
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:maxLines="1"
                         android:gravity="center_vertical"
+                        android:maxLines="1"
                         android:textAllCaps="false"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="@dimen/_12sdp"
@@ -251,9 +251,9 @@
                     android:layout_width="@dimen/_36sdp"
                     android:layout_height="@dimen/_36sdp"
                     android:layout_marginRight="@dimen/_2sdp"
-                    android:padding="@dimen/_4sdp"
-                    app:srcCompat="@drawable/ic_call_icon" />
-
+                    android:padding="@dimen/_3sdp"
+                    app:srcCompat="@drawable/ic_user" />
+                <!--app:srcCompat="@drawable/ic_call_icon"-->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -266,11 +266,11 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:maxLines="1"
-                        tools:text="Sajid"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_10sdp"
                         android:visibility="visible"
-                        app:fontName="roboto_regular.ttf" />
+                        app:fontName="roboto_regular.ttf"
+                        tools:text="Sajid" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -300,12 +300,33 @@
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/chatBtn"
-                    android:layout_width="@dimen/_36sdp"
-                    android:layout_height="@dimen/_36sdp"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/voice_icon" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/chatBtn"
+                        android:layout_width="@dimen/_36sdp"
+                        android:layout_height="@dimen/_36sdp"
+                        android:padding="@dimen/_3sdp"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_chat_msg" />
+
+                    <TextView
+                        android:id="@+id/cartBadge"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="right"
+                        android:background="@drawable/bg_notification_badge"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:visibility="gone" />
+                </FrameLayout>
 
             </LinearLayout>
 
@@ -589,8 +610,7 @@
 
         </LinearLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cvLocation"
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/cvDirections"
@@ -598,18 +618,44 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/_28sdp"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_marginRight="@dimen/_8sdp"
-            android:background="@color/white"
-            app:cardCornerRadius="@dimen/_2sdp"
-            app:cardElevation="@dimen/_4sdp">
+            android:layout_marginRight="@dimen/_8sdp">
 
-            <ImageView
-                android:id="@+id/currentLocIv"
-                android:layout_width="@dimen/_38sdp"
-                android:layout_height="@dimen/_38sdp"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/location_icon" />
-        </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:cardCornerRadius="@dimen/_2sdp"
+                app:cardElevation="@dimen/_4sdp">
+
+                <ImageView
+                    android:id="@+id/currentLocIv"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="@dimen/_38sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/location_icon" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvRouteView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:visibility="gone"
+                app:cardCornerRadius="@dimen/_2sdp"
+                app:cardElevation="@dimen/_4sdp">
+
+                <ImageView
+                    android:id="@+id/ivRouteView"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="@dimen/_38sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_active_booking_track_view" />
+
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cvDirections"

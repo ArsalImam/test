@@ -5,19 +5,16 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- <uses-permission android:name="android.permission.CALL_PHONE" /> -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- <uses-permission android:name="android.permission.CALL_PHONE" /> -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" /> -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" /> -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <!-- To start location service on mobile restart -->
+    <uses-permission android:name="android.permission.VIBRATE" /> <!-- To start location service on mobile restart -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
@@ -25,9 +22,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-    <uses-feature android:name="android.hardware.location.gps" />
-    <!-- <uses-feature android:glEsVersion="0x00030001" /> -->
-
+    <uses-feature android:name="android.hardware.location.gps" /> <!-- <uses-feature android:glEsVersion="0x00030001" /> -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
 
@@ -42,8 +37,10 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-
-        <!-- OTP SMS onLoadBoardListFragmentInteractionListener-->
+        <activity
+            android:name=".ui.activities.RideCodeVerificationActivity"
+            android:launchMode="singleTop" />
+        <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">
@@ -57,11 +54,12 @@
             android:theme="@style/NewTheme" />
         <activity
             android:name=".ui.activities.HomeActivity"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
             android:exported="true"
+            android:windowSoftInputMode="adjustResize"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
         <activity android:name=".ui.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -71,20 +69,26 @@
         </activity>
         <activity android:name=".ui.activities.BaseActivity" />
         <activity
-            android:name=".ui.activities.CallingActivity"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
+            android:name=".ui.calling.CallingActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.Base" />
-
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Base"
+            android:turnScreenOn="true" />
         <activity
-            android:name=".ui.activities.MultiDeliveryCallingActivity"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
+            android:name=".ui.calling.JobCallActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.Base" />
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Base"
+            android:turnScreenOn="true" />
+        <activity
+            android:name=".ui.calling.MultiDeliveryCallingActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Base"
+            android:turnScreenOn="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -116,15 +120,13 @@
             android:name=".services.LocationService"
             android:enabled="true"
             android:exported="false" />
-
         <service android:name=".services.HandleInactivePushService" />
 
         <activity
             android:name=".ui.activities.BookingActivity"
             android:excludeFromRecents="false"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated" />
-        <activity android:name=".ui.activities.FeedbackActivity" />
-        <!-- CROPPING ACTIVITY -->
+        <activity android:name=".ui.activities.FeedbackActivity" /> <!-- CROPPING ACTIVITY -->
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
@@ -142,19 +144,15 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-
-        <!-- Firebase Notifications -->
+        </receiver> <!-- Firebase Notifications -->
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:name=".services.DriverETAService"
-            android:exported="false"/>
-
+            android:exported="false" />
         <service
             android:name=".services.OneSignalNotificationExtenderService"
             android:exported="false"
@@ -166,16 +164,35 @@
 
         <activity
             android:name=".ui.activities.ChatActivityNew"
-            android:launchMode="singleTask" />
-        <activity android:name=".ui.activities.PersonalActivity" />
-        <activity android:name=".ui.activities.LicenseActivity" />
-        <activity android:name=".ui.activities.PostBankAccountActivity" />
-        <activity android:name=".ui.activities.ScannFingerPrintsActivity" />
-        <activity android:name=".ui.activities.JsBankFingerSelectionActivity" />
-        <activity android:name=".ui.activities.MotorbikeActivity" />
-        <activity android:name=".ui.activities.BanksAccountActivity" />
-        <activity android:name=".ui.activities.BanksDetailsActivity" />
-        <activity android:name=".ui.activities.PaymentRequestActivity" />
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ui.activities.PersonalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.LicenseActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.PostBankAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.ScannFingerPrintsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.JsBankFingerSelectionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.MotorbikeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.BanksAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.BanksDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.PaymentRequestActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.MyPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
@@ -191,13 +208,18 @@
         <activity
             android:name=".ui.activities.ConfirmDropOffAddressActivity"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated" />
-        <activity android:name=".ui.activities.ProblemActivity" />
-        <activity android:name=".ui.activities.PostProblemActivity" />
-        <activity android:name=".ui.activities.ReportActivity" />
-        <activity android:name=".ui.activities.ReportPostActivity" />
-        <activity android:name=".ui.activities.ForgotPasswordActivity" />
-        <activity android:name=".ui.activities.SelectPlaceActivity" />
-        <activity android:name=".ui.activities.SavePlaceActivity" />
+        <activity
+            android:name=".ui.activities.PostProblemActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.ForgotPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.SelectPlaceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.SavePlaceActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.RegistrationActivity"
             android:theme="@style/NewTheme" />
@@ -223,26 +245,50 @@
         <activity
             android:name=".ui.activities.DeliveryScheduleDetailActivity"
             android:exported="true" />
-        <activity android:name=".ui.activities.MapDetailsActivity" />
-        <activity android:name=".ui.activities.ShahkarActivity" />
-        <activity android:name=".ui.activities.RankingActivity" />
-        <activity android:name=".ui.activities.NumberVerificationActivity"
+        <activity
+            android:name=".ui.activities.MapDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.ShahkarActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.RankingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.NumberVerificationActivity"
             android:theme="@style/NewTheme" />
-        <activity android:name=".ui.activities.LandingActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activities.MultipleDeliveryBookingActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name=".ui.activities.MultiDeliveryFeedbackActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activities.LandingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.MultipleDeliveryBookingActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.activities.MultiDeliveryFeedbackActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.loadboard.detail.JobRequestDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.complain.ComplaintSubmissionActivity"
+            android:label="@string/title_activity_problem_final"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.complain.ComplaintListActivity"
+            android:label="@string/title_complain_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.complain.ComplainZendeskIdentityActivity" />
+
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".ui.withdraw.WithdrawalActivity"
+            android:theme="@style/NewTheme" />
+        <activity android:name=".ui.withdraw.WithdrawThankyouActivity" />
     </application>
 
 </manifest>

@@ -96,4 +96,21 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="RequestsTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+
+    <style name="TextInputLayoutAppearance" parent="Widget.Design.TextInputLayout">
+        <!-- reference our hint & error styles -->
+        <!--<item name="hintTextAppearance">@style/HintText</item>-->
+        <!--<item name="errorTextAppearance">@style/ErrorText</item>-->
+        <item name="android:textColor">@color/black</item>
+        <!--<item name="android:textColorHint">@color/textColorPerformance</item>-->
+        <!--<item name="colorControlNormal">@color/white</item>-->
+        <item name="colorControlActivated">@color/textColorPerformance</item>
+    </style>
 </resources>

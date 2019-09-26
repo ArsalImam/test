@@ -13,10 +13,9 @@ import com.bykea.pk.partner.dal.util.AppExecutors
  */
 class JobsLocalDataSource private constructor(
         private val appExecutors: AppExecutors,
-        private val jobsDao: JobsDao
-) : JobsDataSource {
+        private val jobsDao: JobsDao) {
 
-    override fun getJobs(callback: JobsDataSource.LoadJobsCallback) {
+    fun getJobs(callback: JobsDataSource.LoadJobsCallback) {
         appExecutors.diskIO.execute {
             val jobRequests = jobsDao.getJobs()
             appExecutors.mainThread.execute {
@@ -30,7 +29,7 @@ class JobsLocalDataSource private constructor(
         }
     }
 
-    override fun getJob(jobId: Long, callback: JobsDataSource.GetJobRequestCallback) {
+    fun getJob(jobId: Long, callback: JobsDataSource.GetJobRequestCallback) {
         appExecutors.diskIO.execute {
             val jobRequest = jobsDao.getJob(jobId)
             appExecutors.mainThread.execute {
@@ -43,35 +42,35 @@ class JobsLocalDataSource private constructor(
         }
     }
 
-    override fun saveJob(job: Job) {
+    fun saveJob(job: Job) {
         appExecutors.diskIO.execute { jobsDao.insert(job) }
     }
 
-    override fun refreshJobRequestList() {
+    fun refreshJobRequestList() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun deleteAllJobRequests() {
+    fun deleteAllJobRequests() {
         appExecutors.diskIO.execute {
             jobsDao.deleteAll()
         }
     }
 
-    override fun deleteJobRequest(jobRequestId: Long) {
+    fun deleteJobRequest(jobRequestId: Long) {
         appExecutors.diskIO.execute {
             jobsDao.delete(jobRequestId)
         }
     }
 
-    override fun acceptJobRequest(jobRequestId: Long, callback: JobsDataSource.AcceptJobRequestCallback) {
+    fun acceptJobRequest(jobRequestId: Long, callback: JobsDataSource.AcceptJobRequestCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.FinishJobCallback) {
+    fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.FinishJobCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun concludeJob(callback: JobsDataSource.ConcludeJobCallback) {
+    fun concludeJob(jobId: String, rate: Int, receivedAmount: Int, callback: JobsDataSource.ConcludeJobCallback, deliveryMessage: String?, deliveryStatus: Boolean?, purchaseAmount: Int?, receiverName: String?, receiverPhone: String?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
