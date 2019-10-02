@@ -14,6 +14,7 @@ import com.bykea.pk.partner.dal.source.socket.payload.JobCall
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.models.response.AcceptCallResponse
 import com.bykea.pk.partner.models.response.FreeDriverResponse
+import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.models.response.RejectCallResponse
 import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.repositories.UserRepository
@@ -274,6 +275,12 @@ class JobCallActivity : BaseActivity() {
                     AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                     AppPreferences.setIsOnTrip(true)
                     AppPreferences.setDeliveryType(Constants.CallType.SINGLE)
+
+                    val callData = NormalCallData()
+                    callData.status = TripStatus.ON_ACCEPT_CALL
+                    callData.tripNo = jobCall.booking_no
+                    AppPreferences.setCallData(callData)
+
                     ActivityStackManager.getInstance().startJobActivity(this@JobCallActivity)
                     stopSound()
                     finishActivity()
