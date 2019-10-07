@@ -2041,6 +2041,7 @@ public class Utils {
                 || serviceCode == Constants.ServiceCode.SEND_COD
                 || serviceCode == Constants.ServiceCode.RIDE
                 || serviceCode == Constants.ServiceCode.OFFLINE_RIDE
+                || serviceCode == Constants.ServiceCode.MART
         );
     }
 
