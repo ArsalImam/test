@@ -163,6 +163,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 
@@ -1210,8 +1211,7 @@ public class Utils {
         return diff >= cancel_time * 60000;
     }
 
-    /*
-        public static ArrayList<PlacesResult> getCities() {
+    /*public static ArrayList<PlacesResult> getCities() {
             PlacesResult rawalpindi = new PlacesResult("Rawalpindi", StringUtils.EMPTY, Constants.rwpLat, Constants.rwpLng);
             PlacesResult lahore = new PlacesResult("Lahore", StringUtils.EMPTY, Constants.lhrLat, Constants.lhrLng);
             PlacesResult karachi = new PlacesResult("Karachi", StringUtils.EMPTY, Constants.khiLat, Constants.khiLng);
@@ -1220,7 +1220,8 @@ public class Utils {
             cities.add(lahore);
             cities.add(karachi);
             return cities;
-        }*/
+    }*/
+
     public static ArrayList<PlacesResult> getCities() {
         ArrayList<PlacesResult> availableCities = AppPreferences.getAvailableCities();
         if (availableCities.size() > 0) {
@@ -2041,7 +2042,7 @@ public class Utils {
                 || serviceCode == Constants.ServiceCode.SEND_COD
                 || serviceCode == Constants.ServiceCode.RIDE
                 || serviceCode == Constants.ServiceCode.OFFLINE_RIDE
-                || serviceCode == Constants.ServiceCode.MART
+                || serviceCode == MART
         );
     }
 
@@ -2054,8 +2055,17 @@ public class Utils {
     }
 
     public static boolean isPurchaseService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Bring")
-                || StringUtils.containsIgnoreCase(callType, "Purchase");
+        return isPurchaseService(callType, -1);
+    }
+
+    public static boolean isPurchaseService(String callType, int serviceCode) {
+        if (serviceCode == -1)
+            return StringUtils.containsIgnoreCase(callType, "Bring")
+                    || StringUtils.containsIgnoreCase(callType, "Purchase");
+        else
+            return StringUtils.containsIgnoreCase(callType, "Bring")
+                    || StringUtils.containsIgnoreCase(callType, "Purchase")
+                    || serviceCode == MART;
     }
 
     public static boolean isValidTopUpAmount(String amount, boolean isCourierType) {

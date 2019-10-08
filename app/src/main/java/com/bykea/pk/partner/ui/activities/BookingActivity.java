@@ -1285,7 +1285,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             ivTopUp.setVisibility(View.INVISIBLE);
         }
 
-        if (Utils.isPurchaseService(callData.getCallType())) {
+        if (Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode())) {
             tvCashWasooliLabel.setText(R.string.kharidari_label);
             if (StringUtils.isNotBlank(callData.getCodAmount())) {
                 tvCodAmount.setText(String.format(getString(R.string.amount_rs), callData.getCodAmount()));
