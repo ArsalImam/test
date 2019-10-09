@@ -2055,11 +2055,11 @@ public class Utils {
     }
 
     public static boolean isPurchaseService(String callType) {
-        return isPurchaseService(callType, -1);
+        return isPurchaseService(callType, null);
     }
 
-    public static boolean isPurchaseService(String callType, int serviceCode) {
-        if (serviceCode == -1)
+    public static boolean isPurchaseService(String callType, Integer serviceCode) {
+        if (serviceCode == null)
             return StringUtils.containsIgnoreCase(callType, "Bring")
                     || StringUtils.containsIgnoreCase(callType, "Purchase");
         else
