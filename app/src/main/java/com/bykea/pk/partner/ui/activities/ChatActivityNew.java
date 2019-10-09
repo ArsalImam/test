@@ -922,7 +922,10 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             @Override
             public void onCallOnPhone() {
                 Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_MOBILE);
-                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                if (callNumber.startsWith("92"))
+                    Utils.callingIntent(mCurrentActivity, Utils.phoneNumberToShow(callNumber));
+                else
+                    Utils.callingIntent(mCurrentActivity, callNumber);
                 dialog.dismiss();
             }
 
@@ -955,6 +958,17 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                         || TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
                     return callData.getReceiverPhone();
                 }
+            } else if (StringUtils.isNotEmpty(callData.getPhoneNo()) && StringUtils.isNotEmpty(callData.getSenderPhone())) {
+                String passengerPhoneNumber = callData.getPhoneNo(), senderPhoneNumber = callData.getSenderPhone();
+                if (passengerPhoneNumber.startsWith("92"))
+                    passengerPhoneNumber = Utils.phoneNumberToShow(callData.getPhoneNo());
+                if (senderPhoneNumber.startsWith("92"))
+                    senderPhoneNumber = Utils.phoneNumberToShow(callData.getSenderPhone());
+
+                if (passengerPhoneNumber.equalsIgnoreCase(senderPhoneNumber))
+                    return passengerPhoneNumber;
+                else
+                    return senderPhoneNumber;
             } else {
                 return callData.getPhoneNo();
             }

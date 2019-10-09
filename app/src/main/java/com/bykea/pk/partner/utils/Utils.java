@@ -163,6 +163,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 
@@ -1210,8 +1211,7 @@ public class Utils {
         return diff >= cancel_time * 60000;
     }
 
-    /*
-        public static ArrayList<PlacesResult> getCities() {
+    /*public static ArrayList<PlacesResult> getCities() {
             PlacesResult rawalpindi = new PlacesResult("Rawalpindi", StringUtils.EMPTY, Constants.rwpLat, Constants.rwpLng);
             PlacesResult lahore = new PlacesResult("Lahore", StringUtils.EMPTY, Constants.lhrLat, Constants.lhrLng);
             PlacesResult karachi = new PlacesResult("Karachi", StringUtils.EMPTY, Constants.khiLat, Constants.khiLng);
@@ -1220,7 +1220,8 @@ public class Utils {
             cities.add(lahore);
             cities.add(karachi);
             return cities;
-        }*/
+    }*/
+
     public static ArrayList<PlacesResult> getCities() {
         ArrayList<PlacesResult> availableCities = AppPreferences.getAvailableCities();
         if (availableCities.size() > 0) {
@@ -2037,10 +2038,11 @@ public class Utils {
      */
     public static boolean isModernService(Integer serviceCode) {
         return serviceCode != null
-                && (serviceCode == Constants.ServiceType.SEND_CODE
-                || serviceCode == Constants.ServiceType.SEND_COD_CODE
-                || serviceCode == Constants.ServiceType.RIDE_CODE
-                || serviceCode == Constants.ServiceType.OFFLINE_RIDE
+                && (serviceCode == Constants.ServiceCode.SEND
+                || serviceCode == Constants.ServiceCode.SEND_COD
+                || serviceCode == Constants.ServiceCode.RIDE
+                || serviceCode == Constants.ServiceCode.OFFLINE_RIDE
+                || serviceCode == MART
         );
     }
 
@@ -2053,8 +2055,17 @@ public class Utils {
     }
 
     public static boolean isPurchaseService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Bring")
-                || StringUtils.containsIgnoreCase(callType, "Purchase");
+        return isPurchaseService(callType, null);
+    }
+
+    public static boolean isPurchaseService(String callType, Integer serviceCode) {
+        if (serviceCode == null)
+            return StringUtils.containsIgnoreCase(callType, "Bring")
+                    || StringUtils.containsIgnoreCase(callType, "Purchase");
+        else
+            return StringUtils.containsIgnoreCase(callType, "Bring")
+                    || StringUtils.containsIgnoreCase(callType, "Purchase")
+                    || serviceCode == MART;
     }
 
     public static boolean isValidTopUpAmount(String amount, boolean isCourierType) {
@@ -2148,6 +2159,7 @@ public class Utils {
                 return R.drawable.bhejdo_no_caption;
             case "bring":
             case "purchase":
+            case "mart":
                 return R.drawable.lay_ao_no_caption;
             case "ride":
                 return R.drawable.ride_right;

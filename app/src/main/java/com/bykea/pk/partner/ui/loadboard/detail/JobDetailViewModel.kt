@@ -18,19 +18,19 @@ import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.maps.model.LatLng
 
 /**
- * The ViewModel used in [BookingDetailFragment].
+ * The ViewModel used in [JobDetailActivity].
  *
  * @Author: Yousuf Sohail
  */
-class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) : ViewModel(), JobsDataSource.GetJobRequestCallback, JobsDataSource.AcceptJobRequestCallback {
+class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel(), JobsDataSource.GetJobRequestCallback, JobsDataSource.AcceptJobRequestCallback {
 
     private val _currentLatLng = MutableLiveData<LatLng>()
     val currentLatLng: LiveData<LatLng>
         get() = _currentLatLng
 
-    private val _booking = MutableLiveData<Job>()
+    private val _job = MutableLiveData<Job>()
     val job: LiveData<Job>
-        get() = _booking
+        get() = _job
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean>
@@ -52,19 +52,19 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
     val snackbarMessage: LiveData<Event<Int>>
         get() = _snackbarText
 
-    val bookingId: Long?
-        get() = _booking.value?.id
+    private val jobId: Long?
+        get() = _job.value?.id
 
 
     /**
      * Start the ViewModel by fetching the [Job] id
      *
-     * @param bookingId [Job.id]
+     * @param jobId [Job.id]
      */
-    fun start(bookingId: Long) {
+    fun start(jobId: Long) {
         _dataLoading.value = true
-        bookingsRepository.getJob(bookingId, this)
-        _currentLatLng.value = LatLng(AppPref.getLat(bookingsRepository.pref), AppPref.getLng(bookingsRepository.pref))
+        jobsRepository.getJob(jobId, this)
+        _currentLatLng.value = LatLng(AppPref.getLat(jobsRepository.pref), AppPref.getLng(jobsRepository.pref))
     }
 
     /**
@@ -72,8 +72,8 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
      *
      */
     fun accept() {
-        bookingId?.let {
-            bookingsRepository.pickJob(it, this)
+        job.value?.let {
+            jobsRepository.pickJob(it, this)
         }
     }
 
@@ -81,7 +81,7 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
      * Refresh by loading the [Job] details all over again
      */
     fun onRefresh() {
-        bookingId?.let { start(it) }
+        jobId?.let { start(it) }
     }
 
     /**
@@ -89,13 +89,13 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
      *
      * @param job Updated [Job] object
      */
-    private fun setBooking(job: Job?) {
-        this._booking.value = job
+    private fun renderDetails(job: Job?) {
+        this._job.value = job
         _isDataAvailable.value = job != null
     }
 
     override fun onJobLoaded(job: Job) {
-        setBooking(job)
+        renderDetails(job)
         _dataLoading.value = false
 
         if (job.isComplete)
@@ -106,7 +106,7 @@ class JobRequestDetailViewModel(private val bookingsRepository: JobsRepository) 
     }
 
     override fun onDataNotAvailable(message: String?) {
-        _booking.value = null
+        _job.value = null
         _dataLoading.value = false
         _isDataAvailable.value = false
     }

@@ -15,7 +15,7 @@ import java.util.*
  *
  * @Author: Yousuf Sohail
  */
-class JobRequestListViewModel internal constructor(private val bookingsRepository: JobsRepository) : ViewModel() {
+class JobListViewModel internal constructor(private val jobsRepository: JobsRepository) : ViewModel() {
 
     private val _items = MutableLiveData<List<Job>>().apply { value = emptyList() }
     val items: LiveData<List<Job>>
@@ -59,7 +59,7 @@ class JobRequestListViewModel internal constructor(private val bookingsRepositor
      *
      */
     fun start() {
-        loadBookings(false)
+        loadBookings()
         isExpended.value = false
     }
 
@@ -68,20 +68,11 @@ class JobRequestListViewModel internal constructor(private val bookingsRepositor
      *
      */
     fun refresh() {
-        loadBookings(true)
+        loadBookings()
     }
 
     /**
-     * Load Booking list from Repository
-     *
-     * @param forceUpdate Pass in true to refresh the data in the [JobsDataSource]
-     */
-    private fun loadBookings(forceUpdate: Boolean) {
-        loadBookings(forceUpdate, true)
-    }
-
-    /**
-     * Open Booking Detail screen. Called by the [JobRequestListAdapter].
+     * Open Booking Detail screen. Called by the [JobListAdapter].
      *
      * @param bookingId [Job] id
      */
@@ -91,26 +82,17 @@ class JobRequestListViewModel internal constructor(private val bookingsRepositor
 
     /**
      * Load Booking list from Repository
-     *
-     * @param forceUpdate   Pass in true to refresh the data in the [JobsDataSource]
-     * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
-    private fun loadBookings(forceUpdate: Boolean, showLoadingUI: Boolean) {
-        if (showLoadingUI) {
-            _dataLoading.value = true
-        }
-        if (forceUpdate) {
-            bookingsRepository.refreshJobRequestList()
-        }
-
-        bookingsRepository.getJobs(object : JobsDataSource.LoadJobsCallback {
+    private fun loadBookings() {
+        _dataLoading.value = true
+        jobsRepository.getJobs(object : JobsDataSource.LoadJobsCallback {
             override fun onJobsLoaded(jobs: List<Job>) {
-                if (showLoadingUI) _dataLoading.value = false
+                _dataLoading.value = false
                 _items.value = ArrayList(jobs)
             }
 
             override fun onDataNotAvailable(errorMsg: String?) {
-                if (showLoadingUI) _dataLoading.value = false
+                _dataLoading.value = false
             }
         })
     }
