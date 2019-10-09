@@ -40,16 +40,16 @@ import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
 import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
+import com.bykea.pk.partner.ui.activities.RideCodeVerificationActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
-import com.bykea.pk.partner.ui.activities.RideCodeVerificationActivity;
 import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.calling.JobCallActivity;
 import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
-import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailActivity;
+import com.bykea.pk.partner.ui.loadboard.detail.JobDetailActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -530,8 +530,8 @@ public class ActivityStackManager {
      * @param bookingId selected booking id
      */
     public void startLoadboardBookingDetailActiivty(Context context, Long bookingId) {
-        Intent intent = new Intent(context, JobRequestDetailActivity.class);
-        intent.putExtra(JobRequestDetailActivity.EXTRA_BOOKING_ID, bookingId);
+        Intent intent = new Intent(context, JobDetailActivity.class);
+        intent.putExtra(JobDetailActivity.EXTRA_BOOKING_ID, bookingId);
         context.startActivity(intent);
     }
 

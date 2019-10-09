@@ -5,7 +5,7 @@ package com.bykea.pk.partner.ui.loadboard.list
  *
  * @author Yousuf Sohail
  */
-interface JobRequestListActionsListener {
+interface JobListActionsListener {
 
     /**
      * On user tap back button to collapse Loadboard bottom sheet

@@ -35,12 +35,6 @@ class JobsRepository(
     var cachedJobs: LinkedHashMap<Long, Job> = LinkedHashMap()
 
     /**
-     * Marks the cache as invalid, to force an update the next time data is requested. This variable
-     * has package local visibility so it can be accessed from tests.
-     */
-    var cacheIsDirty = false
-
-    /**
      * Gets jobRequests from cache, local data source (SQLite) or remote data source, whichever is
      * available first.
      *
@@ -50,29 +44,23 @@ class JobsRepository(
      */
     override fun getJobs(callback: JobsDataSource.LoadJobsCallback) {
 
-        cacheIsDirty = true //Cache disabled
-
-        // Respond immediately with cache if available and not dirty
-        if (cachedJobs.isNotEmpty() && !cacheIsDirty) {
+        if (cachedJobs.isNotEmpty()) {
             callback.onJobsLoaded(ArrayList(cachedJobs.values))
         }
 
-        if (cacheIsDirty) {
-            // If the cache is dirty we need to fetch new data from the network.
-            getJobsFromRemoteDataSource(callback)
-        } else {
-            // Query the local storage if available. If not, query the network.
-            jobsLocalDataSource.getJobs(object : JobsDataSource.LoadJobsCallback {
-                override fun onJobsLoaded(jobs: List<Job>) {
-                    refreshCache(jobs)
-                    callback.onJobsLoaded(ArrayList(cachedJobs.values))
-                }
+        var serviceCode: Int? = null
+        if (!AppPref.getIsCash(pref)) serviceCode = SERVICE_CODE_SEND
 
-                override fun onDataNotAvailable(errorMsg: String?) {
-                    getJobsFromRemoteDataSource(callback)
-                }
-            })
-        }
+        jobsRemoteDataSource.getJobs(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), serviceCode, limit, object : JobsDataSource.LoadJobsCallback {
+            override fun onJobsLoaded(jobs: List<Job>) {
+                callback.onJobsLoaded(jobs)
+                refreshCache(jobs)
+            }
+
+            override fun onDataNotAvailable(errorMsg: String?) {
+                callback.onDataNotAvailable(errorMsg)
+            }
+        })
     }
 
     /**
@@ -85,58 +73,39 @@ class JobsRepository(
      */
     override fun getJob(jobId: Long, callback: JobsDataSource.GetJobRequestCallback) {
 
-        val jobRequestInCache = getJobRequestWithId(jobId)
+        val jobInCache = getJobWithId(jobId)
 
         // Respond immediately with cache if available
-        if (jobRequestInCache != null) {
-            callback.onJobLoaded(jobRequestInCache)
-        }
+        if (jobInCache != null) callback.onJobLoaded(jobInCache)
 
-        if (jobRequestInCache == null || !jobRequestInCache.isComplete) {
-            jobsLocalDataSource.getJob(jobId, object : JobsDataSource.GetJobRequestCallback {
-                override fun onJobLoaded(job: Job) {
-                    if (job.isComplete) {
-                        // Do in memory cache update to keep the app UI up to date
-                        cacheAndPerform(job) {
-                            callback.onJobLoaded(it)
-                        }
-                    } else {
-                        getJobRequestFromRemoteDataSource(jobId, callback)
-                    }
-                }
-
-                override fun onDataNotAvailable(message: String?) {
-                    getJobRequestFromRemoteDataSource(jobId, callback)
-                }
-            })
-        }
+        // Or continue to fetch latest details
+        if (jobInCache == null || !jobInCache.isComplete) getJobFromRemote(jobId, callback)
     }
 
     override fun saveJob(job: Job) {
-        // Do in memory cache update to keep the app UI up to date
-        cacheAndPerform(job) {
-            jobsLocalDataSource.saveJob(it)
-        }
-    }
-
-    override fun refreshJobRequestList() {
-        cacheIsDirty = true
+        jobsLocalDataSource.saveJob(job)
     }
 
     override fun deleteAllJobRequests() {
-//        jobsRemoteDataSource.deleteAllJobRequests()
         jobsLocalDataSource.deleteAllJobRequests()
-        cachedJobs.clear()
     }
 
     override fun deleteJobRequest(jobRequestId: Long) {
-//        jobsRemoteDataSource.deleteJobRequest(jobRequestId)
         jobsLocalDataSource.deleteJobRequest(jobRequestId)
-        cachedJobs.remove(jobRequestId)
     }
 
-    override fun pickJob(jobId: Long, callback: JobsDataSource.AcceptJobRequestCallback) {
-        jobsRemoteDataSource.pickJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    override fun pickJob(job: Job, callback: JobsDataSource.AcceptJobRequestCallback) {
+        jobsRemoteDataSource.pickJob(job.id, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : JobsDataSource.AcceptJobRequestCallback {
+            override fun onJobRequestAccepted() {
+                saveJob(job)
+                callback.onJobRequestAccepted()
+            }
+
+            override fun onJobRequestAcceptFailed(code: Int, message: String?) {
+                callback.onJobRequestAcceptFailed(code, message)
+            }
+
+        })
     }
 
     override fun ackJobCall(jobId: String, callback: JobsDataSource.AckJobCallCallback) {
@@ -181,33 +150,25 @@ class JobsRepository(
         jobsRemoteDataSource.getEmailUpdateRequest(emailId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
-    private fun getJobsFromRemoteDataSource(callback: JobsDataSource.LoadJobsCallback) {
-
-        var serviceCode: Int? = null
-        if (!AppPref.getIsCash(pref)) serviceCode = SERVICE_CODE_SEND
-
-        jobsRemoteDataSource.getJobs(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), serviceCode, limit, object : JobsDataSource.LoadJobsCallback {
-            override fun onJobsLoaded(jobs: List<Job>) {
-                refreshCache(jobs)
-                refreshLocalDataSource(jobs)
-//                EspressoIdlingResource.decrement() // Set app as idle.
-                callback.onJobsLoaded(ArrayList(cachedJobs.values))
-            }
-
-            override fun onDataNotAvailable(errorMsg: String?) {
-//                EspressoIdlingResource.decrement() // Set app as idle.
-                callback.onDataNotAvailable(errorMsg)
-            }
-        })
+    override fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
+        jobsRemoteDataSource.requestFairEstimation(AppPref.getDriverId(pref), AppPref.getAccessToken(pref),
+                startLat, startLng, endLat, endLng, type, rideType, callback)
     }
 
-    private fun getJobRequestFromRemoteDataSource(jobRequestId: Long, callback: JobsDataSource.GetJobRequestCallback) {
+    override fun requestOtpGenerate(phone: String, type: String, callback: JobsDataSource.OtpGenerateCallback) {
+        jobsRemoteDataSource.requestOtpGenerate(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), phone, type, callback)
+    }
+
+    override fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: JobsDataSource.CreateTripCallback) {
+        jobsRemoteDataSource.createTrip(rideCreateRequestObject, callback)
+    }
+
+    private fun getJobFromRemote(jobRequestId: Long, callback: JobsDataSource.GetJobRequestCallback) {
         jobsRemoteDataSource.getJob(jobRequestId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : JobsDataSource.GetJobRequestCallback {
             override fun onJobLoaded(job: Job) {
                 // Do in memory cache update to keep the app UI up to date
                 job.isComplete = true
                 cacheAndPerform(job) {
-                    saveJob(job)
                     callback.onJobLoaded(it)
                 }
             }
@@ -218,7 +179,6 @@ class JobsRepository(
         })
     }
 
-
     /**
      * Delete and save new list of JobRequest list in memory cache
      *
@@ -227,20 +187,7 @@ class JobsRepository(
     private fun refreshCache(jobs: List<Job>) {
         cachedJobs.clear()
         jobs.forEach {
-            cacheAndPerform(it) {}
-        }
-        cacheIsDirty = false
-    }
-
-    /**
-     * Delete and save new list of JobRequest list in local data source
-     *
-     * @param jobs List of [Job] to update
-     */
-    private fun refreshLocalDataSource(jobs: List<Job>) {
-        jobsLocalDataSource.deleteAllJobRequests()
-        for (jobRequest in jobs) {
-            jobsLocalDataSource.saveJob(jobRequest)
+            cachedJobs[it.id] = it
         }
     }
 
@@ -249,7 +196,7 @@ class JobsRepository(
      *
      * @param id JobRequest Id to fetch
      */
-    private fun getJobRequestWithId(id: Long) = cachedJobs[id]
+    private fun getJobWithId(id: Long) = cachedJobs[id]
 
     /**
      * Update cache with [Job] and then perform given task
@@ -292,18 +239,5 @@ class JobsRepository(
         fun destroyInstance() {
             INSTANCE = null
         }
-    }
-
-    override fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
-        jobsRemoteDataSource.requestFairEstimation(AppPref.getDriverId(pref), AppPref.getAccessToken(pref),
-                startLat, startLng, endLat, endLng, type, rideType, callback)
-    }
-
-    override fun requestOtpGenerate(phone: String, type: String, callback: JobsDataSource.OtpGenerateCallback) {
-        jobsRemoteDataSource.requestOtpGenerate(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), phone, type, callback)
-    }
-
-    override fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: JobsDataSource.CreateTripCallback) {
-        jobsRemoteDataSource.createTrip(rideCreateRequestObject,callback)
     }
 }

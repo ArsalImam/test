@@ -12,7 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
-import com.bykea.pk.partner.databinding.JobRequestDetailActBinding
+import com.bykea.pk.partner.databinding.JobDetailActBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.common.setupSnackbar
@@ -32,7 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_confirm_drop_off_address.*
-import kotlinx.android.synthetic.main.job_request_detail_act.*
+import kotlinx.android.synthetic.main.job_detail_act.*
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
@@ -40,10 +40,10 @@ import java.util.*
 /**
  * Loadboard booking detail screen ACTIVITY - opening from homeScreen's loadboard listing items
  */
-class JobRequestDetailActivity : BaseActivity() {
+class JobDetailActivity : BaseActivity() {
 
     private val EARTHRADIUS = 6366198.0
-    private lateinit var binding: JobRequestDetailActBinding
+    private lateinit var binding: JobDetailActBinding
     private var bookingId: Long = 0
     private lateinit var mMediaPlayerHolder: MediaPlayerHolder
     private val mMarkerList = ArrayList<Marker>()
@@ -56,33 +56,33 @@ class JobRequestDetailActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.job_request_detail_act)
+        binding = DataBindingUtil.setContentView(this, R.layout.job_detail_act)
 
-        binding.viewmodel = obtainViewModel(JobRequestDetailViewModel::class.java).apply {
-            view?.setupSnackbar(this@JobRequestDetailActivity, this.snackbarMessage, Snackbar.LENGTH_LONG)
+        binding.viewmodel = obtainViewModel(JobDetailViewModel::class.java).apply {
+            view?.setupSnackbar(this@JobDetailActivity, this.snackbarMessage, Snackbar.LENGTH_LONG)
 
-            dataLoading.observe(this@JobRequestDetailActivity, Observer {
-                if (it) Dialogs.INSTANCE.showLoader(this@JobRequestDetailActivity)
+            dataLoading.observe(this@JobDetailActivity, Observer {
+                if (it) Dialogs.INSTANCE.showLoader(this@JobDetailActivity)
                 else Dialogs.INSTANCE.dismissDialog()
             })
 
-            acceptBookingCommand.observe(this@JobRequestDetailActivity, Observer {
-                Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+            acceptBookingCommand.observe(this@JobDetailActivity, Observer {
+                Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT,
                         AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, job.value),
                         true)
-                ActivityStackManager.getInstance().startJobActivity(this@JobRequestDetailActivity, false)
+                ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
             })
 
-            bookingTakenCommand.observe(this@JobRequestDetailActivity, Observer {
+            bookingTakenCommand.observe(this@JobDetailActivity, Observer {
                 Dialogs.INSTANCE
-                        .showAlertDialogTick(this@JobRequestDetailActivity,
-                                this@JobRequestDetailActivity.resources.getString(R.string.booking_already_taken_title),
-                                this@JobRequestDetailActivity.resources.getString(R.string.booking_already_taken_msg)
+                        .showAlertDialogTick(this@JobDetailActivity,
+                                this@JobDetailActivity.resources.getString(R.string.booking_already_taken_title),
+                                this@JobDetailActivity.resources.getString(R.string.booking_already_taken_msg)
                         ) { finish() }
             })
         }
-        binding.listener = object : JobRequestDetailActionsListener {
+        binding.listener = object : JobDetailActionsListener {
             override fun onPlayAudio(url: String?) {
                 if (url != null) {
                     voiceClipPlayDownload(url)
@@ -102,17 +102,17 @@ class JobRequestDetailActivity : BaseActivity() {
 
             override fun onNavigateToMap(isPickUp: Boolean, pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double) {
                 if (isPickUp) //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE CURRENT TO PICKUP
-                    Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                    Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION,
                             AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.job?.value),
                             true)
                 else //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE PICKUP TO DROPOFF
-                    Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                    Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION,
                             AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.job?.value),
                             true)
 
-                Utils.navigateToGoogleMap(this@JobRequestDetailActivity, pickLat, pickLng, dropLat, dropLng)
+                Utils.navigateToGoogleMap(this@JobDetailActivity, pickLat, pickLng, dropLat, dropLng)
             }
 
             override fun onAcceptBooking() {
@@ -120,7 +120,7 @@ class JobRequestDetailActivity : BaseActivity() {
             }
 
             override fun onBackClicked() {
-                Utils.logEvent(this@JobRequestDetailActivity, AppPreferences.getDriverId(),
+                Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL,
                         AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.job?.value),
                         true)
@@ -164,7 +164,7 @@ class JobRequestDetailActivity : BaseActivity() {
             mediaPlayer?.start()
             startPlayProgressUpdater()
         } else {
-            Dialogs.INSTANCE.showLoader(this@JobRequestDetailActivity)
+            Dialogs.INSTANCE.showLoader(this@JobDetailActivity)
             BykeaAmazonClient.getFileObject(url, object : Callback<File> {
                 override fun success(obj: File) {
                     Dialogs.INSTANCE.dismissDialog()
@@ -197,7 +197,8 @@ class JobRequestDetailActivity : BaseActivity() {
             setMarker(mMap, LatLng(lat, lng), R.drawable.ic_marker_pickup)
         }
         Util.safeLet(binding.viewmodel?.job?.value?.dropoff?.lat, binding.viewmodel?.job?.value?.dropoff?.lng) { lat, lng ->
-            setMarker(mMap, LatLng(lat, lng), R.drawable.ic_marker_dropoff)
+            if (binding.viewmodel?.job?.value?.dropoff?.lat != 0.0)
+                setMarker(mMap, LatLng(lat, lng), R.drawable.ic_marker_dropoff)
         }
         setPickupBounds(mMap)
     }
@@ -279,7 +280,7 @@ class JobRequestDetailActivity : BaseActivity() {
         if (null != mGoogleMap) {
             //if driver marker is null add driver marker on google map
             if (null == driverMarker) {
-                val driverIcon = Utils.getBitmap(this@JobRequestDetailActivity, R.drawable.ic_delivery_bike)
+                val driverIcon = Utils.getBitmap(this@JobDetailActivity, R.drawable.ic_delivery_bike)
                 driverMarker = mGoogleMap.addMarker(MarkerOptions().icon(
                         BitmapDescriptorFactory.fromBitmap(driverIcon))
                         .position(LatLng(snappedLatitude, snappedLongitude)))

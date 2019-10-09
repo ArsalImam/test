@@ -228,7 +228,7 @@ public class FeedbackActivity extends BaseActivity {
 
         callData = AppPreferences.getCallData();
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
-        isPurchaseType = Utils.isPurchaseService(callData.getCallType());
+        isPurchaseType = Utils.isPurchaseService(callData.getCallType(),callData.getServiceCode());
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());

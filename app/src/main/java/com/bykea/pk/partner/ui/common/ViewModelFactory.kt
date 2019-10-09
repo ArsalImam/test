@@ -9,8 +9,8 @@ import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.ui.complain.ComplaintListViewModel
-import com.bykea.pk.partner.ui.loadboard.detail.JobRequestDetailViewModel
-import com.bykea.pk.partner.ui.loadboard.list.JobRequestListViewModel
+import com.bykea.pk.partner.ui.loadboard.detail.JobDetailViewModel
+import com.bykea.pk.partner.ui.loadboard.list.JobListViewModel
 import com.bykea.pk.partner.ui.withdraw.WithdrawalViewModel
 
 /**
@@ -26,9 +26,9 @@ class ViewModelFactory private constructor(private val bookingsRepository: JobsR
     override fun <T : ViewModel> create(modelClass: Class<T>) =
             with(modelClass) {
                 when {
-                    isAssignableFrom(JobRequestListViewModel::class.java) -> JobRequestListViewModel(bookingsRepository)
+                    isAssignableFrom(JobListViewModel::class.java) -> JobListViewModel(bookingsRepository)
                     isAssignableFrom(WithdrawalViewModel::class.java) -> WithdrawalViewModel(withdrawRepository)
-                    isAssignableFrom(JobRequestDetailViewModel::class.java) -> JobRequestDetailViewModel(bookingsRepository)
+                    isAssignableFrom(JobDetailViewModel::class.java) -> JobDetailViewModel(bookingsRepository)
                     isAssignableFrom(ComplaintListViewModel::class.java) -> ComplaintListViewModel()
                     else ->
                         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
