@@ -876,6 +876,8 @@ public class Utils {
         try {
             if (StringUtils.isBlank(number)) {
                 number = StringUtils.EMPTY;
+            } else if (number.startsWith("92")) {
+                number = phoneNumberToShow(number);
             }
             Intent callingIntent = new Intent(Intent.ACTION_VIEW);
             callingIntent.setData(Uri.parse("tel:" + number));
