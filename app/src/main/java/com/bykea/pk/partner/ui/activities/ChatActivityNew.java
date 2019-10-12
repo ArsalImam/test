@@ -83,6 +83,7 @@ import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusRecorder;
 
 import static com.bykea.pk.partner.DriverApp.getContext;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 //import top.oply.opuslib.OpusService;
 
 public class ChatActivityNew extends BaseActivity implements ImageCompression.onImageCompressListener {
@@ -738,7 +739,15 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                 if (callData != null) {
                     Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK);
                     if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
-                        showCallPassengerDialog();
+                        if (callData.getServiceCode() != null && callData.getServiceCode() == MART) {
+                            if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                                openCallDialog(callData.getReceiverPhone());
+                            } else {
+                                Utils.callingIntent(mCurrentActivity, callData.getReceiverPhone());
+                            }
+                        } else {
+                            showCallPassengerDialog();
+                        }
                     } else if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
                         openCallDialog(callData.getPhoneNo());
                     } else {
