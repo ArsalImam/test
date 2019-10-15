@@ -1344,9 +1344,16 @@ public class Utils {
         }
     }
 
+    /**
+     * Convert Phone Number from 92********** to 03*********
+     * @param phone : Phone Number
+     */
     public static String phoneNumberToShow(String phone) {
         if (StringUtils.isNotBlank(phone)) {
-            return "0" + phone.substring(2);
+            if (phone.startsWith("92"))
+                return "0" + phone.substring(2);
+            else
+                return phone;
         } else {
             return StringUtils.EMPTY;
         }
@@ -2028,6 +2035,20 @@ public class Utils {
     public static boolean isLoadboardService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "COD")
                 || StringUtils.containsIgnoreCase(callType, "NOD");
+    }
+
+    /**
+     * Is ride for NOC(21), COD(22) or MART(22)
+     *
+     * @param serviceCode : Ride Service Code
+     * @return
+     */
+    public static boolean isDescriptiveAddressRequired(Integer serviceCode) {
+        return serviceCode != null
+                && (serviceCode == Constants.ServiceCode.SEND
+                || serviceCode == Constants.ServiceCode.SEND_COD
+                || serviceCode == MART
+        );
     }
 
     /**
