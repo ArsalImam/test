@@ -163,6 +163,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
+import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
@@ -881,7 +882,7 @@ public class Utils {
                 number = phoneNumberToShow(number);
             }
             Intent callingIntent = new Intent(Intent.ACTION_VIEW);
-            callingIntent.setData(Uri.parse("tel:" + number));
+            callingIntent.setData(Uri.parse(MOBILE_TEL_URI + number));
             ((Activity) context).startActivity(callingIntent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1353,7 +1354,7 @@ public class Utils {
      */
     public static String phoneNumberToShow(String phone) {
         if (StringUtils.isNotBlank(phone)) {
-            if (phone.startsWith("92"))
+            if (phone.startsWith(MOBILE_COUNTRY_STANDARD))
                 return "0" + phone.substring(2);
             else
                 return phone;
