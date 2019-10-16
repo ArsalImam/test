@@ -745,7 +745,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                         //IF WHATSAPP IS INSTALLED
                         if (isServiceTypeFoodDelivery()) {
                             //IF SERVICE IS FOR PURCHASE/MART
-                            Utils.callingIntent(mCurrentActivity, StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getSenderPhone() : callData.getReceiverPhone());
+                            openCallDialog(StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getSenderPhone() : callData.getReceiverPhone());
                         } else {
                             //IF SERVICE IS FOR NOT FOR PURCHASE/MART
                             openCallDialog(StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getPhoneNo() : callData.getReceiverPhone());
