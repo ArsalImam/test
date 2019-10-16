@@ -644,4 +644,5 @@ public class Constants {
     public final static int AMOUNT_LIMIT = 35000;
 
     public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
+    public final static String MOBILE_COUNTRY_STANDARD = "92";
 }
