@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -39,7 +38,6 @@ import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest;
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
 import com.bykea.pk.partner.dal.util.Injection;
-import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
 import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Stop;
@@ -90,7 +88,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
@@ -115,9 +112,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
 
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener {
@@ -969,7 +966,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData = AppPreferences.getCallData();
                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
-                        if (Utils.isDeliveryService(callData.getCallType()))
+                        if (Utils.isDeliveryService(callData.getCallType()) || Utils.isDescriptiveAddressRequired(callData.getServiceCode()))
                             showDropOffPersonInfo();
                         showWalletAmount();
                     }
@@ -1013,7 +1010,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 && StringUtils.isNotBlank(callData.getEndAddress())
                 && StringUtils.isNotBlank(callData.getEndLat())
                 && StringUtils.isNotBlank(callData.getEndLng())) {
-            endAddressTv.setText(callData.getEndAddress());
+            setDropOffAddress();
             configCountDown();
 //            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
             lastApiCallLatLng = null;
@@ -1240,14 +1237,25 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         AppPreferences.setEstimatedDistance(distance);
     }
 
+    /**
+     * Set and Configure Accordingly For The Accepted State
+     */
     private void setAcceptedState() {
-
         callerNameTv.setText(callData.getPassName());
         setTimeDistance(Utils.formatETA(callData.getArivalTime()),
                 callData.getDistance());
-        startAddressTv.setText(callData.getStartAddress());
+        setPickUpAddress();
+
+        if (callData != null && callData.getServiceCode() != null && callData.getServiceCode() == MART
+                && StringUtils.isEmpty(callData.getReceiverAddress())
+                && StringUtils.isEmpty(callData.getReceiverName())
+                && StringUtils.isEmpty(callData.getReceiverPhone()))
+            setAddressDetailsVisible();
     }
 
+    /**
+     * Set and Configure Accordingly For The Arrived State
+     */
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
         showDropOffAddress();
@@ -1256,6 +1264,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         setOnArrivedData();
     }
 
+    /**
+     * Set and Configure Accordingly For The Started State
+     */
     private void setStartedState() {
         llStartAddress.setVisibility(View.GONE);
         showDropOffAddress();
@@ -1326,18 +1337,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void showDropOffPersonInfo() {
-        if (checkIfDetailsAdded()) {
-            llDetails.setVisibility(View.VISIBLE);
-            tvDetailsNotEntered.setVisibility(View.GONE);
-
-            tvCustomerName.setText(callData.getReceiverName());
-            tvCustomerPhone.setText(callData.getReceiverPhone());
-            if (StringUtils.isNotBlank(callData.getReceiverAddress())) {
-                tvDetailsAddress.setVisibility(View.VISIBLE);
-                tvDetailsAddress.setText(callData.getReceiverAddress());
-            } else {
-                tvDetailsAddress.setVisibility(View.GONE);
-            }
+        if (checkIfDetailsAdded() || (callData.getServiceCode() != null && callData.getServiceCode() == MART)) {
+            setAddressDetailsVisible();
         } else {
             tvDetailsNotEntered.setVisibility(View.VISIBLE);
             llDetails.setVisibility(View.GONE);
@@ -1346,7 +1347,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setOnArrivedData() {
         showWalletAmount();
-        if (Utils.isDeliveryService(callData.getCallType())) showDropOffPersonInfo();
+        if (Utils.isDeliveryService(callData.getCallType()) || Utils.isDescriptiveAddressRequired(callData.getServiceCode()))
+            showDropOffPersonInfo();
         if (mapPolylines != null) {
             mapPolylines.remove();
         }
@@ -1358,26 +1360,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (StringUtils.isNotBlank(callData.getEndLat()) &&
                 StringUtils.isNotBlank(callData.getEndLng()) &&
                 StringUtils.isNotBlank(callData.getEndAddress())) {
-            endAddressTv.setText(callData.getEndAddress());
-            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary676767));
-            startAddressTv.setText(callData.getStartAddress());
+            setDropOffAddress();
         } else {
             updateEtaAndCallData("0", "0");
-            startAddressTv.setText(callData.getStartAddress());
+            setPickUpAddress();
         }
 
         if (StringUtils.isBlank(callData.getEndAddress())) {
             endAddressTv.setText(getString(R.string.destination_not_selected_msg));
             endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_red));
         } else {
-            endAddressTv.setText(callData.getEndAddress());
-            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
+            setDropOffAddress();
         }
 
         jobBtn.setText(getString(R.string.button_text_start));
         cvDirections.setVisibility(View.INVISIBLE);
         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
-
     }
 
     private void updateEtaAndCallData(String time, String distance) {
@@ -1389,7 +1387,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void setOnStartData() {
         showWalletAmount();
-        if (Utils.isDeliveryService(callData.getCallType())) showDropOffPersonInfo();
+        if (Utils.isDeliveryService(callData.getCallType()) || Utils.isDescriptiveAddressRequired(callData.getServiceCode()))
+            showDropOffPersonInfo();
         hideButtonOnArrived();
         lastApiCallLatLng = null;
         AppPreferences.setLastDirectionsApiCallTime(0);
@@ -1403,15 +1402,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
 
         if (AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-            startAddressTv.setText(callData.getStartAddress());
+            setPickUpAddress();
         }
 
         if (StringUtils.isBlank(callData.getEndAddress())) {
             endAddressTv.setText(getString(R.string.destination_not_selected_msg));
             endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.color_red));
         } else {
-            endAddressTv.setText(callData.getEndAddress());
-            endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary));
+            setDropOffAddress();
         }
         if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
             updateMarkers(true);
@@ -2498,4 +2496,59 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
     //endregion
+
+    /**
+     * Set PickUpAddress
+     */
+    public void setPickUpAddress() {
+        if (Utils.isDescriptiveAddressRequired(callData.getServiceCode())) {
+            startAddressTv.setText(callData.getPickupStop().getZoneNameEn());
+        } else {
+            startAddressTv.setText(callData.getStartAddress());
+        }
+    }
+
+    /**
+     * Set Drop Off Address
+     */
+    public void setDropOffAddress() {
+        endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary676767));
+        if (Utils.isDescriptiveAddressRequired(callData.getServiceCode())) {
+            endAddressTv.setText(callData.getDropoffStop().getZoneNameEn());
+        } else {
+            endAddressTv.setText(callData.getEndAddress());
+        }
+    }
+
+    /**
+     * Set Address Details
+     * Entered by user for creation of booking
+     */
+    private void setAddressDetailsVisible() {
+        llDetails.setVisibility(View.VISIBLE);
+        tvDetailsNotEntered.setVisibility(View.GONE);
+
+        setAddressDetailEitherSenderOrReceiver(tvCustomerName, callData.getSenderName(), callData.getReceiverName());
+        setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, Utils.phoneNumberToShow(callData.getSenderPhone()), Utils.phoneNumberToShow(callData.getReceiverPhone()));
+        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, callData.getSenderAddress(), callData.getReceiverAddress());
+    }
+
+    /**
+     * Use to set either sender or reciever value which is available.
+     *
+     * @param textField     : Widget Reference
+     * @param senderField   : Sender Value (Name, Address or Phone)
+     * @param receiverField : Receiver Value (Name, Address or Phone)
+     */
+    public void setAddressDetailEitherSenderOrReceiver(FontTextView textField, String senderField, String receiverField) {
+        if (StringUtils.isNotBlank(receiverField)) {
+            textField.setVisibility(View.VISIBLE);
+            textField.setText(receiverField);
+        } else if (StringUtils.isNotBlank(senderField)) {
+            textField.setVisibility(View.VISIBLE);
+            textField.setText(senderField);
+        } else {
+            textField.setVisibility(View.GONE);
+        }
+    }
 }
