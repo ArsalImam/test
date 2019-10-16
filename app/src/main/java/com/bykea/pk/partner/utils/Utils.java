@@ -163,6 +163,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
+import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
@@ -881,7 +882,7 @@ public class Utils {
                 number = phoneNumberToShow(number);
             }
             Intent callingIntent = new Intent(Intent.ACTION_VIEW);
-            callingIntent.setData(Uri.parse("tel:" + number));
+            callingIntent.setData(Uri.parse(MOBILE_TEL_URI + number));
             ((Activity) context).startActivity(callingIntent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1347,9 +1348,16 @@ public class Utils {
         }
     }
 
+    /**
+     * Convert Phone Number from 92********** to 03*********
+     * @param phone : Phone Number
+     */
     public static String phoneNumberToShow(String phone) {
         if (StringUtils.isNotBlank(phone)) {
-            return "0" + phone.substring(2);
+            if (phone.startsWith(MOBILE_COUNTRY_STANDARD))
+                return "0" + phone.substring(2);
+            else
+                return phone;
         } else {
             return StringUtils.EMPTY;
         }
@@ -2031,6 +2039,20 @@ public class Utils {
     public static boolean isLoadboardService(String callType) {
         return StringUtils.containsIgnoreCase(callType, "COD")
                 || StringUtils.containsIgnoreCase(callType, "NOD");
+    }
+
+    /**
+     * Is ride for NOC(21), COD(22) or MART(22)
+     *
+     * @param serviceCode : Ride Service Code
+     * @return
+     */
+    public static boolean isDescriptiveAddressRequired(Integer serviceCode) {
+        return serviceCode != null
+                && (serviceCode == Constants.ServiceCode.SEND
+                || serviceCode == Constants.ServiceCode.SEND_COD
+                || serviceCode == MART
+        );
     }
 
     /**
