@@ -2501,11 +2501,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Set PickUpAddress
      */
     public void setPickUpAddress() {
-        if (Utils.isDescriptiveAddressRequired(callData.getServiceCode())) {
-            startAddressTv.setText(callData.getPickupStop().getZoneNameEn());
-        } else {
-            startAddressTv.setText(callData.getStartAddress());
-        }
+        startAddressTv.setText(callData.getStartAddress());
     }
 
     /**
@@ -2513,11 +2509,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     public void setDropOffAddress() {
         endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary676767));
-        if (Utils.isDescriptiveAddressRequired(callData.getServiceCode())) {
-            endAddressTv.setText(callData.getDropoffStop().getZoneNameEn());
-        } else {
-            endAddressTv.setText(callData.getEndAddress());
-        }
+        endAddressTv.setText(callData.getEndAddress());
     }
 
     /**
