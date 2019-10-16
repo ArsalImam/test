@@ -162,6 +162,7 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
@@ -876,6 +877,8 @@ public class Utils {
         try {
             if (StringUtils.isBlank(number)) {
                 number = StringUtils.EMPTY;
+            } else if (number.startsWith(MOBILE_COUNTRY_STANDARD)) {
+                number = phoneNumberToShow(number);
             }
             Intent callingIntent = new Intent(Intent.ACTION_VIEW);
             callingIntent.setData(Uri.parse("tel:" + number));
@@ -1338,7 +1341,7 @@ public class Utils {
 
     public static String phoneNumberForServer(String number) {
         if (StringUtils.isNotBlank(number) && number.length() > 1) {
-            return "92" + number.substring(1);
+            return MOBILE_COUNTRY_STANDARD + number.substring(1);
         } else {
             return StringUtils.EMPTY;
         }
