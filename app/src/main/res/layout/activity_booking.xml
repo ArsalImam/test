@@ -436,7 +436,7 @@
                 android:layout_marginRight="@dimen/_2sdp"
                 android:gravity="center"
                 android:text="00:00"
-                android:textColor="@color/Color_Red"
+                android:textColor="@color/color_red"
                 android:textSize="@dimen/_14sdp" />
 
         </LinearLayout>
@@ -458,7 +458,7 @@
             android:paddingRight="@dimen/_2sdp"
             android:paddingBottom="@dimen/_2sdp"
             android:text="Enter Drop Off"
-            android:textColor="@color/Color_Red"
+            android:textColor="@color/color_red"
             android:textSize="@dimen/textsize.small.medium"
             android:visibility="gone"
             app:fontName="open_sans_regular.ttf"
