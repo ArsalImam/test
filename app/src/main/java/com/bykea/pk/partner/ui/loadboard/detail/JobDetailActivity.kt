@@ -69,8 +69,7 @@ class JobDetailActivity : BaseActivity() {
             acceptBookingCommand.observe(this@JobDetailActivity, Observer {
                 Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT,
-                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, job.value),
-                        true)
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, job.value))
                 ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
             })
 
@@ -104,13 +103,11 @@ class JobDetailActivity : BaseActivity() {
                 if (isPickUp) //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE CURRENT TO PICKUP
                     Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION,
-                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.job?.value),
-                            true)
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.job?.value))
                 else //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE PICKUP TO DROPOFF
                     Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION,
-                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.job?.value),
-                            true)
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.job?.value))
 
                 Utils.navigateToGoogleMap(this@JobDetailActivity, pickLat, pickLng, dropLat, dropLng)
             }
@@ -122,8 +119,7 @@ class JobDetailActivity : BaseActivity() {
             override fun onBackClicked() {
                 Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL,
-                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.job?.value),
-                        true)
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_FROM_BOOKING_DETAIL, binding.viewmodel?.job?.value))
                 finish()
             }
         }

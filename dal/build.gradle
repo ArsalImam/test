@@ -35,8 +35,8 @@ android {
             }
             develop {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://dev.bykea.net:3000\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://dev.bykea.net:4000\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://sandbox-lb-talos.bykea.net:3000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://sandbox-lb-loadboard.bykea.net:3000\""
             }
             staging {
                 dimension "env"

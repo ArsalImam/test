@@ -641,7 +641,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Utils.flushMixPanelEvent(mCurrentActivity);
         if (networkChangeListener != null && !(mCurrentActivity instanceof BookingActivity)) {
             unregisterReceiver(networkChangeListener);
         }

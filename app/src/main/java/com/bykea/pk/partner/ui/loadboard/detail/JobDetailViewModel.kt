@@ -101,8 +101,7 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
         if (job.isComplete)
             Utils.logEvent(DriverApp.getContext(), AppPreferences.getDriverId(),
                     Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL,
-                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL, job),
-                    true)
+                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL, job))
     }
 
     override fun onDataNotAvailable(message: String?) {

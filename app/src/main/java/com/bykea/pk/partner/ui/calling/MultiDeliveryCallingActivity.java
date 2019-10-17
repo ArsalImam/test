@@ -157,7 +157,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-//        Utils.flushMixPanelEvent(mCurrentActivity);
         stopSound();
 //        unregisterReceiver(cancelRideReceiver);
         if (AppPreferences.isOnTrip()) {
@@ -370,7 +369,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     private void setInitialData() {
 
         //Todo 1: Change the object and log the event on mixpanel
-        //logMixpanelEvent(callData, false);
         timeInMilliSeconds = Utils.getTimeInMilliseconds(response.getTimer());
         timePercentage = Utils.getTimeInPercentage(timeInMilliSeconds,
                 Constants.TIME_IN_MILLISECONDS_PERCENTAGE);

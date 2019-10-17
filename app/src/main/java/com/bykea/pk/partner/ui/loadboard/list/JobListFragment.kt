@@ -107,8 +107,7 @@ class JobListFragment : Fragment() {
                 override fun onRefreshClicked() {
                     Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_REFRESH,
-                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_REFRESH,null,listAdapter.count),
-                            true)
+                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_REFRESH, null, listAdapter.count))
                     viewDataBinding.viewmodel!!.refresh()
                 }
             }
@@ -133,8 +132,7 @@ class JobListFragment : Fragment() {
                                 isExpanded = false
                                 Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                                         Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN,
-                                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN, null, listAdapter.count),
-                                        true)
+                                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BACK_SWIPE_DOWN, null, listAdapter.count))
                             }
                             viewDataBinding.bookingsList.smoothScrollToPosition(0)
                         }
@@ -142,8 +140,7 @@ class JobListFragment : Fragment() {
                             isExpanded = true
                             Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                                     Constants.AnalyticsEvents.ON_LB_SWIPE_UP,
-                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_SWIPE_UP, null, listAdapter.count),
-                                    true)
+                                    AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_SWIPE_UP, null, listAdapter.count))
                         }
                         BottomSheetBehavior.STATE_DRAGGING -> {
                         }
