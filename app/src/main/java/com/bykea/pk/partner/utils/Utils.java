@@ -165,7 +165,11 @@ import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.BANK_TRANSFER;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_TOP_UP;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_WALLET;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.UTILITY;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 
@@ -2068,6 +2072,10 @@ public class Utils {
                 || serviceCode == Constants.ServiceCode.RIDE
                 || serviceCode == Constants.ServiceCode.OFFLINE_RIDE
                 || serviceCode == MART
+                || serviceCode == MOBILE_TOP_UP
+                || serviceCode == MOBILE_WALLET
+                || serviceCode == BANK_TRANSFER
+                || serviceCode == UTILITY
         );
     }
 
@@ -2198,6 +2206,8 @@ public class Utils {
                 return R.drawable.carry_van;
             case "courier":
                 return R.drawable.courier_no_caption;
+            case "pay":
+                return R.drawable.ic_pay;
             default:
                 return R.drawable.ride_right;
         }
