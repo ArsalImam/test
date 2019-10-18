@@ -491,8 +491,15 @@
     <string name="wrong_code_entered">\u0020درج کردہ کوڈ درست نہیں ہے\u0020</string>
     <string name="enter_received_amount">Enter received amount</string>
     <string name="enter_amount">Enter amount</string>
+
     <string name="account_number">\u0020اکاؤنٹ نمبر\u0020</string>
-    <string name="amount">\u0020رقم\u0020</string>
     <string name="please_enter_account_number">\u0020اکاؤنٹ نمبر درج کریں\u0020</string>
+    <string name="cnic_number">\u0020شناختی کارڈ نمبر\u0020</string>
+    <string name="please_enter_cnic_number">\u0020شناختی کارڈ نمبر درج کریں\u0020</string>
+    <string name="iban">\u0020آئی بی این نمبر\u0020</string>
+    <string name="please_enter_iban">\u0020آئی بی این نمبر درج کریں\u0020</string>
+    <string name="mobile_number">\u0020موبائل نمبر\u0020</string>
+    <string name="please_enter_mobile_number">\u0020موبائل نمبر درج کریں\u0020</string>
+    <string name="amount">\u0020رقم\u0020</string>
     <string name="please_enter_amount">\u0020رقم درج کریں\u0020</string>
 </resources>
