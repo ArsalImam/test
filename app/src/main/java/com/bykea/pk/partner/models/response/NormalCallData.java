@@ -175,8 +175,10 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("trip_status_code")
     private Integer serviceCode;
 
+    public NormalCallData() {
+    }
 
-    protected NormalCallData(Parcel in) {
+    public NormalCallData(Parcel in) {
         status = in.readString();
         icon = in.readString();
         data = in.readParcelable(NormalCallData.class.getClassLoader());
