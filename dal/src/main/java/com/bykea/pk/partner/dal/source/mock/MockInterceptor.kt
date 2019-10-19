@@ -20,7 +20,7 @@ class MockInterceptor : Interceptor {
             return chain.proceed(chain.request())
                     .newBuilder()
 //                    .code(SUCCESS_CODE)
-                    .protocol(Protocol.HTTP_2)
+                    .protocol(Protocol.HTTP_1_1)
                     .message(responseString)
                     .body(ResponseBody.create(MediaType.parse("application/json"),
                             responseString.toByteArray()))
