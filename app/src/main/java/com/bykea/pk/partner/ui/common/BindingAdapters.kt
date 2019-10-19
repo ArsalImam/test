@@ -47,6 +47,10 @@ object BindingAdapters {
             SEND_COD -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
             RIDE -> imageView.setImageResource(R.drawable.ride_right)
             MART -> imageView.setImageResource(R.drawable.ic_purchase)
+            MOBILE_TOP_UP -> imageView.setImageResource(R.drawable.ic_pay)
+            MOBILE_WALLET -> imageView.setImageResource(R.drawable.ic_pay)
+            BANK_TRANSFER -> imageView.setImageResource(R.drawable.ic_pay)
+            UTILITY -> imageView.setImageResource(R.drawable.ic_pay)
             else -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
         }
     }

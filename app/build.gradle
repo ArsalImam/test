@@ -76,7 +76,7 @@ android {
             }
             develop {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://sandbox-lb-talos.bykea.net:3000\""
             }
             staging {
                 dimension "env"

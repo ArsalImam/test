@@ -383,6 +383,10 @@ public class Constants {
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;
         public static final int MART = 25;
+        public static final int MOBILE_TOP_UP = 27;
+        public static final int MOBILE_WALLET = 28;
+        public static final int BANK_TRANSFER = 29;
+        public static final int UTILITY = 30;
     }
 
     /**
