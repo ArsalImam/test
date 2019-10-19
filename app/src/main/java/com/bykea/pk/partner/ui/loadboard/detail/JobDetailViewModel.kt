@@ -14,6 +14,7 @@ import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.ui.common.Event
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.maps.model.LatLng
 
@@ -55,6 +56,13 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     private val jobId: Long?
         get() = _job.value?.id
 
+    private val _showDropOff = MutableLiveData<Boolean>()
+    val showDropOff: LiveData<Boolean>
+        get() = _showDropOff
+
+    private val _showCOD = MutableLiveData<Boolean>()
+    val showCOD: LiveData<Boolean>
+        get() = _showCOD
 
     /**
      * Start the ViewModel by fetching the [Job] id
@@ -97,6 +105,9 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     override fun onJobLoaded(job: Job) {
         renderDetails(job)
         _dataLoading.value = false
+
+        _showDropOff.value = !Util.isBykeaCashJob(job.service_code)
+        _showCOD.value = job.service_code == 22 || job.service_code == 25 || Util.isBykeaCashJob(job.service_code)
 
         if (job.isComplete)
             Utils.logEvent(DriverApp.getContext(), AppPreferences.getDriverId(),
