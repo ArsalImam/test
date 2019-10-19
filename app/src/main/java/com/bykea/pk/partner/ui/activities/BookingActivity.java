@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -67,6 +68,7 @@ import com.bykea.pk.partner.utils.MapUtil;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -179,6 +181,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     LinearLayout llDetails;
     @BindView(R.id.tvDetailsNotEntered)
     FontTextView tvDetailsNotEntered;
+    @BindView(R.id.tvDetailsBanner)
+    FontTextView tvDetailsBanner;
     @BindView(R.id.tvCustomerName)
     FontTextView tvCustomerName;
     @BindView(R.id.tvCustomerPhone)
@@ -664,7 +668,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections,
-            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
+            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone, R.id.tvDetailsBanner})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -823,6 +827,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     }
                 });
                 break;
+            case R.id.tvDetailsBanner:
+                Toast.makeText(mCurrentActivity, "On detail dialog", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1242,14 +1248,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void setAcceptedState() {
         callerNameTv.setText(callData.getPassName());
-        setTimeDistance(Utils.formatETA(callData.getArivalTime()),
-                callData.getDistance());
+        setTimeDistance(Utils.formatETA(callData.getArivalTime()), callData.getDistance());
         setPickUpAddress();
 
-        if (callData != null && callData.getServiceCode() != null && callData.getServiceCode() == MART
-                && StringUtils.isEmpty(callData.getReceiverAddress())
+        if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()))
+            tvDetailsBanner.setVisibility(View.VISIBLE);
+
+        if (StringUtils.isEmpty(callData.getReceiverAddress())
                 && StringUtils.isEmpty(callData.getReceiverName())
-                && StringUtils.isEmpty(callData.getReceiverPhone()))
+                && StringUtils.isEmpty(callData.getReceiverPhone())
+                && (callData.getServiceCode() == MART || Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())))
             setAddressDetailsVisible();
     }
 
@@ -1258,8 +1266,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
-        showDropOffAddress();
         llStartAddress.setVisibility(View.GONE);
+        showDropOffAddress();
         cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
     }
@@ -1281,8 +1289,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void showDropOffAddress() {
         if (Utils.isCourierService(callData.getCallType())) {
+            llStartAddress.setVisibility(View.GONE);
+            llEndAddress.setVisibility(View.GONE);
+        } else if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+            llStartAddress.setVisibility(View.VISIBLE);
             llEndAddress.setVisibility(View.GONE);
         } else {
+            llStartAddress.setVisibility(View.GONE);
             llEndAddress.setVisibility(View.VISIBLE);
         }
     }
@@ -2065,7 +2078,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else */
         if (StringUtils.isBlank(callData.getReceiverPhone())) {
             isAdded = false;
-        } else if (!Utils.isLoadboardService(callData.getCallType()) && StringUtils.isBlank(callData.getCodAmount())) {
+        } else if (!Utils.isModernService(callData.getServiceCode()) && StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;
         }
         return isAdded;
@@ -2294,7 +2307,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
                     AppPreferences.setCallData(callData);
                     showDropOffAddress();
-                    llStartAddress.setVisibility(View.GONE);
                     AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
                     setOnArrivedData();
                     // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
