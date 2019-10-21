@@ -2206,7 +2206,10 @@ public class Utils {
                 return R.drawable.carry_van;
             case "courier":
                 return R.drawable.courier_no_caption;
-            case "pay":
+            case "bykeacash-mobiletopup":
+            case "bykeacash-mobilewallet":
+            case "bykeacash-banktransfer":
+            case "bykeacash-utilitybill":
                 return R.drawable.ic_pay;
             default:
                 return R.drawable.ride_right;

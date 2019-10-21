@@ -560,6 +560,21 @@
         </LinearLayout>
     </FrameLayout>
 
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tvDetailsBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:maxLines="1"
+        android:padding="@dimen/_2sdp"
+        android:text="@string/trip_details"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/_18sdp"
+        android:visibility="gone"
+        app:fontName="jameel_noori_nastaleeq.ttf"
+        tools:visibility="visible" />
+
     <RelativeLayout
         android:layout_below="@+id/frameLayout"
         android:layout_width="match_parent"
