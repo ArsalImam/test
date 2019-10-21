@@ -916,4 +916,6 @@ public class NormalCallData extends CommonResponse implements Parcelable {
             dest.writeInt(serviceCode);
         }
     }
+
+
 }

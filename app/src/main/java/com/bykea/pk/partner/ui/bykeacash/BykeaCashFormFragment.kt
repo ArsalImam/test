@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.FragmentBykeaCashFormBinding
 import com.bykea.pk.partner.models.response.NormalCallData
@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_bykea_cash_form.*
 
 private const val ARG_PARAM1 = "param1"
 
-class BykeaCashFormFragment : Fragment() {
+class BykeaCashFormFragment : DialogFragment() {
     private lateinit var binding: FragmentBykeaCashFormBinding
     private lateinit var mCurrentActivity: BookingActivity
     private var normalCallData: NormalCallData? = null
@@ -40,6 +40,7 @@ class BykeaCashFormFragment : Fragment() {
             override fun onUpdateDetails() {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity)
                 binding.viewmodel?.updateFormDetails()
+                isValidate(normalCallData?.serviceCode)
             }
 
             override fun onCancelDialog() {
@@ -56,6 +57,7 @@ class BykeaCashFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        normalCallData?.serviceCode = 28
         setFormVisibilityForServiceCode(normalCallData?.serviceCode)
     }
 
@@ -88,34 +90,56 @@ class BykeaCashFormFragment : Fragment() {
             when (it!!) {
                 MOBILE_TOP_UP -> {
                     if (eTMobileNumber.text.isNullOrEmpty()) {
+                        eTMobileNumber.requestFocus()
                         eTMobileNumber.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
-                    } else if (Utils.isValidNumber(mCurrentActivity, etMobileNumber)) {
+                    } else if (!Utils.isValidNumber(mCurrentActivity, etMobileNumber)) {
+                        eTMobileNumber.requestFocus()
+                        eTMobileNumber.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
+                    } else {
+                        eTMobileNumber.setBackgroundResource(R.drawable.gray_bordered_bg)
                     }
                 }
                 MOBILE_WALLET -> {
                     if (eTCNIC.text.isNullOrEmpty()) {
+                        eTCNIC.requestFocus()
                         eTCNIC.setBackgroundResource(R.drawable.red_bordered_bg)
+                        return false
+                    } else if (eTCNIC.text.toString().length < 13) {
+                        eTCNIC.setBackgroundResource(R.drawable.red_bordered_bg)
+                        eTCNIC.requestFocus()
                         return false
                     } else if (eTMobileNumber.text.isNullOrEmpty()) {
                         eTCNIC.setBackgroundResource(R.drawable.gray_bordered_bg)
+                        eTMobileNumber.requestFocus()
                         eTMobileNumber.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
-                    } else if (Utils.isValidNumber(mCurrentActivity, etMobileNumber)) {
+                    } else if (!Utils.isValidNumber(eTMobileNumber)) {
+                        eTCNIC.setBackgroundResource(R.drawable.gray_bordered_bg)
+                        eTMobileNumber.requestFocus()
+                        eTMobileNumber.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
+                    } else {
+                        eTMobileNumber.setBackgroundResource(R.drawable.gray_bordered_bg)
                     }
                 }
                 BANK_TRANSFER -> {
                     if (eTIBAN.text.isNullOrEmpty()) {
+                        eTIBAN.requestFocus()
                         eTIBAN.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
+                    } else {
+                        eTIBAN.setBackgroundResource(R.drawable.gray_bordered_bg)
                     }
                 }
                 UTILITY -> {
                     if (eTAccountNumber.text.isNullOrEmpty()) {
+                        eTAccountNumber.requestFocus()
                         eTAccountNumber.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
+                    } else {
+                        eTAccountNumber.setBackgroundResource(R.drawable.gray_bordered_bg)
                     }
                 }
             }
@@ -126,12 +150,15 @@ class BykeaCashFormFragment : Fragment() {
 
     private fun checkAmountValue(): Boolean {
         if (eTAmount.text.isNullOrEmpty()) {
+            eTAmount.requestFocus()
             eTAmount.setBackgroundResource(R.drawable.red_bordered_bg)
             return false
         } else if (eTAmount.text.toString().toInt() > AppPreferences.getSettings().settings.bykeaCashMaxAmount) {
+            eTAmount.requestFocus()
             eTAmount.setBackgroundResource(R.drawable.red_bordered_bg)
             return false
         }
+        eTAmount.setBackgroundResource(R.drawable.gray_bordered_bg)
         return true
     }
 
