@@ -651,4 +651,5 @@ public class Constants {
     public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
     public final static String MOBILE_COUNTRY_STANDARD = "92";
     public final static String MOBILE_TEL_URI ="tel:";
+    public final static int MAX_LENGTH_CNIC =13;
 }

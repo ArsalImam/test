@@ -233,13 +233,18 @@ interface Backend {
     @FormUrlEncoded
     @POST("/api/v1/driver/offline/ride/otp")
     fun generateDriverOTP(@Field(Fields.OtpSend.ID) id: String,
-                      @Field(Fields.OtpSend.TOKEN_ID) tokenId: String,
-                      @Field(Fields.OtpSend.PHONE_NUMBER) phone: String,
-                      @Field(Fields.OtpSend.TYPE) type: String): Call<VerifyNumberResponse>
+                          @Field(Fields.OtpSend.TOKEN_ID) tokenId: String,
+                          @Field(Fields.OtpSend.PHONE_NUMBER) phone: String,
+                          @Field(Fields.OtpSend.TYPE) type: String): Call<VerifyNumberResponse>
 
     @POST("/api/v1/trips/create")
     fun initiateRide(
             @Body bodyObject: RideCreateRequestObject): Call<RideCreateResponse>
+
+    @PUT("/api/v1/trips/{trip_id}/partner")
+    fun updateBookingDetails(
+            @Path("trip_id") jobRequestId: String,
+            @Body bodyObject: UpdateBookingRequest): Call<UpdateBookingResponse>
 
     companion object {
 

@@ -57,6 +57,7 @@ import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.bykeacash.BykeaCashFormFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -227,6 +228,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean isFinishedRetried = false;
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
+    BykeaCashFormFragment bykeaCashFormFragment;
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -579,7 +581,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     public void onBackPressed() {
-
+        if (bykeaCashFormFragment != null && bykeaCashFormFragment.isVisible()) {
+            bykeaCashFormFragment.dismiss();
+        }
     }
 
     @Override
@@ -828,7 +832,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 });
                 break;
             case R.id.tvDetailsBanner:
-                Toast.makeText(mCurrentActivity, "On detail dialog", Toast.LENGTH_SHORT).show();
+                bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
+                bykeaCashFormFragment.setCancelable(false);
+                bykeaCashFormFragment.show(getSupportFragmentManager(), BykeaCashFormFragment.class.getSimpleName());
+                break;
         }
     }
 

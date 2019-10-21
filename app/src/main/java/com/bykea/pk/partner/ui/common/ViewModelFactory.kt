@@ -31,7 +31,7 @@ class ViewModelFactory private constructor(private val bookingsRepository: JobsR
                     isAssignableFrom(WithdrawalViewModel::class.java) -> WithdrawalViewModel(withdrawRepository)
                     isAssignableFrom(JobDetailViewModel::class.java) -> JobDetailViewModel(bookingsRepository)
                     isAssignableFrom(ComplaintListViewModel::class.java) -> ComplaintListViewModel()
-                    isAssignableFrom(BykeaCashFormViewModel::class.java) -> BykeaCashFormViewModel()
+                    isAssignableFrom(BykeaCashFormViewModel::class.java) -> BykeaCashFormViewModel(bookingsRepository)
                     else ->
                         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
                 }

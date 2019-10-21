@@ -6,17 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.source.remote.request.UpdateBookingRequest
 import com.bykea.pk.partner.databinding.FragmentBykeaCashFormBinding
 import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.activities.BookingActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.complain.GenericFragmentListener
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_CNIC
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
-import kotlinx.android.synthetic.main.activity_save_place.*
 import kotlinx.android.synthetic.main.fragment_bykea_cash_form.*
 
 private const val ARG_PARAM1 = "param1"
@@ -28,6 +30,7 @@ class BykeaCashFormFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(STYLE_NO_TITLE, R.style.AppTheme_Dialog_Custom)
         arguments?.let { normalCallData = it.getParcelable(ARG_PARAM1) }
     }
 
@@ -36,55 +39,94 @@ class BykeaCashFormFragment : DialogFragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bykea_cash_form, container, false)
         mCurrentActivity = activity as BookingActivity
         binding.lifecycleOwner = this
-        binding.listener = object : GenericFragmentListener {
-            override fun onUpdateDetails() {
-                Dialogs.INSTANCE.showLoader(mCurrentActivity)
-                binding.viewmodel?.updateFormDetails()
-                isValidate(normalCallData?.serviceCode)
-            }
-
-            override fun onCancelDialog() {
-                fragmentManager?.popBackStack()
-            }
-        }
-
         binding.viewmodel = obtainViewModel(BykeaCashFormViewModel::class.java).apply {
             callData.value = normalCallData
+            responseFromServer.observe(this@BykeaCashFormFragment, Observer {
+                if (it) {
+                    dismiss()
+                    normalCallData?.serviceCode.let {
+                        when (it!!) {
+                            MOBILE_TOP_UP -> {
+                                normalCallData?.extraParams?.phone = eTMobileNumber.text.toString()
+                            }
+                            MOBILE_WALLET -> {
+                                normalCallData?.extraParams?.cnic = eTCNIC.text.toString()
+                                normalCallData?.extraParams?.phone = eTMobileNumber.text.toString()
+                            }
+                            BANK_TRANSFER -> {
+                                normalCallData?.extraParams?.iban = eTIBAN.text.toString()
+                            }
+                            UTILITY -> {
+                                normalCallData?.extraParams?.account_number = eTAccountNumber.text.toString()
+                            }
+                        }
+                        normalCallData?.codAmount = eTAmount.text.toString()
+                    }
+                }
+
+            })
         }
 
+        setListeners()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        normalCallData?.serviceCode = 28
-        setFormVisibilityForServiceCode(normalCallData?.serviceCode)
+        setFormDataAndVisibility(normalCallData?.serviceCode)
     }
 
     /**
-     * Set Form Visiblity Using Service Code
-     * @param serviceCode: Receive In Get Active Trip Call (Ride Data)
+     * Set Listeners
      */
-    private fun setFormVisibilityForServiceCode(serviceCode: Int?) {
-        serviceCode.let {
-            when (it!!) {
-                MOBILE_TOP_UP -> {
-                    linLayoutMobileNumber.visibility = View.VISIBLE
+    private fun setListeners() {
+        binding.listener = object : GenericFragmentListener {
+            override fun onUpdateDetails() {
+                if (isValidate(normalCallData?.serviceCode)) {
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity)
+                    binding.viewmodel?.updateFormDetails(normalCallData?.tripId!!, createUpdateBookingRequest())
                 }
-                MOBILE_WALLET -> {
-                    linLayoutCNIC.visibility = View.VISIBLE
-                    linLayoutMobileNumber.visibility = View.VISIBLE
-                }
-                BANK_TRANSFER -> {
-                    linLayoutIBAN.visibility = View.VISIBLE
-                }
-                UTILITY -> {
-                    linLayoutAccountNumber.visibility = View.VISIBLE
-                }
+            }
+
+            override fun onCancelDialog() {
+                dismiss()
             }
         }
     }
 
+    /**
+     * Set Form Data and Fields Visibility Using Service Code
+     * @param serviceCode: Receive In Get Active Trip Call (Ride Data)
+     */
+    private fun setFormDataAndVisibility(serviceCode: Int?) {
+        serviceCode.let {
+            when (it!!) {
+                MOBILE_TOP_UP -> {
+                    linLayoutMobileNumber.visibility = View.VISIBLE
+                    eTMobileNumber.setText(normalCallData?.extraParams?.phone)
+                }
+                MOBILE_WALLET -> {
+                    linLayoutCNIC.visibility = View.VISIBLE
+                    linLayoutMobileNumber.visibility = View.VISIBLE
+                    eTCNIC.setText(normalCallData?.extraParams?.cnic)
+                    eTMobileNumber.setText(normalCallData?.extraParams?.phone)
+                }
+                BANK_TRANSFER -> {
+                    linLayoutIBAN.visibility = View.VISIBLE
+                    eTIBAN.setText(normalCallData?.extraParams?.iban)
+                }
+                UTILITY -> {
+                    linLayoutAccountNumber.visibility = View.VISIBLE
+                    eTAccountNumber.setText(normalCallData?.extraParams?.account_number)
+                }
+            }
+        }
+        eTAmount.setText(normalCallData?.codAmountNotFormatted.toString())
+    }
+
+    /**
+     * Perform Form Validation Using Service Code
+     */
     private fun isValidate(serviceCode: Int?): Boolean {
         serviceCode.let {
             when (it!!) {
@@ -93,7 +135,7 @@ class BykeaCashFormFragment : DialogFragment() {
                         eTMobileNumber.requestFocus()
                         eTMobileNumber.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
-                    } else if (!Utils.isValidNumber(mCurrentActivity, etMobileNumber)) {
+                    } else if (!Utils.isValidNumber(mCurrentActivity, eTMobileNumber)) {
                         eTMobileNumber.requestFocus()
                         eTMobileNumber.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
@@ -106,7 +148,7 @@ class BykeaCashFormFragment : DialogFragment() {
                         eTCNIC.requestFocus()
                         eTCNIC.setBackgroundResource(R.drawable.red_bordered_bg)
                         return false
-                    } else if (eTCNIC.text.toString().length < 13) {
+                    } else if (eTCNIC.text.toString().length < MAX_LENGTH_CNIC) {
                         eTCNIC.setBackgroundResource(R.drawable.red_bordered_bg)
                         eTCNIC.requestFocus()
                         return false
@@ -143,13 +185,15 @@ class BykeaCashFormFragment : DialogFragment() {
                     }
                 }
             }
-            checkAmountValue();
         }
-        return true
+        return checkAmountValue()
     }
 
+    /**
+     * Perform Validation For Amount Value
+     */
     private fun checkAmountValue(): Boolean {
-        if (eTAmount.text.isNullOrEmpty()) {
+        if (eTAmount.text.isNullOrEmpty() || (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() == 0)) {
             eTAmount.requestFocus()
             eTAmount.setBackgroundResource(R.drawable.red_bordered_bg)
             return false
@@ -162,19 +206,40 @@ class BykeaCashFormFragment : DialogFragment() {
         return true
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         * @param param1 Parameter 1.
-         * @return A new instance of fragment BlankFragment.
-         */
-        @JvmStatic
-        fun newInstance(param1: NormalCallData) =
-                BykeaCashFormFragment().apply {
-                    arguments = Bundle().apply {
-                        putParcelable(ARG_PARAM1, param1)
+    /**
+     * Create Update Booking Request Object
+     */
+    private fun createUpdateBookingRequest(): UpdateBookingRequest {
+        return UpdateBookingRequest().apply {
+            trip = UpdateBookingRequest.Trip()
+            trip?.amount = eTAmount.text.toString().toInt()
+
+            extra_info = UpdateBookingRequest.ExtraInfo()
+            normalCallData?.serviceCode.let {
+                when (it!!) {
+                    MOBILE_TOP_UP -> {
+                        extra_info?.telco_name = normalCallData?.extraParams?.telco_name
+                        extra_info?.phone = eTMobileNumber.text.toString()
+                    }
+                    MOBILE_WALLET -> {
+                        extra_info?.vendor_name = normalCallData?.extraParams?.vendor_name
+                        extra_info?.phone = eTMobileNumber.text.toString()
+                        extra_info?.cnic = eTCNIC.text.toString()
+                    }
+                    BANK_TRANSFER -> {
+                        extra_info?.iban = eTIBAN.text.toString()
+                    }
+                    UTILITY -> {
+                        extra_info?.bill_company_name = normalCallData?.extraParams?.bill_company_name
+                        extra_info?.account_number = eTAccountNumber.text.toString()
                     }
                 }
+            }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(param1: NormalCallData) = BykeaCashFormFragment().apply { arguments = Bundle().apply { putParcelable(ARG_PARAM1, param1) } }
     }
 }

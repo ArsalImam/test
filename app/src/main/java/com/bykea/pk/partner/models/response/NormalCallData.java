@@ -175,10 +175,13 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("trip_status_code")
     private Integer serviceCode;
 
+    @SerializedName("extra_params")
+    private ExtraParams extraParams;
+
     public NormalCallData() {
     }
 
-    public NormalCallData(Parcel in) {
+    protected NormalCallData(Parcel in) {
         status = in.readString();
         icon = in.readString();
         data = in.readParcelable(NormalCallData.class.getClassLoader());
@@ -252,6 +255,7 @@ public class NormalCallData extends CommonResponse implements Parcelable {
         } else {
             serviceCode = in.readInt();
         }
+        extraParams = in.readParcelable(ExtraParams.class.getClassLoader());
     }
 
     public static final Creator<NormalCallData> CREATOR = new Creator<NormalCallData>() {
@@ -833,6 +837,15 @@ public class NormalCallData extends CommonResponse implements Parcelable {
         this.senderAddress = senderAddress;
     }
 
+    public ExtraParams getExtraParams() {
+        return extraParams;
+    }
+
+    public void setExtraParams(ExtraParams extraParams) {
+        this.extraParams = extraParams;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -915,7 +928,6 @@ public class NormalCallData extends CommonResponse implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(serviceCode);
         }
+        dest.writeParcelable(extraParams, flags);
     }
-
-
 }

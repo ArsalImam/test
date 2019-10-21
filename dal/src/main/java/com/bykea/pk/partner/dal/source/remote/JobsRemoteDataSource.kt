@@ -1,12 +1,10 @@
 package com.bykea.pk.partner.dal.source.remote
 
-import androidx.room.util.StringUtil
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
-import com.bykea.pk.partner.dal.util.EMPTY_STRING
 import retrofit2.Call
 import retrofit2.Response
 
@@ -284,6 +282,21 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, subCode: Int?, message: String?) {
                 callback.onFail(code, subCode, message)
             }
+        })
+    }
+
+
+    /**
+     * Finish job to remote data source
+     *
+     * @param jobId Job Id
+     * @param requestBody Request body
+     * @param callback Response callback
+     */
+    fun updateBookingDetails(tripId: String, requestBody: UpdateBookingRequest, callback: JobsDataSource.UpdateBookingCallback) {
+        Backend.talos.updateBookingDetails(tripId, requestBody).enqueue(object : Callback<UpdateBookingResponse> {
+            override fun onSuccess(response: UpdateBookingResponse) = callback.onSuccess(response)
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onFail(code, subCode, message)
         })
     }
 }
