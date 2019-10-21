@@ -3265,6 +3265,15 @@ public class Utils {
     }
 
     /**
+     * Bykea cash success or fail messages
+     *
+     * @return list of messages
+     */
+    public static String[] getBykeaCashJobStatusMsgList(Context context) {
+        return context.getResources().getStringArray(R.array.bykea_cash_status_messages);
+    }
+
+    /**
      * Get Ride Complain Reasons List.
      *
      * @param context : Calling Activity
