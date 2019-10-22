@@ -3,7 +3,7 @@ package com.bykea.pk.partner.dal.source
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
-import com.bykea.pk.partner.dal.source.remote.request.UpdateBookingRequest
+import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 
@@ -363,15 +363,15 @@ interface JobsDataSource {
     /**
      * Update Booking Details
      *
-     * @param callback Callback to executed
+     * @param callbackBykeaCash Callback to executed
      */
-    fun updateBookingDetails(tripId: String, requestObj: UpdateBookingRequest, callback: UpdateBookingCallback)
+    fun updateBykeaCashBookingDetails(tripId: String, requestObjBykeaCash: UpdateBykeaCashBookingRequest, callbackBykeaCash: UpdateBykeaCashBookingCallback)
 
     /**
      * Callback interface for update booking details
      */
-    interface UpdateBookingCallback {
-        fun onSuccess(updateBookingResponse: UpdateBookingResponse)
+    interface UpdateBykeaCashBookingCallback {
+        fun onSuccess(updateBykeaCashBookingResponse: UpdateBykeaCashBookingResponse)
 
         fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
