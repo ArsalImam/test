@@ -111,6 +111,8 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView tvCOD;
     @BindView(R.id.tvAmountToGetLable)
     FontTextView tvAmountToGetLable;
+    @BindView(R.id.tvPayment)
+    FontTextView tvPayment;
     @BindView(R.id.totalAmountTvLable)
     FontTextView totalAmountTvLable;
     @BindView(R.id.rlCOD)
@@ -355,6 +357,7 @@ public class FeedbackActivity extends BaseActivity {
         if (StringUtils.isNotBlank(callData.getCodAmount())) {
             rlCOD.setVisibility(View.VISIBLE);
             tvCOD.setText(callData.getCodAmount());
+            tvPayment.setText(R.string.payment);
         } else {
             rlCOD.setVisibility(View.GONE);
         }

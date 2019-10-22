@@ -343,6 +343,7 @@
 
     <string name="cash_on_delivery">وصولی</string>
     <string name="accept_booking">بکنگ منتخب کریں</string>
+    <string name="payment">ادائیگی</string>
 
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
