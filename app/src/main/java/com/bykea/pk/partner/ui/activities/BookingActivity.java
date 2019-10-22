@@ -695,8 +695,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.tvCustomerPhone:
-                if (StringUtils.isNotBlank(tvCustomerPhone.getText().toString())) {
-                    Utils.callingIntent(mCurrentActivity, tvCustomerPhone.getText().toString());
+                String phoneNumber = tvCustomerPhone.getText().toString();
+                if (StringUtils.isNotBlank(phoneNumber)) {
+                    if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                        Utils.openCallDialog(mCurrentActivity, callData, phoneNumber);
+                    } else {
+                        Utils.callingIntent(mCurrentActivity, phoneNumber);
+                    }
                 }
                 break;
             case R.id.cancelBtn:
