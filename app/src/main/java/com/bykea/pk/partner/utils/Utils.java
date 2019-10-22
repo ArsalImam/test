@@ -3519,7 +3519,7 @@ public class Utils {
             @Override
             public void onCallOnPhone() {
                 Utils.generateFirebaseEventForCalling(context, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_MOBILE);
-                if (callNumber.startsWith("92"))
+                if (callNumber.startsWith(context.getString(R.string.country_code_pk)))
                     Utils.callingIntent(context, Utils.phoneNumberToShow(callNumber));
                 else
                     Utils.callingIntent(context, callNumber);
@@ -3530,7 +3530,7 @@ public class Utils {
             public void onCallOnWhatsapp() {
                 Utils.generateFirebaseEventForCalling(context, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_WHATSAPP);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                if (callNumber.startsWith("92"))
+                if (callNumber.startsWith(context.getString(R.string.country_code_pk)))
                     intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(callNumber))));
                 else
                     intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
