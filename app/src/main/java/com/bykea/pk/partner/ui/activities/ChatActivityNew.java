@@ -18,7 +18,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Chronometer;
@@ -37,7 +36,6 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.compression.ImageCompression;
-import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
 import com.bykea.pk.partner.models.ChatMessage;
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.Sender;
@@ -64,7 +62,6 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
@@ -82,8 +79,8 @@ import butterknife.OnClick;
 import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusRecorder;
 
-import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
+import static com.bykea.pk.partner.utils.Utils.openCallDialog;
 //import top.oply.opuslib.OpusService;
 
 public class ChatActivityNew extends BaseActivity implements ImageCompression.onImageCompressListener {
@@ -745,10 +742,10 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                         //IF WHATSAPP IS INSTALLED
                         if (isServiceTypeFoodDelivery()) {
                             //IF SERVICE IS FOR PURCHASE/MART
-                            openCallDialog(StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getSenderPhone() : callData.getReceiverPhone());
+                            openCallDialog(mCurrentActivity, callData, StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getSenderPhone() : callData.getReceiverPhone());
                         } else {
                             //IF SERVICE IS FOR NOT FOR PURCHASE/MART
-                            openCallDialog(StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getPhoneNo() : callData.getReceiverPhone());
+                            openCallDialog(mCurrentActivity, callData, StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getPhoneNo() : callData.getReceiverPhone());
                         }
                     } else {
                         //IF WHATSAPP IS NOT INSTALLED
@@ -905,61 +902,19 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     private void showCallPassengerDialog() {
         Dialogs.INSTANCE.showCallPassengerDialog(mCurrentActivity, v -> {
             if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                openCallDialog(getSenderNumber());
+                openCallDialog(mCurrentActivity, callData, getSenderNumber());
             } else {
                 Utils.callingIntent(mCurrentActivity, getSenderNumber());
             }
             Utils.redLog("BookingActivity", "Call Sender");
         }, v -> {
             if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                openCallDialog(getRecipientNumber());
+                openCallDialog(mCurrentActivity, callData, getRecipientNumber());
             } else {
                 Utils.callingIntent(mCurrentActivity, getRecipientNumber());
             }
             Utils.redLog("BookingActivity", "Call Recipient");
         });
-    }
-
-    /**
-     * Call On Phone Number Using Whatsapp
-     *
-     * @param callNumber : Phone Number
-     */
-    private void openCallDialog(String callNumber) {
-        if (StringUtils.isEmpty(callNumber)) {
-            Utils.appToastDebug("Number is empty");
-            return;
-        }
-        BottomSheetDialog dialog = new BottomSheetDialog(this);
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_call_booking, null, false);
-        DialogCallBookingBinding mBinding = DialogCallBookingBinding.bind(view);
-        dialog.setContentView(mBinding.getRoot());
-        mBinding.setListener(new BookingCallListener() {
-            @Override
-            public void onCallOnPhone() {
-                Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_MOBILE);
-                if (callNumber.startsWith("92"))
-                    Utils.callingIntent(mCurrentActivity, Utils.phoneNumberToShow(callNumber));
-                else
-                    Utils.callingIntent(mCurrentActivity, callNumber);
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onCallOnWhatsapp() {
-                Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_WHATSAPP);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                if (callNumber.startsWith("92"))
-                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(callNumber))));
-                else
-                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
-                startActivity(intent);
-                dialog.dismiss();
-            }
-        });
-        mBinding.iVCallOnMobile.setImageResource(R.drawable.ic_mobile_call);
-        mBinding.iVCallOnWhatsapp.setImageResource(R.drawable.ic_whatsapp_call);
-        dialog.show();
     }
 
     /***

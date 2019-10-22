@@ -79,6 +79,7 @@ import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIO;
+import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
 import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
@@ -93,6 +94,7 @@ import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.Result;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
+import com.bykea.pk.partner.ui.activities.BookingCallListener;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -108,6 +110,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
@@ -160,6 +163,7 @@ import zendesk.core.JwtIdentity;
 import zendesk.core.Zendesk;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
@@ -2206,7 +2210,10 @@ public class Utils {
                 return R.drawable.carry_van;
             case "courier":
                 return R.drawable.courier_no_caption;
-            case "pay":
+            case "bykeacash-mobiletopup":
+            case "bykeacash-mobilewallet":
+            case "bykeacash-banktransfer":
+            case "bykeacash-utilitybill":
                 return R.drawable.ic_pay;
             default:
                 return R.drawable.ride_right;
@@ -3262,6 +3269,15 @@ public class Utils {
     }
 
     /**
+     * Bykea cash success or fail messages
+     *
+     * @return list of messages
+     */
+    public static String[] getBykeaCashJobStatusMsgList(Context context) {
+        return context.getResources().getStringArray(R.array.bykea_cash_status_messages);
+    }
+
+    /**
      * Get Ride Complain Reasons List.
      *
      * @param context : Calling Activity
@@ -3483,5 +3499,47 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Open calling option dialog and navigate to whatsapp or phone dialer on basis of user's choice
+     *
+     * @param callNumber : Phone Number
+     */
+    public static void openCallDialog(Context context, NormalCallData callData, String callNumber) {
+        if (StringUtils.isEmpty(callNumber)) {
+            Utils.appToastDebug("Number is empty");
+            return;
+        }
+        BottomSheetDialog dialog = new BottomSheetDialog(context);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_call_booking, null, false);
+        DialogCallBookingBinding mBinding = DialogCallBookingBinding.bind(view);
+        dialog.setContentView(mBinding.getRoot());
+        mBinding.setListener(new BookingCallListener() {
+            @Override
+            public void onCallOnPhone() {
+                Utils.generateFirebaseEventForCalling(context, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_MOBILE);
+                if (callNumber.startsWith(context.getString(R.string.country_code_pk)))
+                    Utils.callingIntent(context, Utils.phoneNumberToShow(callNumber));
+                else
+                    Utils.callingIntent(context, callNumber);
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onCallOnWhatsapp() {
+                Utils.generateFirebaseEventForCalling(context, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_WHATSAPP);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                if (callNumber.startsWith(context.getString(R.string.country_code_pk)))
+                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(callNumber))));
+                else
+                    intent.setData(Uri.parse(String.valueOf(new StringBuilder(Constants.WHATSAPP_URI_PREFIX).append(Utils.phoneNumberForServer(callNumber)))));
+                context.startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+        mBinding.iVCallOnMobile.setImageResource(R.drawable.ic_mobile_call);
+        mBinding.iVCallOnWhatsapp.setImageResource(R.drawable.ic_whatsapp_call);
+        dialog.show();
     }
 }
