@@ -498,4 +498,29 @@
     <string name="enter_received_amount">Enter received amount</string>
     <string name="enter_amount">Enter amount</string>
     <string name="country_code_pk">92</string>
+
+    <string name="account_number">\u0020اکاؤنٹ نمبر\u0020</string>
+    <string name="hint_account_number">Account Number</string>
+    <string name="cnic_number">\u0020شناختی کارڈ نمبر\u0020</string>
+    <string name="hint_cnic_number">CNIC Number</string>
+    <string name="iban_bank_account_number">\u0020بینک اکاؤنٹ نمبر\u0020</string>
+    <string name="iban_with_brackets">(IBAN)</string>
+    <string name="hint_iban_number">IBAN Number</string>
+    <string name="mobile_number">\u0020موبائل نمبر\u0020</string>
+    <string name="hint_mobile_number">Mobile Number</string>
+    <string name="amount">\u0020رقم\u0020</string>
+    <string name="hint_amount">Amount</string>
+
+    <string name="iban_length">24</string>
+    <string name="digits_correction">\u0020ہندسوں پر مشتمل درست\u0020</string>
+    <string name="iban">IBAN</string>
+    <string name="enter_number">\u0020نمبر درج کریں۔\u0020</string>
+    <string name="mobile_number_length">11</string>
+    <string name="mobile_number_error2">\u0020ہندسوں پر مشتمل درست موبائل نمبر درج کریں۔\u0020</string>
+    <string name="cnic_length">13</string>
+    <string name="correct_cnic">\u0020ہندسوں پر مشتمل درست شناختی کارڈ نمبر درج کریں۔\u0020</string>
+
+    <string name="enter_amount_error">\u0020درج کردہ رقم\u0020</string>
+    <string name="amount_not_more">\u0020روپے سے زیادہ نہیں ہو سکتی۔\u0020</string>
+    <string name="alphanumeric">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
 </resources>

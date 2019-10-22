@@ -692,6 +692,6 @@
                 android:padding="@dimen/_4sdp"
                 android:src="@drawable/direction_icon" />
         </androidx.cardview.widget.CardView>
-    </RelativeLayout>
 
+    </RelativeLayout>
 </LinearLayout>

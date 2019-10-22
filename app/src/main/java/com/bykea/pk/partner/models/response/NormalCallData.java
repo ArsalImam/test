@@ -1,12 +1,15 @@
 package com.bykea.pk.partner.models.response;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class NormalCallData extends CommonResponse {
+public class NormalCallData extends CommonResponse implements Parcelable {
 
     private String status;
     private String icon;
@@ -172,6 +175,100 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("trip_status_code")
     private Integer serviceCode;
 
+    @SerializedName("extra_params")
+    private ExtraParams extraParams;
+
+    public NormalCallData() {
+    }
+
+    protected NormalCallData(Parcel in) {
+        status = in.readString();
+        icon = in.readString();
+        data = in.readParcelable(NormalCallData.class.getClassLoader());
+        trip_charges = in.readString();
+        sentTime = in.readLong();
+        tripId = in.readString();
+        tripNo = in.readString();
+        referenceId = in.readString();
+        startAddress = in.readString();
+        startLat = in.readString();
+        startLng = in.readString();
+        endAddress = in.readString();
+        endLat = in.readString();
+        endLng = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        distance = in.readString();
+        arivalTime = in.readString();
+        kraiKiKamai = in.readInt();
+        estimatedDistance = in.readFloat();
+        cashKiWasooli = in.readInt();
+        passId = in.readString();
+        passName = in.readString();
+        passImage = in.readString();
+        phoneNo = in.readString();
+        rating = in.readString();
+        totalFare = in.readString();
+        pass_socket_id = in.readString();
+        distanceCovered = in.readString();
+        totalMins = in.readString();
+        started_at = in.readString();
+        callType = in.readString();
+        isDispatcher = in.readByte() != 0;
+        creator_type = in.readString();
+        wallet_deduction = in.readString();
+        passWallet = in.readInt();
+        promo_deduction = in.readString();
+        codAmount = in.readString();
+        isCod = in.readByte() != 0;
+        tripDetailsAdded = in.readByte() != 0;
+        details = in.readString();
+        dropoff_discount = in.readString();
+        amount_parcel_value = in.readString();
+        isReturnRun = in.readByte() != 0;
+        isWalletDeposit = in.readByte() != 0;
+        sub_type = in.readString();
+        order_no = in.readString();
+        receiverPhone = in.readString();
+        receiverName = in.readString();
+        receiverAddress = in.readString();
+        senderName = in.readString();
+        senderPhone = in.readString();
+        senderAddress = in.readString();
+        recName = in.readString();
+        rec_no = in.readString();
+        complete_address = in.readString();
+        if (in.readByte() == 0) {
+            driverToPassengerEta = null;
+        } else {
+            driverToPassengerEta = in.readLong();
+        }
+        tripEta = in.readString();
+        driverToPassengerDistance = in.readString();
+        tripDistance = in.readString();
+        zoneNamePickupUrdu = in.readString();
+        zoneNameDropOffUrdu = in.readString();
+        dropoffZoneName = in.readString();
+        dropoffZoneNameUrdu = in.readString();
+        if (in.readByte() == 0) {
+            serviceCode = null;
+        } else {
+            serviceCode = in.readInt();
+        }
+        extraParams = in.readParcelable(ExtraParams.class.getClassLoader());
+    }
+
+    public static final Creator<NormalCallData> CREATOR = new Creator<NormalCallData>() {
+        @Override
+        public NormalCallData createFromParcel(Parcel in) {
+            return new NormalCallData(in);
+        }
+
+        @Override
+        public NormalCallData[] newArray(int size) {
+            return new NormalCallData[size];
+        }
+    };
 
     public String getDistanceCovered() {
         return distanceCovered;
@@ -738,5 +835,99 @@ public class NormalCallData extends CommonResponse {
 
     public void setSenderAddress(String senderAddress) {
         this.senderAddress = senderAddress;
+    }
+
+    public ExtraParams getExtraParams() {
+        return extraParams;
+    }
+
+    public void setExtraParams(ExtraParams extraParams) {
+        this.extraParams = extraParams;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(status);
+        dest.writeString(icon);
+        dest.writeParcelable(data, flags);
+        dest.writeString(trip_charges);
+        dest.writeLong(sentTime);
+        dest.writeString(tripId);
+        dest.writeString(tripNo);
+        dest.writeString(referenceId);
+        dest.writeString(startAddress);
+        dest.writeString(startLat);
+        dest.writeString(startLng);
+        dest.writeString(endAddress);
+        dest.writeString(endLat);
+        dest.writeString(endLng);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(distance);
+        dest.writeString(arivalTime);
+        dest.writeInt(kraiKiKamai);
+        dest.writeFloat(estimatedDistance);
+        dest.writeInt(cashKiWasooli);
+        dest.writeString(passId);
+        dest.writeString(passName);
+        dest.writeString(passImage);
+        dest.writeString(phoneNo);
+        dest.writeString(rating);
+        dest.writeString(totalFare);
+        dest.writeString(pass_socket_id);
+        dest.writeString(distanceCovered);
+        dest.writeString(totalMins);
+        dest.writeString(started_at);
+        dest.writeString(callType);
+        dest.writeByte((byte) (isDispatcher ? 1 : 0));
+        dest.writeString(creator_type);
+        dest.writeString(wallet_deduction);
+        dest.writeInt(passWallet);
+        dest.writeString(promo_deduction);
+        dest.writeString(codAmount);
+        dest.writeByte((byte) (isCod ? 1 : 0));
+        dest.writeByte((byte) (tripDetailsAdded ? 1 : 0));
+        dest.writeString(details);
+        dest.writeString(dropoff_discount);
+        dest.writeString(amount_parcel_value);
+        dest.writeByte((byte) (isReturnRun ? 1 : 0));
+        dest.writeByte((byte) (isWalletDeposit ? 1 : 0));
+        dest.writeString(sub_type);
+        dest.writeString(order_no);
+        dest.writeString(receiverPhone);
+        dest.writeString(receiverName);
+        dest.writeString(receiverAddress);
+        dest.writeString(senderName);
+        dest.writeString(senderPhone);
+        dest.writeString(senderAddress);
+        dest.writeString(recName);
+        dest.writeString(rec_no);
+        dest.writeString(complete_address);
+        if (driverToPassengerEta == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(driverToPassengerEta);
+        }
+        dest.writeString(tripEta);
+        dest.writeString(driverToPassengerDistance);
+        dest.writeString(tripDistance);
+        dest.writeString(zoneNamePickupUrdu);
+        dest.writeString(zoneNameDropOffUrdu);
+        dest.writeString(dropoffZoneName);
+        dest.writeString(dropoffZoneNameUrdu);
+        if (serviceCode == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(serviceCode);
+        }
+        dest.writeParcelable(extraParams, flags);
     }
 }
