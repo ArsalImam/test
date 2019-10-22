@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -18,7 +19,6 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-
         android:paddingBottom="@dimen/_8sdp">
 
 
@@ -59,12 +59,17 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:background="@drawable/gray_bordered_bg"
-                        android:hint="@string/please_enter_account_number"
+                        android:drawableStart="@drawable/ic_number"
+                        android:drawableLeft="@drawable/ic_number"
+                        android:drawablePadding="@dimen/_7sdp"
+                        android:hint="@string/hint_account_number"
                         android:imeOptions="actionDone"
+                        android:maxLength="30"
                         android:minHeight="@dimen/delivery_details_item_height"
-                        android:overScrollMode="never"
-                        android:padding="@dimen/_5sdp"
+                        android:paddingStart="@dimen/_10sdp"
+                        android:paddingLeft="@dimen/_10sdp"
                         android:scrollHorizontally="false"
+                        android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf" />
@@ -96,17 +101,33 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:background="@drawable/gray_bordered_bg"
-                        android:hint="@string/please_enter_cnic_number"
+                        android:drawableStart="@drawable/ic_cnic"
+                        android:drawableLeft="@drawable/ic_cnic"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:hint="@string/hint_cnic_number"
                         android:imeOptions="actionDone"
                         android:inputType="number"
                         android:maxLength="13"
                         android:minHeight="@dimen/delivery_details_item_height"
-                        android:overScrollMode="never"
-                        android:padding="@dimen/_5sdp"
+                        android:paddingStart="@dimen/_7sdp"
+                        android:paddingLeft="@dimen/_7sdp"
                         android:scrollHorizontally="false"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tVCNICError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:gravity="right"
+                        android:singleLine="true"
+                        android:textColor="@color/color_red"
+                        android:textSize="@dimen/_11sdp"
+                        android:visibility="gone"
+                        app:fontName="jameel_noori_nastaleeq.ttf"
+                        tools:text="@string/account_number" />
                     <!-- endregion -->
                 </LinearLayout>
 
@@ -136,17 +157,33 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:background="@drawable/gray_bordered_bg"
-                        android:hint="@string/please_enter_mobile_number"
+                        android:drawableStart="@drawable/ic_number"
+                        android:drawableLeft="@drawable/ic_number"
+                        android:drawablePadding="@dimen/_7sdp"
+                        android:hint="@string/hint_mobile_number"
                         android:imeOptions="actionDone"
                         android:inputType="number"
                         android:maxLength="11"
                         android:minHeight="@dimen/delivery_details_item_height"
-                        android:overScrollMode="never"
-                        android:padding="@dimen/_5sdp"
+                        android:paddingStart="@dimen/_10sdp"
+                        android:paddingLeft="@dimen/_10sdp"
                         android:scrollHorizontally="false"
+                        android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tVMobileNumberError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:gravity="right"
+                        android:textColor="@color/color_red"
+                        android:textSize="@dimen/_11sdp"
+                        android:visibility="gone"
+                        app:fontName="jameel_noori_nastaleeq.ttf"
+                        tools:text="@string/account_number" />
                     <!-- endregion -->
                 </LinearLayout>
 
@@ -163,8 +200,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_10sdp"
-                        android:gravity="start"
-                        android:text="@string/mobile_number"
+                        android:gravity="right"
+                        android:text="@string/iban_1"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -175,17 +212,33 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:background="@drawable/gray_bordered_bg"
-                        android:hint="@string/please_enter_mobile_number"
+                        android:digits="@string/alphanumeric"
+                        android:drawableStart="@drawable/ic_number"
+                        android:drawableLeft="@drawable/ic_number"
+                        android:drawablePadding="@dimen/_7sdp"
+                        android:hint="@string/hint_iban"
                         android:imeOptions="actionDone"
                         android:maxLength="24"
                         android:minHeight="@dimen/delivery_details_item_height"
-                        android:overScrollMode="never"
-                        android:padding="@dimen/_5sdp"
+                        android:paddingStart="@dimen/_10sdp"
+                        android:paddingLeft="@dimen/_10sdp"
                         android:scrollHorizontally="false"
-                        android:textAllCaps="true"
+                        android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tVIBANError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:gravity="right"
+                        android:textColor="@color/color_red"
+                        android:textSize="@dimen/_11sdp"
+                        android:visibility="gone"
+                        app:fontName="jameel_noori_nastaleeq.ttf"
+                        tools:text="@string/account_number" />
                     <!-- endregion -->
                 </LinearLayout>
 
@@ -208,17 +261,32 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/gray_bordered_bg"
-                    android:hint="@string/please_enter_amount"
+                    android:drawableStart="@drawable/ic_cash"
+                    android:drawableLeft="@drawable/ic_cash"
+                    android:drawablePadding="@dimen/_5sdp"
+                    android:hint="@string/hint_amount"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLength="5"
                     android:minHeight="@dimen/delivery_details_item_height"
-                    android:overScrollMode="never"
-                    android:padding="@dimen/_5sdp"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingLeft="@dimen/_8sdp"
                     android:scrollHorizontally="false"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tVAmountError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:gravity="right"
+                    android:textColor="@color/color_red"
+                    android:textSize="@dimen/_11sdp"
+                    android:visibility="gone"
+                    app:fontName="jameel_noori_nastaleeq.ttf"
+                    tools:text="@string/account_number" />
                 <!-- endregion -->
             </LinearLayout>
         </ScrollView>

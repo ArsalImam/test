@@ -493,13 +493,27 @@
     <string name="enter_amount">Enter amount</string>
 
     <string name="account_number">\u0020اکاؤنٹ نمبر\u0020</string>
-    <string name="please_enter_account_number">\u0020اکاؤنٹ نمبر درج کریں\u0020</string>
+    <string name="hint_account_number">Account Number</string>
     <string name="cnic_number">\u0020شناختی کارڈ نمبر\u0020</string>
-    <string name="please_enter_cnic_number">\u0020شناختی کارڈ نمبر درج کریں\u0020</string>
-    <string name="iban">\u0020آئی بی این نمبر\u0020</string>
-    <string name="please_enter_iban">\u0020آئی بی این نمبر درج کریں\u0020</string>
+    <string name="hint_cnic_number">CNIC Number</string>
+    <string name="iban_1">\u0020بینک اکاؤنٹ نمبر\u0020</string>
+    <string name="iban_2">(IBAN)</string>
+    <string name="hint_iban">IBAN Number</string>
     <string name="mobile_number">\u0020موبائل نمبر\u0020</string>
-    <string name="please_enter_mobile_number">\u0020موبائل نمبر درج کریں\u0020</string>
+    <string name="hint_mobile_number">Mobile Number</string>
     <string name="amount">\u0020رقم\u0020</string>
-    <string name="please_enter_amount">\u0020رقم درج کریں\u0020</string>
+    <string name="hint_amount">Amount</string>
+
+    <string name="iban_error1">24</string>
+    <string name="iban_error2">\u0020ہندسوں پر مشتمل درست\u0020</string>
+    <string name="iban_error3">IBAN</string>
+    <string name="iban_error4">\u0020نمبر درج کریں۔\u0020</string>
+    <string name="mobile_number_error1">11</string>
+    <string name="mobile_number_error2">\u0020ہندسوں پر مشتمل درست موبائل نمبر درج کریں۔\u0020</string>
+    <string name="cnic_error1">13</string>
+    <string name="cnic_error2">\u0020ہندسوں پر مشتمل درست شناختی کارڈ نمبر درج کریں۔\u0020</string>
+
+    <string name="amount_error1">\u0020درج کردہ رقم\u0020</string>
+    <string name="amount_error2">\u0020روپے سے زیادہ نہیں ہو سکتی۔\u0020</string>
+    <string name="alphanumeric">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
 </resources>
