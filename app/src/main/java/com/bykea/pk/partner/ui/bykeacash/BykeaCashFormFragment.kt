@@ -251,24 +251,32 @@ class BykeaCashFormFragment : DialogFragment() {
         serviceCode.let {
             when (it!!) {
                 MOBILE_TOP_UP -> {
-                    return Utils.isValidNumber(eTMobileNumber)
+                    return Utils.isValidNumber(eTMobileNumber) && validateAmount()
                 }
                 MOBILE_WALLET -> {
-                    return ((!eTCNIC.text.isNullOrEmpty() && eTCNIC.text.toString().length < MAX_LENGTH_CNIC) && Utils.isValidNumber(eTMobileNumber))
+                    return ((!eTCNIC.text.isNullOrEmpty() && eTCNIC.text.toString().length < MAX_LENGTH_CNIC) && Utils.isValidNumber(eTMobileNumber)) && validateAmount()
                 }
                 BANK_TRANSFER -> {
-                    return !eTIBAN.text.isNullOrEmpty() && eTIBAN.text.toString().length < MAX_LENGTH_IBAN
+                    return (!eTIBAN.text.isNullOrEmpty() && eTIBAN.text.toString().length < MAX_LENGTH_IBAN) && validateAmount()
                 }
                 UTILITY -> {
-                    return !eTAccountNumber.text.isNullOrEmpty()
+                    return !eTAccountNumber.text.isNullOrEmpty() && validateAmount()
                 }
                 else -> {
+
                 }
             }
         }
-        return (!eTAmount.text.isNullOrEmpty() &&
+        return false
+    }
+
+    /**
+     * Validate Amount Field
+     */
+    private fun validateAmount(): Boolean {
+        return !eTAmount.text.isNullOrEmpty() &&
                 eTAmount.text.toString().toInt() > 0 &&
-                eTAmount.text.toString().toInt() <= AppPreferences.getSettings().settings.bykeaCashMaxAmount)
+                eTAmount.text.toString().toInt() <= AppPreferences.getSettings().settings.bykeaCashMaxAmount
     }
 
     /**
