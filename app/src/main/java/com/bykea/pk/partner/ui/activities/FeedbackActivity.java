@@ -38,6 +38,7 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -65,6 +66,12 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView startAddressTv;
     @BindView(R.id.invoiceMsgTv)
     FontTextView invoiceMsgTv;
+    @BindView(R.id.ic_pin)
+    View ic_pin;
+    @BindView(R.id.addressDivider)
+    View addressDivider;
+    @BindView(R.id.dotted_line)
+    View dotted_line;
     @BindView(R.id.endAddressTv)
     FontTextView endAddressTv;
     //    @BindView(R.id.callerNameTv)
@@ -104,6 +111,8 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView tvCOD;
     @BindView(R.id.tvAmountToGetLable)
     FontTextView tvAmountToGetLable;
+    @BindView(R.id.tvPayment)
+    FontTextView tvPayment;
     @BindView(R.id.totalAmountTvLable)
     FontTextView totalAmountTvLable;
     @BindView(R.id.rlCOD)
@@ -220,15 +229,16 @@ public class FeedbackActivity extends BaseActivity {
         }
     }
 
-    private boolean isDeliveryType, isPurchaseType;
+    private boolean isBykeaCashType, isDeliveryType, isPurchaseType;
     private NormalCallData callData;
 
     private void initViews() {
         mCurrentActivity = this;
 
         callData = AppPreferences.getCallData();
+        isBykeaCashType = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
-        isPurchaseType = Utils.isPurchaseService(callData.getCallType(),callData.getServiceCode());
+        isPurchaseType = Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode());
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
@@ -262,8 +272,10 @@ public class FeedbackActivity extends BaseActivity {
             rlDropOffDiscount.setVisibility(View.VISIBLE);
             tvDropOffDiscount.setText(callData.getDropoff_discount());
         }
-        if (isDeliveryType) {
 
+        if (isBykeaCashType) {
+            updateUIBykeaCash();
+        } else if (isDeliveryType) {
             updateUIICODelivery();
         } else if (isPurchaseType) {
             updateUIforPurcahseService();
@@ -330,13 +342,37 @@ public class FeedbackActivity extends BaseActivity {
         etReceiverName.requestFocus();
     }
 
+    private void updateUIBykeaCash() {
+        endAddressTv.setVisibility(View.GONE);
+        dotted_line.setVisibility(View.GONE);
+        ic_pin.setVisibility(View.GONE);
+        tvTotalTime.setVisibility(View.GONE);
+        tvTotalDistance.setVisibility(View.GONE);
+        addressDivider.setVisibility(View.GONE);
+
+        rlDeliveryStatus.setVisibility(View.VISIBLE);
+        ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
+        initAdapter(callData);
+
+        if (StringUtils.isNotBlank(callData.getCodAmount())) {
+            rlCOD.setVisibility(View.VISIBLE);
+            tvCOD.setText(callData.getCodAmount());
+            tvPayment.setText(R.string.payment);
+        } else {
+            rlCOD.setVisibility(View.GONE);
+        }
+        receivedAmountEt.requestFocus();
+    }
+
     private int selectedMsgPosition = 0;
 
     private void initAdapter(final NormalCallData callData) {
 
-        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity,
-                Utils.getDeliveryMsgsList(mCurrentActivity));
+        String[] list;
+        if (isBykeaCashType) list = Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
+        else list = Utils.getDeliveryMsgsList(mCurrentActivity);
 
+        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, list);
 
         spDeliveryStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -358,7 +394,7 @@ public class FeedbackActivity extends BaseActivity {
                     });
                 }
                 selectedMsgPosition = position;
-                if (StringUtils.isNotBlank(callData.getCodAmount()) && callData.isCod()) {
+                if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashType)) {
                     if (position == 0) {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));

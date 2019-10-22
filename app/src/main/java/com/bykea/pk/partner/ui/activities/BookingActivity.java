@@ -699,8 +699,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.tvCustomerPhone:
-                if (StringUtils.isNotBlank(tvCustomerPhone.getText().toString())) {
-                    Utils.callingIntent(mCurrentActivity, tvCustomerPhone.getText().toString());
+                String phoneNumber = tvCustomerPhone.getText().toString();
+                if (StringUtils.isNotBlank(phoneNumber)) {
+                    if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                        Utils.openCallDialog(mCurrentActivity, callData, phoneNumber);
+                    } else {
+                        Utils.callingIntent(mCurrentActivity, phoneNumber);
+                    }
                 }
                 break;
             case R.id.cancelBtn:
@@ -1193,6 +1198,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             AppPreferences.setTripStatus(callData.getStatus());
 //        setCallData();
             tvTripId.setText(callData.getTripNo());
+            if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+                tvDetailsBanner.setVisibility(View.VISIBLE);
+                setAddressDetailsVisible();
+            }
 
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
@@ -1258,9 +1267,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         setTimeDistance(Utils.formatETA(callData.getArivalTime()), callData.getDistance());
         setPickUpAddress();
 
-        if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()))
-            tvDetailsBanner.setVisibility(View.VISIBLE);
-
         if (StringUtils.isEmpty(callData.getReceiverAddress())
                 && StringUtils.isEmpty(callData.getReceiverName())
                 && StringUtils.isEmpty(callData.getReceiverPhone())
@@ -1283,12 +1289,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Set and Configure Accordingly For The Started State
      */
     private void setStartedState() {
+        jobBtn.setText(getString(R.string.button_text_finish));
         llStartAddress.setVisibility(View.GONE);
         showDropOffAddress();
         cvDirections.setVisibility(View.VISIBLE);
-        jobBtn.setText(getString(R.string.button_text_finish));
         setOnStartData();
-
     }
 
     /**

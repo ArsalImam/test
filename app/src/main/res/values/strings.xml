@@ -343,6 +343,7 @@
 
     <string name="cash_on_delivery">وصولی</string>
     <string name="accept_booking">بکنگ منتخب کریں</string>
+    <string name="payment">ادائیگی</string>
 
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
@@ -350,6 +351,11 @@
         <item>ناكام - وصول کرنے والا موجود نہیں ہے</item>
         <item>ناكام - پارسل وصول کرنے سے انکار</item>
         <item>ناكام - پتہ نہیں ملا</item>
+    </string-array>
+    <string-array name="bykea_cash_status_messages">
+        <item>کامیاب ادائیگی</item>
+        <item>ناكام - ادائیگی مکمل نہیں ہو سکی</item>
+        <item>ناكام - ادائیگی کرنے والا موجود نہیں  ہے</item>
     </string-array>
     <string name="cancel_reason">Please select cancellation reason.</string>
     <string name="amount_cannot_greater">Amount can not be more than %1$s</string>
@@ -491,6 +497,7 @@
     <string name="wrong_code_entered">\u0020درج کردہ کوڈ درست نہیں ہے\u0020</string>
     <string name="enter_received_amount">Enter received amount</string>
     <string name="enter_amount">Enter amount</string>
+    <string name="country_code_pk">92</string>
 
     <string name="account_number">\u0020اکاؤنٹ نمبر\u0020</string>
     <string name="hint_account_number">Account Number</string>
