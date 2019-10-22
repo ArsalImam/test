@@ -3,7 +3,7 @@ package com.bykea.pk.partner.dal.source.remote.request
 import androidx.room.util.StringUtil
 import com.bykea.pk.partner.dal.util.EMPTY_STRING
 
-open class UpdateBookingRequest {
+open class UpdateBykeaCashBookingRequest {
     var _id: String? = EMPTY_STRING
     var token_id: String? = EMPTY_STRING
     var trip: Trip? = null

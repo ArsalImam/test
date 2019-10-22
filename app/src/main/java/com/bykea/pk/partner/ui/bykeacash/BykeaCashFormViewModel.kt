@@ -5,11 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
-import com.bykea.pk.partner.dal.source.pref.AppPref
-import com.bykea.pk.partner.dal.source.remote.request.UpdateBookingRequest
-import com.bykea.pk.partner.dal.source.remote.response.UpdateBookingResponse
+import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
+import com.bykea.pk.partner.dal.source.remote.response.UpdateBykeaCashBookingResponse
 import com.bykea.pk.partner.models.response.NormalCallData
-import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
 
 /**
@@ -25,9 +23,9 @@ class BykeaCashFormViewModel(private val jobsRepository: JobsRepository) : ViewM
     val responseFromServer: LiveData<Boolean>
         get() = _responseFromServer
 
-    fun updateFormDetails(tripId: String, updateBookingRequest: UpdateBookingRequest) {
-        jobsRepository.updateBookingDetails(tripId, updateBookingRequest, object : JobsDataSource.UpdateBookingCallback {
-            override fun onSuccess(updateBookingResponse: UpdateBookingResponse) {
+    fun updateBykeaCashFormDetails(tripId: String, updateBykeaCashBookingRequest: UpdateBykeaCashBookingRequest) {
+        jobsRepository.updateBykeaCashBookingDetails(tripId, updateBykeaCashBookingRequest, object : JobsDataSource.UpdateBykeaCashBookingCallback {
+            override fun onSuccess(updateBykeaCashBookingResponse: UpdateBykeaCashBookingResponse) {
                 Dialogs.INSTANCE.dismissDialog()
                 _responseFromServer.value = true
             }

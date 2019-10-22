@@ -12,7 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.source.remote.request.UpdateBookingRequest
+import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
 import com.bykea.pk.partner.databinding.FragmentBykeaCashFormBinding
 import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.activities.BookingActivity
@@ -25,8 +25,6 @@ import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_bykea_cash_form.*
-import android.content.DialogInterface
-import android.view.WindowManager
 import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_IBAN
 
 
@@ -100,7 +98,7 @@ class BykeaCashFormFragment : DialogFragment() {
             override fun onUpdateDetails() {
                 if (isValidate(normalCallData?.serviceCode)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity)
-                    binding.viewmodel?.updateFormDetails(normalCallData?.tripId!!, createUpdateBookingRequest())
+                    binding.viewmodel?.updateBykeaCashFormDetails(normalCallData?.tripId!!, createUpdateBookingRequest())
                 }
             }
 
@@ -145,27 +143,27 @@ class BykeaCashFormFragment : DialogFragment() {
      */
     private fun setFormSpannableStrings() {
         tVIBAN.text =
-                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_1), "jameel_noori_nastaleeq.ttf"))
-                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_2), "roboto_medium.ttf"))
+                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_bank_account_number), "jameel_noori_nastaleeq.ttf"))
+                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_with_brackets), "roboto_medium.ttf"))
 
         tVCNICError.text =
-                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.cnic_error1), "roboto_medium.ttf"))
-                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.cnic_error2), "jameel_noori_nastaleeq.ttf"))
+                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.cnic_length), "roboto_medium.ttf"))
+                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.correct_cnic), "jameel_noori_nastaleeq.ttf"))
 
         tVMobileNumberError.text =
-                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.mobile_number_error1), "roboto_medium.ttf"))
+                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.mobile_number_length), "roboto_medium.ttf"))
                         .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.mobile_number_error2), "jameel_noori_nastaleeq.ttf"))
 
         tVIBANError.text =
-                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_error1), "roboto_medium.ttf"))
-                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_error2), "jameel_noori_nastaleeq.ttf"))
-                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_error3), "roboto_medium.ttf"))
-                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_error4), "jameel_noori_nastaleeq.ttf"))
+                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban_length), "roboto_medium.ttf"))
+                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.digits_correction), "jameel_noori_nastaleeq.ttf"))
+                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.iban), "roboto_medium.ttf"))
+                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.enter_number), "jameel_noori_nastaleeq.ttf"))
 
         tVAmountError.text =
-                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.amount_error1), "jameel_noori_nastaleeq.ttf"))
+                SpannableStringBuilder(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.enter_amount_error), "jameel_noori_nastaleeq.ttf"))
                         .append(FontUtils.getStyledTitle(mCurrentActivity, AppPreferences.getSettings().settings.bykeaCashMaxAmount.toString(), "roboto_medium.ttf"))
-                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.amount_error2), "jameel_noori_nastaleeq.ttf"))
+                        .append(FontUtils.getStyledTitle(mCurrentActivity, context?.getString(R.string.amount_not_more), "jameel_noori_nastaleeq.ttf"))
     }
 
     /**
@@ -282,12 +280,12 @@ class BykeaCashFormFragment : DialogFragment() {
     /**
      * Create Update Booking Request Object
      */
-    private fun createUpdateBookingRequest(): UpdateBookingRequest {
-        return UpdateBookingRequest().apply {
-            trip = UpdateBookingRequest.Trip()
+    private fun createUpdateBookingRequest(): UpdateBykeaCashBookingRequest {
+        return UpdateBykeaCashBookingRequest().apply {
+            trip = UpdateBykeaCashBookingRequest.Trip()
             trip?.amount = eTAmount.text.toString().toInt()
 
-            extra_info = UpdateBookingRequest.ExtraInfo()
+            extra_info = UpdateBykeaCashBookingRequest.ExtraInfo()
             normalCallData?.serviceCode.let {
                 when (it!!) {
                     MOBILE_TOP_UP -> {

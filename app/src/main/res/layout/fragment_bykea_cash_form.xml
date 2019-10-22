@@ -201,7 +201,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_10sdp"
                         android:gravity="right"
-                        android:text="@string/iban_1"
+                        android:text="@string/iban_bank_account_number"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -216,7 +216,7 @@
                         android:drawableStart="@drawable/ic_number"
                         android:drawableLeft="@drawable/ic_number"
                         android:drawablePadding="@dimen/_7sdp"
-                        android:hint="@string/hint_iban"
+                        android:hint="@string/hint_iban_number"
                         android:imeOptions="actionDone"
                         android:maxLength="24"
                         android:minHeight="@dimen/delivery_details_item_height"

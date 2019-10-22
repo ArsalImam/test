@@ -290,13 +290,13 @@ class JobsRemoteDataSource {
      * Finish job to remote data source
      *
      * @param jobId Job Id
-     * @param requestBody Request body
-     * @param callback Response callback
+     * @param requestBodyBykeaCash Request body
+     * @param callbackBykeaCash Response callbackBykeaCash
      */
-    fun updateBookingDetails(tripId: String, requestBody: UpdateBookingRequest, callback: JobsDataSource.UpdateBookingCallback) {
-        Backend.talos.updateBookingDetails(tripId, requestBody).enqueue(object : Callback<UpdateBookingResponse> {
-            override fun onSuccess(response: UpdateBookingResponse) = callback.onSuccess(response)
-            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onFail(code, subCode, message)
+    fun updateBookingDetails(tripId: String, requestBodyBykeaCash: UpdateBykeaCashBookingRequest, callbackBykeaCash: JobsDataSource.UpdateBykeaCashBookingCallback) {
+        Backend.talos.updateBookingDetails(tripId, requestBodyBykeaCash).enqueue(object : Callback<UpdateBykeaCashBookingResponse> {
+            override fun onSuccess(responseBykeaCash: UpdateBykeaCashBookingResponse) = callbackBykeaCash.onSuccess(responseBykeaCash)
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callbackBykeaCash.onFail(code, subCode, message)
         })
     }
 }

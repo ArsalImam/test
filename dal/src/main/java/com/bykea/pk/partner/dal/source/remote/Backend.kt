@@ -7,7 +7,6 @@ import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
-import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -244,7 +243,7 @@ interface Backend {
     @PUT("/api/v1/trips/{trip_id}/partner")
     fun updateBookingDetails(
             @Path("trip_id") jobRequestId: String,
-            @Body bodyObject: UpdateBookingRequest): Call<UpdateBookingResponse>
+            @Body bodyObject: UpdateBykeaCashBookingRequest): Call<UpdateBykeaCashBookingResponse>
 
     companion object {
 
