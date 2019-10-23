@@ -621,7 +621,8 @@ public class FeedbackActivity extends BaseActivity {
             setEtError(getString(R.string.error_invalid_amount));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
-                && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)) {
+                && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)
+                && !isBykeaCashType) {
             setEtError(getString(R.string.error_amount_greater_than_total));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
