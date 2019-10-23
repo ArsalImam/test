@@ -9,6 +9,7 @@ import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequ
 import com.bykea.pk.partner.dal.source.remote.response.UpdateBykeaCashBookingResponse
 import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Utils
 
 /**
  * ViewModel for Bykea Cash Form
@@ -29,6 +30,7 @@ class BykeaCashFormViewModel(private val jobsRepository: JobsRepository) : ViewM
 
 
     fun updateBykeaCashFormDetails(tripId: String, updateBykeaCashBookingRequest: UpdateBykeaCashBookingRequest) {
+        updateBykeaCashBookingRequest.extra_info?.phone = Utils.phoneNumberForServer(updateBykeaCashBookingRequest.extra_info?.phone)
         jobsRepository.updateBykeaCashBookingDetails(tripId, updateBykeaCashBookingRequest, object : JobsDataSource.UpdateBykeaCashBookingCallback {
             override fun onSuccess(updateBykeaCashBookingResponse: UpdateBykeaCashBookingResponse) {
                 Dialogs.INSTANCE.dismissDialog()
