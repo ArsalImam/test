@@ -26,6 +26,7 @@ import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_bykea_cash_form.*
 import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_IBAN
+import com.bykea.pk.partner.utils.TripStatus
 
 
 private const val ARG_PARAM1 = "param1"
@@ -34,11 +35,17 @@ class BykeaCashFormFragment : DialogFragment() {
     private lateinit var binding: FragmentBykeaCashFormBinding
     private lateinit var mCurrentActivity: BookingActivity
     private var normalCallData: NormalCallData? = null
+    private var isUpdateAllowed = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mCurrentActivity = activity as BookingActivity
         setStyle(STYLE_NO_TITLE, R.style.AppTheme_Dialog_Custom)
         arguments?.let { normalCallData = it.getParcelable(ARG_PARAM1) }
+
+        if (normalCallData?.status.equals(TripStatus.ON_ACCEPT_CALL, ignoreCase = true) ||
+                normalCallData?.status.equals(TripStatus.ON_ARRIVED_TRIP, ignoreCase = true))
+            isUpdateAllowed = true
+
         return object : Dialog(mCurrentActivity, theme) {
             override fun onBackPressed() {
                 super.onBackPressed()
@@ -87,7 +94,9 @@ class BykeaCashFormFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         setFormDataAndVisibility(normalCallData?.serviceCode)
         setFormSpannableStrings()
-        setTextChangeListeners()
+
+        if (isUpdateAllowed) setTextChangeListeners()
+        else setFieldDisabled()
     }
 
     /**
@@ -96,7 +105,9 @@ class BykeaCashFormFragment : DialogFragment() {
     private fun setListeners() {
         binding.listener = object : GenericFragmentListener {
             override fun onUpdateDetails() {
-                if (isValidate(normalCallData?.serviceCode)) {
+                if (!isUpdateAllowed) {
+                    dismiss()
+                } else if (isValidate(normalCallData?.serviceCode)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity)
                     binding.viewmodel?.updateBykeaCashFormDetails(normalCallData?.tripId!!, createUpdateBookingRequest())
                 }
@@ -117,13 +128,13 @@ class BykeaCashFormFragment : DialogFragment() {
             when (it!!) {
                 MOBILE_TOP_UP -> {
                     linLayoutMobileNumber.visibility = View.VISIBLE
-                    eTMobileNumber.setText(normalCallData?.extraParams?.phone)
+                    eTMobileNumber.setText(Utils.phoneNumberToShow(normalCallData?.extraParams?.phone))
                 }
                 MOBILE_WALLET -> {
                     linLayoutCNIC.visibility = View.VISIBLE
                     linLayoutMobileNumber.visibility = View.VISIBLE
                     eTCNIC.setText(normalCallData?.extraParams?.cnic)
-                    eTMobileNumber.setText(normalCallData?.extraParams?.phone)
+                    eTMobileNumber.setText(Utils.phoneNumberToShow(normalCallData?.extraParams?.phone))
                 }
                 BANK_TRANSFER -> {
                     linLayoutIBAN.visibility = View.VISIBLE
@@ -174,72 +185,49 @@ class BykeaCashFormFragment : DialogFragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (eTAccountNumber.text.isNullOrEmpty()) {
-                    eTAccountNumber.requestFocus()
-                    eTAccountNumber.setBackgroundResource(R.drawable.red_bordered_bg)
-                } else {
-                    eTAccountNumber.setBackgroundResource(R.drawable.gray_bordered_bg)
-                }
+                validateAccountNumber()
             }
         })
         eTCNIC.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty() || (!s.isNullOrEmpty() && s.length < MAX_LENGTH_CNIC)) {
-                    eTCNIC.requestFocus()
-                    tVCNICError.visibility = View.VISIBLE
-                    eTCNIC.setBackgroundResource(R.drawable.red_bordered_bg)
-                } else {
-                    tVCNICError.visibility = View.GONE
-                    eTCNIC.setBackgroundResource(R.drawable.gray_bordered_bg)
-                }
+                validateCNIC()
             }
         })
         eTIBAN.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty() || (!s.isNullOrEmpty() && s.length < MAX_LENGTH_IBAN)) {
-                    eTIBAN.requestFocus()
-                    tVIBANError.visibility = View.VISIBLE
-                    eTIBAN.setBackgroundResource(R.drawable.red_bordered_bg)
-                } else {
-                    tVIBANError.visibility = View.GONE
-                    eTIBAN.setBackgroundResource(R.drawable.gray_bordered_bg)
-                }
+                validateIBAN()
             }
         })
         eTMobileNumber.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (!Utils.isValidNumber(eTMobileNumber)) {
-                    eTMobileNumber.requestFocus()
-                    tVMobileNumberError.visibility = View.VISIBLE
-                    eTMobileNumber.setBackgroundResource(R.drawable.red_bordered_bg)
-                } else {
-                    tVMobileNumberError.visibility = View.GONE
-                    eTMobileNumber.setBackgroundResource(R.drawable.gray_bordered_bg)
-                }
+                validateMobileNumber()
             }
         })
         eTAmount.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty() ||
-                        (!s.isNullOrEmpty() && s.toString().toInt() == 0) ||
-                        (!s.isNullOrEmpty() && s.toString().toInt() > AppPreferences.getSettings().settings.bykeaCashMaxAmount)) {
-                    eTAmount.requestFocus()
-                    tVAmountError.visibility = View.VISIBLE
-                    eTAmount.setBackgroundResource(R.drawable.red_bordered_bg)
-                } else {
-                    tVAmountError.visibility = View.GONE
-                    eTAmount.setBackgroundResource(R.drawable.gray_bordered_bg)
-                }
+                validateAmount()
             }
         })
+    }
+
+    /**
+     * Set Field Disabled
+     */
+    private fun setFieldDisabled() {
+        eTAccountNumber.isEnabled = false
+        eTCNIC.isEnabled = false
+        eTIBAN.isEnabled = false
+        eTMobileNumber.isEnabled = false
+        eTAmount.isEnabled = false
+        iVNegativeButton.visibility = View.GONE
     }
 
     /**
@@ -249,33 +237,105 @@ class BykeaCashFormFragment : DialogFragment() {
         serviceCode.let {
             when (it!!) {
                 MOBILE_TOP_UP -> {
-                    return Utils.isValidNumber(eTMobileNumber) && validateAmount()
+                    return validateMobileNumber() && validateAmount()
                 }
                 MOBILE_WALLET -> {
-                    return ((!eTCNIC.text.isNullOrEmpty() && eTCNIC.text.toString().length < MAX_LENGTH_CNIC) && Utils.isValidNumber(eTMobileNumber)) && validateAmount()
+                    return validateCNIC() && validateMobileNumber() && validateAmount()
                 }
                 BANK_TRANSFER -> {
-                    return (!eTIBAN.text.isNullOrEmpty() && eTIBAN.text.toString().length < MAX_LENGTH_IBAN) && validateAmount()
+                    return validateIBAN() && validateAmount()
                 }
                 UTILITY -> {
-                    return !eTAccountNumber.text.isNullOrEmpty() && validateAmount()
+                    return validateAccountNumber() && validateAmount()
                 }
                 else -> {
-
+                    return false
                 }
             }
         }
-        return false
+    }
+
+    // region Validations
+    /**
+     * Validate Account Number
+     */
+    private fun validateAccountNumber(): Boolean {
+        if (eTAccountNumber.text.isNullOrEmpty()) {
+            eTAccountNumber.requestFocus()
+            eTAccountNumber.setBackgroundResource(R.drawable.red_bordered_bg)
+            return false
+        } else {
+            eTAccountNumber.setBackgroundResource(R.drawable.gray_bordered_bg)
+            return true
+        }
+    }
+
+    /**
+     * Validate CNIC
+     */
+    private fun validateCNIC(): Boolean {
+        if (eTCNIC.text.isNullOrEmpty() || (!eTCNIC.text.isNullOrEmpty() && eTCNIC.text.toString().length < MAX_LENGTH_CNIC)) {
+            eTCNIC.requestFocus()
+            tVCNICError.visibility = View.VISIBLE
+            eTCNIC.setBackgroundResource(R.drawable.red_bordered_bg)
+            return false
+        } else {
+            tVCNICError.visibility = View.GONE
+            eTCNIC.setBackgroundResource(R.drawable.gray_bordered_bg)
+            return true
+        }
+    }
+
+    /**
+     * Validate IBAN
+     */
+    private fun validateIBAN(): Boolean {
+        if (eTIBAN.text.isNullOrEmpty() || (!eTIBAN.text.isNullOrEmpty() && eTIBAN.text.toString().length < MAX_LENGTH_IBAN)) {
+            eTIBAN.requestFocus()
+            tVIBANError.visibility = View.VISIBLE
+            eTIBAN.setBackgroundResource(R.drawable.red_bordered_bg)
+            return false
+        } else {
+            tVIBANError.visibility = View.GONE
+            eTIBAN.setBackgroundResource(R.drawable.gray_bordered_bg)
+            return true
+        }
+    }
+
+    /**
+     * Validate Mobile Number
+     */
+    private fun validateMobileNumber(): Boolean {
+        if (!Utils.isValidNumber(eTMobileNumber)) {
+            eTMobileNumber.requestFocus()
+            tVMobileNumberError.visibility = View.VISIBLE
+            eTMobileNumber.setBackgroundResource(R.drawable.red_bordered_bg)
+            return false
+        } else {
+            tVMobileNumberError.visibility = View.GONE
+            eTMobileNumber.setBackgroundResource(R.drawable.gray_bordered_bg)
+            return true
+        }
     }
 
     /**
      * Validate Amount Field
      */
     private fun validateAmount(): Boolean {
-        return !eTAmount.text.isNullOrEmpty() &&
-                eTAmount.text.toString().toInt() > 0 &&
-                eTAmount.text.toString().toInt() <= AppPreferences.getSettings().settings.bykeaCashMaxAmount
+        if (eTAmount.text.isNullOrEmpty() ||
+                (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() == 0) ||
+                (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() > AppPreferences.getSettings().settings.bykeaCashMaxAmount)) {
+            eTAmount.requestFocus()
+            tVAmountError.visibility = View.VISIBLE
+            eTAmount.setBackgroundResource(R.drawable.red_bordered_bg)
+            return false
+        } else {
+            tVAmountError.visibility = View.GONE
+            eTAmount.setBackgroundResource(R.drawable.gray_bordered_bg)
+            return true
+        }
     }
+    //endregion
 
     /**
      * Create Update Booking Request Object
