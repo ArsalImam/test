@@ -22,9 +22,13 @@ object Util {
         return if (p1 != null && p2 != null && p3 != null && p4 != null && p5 != null) block(p1, p2, p3, p4, p5) else null
     }
 
-    fun isBykeaCashJob(serviceCode: Int) = (
+    fun isBykeaCashJob(serviceCode: Int?): Boolean {
+        return if (serviceCode == null)
+            false
+        else
             serviceCode == Constants.ServiceCode.MOBILE_TOP_UP
                     || serviceCode == Constants.ServiceCode.MOBILE_WALLET
                     || serviceCode == Constants.ServiceCode.BANK_TRANSFER
-                    || serviceCode == Constants.ServiceCode.UTILITY)
+                    || serviceCode == Constants.ServiceCode.UTILITY
+    }
 }

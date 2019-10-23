@@ -227,7 +227,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean isFinishedRetried = false;
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
-    BykeaCashFormFragment bykeaCashFormFragment;
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -580,9 +579,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     public void onBackPressed() {
-        if (bykeaCashFormFragment != null && bykeaCashFormFragment.isVisible()) {
-            bykeaCashFormFragment.dismiss();
-        }
     }
 
     @Override
@@ -836,7 +832,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 });
                 break;
             case R.id.tvDetailsBanner:
-                bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
+                BykeaCashFormFragment bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
                 bykeaCashFormFragment.setCancelable(false);
                 bykeaCashFormFragment.show(getSupportFragmentManager(), BykeaCashFormFragment.class.getSimpleName());
                 break;
@@ -1564,7 +1560,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 showOnLeft = false; //isLeftAreaGreater(latLng);
             }
         }
-        if (pickUpMarker != null && !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+        if (pickUpMarker != null) {
             if (!lastPickUpFlagOnLeft == showOnLeft || shouldRefreshPickupMarker) {
                 shouldRefreshPickupMarker = false;
                 pickUpMarker.remove();
@@ -1654,7 +1650,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
         } else {
-            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))
+            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) &&
+                    !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()))
                 pickUpMarker.remove();
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
