@@ -302,7 +302,7 @@
 
             <ImageView
                 android:id="@+id/iVNegativeButton"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/height.large.medium"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:layout_marginRight="@dimen/_5sdp"
@@ -315,7 +315,7 @@
 
             <ImageView
                 android:id="@+id/iVPostiveButton"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/height.large.medium"
                 android:layout_marginStart="@dimen/_5sdp"
                 android:layout_marginLeft="@dimen/_5sdp"
