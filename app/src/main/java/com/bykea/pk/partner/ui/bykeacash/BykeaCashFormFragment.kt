@@ -36,9 +36,12 @@ class BykeaCashFormFragment : DialogFragment() {
     private lateinit var mCurrentActivity: BookingActivity
     private var normalCallData: NormalCallData? = null
     private var isUpdateAllowed = false
+    private var mCallback: BykeaCashDetailsListener? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mCurrentActivity = activity as BookingActivity
+        mCallback = mCurrentActivity
+
         setStyle(STYLE_NO_TITLE, R.style.AppTheme_Dialog_Custom)
         arguments?.let { normalCallData = it.getParcelable(ARG_PARAM1) }
 
@@ -82,7 +85,11 @@ class BykeaCashFormFragment : DialogFragment() {
                         normalCallData?.codAmount = eTAmount.text.toString()
                     }
                 }
+            })
 
+            cashAmount.observe(this@BykeaCashFormFragment, Observer {
+                if (cashAmount.value != null)
+                    mCallback?.onBykeaCashAmountUpdated(cashAmount.value!!)
             })
         }
 

@@ -56,6 +56,7 @@ import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.bykeacash.BykeaCashDetailsListener;
 import com.bykea.pk.partner.ui.bykeacash.BykeaCashFormFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -119,7 +120,7 @@ import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
 
-public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener {
+public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener, BykeaCashDetailsListener {
 
     private final String TAG = BookingActivity.class.getSimpleName();
 
@@ -2567,5 +2568,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             textField.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onBykeaCashAmountUpdated(int amount) {
+        tvCodAmount.setText(String.format(getString(R.string.amount_rs_int), amount));
     }
 }

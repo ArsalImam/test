@@ -23,11 +23,17 @@ class BykeaCashFormViewModel(private val jobsRepository: JobsRepository) : ViewM
     val responseFromServer: LiveData<Boolean>
         get() = _responseFromServer
 
+    private val _cashAmount = MutableLiveData<Int>()
+    val cashAmount: LiveData<Int>
+        get() = _cashAmount
+
+
     fun updateBykeaCashFormDetails(tripId: String, updateBykeaCashBookingRequest: UpdateBykeaCashBookingRequest) {
         jobsRepository.updateBykeaCashBookingDetails(tripId, updateBykeaCashBookingRequest, object : JobsDataSource.UpdateBykeaCashBookingCallback {
             override fun onSuccess(updateBykeaCashBookingResponse: UpdateBykeaCashBookingResponse) {
                 Dialogs.INSTANCE.dismissDialog()
                 _responseFromServer.value = true
+                _cashAmount.value = updateBykeaCashBookingRequest.trip?.amount
             }
 
             override fun onFail(code: Int, subCode: Int?, message: String?) {
