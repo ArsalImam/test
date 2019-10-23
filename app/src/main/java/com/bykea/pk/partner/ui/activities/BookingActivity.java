@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -1330,7 +1329,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         } else {
             int cashKiWasooliValue = callData.getCashKiWasooli();
-            if (callData.isCod() && StringUtils.isNotBlank(callData.getCodAmount())) {
+            if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()))) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
@@ -1565,7 +1564,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 showOnLeft = false; //isLeftAreaGreater(latLng);
             }
         }
-        if (pickUpMarker != null) {
+        if (pickUpMarker != null && !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
             if (!lastPickUpFlagOnLeft == showOnLeft || shouldRefreshPickupMarker) {
                 shouldRefreshPickupMarker = false;
                 pickUpMarker.remove();
@@ -1925,7 +1924,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
-        if (StringUtils.isNotBlank(callData.getStartLat())
+        if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+            drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
+                    null,
+                    new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
+                    Routing.pickupRoute);
+        } else if (StringUtils.isNotBlank(callData.getStartLat())
                 && StringUtils.isNotBlank(callData.getStartLng())
                 && StringUtils.isNotBlank(callData.getEndLat())
                 && StringUtils.isNotBlank(callData.getEndLng())
