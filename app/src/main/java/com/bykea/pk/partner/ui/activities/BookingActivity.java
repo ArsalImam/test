@@ -500,15 +500,21 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 checkGps();
             } else {
                 if (Connectivity.isConnectedFast(context)) {
-                    if (null != progressDialogJobActivity && !isFirstTime) {
+                    if (null != progressDialogJobActivity) {// && !isFirstTime) {
                         progressDialogJobActivity.dismiss();
                         if (allowTripStatusCall)
                             dataRepository.requestRunningTrip(mCurrentActivity, handler);
-                    } else {
-                        isFirstTime = false;
                     }
+
+//                    else {
+//                        isFirstTime = false;
+//                    }
                 } else {
-                    if (progressDialogJobActivity != null) progressDialogJobActivity.show();
+                    if (progressDialogJobActivity != null) {
+                        dismissProgressDialog();
+                        progressDialogJobActivity.dismiss();
+                        progressDialogJobActivity.show();
+                    }
                 }
             }
         }
@@ -523,6 +529,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mCurrentActivity = this;
         dataRepository = new UserRepository();
         jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+
+        if (progressDialogJobActivity == null) {
+            progressDialogJobActivity = new ProgressDialog(mCurrentActivity);
+            progressDialogJobActivity.setCancelable(false);
+            progressDialogJobActivity.setIndeterminate(true);
+            progressDialogJobActivity.setMessage(getString(R.string.internet_error));
+        }
 
         // FOR CHAT NOTIFCATION BADGE ICON HANDLING
         if (AppPreferences.getReceivedMessageCount() != null) {
@@ -1176,12 +1189,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * METHODS FOR SETTING CALL DATA ACCORDING TO THE TRIP STATE
      ****************************************************************************************/
     private void setInitialData() {
-        if (progressDialogJobActivity == null) {
-            progressDialogJobActivity = new ProgressDialog(mCurrentActivity);
-            progressDialogJobActivity.setCancelable(false);
-            progressDialogJobActivity.setIndeterminate(true);
-            progressDialogJobActivity.setMessage(getString(R.string.internet_error));
-        }
         AppPreferences.setIsOnTrip(true);
         ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
         mLocBearing = AppPreferences.getBearing() + "";
