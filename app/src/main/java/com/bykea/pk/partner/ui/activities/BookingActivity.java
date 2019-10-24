@@ -229,6 +229,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
 
+    BykeaCashFormFragment bykeaCashFormFragment;
+
     private UserDataHandler handler = new UserDataHandler() {
         @Override
         public void onRunningTrips(final CheckDriverStatusResponse response) {
@@ -726,6 +728,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.jobBtn:
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
@@ -833,7 +836,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 });
                 break;
             case R.id.tvDetailsBanner:
-                BykeaCashFormFragment bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
+                bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
                 bykeaCashFormFragment.setCancelable(false);
                 bykeaCashFormFragment.show(getSupportFragmentManager(), BykeaCashFormFragment.class.getSimpleName());
                 break;
