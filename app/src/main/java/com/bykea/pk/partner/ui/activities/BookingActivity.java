@@ -500,15 +500,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 checkGps();
             } else {
                 if (Connectivity.isConnectedFast(context)) {
-                    if (null != progressDialogJobActivity) {// && !isFirstTime) {
+                    if (null != progressDialogJobActivity) {
                         progressDialogJobActivity.dismiss();
                         if (allowTripStatusCall)
                             dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     }
-
-//                    else {
-//                        isFirstTime = false;
-//                    }
                 } else {
                     if (progressDialogJobActivity != null) {
                         dismissProgressDialog();
