@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.utils
 
+import java.util.regex.Pattern
+
 /**
  * Util Class
  * Mixed types, all must not be null to calculate a new value
@@ -30,5 +32,10 @@ object Util {
                     || serviceCode == Constants.ServiceCode.MOBILE_WALLET
                     || serviceCode == Constants.ServiceCode.BANK_TRANSFER
                     || serviceCode == Constants.ServiceCode.UTILITY
+    }
+
+    fun isIbanValid(iban: String): Boolean {
+        return Pattern.compile("^[A-Za-z]{2}\\d{2}[A-Za-z\\d]{4}\\d{16}$").matcher(iban).matches()
+//        return Pattern.compile("PK\\d{2}[A-Z]{4}[A-Z0-9]{16}").matcher(iban).matches()
     }
 }

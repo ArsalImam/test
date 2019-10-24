@@ -21,12 +21,13 @@ import com.bykea.pk.partner.ui.complain.GenericFragmentListener
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_CNIC
+import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_IBAN
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.TripStatus
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_bykea_cash_form.*
-import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_IBAN
-import com.bykea.pk.partner.utils.TripStatus
 
 
 private const val ARG_PARAM1 = "param1"
@@ -297,15 +298,16 @@ class BykeaCashFormFragment : DialogFragment() {
      * Validate IBAN
      */
     private fun validateIBAN(): Boolean {
-        if (eTIBAN.text.isNullOrEmpty() || (!eTIBAN.text.isNullOrEmpty() && eTIBAN.text.toString().length < MAX_LENGTH_IBAN)) {
+        val iban = eTIBAN.text.toString()
+        return if (iban.isEmpty() || (iban.isNotEmpty() && iban.length < MAX_LENGTH_IBAN) || !Util.isIbanValid(iban)) {
             eTIBAN.requestFocus()
             tVIBANError.visibility = View.VISIBLE
             eTIBAN.setBackgroundResource(R.drawable.red_bordered_bg)
-            return false
+            false
         } else {
             tVIBANError.visibility = View.GONE
             eTIBAN.setBackgroundResource(R.drawable.gray_bordered_bg)
-            return true
+            true
         }
     }
 
