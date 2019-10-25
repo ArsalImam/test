@@ -149,6 +149,7 @@ public class FeedbackActivity extends BaseActivity {
 
     private MixpanelAPI mixpanelAPI;
     int driverWallet;
+    private boolean isJobSuccessful = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -399,10 +400,12 @@ public class FeedbackActivity extends BaseActivity {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                         totalCharges = "" + (Integer.parseInt(callData.getTotalFare()) + Integer.parseInt(callData.getCodAmountNotFormatted()));
+                        isJobSuccessful = true;
                     } else {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         totalCharges = callData.getTotalFare();
+                        isJobSuccessful = false;
                     }
                     tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
                 }
@@ -622,7 +625,7 @@ public class FeedbackActivity extends BaseActivity {
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)
-                && !isBykeaCashType) {
+                && (!isBykeaCashType || isJobSuccessful)) {
             setEtError(getString(R.string.error_amount_greater_than_total));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
