@@ -28,6 +28,7 @@ import com.bykea.pk.partner.utils.TripStatus
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_bykea_cash_form.*
+import org.apache.commons.validator.routines.IBANValidator
 
 
 private const val ARG_PARAM1 = "param1"
@@ -299,7 +300,7 @@ class BykeaCashFormFragment : DialogFragment() {
      */
     private fun validateIBAN(): Boolean {
         val iban = eTIBAN.text.toString()
-        return if (iban.isEmpty() || (iban.isNotEmpty() && iban.length < MAX_LENGTH_IBAN) || !Util.isIbanValid(iban)) {
+        return if (iban.isEmpty() || (iban.isNotEmpty() && iban.length < MAX_LENGTH_IBAN) || !IBANValidator.getInstance().isValid(iban)) {
             eTIBAN.requestFocus()
             tVIBANError.visibility = View.VISIBLE
             eTIBAN.setBackgroundResource(R.drawable.red_bordered_bg)
