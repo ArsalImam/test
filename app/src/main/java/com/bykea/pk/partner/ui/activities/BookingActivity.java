@@ -717,6 +717,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.cancelBtn:
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
                     String msg = "پہنچنے کے " + AppPreferences.getSettings()
                             .getSettings().getCancel_time() +
