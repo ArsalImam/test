@@ -331,9 +331,9 @@ class BykeaCashFormFragment : DialogFragment() {
      * Validate Amount Field
      */
     private fun validateAmount(): Boolean {
-        if (eTAmount.text.isNullOrEmpty() ||
-                (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() == 0) ||
-                (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() > AppPreferences.getSettings().settings.bykeaCashMaxAmount)) {
+        if (eTAmount.text.isNullOrEmpty()
+                || (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() < 50)
+                || (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() > AppPreferences.getSettings().settings.bykeaCashMaxAmount)) {
             eTAmount.requestFocus()
             tVAmountError.visibility = View.VISIBLE
             eTAmount.setBackgroundResource(R.drawable.red_bordered_bg)
