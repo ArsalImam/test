@@ -39,6 +39,7 @@ class BykeaCashFormViewModel(private val jobsRepository: JobsRepository) : ViewM
             }
 
             override fun onFail(code: Int, subCode: Int?, message: String?) {
+                Dialogs.INSTANCE.showToast(message)
                 Dialogs.INSTANCE.dismissDialog()
             }
         })
