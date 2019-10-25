@@ -684,6 +684,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         switch (view.getId()) {
             case R.id.chatBtn:
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
                     Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                 } else {
@@ -716,6 +717,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.cancelBtn:
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
                     String msg = "پہنچنے کے " + AppPreferences.getSettings()
                             .getSettings().getCancel_time() +
