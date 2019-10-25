@@ -14,6 +14,7 @@ import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.ui.common.Event
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.maps.model.LatLng
@@ -123,10 +124,12 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     }
 
     override fun onJobRequestAccepted() {
+        Dialogs.INSTANCE.dismissDialog()
         _acceptBookingCommand.value = Event(Unit)
     }
 
     override fun onJobRequestAcceptFailed(code: Int, message: String?) {
+        Dialogs.INSTANCE.dismissDialog()
         if (code == 422) {
             _bookingTakenCommand.value = Event(Unit)
         } else {
