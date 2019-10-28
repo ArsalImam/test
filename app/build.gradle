@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 50
-        versionName "6.9"
+        versionCode 51
+        versionName "7.0"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -201,6 +201,7 @@ dependencies {
     implementation 'me.grantland:autofittextview:0.2.1'
     implementation 'me.relex:circleindicator:1.2.1@aar'
     implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'commons-validator:commons-validator:1.5.0'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
     implementation 'top.oply.opuslib:opuslib:1.0.2'

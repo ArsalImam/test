@@ -218,6 +218,7 @@
                         android:drawablePadding="@dimen/_7sdp"
                         android:hint="@string/hint_iban_number"
                         android:imeOptions="actionDone"
+                        android:inputType="textCapCharacters"
                         android:maxLength="24"
                         android:minHeight="@dimen/delivery_details_item_height"
                         android:paddingStart="@dimen/_10sdp"

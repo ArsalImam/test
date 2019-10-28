@@ -56,6 +56,7 @@ import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.bykeacash.BykeaCashDetailsListener;
 import com.bykea.pk.partner.ui.bykeacash.BykeaCashFormFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -119,7 +120,7 @@ import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
 
-public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener {
+public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener, BykeaCashDetailsListener {
 
     private final String TAG = BookingActivity.class.getSimpleName();
 
@@ -227,6 +228,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean isFinishedRetried = false;
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
+
     BykeaCashFormFragment bykeaCashFormFragment;
 
     private UserDataHandler handler = new UserDataHandler() {
@@ -498,15 +500,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 checkGps();
             } else {
                 if (Connectivity.isConnectedFast(context)) {
-                    if (null != progressDialogJobActivity && !isFirstTime) {
+                    if (null != progressDialogJobActivity) {
                         progressDialogJobActivity.dismiss();
                         if (allowTripStatusCall)
                             dataRepository.requestRunningTrip(mCurrentActivity, handler);
-                    } else {
-                        isFirstTime = false;
                     }
                 } else {
-                    if (progressDialogJobActivity != null) progressDialogJobActivity.show();
+                    if (progressDialogJobActivity != null) {
+                        dismissProgressDialog();
+                        progressDialogJobActivity.dismiss();
+                        progressDialogJobActivity.show();
+                    }
                 }
             }
         }
@@ -521,6 +525,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mCurrentActivity = this;
         dataRepository = new UserRepository();
         jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+
+        if (progressDialogJobActivity == null) {
+            progressDialogJobActivity = new ProgressDialog(mCurrentActivity);
+            progressDialogJobActivity.setCancelable(false);
+            progressDialogJobActivity.setIndeterminate(true);
+            progressDialogJobActivity.setMessage(getString(R.string.internet_error));
+        }
 
         // FOR CHAT NOTIFCATION BADGE ICON HANDLING
         if (AppPreferences.getReceivedMessageCount() != null) {
@@ -580,9 +591,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     public void onBackPressed() {
-        if (bykeaCashFormFragment != null && bykeaCashFormFragment.isVisible()) {
-            bykeaCashFormFragment.dismiss();
-        }
     }
 
     @Override
@@ -676,6 +684,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         switch (view.getId()) {
             case R.id.chatBtn:
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
                     Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                 } else {
@@ -708,6 +717,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.cancelBtn:
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
                     String msg = "پہنچنے کے " + AppPreferences.getSettings()
                             .getSettings().getCancel_time() +
@@ -729,6 +739,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 break;
             case R.id.jobBtn:
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
@@ -1176,12 +1187,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * METHODS FOR SETTING CALL DATA ACCORDING TO THE TRIP STATE
      ****************************************************************************************/
     private void setInitialData() {
-        if (progressDialogJobActivity == null) {
-            progressDialogJobActivity = new ProgressDialog(mCurrentActivity);
-            progressDialogJobActivity.setCancelable(false);
-            progressDialogJobActivity.setIndeterminate(true);
-            progressDialogJobActivity.setMessage(getString(R.string.internet_error));
-        }
         AppPreferences.setIsOnTrip(true);
         ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
         mLocBearing = AppPreferences.getBearing() + "";
@@ -1564,7 +1569,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 showOnLeft = false; //isLeftAreaGreater(latLng);
             }
         }
-        if (pickUpMarker != null && !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+        if (pickUpMarker != null) {
             if (!lastPickUpFlagOnLeft == showOnLeft || shouldRefreshPickupMarker) {
                 shouldRefreshPickupMarker = false;
                 pickUpMarker.remove();
@@ -1654,7 +1659,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
         } else {
-            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))
+            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) &&
+                    !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()))
                 pickUpMarker.remove();
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
@@ -2570,5 +2576,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             textField.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onBykeaCashAmountUpdated(int amount) {
+        tvCodAmount.setText(String.format(getString(R.string.amount_rs_int), amount));
+        AppPreferences.setCallData(callData);
     }
 }

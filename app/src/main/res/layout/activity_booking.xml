@@ -547,6 +547,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="2"
                     android:textColor="#676767"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"

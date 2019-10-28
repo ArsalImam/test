@@ -149,6 +149,7 @@ public class FeedbackActivity extends BaseActivity {
 
     private MixpanelAPI mixpanelAPI;
     int driverWallet;
+    private boolean isJobSuccessful = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,15 +208,17 @@ public class FeedbackActivity extends BaseActivity {
         if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
                 if (driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT
-                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE)) {
+                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
+                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
                     //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
                 } else if ((driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
-                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE)) {
+                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE) &&
+                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
                     //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
                     //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
-                } else if (driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                } else if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT) &&
                         Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT + Constants.DIGIT_ONE)) {
                     //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
                     //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
@@ -399,10 +402,12 @@ public class FeedbackActivity extends BaseActivity {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                         totalCharges = "" + (Integer.parseInt(callData.getTotalFare()) + Integer.parseInt(callData.getCodAmountNotFormatted()));
+                        isJobSuccessful = true;
                     } else {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         totalCharges = callData.getTotalFare();
+                        isJobSuccessful = false;
                     }
                     tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
                 }
@@ -621,24 +626,27 @@ public class FeedbackActivity extends BaseActivity {
             setEtError(getString(R.string.error_invalid_amount));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
-                && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)) {
+                && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)
+                && (!isBykeaCashType || isJobSuccessful)) {
             setEtError(getString(R.string.error_amount_greater_than_total));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT &&
-                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE)) {
+                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
+                !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
             //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 (driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
-                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE)) {
+                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE) &&
+                !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
             //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
             //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
-                driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT) &&
                 Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT + Constants.DIGIT_ONE)) {
             //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
             //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)

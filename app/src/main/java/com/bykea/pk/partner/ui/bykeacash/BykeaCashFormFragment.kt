@@ -21,12 +21,14 @@ import com.bykea.pk.partner.ui.complain.GenericFragmentListener
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_CNIC
+import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_IBAN
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.TripStatus
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.fragment_bykea_cash_form.*
-import com.bykea.pk.partner.utils.Constants.MAX_LENGTH_IBAN
-import com.bykea.pk.partner.utils.TripStatus
+import org.apache.commons.validator.routines.IBANValidator
 
 
 private const val ARG_PARAM1 = "param1"
@@ -36,9 +38,12 @@ class BykeaCashFormFragment : DialogFragment() {
     private lateinit var mCurrentActivity: BookingActivity
     private var normalCallData: NormalCallData? = null
     private var isUpdateAllowed = false
+    private var mCallback: BykeaCashDetailsListener? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mCurrentActivity = activity as BookingActivity
+        mCallback = mCurrentActivity
+
         setStyle(STYLE_NO_TITLE, R.style.AppTheme_Dialog_Custom)
         arguments?.let { normalCallData = it.getParcelable(ARG_PARAM1) }
 
@@ -82,7 +87,11 @@ class BykeaCashFormFragment : DialogFragment() {
                         normalCallData?.codAmount = eTAmount.text.toString()
                     }
                 }
+            })
 
+            cashAmount.observe(this@BykeaCashFormFragment, Observer {
+                if (cashAmount.value != null)
+                    mCallback?.onBykeaCashAmountUpdated(cashAmount.value!!)
             })
         }
 
@@ -290,15 +299,16 @@ class BykeaCashFormFragment : DialogFragment() {
      * Validate IBAN
      */
     private fun validateIBAN(): Boolean {
-        if (eTIBAN.text.isNullOrEmpty() || (!eTIBAN.text.isNullOrEmpty() && eTIBAN.text.toString().length < MAX_LENGTH_IBAN)) {
+        val iban = eTIBAN.text.toString()
+        return if (iban.isEmpty() || (iban.isNotEmpty() && iban.length < MAX_LENGTH_IBAN) || !IBANValidator.getInstance().isValid(iban)) {
             eTIBAN.requestFocus()
             tVIBANError.visibility = View.VISIBLE
             eTIBAN.setBackgroundResource(R.drawable.red_bordered_bg)
-            return false
+            false
         } else {
             tVIBANError.visibility = View.GONE
             eTIBAN.setBackgroundResource(R.drawable.gray_bordered_bg)
-            return true
+            true
         }
     }
 
@@ -322,9 +332,9 @@ class BykeaCashFormFragment : DialogFragment() {
      * Validate Amount Field
      */
     private fun validateAmount(): Boolean {
-        if (eTAmount.text.isNullOrEmpty() ||
-                (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() == 0) ||
-                (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() > AppPreferences.getSettings().settings.bykeaCashMaxAmount)) {
+        if (eTAmount.text.isNullOrEmpty()
+                || (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() < 50)
+                || (!eTAmount.text.isNullOrEmpty() && eTAmount.text.toString().toInt() > AppPreferences.getSettings().settings.bykeaCashMaxAmount)) {
             eTAmount.requestFocus()
             tVAmountError.visibility = View.VISIBLE
             eTAmount.setBackgroundResource(R.drawable.red_bordered_bg)
