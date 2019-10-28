@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 52
-        versionName "6.67"
+        versionCode 50
+        versionName "6.9"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -72,7 +72,7 @@ android {
         productFlavors {
             local {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"http://dev.bykea.net:3000\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.0.122:3000\""
             }
             develop {
                 dimension "env"

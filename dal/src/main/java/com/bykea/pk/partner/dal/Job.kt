@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
  *
  * @Author: Yousuf Sohail
  */
-@Entity(tableName = "jobRequests")
+@Entity(tableName = "jobs")
 data class Job(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
                val state: String?,
                val booking_no: String?,
@@ -22,6 +22,7 @@ data class Job(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
                val creator_type: String?,
                val fare_est: Int,
                val cod_value: Int?,
+               val amount: Int?,
                val voice_note: String?,
                val dt: String?,
                @Embedded(prefix = "pick_") val pickup: Stop?,

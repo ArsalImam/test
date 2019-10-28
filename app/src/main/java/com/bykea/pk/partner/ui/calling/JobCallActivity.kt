@@ -14,6 +14,7 @@ import com.bykea.pk.partner.dal.source.socket.payload.JobCall
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.models.response.AcceptCallResponse
 import com.bykea.pk.partner.models.response.FreeDriverResponse
+import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.models.response.RejectCallResponse
 import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.repositories.UserRepository
@@ -21,7 +22,7 @@ import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
-import com.bykea.pk.partner.utils.Constants.ServiceType.*
+import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_job_call.*
 import org.greenrobot.eventbus.Subscribe
@@ -184,12 +185,12 @@ class JobCallActivity : BaseActivity() {
      * @return Drawable ID
      */
     private fun getJobImage(service_code: Int): Int {
-        return if (service_code == RIDE_CODE)
-            R.drawable.ride
-        else if (service_code == SEND_CODE || service_code == SEND_COD_CODE)
+        return if (service_code == RIDE)
+            R.drawable.ride_right
+        else if (service_code == SEND || service_code == SEND_COD)
             R.drawable.bhejdo_no_caption
         else
-            R.drawable.ride
+            R.drawable.ride_right
     }
 
     /**
@@ -274,6 +275,12 @@ class JobCallActivity : BaseActivity() {
                     AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                     AppPreferences.setIsOnTrip(true)
                     AppPreferences.setDeliveryType(Constants.CallType.SINGLE)
+
+                    val callData = NormalCallData()
+                    callData.status = TripStatus.ON_ACCEPT_CALL
+                    callData.tripNo = jobCall.booking_no
+                    AppPreferences.setCallData(callData)
+
                     ActivityStackManager.getInstance().startJobActivity(this@JobCallActivity)
                     stopSound()
                     finishActivity()

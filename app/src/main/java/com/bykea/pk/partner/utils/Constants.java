@@ -375,8 +375,20 @@ public class Constants {
     }
 
     /**
+     * Service Codes
+     */
+    public static class ServiceCode {
+        public static final int SEND = 21;
+        public static final int SEND_COD = 22;
+        public static final int RIDE = 23;
+        public static final int OFFLINE_RIDE = 24;
+        public static final int MART = 25;
+    }
+
+    /**
      * List of supported services name and title by our eco system.
      */
+    @Deprecated
     public static class ServiceType {
 
         public static final String RIDE_NAME = "Ride";
@@ -384,10 +396,6 @@ public class Constants {
 
         public static final String SEND_NAME = "Send";
         public static final String SEND_TITLE = "Delivery";
-        public static final int SEND_CODE = 21;
-        public static final int SEND_COD_CODE = 22;
-        public static final int RIDE_CODE = 23;
-        public static final int OFFLINE_RIDE = 24;
         public static final String OFFLINE_RIDE_STRING = "Offline Ride";
 
         public static final String BRING_NAME = "Bring";
@@ -636,4 +644,6 @@ public class Constants {
     public final static int AMOUNT_LIMIT = 35000;
 
     public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
+    public final static String MOBILE_COUNTRY_STANDARD = "92";
+    public final static String MOBILE_TEL_URI ="tel:";
 }

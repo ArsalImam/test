@@ -7,11 +7,11 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
-import com.bykea.pk.partner.ui.loadboard.list.JobRequestListAdapter
+import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.REQUIRED_DATE_FORMAT
+import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.widgets.FontTextView
-import zendesk.support.Request
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,7 +34,7 @@ object BindingAdapters {
     @BindingAdapter("app:items")
     @JvmStatic
     fun setItems(listView: ListView, items: List<Job>) {
-        with(listView.adapter as JobRequestListAdapter) {
+        with(listView.adapter as JobListAdapter) {
             replaceData(items)
         }
     }
@@ -43,8 +43,10 @@ object BindingAdapters {
     @JvmStatic
     fun setServiceCode(imageView: ImageView, serviceCode: Int) {
         when (serviceCode) {
-            21 -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
-            22 -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            SEND -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            SEND_COD -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            RIDE -> imageView.setImageResource(R.drawable.ride_right)
+            MART -> imageView.setImageResource(R.drawable.ic_purchase)
             else -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
         }
     }

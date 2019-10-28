@@ -83,6 +83,7 @@ import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusRecorder;
 
 import static com.bykea.pk.partner.DriverApp.getContext;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 //import top.oply.opuslib.OpusService;
 
 public class ChatActivityNew extends BaseActivity implements ImageCompression.onImageCompressListener {
@@ -737,12 +738,27 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             case R.id.callbtn:
                 if (callData != null) {
                     Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK);
-                    if (StringUtils.isNotBlank(callData.getReceiverPhone())) {
+                    if (StringUtils.isNotBlank(callData.getReceiverPhone()) && (callData.getServiceCode() == null ||
+                            (callData.getServiceCode() != null && callData.getServiceCode() != MART))) {
                         showCallPassengerDialog();
                     } else if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                        openCallDialog(callData.getPhoneNo());
+                        //IF WHATSAPP IS INSTALLED
+                        if (isServiceTypeFoodDelivery()) {
+                            //IF SERVICE IS FOR PURCHASE/MART
+                            openCallDialog(StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getSenderPhone() : callData.getReceiverPhone());
+                        } else {
+                            //IF SERVICE IS FOR NOT FOR PURCHASE/MART
+                            openCallDialog(StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getPhoneNo() : callData.getReceiverPhone());
+                        }
                     } else {
-                        Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                        //IF WHATSAPP IS NOT INSTALLED
+                        if (isServiceTypeFoodDelivery()) {
+                            //IF SERVICE IS FOR PURCHASE/MART
+                            Utils.callingIntent(mCurrentActivity, StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getSenderPhone() : callData.getReceiverPhone());
+                        } else {
+                            //IF SERVICE IS FOR NOT FOR PURCHASE/MART
+                            Utils.callingIntent(mCurrentActivity, StringUtils.isEmpty(callData.getReceiverPhone()) ? callData.getPhoneNo() : callData.getReceiverPhone());
+                        }
                     }
                 }
                 break;
@@ -922,7 +938,10 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             @Override
             public void onCallOnPhone() {
                 Utils.generateFirebaseEventForCalling(mCurrentActivity, callData, Constants.AnalyticsEvents.ON_CALL_BUTTON_CLICK_MOBILE);
-                Utils.callingIntent(mCurrentActivity, callData.getPhoneNo());
+                if (callNumber.startsWith("92"))
+                    Utils.callingIntent(mCurrentActivity, Utils.phoneNumberToShow(callNumber));
+                else
+                    Utils.callingIntent(mCurrentActivity, callNumber);
                 dialog.dismiss();
             }
 
@@ -955,6 +974,17 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                         || TripStatus.ON_START_TRIP.equalsIgnoreCase(callData.getStatus())) {
                     return callData.getReceiverPhone();
                 }
+            } else if (StringUtils.isNotEmpty(callData.getPhoneNo()) && StringUtils.isNotEmpty(callData.getSenderPhone())) {
+                String passengerPhoneNumber = callData.getPhoneNo(), senderPhoneNumber = callData.getSenderPhone();
+                if (passengerPhoneNumber.startsWith("92"))
+                    passengerPhoneNumber = Utils.phoneNumberToShow(callData.getPhoneNo());
+                if (senderPhoneNumber.startsWith("92"))
+                    senderPhoneNumber = Utils.phoneNumberToShow(callData.getSenderPhone());
+
+                if (passengerPhoneNumber.equalsIgnoreCase(senderPhoneNumber))
+                    return passengerPhoneNumber;
+                else
+                    return senderPhoneNumber;
             } else {
                 return callData.getPhoneNo();
             }
@@ -988,6 +1018,8 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
      */
     private boolean isServiceTypeFoodDelivery() {
         if (callData != null) {
+            if (callData.getServiceCode() != null)
+                return callData.getServiceCode() == MART;
             return Constants.RIDE_TYPE_FOOD_DELIVERY.equalsIgnoreCase(callData.getCallType());
         }
         return false;

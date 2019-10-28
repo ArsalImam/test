@@ -162,7 +162,10 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
+import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 
@@ -875,9 +878,11 @@ public class Utils {
         try {
             if (StringUtils.isBlank(number)) {
                 number = StringUtils.EMPTY;
+            } else if (number.startsWith(MOBILE_COUNTRY_STANDARD)) {
+                number = phoneNumberToShow(number);
             }
             Intent callingIntent = new Intent(Intent.ACTION_VIEW);
-            callingIntent.setData(Uri.parse("tel:" + number));
+            callingIntent.setData(Uri.parse(MOBILE_TEL_URI + number));
             ((Activity) context).startActivity(callingIntent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1210,8 +1215,7 @@ public class Utils {
         return diff >= cancel_time * 60000;
     }
 
-    /*
-        public static ArrayList<PlacesResult> getCities() {
+    /*public static ArrayList<PlacesResult> getCities() {
             PlacesResult rawalpindi = new PlacesResult("Rawalpindi", StringUtils.EMPTY, Constants.rwpLat, Constants.rwpLng);
             PlacesResult lahore = new PlacesResult("Lahore", StringUtils.EMPTY, Constants.lhrLat, Constants.lhrLng);
             PlacesResult karachi = new PlacesResult("Karachi", StringUtils.EMPTY, Constants.khiLat, Constants.khiLng);
@@ -1220,7 +1224,8 @@ public class Utils {
             cities.add(lahore);
             cities.add(karachi);
             return cities;
-        }*/
+    }*/
+
     public static ArrayList<PlacesResult> getCities() {
         ArrayList<PlacesResult> availableCities = AppPreferences.getAvailableCities();
         if (availableCities.size() > 0) {
@@ -1337,15 +1342,22 @@ public class Utils {
 
     public static String phoneNumberForServer(String number) {
         if (StringUtils.isNotBlank(number) && number.length() > 1) {
-            return "92" + number.substring(1);
+            return MOBILE_COUNTRY_STANDARD + number.substring(1);
         } else {
             return StringUtils.EMPTY;
         }
     }
 
+    /**
+     * Convert Phone Number from 92********** to 03*********
+     * @param phone : Phone Number
+     */
     public static String phoneNumberToShow(String phone) {
         if (StringUtils.isNotBlank(phone)) {
-            return "0" + phone.substring(2);
+            if (phone.startsWith(MOBILE_COUNTRY_STANDARD))
+                return "0" + phone.substring(2);
+            else
+                return phone;
         } else {
             return StringUtils.EMPTY;
         }
@@ -2030,6 +2042,20 @@ public class Utils {
     }
 
     /**
+     * Is ride for NOC(21), COD(22) or MART(22)
+     *
+     * @param serviceCode : Ride Service Code
+     * @return
+     */
+    public static boolean isDescriptiveAddressRequired(Integer serviceCode) {
+        return serviceCode != null
+                && (serviceCode == Constants.ServiceCode.SEND
+                || serviceCode == Constants.ServiceCode.SEND_COD
+                || serviceCode == MART
+        );
+    }
+
+    /**
      * Checks if call type is among modern services
      *
      * @param serviceCode Service Code
@@ -2037,10 +2063,11 @@ public class Utils {
      */
     public static boolean isModernService(Integer serviceCode) {
         return serviceCode != null
-                && (serviceCode == Constants.ServiceType.SEND_CODE
-                || serviceCode == Constants.ServiceType.SEND_COD_CODE
-                || serviceCode == Constants.ServiceType.RIDE_CODE
-                || serviceCode == Constants.ServiceType.OFFLINE_RIDE
+                && (serviceCode == Constants.ServiceCode.SEND
+                || serviceCode == Constants.ServiceCode.SEND_COD
+                || serviceCode == Constants.ServiceCode.RIDE
+                || serviceCode == Constants.ServiceCode.OFFLINE_RIDE
+                || serviceCode == MART
         );
     }
 
@@ -2053,8 +2080,17 @@ public class Utils {
     }
 
     public static boolean isPurchaseService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Bring")
-                || StringUtils.containsIgnoreCase(callType, "Purchase");
+        return isPurchaseService(callType, null);
+    }
+
+    public static boolean isPurchaseService(String callType, Integer serviceCode) {
+        if (serviceCode == null)
+            return StringUtils.containsIgnoreCase(callType, "Bring")
+                    || StringUtils.containsIgnoreCase(callType, "Purchase");
+        else
+            return StringUtils.containsIgnoreCase(callType, "Bring")
+                    || StringUtils.containsIgnoreCase(callType, "Purchase")
+                    || serviceCode == MART;
     }
 
     public static boolean isValidTopUpAmount(String amount, boolean isCourierType) {
@@ -2148,6 +2184,7 @@ public class Utils {
                 return R.drawable.bhejdo_no_caption;
             case "bring":
             case "purchase":
+            case "mart":
                 return R.drawable.lay_ao_no_caption;
             case "ride":
                 return R.drawable.ride_right;

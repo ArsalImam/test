@@ -13,7 +13,7 @@
 
         <variable
             name="listener"
-            type="com.bykea.pk.partner.ui.loadboard.list.JobRequestListItemActionsListener" />
+            type="com.bykea.pk.partner.ui.loadboard.list.JobListItemActionsListener" />
 
     </data>
 
@@ -44,7 +44,7 @@
                 android:background="@drawable/gray_bordered_bg"
                 android:gravity="center"
                 android:maxLines="1"
-                android:text="@{`Rs. `+(int)booking.fare_est}"
+                android:text="@{booking.fare_est == 0 ? `?` : `Rs. `+(int)booking.fare_est}"
                 android:textSize="@dimen/_14sdp"
                 app:fontName="open_sans_regular.ttf" />
 
@@ -60,7 +60,7 @@
                 android:maxLines="1"
                 android:paddingStart="@dimen/_6sdp"
                 android:paddingEnd="@dimen/_6sdp"
-                android:text="@{` ` +booking.dropoff.zone_ur}"
+                android:text='@{booking.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + booking.dropoff.zone_ur}'
                 android:textSize="@dimen/_14sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 

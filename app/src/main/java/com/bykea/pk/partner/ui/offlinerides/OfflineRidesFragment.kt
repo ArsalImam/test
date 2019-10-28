@@ -8,12 +8,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-
+import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
@@ -34,7 +33,7 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.APP
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
 import com.bykea.pk.partner.utils.Constants.Extras.FROM
-import com.bykea.pk.partner.utils.Constants.ServiceType.OFFLINE_RIDE
+import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
