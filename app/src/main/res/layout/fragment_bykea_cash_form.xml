@@ -64,7 +64,7 @@
                         android:drawablePadding="@dimen/_7sdp"
                         android:hint="@string/hint_account_number"
                         android:imeOptions="actionDone"
-                        android:maxLength="30"
+                        android:maxLength="24"
                         android:minHeight="@dimen/delivery_details_item_height"
                         android:paddingStart="@dimen/_10sdp"
                         android:paddingLeft="@dimen/_10sdp"
