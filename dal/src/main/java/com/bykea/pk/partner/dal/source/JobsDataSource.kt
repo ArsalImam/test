@@ -205,7 +205,7 @@ interface JobsDataSource {
          *
          * @param message
          */
-        fun onDataNotAvailable(message: String?)
+        fun onDataNotAvailable(code: Int, message: String?)
     }
 
     /**

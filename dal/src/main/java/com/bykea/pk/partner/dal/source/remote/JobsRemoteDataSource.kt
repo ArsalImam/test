@@ -40,7 +40,7 @@ class JobsRemoteDataSource {
     fun getJob(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.GetJobRequestCallback) {
         Backend.loadboard.getJob(driverId, token, bookingId, lat, lng).enqueue(object : Callback<GetJobRequestDetailResponse> {
             override fun onSuccess(response: GetJobRequestDetailResponse) = callback.onJobLoaded(response.data)
-            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(message)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message)
         })
     }
 

@@ -174,8 +174,8 @@ class JobsRepository(
                 }
             }
 
-            override fun onDataNotAvailable(message: String?) {
-                callback.onDataNotAvailable(message)
+            override fun onDataNotAvailable(code: Int, message: String?) {
+                callback.onDataNotAvailable(code, message)
             }
         })
     }
