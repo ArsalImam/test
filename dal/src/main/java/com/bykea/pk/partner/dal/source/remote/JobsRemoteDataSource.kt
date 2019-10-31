@@ -132,7 +132,7 @@ class JobsRemoteDataSource {
     fun startJob(jobId: String, address: String, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.StartJobCallback) {
         Backend.talos.startJob(jobId, StartJobRequest(driverId, token, lat, lng, address)).enqueue(object : Callback<StartJobResponse> {
             override fun onSuccess(response: StartJobResponse) = callback.onJobStarted()
-            override fun onFail(code: Int, message: String?) = callback.onJobStartFailed()
+            override fun onFail(code: Int, message: String?) = callback.onJobStartFailed(message)
         })
     }
 

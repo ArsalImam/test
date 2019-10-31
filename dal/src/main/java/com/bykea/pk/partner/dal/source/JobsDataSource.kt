@@ -272,7 +272,7 @@ interface JobsDataSource {
      */
     interface StartJobCallback {
         fun onJobStarted()
-        fun onJobStartFailed()
+        fun onJobStartFailed(message: String?)
     }
 
     /**

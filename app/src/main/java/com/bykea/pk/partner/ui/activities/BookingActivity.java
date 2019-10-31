@@ -2206,8 +2206,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
 
                 @Override
-                public void onJobStartFailed() {
-                    onStatusChangedFailed("Failed to mark started");
+                public void onJobStartFailed(@Nullable String message) {
+                    onStatusChangedFailed(message);
                 }
             });
         } else {
