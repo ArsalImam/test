@@ -222,6 +222,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean lastPickUpFlagOnLeft, lastDropOffFlagOnLeft = false;
     boolean shouldRefreshPickupMarker = false, shouldRefreshDropOffMarker = false;
     private boolean allowTripStatusCall = true;
+    boolean isBykeaCashJob = false;
     CountDownTimer countDownTimer;
 
     private boolean shouldCameraFollowCurrentLocation = false;
@@ -1202,7 +1203,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             AppPreferences.setTripStatus(callData.getStatus());
 //        setCallData();
             tvTripId.setText(callData.getTripNo());
-            if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+
+            isBykeaCashJob = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
+
+            if (isBykeaCashJob) {
                 tvDetailsBanner.setVisibility(View.VISIBLE);
                 setAddressDetailsVisible();
             }
@@ -1274,7 +1278,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (StringUtils.isEmpty(callData.getReceiverAddress())
                 && StringUtils.isEmpty(callData.getReceiverName())
                 && StringUtils.isEmpty(callData.getReceiverPhone())
-                && (callData.getServiceCode() == MART || Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())))
+                && (callData.getServiceCode() == MART || isBykeaCashJob))
             setAddressDetailsVisible();
     }
 
@@ -1307,7 +1311,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isCourierService(callData.getCallType())) {
             llStartAddress.setVisibility(View.GONE);
             llEndAddress.setVisibility(View.GONE);
-        } else if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+        } else if (isBykeaCashJob) {
             llStartAddress.setVisibility(View.VISIBLE);
             llEndAddress.setVisibility(View.GONE);
         } else {
@@ -1334,7 +1338,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         } else {
             int cashKiWasooliValue = callData.getCashKiWasooli();
-            if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()))) {
+            if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashJob)) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
@@ -1660,7 +1664,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 updateDropOffMarker();
         } else {
             if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) &&
-                    !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()))
+                    !isBykeaCashJob)
                 pickUpMarker.remove();
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
@@ -1930,7 +1934,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
-        if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+        if (isBykeaCashJob) {
             drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
                     null,
                     new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
@@ -2554,9 +2558,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         llDetails.setVisibility(View.VISIBLE);
         tvDetailsNotEntered.setVisibility(View.GONE);
 
+        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, callData.getSenderAddress(), callData.getReceiverAddress());
         setAddressDetailEitherSenderOrReceiver(tvCustomerName, callData.getSenderName(), callData.getReceiverName());
         setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, Utils.phoneNumberToShow(callData.getSenderPhone()), Utils.phoneNumberToShow(callData.getReceiverPhone()));
-        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, callData.getSenderAddress(), callData.getReceiverAddress());
     }
 
     /**
@@ -2570,7 +2574,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (StringUtils.isNotBlank(receiverField)) {
             textField.setVisibility(View.VISIBLE);
             textField.setText(receiverField);
-        } else if (StringUtils.isNotBlank(senderField)) {
+        } else if (StringUtils.isNotBlank(senderField) && (!isBykeaCashJob || !callData.getStartAddress().equals(senderField))) {
             textField.setVisibility(View.VISIBLE);
             textField.setText(senderField);
         } else {
