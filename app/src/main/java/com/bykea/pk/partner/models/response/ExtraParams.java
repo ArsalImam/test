@@ -13,6 +13,8 @@ public class ExtraParams implements Parcelable {
     private String iban;
     private String phone;
 
+    public ExtraParams() {}
+
     protected ExtraParams(Parcel in) {
         telco_name = in.readString();
         vendor_name = in.readString();

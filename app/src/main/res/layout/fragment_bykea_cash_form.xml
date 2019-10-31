@@ -213,7 +213,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:background="@drawable/gray_bordered_bg"
-                        android:digits="@string/alphanumeric"
+                        android:digits="@string/alphanumeric_uppercase"
                         android:drawableStart="@drawable/ic_number"
                         android:drawableLeft="@drawable/ic_number"
                         android:drawablePadding="@dimen/_7sdp"

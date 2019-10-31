@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
 import com.bykea.pk.partner.databinding.FragmentBykeaCashFormBinding
+import com.bykea.pk.partner.models.response.ExtraParams
 import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.activities.BookingActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
@@ -68,6 +69,8 @@ class BykeaCashFormFragment : DialogFragment() {
             responseFromServer.observe(this@BykeaCashFormFragment, Observer {
                 if (it) {
                     dismiss()
+                    if (normalCallData?.extraParams == null)
+                        normalCallData?.extraParams = ExtraParams()
                     normalCallData?.serviceCode.let {
                         when (it!!) {
                             MOBILE_TOP_UP -> {
@@ -85,13 +88,9 @@ class BykeaCashFormFragment : DialogFragment() {
                             }
                         }
                         normalCallData?.codAmount = eTAmount.text.toString()
+                        mCallback?.onBykeaCashAmountUpdated(normalCallData?.codAmountNotFormatted?.toInt()!!)
                     }
                 }
-            })
-
-            cashAmount.observe(this@BykeaCashFormFragment, Observer {
-                if (cashAmount.value != null)
-                    mCallback?.onBykeaCashAmountUpdated(cashAmount.value!!)
             })
         }
 
