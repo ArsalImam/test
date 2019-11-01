@@ -117,10 +117,15 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
                     true)
     }
 
-    override fun onDataNotAvailable(message: String?) {
-        _job.value = null
+    override fun onDataNotAvailable(code: Int, message: String?) {
+//        _job.value = null
         _dataLoading.value = false
         _isDataAvailable.value = false
+        if (code == 422 || code == 404) {
+            _bookingTakenCommand.value = Event(Unit)
+        } else {
+            showSnackbarMessage(R.string.error_try_again)
+        }
     }
 
     override fun onJobRequestAccepted() {

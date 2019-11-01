@@ -238,7 +238,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{Integer.toString(viewmodel.job.pickup.duration/60)}"
+                                        android:text="@{(viewmodel.job.pickup.duration/60) == 0 ? `1` :Integer.toString(viewmodel.job.pickup.duration/60)}"
                                         android:textColor="@color/color_06A833"
                                         android:textSize="@dimen/_18sdp"
                                         android:textStyle="bold"

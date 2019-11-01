@@ -36,7 +36,7 @@ class JobsLocalDataSource private constructor(
                 if (jobRequest != null) {
                     callback.onJobLoaded(jobRequest)
                 } else {
-                    callback.onDataNotAvailable("No job request found")
+                    callback.onDataNotAvailable(422, "No job request found")
                 }
             }
         }

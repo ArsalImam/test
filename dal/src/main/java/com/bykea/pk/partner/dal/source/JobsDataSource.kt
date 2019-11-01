@@ -205,7 +205,7 @@ interface JobsDataSource {
          *
          * @param message
          */
-        fun onDataNotAvailable(message: String?)
+        fun onDataNotAvailable(code: Int, message: String?)
     }
 
     /**
@@ -272,7 +272,7 @@ interface JobsDataSource {
      */
     interface StartJobCallback {
         fun onJobStarted()
-        fun onJobStartFailed()
+        fun onJobStartFailed(message: String?)
     }
 
     /**

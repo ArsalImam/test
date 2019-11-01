@@ -467,7 +467,36 @@ public class FeedbackActivity extends BaseActivity {
             if (isLoadboardJob)
                 repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
-            if (isDeliveryType) {
+            if (isBykeaCashType) {
+                if (isLoadboardJob) {
+                    String name = callData.getSenderName() != null ? callData.getSenderName() : callData.getPassName();
+                    String number = callData.getSenderPhone() != null ? callData.getSenderPhone() : callData.getPhoneNo();
+
+
+                    repo.concludeJob(
+                            callData.getTripId(),
+                            (int) callerRb.getRating(),
+                            Integer.parseInt(receivedAmountEt.getText().toString()),
+                            jobCallback,
+                            Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
+                            selectedMsgPosition == 0,
+                            null,
+                            name,
+                            number
+                    );
+                } else
+                    new UserRepository().requestFeedback(
+                            mCurrentActivity,
+                            handler,
+                            "",
+                            callerRb.getRating() + "",
+                            receivedAmountEt.getText().toString(),
+                            selectedMsgPosition == 0,
+                            Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
+                            etReceiverName.getText().toString(),
+                            etReceiverMobileNo.getText().toString()
+                    );
+            } else if (isDeliveryType) {
                 if (isLoadboardJob)
                     repo.concludeJob(
                             callData.getTripId(),
