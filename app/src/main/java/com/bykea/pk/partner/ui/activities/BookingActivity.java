@@ -2555,12 +2555,32 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Entered by user for creation of booking
      */
     private void setAddressDetailsVisible() {
+        String senderAddress = callData.getSenderAddress();
+        String senderName = callData.getSenderName();
+        String senderPhone = Utils.phoneNumberToShow(callData.getSenderPhone());
+
         llDetails.setVisibility(View.VISIBLE);
         tvDetailsNotEntered.setVisibility(View.GONE);
 
-        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, callData.getSenderAddress(), callData.getReceiverAddress());
-        setAddressDetailEitherSenderOrReceiver(tvCustomerName, callData.getSenderName(), callData.getReceiverName());
-        setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, Utils.phoneNumberToShow(callData.getSenderPhone()), Utils.phoneNumberToShow(callData.getReceiverPhone()));
+        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress());
+        setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName());
+        setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, senderPhone, Utils.phoneNumberToShow(callData.getReceiverPhone()));
+
+        if (isBykeaCashJob) {
+            if (senderAddress.equalsIgnoreCase(callData.getStartAddress()) && senderName.equalsIgnoreCase(callData.getPassName()) && senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
+                llDetails.setVisibility(View.GONE);
+                tvDetailsNotEntered.setVisibility(View.GONE);
+            }
+            if (senderAddress.equalsIgnoreCase(callData.getStartAddress())) {
+                tvDetailsAddress.setVisibility(View.GONE);
+            }
+            if (senderName.equalsIgnoreCase(callData.getPassName())) {
+                tvCustomerName.setVisibility(View.GONE);
+            }
+            if (senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
+                tvCustomerPhone.setVisibility(View.GONE);
+            }
+        }
     }
 
     /**
@@ -2574,7 +2594,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (StringUtils.isNotBlank(receiverField)) {
             textField.setVisibility(View.VISIBLE);
             textField.setText(receiverField);
-        } else if (StringUtils.isNotBlank(senderField) && (!isBykeaCashJob || !callData.getStartAddress().equals(senderField))) {
+        } else if (StringUtils.isNotBlank(senderField)) {// && (!isBykeaCashJob || !callData.getStartAddress().equals(senderField))) {
             textField.setVisibility(View.VISIBLE);
             textField.setText(senderField);
         } else {
