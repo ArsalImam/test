@@ -477,8 +477,8 @@ public class FeedbackActivity extends BaseActivity {
                             Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
                             selectedMsgPosition == 0,
                             null,
-                            null,
-                            null
+                            callData.getSenderName(),
+                            callData.getSenderPhone()
                     );
                 else
                     new UserRepository().requestFeedback(
