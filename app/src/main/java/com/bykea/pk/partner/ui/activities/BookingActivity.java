@@ -2594,7 +2594,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (StringUtils.isNotBlank(receiverField)) {
             textField.setVisibility(View.VISIBLE);
             textField.setText(receiverField);
-        } else if (StringUtils.isNotBlank(senderField)) {// && (!isBykeaCashJob || !callData.getStartAddress().equals(senderField))) {
+        } else if (StringUtils.isNotBlank(senderField)) {
             textField.setVisibility(View.VISIBLE);
             textField.setText(senderField);
         } else {
