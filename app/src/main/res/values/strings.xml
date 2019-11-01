@@ -524,4 +524,5 @@
     <string name="amount_not_more">\u0020روپے سے زیادہ اور 50 روپے سے کم نہیں ہوسکتی۔\u0020</string>
     <string name="alphanumeric">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="alphanumeric_uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
+    <string name="lb_bykea_call_center">Bykea Call Center</string>
 </resources>

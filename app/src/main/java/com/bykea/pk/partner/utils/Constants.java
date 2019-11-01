@@ -653,4 +653,7 @@ public class Constants {
     public final static String MOBILE_TEL_URI = "tel:";
     public final static int MAX_LENGTH_CNIC = 13;
     public final static int MAX_LENGTH_IBAN = 24;
+
+
+    public final static String BYKEA_SUPPORT_CONTACT_NUMBER = "03111111700";
 }

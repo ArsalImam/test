@@ -180,12 +180,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     ImageView ivTopUp;
     @BindView(R.id.llDetails)
     LinearLayout llDetails;
+    @BindView(R.id.llBykeaSupportContactInfo)
+    LinearLayout llBykeaSupportContactInfo;
     @BindView(R.id.tvDetailsNotEntered)
     FontTextView tvDetailsNotEntered;
     @BindView(R.id.tvDetailsBanner)
     FontTextView tvDetailsBanner;
     @BindView(R.id.tvCustomerName)
     FontTextView tvCustomerName;
+    @BindView(R.id.tvBykeaSupportContactNumber)
+    FontTextView tvBykeaSupportContactNumber;
     @BindView(R.id.tvCustomerPhone)
     FontTextView tvCustomerPhone;
     @BindView(R.id.tvDetailsAddress)
@@ -680,7 +684,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections,
-            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone, R.id.tvDetailsBanner})
+            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone, R.id.tvDetailsBanner, R.id.tvBykeaSupportContactNumber})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -715,6 +719,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     } else {
                         Utils.callingIntent(mCurrentActivity, phoneNumber);
                     }
+                }
+                break;
+            case R.id.tvBykeaSupportContactNumber:
+                if (StringUtils.isNotBlank(tvBykeaSupportContactNumber.getText().toString())) {
+                    Utils.callingIntent(mCurrentActivity, tvBykeaSupportContactNumber.getText().toString());
                 }
                 break;
             case R.id.cancelBtn:
@@ -2567,18 +2576,29 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, senderPhone, Utils.phoneNumberToShow(callData.getReceiverPhone()));
 
         if (isBykeaCashJob) {
-            if (senderAddress.equalsIgnoreCase(callData.getStartAddress()) && senderName.equalsIgnoreCase(callData.getPassName()) && senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                String supportContact = AppPreferences.getSettings().getSettings().getBykeaSupportContact();
+                if (StringUtils.isNotBlank(supportContact))
+                    tvBykeaSupportContactNumber.setText(supportContact);
+                else tvBykeaSupportContactNumber.setText(Constants.BYKEA_SUPPORT_CONTACT_NUMBER);
+                llBykeaSupportContactInfo.setVisibility(View.VISIBLE);
                 llDetails.setVisibility(View.GONE);
                 tvDetailsNotEntered.setVisibility(View.GONE);
-            }
-            if (senderAddress.equalsIgnoreCase(callData.getStartAddress())) {
-                tvDetailsAddress.setVisibility(View.GONE);
-            }
-            if (senderName.equalsIgnoreCase(callData.getPassName())) {
-                tvCustomerName.setVisibility(View.GONE);
-            }
-            if (senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
-                tvCustomerPhone.setVisibility(View.GONE);
+            } else {
+                llBykeaSupportContactInfo.setVisibility(View.GONE);
+                if (senderAddress.equalsIgnoreCase(callData.getStartAddress()) && senderName.equalsIgnoreCase(callData.getPassName()) && senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
+                    llDetails.setVisibility(View.GONE);
+                    tvDetailsNotEntered.setVisibility(View.GONE);
+                }
+                if (senderAddress.equalsIgnoreCase(callData.getStartAddress())) {
+                    tvDetailsAddress.setVisibility(View.GONE);
+                }
+                if (senderName.equalsIgnoreCase(callData.getPassName())) {
+                    tvCustomerName.setVisibility(View.GONE);
+                }
+                if (senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
+                    tvCustomerPhone.setVisibility(View.GONE);
+                }
             }
         }
     }
