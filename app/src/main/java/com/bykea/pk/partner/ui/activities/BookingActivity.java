@@ -2555,8 +2555,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Entered by user for creation of booking
      */
     private void setAddressDetailsVisible() {
-        String senderAddress = callData.getSenderAddress();
-        String senderName = callData.getSenderName();
+        String senderAddress = callData.getSenderAddress() != null ? callData.getSenderAddress() : "";
+        String senderName = callData.getSenderName() != null ? callData.getSenderName() : "";
         String senderPhone = Utils.phoneNumberToShow(callData.getSenderPhone());
 
         llDetails.setVisibility(View.VISIBLE);

@@ -468,7 +468,11 @@ public class FeedbackActivity extends BaseActivity {
                 repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
             if (isBykeaCashType) {
-                if (isLoadboardJob)
+                if (isLoadboardJob) {
+                    String name = callData.getSenderName() != null ? callData.getSenderName() : callData.getPassName();
+                    String number = callData.getSenderPhone() != null ? callData.getSenderPhone() : callData.getPhoneNo();
+
+
                     repo.concludeJob(
                             callData.getTripId(),
                             (int) callerRb.getRating(),
@@ -477,10 +481,10 @@ public class FeedbackActivity extends BaseActivity {
                             Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
                             selectedMsgPosition == 0,
                             null,
-                            callData.getSenderName(),
-                            callData.getSenderPhone()
+                            name,
+                            number
                     );
-                else
+                } else
                     new UserRepository().requestFeedback(
                             mCurrentActivity,
                             handler,
