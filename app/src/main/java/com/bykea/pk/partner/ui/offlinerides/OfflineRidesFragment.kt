@@ -3,7 +3,6 @@ package com.bykea.pk.partner.ui.offlinerides
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -31,12 +30,11 @@ import com.bykea.pk.partner.ui.activities.SelectPlaceActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
-import com.bykea.pk.partner.ui.helpers.Fonts
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.APP
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
 import com.bykea.pk.partner.utils.Constants.Extras.FROM
-import com.bykea.pk.partner.utils.Constants.ServiceCode.DELIVERY
+import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
 import com.bykea.pk.partner.utils.Dialogs
@@ -240,7 +238,7 @@ class OfflineRidesFragment : Fragment() {
             if (rBSawari.isChecked)
                 trip.service_code = OFFLINE_RIDE
             else
-                trip.service_code = DELIVERY
+                trip.service_code = OFFLINE_DELIVERY
 
             trip.lat = AppPreferences.getLatitude().toString()
             trip.lng = AppPreferences.getLongitude().toString()

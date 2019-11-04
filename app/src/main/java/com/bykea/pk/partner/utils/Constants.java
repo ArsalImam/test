@@ -383,7 +383,7 @@ public class Constants {
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;
         public static final int MART = 25;
-        public static final int DELIVERY = 27;
+        public static final int OFFLINE_DELIVERY = 31;
     }
 
     /**
