@@ -563,7 +563,8 @@
             android:layout_height="wrap_content"
             android:background="#f5f5f5"
             android:orientation="horizontal"
-            android:padding="@dimen/_8sdp">
+            android:padding="@dimen/_8sdp"
+            android:visibility="gone">
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:layout_width="0dp"
