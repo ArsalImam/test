@@ -1300,6 +1300,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         showDropOffAddress();
         cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
+
+        if (isBykeaCashJob) setAddressDetailsVisible();
     }
 
     /**
@@ -1311,6 +1313,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         showDropOffAddress();
         cvDirections.setVisibility(View.VISIBLE);
         setOnStartData();
+
+        if (isBykeaCashJob) setAddressDetailsVisible();
     }
 
     /**
@@ -2576,6 +2580,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, senderPhone, Utils.phoneNumberToShow(callData.getReceiverPhone()));
 
         if (isBykeaCashJob) {
+            tvDetailsBanner.setVisibility(View.VISIBLE);
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 String supportContact = AppPreferences.getSettings().getSettings().getBykeaSupportContact();
                 if (StringUtils.isNotBlank(supportContact))
