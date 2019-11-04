@@ -383,6 +383,7 @@ public class Constants {
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;
         public static final int MART = 25;
+        public static final int DELIVERY = 27;
     }
 
     /**
@@ -646,4 +647,5 @@ public class Constants {
     public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
     public final static String MOBILE_COUNTRY_STANDARD = "92";
     public final static String MOBILE_TEL_URI ="tel:";
+    public final static String SEPERATOR ="/";
 }
