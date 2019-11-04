@@ -525,4 +525,10 @@
     <string name="alphanumeric">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="alphanumeric_uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="lb_bykea_call_center">Bykea Call Center</string>
+    <string name="bykea_cash_utility_bill">\u0020بل کی ادائیگی\u0020</string>
+    <string name="bykea_cash_bank_transfer">\u0020بینک ٹرانسفر\u0020</string>
+    <string name="bykea_cash_wallet_easy_paisa">ایزی پیسہ</string>
+    <string name="bykea_cash_wallet_jazz_cash">جیزکیش</string>
+    <string name="bykea_cash_wallet_deposit">ڈپازٹ</string>
+    <string name="bykea_cash_mobile_top_up">\u0020موبائل بیلنس ٹاپ اپ\u0020</string>
 </resources>
