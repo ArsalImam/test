@@ -47,6 +47,9 @@ public class Settings {
     @SerializedName("bykea_cash_max_amount")
     private String bykeaCashMaxAmount;
 
+    @SerializedName("bykea_support_contact")
+    private String BykeaSupportContact;
+
     /**
      * getter bykea cash max amount
      *
@@ -201,4 +204,11 @@ public class Settings {
     }
 
 
+    public String getBykeaSupportContact() {
+        return BykeaSupportContact;
+    }
+
+    public void setBykeaSupportContact(String bykeaSupportContact) {
+        BykeaSupportContact = bykeaSupportContact;
+    }
 }
