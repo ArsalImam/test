@@ -240,7 +240,7 @@ public class HomeActivity extends BaseActivity {
             List<String> titlesUrduList = new ArrayList<>(Arrays.asList(navIcons));
             List<String> newLabelToShowList = new ArrayList<>(Arrays.asList(navDrawerNewText));
 
-//            Utils.removeOrHideItemFromNavigationDrawerList(Constants.ScreenRedirections.OFFLINE_RIDES_S, titlesEnglishList, titlesUrduList, newLabelToShowList);
+            Utils.removeOrHideItemFromNavigationDrawerList(Constants.ScreenRedirections.OFFLINE_RIDES_S, titlesEnglishList, titlesUrduList, newLabelToShowList);
 
             navTitles = titlesEnglishList.toArray(new String[0]);
             navIcons = titlesUrduList.toArray(new String[0]);
