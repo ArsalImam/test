@@ -214,6 +214,17 @@ public class Utils {
         }
     }
 
+    /**
+     * Get Support Helpline Number from setting or from constants
+     * @return Helpline number
+     */
+    public static String getSupportHelplineNumber() {
+        String supportContact = AppPreferences.getSettings().getSettings().getBykeaSupportHelpline();
+        if (StringUtils.isNotBlank(supportContact))
+            return supportContact;
+        else
+            return Constants.BYKEA_SUPPORT_HELPLINE;
+    }
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -1350,6 +1361,7 @@ public class Utils {
 
     /**
      * Convert Phone Number from 92********** to 03*********
+     *
      * @param phone : Phone Number
      */
     public static String phoneNumberToShow(String phone) {

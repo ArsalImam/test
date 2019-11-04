@@ -44,6 +44,8 @@ public class Settings {
     @SerializedName("offline_ride_display")
     private boolean offlineRideDisplay;
 
+    @SerializedName("bykea_support_helpline")
+    private String BykeaSupportHelpline;
 
     /**
      * getter partner topup limit positive
@@ -187,6 +189,14 @@ public class Settings {
 
     public void setVan_partner_topup_limit(String van_partner_topup_limit) {
         this.van_partner_topup_limit = van_partner_topup_limit;
+    }
+
+    public String getBykeaSupportHelpline() {
+        return BykeaSupportHelpline;
+    }
+
+    public void setBykeaSupportHelpline(String bykeaSupportHelpline) {
+        BykeaSupportHelpline = bykeaSupportHelpline;
     }
 
 
