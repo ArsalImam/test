@@ -77,7 +77,7 @@ public class ForgotPasswordActivity extends BaseActivity {
                                 Utils.phoneNumberForServer(phoneNumberEt.getText().toString()));
                     }
                 } else {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, "Please check your internet connection.");
+                    Dialogs.INSTANCE.showToast(getString(R.string.error_internet_connectivity));
                 }
                 break;
             case R.id.phoneNumberEt:
@@ -106,7 +106,7 @@ public class ForgotPasswordActivity extends BaseActivity {
                                 }
                             });
                 } else {
-                    Utils.appToast(mCurrentActivity, commonResponse.getMessage());
+                    Utils.appToast(commonResponse.getMessage());
                 }
             }
         }
@@ -114,7 +114,7 @@ public class ForgotPasswordActivity extends BaseActivity {
         @Override
         public void onError(int errorCode, String errorMessage) {
             Dialogs.INSTANCE.dismissDialog();
-            Utils.appToast(mCurrentActivity, errorMessage);
+            Utils.appToast(errorMessage);
         }
     };
 }

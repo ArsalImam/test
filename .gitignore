@@ -11,3 +11,6 @@
 /.idea/caches/*
 /.idea/misc.xml
 .idea/
+/app/*/release/output.json
+/app/release/output.json
+/.idea/gradle.xml

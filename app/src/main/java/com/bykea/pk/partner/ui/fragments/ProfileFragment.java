@@ -3,8 +3,10 @@ package com.bykea.pk.partner.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,7 @@ import android.widget.ProgressBar;
 
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.PersonalInfoData;
+import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
@@ -230,7 +232,7 @@ public class ProfileFragment extends Fragment {
                             if (response.getCode() == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
-                                Dialogs.INSTANCE.showToast(mCurrentActivity, response.getMessage());
+                                Dialogs.INSTANCE.showToast(response.getMessage());
                             }
                         }
                     }
@@ -250,7 +252,7 @@ public class ProfileFragment extends Fragment {
                             if (errorCode == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             } else {
-                                Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                                Dialogs.INSTANCE.showToast(errorMessage);
                             }
                         }
                     }

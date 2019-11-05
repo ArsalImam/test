@@ -1,12 +1,14 @@
 package com.bykea.pk.partner.ui.fragments;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
 
 public class TripHistoryFragment extends Fragment {
 
@@ -98,7 +102,7 @@ public class TripHistoryFragment extends Fragment {
                 if (!historyData.getStatus().equalsIgnoreCase("cancelled")) {
                     if (historyData.getInvoice() != null) {
                         ActivityStackManager.getInstance().startCompletedDetailsActivity(historyData, mCurrentActivity);
-                        HomeActivity.visibleFragmentNumber = 2;
+                        HomeActivity.visibleFragmentNumber = TRIP_HISTORY_SCREEN_S;
                     }
                 } else {
                     ActivityStackManager.getInstance().startCancelDetailsActivity(historyData, mCurrentActivity);
@@ -206,7 +210,7 @@ public class TripHistoryFragment extends Fragment {
                             if (loader != null) {
                                 loader.setVisibility(View.GONE);
                             }
-                            Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                            Dialogs.INSTANCE.showToast(errorMessage);
                             if (errorCode == HTTPStatus.UNAUTHORIZED) {
                                 Utils.logout(mCurrentActivity);
                             }

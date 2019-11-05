@@ -118,7 +118,7 @@ public class BanksDetailsActivity extends BaseActivity {
         @Override
         public void onError(int errorCode, String errorMessage) {
             loader.setVisibility(View.GONE);
-            Utils.appToast(mCurrentActivity, errorMessage);
+            Utils.appToast(errorMessage);
             if (errorCode == HTTPStatus.UNAUTHORIZED) {
                 Utils.onUnauthorized(mCurrentActivity);
             }

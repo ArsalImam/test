@@ -153,7 +153,7 @@ public class PlacesRecentFragment extends Fragment {
                                                 @Override
                                                 public void run() {
                                                     Dialogs.INSTANCE.dismissDialog();
-                                                    Utils.appToast(mCurrentActivity, errorMessage);
+                                                    Utils.appToast(errorMessage);
                                                 }
                                             });
                                         }

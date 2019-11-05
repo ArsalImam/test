@@ -6,12 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.cardview.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,12 +18,19 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.NearByResults;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Predictions;
 import com.bykea.pk.partner.models.data.SavedPlaces;
-import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
+import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
+import com.bykea.pk.partner.models.response.Result;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
@@ -376,20 +377,15 @@ public class PlacesSearchFragment extends Fragment {
                 primaryText = Utils.formatAddress(item.getDescription());
                 Utils.redLog("Auto", "Autocomplete item selected: " + primaryText);
                 Utils.redLog("bykea", "Called getPlaceById to get Place details for " + placeId);
-                new PlacesRepository().getPlaceDetails(placeId, mCurrentActivity, new PlacesDataHandler() {
+
+                new PlacesRepository().geoCodeWithPlaceId(placeId, mCurrentActivity, new PlacesDataHandler() {
                     @Override
-                    public void onPlaceDetailsResponse(PlaceDetailsResponse response) {
-
-                        NearByResults results = response.getResult();
-                        if (results != null) {
-                            // Format details of the place for display and show it in a TextView.
-//            tvLocation.setText("" + place.getAddress());
-                            String result = StringUtils.isNotBlank(primaryText) ? primaryText : Utils.formatAddress(results.getFormatted_address());
-//                            mAutocompleteView.setText(result);
-                            PlacesResult placesResult = new PlacesResult(result, "",
-                                    results.getGeometry().getLocation().getLat(), results.getGeometry().getLocation().getLng());
+                    public void onGeoCodeApiResponse(GeoCodeApiResponse response) {
+                        Result result = response.getResults().get(0);
+                        if (result != null) {
+                            String resultText = StringUtils.isNotBlank(primaryText) ? primaryText : Utils.cookAddressGeoCodeResult(result);
+                            PlacesResult placesResult = new PlacesResult(resultText, "", result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
                             updateDropOff(placesResult);
-
                         }
                     }
                 });
@@ -464,7 +460,7 @@ public class PlacesSearchFragment extends Fragment {
         public void onError(String error) {
             finishLoading();
             Utils.redLog("Address error", error + "");
-            Utils.appToast(mCurrentActivity, "" + error);
+            Utils.appToast("" + error);
         }
     };
 
@@ -528,7 +524,7 @@ public class PlacesSearchFragment extends Fragment {
                                                             @Override
                                                             public void run() {
                                                                 Dialogs.INSTANCE.dismissDialog();
-                                                                Utils.appToast(mCurrentActivity, errorMessage);
+                                                                Utils.appToast(errorMessage);
                                                             }
                                                         });
                                                     }
@@ -627,11 +623,12 @@ public class PlacesSearchFragment extends Fragment {
 
         }
     }
+
     /***
      * moving camera to current location latitude & longitude.
      */
     private void goToCurrentLocation() {
-        if(Utils.isGpsEnable()){
+        if (Utils.isGpsEnable()) {
             double lat = AppPreferences.getLatitude();
             double lng = AppPreferences.getLongitude();
             if (lat != 0.0 && lng != 0.0) {

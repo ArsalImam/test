@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.bykea.pk.partner.models.data.ChatMessagesTranslated" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:id="@+id/tVChatMessageUrdu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:padding="@dimen/_8sdp"
+            android:text="@{item.position +`) `+item.chatMessageInUrdu }"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_16sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            tools:text="@string/call_mobile_no" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_graya5a5a5" />
+    </LinearLayout>
+
+</layout>

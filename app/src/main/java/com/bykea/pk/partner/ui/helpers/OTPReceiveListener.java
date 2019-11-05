@@ -1,7 +1,7 @@
 package com.bykea.pk.partner.ui.helpers;
 
 /**
- * OTP Receiver Listener Interface
+ * OTP Receiver onLoadBoardListFragmentInteractionListener Interface
  */
 public interface OTPReceiveListener {
 

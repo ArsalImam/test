@@ -7,13 +7,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.bykea.pk.partner.utils.Utils;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.bykea.pk.partner.R;
 
-public class MyPlayerActivity extends YouTubeBaseActivity implements  YouTubePlayer.OnInitializedListener{
+public class MyPlayerActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
     private String VIDEO_ID = "";
 
@@ -46,7 +47,7 @@ public class MyPlayerActivity extends YouTubeBaseActivity implements  YouTubePla
             errorReason.getErrorDialog(this, RECOVERY_DIALOG_REQUEST).show();
         } else {
             String errorMessage = errorReason.toString();
-            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+            Utils.appToast(errorMessage);
         }
     }
 

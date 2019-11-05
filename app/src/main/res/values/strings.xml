@@ -31,7 +31,6 @@
 
 
     <!--                ERROR STRINGS HERE                  -->
-    <string name="error_internet_connectivity">Please check your internet connection.</string>
     <string name="error_phone_number_1">Please enter correct mobile number</string>
     <string name="error_field_empty">Required</string>
     <string name="error_picture_not_selected">Picture not selected.</string>
@@ -49,6 +48,7 @@
     <!-- Nav Drawer Menu Items -->
     <string-array name="navDrawerItems">
         <item>Home</item>
+        <item>Offline Rides</item>
         <item>Booking History</item>
         <item>Wallet</item>
         <item>How it works</item>
@@ -58,12 +58,21 @@
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <string-array name="navDrawerIcons">
-        <item>ہوم</item>
-        <item>تفصیل‎</item>
-        <item>بٹوا‎</item>
-        <item>طریقہ کار</item>
-        <item>رابطہ‎</item>
-        <item>ٹیسٹنگ</item>
+        <item>\u0020ہوم\u0020</item><!--Home-->
+        <item>\u0020آف لائن رائیڈز\u0020</item><!--Offline Rides-->
+        <item>\u0020تفصیل‎\u0020</item><!--Booking History-->
+        <item>\u0020بٹوا‎\u0020</item><!--Wallet-->
+        <item>\u0020طریقہ کار\u0020</item><!--How it works-->
+        <item>\u0020رابطہ‎\u0020</item><!--Contact Us-->
+    </string-array>
+
+    <string-array name="navDrawerNewText">
+        <item>0</item> <!--Home-->
+        <item>1</item> <!--Offline Rides-->
+        <item>0</item> <!--Booking History-->
+        <item>0</item> <!--Wallet-->
+        <item>0</item> <!--How it works-->
+        <item>0</item> <!--Contact Us-->
     </string-array>
     <!--
     <string-array name="navDrawerIcons">
@@ -141,7 +150,7 @@
     <string name="unwan_text">عنوان</string>
     <string name="raqam_text">رقم</string>
     <string name="transfer_text">ٹرانسفر</string>
-    <string name="balance_text">بیلینس</string>
+    <string name="balance_text">بیلنس</string>
     <!-- %1$s is argument of type string and \u0020 is blank space, normal space doesn't work when
     string extracted from string.xml (added space with urdu text because Jameel nastaliqi font cuts some text)-->
     <string name="problem_item">\u0020%1$s\u0020</string>
@@ -265,7 +274,7 @@
     <string name="dha_ur">ڈی ایچ اے</string>
     <string name="nazimabad_ur">نارتھ ناظم آباد</string>
     <string name="selected_amount_ur"> منتخب رقم </string>
-    <string name="seleted_amount_rs"> Rs.%1$d&#160;</string>
+    <string name="seleted_amount_rs"> Rs.&#160;%1$d&#160;</string>
     <string name="acha_connection_ur">اچھا کنکشن</string>
     <string name="bura_connection_ur">برا کنکشن</string>
     <string name="low_battery_ur">لو بیٹری</string>
@@ -327,6 +336,14 @@
     <string name="dash">-</string>
     <string name="please_select_city">Please select your city.</string>
 
+    <string name="destination">منزل</string>
+    <string name="fare">\u0020کرایہ</string>
+    <string name="service">\u0020سروس\u0020</string>
+    <string name="wait_for_booking">بکنگ کا انتظار کریں</string>
+
+    <string name="cash_on_delivery">وصولی</string>
+    <string name="accept_booking">بکنگ منتخب کریں</string>
+
     <string-array name="delivery_messages">
         <item>کامیاب ڈیلیوری</item>
         <item>ناكام - وصول کرنے والا رابطے میں نہیں</item>
@@ -343,4 +360,135 @@
 
     <string name="how_it_works">How it Works</string>
     <string name="no_browser_found_error">Browser not found on Device</string>
+
+    <string name="booking_already_taken_title">معذرت!</string>
+    <string name="booking_already_taken_msg">یہ بکنگ کسی اور پارٹنر نے اسٹارٹ کرلی ہے</string>
+    <string name="no_voice_note_available">No voice note available</string>
+    <string name="err_booking_accept_failed">Failed to accept booking. Refresh the list and try again.</string>
+    <string name="enter_your_ip">enter your ip</string>
+    <string name="enter_valid_ip">enter valid url</string>
+    <string name="enter_your_loadboard_ip">enter your loadboard ip</string>
+    <string name="enter_valid_loadboard_ip">enter valid loadboard url</string>
+    <string name="error_internet_connectivity">Please check your internet connection.</string>
+    <string name="not_available">Number not available.</string>
+
+    <string name="withdrawal_title">رقم نکلوائیں</string>
+    <string name="label_amount_to_add">رقم درج کریں</string>
+    <string name="payment_method_label">یہاں جمع کروائیں</string>
+    <string name="withdrawal_submit_title">درخواست کریں</string>
+    <string name="nic">شناختی کارڈ</string>
+    <string name="fees_template_val">جیز کیش کے ذریعے پیسے اگلے دن موصول ہوں گے۔</string>
+    <string name="fees_currency_val">روپے فیس ۔</string>
+    <string name="withdraw_confirmation">کیا آپ یہ رقم نکالنا چاہتے ہیں؟</string>
+    <string name="amount_lbl">رقم</string>
+    <string name="fees_lbl">فیس</string>
+    <string name="total_lbl">ٹوٹل</string>
+    <string name="cancel">کینسل</string>
+    <string name="yes">ہاں</string>
+    <string name="thanks">شکریہ</string>
+    <string name="thanks_details_1">آپ کی رقم 24 گھنٹوں کے اندر آپ</string>
+    <string name="thanks_details_2">کے جیز کیش اکاؤنٹ میں جمع کردی جائیگی</string>
+    <string name="wallet">والٹ</string>
+    <string name="rs_price">Rs. %,d</string>
+    <string name="something_went_wrong">معذرت فی الحال آپ کی درخواست پر عمل نہیں کیا جا سکتا</string>
+    <string name="dont_have_enough_to_withdraw">درج کردہ رقم آپ کے موجودہ بیلنس سے زیادہ ہے</string>
+    <string name="minimum_amount_to_withdraw_1">سے کم نہیں ہوسکتی</string>
+    <string name="minimum_amount_to_withdraw_2">درج کردہ رقم</string>
+    <string name="maximum_amount_to_withdraw_1">ایک وقت میں</string>
+    <string name="maximum_amount_to_withdraw_2">سے زیادہ کی رقم نہیں نکالی جاسکتی</string>
+    <string name="formatted_price">%,d</string>
+    <string name="specifier_string">-%s</string>
+    <string name="new_line">\n</string>
+    <string name="withdraw_error_threshold_exceed">مزید بوکنگس لینے کے لئے پہلے پیسے جمع کروایں </string>
+    <string name="ref_no_lbl">Reference No: %s</string>
+
+    <string name="you_complain">آپ کی شکایت</string>
+    <string name="you_complain_with_number">آپ کی شکایت نمبر</string>
+    <string name="issue_submitted">درج کی جا چکی ہے</string>
+    <string name="issue_submitted_detail">درج کردہ شکایت دیکھیں</string>
+    <string name="move_to_home_screen">ہوم سکرین پر جائیں</string>
+    <string name="title_activity_main123">MainActivity123</string>
+    <string name="title_activity_problem_final">ProblemActivityFinal</string>
+    <string name="submit">\u0020درج کریں\u0020</string>
+    <string name="title_complain_list">My Complaints</string>
+    <string name="title_complain_detail">Complaint Detail</string>
+    <string name="title_new_complain_en">Your Complaints</string>
+    <string name="title_new_complain_ur">\u0020آپ کی شکایات\u0020</string>
+    <string name="ticket_status_open">\u0020شکایت موصول ہوگئی ہے\u0020</string>
+    <string name="ticket_status_pending">\u0020تحقیق جاری ہے\u0020</string>
+    <string name="ticket_status_solved">\u0020شکایت حل ہوگئی ہے\u0020</string>
+    <string name="contact_fragment_title">\u0020شکایت پر بات چیت\u0020</string>
+    <string name="request_activity_title">\u0020شکایت پر بات چیت\u0020</string>
+
+    <string name="contact_us_your_complain">\u0020آپ کی  شکایات\u0020</string>
+    <string name="contact_us_report">\u0020رپورٹ\u0020</string>
+    <string name="contact_us_call">\u0020کال\u0020</string>
+    <string name="contact_us_bank_account">\u0020بینک اکاوٴنٹ\u0020</string>
+    <string name="title_report_en">Report</string>
+    <string name="title_report_ur">\u0020رپورٹ\u0020</string>
+    <string name="complains_not_found">\u0020آپ کی کوئی شکایت درج نہیں ہے\u0020</string>
+    <string name="enter_some_details">Please Enter Some Details</string>
+
+    <string-array name="ride_complain_reasons">
+        <item>Partner ka ravaiya gair ikhlaqi tha</item>
+        <item>Partner ne aik gair mansooba stop kia</item>
+        <item>Partner ne khud safar ka aghaz kar k ikhtitam kardia, mere pas ai baghair.</item>
+        <item>Parner ne baqaya raqam mere wallet me nahi daali</item>
+        <item>Main haadse main manavas tha.</item>
+    </string-array>
+
+    <string name="wait_for_zendesk">\u0020انتظار فرمائیں\u0020</string>
+    <string name="wait_for_zendesk_for_duration">\u0020انتظار کیجیے ، آپ کی ریکویسٹ کے لیے 2–1 منٹ درکار ہیں\u0020</string>
+    <string name="partner_label">partner</string>
+    <string name="customer_labee">customer</string>
+    <string name="question_mark">\?</string>
+
+    <string name="call_whatsapp">\u0020واٹس ایپ پر کال کریں\u0020</string>
+    <string name="call_mobile_no">\u0020موبائل نمبر پر کال کریں\u0020</string>
+
+
+    <string-array name="chat_messages_urdu">
+        <item>\u0020آپ کی لوکیشن صحیح ڈلی ہوئی ہے؟\u0020</item>
+        <item>\u0020میں آپ کی طرف آ رہا ہوں\u0020</item>
+        <item>\u0020راستہ سمجھا دیں یا نزدیک کوئی جگہ بتا دیں\u0020</item>
+        <item>\u0020میں راستے میں ہوں لیکن 5 منٹ لیٹ ہو سکتا ہوں\u0020</item>
+        <item>\u0020تھوڑا دور ہوں لیکن آپ کی طرف آ رہا ہوں\u0020</item>
+        <item>\u0020میں آپ کو کیسے پہچانوں گا؟\u0020</item>
+        <item>\u0020میں آپ کی لوکیشن پر پہنچ گیا ہوں\u0020</item>
+    </string-array>
+
+    <string-array name="chat_messages_english">
+        <item>Is your location pick accurate?</item>
+        <item>"I'm on my way"</item>
+        <item>Please provide more details about your pickup location</item>
+        <item>"I'm on my way but will run 5 minutes late"</item>
+        <item>I am slightly far away, but coming towards you</item>
+        <item>How do I recognize you\?</item>
+        <item>I have arrived</item>
+    </string-array>
+    <string name="how_it_works_en">How it works</string>
+    <string name="how_it_works_ur">\u0020طریقہ کار\u0020</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="offline_rides_en">Offline Rides</string>
+    <string name="offline_rides_ur">\u0020آف لائن رائیڈز\u0020</string>
+    <string name="enter_customer_mobile_no">\u0020کسٹمر کا موبائل نمبر درج کریں\u0020</string>
+    <string name="code_sent_on_mentioned_no">\u0020درج کردہ نمبر پر تصدیقی کوڈ بھیجا جائیگا\u0020</string>
+    <string name="enter_drop_off_for_fare">\u0020اندازاً  کرائے کے لئے منزل منتخب کریں\u0020</string>
+    <string name="offline_ride_fare">\u0020:کرایہ\u0020</string>
+    <string name="enter_mobile_no">Enter Mobile Number</string>
+    <string name="search_drop_off">Search Drop Off</string>
+    <string name="receive_code">\u0020کوڈ وصول کریں\u0020</string>
+    <string name="search_drop_off_toast">Please search drop off</string>
+    <string name="offline_ride_notice">\u0020برائے مہربانی آف لائن رائیڈز لینے کے لئے ہوم اسکرین پر اپنی ایپ کو آف لائن کریں\u0020</string>
+
+    <string name="select_dropoff_title">\u0020منزل منتخب کریں\u0020</string>
+    <string name="pick_from_here_title">\u0020یہاں سے پِک کریں\u0020</string>
+    <string name="select_location_title">\u0020مقام مقرر کریں\u0020</string>
+    <string name="resend_code">\u0020دوبارہ کوڈ بھیجیں\u0020</string>
+    <string name="wrong_code_entered">\u0020درج کردہ کوڈ درست نہیں ہے\u0020</string>
+    <string name="enter_received_amount">Enter received amount</string>
+    <string name="enter_amount">Enter amount</string>
 </resources>
