@@ -87,6 +87,7 @@ object NetworkUtil {
             val builder = OkHttpClient.Builder()
             builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
             builder.hostnameVerifier { hostname, session -> true }
+//            if (BuildConfig.DEBUG) builder.addInterceptor(MockInterceptor())
             if (BuildConfig.DEBUG) builder.addNetworkInterceptor(loggingInterceptor)
 
             return builder.build()

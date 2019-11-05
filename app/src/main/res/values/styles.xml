@@ -113,4 +113,12 @@
         <!--<item name="colorControlNormal">@color/white</item>-->
         <item name="colorControlActivated">@color/textColorPerformance</item>
     </style>
+
+    <style name="AppTheme.Dialog.Custom" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:maxHeight">@dimen/_200sdp</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowSoftInputMode">stateHidden|adjustResize</item>
+    </style>
 </resources>
