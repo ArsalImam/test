@@ -146,7 +146,7 @@ public class PlacesActivity extends BaseActivity implements GoogleApiClient.OnCo
 
     */
 /**
-     * Listener that handles selections from suggestions from the AutoCompleteTextView that
+     * onLoadBoardListFragmentInteractionListener that handles selections from suggestions from the AutoCompleteTextView that
      * displays Place suggestions.
      * Gets the place id of the selected item and issues a request to the Places Geo Data API
      * to retrieve more details about the place.

@@ -229,7 +229,7 @@ public class SavePlaceActivity extends BaseActivity {
         public void onError(String error) {
             finishLoading();
             Utils.redLog("Address error", error + "");
-            Utils.appToast(mCurrentActivity, "" + error);
+            Utils.appToast("" + error);
         }
     };
 
@@ -322,7 +322,7 @@ public class SavePlaceActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
-                        Utils.appToast(mCurrentActivity, errorMessage);
+                        Utils.appToast(errorMessage);
                     }
                 });
             }

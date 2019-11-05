@@ -11,11 +11,13 @@ import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
 import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
-import com.bykea.pk.partner.models.response.BankAccountListResponse;
+import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
+import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.ContactNumbersResponse;
@@ -23,6 +25,7 @@ import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
+import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
@@ -30,10 +33,8 @@ import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
-import com.bykea.pk.partner.models.response.LoadBoardListingResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
-import com.bykea.pk.partner.models.response.LoadboardBookingDetailResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
@@ -286,6 +287,9 @@ interface IRestClient {
     Call<GeocoderApi> callGeoCoderApi(@Query("latlng") String latLng,
                                       @Query("key") String key);
 
+    @GET(ApiTags.PLACES_GEOCODER_EXT_URL)
+    Call<GeoCodeApiResponse> callGeoCoderApiWithPlaceId(@Query("place_id") String placeId, @Query("key") String key);
+
     @FormUrlEncoded
     @POST(ApiTags.CHANGE_PIN)
     Call<ChangePinResponse> requestChangePin(@Field("_id") String _id,
@@ -414,25 +418,6 @@ interface IRestClient {
     Call<UpdateAppVersionResponse> updateAppVersion(@Field("_id") String id,
                                                     @Field("token_id") String token,
                                                     @Field("version") double version);
-    /**
-     * Getting loadboard list in home screen when partener is active.
-     * @param driver_id Driver id
-     * @param token_id Driver access token
-     * @param lat Driver current lat
-     * @param lng Driver current lng
-     * @param limit jobs limit - OPTIONAL
-     * @param pickup_zone driver's selected pickup zone - OPTIONAL
-     * @param dropoff_zone driver's selected dropoff zone - OPTIONAL
-     * @return Loadboard jobs list
-     */
-    @GET(ApiTags.GET_LOAD_BOARD_LISTING)
-    Call<LoadBoardListingResponse> requestLoadBoardListing(@Query("_id") String driver_id,
-                                                           @Query("token_id") String token_id,
-                                                           @Query("lat") String lat,
-                                                           @Query("lng") String lng,
-                                                           @Query("limit") String limit,
-                                                           @Query("pickup_zone") String pickup_zone /*id*/,
-                                                           @Query("dropoff_zone") String dropoff_zone /*id*/);
 
     /**
      * Accept a booking
@@ -452,20 +437,12 @@ interface IRestClient {
                                                                 @Field("lng") String lng);
 
     /**
-     * Getting selected booking's detail
-     * @param bookingId selected booking id
-     * @param driver_id driver's id
-     * @param lat driver's current lat
-     * @param lng driver's current lng
-     * @param token_id driver's access token
-     * @return booking detail response
+     * Driver cancel booking picked from load board
+     * @param body Body having details of Booking
+     * @return Server response
      */
-    @GET(ApiTags.GET_LOAD_BOARD_BOOKING_DETAIL)
-    Call<LoadboardBookingDetailResponse> requestLoadBoardBookingDetail(@Path("id") String bookingId,
-                                                                       @Query("_id") String driver_id,
-                                                                       @Query("lat") String lat,
-                                                                       @Query("lng") String lng,
-                                                                       @Query("token_id") String token_id);
+    @POST(ApiTags.CANCEL_LOAD_BOARD_BOOKING)
+    Call<CancelRideResponse> cancelLoadBoardBooking(@Body LoadBoardBookingCancelRequest body);
 
 //    @GET("/news")
 //    Call<GenericRetrofitCallBackSuccess<News>> requestHttp(

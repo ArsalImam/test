@@ -1,26 +1,27 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.data.Predefine_rating;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.CommentsAdapter;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.Predefine_rating;
-import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -138,16 +139,16 @@ public class HistoryDetailActivity extends BaseActivity {
                             CURRENT_DATE_FORMAT,
                             REQUIRED_DATE_FORMAT));
                     serviceTypeTv.setText(StringUtils.capitalize(data.getTrip_type()));
-                    totalDistanceTv.setText(getString(R.string.kilometer_with_amount_ur,Math.round(Double.parseDouble(data.getInvoice().getKm()))));
+                    totalDistanceTv.setText(getString(R.string.kilometer_with_amount_ur, Math.round(Double.parseDouble(data.getInvoice().getKm()))));
                     float totalTime = Float.parseFloat(data.getInvoice().getMinutes());
                     float pricePerMin = Float.parseFloat(data.getInvoice().getPricePerMin());
                     float pricePerKm = Float.parseFloat(data.getInvoice().getPricePerKm());
-                    totalTimeTv.setText(getString(R.string.minute_with_amount_ur,Math.round(totalTime)));
-                    timePriceTv.setText(getString(R.string.display_integer_value,Math.round(Math.ceil(totalTime * pricePerMin))));
-                    distancePriceTv.setText(getString(R.string.display_integer_value,Math.round(Math.ceil(pricePerKm))));
+                    totalTimeTv.setText(getString(R.string.minute_with_amount_ur, Math.round(totalTime)));
+                    timePriceTv.setText(getString(R.string.display_integer_value, Math.round(Math.ceil(totalTime * pricePerMin))));
+                    distancePriceTv.setText(getString(R.string.display_integer_value, Math.round(Math.ceil(pricePerKm))));
                     fareTv.setText(data.getInvoice().getTripCharges());
                     basefareTv.setText(data.getInvoice().getBaseFare());
-                    totalAmountTv.setText(getString(R.string.display_string_value,data.getInvoice().getTotal()));
+                    totalAmountTv.setText(getString(R.string.display_string_value, data.getInvoice().getTotal()));
                     promoTv.setText(data.getInvoice().getPromo_deduction());
                     dropOffDiscTv.setText(data.getInvoice().getDropoff_discount());
 
@@ -162,7 +163,7 @@ public class HistoryDetailActivity extends BaseActivity {
 
                     if (StringUtils.isNotBlank(data.getInvoice().getWait_charges())) {
                         float wait_charges = Float.parseFloat(data.getInvoice().getWait_charges());
-                        tvWaitPrice.setText(getString(R.string.display_integer_value,Math.round(Math.ceil(wait_charges))));
+                        tvWaitPrice.setText(getString(R.string.display_integer_value, Math.round(Math.ceil(wait_charges))));
                     } else {
                         tvWaitPrice.setText("0");
                     }
@@ -208,7 +209,6 @@ public class HistoryDetailActivity extends BaseActivity {
                             AppPreferences.getSettings().getSettings().getTrip_support_max_days()) {
                         btnProblem.setVisibility(View.GONE);
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -233,7 +233,7 @@ public class HistoryDetailActivity extends BaseActivity {
 //                Utils.startCustomWebViewActivity(mCurrentActivity,
 //                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
 
-                ActivityStackManager.getInstance().startProblemActivity(mCurrentActivity, data.getTripNo());
+                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, data);
                 break;
         }
     }

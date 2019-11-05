@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.bykea.pk.partner.R;
 
-import com.bykea.pk.partner.models.data.PersonalInfoData;
+import com.bykea.pk.partner.dal.source.remote.data.PersonalInfoData;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Utils;
@@ -57,7 +57,7 @@ public class PostBankAccountActivity extends BaseActivity {
                 if (StringUtils.isNotBlank(financeNumber)) {
                     Utils.callingIntent(mCurrentActivity, financeNumber);
                 } else {
-                    Dialogs.INSTANCE.showToast(mCurrentActivity, "Number not available.");
+                    Dialogs.INSTANCE.showToast(getString(R.string.not_available));
                 }
                 break;
         }

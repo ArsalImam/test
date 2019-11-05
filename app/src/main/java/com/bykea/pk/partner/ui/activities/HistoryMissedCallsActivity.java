@@ -18,7 +18,6 @@ import com.bykea.pk.partner.ui.helpers.adapters.HistoryMissedCallsAdapter;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 
 import java.util.ArrayList;
 
@@ -148,7 +147,7 @@ public class HistoryMissedCallsActivity extends BaseActivity {
                     @Override
                     public void run() {
                         loader.setVisibility(View.GONE);
-                        Dialogs.INSTANCE.showToast(mCurrentActivity, errorMessage);
+                        Dialogs.INSTANCE.showToast(errorMessage);
                         if (errorCode == HTTPStatus.UNAUTHORIZED) {
                             Utils.logout(mCurrentActivity);
                         }

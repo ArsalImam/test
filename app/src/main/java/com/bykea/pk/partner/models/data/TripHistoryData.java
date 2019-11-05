@@ -142,6 +142,10 @@ public class TripHistoryData implements Serializable {
         return StringUtils.isNotBlank(cancel_by) ? StringUtils.capitalize(cancel_by) : "Admin";
     }
 
+    public String getCancelBy() {
+        return cancel_by;
+    }
+
     public boolean is_verified() {
         return is_verified;
     }

@@ -11,7 +11,7 @@ import android.provider.Telephony;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
+
 import android.telephony.SmsMessage;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
@@ -617,7 +617,7 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
                     @Override
                     public void run() {
                         Dialogs.INSTANCE.dismissDialog();
-                        Utils.appToast(mCurrentActivity, response.getMessage());
+                        Utils.appToast(response.getMessage());
 
                     }
                 });

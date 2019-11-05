@@ -1,0 +1,78 @@
+<layout>
+
+    <data>
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.ui.complain.GenericFragmentListener" />
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/_15sdp"
+            android:paddingRight="@dimen/_15sdp">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/thanks"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/_36sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tVIssueNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:gravity="center"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/_20sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf"
+                tools:text="@string/you_complain" />
+
+
+            <com.bykea.pk.partner.widgets.FontButton
+                android:id="@+id/submittedIssueDetail"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_55sdp"
+                android:background="@drawable/button_background_green_round"
+                android:gravity="center"
+                android:onClick="@{() -> listener.onRequestSubmittedTickets()}"
+                android:text="@string/issue_submitted_detail"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize.large"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            <com.bykea.pk.partner.widgets.FontButton
+                android:id="@+id/navigateHomeScreen"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:background="@drawable/gray_bordered_bg"
+                android:gravity="center"
+                android:onClick="@{() -> listener.onNavigateToHomeScreen()}"
+                android:text="@string/move_to_home_screen"
+                android:textAllCaps="false"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/textsize.large"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>
