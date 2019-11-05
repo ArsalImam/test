@@ -16,6 +16,15 @@ public class ReceivedMessage implements Serializable {
         this.data = data;
     }
 
+    @SerializedName("trip_id")
+    private String tripId;
+    @SerializedName("trip_no")
+    private String tripNo;
+
+    @SerializedName("full_name")
+    private String fullName;
+
+
     @SerializedName("passenger_id")
     private String sender;
     @SerializedName("driver_id")
@@ -137,5 +146,13 @@ public class ReceivedMessage implements Serializable {
 
     public void setBatchID(String batchID) {
         this.batchID = batchID;
+    }
+
+    public String getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
     }
 }

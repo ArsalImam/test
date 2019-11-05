@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.models.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class WalletData {
     private String total;
     private String trip_no;
@@ -8,6 +10,8 @@ public class WalletData {
     private String transfer;
     private String title;
     private String balance;
+    @SerializedName("transaction_id")
+    private String transactionId;
 
 
     public String getTotal() {
@@ -65,5 +69,13 @@ public class WalletData {
 
     public void setBalance(String balance) {
         this.balance = balance;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 }

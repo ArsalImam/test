@@ -4,7 +4,6 @@ package com.bykea.pk.partner.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,7 +36,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -167,6 +165,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
                 }
                 Utils.redLog("Auto", "Autocomplete item selected: " + primaryText);
                 Utils.redLog("bykea", "Called getPlaceById to get Place details for " + placeId);
+                //TODO: Replace place details call with Geocode call
                 new PlacesRepository().getPlaceDetails(placeId, mCurrentActivity, new PlacesDataHandler() {
                     @Override
                     public void onPlaceDetailsResponse(PlaceDetailsResponse response) {
@@ -341,7 +340,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
         public void onError(String error) {
             Utils.redLog("Address error", error + "");
             finishLoading();
-            Dialogs.INSTANCE.showToast(mCurrentActivity, "" + error);
+            Dialogs.INSTANCE.showToast(error);
 //            stopLoadingAnimation();
         }
     };

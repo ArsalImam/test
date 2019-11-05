@@ -32,8 +32,8 @@ public class FontButton extends Button {
                 R.styleable.FontTextView);
         String fontName = Fonts.values()[a.getInt(R.styleable.FontTextView_fontName, 0)].getName();
         a.recycle();
-        if (!isInEditMode() && !TextUtils.isEmpty(sDefaultFontName)) {
-            setTypeface(FontUtils.getFonts(sDefaultFontName));
+        if (!isInEditMode() && !TextUtils.isEmpty(fontName)) {
+            setTypeface(FontUtils.getFonts(fontName));
         }
     }
 }

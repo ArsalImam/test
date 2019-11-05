@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.helpers;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject;
+import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -19,7 +22,6 @@ import com.bykea.pk.partner.services.HandleInactivePushService;
 import com.bykea.pk.partner.services.LocationService;
 import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
-import com.bykea.pk.partner.ui.activities.CallingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
@@ -29,27 +31,33 @@ import com.bykea.pk.partner.ui.activities.HistoryDetailActivity;
 import com.bykea.pk.partner.ui.activities.HistoryMissedCallsActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.activities.LandingActivity;
-import com.bykea.pk.partner.ui.activities.LoadboardBookingDetailActivity;
 import com.bykea.pk.partner.ui.activities.LoginActivity;
 import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
-import com.bykea.pk.partner.ui.activities.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.activities.MultiDeliveryFeedbackActivity;
 import com.bykea.pk.partner.ui.activities.MultipleDeliveryBookingActivity;
 import com.bykea.pk.partner.ui.activities.NumberVerificationActivity;
 import com.bykea.pk.partner.ui.activities.PaymentRequestActivity;
 import com.bykea.pk.partner.ui.activities.PostProblemActivity;
-import com.bykea.pk.partner.ui.activities.ProblemActivity;
 import com.bykea.pk.partner.ui.activities.RankingActivity;
 import com.bykea.pk.partner.ui.activities.RegistrationActivity;
-import com.bykea.pk.partner.ui.activities.ReportActivity;
-import com.bykea.pk.partner.ui.activities.ReportPostActivity;
+import com.bykea.pk.partner.ui.activities.RideCodeVerificationActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
+import com.bykea.pk.partner.ui.calling.CallingActivity;
+import com.bykea.pk.partner.ui.calling.JobCallActivity;
+import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
+import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
+import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
+import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
+import com.bykea.pk.partner.ui.loadboard.detail.JobDetailActivity;
+import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
+import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
+import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
 
 public class ActivityStackManager {
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
@@ -176,6 +184,18 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /**
+     * Util method to start active job activity aka Booking Activity
+     *
+     * @param mContext     source activity's context
+     * @param dataPrefetch flag to identify is active job data is already fetch from server
+     */
+    public void startJobActivity(Context mContext, boolean dataPrefetch) {
+        Intent intent = new Intent(mContext, BookingActivity.class);
+        if (!dataPrefetch) intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, true);
+        mContext.startActivity(intent);
+    }
+
     /***
      * Start Map Details Activity.
      *
@@ -206,11 +226,11 @@ public class ActivityStackManager {
     /**
      * Start multi delivery feedback activity.
      *
-     * @param mContext Holding the reference of an activity.
+     * @param mContext                Holding the reference of an activity.
      * @param isComingFromOnGoingRide Is user coming from on going ride.
-     * @param tripID Current Trip id.
+     * @param tripID                  Current Trip id.
      */
-    public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID,boolean isComingFromOnGoingRide) {
+    public void startMultiDeliveryFeedbackActivity(Context mContext, String tripID, boolean isComingFromOnGoingRide) {
         Intent intent = new Intent(mContext, MultiDeliveryFeedbackActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(Keys.MULTIDELIVERY_TRIP_ID, tripID);
@@ -283,7 +303,8 @@ public class ActivityStackManager {
 
     /**
      * This method restarts location service with custom interval when partner is on trip
-     * @param context Calling Context
+     *
+     * @param context        Calling Context
      * @param updateInterval interval in millis
      */
     public void restartLocationServiceWithCustomIntervals(final Context context, long updateInterval) {
@@ -304,6 +325,22 @@ public class ActivityStackManager {
         }
     }
 
+    public void startCallingActivity(JobCall jobCall, boolean isFromGcm, Context mContext) {
+        if (AppPreferences.getAvailableStatus() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
+            Intent callIntent = new Intent(DriverApp.getContext(), JobCallActivity.class);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.setAction(Intent.ACTION_MAIN);
+            callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            callIntent.putExtra(JobCallActivity.Companion.getKEY_CALL_DATA(), jobCall);
+            if (isFromGcm) {
+                callIntent.putExtra(JobCallActivity.Companion.getKEY_IS_FROM_PUSH(), true);
+                Utils.redLog("Calling Activity", "On Call FCM opening Calling Activity");
+            }
+            mContext.startActivity(callIntent);
+        }
+    }
+
+    @Deprecated
     public void startCallingActivity(NormalCallData callData, boolean isFromGcm, Context mContext) {
 
         Utils.redLog("Calling Activity", "Status Available: " + AppPreferences.getAvailableStatus() +
@@ -331,9 +368,9 @@ public class ActivityStackManager {
     /**
      * Start multi delivery calling activity.
      *
-     * @param response The {@link MultiDeliveryCallDriverData} object.
+     * @param response  The {@link MultiDeliveryCallDriverData} object.
      * @param isFromGcm boolean indicating that start activity from GCM or not.
-     * @param mContext Holding the reference of an activity.
+     * @param mContext  Holding the reference of an activity.
      */
     public void startMultiDeliveryCallingActivity(MultiDeliveryCallDriverData response,
                                                   boolean isFromGcm,
@@ -352,7 +389,6 @@ public class ActivityStackManager {
             mContext.startActivity(callIntent);
         }
     }
-
 
 
     public void startChatActivity(String title, String refId, boolean isChatEnable, Context mContext) {
@@ -415,16 +451,31 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-    public void startProblemActivity(Context context, String tripNo) {
+    /*public void startComplainSubmissionActivity(Context context, String tripNo) {
         Intent intent = new Intent(context, ProblemActivity.class);
         intent.putExtra("TRIP_ID", tripNo);
         context.startActivity(intent);
+    }*/
+
+    /**
+     * @param context         Calling Activity
+     * @param tripHistoryData Model Send For Intent
+     */
+    public void startComplainSubmissionActivity(Context context, TripHistoryData tripHistoryData) {
+        Intent intent = new Intent(context, ComplaintSubmissionActivity.class);
+        if (tripHistoryData != null)
+            intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
+        context.startActivity(intent);
     }
 
-    public void startReportActivity(Context mContext, String cTtype) {
-        Intent intent = new Intent(mContext, ReportActivity.class);
-        intent.putExtra(Constants.Extras.CONTACT_TYPE, cTtype);
-        mContext.startActivity(intent);
+    /**
+     * Screen for waiting, to get zendesk sdk setup.
+     *
+     * @param context : Calling Activity
+     */
+    public void startZendeskIdentityActivity(Context context) {
+        Intent intent = new Intent(context, ComplainZendeskIdentityActivity.class);
+        context.startActivity(intent);
     }
 
     /**
@@ -436,13 +487,6 @@ public class ActivityStackManager {
     public void startDeliveryScheduleDetailActivity(Context mContext, DeliveryScheduleModel deliveryScheduleData) {
         Intent intent = new Intent(mContext, DeliveryScheduleDetailActivity.class);
         intent.putExtra(Constants.Extras.SELECTED_ITEM, deliveryScheduleData);
-        mContext.startActivity(intent);
-    }
-
-    public void startReportPostActivity(Context mContext, String reason, String contactType) {
-        Intent intent = new Intent(mContext, ReportPostActivity.class);
-        intent.putExtra("reason", reason);
-        intent.putExtra(Constants.Extras.CONTACT_TYPE, contactType);
         mContext.startActivity(intent);
     }
 
@@ -471,16 +515,25 @@ public class ActivityStackManager {
     }
 
     /**
-     * open loadboard booking screen
-     * @param context Context
-     * @param bookingId selected booking id
+     * This method will open withdrawal activity
+     *
+     * @param activity context through which new activity can be launched
      */
-    public void startLoadboardBookingDetailActiivty(Context context, String bookingId) {
-        Intent intent = new Intent(context, LoadboardBookingDetailActivity.class);
-        intent.putExtra(LoadboardBookingDetailActivity.BOOKING_ID, bookingId);
-        context.startActivity(intent);
+    public void startWithDrawActivity(Activity activity) {
+        WithdrawalActivity.Companion.openActivity(activity);
     }
 
+    /**
+     * open loadboard booking screen
+     *
+     * @param context   Context
+     * @param bookingId selected booking id
+     */
+    public void startLoadboardBookingDetailActiivty(Context context, Long bookingId) {
+        Intent intent = new Intent(context, JobDetailActivity.class);
+        intent.putExtra(JobDetailActivity.EXTRA_BOOKING_ID, bookingId);
+        context.startActivity(intent);
+    }
 
     /**
      * This method starts a service to handle Inactive Push Notification
@@ -496,4 +549,34 @@ public class ActivityStackManager {
         }
     }
 
+    /**
+     * This method will open withdrawal complete activity
+     *
+     * @param activity context through which new activity can be launched
+     */
+    public void startWithDrawCompleteActivity(Activity activity) {
+        Intent intent = new Intent(activity, WithdrawThankyouActivity.class);
+        activity.startActivity(intent);
+    }
+
+    /**
+     * Submitted Tickets Activity
+     *
+     * @param context Calling Activity
+     */
+    public void startComplainListActivity(Context context) {
+        Intent intent = new Intent(context, ComplaintListActivity.class);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Ride Create Code Verification Activity
+     * @param phoneNumber : Phone Number For OTP Code Message and Call
+     */
+    public void startWaitingActivity(Context context, RideCreateRequestObject createRequestBody, String phoneNumber) {
+        Intent intent = new Intent(context, RideCodeVerificationActivity.class);
+        intent.putExtra(Constants.Extras.PHONE_NUMBER, phoneNumber);
+        intent.putExtra(Constants.Extras.RIDE_CREATE_DATA, createRequestBody);
+        context.startActivity(intent);
+    }
 }

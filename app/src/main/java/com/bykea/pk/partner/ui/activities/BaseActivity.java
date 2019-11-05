@@ -21,11 +21,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.View;
@@ -33,10 +28,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NotificationData;
 import com.bykea.pk.partner.services.LocationService;
+import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -303,6 +305,9 @@ public class BaseActivity extends AppCompatActivity {
     public void checkConnectivity(Context context) {
         if (Connectivity.isConnectedFast(context)) {
             dismissProgressDialog();
+
+            //  Below broadcast has send to update the loadboard bookings request
+            sendBroadcast(new Intent(Constants.Broadcast.UPDATE_LOADBOARD_BOOKINGS_REQUEST));
         } else {
             showProgressDialog();
         }
@@ -656,7 +661,7 @@ public class BaseActivity extends AppCompatActivity {
             Utils.onUnauthorizedMockLocation(mCurrentActivity);
         } else if (Keys.MULTIDELIVERY_ERROR_BORADCAST.equalsIgnoreCase(action)) {
             //MULTI DELIVERY EVENT ERROR HANDLING
-            Utils.appToast(mCurrentActivity,
+            Utils.appToast(
                     mCurrentActivity.getString(R.string.error_try_again));
         } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
             Utils.multiDeliveryFreeDriverOnBatchComplete();
