@@ -39,6 +39,11 @@
         tools:node="merge"
         android:networkSecurityConfig="@xml/network_security_config"
         tools:replace="android:allowBackup">
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
         <activity
             android:name=".ui.activities.RideCodeVerificationActivity"
             android:launchMode="singleTop" />
