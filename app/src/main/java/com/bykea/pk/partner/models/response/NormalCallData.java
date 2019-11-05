@@ -68,14 +68,11 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("total")
     private String totalFare;
     private String pass_socket_id;
-    private String rec_no;
 
     @SerializedName("km")
     private String distanceCovered;
     @SerializedName("minutes")
     private String totalMins;
-    @SerializedName("total_amount")
-    private String totalAmount;
     private String started_at;
 
 
@@ -105,11 +102,32 @@ public class NormalCallData extends CommonResponse {
     private boolean isReturnRun;
     @SerializedName("wallet_deposit")
     private boolean isWalletDeposit;
+    private String sub_type;
+    private String order_no;
+
+    @SerializedName("receiver_phone")
+    private String receiverPhone;
+    @SerializedName("receiver_name")
+    private String receiverName;
+    @SerializedName("receiver_address")
+    private String receiverAddress;
+
+    @SerializedName("sender_name")
+    private String senderName;
+    @SerializedName("sender_phone")
+    private String senderPhone;
+    @SerializedName("sender_address")
+    private String senderAddress;
+
+    @Deprecated
+    private String recName;
+
+    @Deprecated
+    private String rec_no;
+
+    @Deprecated
     @SerializedName("cAddr")
     private String complete_address;
-    private String sub_type;
-    private String recName;
-    private String order_no;
 
     @Deprecated
     @SerializedName("driver_passenger_eta")
@@ -151,6 +169,9 @@ public class NormalCallData extends CommonResponse {
     @SerializedName("dropoff")
     private Stop dropoffStop;
 
+    @SerializedName("trip_status_code")
+    private Integer serviceCode;
+
 
     public String getDistanceCovered() {
         return distanceCovered;
@@ -166,14 +187,6 @@ public class NormalCallData extends CommonResponse {
 
     public void setTotalMins(String totalMins) {
         this.totalMins = totalMins;
-    }
-
-    public String getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(String totalAmount) {
-        this.totalAmount = totalAmount;
     }
 
     public String getStatus() {
@@ -454,10 +467,12 @@ public class NormalCallData extends CommonResponse {
         this.icon = icon;
     }
 
+    @Deprecated
     public String getRec_no() {
         return rec_no;
     }
 
+    @Deprecated
     public void setRec_no(String rec_no) {
         this.rec_no = rec_no;
     }
@@ -510,10 +525,12 @@ public class NormalCallData extends CommonResponse {
         isWalletDeposit = walletDeposit;
     }
 
+    @Deprecated
     public String getComplete_address() {
         return complete_address;
     }
 
+    @Deprecated
     public void setComplete_address(String complete_address) {
         this.complete_address = complete_address;
     }
@@ -526,10 +543,12 @@ public class NormalCallData extends CommonResponse {
         this.sub_type = sub_type;
     }
 
+    @Deprecated
     public String getRecName() {
         return recName;
     }
 
+    @Deprecated
     public void setRecName(String recName) {
         this.recName = recName;
     }
@@ -660,5 +679,64 @@ public class NormalCallData extends CommonResponse {
 
     public void setDropoffStop(Stop dropoffStop) {
         this.dropoffStop = dropoffStop;
+    }
+
+    public Integer getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(Integer serviceCode) {
+        this.serviceCode = serviceCode;
+    }
+
+    public String getReceiverPhone() {
+        if (receiverPhone != null && !receiverPhone.isEmpty()) return receiverPhone;
+        else return rec_no;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
+    }
+
+    public String getReceiverName() {
+        if (receiverName != null && !receiverName.isEmpty()) return receiverName;
+        else return recName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getReceiverAddress() {
+        if (receiverAddress != null && !receiverAddress.isEmpty()) return receiverAddress;
+        else return complete_address;
+    }
+
+    public void setReceiverAddress(String receiverAddress) {
+        this.receiverAddress = receiverAddress;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getSenderPhone() {
+        return senderPhone;
+    }
+
+    public void setSenderPhone(String senderPhone) {
+        this.senderPhone = senderPhone;
+    }
+
+    public String getSenderAddress() {
+        return senderAddress;
+    }
+
+    public void setSenderAddress(String senderAddress) {
+        this.senderAddress = senderAddress;
     }
 }

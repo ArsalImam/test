@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_payment_request"
     android:layout_width="match_parent"
-    android:background="@color/white"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
@@ -20,6 +19,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -37,8 +37,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="2.5"
                 android:paddingLeft="@dimen/_8sdp"
-                android:paddingRight="@dimen/_8sdp"
-                android:paddingTop="@dimen/_15sdp">
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingRight="@dimen/_8sdp">
 
                 <LinearLayout
                     android:id="@+id/llBankName"
@@ -63,11 +63,11 @@
                         android:layout_weight="1"
                         android:background="@color/transparent"
                         android:gravity="start"
-                        android:inputType="text"
                         android:hint="Standard Chartered Bank"
+                        android:inputType="text"
                         android:maxWidth="@dimen/_220sdp"
-                        android:padding="@dimen/_7sdp"
                         android:maxLength="75"
+                        android:padding="@dimen/_7sdp"
                         android:text=""
                         android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
@@ -88,8 +88,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="2.5"
                 android:paddingLeft="@dimen/_8sdp"
-                android:paddingRight="@dimen/_8sdp"
-                android:paddingTop="@dimen/_15sdp">
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingRight="@dimen/_8sdp">
 
                 <LinearLayout
                     android:id="@+id/llAccountName"
@@ -117,8 +117,8 @@
                         android:hint="Anwar Khalid"
                         android:inputType="text"
                         android:maxWidth="@dimen/_220sdp"
-                        android:padding="@dimen/_7sdp"
                         android:maxLength="50"
+                        android:padding="@dimen/_7sdp"
                         android:text=""
                         android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
@@ -139,8 +139,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="2.5"
                 android:paddingLeft="@dimen/_8sdp"
-                android:paddingRight="@dimen/_8sdp"
-                android:paddingTop="@dimen/_15sdp">
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingRight="@dimen/_8sdp">
 
                 <LinearLayout
                     android:id="@+id/llIBAN"
@@ -166,9 +166,9 @@
                         android:background="@color/transparent"
                         android:gravity="start"
                         android:hint="DE8937444444444444"
+                        android:inputType="text"
                         android:maxWidth="@dimen/_220sdp"
                         android:maxLength="50"
-                        android:inputType="text"
                         android:padding="@dimen/_7sdp"
                         android:text=""
                         android:textColor="@color/colorAccentDark"
@@ -190,8 +190,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="2.5"
                 android:paddingLeft="@dimen/_8sdp"
-                android:paddingRight="@dimen/_8sdp"
-                android:paddingTop="@dimen/_15sdp">
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingRight="@dimen/_8sdp">
 
                 <LinearLayout
                     android:id="@+id/llCNIC"
@@ -219,9 +219,9 @@
                         android:hint="32134-22222222-2"
                         android:inputType="number"
                         android:maxWidth="@dimen/_220sdp"
+                        android:maxLength="16"
                         android:padding="@dimen/_7sdp"
                         android:text=""
-                        android:maxLength="16"
                         android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
@@ -241,8 +241,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="2.5"
                 android:paddingLeft="@dimen/_8sdp"
-                android:paddingRight="@dimen/_8sdp"
-                android:paddingTop="@dimen/_15sdp">
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingRight="@dimen/_8sdp">
 
                 <LinearLayout
                     android:id="@+id/llMobile"
@@ -268,11 +268,11 @@
                         android:background="@color/transparent"
                         android:gravity="start"
                         android:hint="03132222222"
+                        android:inputType="phone"
                         android:maxWidth="@dimen/_220sdp"
+                        android:maxLength="15"
                         android:padding="@dimen/_7sdp"
                         android:text=""
-                        android:maxLength="15"
-                        android:inputType="phone"
                         android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
@@ -292,8 +292,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="2.5"
                 android:paddingLeft="@dimen/_8sdp"
-                android:paddingRight="@dimen/_8sdp"
-                android:paddingTop="@dimen/_15sdp">
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingRight="@dimen/_8sdp">
 
                 <LinearLayout
                     android:id="@+id/llAmount"
@@ -319,11 +319,11 @@
                         android:background="@color/transparent"
                         android:gravity="start"
                         android:hint="Rs. "
+                        android:inputType="number"
                         android:maxWidth="@dimen/_220sdp"
+                        android:maxLength="20"
                         android:padding="@dimen/_7sdp"
                         android:text=""
-                        android:maxLength="20"
-                        android:inputType="number"
                         android:textColor="@color/colorAccentDark"
                         android:textColorHint="@color/secondaryColorLight"
                         android:textSize="@dimen/textsize.body1"
@@ -339,21 +339,19 @@
             </RelativeLayout>
 
 
-
-
             <com.bykea.pk.partner.widgets.FontButton
                 android:id="@+id/submitBtn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button.next.height"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="@dimen/margin.normal"
-                android:layout_marginRight="@dimen/margin.normal"
                 android:layout_marginTop="@dimen/margin.normal"
+                android:layout_marginRight="@dimen/margin.normal"
                 android:background="@drawable/button_green"
                 android:text="@string/button_text_submit_a_request"
                 android:textAllCaps="false"
-                android:textSize="@dimen/_20sdp"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/_20sdp" />
 
 
             <com.bykea.pk.partner.widgets.FontButton
@@ -362,18 +360,17 @@
                 android:layout_height="@dimen/button.next.height"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="@dimen/_46sdp"
-                android:layout_marginRight="@dimen/_46sdp"
                 android:layout_marginTop="@dimen/margin.normal"
+                android:layout_marginRight="@dimen/_46sdp"
                 android:layout_marginBottom="@dimen/margin.normal"
                 android:background="@drawable/button_greyhot"
-                android:textSize="@dimen/_24sdp"
                 android:text="@string/button_text_help"
                 android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/_24sdp" />
         </LinearLayout>
 
     </ScrollView>
-
 
 
 </LinearLayout>

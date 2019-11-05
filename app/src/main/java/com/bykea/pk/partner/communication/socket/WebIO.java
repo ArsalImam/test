@@ -60,7 +60,6 @@ public class WebIO {
 
     private WebIO() {
         try {
-
             IO.Options options = new IO.Options();
             options.query = getConnectionString();
             options.timeout = 15 * 1000;
@@ -145,12 +144,11 @@ public class WebIO {
     }
 
     public boolean isSocketConnected() {
-        if (getSocket() != null
-                && getSocket().connected()) {
-            Utils.redLogLocation(TAG, "isSocketConnected: true");
+        if (getSocket() != null && getSocket().connected()) {
+//            Utils.redLogLocation(TAG, "isSocketConnected: true");
             return true;
         } else {
-            Utils.redLogLocation(TAG, "isSocketConnected: false");
+//            Utils.redLogLocation(TAG, "isSocketConnected: false");
             return false;
         }
     }
@@ -237,10 +235,10 @@ public class WebIO {
                 public void call(Object... args) {
                     if (args != null && args.length > 0) {
                         String serverResponse = args[0].toString();
-                        Utils.redLogLocation(TAG, "Server response from Ping : " + serverResponse);
+//                        Utils.redLogLocation(TAG, "Server response from Ping : " + serverResponse);
                     }
                     WebIO.getInstance().getSocket().emit(Socket.EVENT_PONG);
-                    Utils.redLogLocation(TAG, "Socket Ping: " + Socket.EVENT_PING);
+//                    Utils.redLogLocation(TAG, "Socket Ping: " + Socket.EVENT_PING);
                 }
             });
             on(Socket.EVENT_PONG, new Emitter.Listener() {
@@ -248,9 +246,9 @@ public class WebIO {
                 public void call(Object... args) {
                     if (args != null && args.length > 0) {
                         String serverResponse = args[0].toString();
-                        Utils.redLogLocation(TAG, "Server response from Pong : " + serverResponse);
+//                        Utils.redLogLocation(TAG, "Server response from Pong : " + serverResponse);
                     }
-                    Utils.redLogLocation(TAG, "Socket Pong: " + Socket.EVENT_PONG);
+//                    Utils.redLogLocation(TAG, "Socket Pong: " + Socket.EVENT_PONG);
                 }
             });
             on(ApiTags.SOCKEY_AUTH_FAILED, new Emitter.Listener() {
@@ -413,12 +411,12 @@ public class WebIO {
 
     }
 
-    /* public static void onError(Emitter.Listener callBack){
+    /* public static void onError(Emitter.onLoadBoardListFragmentInteractionListener callBack){
          WebIO.getInstance().getSocket().on(Socket.EVENT_CONNECT_TIMEOUT, callBack)
                  .on(Socket.EVENT_CONNECT_ERROR, callBack).on(Socket.EVENT_DISCONNECT, callBack);
      }
 
-     public static void offError(Emitter.Listener callBack){
+     public static void offError(Emitter.onLoadBoardListFragmentInteractionListener callBack){
          WebIO.getInstance().getSocket().off(Socket.EVENT_CONNECT_TIMEOUT, callBack)
                  .off(Socket.EVENT_CONNECT_ERROR, callBack).off(Socket.EVENT_DISCONNECT, callBack);
      }*/

@@ -5,10 +5,10 @@ import android.content.Context;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
-import com.bykea.pk.partner.utils.Constants;
 
 public class PlacesRepository {
 
@@ -27,21 +27,6 @@ public class PlacesRepository {
         mRestRequestHandler.callGeoCoderApi(lat, lng, mGeoCoderPlaces, context);
     }
 
-    public void getDistanceMatrix(String origin, String destination, Context context, IPlacesDataHandler handler) {
-        mUserCallback = handler;
-        mRestRequestHandler.getDistanceMatriax(origin, destination, mGeoCoderPlaces, context);
-    }
-
-    public void getPlaceDetails(String placeId, Context context, IPlacesDataHandler handler) {
-        mUserCallback = handler;
-        mRestRequestHandler.getPlaceDetails(placeId, context, mGeoCoderPlaces);
-    }
-
-    public void getPlaceAutoComplete(Context context, String search, IPlacesDataHandler handler) {
-        mUserCallback = handler;
-        mRestRequestHandler.autocomplete(context, search, mGeoCoderPlaces);
-    }
-
     private IResponseCallback mGeoCoderPlaces = new IResponseCallback() {
         @Override
         public void onResponse(Object object) {
@@ -53,12 +38,9 @@ public class PlacesRepository {
                 mUserCallback.onPlaceDetailsResponse((PlaceDetailsResponse) object);
             }else if (object instanceof PlaceAutoCompleteResponse) {
                 mUserCallback.onPlaceAutoCompleteResponse((PlaceAutoCompleteResponse) object);
+            } else if (object instanceof GeoCodeApiResponse) {
+                mUserCallback.onGeoCodeApiResponse((GeoCodeApiResponse) object);
             }
-        }
-
-        @Override
-        public void onSuccess() {
-
         }
 
         @Override
@@ -67,6 +49,49 @@ public class PlacesRepository {
         }
 
     };
+
+    /**
+     *
+     * @param origin : Longitude and Latitude - String Concatenation
+     * @param destination : Longitude and Latitude - String Concatenation
+     * @param context : Calling Activity
+     * @param handler : CallBack
+     */
+
+    public void getDistanceMatrix(String origin, String destination, Context context, IPlacesDataHandler handler) {
+        mUserCallback = handler;
+        mRestRequestHandler.getDistanceMatriax(origin, destination, mGeoCoderPlaces, context);
+    }
+
+    /**
+     * @param placeId : Place Id
+     * @param context : Calling Activity
+     * @param handler : CallBack
+     */
+    public void getPlaceDetails(String placeId, Context context, IPlacesDataHandler handler) {
+        mUserCallback = handler;
+        mRestRequestHandler.getPlaceDetails(placeId, context, mGeoCoderPlaces);
+    }
+
+    /**
+     * @param context : Calling Activity
+     * @param search : Filter String Value
+     * @param handler : CallBack
+     */
+    public void getPlaceAutoComplete(Context context, String search, IPlacesDataHandler handler) {
+        mUserCallback = handler;
+        mRestRequestHandler.autocomplete(context, search, mGeoCoderPlaces);
+    }
+
+    /**
+     * @param placeId : Place Id
+     * @param context : Calling Activity
+     * @param handler : CallBack
+     */
+    public void geoCodeWithPlaceId(String placeId, Context context, IPlacesDataHandler handler) {
+        mUserCallback = handler;
+        mRestRequestHandler.callGeoCodeApiWithPlaceId(placeId, context, mGeoCoderPlaces);
+    }
 
 
 }

@@ -10,15 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
-        android:paddingBottom="@dimen/_5sdp"
         android:paddingTop="@dimen/_5sdp"
+        android:paddingBottom="@dimen/_5sdp"
         android:visibility="visible">
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
             android:padding="@dimen/_3sdp"
             android:text="Balance"
             android:textColor="@color/white"
@@ -49,10 +49,10 @@
         android:background="@color/secondaryColorLight"
         android:baselineAligned="false"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/_4sdp"
         android:paddingLeft="@dimen/_4sdp"
-        android:paddingRight="@dimen/_4sdp"
         android:paddingTop="@dimen/_7sdp"
+        android:paddingRight="@dimen/_4sdp"
+        android:paddingBottom="@dimen/_4sdp"
         android:visibility="invisible"
         tools:visibility="visible">
 
