@@ -47,6 +47,9 @@ public class Settings {
     @SerializedName("bykea_cash_max_amount")
     private String bykeaCashMaxAmount;
 
+    @SerializedName("bykea_support_helpline")
+    private String BykeaSupportHelpline;
+
     @SerializedName("bykea_support_contact")
     private String BykeaSupportContact;
 
@@ -201,6 +204,14 @@ public class Settings {
 
     public void setVan_partner_topup_limit(String van_partner_topup_limit) {
         this.van_partner_topup_limit = van_partner_topup_limit;
+    }
+
+    public String getBykeaSupportHelpline() {
+        return BykeaSupportHelpline;
+    }
+
+    public void setBykeaSupportHelpline(String bykeaSupportHelpline) {
+        BykeaSupportHelpline = bykeaSupportHelpline;
     }
 
 

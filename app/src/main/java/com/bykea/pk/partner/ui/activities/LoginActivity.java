@@ -312,7 +312,7 @@ public class LoginActivity extends BaseActivity {
                 if (verifyNumberResponse.getMessage().toLowerCase().contains(
                         getString(R.string.driver_licence_expire_error))) {
                     Dialogs.INSTANCE.showInactiveAccountDialog(mCurrentActivity,
-                            verifyNumberResponse.getSupportNumber());
+                            Utils.getSupportHelplineNumber());
                 } else {
                     Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
                             new StringCallBack() {
@@ -329,12 +329,12 @@ public class LoginActivity extends BaseActivity {
             case ApiError.DRIVER_REGION_NOT_ALLOWED:
                 //getString(R.string.region_out_support_helpline),
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                        verifyNumberResponse.getSupportNumber(),
+                        Utils.getSupportHelplineNumber(),
                         getString(R.string.region_out_message_ur));
                 break;
             case ApiError.DRIVER_ACCOUNT_BLOCKED:
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                        verifyNumberResponse.getSupportNumber(),
+                        Utils.getSupportHelplineNumber(),
                         getString(R.string.account_blocked_message_ur));
                 break;
             case ApiError.DRIVER_LAT_LNG_ZERO: {
