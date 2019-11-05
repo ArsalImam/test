@@ -383,6 +383,10 @@ public class Constants {
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;
         public static final int MART = 25;
+        public static final int MOBILE_TOP_UP = 27;
+        public static final int MOBILE_WALLET = 28;
+        public static final int BANK_TRANSFER = 29;
+        public static final int UTILITY = 30;
     }
 
     /**
@@ -642,10 +646,15 @@ public class Constants {
     public final static int PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK = 50;
     public final static int PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK = 500;
     public final static int AMOUNT_LIMIT = 35000;
+    public static final int BYKEA_CASH_MAX_AMOUNT = 7700;
 
     public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
     public final static String MOBILE_COUNTRY_STANDARD = "92";
     public final static String MOBILE_TEL_URI ="tel:";
 
+    public final static String MOBILE_TEL_URI = "tel:";
+    public final static int MAX_LENGTH_CNIC = 13;
+    public final static int MAX_LENGTH_IBAN = 24;
     public final static String BYKEA_SUPPORT_HELPLINE = "02138654444";
+    public final static String BYKEA_SUPPORT_CONTACT_NUMBER = "03111111700";
 }

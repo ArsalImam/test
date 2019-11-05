@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
+import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK;
 
@@ -43,9 +44,23 @@ public class Settings {
 
     @SerializedName("offline_ride_display")
     private boolean offlineRideDisplay;
+    @SerializedName("bykea_cash_max_amount")
+    private String bykeaCashMaxAmount;
 
     @SerializedName("bykea_support_helpline")
     private String BykeaSupportHelpline;
+
+    @SerializedName("bykea_support_contact")
+    private String BykeaSupportContact;
+
+    /**
+     * getter bykea cash max amount
+     *
+     * @return bykeaCashMaxAmount
+     */
+    public int getBykeaCashMaxAmount() {
+        return StringUtils.isNotBlank(bykeaCashMaxAmount) ? Integer.parseInt(bykeaCashMaxAmount) : BYKEA_CASH_MAX_AMOUNT;
+    }
 
     /**
      * getter partner topup limit positive
@@ -200,4 +215,11 @@ public class Settings {
     }
 
 
+    public String getBykeaSupportContact() {
+        return BykeaSupportContact;
+    }
+
+    public void setBykeaSupportContact(String bykeaSupportContact) {
+        BykeaSupportContact = bykeaSupportContact;
+    }
 }
