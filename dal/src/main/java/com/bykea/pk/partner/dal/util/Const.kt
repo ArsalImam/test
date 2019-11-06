@@ -2,7 +2,7 @@ package com.bykea.pk.partner.dal.util
 
 const val LATITUDE = "latitude"
 const val LONGITUDE = "longitude"
-
+const val SEPERATOR = "/"
 val BUILD_VARIANT_LOCAL_FLAVOR = "local"
 
 const val DRIVER_ID = "DRIVER_ID"

@@ -996,13 +996,13 @@ public class HomeFragment extends Fragment {
                 break;
             case Constants.ApiError.OUT_OF_SERVICE_REGION:
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                        getString(R.string.region_out_support_helpline),
+                        Utils.getSupportHelplineNumber(),
                         getString(R.string.region_out_message_ur));
                 break;
 
             case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
-                        getString(R.string.region_out_support_helpline),
+                        Utils.getSupportHelplineNumber(),
                         getString(R.string.account_blocked_message_ur));
                 break;
             case Constants.ApiError.APP_FORCE_UPDATE:

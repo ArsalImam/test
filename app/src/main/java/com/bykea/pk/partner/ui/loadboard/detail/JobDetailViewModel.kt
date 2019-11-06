@@ -14,6 +14,8 @@ import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.ui.common.Event
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.maps.model.LatLng
 
@@ -55,6 +57,13 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     private val jobId: Long?
         get() = _job.value?.id
 
+    private val _showDropOff = MutableLiveData<Boolean>()
+    val showDropOff: LiveData<Boolean>
+        get() = _showDropOff
+
+    private val _showCOD = MutableLiveData<Boolean>()
+    val showCOD: LiveData<Boolean>
+        get() = _showCOD
 
     /**
      * Start the ViewModel by fetching the [Job] id
@@ -98,6 +107,9 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
         renderDetails(job)
         _dataLoading.value = false
 
+        _showDropOff.value = !Util.isBykeaCashJob(job.service_code)
+        _showCOD.value = job.service_code == 22 || job.service_code == 25 || Util.isBykeaCashJob(job.service_code)
+
         if (job.isComplete)
             Utils.logEvent(DriverApp.getContext(), AppPreferences.getDriverId(),
                     Constants.AnalyticsEvents.ON_LB_BOOKING_DETAIL,
@@ -105,17 +117,24 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
                     true)
     }
 
-    override fun onDataNotAvailable(message: String?) {
-        _job.value = null
+    override fun onDataNotAvailable(code: Int, message: String?) {
+//        _job.value = null
         _dataLoading.value = false
         _isDataAvailable.value = false
+        if (code == 422 || code == 404) {
+            _bookingTakenCommand.value = Event(Unit)
+        } else {
+            showSnackbarMessage(R.string.error_try_again)
+        }
     }
 
     override fun onJobRequestAccepted() {
+        Dialogs.INSTANCE.dismissDialog()
         _acceptBookingCommand.value = Event(Unit)
     }
 
     override fun onJobRequestAcceptFailed(code: Int, message: String?) {
+        Dialogs.INSTANCE.dismissDialog()
         if (code == 422) {
             _bookingTakenCommand.value = Event(Unit)
         } else {

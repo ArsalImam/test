@@ -101,6 +101,7 @@
 
     <color name="color_128c7e">#128c7e</color>
     <color name="color_red">#de0200</color>
+    <color name="color_red_light">#F41714</color>
 
     <color name="color_grayf8f8f8">#f8f8f8</color>
     <color name="color_graydcdcdc">#dcdcdc</color>
@@ -164,4 +165,5 @@
     <color name="color_blue1f81a6">#1f81a6</color>
     <color name="color_ae2939">#ae2939</color>
     <color name="color_02AA31">#02aa31</color>
+    <color name="greyBackground">#80000000</color>
 </resources>

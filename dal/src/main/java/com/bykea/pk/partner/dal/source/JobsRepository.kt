@@ -9,6 +9,7 @@ import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
 import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
+import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
 import java.util.*
@@ -173,8 +174,8 @@ class JobsRepository(
                 }
             }
 
-            override fun onDataNotAvailable(message: String?) {
-                callback.onDataNotAvailable(message)
+            override fun onDataNotAvailable(code: Int, message: String?) {
+                callback.onDataNotAvailable(code, message)
             }
         })
     }
@@ -208,6 +209,13 @@ class JobsRepository(
         cachedJobs[job.id] = job
         perform(job)
     }
+
+    override fun updateBykeaCashBookingDetails(tripId: String, requestObjBykeaCash: UpdateBykeaCashBookingRequest, callbackBykeaCash: JobsDataSource.UpdateBykeaCashBookingCallback) {
+        requestObjBykeaCash._id = AppPref.getDriverId(pref)
+        requestObjBykeaCash.token_id = AppPref.getAccessToken(pref)
+        jobsRemoteDataSource.updateBookingDetails(tripId, requestObjBykeaCash, callbackBykeaCash)
+    }
+
 
     companion object {
 
