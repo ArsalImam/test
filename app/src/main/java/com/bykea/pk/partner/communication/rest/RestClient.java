@@ -3,6 +3,7 @@ package com.bykea.pk.partner.communication.rest;
 import android.content.Context;
 
 import com.bykea.pk.partner.BuildConfig;
+import com.bykea.pk.partner.dal.source.remote.NetworkUtil;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.LoggingInterceptor;
@@ -51,7 +52,8 @@ class RestClient {
                 builder.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
             Retrofit client = retrofitBuilder.baseUrl(ApiTags.BASE_SERVER_URL)
-                    .client(builder.build())
+                    /*.client(builder.build())*/
+                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitCalls = client.create(IRestClient.class);
@@ -80,7 +82,8 @@ class RestClient {
             //okHttpClient.setRetryOnConnectionFailure(false);
             Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
             Retrofit client = retrofitBuilder.baseUrl(ApiTags.BASE_SERVER_URL)
-                    .client(builder.build())
+                    /*.client(builder.build())*/
+                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitChatAudio = client.create(IRestClient.class);
@@ -102,7 +105,8 @@ class RestClient {
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
             Retrofit client = builder.baseUrl(ApiTags.GOOGLE_API_BASE_URL)
-                    .client(okHttpClient.build())
+                    /*.client(okHttpClient.build())*/
+                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitGoogleApiCalls = client.create(IRestClient.class);
@@ -132,7 +136,8 @@ class RestClient {
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
             Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL_2)
-                    .client(okHttpClient.build())
+                    /*.client(okHttpClient.build())*/
+                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             bykea2retrofitCalls = client.create(IRestClient.class);
@@ -168,7 +173,8 @@ class RestClient {
                 signUpUrl = AppPreferences.getSettings().getSettings().getPartner_signup_url();
             }
             Retrofit client = builder.baseUrl(signUpUrl)
-                    .client(okHttpClient.build())
+                    /*.client(okHttpClient.build())*/
+                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             bykeaSignUpretrofitCalls = client.create(IRestClient.class);

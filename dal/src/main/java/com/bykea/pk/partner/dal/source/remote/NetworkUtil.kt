@@ -9,6 +9,7 @@ import java.security.KeyStore
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.TrustManagerFactory
@@ -89,6 +90,8 @@ object NetworkUtil {
             builder.hostnameVerifier { hostname, session -> true }
 //            if (BuildConfig.DEBUG) builder.addInterceptor(MockInterceptor())
             if (BuildConfig.DEBUG) builder.addNetworkInterceptor(loggingInterceptor)
+            builder.connectTimeout(60, TimeUnit.SECONDS);
+            builder.readTimeout(60, TimeUnit.SECONDS);
 
             return builder.build()
         } catch (e: Exception) {
