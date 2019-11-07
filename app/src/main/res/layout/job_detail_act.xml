@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewmodel"
             type="com.bykea.pk.partner.ui.loadboard.detail.JobDetailViewModel" />
@@ -44,7 +46,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgViewDelivery"
                     android:layout_width="@dimen/_35sdp"
-                    android:layout_height="@dimen/_35sdp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     app:serviceCode="@{viewmodel.job.service_code}"
                     tools:src="@drawable/bhejdo_no_caption" />
@@ -82,7 +84,7 @@
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
                     app:fontName="open_sans_semi_bold.ttf"
-                    tools:text="R" />
+                    tools:text="Rs. 70" />
 
             </RelativeLayout>
 
@@ -94,7 +96,7 @@
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
                 android:orientation="vertical"
-                app:goneUnless="@{viewmodel.job.service_code==22 || viewmodel.job.service_code==25}">
+                app:goneUnless="@{viewmodel.showCOD}">
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:id="@+id/tVCODAmountLabel"
@@ -104,11 +106,12 @@
                     android:layout_centerInParent="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/_minus5sdp"
-                    android:text="@{viewmodel.job.service_code== 25 ? @string/kharidari_label : @string/cash_on_delivery}"
+                    android:text="@{viewmodel.job.service_code == 25 ? @string/kharidari_label : @string/cash_on_delivery}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_10sdp"
                     android:textStyle="bold"
-                    app:fontName="jameel_noori_nastaleeq.ttf" />
+                    app:fontName="jameel_noori_nastaleeq.ttf"
+                    tools:text="خریداری" />
 
                 <TextView
                     android:id="@+id/tVCODAmount"
@@ -122,7 +125,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="open_sans_regular.ttf"
-                    tools:text="1" />
+                    tools:text="Rs. 1,580" />
             </RelativeLayout>
         </FrameLayout>
 
@@ -235,7 +238,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{Integer.toString(viewmodel.job.pickup.duration/60)}"
+                                        android:text="@{(viewmodel.job.pickup.duration/60) == 0 ? `1` :Integer.toString(viewmodel.job.pickup.duration/60)}"
                                         android:textColor="@color/color_06A833"
                                         android:textSize="@dimen/_18sdp"
                                         android:textStyle="bold"
@@ -300,14 +303,16 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_10sdp"
-                        android:src="@drawable/icon_down_arrow_gray" />
+                        android:src="@drawable/icon_down_arrow_gray"
+                        android:visibility="@{viewmodel.showDropOff ? View.VISIBLE : View.GONE}" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_10sdp"
                         android:layout_marginRight="@dimen/_10sdp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        app:goneUnless="@{viewmodel.showDropOff}">
 
                         <RelativeLayout
                             android:id="@+id/relLayoutCardViewDropOff"

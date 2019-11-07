@@ -6,7 +6,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
@@ -112,5 +111,13 @@
         <!--<item name="android:textColorHint">@color/textColorPerformance</item>-->
         <!--<item name="colorControlNormal">@color/white</item>-->
         <item name="colorControlActivated">@color/textColorPerformance</item>
+    </style>
+
+    <style name="AppTheme.Dialog.Custom" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:maxHeight">@dimen/_200sdp</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowSoftInputMode">stateHidden|adjustResize</item>
     </style>
 </resources>
