@@ -23,7 +23,7 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 51
+        versionCode 52
         versionName "7.1"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
