@@ -368,7 +368,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    private void dismissProgressDialog() {
+    protected void dismissProgressDialog() {
         try {
             if (progressDialog != null) {
                 progressDialog.dismiss();

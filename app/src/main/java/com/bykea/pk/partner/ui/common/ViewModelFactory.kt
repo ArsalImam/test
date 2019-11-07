@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.ui.bykeacash.BykeaCashFormViewModel
 import com.bykea.pk.partner.ui.complain.ComplaintListViewModel
 import com.bykea.pk.partner.ui.loadboard.detail.JobDetailViewModel
 import com.bykea.pk.partner.ui.loadboard.list.JobListViewModel
@@ -30,6 +31,7 @@ class ViewModelFactory private constructor(private val bookingsRepository: JobsR
                     isAssignableFrom(WithdrawalViewModel::class.java) -> WithdrawalViewModel(withdrawRepository)
                     isAssignableFrom(JobDetailViewModel::class.java) -> JobDetailViewModel(bookingsRepository)
                     isAssignableFrom(ComplaintListViewModel::class.java) -> ComplaintListViewModel()
+                    isAssignableFrom(BykeaCashFormViewModel::class.java) -> BykeaCashFormViewModel(bookingsRepository)
                     else ->
                         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
                 }

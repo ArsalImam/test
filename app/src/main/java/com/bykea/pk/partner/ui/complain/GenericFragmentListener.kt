@@ -18,4 +18,14 @@ interface GenericFragmentListener {
      * Use To Navigate To Home Screen On Ticket Submit Screen
      */
     fun onNavigateToHomeScreen() {}
+
+    /**
+     * Use To Cancel Bykea Cash Details Dialog
+     */
+    fun onCancelDialog() {}
+
+    /**
+     * Use To Update Bykea Cash Details
+     */
+    fun onUpdateDetails() {}
 }
