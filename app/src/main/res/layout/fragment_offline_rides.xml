@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -25,19 +26,53 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:scrollbars="none"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <RadioGroup
+                        android:id="@+id/rGOfflineRide"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_14sdp"
+                        android:gravity="right"
+                        android:orientation="horizontal"
+                        android:visibility="visible"
+                        tools:ignore="RtlHardcoded">
+
+                        <androidx.appcompat.widget.AppCompatRadioButton
+                            android:id="@+id/rBSawari"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_18sdp"
+                            android:layout_marginRight="@dimen/_18sdp"
+                            android:button="@drawable/radio_button_offline_ride"
+                            android:checked="true"
+                            android:text="@string/sawari"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14sdp"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                        <androidx.appcompat.widget.AppCompatRadioButton
+                            android:id="@+id/rBDelivery"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/radio_button_offline_ride"
+                            android:text="@string/delivery"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14sdp"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+                    </RadioGroup>
+
                     <com.bykea.pk.partner.ui.helpers.FontTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:layout_marginTop="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_5sdp"
                         android:text="@string/enter_customer_mobile_no"
                         android:textColor="@color/black"
@@ -50,9 +85,9 @@
                         android:background="@drawable/gray_bordered_bg"
                         android:gravity="center_vertical"
                         android:paddingLeft="@dimen/_5sdp"
-                        android:paddingBottom="@dimen/_2sdp"
                         android:paddingTop="@dimen/_2sdp"
-                        android:paddingRight="@dimen/_5sdp">
+                        android:paddingRight="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_2sdp">
 
                         <ImageView
                             android:layout_width="20dp"

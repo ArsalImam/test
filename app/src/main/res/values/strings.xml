@@ -530,4 +530,6 @@
     <string name="bykea_cash_wallet_jazz_cash">جیزکیش</string>
     <string name="bykea_cash_wallet_deposit">ڈپازٹ</string>
     <string name="bykea_cash_mobile_top_up">\u0020موبائل بیلنس ٹاپ اپ\u0020</string>
+    <string name="sawari">\u0020سواری\u0020</string>
+    <string name="delivery">\u0020ڈیلیوری\u0020</string>
 </resources>
