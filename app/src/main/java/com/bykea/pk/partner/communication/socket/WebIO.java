@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.remote.NetworkUtil;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -83,7 +84,7 @@ public class WebIO {
     }
 
 
-    private void addSslCertificates(IO.Options options) {
+    /*private void addSslCertificates(IO.Options options) {
         SSLContext sslContext = null;
         try {
             // loading CAs from an InputStream
@@ -122,7 +123,7 @@ public class WebIO {
                     .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) tmf.getTrustManagers()[0])
                     .build();
 
-// default settings for all sockets
+            // default settings for all sockets
             IO.setDefaultOkHttpWebSocketFactory(okHttpClient);
             IO.setDefaultOkHttpCallFactory(okHttpClient);
 
@@ -133,7 +134,7 @@ public class WebIO {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 
     public synchronized static WebIO getInstance() {
@@ -434,5 +435,28 @@ public class WebIO {
 //    .off(Socket.EVENT_CONNECT_ERROR, callBack)
                 .off(Socket.EVENT_DISCONNECT, callBack);
         Dialogs.INSTANCE.dismissDialog();
+    }
+
+    private void addSslCertificates(IO.Options options) {
+        try {
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                    .hostnameVerifier(new HostnameVerifier() {
+                        @SuppressLint("BadHostnameVerifier")
+                        @Override
+                        public boolean verify(String hostname, SSLSession session) {
+                            return true;
+                        }
+                    });
+            builder.sslSocketFactory(NetworkUtil.INSTANCE.getUnsafeSSL().getSocketFactory());
+            builder.hostnameVerifier((hostname, session) -> true);
+            OkHttpClient okHttpClient = builder.build();
+            // default settings for all sockets
+            IO.setDefaultOkHttpWebSocketFactory(okHttpClient);
+            IO.setDefaultOkHttpCallFactory(okHttpClient);
+            options.callFactory = okHttpClient;
+            options.webSocketFactory = okHttpClient;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
