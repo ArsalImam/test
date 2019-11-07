@@ -53,6 +53,13 @@ public class Settings {
     @SerializedName("bykea_support_contact")
     private String BykeaSupportContact;
 
+    @SerializedName("offline_delivery_enable")
+    private boolean offlineDeliveryEnable;
+
+    public boolean isOfflineDeliveryEnable() {
+        return offlineDeliveryEnable;
+    }
+
     /**
      * getter bykea cash max amount
      *

@@ -39,8 +39,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_14sdp"
                         android:gravity="right"
                         android:orientation="horizontal"
+                        android:visibility="visible"
                         tools:ignore="RtlHardcoded">
 
                         <androidx.appcompat.widget.AppCompatRadioButton
@@ -50,6 +52,7 @@
                             android:layout_marginEnd="@dimen/_18sdp"
                             android:layout_marginRight="@dimen/_18sdp"
                             android:button="@drawable/radio_button_offline_ride"
+                            android:checked="true"
                             android:text="@string/sawari"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_14sdp"
@@ -60,7 +63,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:button="@drawable/radio_button_offline_ride"
-                            android:checked="true"
                             android:text="@string/delivery"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_14sdp"
@@ -71,7 +73,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:layout_marginTop="@dimen/_14sdp"
                         android:layout_marginBottom="@dimen/_5sdp"
                         android:text="@string/enter_customer_mobile_no"
                         android:textColor="@color/black"

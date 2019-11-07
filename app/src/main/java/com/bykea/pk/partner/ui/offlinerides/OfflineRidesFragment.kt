@@ -91,9 +91,15 @@ class OfflineRidesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        ViewCompat.setLayoutDirection(rGOfflineRide, ViewCompat.LAYOUT_DIRECTION_RTL)
-        rBSawari.text = FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.sawari), Constants.FontNames.JAMEEL_NASTALEEQI)
-        rBDelivery.text = FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.delivery), Constants.FontNames.JAMEEL_NASTALEEQI)
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().settings != null &&
+                AppPreferences.getSettings().settings.isOfflineDeliveryEnable) {
+            rGOfflineRide.visibility = View.VISIBLE
+            ViewCompat.setLayoutDirection(rGOfflineRide, ViewCompat.LAYOUT_DIRECTION_RTL)
+            rBSawari.text = FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.sawari), Constants.FontNames.JAMEEL_NASTALEEQI)
+            rBDelivery.text = FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.delivery), Constants.FontNames.JAMEEL_NASTALEEQI)
+        } else {
+            rGOfflineRide.visibility = View.GONE
+        }
 
         val spannableStringBuilder = SpannableStringBuilder()
         spannableStringBuilder.append(FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.offline_rides_en),
