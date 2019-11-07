@@ -690,11 +690,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         switch (view.getId()) {
             case R.id.chatBtn:
                 if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
-                if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
-                    Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
-                } else {
-                    ActivityStackManager.getInstance()
-                            .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
+                if (callData != null) {
+                    if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
+                        Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                    } else {
+                        ActivityStackManager.getInstance()
+                                .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
+                    }
                 }
                 break;
             case R.id.ivAddressEdit:
