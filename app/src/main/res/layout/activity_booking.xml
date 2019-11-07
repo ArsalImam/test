@@ -547,6 +547,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="2"
                     android:textColor="#676767"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -555,7 +556,58 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llBykeaSupportContactInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#f5f5f5"
+            android:orientation="horizontal"
+            android:padding="@dimen/_8sdp"
+            android:visibility="gone">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/lb_bykea_call_center"
+                android:textColor="#676767"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="open_sans_regular.ttf" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tvBykeaSupportContactNumber"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center_vertical|end"
+                android:text="03111111700"
+                android:textColor="#00729c"
+                android:textSize="@dimen/_14sdp"
+                app:fontName="open_sans_regular.ttf" />
+
+        </LinearLayout>
+
+
     </FrameLayout>
+
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tvDetailsBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:maxLines="1"
+        android:padding="@dimen/_2sdp"
+        android:text="@string/trip_details"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/_18sdp"
+        android:visibility="gone"
+        app:fontName="jameel_noori_nastaleeq.ttf"
+        tools:visibility="visible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -677,6 +729,6 @@
                 android:padding="@dimen/_4sdp"
                 android:src="@drawable/direction_icon" />
         </androidx.cardview.widget.CardView>
-    </RelativeLayout>
 
+    </RelativeLayout>
 </LinearLayout>
