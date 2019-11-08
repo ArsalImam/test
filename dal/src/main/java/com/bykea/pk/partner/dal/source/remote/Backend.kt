@@ -25,6 +25,48 @@ import javax.net.ssl.SSLSocketFactory
  */
 interface Backend {
 
+    // region User related endpoints
+
+    @GET("/api/v1/driver/getProfile")
+    fun getDriverProfile(@Query("_id") _id: String,
+                         @Query("token_id") token_id: String,
+                         @Query("user_type") userType: String): Call<GetDriverProfile>
+
+    /**
+     * Get Driver Email Update
+     * @param email Driver email
+     * @param _id Driver id
+     * @param token_id Driver access token
+     * @return Email is successfully update or not
+     */
+    @FormUrlEncoded
+    @PUT("/api/v1/driver/update/email")
+    fun getEmailUpdate(
+            @Field("email") emailId: String,
+            @Field("_id") driverId: String,
+            @Field("token_id") token: String): Call<GetEmailUpdateResponse>
+
+    /**
+     * Get Is Driver Email Update
+     * @param _id Driver id
+     * @param token_id Driver access token
+     * @return true if updated
+     */
+    @GET("/api/v1/driver/check/email")
+    fun checkIsEmailUpdated(
+            @Query("_id") driverId: String,
+            @Query("token_id") token: String): Call<CheckEmailUpdateResponse>
+
+    //endregion
+
+    // region Location related endpoints
+
+    fun iAmHere()
+
+    // endregion
+
+    //region Job related endpoints
+
     /**
      * Requests the list of job request
      * @param driverId Driver ID
@@ -157,30 +199,28 @@ interface Backend {
     @POST("/api/v1/trips/{job_id}/feedback")
     fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobBadResponse>
 
-    /**
-     * Get Driver Email Update
-     * @param email Driver email
-     * @param _id Driver id
-     * @param token_id Driver access token
-     * @return Email is successfully update or not
-     */
-    @FormUrlEncoded
-    @PUT("/api/v1/driver/update/email")
-    fun getEmailUpdate(
-            @Field("email") emailId: String,
-            @Field("_id") driverId: String,
-            @Field("token_id") token: String): Call<GetEmailUpdateResponse>
+    //endregion
 
-    /**
-     * Get Is Driver Email Update
-     * @param _id Driver id
-     * @param token_id Driver access token
-     * @return true if updated
-     */
-    @GET("/api/v1/driver/check/email")
-    fun checkIsEmailUpdated(
-            @Query("_id") driverId: String,
-            @Query("token_id") token: String): Call<CheckEmailUpdateResponse>
+    // region Withdraw related endpoints
+
+    @GET("/api/v1/driver/paymentmethods")
+    fun getWithdrawalPaymentMethods(
+            @Query("token_id") token: String,
+            @Query("_id") driverId: String
+    ): Call<GetWithdrawalPaymentMethods>
+
+    @PUT("/api/v1/driver/withdrawal")
+    @FormUrlEncoded
+    fun getPerformWithdraw(
+            @Field("token_id") token: String,
+            @Field("_id") driverId: String,
+            @Field("payment_method") paymentMethod: Number,
+            @Field("amount") amount: Number
+    ): Call<WithdrawPostResponse>
+
+    //endregion
+
+    // region Mock endpoints
 
     @GET
     fun getMockJobRequestList(
@@ -198,25 +238,7 @@ interface Backend {
             @Query("_id") driverId: String,
             @Query("token_id") token: String): Call<GetJobRequestDetailResponse>
 
-    @GET("/api/v1/driver/paymentmethods")
-    fun getWithdrawalPaymentMethods(
-            @Query("token_id") token: String,
-            @Query("_id") driverId: String
-    ): Call<GetWithdrawalPaymentMethods>
-
-    @PUT("/api/v1/driver/withdrawal")
-    @FormUrlEncoded
-    fun getPerformWithdraw(
-            @Field("token_id") token: String,
-            @Field("_id") driverId: String,
-            @Field("payment_method") paymentMethod: Number,
-            @Field("amount") amount: Number
-    ): Call<WithdrawPostResponse>
-
-    @GET("/api/v1/driver/getProfile")
-    fun getDriverProfile(@Query("_id") _id: String,
-                         @Query("token_id") token_id: String,
-                         @Query("user_type") userType: String): Call<GetDriverProfile>
+    //endregion
 
 
     @GET("/api/v1/users/getFareEstimation")

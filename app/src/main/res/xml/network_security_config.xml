@@ -4,5 +4,6 @@
         <domain includeSubdomains="true">dev.bykea.net</domain>
         <domain includeSubdomains="true">staging.bykea.net</domain>
         <domain includeSubdomains="true">secure.bykea.net</domain>
+        <domain includeSubdomains="true">res.cloudinary.com</domain>
     </domain-config>
 </network-security-config>

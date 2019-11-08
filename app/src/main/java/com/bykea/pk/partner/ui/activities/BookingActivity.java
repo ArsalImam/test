@@ -690,11 +690,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         switch (view.getId()) {
             case R.id.chatBtn:
                 if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
-                if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
-                    Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
-                } else {
-                    ActivityStackManager.getInstance()
-                            .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
+                if (callData != null) {
+                    if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
+                        Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                    } else {
+                        ActivityStackManager.getInstance()
+                                .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
+                    }
                 }
                 break;
             case R.id.ivAddressEdit:
@@ -728,24 +730,26 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.cancelBtn:
                 if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
-                if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
-                    String msg = "پہنچنے کے " + AppPreferences.getSettings()
-                            .getSettings().getCancel_time() +
-                            " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
-                    Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            cancelReasonDialog();
-                        }
-                    }, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Dialogs.INSTANCE.dismissDialog();
-                        }
-                    }, "Cancel Trip", msg);
-                } else {
-                    cancelReasonDialog();
+                if (callData != null) {
+                    if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
+                        String msg = "پہنچنے کے " + AppPreferences.getSettings()
+                                .getSettings().getCancel_time() +
+                                " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
+                        Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Dialogs.INSTANCE.dismissDialog();
+                                cancelReasonDialog();
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        }, "Cancel Trip", msg);
+                    } else {
+                        cancelReasonDialog();
+                    }
                 }
                 break;
             case R.id.jobBtn:

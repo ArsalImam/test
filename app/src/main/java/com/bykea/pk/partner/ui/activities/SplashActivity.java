@@ -123,6 +123,7 @@ public class SplashActivity extends BaseActivity {
      * will decide which activity needs to be started as launch next activity
      */
     private void configureScreenForApiRequest() {
+        fetchUserLocationAndFireBaseDeviceID();
         repository = new UserRepository();
         if (Utils.isGetCitiesApiCallRequired()) {
             repository.getCities(mCurrentActivity, handler);
@@ -186,7 +187,6 @@ public class SplashActivity extends BaseActivity {
                         @Override
                         public void run() {
                             if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                                fetchUserLocationAndFireBaseDeviceID();
                                 if (Utils.isGpsEnable()) {
                                     validateLoginFlow();
                                 }
