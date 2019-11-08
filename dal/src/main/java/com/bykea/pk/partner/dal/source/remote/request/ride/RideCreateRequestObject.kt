@@ -7,10 +7,10 @@ import com.bykea.pk.partner.dal.util.EMPTY_STRING
 data class RideCreateRequestObject(
         var trip: RideCreateTripData = RideCreateTripData(),
         var pickup_info: RideCreateLocationInfoData = RideCreateLocationInfoData(),
-        var dropoff_info: RideCreateLocationInfoData? = RideCreateLocationInfoData(),
+        var dropoff_info: RideCreateLocationInfoData? = null,
         var _id: String = EMPTY_STRING,
         var user_type: String = EMPTY_STRING,
-        var token_id: String = EMPTY_STRING):Parcelable {
+        var token_id: String = EMPTY_STRING) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readParcelable(RideCreateTripData::class.java.classLoader),
             parcel.readParcelable(RideCreateLocationInfoData::class.java.classLoader),
