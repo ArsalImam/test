@@ -177,7 +177,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         }
         mOpusReceiver = new OpusReceiver();
         isInFront = true;
-        defaultSslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+//        defaultSslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
 //        HttpsURLConnection.setDefaultSSLSocketFactory(Utils.getSSLContext(mCurrentActivity).getSocketFactory());
 
     }
@@ -403,7 +403,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
 
     private void onActivityFinish() {
-        HttpsURLConnection.setDefaultSSLSocketFactory(defaultSslSocketFactory);
+//        HttpsURLConnection.setDefaultSSLSocketFactory(defaultSslSocketFactory);
         AppPreferences.setChatActivityOnForeground(false);
         if (chatAdapter != null) {
             chatAdapter.stopPlayingAudio();
