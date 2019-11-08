@@ -13,7 +13,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -29,9 +33,16 @@ class RestClient {
 
     static IRestClient getClient(Context context) {
         if (retrofitCalls == null) {
-
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(addUnSslCheck().getSocketFactory());
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
 
+/*
             // creating an SSLSocketFactory that uses our TrustManager
             SSLContext sslContext = Utils.getSSLContext(context);
             if (sslContext != null) {
@@ -40,6 +51,7 @@ class RestClient {
                 //this PR is for checking retrofit2 is working fine
                 builder.sslSocketFactory(sslContext.getSocketFactory());
             }
+*/
 
            /* HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
@@ -71,12 +83,19 @@ class RestClient {
         if (retrofitChatAudio == null) {
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(addUnSslCheck().getSocketFactory());
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
 
-            // creating an SSLSocketFactory that uses our TrustManager
+/*            // creating an SSLSocketFactory that uses our TrustManager
             SSLContext sslContext = Utils.getSSLContext(context);
             if (sslContext != null) {
                 builder.sslSocketFactory(sslContext.getSocketFactory());
-            }
+            }*/
             builder.connectTimeout(60, TimeUnit.SECONDS);
             builder.readTimeout(60, TimeUnit.SECONDS);
             //okHttpClient.setRetryOnConnectionFailure(false);
@@ -180,6 +199,31 @@ class RestClient {
             bykeaSignUpretrofitCalls = client.create(IRestClient.class);
         }
         return bykeaSignUpretrofitCalls;
+    }
+
+    private static SSLContext addUnSslCheck() {
+        try {
+            final TrustManager[] trustAllCerts = new TrustManager[] {
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            return sslContext;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
