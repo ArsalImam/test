@@ -26,6 +26,7 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.WalletHistoryAdapter;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
@@ -131,7 +132,12 @@ public class WalletFragment extends Fragment {
                 }
             }
         });
-//        setWalletIcon();
+
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                AppPreferences.getSettings().getSettings().isWithdrawalDisplay()) {
+            setWalletIcon();
+        }
+
         getHistory();
     }
 

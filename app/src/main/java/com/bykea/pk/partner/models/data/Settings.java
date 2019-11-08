@@ -53,6 +53,13 @@ public class Settings {
     @SerializedName("bykea_support_contact")
     private String BykeaSupportContact;
 
+    @SerializedName("withdrawal_display")
+    private boolean withdrawalDisplay;
+
+    public boolean isWithdrawalDisplay() {
+        return withdrawalDisplay;
+    }
+
     /**
      * getter bykea cash max amount
      *

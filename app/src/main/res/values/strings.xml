@@ -391,8 +391,8 @@
     <string name="cancel">کینسل</string>
     <string name="yes">ہاں</string>
     <string name="thanks">شکریہ</string>
-    <string name="thanks_details_1">آپ کی رقم 24 گھنٹوں کے اندر آپ</string>
-    <string name="thanks_details_2">کے جیز کیش اکاؤنٹ میں جمع کردی جائیگی</string>
+    <string name="thanks_details_1">\u0020آپ کی رقم 2  کاروباری دن کے اندر آپ\u0020</string>
+    <string name="thanks_details_2">\u0020کے جیز کیش اکاؤنٹ میں جمع کردی جائیگی\u0020</string>
     <string name="wallet">والٹ</string>
     <string name="rs_price">Rs. %,d</string>
     <string name="something_went_wrong">معذرت فی الحال آپ کی درخواست پر عمل نہیں کیا جا سکتا</string>
