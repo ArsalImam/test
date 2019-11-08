@@ -178,7 +178,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         mOpusReceiver = new OpusReceiver();
         isInFront = true;
         defaultSslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-        HttpsURLConnection.setDefaultSSLSocketFactory(Utils.getSSLContext(mCurrentActivity).getSocketFactory());
+        HttpsURLConnection.setDefaultSSLSocketFactory(Utils.getUnsafeSSLContext().getSocketFactory());
 
     }
 
