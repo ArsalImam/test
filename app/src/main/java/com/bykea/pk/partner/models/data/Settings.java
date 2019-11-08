@@ -56,8 +56,15 @@ public class Settings {
     @SerializedName("offline_delivery_display")
     private boolean offlineDeliveryEnable;
 
+    @SerializedName("withdrawal_display")
+    private boolean withdrawalDisplay;
+
     public boolean isOfflineDeliveryEnable() {
         return offlineDeliveryEnable;
+    }
+
+    public boolean isWithdrawalDisplay() {
+        return withdrawalDisplay;
     }
 
     /**
