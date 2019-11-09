@@ -80,7 +80,7 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging-lb-talos.bykea.net\""
+                buildConfigField "String", "FLAVOR_URL", "\"https://staging.bykea.xyz:3000\""
             }
             livetesting {
                 dimension "env"
