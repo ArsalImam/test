@@ -34,14 +34,6 @@ class RestClient {
     static IRestClient getClient(Context context) {
         if (retrofitCalls == null) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(addUnSslCheck().getSocketFactory());
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-
 /*
             // creating an SSLSocketFactory that uses our TrustManager
             SSLContext sslContext = Utils.getSSLContext(context);
@@ -64,8 +56,7 @@ class RestClient {
                 builder.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
             Retrofit client = retrofitBuilder.baseUrl(ApiTags.BASE_SERVER_URL)
-                    /*.client(builder.build())*/
-                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
+                   .client(builder.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitCalls = client.create(IRestClient.class);
@@ -83,13 +74,6 @@ class RestClient {
         if (retrofitChatAudio == null) {
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(addUnSslCheck().getSocketFactory());
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
 
 /*            // creating an SSLSocketFactory that uses our TrustManager
             SSLContext sslContext = Utils.getSSLContext(context);
@@ -101,8 +85,7 @@ class RestClient {
             //okHttpClient.setRetryOnConnectionFailure(false);
             Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
             Retrofit client = retrofitBuilder.baseUrl(ApiTags.BASE_SERVER_URL)
-                    /*.client(builder.build())*/
-                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
+                    .client(builder.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitChatAudio = client.create(IRestClient.class);
@@ -124,8 +107,7 @@ class RestClient {
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
             Retrofit client = builder.baseUrl(ApiTags.GOOGLE_API_BASE_URL)
-                    /*.client(okHttpClient.build())*/
-                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
+                    .client(okHttpClient.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             retrofitGoogleApiCalls = client.create(IRestClient.class);
@@ -136,18 +118,6 @@ class RestClient {
     static IRestClient getBykea2ApiClient(Context context) {
         if (bykea2retrofitCalls == null) {
             OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
-
-            // creating an SSLSocketFactory that uses our TrustManager
-//            SSLContext sslContext = Utils.getSSLContext(context);
-//            if (sslContext != null) {
-//                okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
-//            }
-
-            /*HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                    HttpLoggingInterceptor.Level.NONE);*/
-
-
             okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.readTimeout(60, TimeUnit.SECONDS);
             okHttpClient.retryOnConnectionFailure(false);
@@ -155,8 +125,7 @@ class RestClient {
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
             Retrofit client = builder.baseUrl(ApiTags.BASE_SERVER_URL_2)
-                    /*.client(okHttpClient.build())*/
-                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
+                    .client(okHttpClient.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             bykea2retrofitCalls = client.create(IRestClient.class);
@@ -192,38 +161,12 @@ class RestClient {
                 signUpUrl = AppPreferences.getSettings().getSettings().getPartner_signup_url();
             }
             Retrofit client = builder.baseUrl(signUpUrl)
-                    /*.client(okHttpClient.build())*/
-                    .client(NetworkUtil.INSTANCE.getUnsafeOkHttpClient())
+                    .client(okHttpClient.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             bykeaSignUpretrofitCalls = client.create(IRestClient.class);
         }
         return bykeaSignUpretrofitCalls;
-    }
-
-    private static SSLContext addUnSslCheck() {
-        try {
-            final TrustManager[] trustAllCerts = new TrustManager[] {
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
-
-                        @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
-
-                        @Override
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return new java.security.cert.X509Certificate[]{};
-                        }
-                    }
-            };
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-
-            return sslContext;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**

@@ -284,23 +284,16 @@ interface Backend {
             this.level = HttpLoggingInterceptor.Level.BODY
         }
 
-        private val socketFactory: SSLSocketFactory?
-        val sslContext: SSLContext? = NetworkUtil.getSSLContext().apply {
-            socketFactory = this?.socketFactory
-        }
-
         val client: OkHttpClient = OkHttpClient.Builder().apply {
             connectTimeout(1, TimeUnit.MINUTES)
             readTimeout(1, TimeUnit.MINUTES)
             writeTimeout(1, TimeUnit.MINUTES)
-            if (socketFactory != null) sslSocketFactory(socketFactory)
             if (BuildConfig.DEBUG) addNetworkInterceptor(loggingInterceptor)
         }.build()
 
         operator fun invoke(baseUrl: String): Backend {
             return Retrofit.Builder()
-//                    .client(client)
-                    .client(NetworkUtil.getUnsafeOkHttpClient())
+                    .client(client)
                     .baseUrl(baseUrl)
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create())
