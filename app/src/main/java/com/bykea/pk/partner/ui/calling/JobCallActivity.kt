@@ -58,6 +58,7 @@ class JobCallActivity : BaseActivity() {
             }
         }
 
+        AppPreferences.removeReceivedMessageCount()
         Utils.unlockScreen(this)
         AppPreferences.setStatsApiCallRequired(true)
         //To inactive driver during passenger calling state
