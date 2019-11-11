@@ -154,7 +154,9 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -175,6 +177,8 @@ import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_TOP_UP;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_WALLET;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.UTILITY;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
 
 
 public class Utils {
@@ -954,41 +958,6 @@ public class Utils {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
-
-
-    public static SSLContext getSSLContext(Context context) {
-        SSLContext sslContext = null;
-        try {
-            // loading CAs from an InputStream
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream cert = context.getResources().openRawResource(R.raw.star_bykea_net);
-            Certificate ca;
-            try {
-                ca = cf.generateCertificate(cert);
-            } finally {
-                cert.close();
-            }
-
-            // creating a KeyStore containing our trusted CAs
-            String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
-
-            // creating a TrustManager that trusts the CAs in our KeyStore
-            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(keyStore);
-
-            // creating an SSLSocketFactory that uses our TrustManager
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sslContext;
-    }
-
 
     public static void shareWithWhatsApp(Context context, String promo) {
         Intent sendIntent = new Intent();
@@ -2100,7 +2069,7 @@ public class Utils {
     }
 
     public static boolean isCourierService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Courier");
+        return StringUtils.containsIgnoreCase(callType, GOODS_TYPE) || StringUtils.containsIgnoreCase(callType, COURIER_TYPE);
     }
 
     public static boolean isPurchaseService(String callType) {
@@ -2221,6 +2190,7 @@ public class Utils {
             case "carryvan":
                 return R.drawable.carry_van;
             case "courier":
+            case "goods":
                 return R.drawable.courier_no_caption;
             case "bykeacash-mobiletopup":
             case "bykeacash-mobilewallet":

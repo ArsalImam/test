@@ -40,7 +40,7 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-lb-talos.bykea.net\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging.bykea.xyz:3000\""
                 buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-lb-loadboard.bykea.net\""
             }
             livetesting {

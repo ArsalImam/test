@@ -165,7 +165,7 @@
                             android:gravity="center"
                             android:onClick="handleResendCode"
                             android:padding="@dimen/_6sdp"
-                            android:text="@string/resend_code"
+                            android:text="@string/verification_call_me_msg_ur"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_16sdp"
                             app:fontName="jameel_noori_nastaleeq.ttf" />

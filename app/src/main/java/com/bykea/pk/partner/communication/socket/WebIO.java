@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.remote.NetworkUtil;
 import com.bykea.pk.partner.models.response.CommonResponse;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -73,7 +74,7 @@ public class WebIO {
                 }*/
 
             //for socket io 1.0.0
-            addSslCertificates(options);
+//            addSslCertificates(options);
             mSocket = IO.socket(ApiTags.BASE_SERVER_URL, options);
 
         } catch (URISyntaxException e) {
@@ -81,60 +82,6 @@ public class WebIO {
             mWebIO = null;
         }
     }
-
-
-    private void addSslCertificates(IO.Options options) {
-        SSLContext sslContext = null;
-        try {
-            // loading CAs from an InputStream
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream cert = DriverApp.getContext().getResources().openRawResource(R.raw.star_bykea_net);
-            Certificate ca;
-            try {
-                ca = cf.generateCertificate(cert);
-            } finally {
-                cert.close();
-            }
-
-            // creating a KeyStore containing our trusted CAs
-            String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
-
-            // creating a TrustManager that trusts the CAs in our KeyStore
-            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(keyStore);
-
-            // creating an SSLSocketFactory that uses our TrustManager
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
-
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @SuppressLint("BadHostnameVerifier")
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    })
-                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) tmf.getTrustManagers()[0])
-                    .build();
-
-// default settings for all sockets
-            IO.setDefaultOkHttpWebSocketFactory(okHttpClient);
-            IO.setDefaultOkHttpCallFactory(okHttpClient);
-
-            options.callFactory = okHttpClient;
-            options.webSocketFactory = okHttpClient;
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public synchronized static WebIO getInstance() {
         if (mWebIO == null) {

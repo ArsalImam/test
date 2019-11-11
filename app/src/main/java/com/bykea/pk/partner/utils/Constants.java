@@ -387,6 +387,7 @@ public class Constants {
         public static final int MOBILE_WALLET = 28;
         public static final int BANK_TRANSFER = 29;
         public static final int UTILITY = 30;
+        public static final int OFFLINE_DELIVERY = 31;
     }
 
     /**
@@ -467,6 +468,7 @@ public class Constants {
         public static final String BUSTICKET_TYPE = "Bus Ticket";
 
         public static final String VAN_TYPE = "Carry Van";
+        public static final String GOODS_TYPE = "Goods";
         public static final String COURIER_TYPE = "Courier";
 
         public static final String INSURANCE_TYPE = "Bima";
@@ -655,4 +657,5 @@ public class Constants {
     public final static int MAX_LENGTH_IBAN = 24;
     public final static String BYKEA_SUPPORT_HELPLINE = "02138654444";
     public final static String BYKEA_SUPPORT_CONTACT_NUMBER = "03111111700";
+    public final static String SEPERATOR ="/";
 }

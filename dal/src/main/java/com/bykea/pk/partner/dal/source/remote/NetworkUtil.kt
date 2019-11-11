@@ -9,6 +9,7 @@ import java.security.KeyStore
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.TrustManagerFactory
@@ -89,8 +90,34 @@ object NetworkUtil {
             builder.hostnameVerifier { hostname, session -> true }
 //            if (BuildConfig.DEBUG) builder.addInterceptor(MockInterceptor())
             if (BuildConfig.DEBUG) builder.addNetworkInterceptor(loggingInterceptor)
+            builder.connectTimeout(60, TimeUnit.SECONDS);
+            builder.readTimeout(60, TimeUnit.SECONDS);
 
             return builder.build()
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
+
+    fun getUnsafeSSL(): SSLContext? {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                @Throws(CertificateException::class)
+                override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
+                }
+                @Throws(CertificateException::class)
+                override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
+                }
+                override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> {
+                    return arrayOf()
+                }
+            })
+            // Install the all-trusting trust manager
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+            // Create an ssl socket factory with our all-trusting manager
+            return sslContext
         } catch (e: Exception) {
             throw RuntimeException(e)
         }

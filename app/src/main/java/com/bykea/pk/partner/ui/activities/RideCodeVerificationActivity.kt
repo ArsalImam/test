@@ -57,6 +57,9 @@ class RideCodeVerificationActivity : BaseActivity() {
                 rideCreateRequestObject = intent.extras.getParcelable(Constants.Extras.RIDE_CREATE_DATA)
             }
         }
+        resendTv.setOnClickListener {
+            resendCode(Constants.OTP_CALL)
+        }
     }
 
     //region General Helper methods
@@ -136,9 +139,8 @@ class RideCodeVerificationActivity : BaseActivity() {
             override fun onFinish() {
                 totalTime = 0
                 counterTv.setText(R.string.digit_zero)
-                donutProgress.progress = (Constants.VERIFICATION_WAIT_MAX_TIME / 100).toInt().toFloat()
-
                 llBottom.visibility = View.VISIBLE
+                donutProgress.progress = (Constants.VERIFICATION_WAIT_MAX_TIME / 100).toInt().toFloat()
             }
         }
     }
@@ -172,11 +174,18 @@ class RideCodeVerificationActivity : BaseActivity() {
     /* Handle request for resend code when user has failed to enter OTP in given time frame.
      * We give user the option to receive OTP via call. */
     fun handleResendCode(view: View) {
+        resendCode()
+    }
+
+    /**
+     *
+     */
+    fun resendCode(type: String = OTP_SMS) {
         linLayoutOtpWrongEntered.visibility = View.GONE
         if (Utils.isConnected(this@RideCodeVerificationActivity, true)) {
             Dialogs.INSTANCE.showLoader(this@RideCodeVerificationActivity)
             animateDonutProgress()
-            requestGenerateCode()
+            requestGenerateCode(type)
         }
     }
 
@@ -250,9 +259,9 @@ class RideCodeVerificationActivity : BaseActivity() {
     /**
      * Send Request to API server which tell OTP should be send to user via phone call
      */
-    private fun requestGenerateCode() {
+    private fun requestGenerateCode(otpType: String) {
         Dialogs.INSTANCE.showLoader(this@RideCodeVerificationActivity)
-        jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(mobileNumber), OTP_SMS, object : JobsDataSource.OtpGenerateCallback {
+        jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(mobileNumber), otpType, object : JobsDataSource.OtpGenerateCallback {
             override fun onSuccess(verifyNumberResponse: com.bykea.pk.partner.dal.source.remote.response.VerifyNumberResponse) {
                 Dialogs.INSTANCE.dismissDialog()
             }

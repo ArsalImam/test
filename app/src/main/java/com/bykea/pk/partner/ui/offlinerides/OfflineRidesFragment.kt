@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
@@ -33,6 +34,7 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.APP
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
 import com.bykea.pk.partner.utils.Constants.Extras.FROM
+import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
 import com.bykea.pk.partner.utils.Dialogs
@@ -89,6 +91,16 @@ class OfflineRidesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().settings != null &&
+                AppPreferences.getSettings().settings.isOfflineDeliveryEnable) {
+            rGOfflineRide.visibility = View.VISIBLE
+            ViewCompat.setLayoutDirection(rGOfflineRide, ViewCompat.LAYOUT_DIRECTION_RTL)
+            rBSawari.text = FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.sawari), Constants.FontNames.JAMEEL_NASTALEEQI)
+            rBDelivery.text = FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.delivery), Constants.FontNames.JAMEEL_NASTALEEQI)
+        } else {
+            rGOfflineRide.visibility = View.GONE
+        }
+
         val spannableStringBuilder = SpannableStringBuilder()
         spannableStringBuilder.append(FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.offline_rides_en),
                 "roboto_medium.ttf"))
@@ -228,7 +240,12 @@ class OfflineRidesFragment : Fragment() {
 
             trip = RideCreateTripData()
             trip.creator = APP
-            trip.service_code = OFFLINE_RIDE
+
+            if (rBSawari.isChecked)
+                trip.service_code = OFFLINE_RIDE
+            else
+                trip.service_code = OFFLINE_DELIVERY
+
             trip.lat = AppPreferences.getLatitude().toString()
             trip.lng = AppPreferences.getLongitude().toString()
 
