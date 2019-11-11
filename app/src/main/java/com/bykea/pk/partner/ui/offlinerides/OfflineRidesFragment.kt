@@ -58,8 +58,8 @@ class OfflineRidesFragment : Fragment() {
 
         binding.listener = object : OfflineFragmentListener {
             override fun onDropOffClicked() {
-                if (StringUtils.isEmpty(eTMobileNumber.text?.trim()))
-                    eTMobileNumber.clearFocus()
+                eTMobileNumber.clearFocus()
+                eTCustomerName.clearFocus()
                 val returndropoffIntent = Intent(mCurrentActivity, SelectPlaceActivity::class.java)
                 returndropoffIntent.putExtra(FROM, Constants.CONFIRM_DROPOFF_REQUEST_CODE)
                 returndropoffIntent.putExtra(FLOW_FOR, Constants.Extras.OFFLINE_RIDE)
@@ -67,7 +67,7 @@ class OfflineRidesFragment : Fragment() {
             }
 
             override fun onReceiveCodeClicked() {
-                if (Utils.isValidNumber(mCurrentActivity, eTMobileNumber)) {
+                if (validateMobileNumber() && validateCustomerName()) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity)
                     jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
                             object : JobsDataSource.OtpGenerateCallback {
@@ -122,20 +122,38 @@ class OfflineRidesFragment : Fragment() {
             override fun afterTextChanged(p0: Editable?) {}
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                validateNumberSetButtonColor()
+                if (validateMobileNumber()) {
+                    setBackgroundColor(R.color.colorAccent)
+                } else {
+                    setBackgroundColor(R.color.color_A7A7A7)
+                }
+            }
+        })
+
+        eTCustomerName.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (validateCustomerName()) {
+                    setBackgroundColor(R.color.colorAccent)
+                } else {
+                    setBackgroundColor(R.color.color_A7A7A7)
+                }
             }
         })
     }
 
-    /**
-     * Set Button Background According To The Validation Of Mobile Number
-     */
-    private fun validateNumberSetButtonColor() {
-        if (Utils.isValidNumber(eTMobileNumber)) {
-            setBackgroundColor(R.color.colorAccent)
-        } else {
-            setBackgroundColor(R.color.color_A7A7A7)
+    private fun validateMobileNumber(): Boolean {
+        return Utils.isValidNumber(mCurrentActivity, eTMobileNumber) && validateCustomerName()
+    }
+
+    private fun validateCustomerName(): Boolean {
+        if (eTCustomerName.text.toString().isEmpty()) {
+            eTCustomerName.setError(context?.getString(R.string.enter_correct_customer_name));
+            eTCustomerName.requestFocus()
+            return false
         }
+        return Utils.isValidNumber(eTMobileNumber)
     }
 
     /**
@@ -237,6 +255,7 @@ class OfflineRidesFragment : Fragment() {
             user_type = USER_TYPE
             _id = AppPreferences.getDriverId()
             token_id = AppPreferences.getAccessToken()
+            customer_name = eTCustomerName.text.toString()
 
             trip = RideCreateTripData()
             trip.creator = APP
