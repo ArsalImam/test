@@ -143,10 +143,16 @@ class OfflineRidesFragment : Fragment() {
         })
     }
 
+    /**
+     * Validate Mobile Number (Valid Number or Not)
+     */
     private fun validateMobileNumber(): Boolean {
         return Utils.isValidNumber(mCurrentActivity, eTMobileNumber) && validateCustomerName()
     }
 
+    /**
+     * Validate Customer Field (Empty or Not)
+     */
     private fun validateCustomerName(): Boolean {
         if (eTCustomerName.text.toString().isEmpty()) {
             eTCustomerName.setError(context?.getString(R.string.enter_correct_customer_name));
@@ -158,7 +164,7 @@ class OfflineRidesFragment : Fragment() {
 
     /**
      * Set Background Color For Bottom Button
-     * @param co
+     * @param colorId
      */
     private fun setBackgroundColor(colorId: Int) {
         mCurrentActivity.let {
