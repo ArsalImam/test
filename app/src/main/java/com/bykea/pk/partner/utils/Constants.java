@@ -468,6 +468,7 @@ public class Constants {
         public static final String BUSTICKET_TYPE = "Bus Ticket";
 
         public static final String VAN_TYPE = "Carry Van";
+        public static final String GOODS_TYPE = "Goods";
         public static final String COURIER_TYPE = "Courier";
 
         public static final String INSURANCE_TYPE = "Bima";
