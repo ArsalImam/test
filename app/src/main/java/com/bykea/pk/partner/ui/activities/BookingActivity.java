@@ -1291,7 +1291,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (StringUtils.isEmpty(callData.getReceiverAddress())
                 && StringUtils.isEmpty(callData.getReceiverName())
                 && StringUtils.isEmpty(callData.getReceiverPhone())
-                && (callData.getServiceCode() == MART || isBykeaCashJob))
+                && ((callData.getServiceCode() != null && callData.getServiceCode() == MART) || isBykeaCashJob))
             setAddressDetailsVisible();
     }
 

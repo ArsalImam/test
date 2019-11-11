@@ -177,6 +177,8 @@ import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_TOP_UP;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_WALLET;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.UTILITY;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
 
 
 public class Utils {
@@ -2067,7 +2069,7 @@ public class Utils {
     }
 
     public static boolean isCourierService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Courier");
+        return StringUtils.containsIgnoreCase(callType, GOODS_TYPE) || StringUtils.containsIgnoreCase(callType, COURIER_TYPE);
     }
 
     public static boolean isPurchaseService(String callType) {
@@ -2188,6 +2190,7 @@ public class Utils {
             case "carryvan":
                 return R.drawable.carry_van;
             case "courier":
+            case "goods":
                 return R.drawable.courier_no_caption;
             case "bykeacash-mobiletopup":
             case "bykeacash-mobilewallet":
