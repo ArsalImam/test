@@ -176,6 +176,7 @@ import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_TOP_UP;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_WALLET;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.UTILITY;
+import static com.bykea.pk.partner.utils.Constants.TAG_ADVANCE_CALL;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
@@ -183,6 +184,7 @@ import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
 
 public class Utils {
 
+    public static final String TAG = Utils.class.getSimpleName();
 
     /**
      * This method handles error logs for Location Service and maintains files via XLog lib for debug builds
@@ -1513,6 +1515,7 @@ public class Utils {
             try {
                 isMock = !Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0") && areThereMockPermissionApps(context);
             } catch (Exception e) {
+                Utils.redLog(TAG, e.getMessage());
                 isMock = false;
             }
         }
