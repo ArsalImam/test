@@ -74,7 +74,7 @@ public class WebIO {
                 }*/
 
             //for socket io 1.0.0
-//            addSslCertificates(options);
+            addSslCertificates(options);
             mSocket = IO.socket(ApiTags.BASE_SERVER_URL, options);
 
         } catch (URISyntaxException e) {
@@ -382,4 +382,17 @@ public class WebIO {
                 .off(Socket.EVENT_DISCONNECT, callBack);
         Dialogs.INSTANCE.dismissDialog();
     }
+
+    private void addSslCertificates(IO.Options options) {
+        try {
+            OkHttpClient okHttpClient = NetworkUtil.INSTANCE.enableTls12OnPreLollipop().build();
+            IO.setDefaultOkHttpWebSocketFactory(okHttpClient);
+            IO.setDefaultOkHttpCallFactory(okHttpClient);
+            options.callFactory = okHttpClient;
+            options.webSocketFactory = okHttpClient;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

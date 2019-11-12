@@ -284,16 +284,13 @@ interface Backend {
             this.level = HttpLoggingInterceptor.Level.BODY
         }
 
-        val client: OkHttpClient = OkHttpClient.Builder().apply {
-            connectTimeout(1, TimeUnit.MINUTES)
-            readTimeout(1, TimeUnit.MINUTES)
-            writeTimeout(1, TimeUnit.MINUTES)
+        val client: OkHttpClient = NetworkUtil.enableTls12OnPreLollipop().apply {
             if (BuildConfig.DEBUG) addNetworkInterceptor(loggingInterceptor)
         }.build()
 
         operator fun invoke(baseUrl: String): Backend {
             return Retrofit.Builder()
-                    .client(client)
+                    .client(NetworkUtil.enableTls12OnPreLollipop().build())
                     .baseUrl(baseUrl)
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create())
