@@ -228,6 +228,7 @@ public class Utils {
 
     /**
      * Get Support Helpline Number from setting or from constants
+     *
      * @return Helpline number
      */
     public static String getSupportHelplineNumber() {
@@ -1509,8 +1510,11 @@ public class Utils {
         if (Build.VERSION.SDK_INT >= 18) {
             isMock = location.isFromMockProvider();
         } else {
-            isMock = !Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0")
-                    && areThereMockPermissionApps(context);
+            try {
+                isMock = !Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0") && areThereMockPermissionApps(context);
+            } catch (Exception e) {
+                isMock = false;
+            }
         }
         if (BuildConfig.DEBUG) {
             isMock = false;
