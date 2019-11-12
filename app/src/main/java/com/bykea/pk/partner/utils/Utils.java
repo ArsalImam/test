@@ -2062,6 +2062,7 @@ public class Utils {
                 || serviceCode == Constants.ServiceCode.SEND_COD
                 || serviceCode == Constants.ServiceCode.RIDE
                 || serviceCode == Constants.ServiceCode.OFFLINE_RIDE
+                || serviceCode == Constants.ServiceCode.OFFLINE_DELIVERY
                 || serviceCode == MART
                 || serviceCode == MOBILE_TOP_UP
                 || serviceCode == MOBILE_WALLET
