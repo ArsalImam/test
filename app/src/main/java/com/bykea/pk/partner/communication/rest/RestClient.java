@@ -33,25 +33,22 @@ class RestClient {
 
     static IRestClient getClient(Context context) {
         if (retrofitCalls == null) {
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-/*
-            // creating an SSLSocketFactory that uses our TrustManager
+            /*creating an SSLSocketFactory that uses our TrustManager
             SSLContext sslContext = Utils.getSSLContext(context);
             if (sslContext != null) {
-                //TODO sslSocketFactory method is deprecated.. will be fixed in refactoring which is further child of this branch
-                //need to pass X509 trust manager externally
-                //this PR is for checking retrofit2 is working fine
+                TODO sslSocketFactory method is deprecated.. will be fixed in refactoring which is further child of this branch
+                need to pass X509 trust manager externally
+                this PR is for checking retrofit2 is working fine
                 builder.sslSocketFactory(sslContext.getSocketFactory());
             }
-*/
-
-           /* HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                    HttpLoggingInterceptor.Level.NONE);*/
-
+            HttpLoggingInterceptor.Level.NONE);
             builder.connectTimeout(60, TimeUnit.SECONDS);
             builder.readTimeout(60, TimeUnit.SECONDS);
-            //okHttpClient.setRetryOnConnectionFailure(false);
+            okHttpClient.setRetryOnConnectionFailure(false);*/
+
+            OkHttpClient.Builder builder = NetworkUtil.INSTANCE.enableTls12OnPreLollipop();
             if (BuildConfig.DEBUG)
                 builder.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
@@ -72,17 +69,16 @@ class RestClient {
      */
     static IRestClient getChatAudioClient(Context context) {
         if (retrofitChatAudio == null) {
-
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-
-/*            // creating an SSLSocketFactory that uses our TrustManager
+            /* creating an SSLSocketFactory that uses our TrustManager
             SSLContext sslContext = Utils.getSSLContext(context);
             if (sslContext != null) {
                 builder.sslSocketFactory(sslContext.getSocketFactory());
-            }*/
+            }
             builder.connectTimeout(60, TimeUnit.SECONDS);
             builder.readTimeout(60, TimeUnit.SECONDS);
-            //okHttpClient.setRetryOnConnectionFailure(false);
+            okHttpClient.setRetryOnConnectionFailure(false);*/
+
+            OkHttpClient.Builder builder = NetworkUtil.INSTANCE.enableTls12OnPreLollipop();
             Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
             Retrofit client = retrofitBuilder.baseUrl(ApiTags.BASE_SERVER_URL)
                     .client(builder.build())
@@ -95,14 +91,14 @@ class RestClient {
 
     static IRestClient getGooglePlaceApiClient() {
         if (retrofitGoogleApiCalls == null) {
-            OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
             /*HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                    HttpLoggingInterceptor.Level.NONE);*/
-
+                    HttpLoggingInterceptor.Level.NONE);
             okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.readTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.retryOnConnectionFailure(false);
+            okHttpClient.retryOnConnectionFailure(false);*/
+
+            OkHttpClient.Builder okHttpClient = NetworkUtil.INSTANCE.enableTls12OnPreLollipop();
             if (BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
@@ -117,10 +113,11 @@ class RestClient {
 
     static IRestClient getBykea2ApiClient(Context context) {
         if (bykea2retrofitCalls == null) {
-            OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
-            okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
+            /*okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.readTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.retryOnConnectionFailure(false);
+            okHttpClient.retryOnConnectionFailure(false);*/
+
+            OkHttpClient.Builder okHttpClient = NetworkUtil.INSTANCE.enableTls12OnPreLollipop();
             if (BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();
@@ -135,22 +132,19 @@ class RestClient {
 
     static IRestClient getBykeaSignUpApiClient() {
         if (bykeaSignUpretrofitCalls == null) {
-            OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
-
-            // creating an SSLSocketFactory that uses our TrustManager
-//            SSLContext sslContext = Utils.getSSLContext(context);
-//            if (sslContext != null) {
-//                okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
-//            }
-
-           /* HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            /* creating an SSLSocketFactory that uses our TrustManager
+            SSLContext sslContext = Utils.getSSLContext(context);
+            if (sslContext != null) {
+                okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
+            }
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                    HttpLoggingInterceptor.Level.NONE);*/
-
-
+            HttpLoggingInterceptor.Level.NONE);
             okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
             okHttpClient.readTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.retryOnConnectionFailure(false);
+            okHttpClient.retryOnConnectionFailure(false);*/
+
+            OkHttpClient.Builder okHttpClient = NetworkUtil.INSTANCE.enableTls12OnPreLollipop();
             if (BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());
             Retrofit.Builder builder = new Retrofit.Builder();

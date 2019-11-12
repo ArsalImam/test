@@ -1,14 +1,20 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import android.content.res.Resources
+import android.os.Build
+import android.util.Log
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.R
+import com.bykea.pk.partner.dal.util.Tls12SocketFactory
+import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
+import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
 import java.security.KeyStore
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
+import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
@@ -121,5 +127,41 @@ object NetworkUtil {
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
+    }
+
+    /**
+     * Enable TLS v1.2 Support For Pre Lolliop Version
+     */
+    fun enableTls12OnPreLollipop(): OkHttpClient.Builder {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            this.level = HttpLoggingInterceptor.Level.BODY
+        }
+        val client: OkHttpClient.Builder = OkHttpClient.Builder().apply {
+            connectTimeout(1, TimeUnit.MINUTES)
+            readTimeout(1, TimeUnit.MINUTES)
+            writeTimeout(1, TimeUnit.MINUTES)
+            if (BuildConfig.DEBUG) addNetworkInterceptor(loggingInterceptor)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+            try {
+                val sc = SSLContext.getInstance("TLSv1.2")
+                sc.init(null, null, null)
+                client.sslSocketFactory(Tls12SocketFactory(sc.socketFactory))
+
+                val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                        .tlsVersions(TlsVersion.TLS_1_2)
+                        .build()
+
+                val specs = ArrayList<ConnectionSpec>()
+                specs.add(cs)
+                specs.add(ConnectionSpec.COMPATIBLE_TLS)
+                specs.add(ConnectionSpec.CLEARTEXT)
+
+                client.connectionSpecs(specs)
+            } catch (exc: Exception) {
+                Log.e("OkHttpTLSCompat", "Error while setting TLS 1.2", exc)
+            }
+        }
+        return client
     }
 }
