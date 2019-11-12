@@ -183,6 +183,7 @@ import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
 
 public class Utils {
 
+    public static final String TAG = Utils.class.getSimpleName();
 
     /**
      * This method handles error logs for Location Service and maintains files via XLog lib for debug builds
@@ -228,6 +229,7 @@ public class Utils {
 
     /**
      * Get Support Helpline Number from setting or from constants
+     *
      * @return Helpline number
      */
     public static String getSupportHelplineNumber() {
@@ -1277,7 +1279,7 @@ public class Utils {
         try {
             List<Address> addresses = geocoder.getFromLocation(Double.valueOf(lat), Double.valueOf(lng), 1);
             return addresses.get(0).getAddressLine(0);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -1509,8 +1511,12 @@ public class Utils {
         if (Build.VERSION.SDK_INT >= 18) {
             isMock = location.isFromMockProvider();
         } else {
-            isMock = !Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0")
-                    && areThereMockPermissionApps(context);
+            try {
+                isMock = !Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0") && areThereMockPermissionApps(context);
+            } catch (Exception e) {
+                Utils.redLog(TAG, e.getMessage());
+                isMock = false;
+            }
         }
         if (BuildConfig.DEBUG) {
             isMock = false;
