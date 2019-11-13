@@ -89,10 +89,13 @@ import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.AddressComponent;
+import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.Result;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.BookingCallListener;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -1272,21 +1275,108 @@ public class Utils {
         return newLocation.distanceTo(prevLocation);
     }
 
+    /**
+     * Using GeoCode To Get Address
+     *
+     * @param lat      : Latitude
+     * @param lng      : Longitude
+     * @param activity : Calling Activity
+     * @return String: address
+     */
     public static String getLocationAddress(String lat, String lng, Activity activity) {
-
         Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
-
         try {
             List<Address> addresses = geocoder.getFromLocation(Double.valueOf(lat), Double.valueOf(lng), 1);
             return addresses.get(0).getAddressLine(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return "";
+        return StringUtils.EMPTY;
     }
 
-    public static String calculateDistanceInKm(double newLat, double newLon, double prevLat, double prevLon) {
+    public interface LocationAddressCallback {
+        void onSuccess(String reverseGeoCodeAddress);
+
+        default void onFail() {
+        }
+    }
+
+    /**
+     * Get Address From Reverse Geo Coder API
+     *
+     * @param lat                     : Latitude
+     * @param lng                     : Longtitude
+     * @param activity                : Calling Activity
+     * @param locationAddressCallback : Interface For Location Address CallBack
+     */
+    public static void getLocationAddress(String lat, String lng, Activity activity, LocationAddressCallback locationAddressCallback) {
+        StringBuilder reverseGeoCodeAddress = new StringBuilder(StringUtils.EMPTY);
+        UserRepository repository = new UserRepository();
+        Dialogs.INSTANCE.showLoader(activity);
+        repository.requestReverseGeocoding(activity, new UserDataHandler() {
+            @Override
+            public void onReverseGeocode(GeocoderApi geocoderApiResponse) {
+                if (activity != null) {
+                    if (geocoderApiResponse != null
+                            && geocoderApiResponse.getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
+                            && geocoderApiResponse.getResults().length > 0) {
+                        String address = StringUtils.EMPTY;
+                        String subLocality = StringUtils.EMPTY;
+                        String cityName = StringUtils.EMPTY;
+                        GeocoderApi.Address_components[] address_componentses = geocoderApiResponse.getResults()[0].getAddress_components();
+                        for (GeocoderApi.Address_components addressComponent : address_componentses) {
+                            String[] types = addressComponent.getTypes();
+                            for (String type : types) {
+                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_CITY))
+                                    cityName = addressComponent.getLong_name();
+                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS) || type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS_1))
+                                    address = addressComponent.getLong_name();
+                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS_SUB_LOCALITY))
+                                    subLocality = addressComponent.getLong_name();
+                                if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(address) && StringUtils.isNotBlank(subLocality))
+                                    break;
+                            }
+                            if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(address) && StringUtils.isNotBlank(subLocality))
+                                break;
+                        }
+                        if (StringUtils.isNotBlank(subLocality)) {
+                            if (StringUtils.isNotBlank(address))
+                                address = address + " " + subLocality;
+                            else
+                                address = subLocality;
+                        }
+                        if (StringUtils.isNotBlank(address))
+                            reverseGeoCodeAddress.append(address);
+                        if (StringUtils.isNotBlank(address) && StringUtils.isNotBlank(cityName))
+                            reverseGeoCodeAddress.append(address).append(", ").append(cityName);
+
+                        if (StringUtils.isNotBlank(reverseGeoCodeAddress.toString())) {
+                            locationAddressCallback.onSuccess(reverseGeoCodeAddress.toString());
+                        } else {
+                            AppPreferences.setGeoCoderApiKeyRequired(true);
+                            locationAddressCallback.onFail();
+                        }
+                    } else {
+                        locationAddressCallback.onFail();
+                        AppPreferences.setGeoCoderApiKeyRequired(true);
+                    }
+                } else {
+                    locationAddressCallback.onFail();
+                }
+                Dialogs.INSTANCE.dismissDialog();
+            }
+
+            @Override
+            public void onError(int errorCode, String errorMessage) {
+                AppPreferences.setGeoCoderApiKeyRequired(true);
+                locationAddressCallback.onFail();
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }, lat + "," + lng, Utils.getApiKeyForGeoCoder());
+    }
+
+    public static String calculateDistanceInKm(double newLat, double newLon, double prevLat,
+                                               double prevLon) {
         return "" + Math.round(((calculateDistance(newLat,
                 newLon, prevLat,
                 prevLon)) / 1000) * 10.0) / 10.0;
@@ -1578,7 +1668,8 @@ public class Utils {
      *
      * @return True if latest fetched latitude and longitude are valid, otherwise return false.
      */
-    public static boolean isValidLocation(double newLat, double newLon, double prevLat, double prevLon) {
+    public static boolean isValidLocation(double newLat, double newLon, double prevLat,
+                                          double prevLon) {
         boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
         if (shouldConsiderLatLng) {
             float distance = calculateDistance(newLat, newLon, prevLat, prevLon);
@@ -1601,7 +1692,8 @@ public class Utils {
         }
     }
 
-    public static boolean isValidLocation(/*double newLat, double newLon, double prevLat, double prevLon, */float distance) {
+    public static boolean isValidLocation
+            (/*double newLat, double newLon, double prevLat, double prevLon, */ float distance) {
 //        boolean shouldConsiderLatLng = newLat != prevLat && newLon != prevLon;
 //        if (shouldConsiderLatLng) {
 //            if (distance > 6) {
@@ -1769,7 +1861,8 @@ public class Utils {
      * @param EVENT   : Firebase Event Name
      * @param data    : JSON Object To Parse Into Bundle
      */
-    public static void logFireBaseEvent(Context context, String userId, String EVENT, JSONObject data) {
+    public static void logFireBaseEvent(Context context, String userId, String
+            EVENT, JSONObject data) {
         EVENT = EVENT.toLowerCase().replace("-", "_").replace(" ", "_");
         if (EVENT.length() > Constants.FirebaseAnalyticsConfigLimits.EVENT_NAME_LENGTH)
             EVENT = EVENT.substring(0, EVENT.length() - Constants.FirebaseAnalyticsConfigLimits.EVENT_NAME_LENGTH);
@@ -1839,7 +1932,8 @@ public class Utils {
         FirebaseAnalytics.getInstance(context).logEvent(EVENT, bundle);
     }
 
-    public static void startCustomWebViewActivity(AppCompatActivity context, String link, String title) {
+    public static void startCustomWebViewActivity(AppCompatActivity context, String
+            link, String title) {
         if (isConnected(context, true)) {
             if (StringUtils.isNotBlank(link)) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
@@ -1937,7 +2031,8 @@ public class Utils {
      * @param data Json data which needs to be emitted.
      * @param shouldLogToMixpanel whether the log event is triggered for mixpanel or not
      */
-    public static void logEvent(Context context, String userID, String EVENT, JSONObject data, boolean shouldLogToMixpanel) {
+    public static void logEvent(Context context, String userID, String EVENT, JSONObject data,
+                                boolean shouldLogToMixpanel) {
         if (shouldLogToMixpanel) {
             MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
             mixpanelAPI.identify(userID);
@@ -2451,7 +2546,8 @@ public class Utils {
     }
 
 
-    public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView ivThumbnail, ImageView ytIcon, YouTubePlayerSupportFragment playerFragment) {
+    public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView
+            ivThumbnail, ImageView ytIcon, YouTubePlayerSupportFragment playerFragment) {
 
         if (playerFragment == null || playerFragment.getView() == null || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
@@ -2489,7 +2585,9 @@ public class Utils {
         });
     }
 
-    public static void initPlayerFragment(final YouTubePlayerSupportFragment playerFragment, ImageView ytIcon, final ImageView ivThumbnail, final String VIDEO_ID) {
+    public static void initPlayerFragment(
+            final YouTubePlayerSupportFragment playerFragment, ImageView ytIcon,
+            final ImageView ivThumbnail, final String VIDEO_ID) {
         if (playerFragment.getView() != null) {
             playerFragment.getView().setVisibility(View.INVISIBLE);
         }
@@ -2513,7 +2611,8 @@ public class Utils {
         }
     }
 
-    public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView ivThumbnail, ImageView ytIcon, YouTubePlayerFragment playerFragment) {
+    public static void playVideo(final BaseActivity context, final String VIDEO_ID, ImageView
+            ivThumbnail, ImageView ytIcon, YouTubePlayerFragment playerFragment) {
 
         if (playerFragment == null || playerFragment.getView() == null || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             // to handle app crash caused by some bug in YouTube App. https://stackoverflow.com/questions/48674311/exception-java-lang-noclassdeffounderror-pim
@@ -2551,7 +2650,9 @@ public class Utils {
         });
     }
 
-    public static void initPlayerFragment(final YouTubePlayerFragment playerFragment, ImageView ytIcon, final ImageView ivThumbnail, final String VIDEO_ID) {
+    public static void initPlayerFragment(
+            final YouTubePlayerFragment playerFragment, ImageView ytIcon, final ImageView ivThumbnail,
+            final String VIDEO_ID) {
         if (playerFragment.getView() != null) {
             playerFragment.getView().setVisibility(View.INVISIBLE);
         }
@@ -2861,7 +2962,8 @@ public class Utils {
      * @return True if we are going to ask Battery optimization, else false.
      * @see Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
      */
-    public static boolean disableBatteryOptimization(Context context, AppCompatActivity activity) {
+    public static boolean disableBatteryOptimization(Context context, AppCompatActivity
+            activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = context.getPackageName();
@@ -3395,7 +3497,8 @@ public class Utils {
      * @param chatMessagesTranslateds List From Which To Match
      * @return If text matches return the english transalation against it.
      */
-    public static Pair<Boolean, String> getTranslationIfExists(String chatMessageInUrdu, ArrayList<ChatMessagesTranslated> chatMessagesTranslateds) {
+    public static Pair<Boolean, String> getTranslationIfExists(String
+                                                                       chatMessageInUrdu, ArrayList<ChatMessagesTranslated> chatMessagesTranslateds) {
         for (ChatMessagesTranslated chatMessagesTranslated : chatMessagesTranslateds) {
             if (chatMessagesTranslated.getChatMessageInUrdu().contains(chatMessageInUrdu))
                 return new Pair<>(true, chatMessagesTranslated.getChatMessageInEnglish());
@@ -3407,7 +3510,8 @@ public class Utils {
      * @param chatMessagesTranslated Object Containing English and Urdu Value
      * @return
      */
-    public static String getConcatenatedTransalation(ChatMessagesTranslated chatMessagesTranslated) {
+    public static String getConcatenatedTransalation(ChatMessagesTranslated
+                                                             chatMessagesTranslated) {
         return chatMessagesTranslated.getChatMessageInUrdu() + TRANSALATION_SEPERATOR + chatMessagesTranslated.getChatMessageInEnglish();
     }
 
@@ -3451,7 +3555,8 @@ public class Utils {
     /**
      * Remove Navigation Drawer List Item
      */
-    public static void removeOrHideItemFromNavigationDrawerList(String itemToRemove, List<String> titlesEnglish, List<String> titlesUrdu, List<String> newLabelToShow) {
+    public static void removeOrHideItemFromNavigationDrawerList(String
+                                                                        itemToRemove, List<String> titlesEnglish, List<String> titlesUrdu, List<String> newLabelToShow) {
         int position = -1;
         for (int i = 0; i < titlesEnglish.size(); i++) {
             if (titlesEnglish.get(i).contains(itemToRemove)) {
@@ -3474,7 +3579,8 @@ public class Utils {
      * @param callData  : Current Trip Model Deta
      * @param eventName : Firebase Event Name
      */
-    public static void generateFirebaseEventForCalling(Context context, NormalCallData callData, String eventName) {
+    public static void generateFirebaseEventForCalling(Context context, NormalCallData
+            callData, String eventName) {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("lat", AppPreferences.getLatitude());
@@ -3495,7 +3601,8 @@ public class Utils {
      *
      * @param callNumber : Phone Number
      */
-    public static void openCallDialog(Context context, NormalCallData callData, String callNumber) {
+    public static void openCallDialog(Context context, NormalCallData callData, String
+            callNumber) {
         if (StringUtils.isEmpty(callNumber)) {
             Utils.appToastDebug("Number is empty");
             return;

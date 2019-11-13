@@ -39,6 +39,7 @@ import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
+import com.bykea.pk.partner.utils.Utils.LocationAddressCallback
 import com.bykea.pk.partner.widgets.FontTextView
 import kotlinx.android.synthetic.main.activity_ride_code_verification.*
 import kotlinx.android.synthetic.main.fragment_offline_rides.*
@@ -68,22 +69,24 @@ class OfflineRidesFragment : Fragment() {
 
             override fun onReceiveCodeClicked() {
                 if (validateMobileNumber() && validateCustomerName()) {
-                    Dialogs.INSTANCE.showLoader(mCurrentActivity)
-                    jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
-                            object : JobsDataSource.OtpGenerateCallback {
-                                override fun onSuccess(verifyNumberResponse: VerifyNumberResponse) {
-                                    Dialogs.INSTANCE.dismissDialog()
-                                    ActivityStackManager
-                                            .getInstance()
-                                            .startWaitingActivity(mCurrentActivity, createRequestBody(),
-                                                    binding.eTMobileNumber.text.toString())
-                                }
+                    val requestBody: RideCreateRequestObject = createRequestBody()
+                    requestBody.pickup_info.address = Utils.getLocationAddress(AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(), mCurrentActivity)
 
-                                override fun onFail(code: Int, subCode: Int?, message: String?) {
-                                    Dialogs.INSTANCE.dismissDialog()
-                                    displayErrorToast(code, subCode, message)
-                                }
-                            })
+                    if (requestBody.pickup_info.address.isNullOrEmpty()) {
+                        Utils.getLocationAddress(
+                                AppPreferences.getLatitude().toString(),
+                                AppPreferences.getLongitude().toString(), mCurrentActivity,
+                                object : LocationAddressCallback {
+                                    override fun onSuccess(reverseGeoCodeAddress: String?) {
+                                        requestBody.pickup_info.address = reverseGeoCodeAddress
+                                        navigateToVerifyCode(requestBody)
+                                    }
+
+                                    override fun onFail() = navigateToVerifyCode(requestBody)
+                                })
+                    } else {
+                        navigateToVerifyCode(requestBody)
+                    }
                 }
             }
         }
@@ -174,12 +177,6 @@ class OfflineRidesFragment : Fragment() {
                 tVReceiveCode.setBackgroundColor(mCurrentActivity!!.resources.getColor(colorId))
             }
         }
-    }
-
-    override fun onDestroyView() {
-        mCurrentActivity?.showToolbar()
-        mCurrentActivity?.hideUrduTitle()
-        super.onDestroyView()
     }
 
     /**
@@ -277,7 +274,6 @@ class OfflineRidesFragment : Fragment() {
             pickup_info = RideCreateLocationInfoData()
             pickup_info.lat = AppPreferences.getLatitude().toString()
             pickup_info.lng = AppPreferences.getLongitude().toString()
-            pickup_info.address = Utils.getLocationAddress(AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(), mCurrentActivity)
 
             if (mDropOffResult != null) {
                 dropoff_info = RideCreateLocationInfoData()
@@ -286,6 +282,28 @@ class OfflineRidesFragment : Fragment() {
                 dropoff_info?.address = mDropOffResult?.address
             }
         }
+    }
+
+    /**
+     * Navigate To Verify Code Screen
+     */
+    private fun navigateToVerifyCode(requestBody: RideCreateRequestObject) {
+        Dialogs.INSTANCE.showLoader(mCurrentActivity)
+        jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
+                object : JobsDataSource.OtpGenerateCallback {
+                    override fun onSuccess(verifyNumberResponse: VerifyNumberResponse) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        ActivityStackManager
+                                .getInstance()
+                                .startWaitingActivity(mCurrentActivity, requestBody,
+                                        binding.eTMobileNumber.text.toString())
+                    }
+
+                    override fun onFail(code: Int, subCode: Int?, message: String?) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        displayErrorToast(code, subCode, message)
+                    }
+                })
     }
 
     /**
@@ -315,4 +333,11 @@ class OfflineRidesFragment : Fragment() {
             }
         }
     }
+
+    override fun onDestroyView() {
+        mCurrentActivity?.showToolbar()
+        mCurrentActivity?.hideUrduTitle()
+        super.onDestroyView()
+    }
+
 }
