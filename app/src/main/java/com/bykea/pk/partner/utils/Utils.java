@@ -1288,7 +1288,7 @@ public class Utils {
         try {
             List<Address> addresses = geocoder.getFromLocation(Double.valueOf(lat), Double.valueOf(lng), 1);
             return addresses.get(0).getAddressLine(0);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return StringUtils.EMPTY;
