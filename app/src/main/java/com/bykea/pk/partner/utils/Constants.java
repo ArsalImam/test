@@ -661,4 +661,5 @@ public class Constants {
 
     public final static int DIRECTION_API_MIX_THRESHOLD_METERS = 45; //meters
     public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 7; //70 seconds
+    public final static int DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME = 30; //300 seconds
 }
