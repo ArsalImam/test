@@ -521,6 +521,7 @@
 
     <string name="enter_amount_error">\u0020درج کردہ رقم\u0020</string>
     <string name="amount_not_more">\u0020روپے سے زیادہ اور 50 روپے سے کم نہیں ہوسکتی۔\u0020</string>
+    <string name="alphabets">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="alphanumeric">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="alphanumeric_uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="lb_bykea_call_center">Bykea Call Center</string>
@@ -532,4 +533,8 @@
     <string name="bykea_cash_mobile_top_up">\u0020موبائل بیلنس ٹاپ اپ\u0020</string>
     <string name="sawari">\u0020سواری\u0020</string>
     <string name="delivery">\u0020ڈیلیوری\u0020</string>
+    <string name="customer_name">\u0020کسٹمر کا نام\u0020</string>
+    <string name="enter_customer_name">Customer Name</string>
+    <string name="enter_customer_name_hint">Customer Name</string>
+    <string name="enter_correct_customer_name">Please enter correct customer name</string>
 </resources>
