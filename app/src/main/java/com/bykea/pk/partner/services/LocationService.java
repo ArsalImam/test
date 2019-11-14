@@ -564,11 +564,11 @@ public class LocationService extends Service {
      * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
      */
     private void updateETAIfRequired() {
-        if (counter == DISTANCE_MATRIX_API_CALL_TIME) {
+        if (counter == Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME) {
             counter = 0;
         }
         counter++;
-        if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground() && counter == DISTANCE_MATRIX_API_CALL_TIME) {
+        if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground() && counter == Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME) {
             Utils.redLogLocation("Direction -> Trip Status ", AppPreferences.getTripStatus());
             if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
                 NormalCallData callData = AppPreferences.getCallData();

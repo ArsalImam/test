@@ -116,6 +116,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
@@ -1874,8 +1875,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
-        if (lastApiCallLatLng != null && (lastApiCallLatLng.equals(currentApiCallLatLng)
-                || Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude, lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < 15)) {
+        if ((lastApiCallLatLng != null)
+                && (lastApiCallLatLng.equals(currentApiCallLatLng)
+                || (Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude,
+                lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < DIRECTION_API_MIX_THRESHOLD_METERS))) {
             return false;
         }
         return true;
