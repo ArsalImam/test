@@ -11,6 +11,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -146,6 +148,28 @@ class OfflineRidesFragment : Fragment() {
                     }
             }
         })
+        rGOfflineRide.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener {
+            override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+                when (checkedId) {
+                    rBSawari.id -> {
+                        eTCustomerName.error = null
+                        eTCustomerName.clearFocus()
+                        if (Utils.isValidNumber(eTMobileNumber)) {
+                            setBackgroundColor(R.color.colorAccent)
+                        } else {
+                            setBackgroundColor(R.color.color_A7A7A7)
+                        }
+                    }
+                    rBDelivery.id -> {
+                        if (Utils.isValidNumber(eTMobileNumber) && validateCustomerName(false)) {
+                            setBackgroundColor(R.color.colorAccent)
+                        } else {
+                            setBackgroundColor(R.color.color_A7A7A7)
+                        }
+                    }
+                }
+            }
+        })
     }
 
     /**
@@ -161,10 +185,12 @@ class OfflineRidesFragment : Fragment() {
     /**
      * Validate Customer Field (Empty or Not)
      */
-    private fun validateCustomerName(): Boolean {
+    private fun validateCustomerName(showError: Boolean = true): Boolean {
         if (eTCustomerName.text.toString().isEmpty()) {
-            eTCustomerName.setError(context?.getString(R.string.enter_correct_customer_name));
-            eTCustomerName.requestFocus()
+            if (showError) {
+                eTCustomerName.error = context?.getString(R.string.enter_correct_customer_name);
+                eTCustomerName.requestFocus()
+            }
             return false
         }
         return Utils.isValidNumber(eTMobileNumber)
