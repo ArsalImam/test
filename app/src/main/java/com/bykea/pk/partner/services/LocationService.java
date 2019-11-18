@@ -569,10 +569,6 @@ public class LocationService extends Service {
      */
     private void updateETAIfRequired() {
         counter++;
-
-        // No need to check further when counter is less than least threshold
-        if (counter < Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME) return;
-
         if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground()) {
             Utils.redLogLocation("Direction -> Trip Status ", AppPreferences.getTripStatus());
             if (counter == Constants.DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME
