@@ -562,10 +562,17 @@ public class LocationService extends Service {
      * when Booking Screen is in background & driver is in any trip then, we need to call distance
      * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
      * is already being handled via Direction API when we are showing Route to driver.
-     * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
+     * If the booking is in started state, counter == DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME == 7
+     * indicates that API will be called after 70 sec whereas when booking is in Accept or Arrived
+     * state then counter == DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME == 30
+     * indicates that API will be called after 300 sec
      */
     private void updateETAIfRequired() {
         counter++;
+
+        // No need to check further when counter is less than least threshold
+        if (counter < Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME) return;
+
         if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground()) {
             Utils.redLogLocation("Direction -> Trip Status ", AppPreferences.getTripStatus());
             if (counter == Constants.DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME
