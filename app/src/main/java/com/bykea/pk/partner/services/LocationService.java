@@ -585,9 +585,9 @@ public class LocationService extends Service {
                     updateETA(Utils.getTripTime(), Utils.getTripDistance());
                 }
 
-            } else if (counter == Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME
-                    && TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus())
-                    || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+            } else if (counter == Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME &&
+                    (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus()) ||
+                            TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()))) {
 
                 NormalCallData callData = AppPreferences.getCallData();
                 if (callData != null && StringUtils.isNotBlank(callData.getStartLat()) &&
