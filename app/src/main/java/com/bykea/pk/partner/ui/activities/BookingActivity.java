@@ -755,8 +755,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.jobBtn:
                 if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
+                //TODO: Why do we need fast connection?
+                // Should not check and let the networking module deal with no connection
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                    //TODO: Instead of string comparision for determining with booking state
+                    // use booking state variable
                     if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
                             callData != null) {
                         int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
@@ -783,6 +787,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }, " پہنچ گئے؟");
                         }
                     }
+                    //TODO: Instead of string comparision for determining with booking state
+                    // use booking state variable
                     //CHECK FOR BEGIN TRIP BUTTON CLICK
                     else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start)) && callData != null) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
@@ -796,7 +802,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 Dialogs.INSTANCE.dismissDialog();
                             }
                         }, " اسٹارٹ؟");
-                    } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
+                    }
+                    //TODO: Instead of string comparision for determining with booking state
+                    // use booking state variable
+                    else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -1578,7 +1587,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         boolean showOnLeft;
         double proposedDistance = 30;
 
-        LatLng latLng = new LatLng(Double.valueOf(callData.getStartLat()), Double.valueOf(callData.getStartLng()));
+        LatLng latLng = new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
         boolean isLeftAreaVisible = MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(latLng, proposedDistance, 270));
 
         if (!isLeftAreaVisible) {
@@ -1676,15 +1685,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (null == mGoogleMap || null == callData) return;
 
         if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-            if (callData.getPickupStop() != null && callData.getStartLat() != null && !callData.getStartLat().isEmpty() && callData.getStartLng() != null && !callData.getStartLng().isEmpty())
+            if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng()))
                 updatePickupMarker();
-            if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+            if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng()))
                 updateDropOffMarker();
         } else {
-            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) &&
-                    !isBykeaCashJob)
+            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) && !isBykeaCashJob)
                 pickUpMarker.remove();
-            if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
+            if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng()))
                 updateDropOffMarker();
         }
 
@@ -1802,7 +1810,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    private synchronized void drawRoute(LatLng start, LatLng mid, LatLng end, int routeType) {
+    private synchronized void drawRoute(LatLng start, LatLng end, int routeType) {
         if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
             LatLng currentLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
             if (PolyUtil.isLocationOnPath(currentLatLng, mRouteLatLng, false, 20)) {
@@ -1856,18 +1864,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
                     builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
                 }
-                if (mid != null)
-                    builder.context(mCurrentActivity)
-                            .waypoints(start, mid, end)
-                            .travelMode(AbstractRouting.TravelMode.DRIVING)
-                            .withListener(this)
-                            .routeType(routeType);
-                else
-                    builder.context(mCurrentActivity)
-                            .waypoints(start, end)
-                            .travelMode(AbstractRouting.TravelMode.DRIVING)
-                            .withListener(this)
-                            .routeType(routeType);
+                builder.context(mCurrentActivity)
+                        .waypoints(start, end)
+                        .travelMode(AbstractRouting.TravelMode.DRIVING)
+                        .withListener(this)
+                        .routeType(routeType);
                 Routing routing = builder.build();
                 routing.execute();
             }
@@ -1956,7 +1957,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         if (isBykeaCashJob) {
             drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
-                    null,
                     new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
                     Routing.pickupRoute);
         } else if (StringUtils.isNotBlank(callData.getStartLat())
@@ -1969,11 +1969,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                 drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
                         new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
-                        new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng())),
                         Routing.pickupRoute);
             } else {
                 drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
-                        null,
                         new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng())),
                         Routing.pickupRoute);
             }
@@ -1991,7 +1989,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             drawRoute(
                     new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
-                    null,
                     new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
                     Routing.pickupRoute
             );
@@ -2008,7 +2005,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             drawRoute(
                     new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
-                    null,
                     new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng())),
                     Routing.dropOffRoute);
 
@@ -2023,7 +2019,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void drawRouteOnChange(LatLng startLatLng, LatLng endLatlng) {
         if (null != startLatLng && null != endLatlng) {
-            drawRoute(startLatLng, null, endLatlng, Routing.onChangeRoute);
+            drawRoute(startLatLng, endLatlng, Routing.onChangeRoute);
         } else {
             if (mapPolylines != null) {
                 mapPolylines.remove();
