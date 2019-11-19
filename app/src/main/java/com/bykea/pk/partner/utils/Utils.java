@@ -2272,6 +2272,7 @@ public class Utils {
         String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
         switch (callType) {
             case "parcel":
+            case "offlineparcel":
             case "send":
             case "delivery":
             case "cod":
