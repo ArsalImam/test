@@ -53,7 +53,7 @@ public class Settings {
     @SerializedName("bykea_support_contact")
     private String BykeaSupportContact;
 
-    @SerializedName("offline_delivery_display")
+    @SerializedName("offline_delivery_enabled")
     private boolean offlineDeliveryEnable;
 
     @SerializedName("withdrawal_display")
