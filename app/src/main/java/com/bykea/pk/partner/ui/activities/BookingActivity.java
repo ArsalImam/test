@@ -208,7 +208,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private String cancelReason = StringUtils.EMPTY;
 
     private Marker driverMarker, dropOffMarker, pickUpMarker/*, passCurrentLocMarker*/;
-    private Polyline mapPolylines, mapPolylinesSecondary;
+    private Polyline mapPolylines;
     private List<LatLng> mRouteLatLng, mRouteLatLngSecondary;
 
 
@@ -908,51 +908,26 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 public void run() {
                     Route routeFirst = route.get(0);
                     mRouteLatLng = routeFirst.getPoints();
+                    PolylineOptions polyOptions = new PolylineOptions();
+                    polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
+                    polyOptions.addAll(routeFirst.getPoints());
                     updateEtaAndCallData((routeFirst.getDurationValue() / 60) + "",
                             Utils.formatDecimalPlaces((routeFirst.getDistanceValue() / 1000.0) + "", 1));
 
                     if (mapPolylines != null) mapPolylines.remove();
-                    if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
 
-                    if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) && route.size() > 1) {
-                        Route routeSecondary = route.get(1);
-
-                        PolylineOptions polyOptions = new PolylineOptions();
-                        polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                        polyOptions.addAll(routeFirst.getPoints());
+                    if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.kelly_green));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
-
-                        polyOptions = new PolylineOptions();
-                        polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                        polyOptions.addAll(routeSecondary.getPoints());
-                        polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
-                        mapPolylinesSecondary = mGoogleMap.addPolyline(polyOptions);
-
-                        mRouteLatLngSecondary = routeSecondary.getPoints();
                         callData.getPickupStop().setDistance(routeFirst.getDistanceValue());
                         callData.getPickupStop().setDuration(routeFirst.getDurationValue());
-                        //TODO: Update zone name of re-render
-                        // callData.getPickupStop().setZoneNameUr(routeFirst.getEndAddressText());
-                        if (callData.getDropoffStop() != null) {
-                            callData.getDropoffStop().setDistance(routeSecondary.getDistanceValue());
-                            callData.getDropoffStop().setDuration(routeSecondary.getDurationValue());
-                        }
-                        //TODO: Update zone name of re-render
-                        // callData.getDropoffStop().setZoneNameUr(routeSecondary.getEndAddressText());
                     } else {
-                        PolylineOptions polyOptions = new PolylineOptions();
-                        polyOptions.width(Utils.dpToPx(mCurrentActivity, 5));
-                        polyOptions.addAll(routeFirst.getPoints());
                         polyOptions.color(ContextCompat.getColor(mCurrentActivity, R.color.blue));
                         mapPolylines = mGoogleMap.addPolyline(polyOptions);
-
                         if (callData.getDropoffStop() != null) {
                             callData.getDropoffStop().setDistance(routeFirst.getDistanceValue());
                             callData.getDropoffStop().setDuration(routeFirst.getDurationValue());
                         }
-                        //TODO: Update zone name of re-render
-                        // callData.getDropoffStop().setZoneNameUr(routeFirst.getEndAddressText());
                     }
 
                     shouldRefreshPickupMarker = true;
@@ -1477,7 +1452,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 pickUpMarker.remove();
                 pickUpMarker = null;
                 if (mapPolylines != null) mapPolylines.remove();
-                if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
             }
         }
 
@@ -1955,10 +1929,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
+        LatLng currentLocation = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        LatLng pickUp = new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
+        LatLng dropOff = new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng()));
+
         if (isBykeaCashJob) {
-            drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
-                    new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
-                    Routing.pickupRoute);
+            drawRoute(currentLocation, pickUp, Routing.pickupRoute);
         } else if (StringUtils.isNotBlank(callData.getStartLat())
                 && StringUtils.isNotBlank(callData.getStartLng())
                 && StringUtils.isNotBlank(callData.getEndLat())
@@ -1967,17 +1943,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 && StringUtils.isNotBlank(AppPreferences.getLongitude() + "")) {
 
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-                drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
-                        new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
-                        Routing.pickupRoute);
+                drawRoute(currentLocation, pickUp, Routing.pickupRoute);
             } else {
-                drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
-                        new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng())),
-                        Routing.pickupRoute);
+                drawRoute(currentLocation, dropOff, Routing.pickupRoute);
             }
         } else {
             if (mapPolylines != null) mapPolylines.remove();
-            if (mapPolylinesSecondary != null) mapPolylinesSecondary.remove();
         }
     }
 
