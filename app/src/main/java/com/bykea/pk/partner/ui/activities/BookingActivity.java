@@ -1431,7 +1431,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mRouteLatLng.clear();
         }
         if (isResume) {
-            drawRouteToDropOff();
+//            drawRouteToDropOff();
             callerNameTv.setText(callData.getPassName());
         }
 
@@ -1931,7 +1931,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         LatLng currentLocation = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
         LatLng pickUp = new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
-        LatLng dropOff = new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng()));
 
         if (isBykeaCashJob) {
             drawRoute(currentLocation, pickUp, Routing.pickupRoute);
@@ -1944,7 +1943,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                 drawRoute(currentLocation, pickUp, Routing.pickupRoute);
-            } else {
+            } else if (callData.getServiceCode() != Constants.ServiceCode.RIDE) {
+                LatLng dropOff = new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng()));
                 drawRoute(currentLocation, dropOff, Routing.pickupRoute);
             }
         } else {
