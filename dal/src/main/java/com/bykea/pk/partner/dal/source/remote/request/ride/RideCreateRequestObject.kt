@@ -10,11 +10,13 @@ data class RideCreateRequestObject(
         var dropoff_info: RideCreateLocationInfoData? = null,
         var _id: String = EMPTY_STRING,
         var user_type: String = EMPTY_STRING,
-        var token_id: String = EMPTY_STRING) : Parcelable {
+        var token_id: String = EMPTY_STRING,
+        var customer_name: String = EMPTY_STRING) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readParcelable(RideCreateTripData::class.java.classLoader),
             parcel.readParcelable(RideCreateLocationInfoData::class.java.classLoader),
             parcel.readParcelable(RideCreateLocationInfoData::class.java.classLoader),
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString()) {
@@ -27,6 +29,7 @@ data class RideCreateRequestObject(
         parcel.writeString(_id)
         parcel.writeString(user_type)
         parcel.writeString(token_id)
+        parcel.writeString(customer_name)
     }
 
     override fun describeContents(): Int {
