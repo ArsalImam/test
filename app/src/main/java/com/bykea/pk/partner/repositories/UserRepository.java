@@ -349,7 +349,7 @@ public class UserRepository {
             jsonObject.put("lat", lat);
             jsonObject.put("lng", lon);
             Utils.addDriverDestinationProperty(jsonObject);
-            Utils.logEvent(context, AppPreferences.getDriverId(), Constants.AnalyticsEvents.ON_PARTNER_LOCATION_UPDATE, jsonObject, true);
+            Utils.logEvent(context, AppPreferences.getDriverId(), Constants.AnalyticsEvents.ON_PARTNER_LOCATION_UPDATE, jsonObject);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

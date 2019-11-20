@@ -41,9 +41,9 @@ object Aog {
 
             if (isOnAccept) {
                 json.put("AcceptSeconds", secondsEclipsed)
-                Utils.logEvent(DriverApp.getContext(), data.customer_id, Constants.AnalyticsEvents.ON_ACCEPT, json, true)
+                Utils.logEvent(DriverApp.getContext(), data.customer_id, Constants.AnalyticsEvents.ON_ACCEPT, json)
             } else {
-                Utils.logEvent(DriverApp.getContext(), data.customer_id, Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB, json, true)
+                Utils.logEvent(DriverApp.getContext(), data.customer_id, Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB, json)
             }
         } catch (e: JSONException) {
             e.printStackTrace()
