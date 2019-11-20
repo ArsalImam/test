@@ -580,12 +580,14 @@ public class LocationService extends Service {
                     counter = 0;
                     if (callData != null && StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
                         callDistanceMatrixApi(callData.getStartLat() + "," + callData.getStartLng());
+                        Log.v(TAG, "Distance Matrix called with accept state");
                     }
                 } else if (TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(tripStatus)
                         && AppPreferences.getCallData().getServiceCode() != RIDE) {
                     counter = 0;
                     if (callData != null && StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
                         callDistanceMatrixApi(callData.getStartLat() + "," + callData.getStartLng());
+                        Log.v(TAG, "Distance Matrix called with arrived state");
                     }
                 }
 
@@ -595,6 +597,7 @@ public class LocationService extends Service {
                 counter = 0;
                 if (callData != null && StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
                     callDistanceMatrixApi(callData.getEndLat() + "," + callData.getEndLng());
+                    Log.v(TAG, "Distance Matrix called with started state");
                 } else {
                     //in case when there is no drop off add distance covered and time taken
                     updateETA(Utils.getTripTime(), Utils.getTripDistance());
