@@ -519,9 +519,10 @@ public class LocationService extends Service {
     }
 
     /**
-     *  Update latitude and longitude and distance preview time in shared preference.
-     * @param lat current latitude fetched.
-     * @param lon current longitude fetched.
+     * Update latitude and longitude and distance preview time in shared preference.
+     *
+     * @param lat            current latitude fetched.
+     * @param lon            current longitude fetched.
      * @param updatePrevTime should updated previous time.
      */
     private void addLatLng(double lat, double lon, boolean updatePrevTime) {
@@ -561,36 +562,41 @@ public class LocationService extends Service {
      * when Booking Screen is in background & driver is in any trip then, we need to call distance
      * matrix API in order to get Estimated time & distance, when booking screen is in foreground it
      * is already being handled via Direction API when we are showing Route to driver.
-     * counter == DISTANCE_MATRIX_API_CALL_TIME == 6 indicates that API will be called after 60 sec
+     * If the booking is in started state, counter == DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME == 7
+     * indicates that API will be called after 70 sec whereas when booking is in Accept or Arrived
+     * state then counter == DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME == 30
+     * indicates that API will be called after 300 sec
      */
     private void updateETAIfRequired() {
-        if (counter == DISTANCE_MATRIX_API_CALL_TIME) {
-            counter = 0;
-        }
         counter++;
-        if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground() && counter == DISTANCE_MATRIX_API_CALL_TIME) {
+        if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground()) {
             Utils.redLogLocation("Direction -> Trip Status ", AppPreferences.getTripStatus());
-            if (TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+            if (counter == Constants.DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME
+                    && TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+                counter = 0;
                 NormalCallData callData = AppPreferences.getCallData();
                 if (callData != null && StringUtils.isNotBlank(callData.getEndLat()) &&
                         StringUtils.isNotBlank(callData.getEndLng())) {
                     String destination = callData.getEndLat() + "," + callData.getEndLng();
                     callDistanceMatrixApi(destination);
+                    Log.v(TAG, "Distance Matrix called with start state");
                 } else {
                     //in case when there is no drop off add distance covered and time taken
                     updateETA(Utils.getTripTime(), Utils.getTripDistance());
-
                 }
-            } else if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus())
-                    || TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+
+            } else if (counter == Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME &&
+                    (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus()) ||
+                            TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()))) {
+                counter = 0;
                 NormalCallData callData = AppPreferences.getCallData();
                 if (callData != null && StringUtils.isNotBlank(callData.getStartLat()) &&
                         StringUtils.isNotBlank(callData.getStartLng())) {
                     String destination = callData.getStartLat() + "," + callData.getStartLng();
                     callDistanceMatrixApi(destination);
+                    Log.v(TAG, "Distance Matrix called with non start state");
                 }
             }
-
         }
     }
 
@@ -608,6 +614,7 @@ public class LocationService extends Service {
 
     /**
      * Send request to DistanceMatrix API.
+     *
      * @param destination destination request address
      */
     private void callDistanceMatrixApi(String destination) {
@@ -641,6 +648,7 @@ public class LocationService extends Service {
 
     /**
      * check if last start latlng and current start latlng has at least 15 m difference
+     *
      * @param currentApiCallLatLng current Latitude and Longitude returned from API
      * @return True is current lat/lng and start lat/lng have 15m difference else return false
      */
