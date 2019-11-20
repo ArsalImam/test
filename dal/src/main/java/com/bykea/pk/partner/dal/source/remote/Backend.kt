@@ -7,7 +7,6 @@ import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
-import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -25,6 +24,48 @@ import javax.net.ssl.SSLSocketFactory
  * @author Yousuf Sohail
  */
 interface Backend {
+
+    // region User related endpoints
+
+    @GET("/api/v1/driver/getProfile")
+    fun getDriverProfile(@Query("_id") _id: String,
+                         @Query("token_id") token_id: String,
+                         @Query("user_type") userType: String): Call<GetDriverProfile>
+
+    /**
+     * Get Driver Email Update
+     * @param email Driver email
+     * @param _id Driver id
+     * @param token_id Driver access token
+     * @return Email is successfully update or not
+     */
+    @FormUrlEncoded
+    @PUT("/api/v1/driver/update/email")
+    fun getEmailUpdate(
+            @Field("email") emailId: String,
+            @Field("_id") driverId: String,
+            @Field("token_id") token: String): Call<GetEmailUpdateResponse>
+
+    /**
+     * Get Is Driver Email Update
+     * @param _id Driver id
+     * @param token_id Driver access token
+     * @return true if updated
+     */
+    @GET("/api/v1/driver/check/email")
+    fun checkIsEmailUpdated(
+            @Query("_id") driverId: String,
+            @Query("token_id") token: String): Call<CheckEmailUpdateResponse>
+
+    //endregion
+
+    // region Location related endpoints
+
+    fun iAmHere()
+
+    // endregion
+
+    //region Job related endpoints
 
     /**
      * Requests the list of job request
@@ -158,30 +199,28 @@ interface Backend {
     @POST("/api/v1/trips/{job_id}/feedback")
     fun concludeJob(@Path("job_id") jobId: String, @Body body: ConcludeJobRequest): Call<ConcludeJobBadResponse>
 
-    /**
-     * Get Driver Email Update
-     * @param email Driver email
-     * @param _id Driver id
-     * @param token_id Driver access token
-     * @return Email is successfully update or not
-     */
-    @FormUrlEncoded
-    @PUT("/api/v1/driver/update/email")
-    fun getEmailUpdate(
-            @Field("email") emailId: String,
-            @Field("_id") driverId: String,
-            @Field("token_id") token: String): Call<GetEmailUpdateResponse>
+    //endregion
 
-    /**
-     * Get Is Driver Email Update
-     * @param _id Driver id
-     * @param token_id Driver access token
-     * @return true if updated
-     */
-    @GET("/api/v1/driver/check/email")
-    fun checkIsEmailUpdated(
-            @Query("_id") driverId: String,
-            @Query("token_id") token: String): Call<CheckEmailUpdateResponse>
+    // region Withdraw related endpoints
+
+    @GET("/api/v1/driver/paymentmethods")
+    fun getWithdrawalPaymentMethods(
+            @Query("token_id") token: String,
+            @Query("_id") driverId: String
+    ): Call<GetWithdrawalPaymentMethods>
+
+    @PUT("/api/v1/driver/withdrawal")
+    @FormUrlEncoded
+    fun getPerformWithdraw(
+            @Field("token_id") token: String,
+            @Field("_id") driverId: String,
+            @Field("payment_method") paymentMethod: Number,
+            @Field("amount") amount: Number
+    ): Call<WithdrawPostResponse>
+
+    //endregion
+
+    // region Mock endpoints
 
     @GET
     fun getMockJobRequestList(
@@ -199,25 +238,7 @@ interface Backend {
             @Query("_id") driverId: String,
             @Query("token_id") token: String): Call<GetJobRequestDetailResponse>
 
-    @GET("/api/v1/driver/paymentmethods")
-    fun getWithdrawalPaymentMethods(
-            @Query("token_id") token: String,
-            @Query("_id") driverId: String
-    ): Call<GetWithdrawalPaymentMethods>
-
-    @PUT("/api/v1/driver/withdrawal")
-    @FormUrlEncoded
-    fun getPerformWithdraw(
-            @Field("token_id") token: String,
-            @Field("_id") driverId: String,
-            @Field("payment_method") paymentMethod: Number,
-            @Field("amount") amount: Number
-    ): Call<WithdrawPostResponse>
-
-    @GET("/api/v1/driver/getProfile")
-    fun getDriverProfile(@Query("_id") _id: String,
-                         @Query("token_id") token_id: String,
-                         @Query("user_type") userType: String): Call<GetDriverProfile>
+    //endregion
 
 
     @GET("/api/v1/users/getFareEstimation")
@@ -233,13 +254,18 @@ interface Backend {
     @FormUrlEncoded
     @POST("/api/v1/driver/offline/ride/otp")
     fun generateDriverOTP(@Field(Fields.OtpSend.ID) id: String,
-                      @Field(Fields.OtpSend.TOKEN_ID) tokenId: String,
-                      @Field(Fields.OtpSend.PHONE_NUMBER) phone: String,
-                      @Field(Fields.OtpSend.TYPE) type: String): Call<VerifyNumberResponse>
+                          @Field(Fields.OtpSend.TOKEN_ID) tokenId: String,
+                          @Field(Fields.OtpSend.PHONE_NUMBER) phone: String,
+                          @Field(Fields.OtpSend.TYPE) type: String): Call<VerifyNumberResponse>
 
     @POST("/api/v1/trips/create")
     fun initiateRide(
             @Body bodyObject: RideCreateRequestObject): Call<RideCreateResponse>
+
+    @PUT("/api/v1/trips/{trip_id}/partner")
+    fun updateBookingDetails(
+            @Path("trip_id") jobRequestId: String,
+            @Body bodyObject: UpdateBykeaCashBookingRequest): Call<UpdateBykeaCashBookingResponse>
 
     companion object {
 
@@ -258,23 +284,13 @@ interface Backend {
             this.level = HttpLoggingInterceptor.Level.BODY
         }
 
-        private val socketFactory: SSLSocketFactory?
-        val sslContext: SSLContext? = NetworkUtil.getSSLContext().apply {
-            socketFactory = this?.socketFactory
-        }
-
-        val client: OkHttpClient = OkHttpClient.Builder().apply {
-            connectTimeout(1, TimeUnit.MINUTES)
-            readTimeout(1, TimeUnit.MINUTES)
-            writeTimeout(1, TimeUnit.MINUTES)
-            if (socketFactory != null) sslSocketFactory(socketFactory)
+        val client: OkHttpClient = NetworkUtil.enableTls12OnPreLollipop().apply {
             if (BuildConfig.DEBUG) addNetworkInterceptor(loggingInterceptor)
         }.build()
 
         operator fun invoke(baseUrl: String): Backend {
             return Retrofit.Builder()
-//                    .client(client)
-                    .client(NetworkUtil.getUnsafeOkHttpClient())
+                    .client(NetworkUtil.enableTls12OnPreLollipop().build())
                     .baseUrl(baseUrl)
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create())

@@ -113,6 +113,7 @@ class JobDetailActivity : BaseActivity() {
             }
 
             override fun onAcceptBooking() {
+                Dialogs.INSTANCE.showLoader(this@JobDetailActivity)
                 binding.viewmodel?.accept()
             }
 

@@ -1,12 +1,10 @@
 package com.bykea.pk.partner.dal.source.remote
 
-import androidx.room.util.StringUtil
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
-import com.bykea.pk.partner.dal.util.EMPTY_STRING
 import retrofit2.Call
 import retrofit2.Response
 
@@ -42,7 +40,7 @@ class JobsRemoteDataSource {
     fun getJob(bookingId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.GetJobRequestCallback) {
         Backend.loadboard.getJob(driverId, token, bookingId, lat, lng).enqueue(object : Callback<GetJobRequestDetailResponse> {
             override fun onSuccess(response: GetJobRequestDetailResponse) = callback.onJobLoaded(response.data)
-            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(message)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message)
         })
     }
 
@@ -134,7 +132,7 @@ class JobsRemoteDataSource {
     fun startJob(jobId: String, address: String, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.StartJobCallback) {
         Backend.talos.startJob(jobId, StartJobRequest(driverId, token, lat, lng, address)).enqueue(object : Callback<StartJobResponse> {
             override fun onSuccess(response: StartJobResponse) = callback.onJobStarted()
-            override fun onFail(code: Int, message: String?) = callback.onJobStartFailed()
+            override fun onFail(code: Int, message: String?) = callback.onJobStartFailed(message)
         })
     }
 
@@ -284,6 +282,21 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, subCode: Int?, message: String?) {
                 callback.onFail(code, subCode, message)
             }
+        })
+    }
+
+
+    /**
+     * Finish job to remote data source
+     *
+     * @param jobId Job Id
+     * @param requestBodyBykeaCash Request body
+     * @param callbackBykeaCash Response callbackBykeaCash
+     */
+    fun updateBookingDetails(tripId: String, requestBodyBykeaCash: UpdateBykeaCashBookingRequest, callbackBykeaCash: JobsDataSource.UpdateBykeaCashBookingCallback) {
+        Backend.talos.updateBookingDetails(tripId, requestBodyBykeaCash).enqueue(object : Callback<UpdateBykeaCashBookingResponse> {
+            override fun onSuccess(responseBykeaCash: UpdateBykeaCashBookingResponse) = callbackBykeaCash.onSuccess(responseBykeaCash)
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callbackBykeaCash.onFail(code, subCode, message)
         })
     }
 }

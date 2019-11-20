@@ -328,7 +328,7 @@ interface IRestClient {
                                                        @Url String url);
 
 
-    @GET(ApiTags.PLACES_DISTANCEMATRIX_EXT_URL)
+    @GET(ApiTags.PLACES_DISTANCE_MATRIX_EXT_URL)
     Call<GoogleDistanceMatrixApi> callDistanceMatrixApi(@Query(Fields.GoogleDirectionApi.ORIGIN) String origin,
                                                         @Query(Fields.GoogleDirectionApi.DESTINATION) String destination,
                                                         @Query(Fields.GoogleDirectionApi.KEY) String key);

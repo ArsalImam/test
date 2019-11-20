@@ -382,6 +382,11 @@ public class Constants {
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;
         public static final int MART = 25;
+        public static final int MOBILE_TOP_UP = 27;
+        public static final int MOBILE_WALLET = 28;
+        public static final int BANK_TRANSFER = 29;
+        public static final int UTILITY = 30;
+        public static final int OFFLINE_DELIVERY = 31;
     }
 
     /**
@@ -462,6 +467,7 @@ public class Constants {
         public static final String BUSTICKET_TYPE = "Bus Ticket";
 
         public static final String VAN_TYPE = "Carry Van";
+        public static final String GOODS_TYPE = "Goods";
         public static final String COURIER_TYPE = "Courier";
 
         public static final String INSURANCE_TYPE = "Bima";
@@ -641,8 +647,18 @@ public class Constants {
     public final static int PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK = 50;
     public final static int PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK = 500;
     public final static int AMOUNT_LIMIT = 35000;
+    public static final int BYKEA_CASH_MAX_AMOUNT = 7700;
 
     public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
     public final static String MOBILE_COUNTRY_STANDARD = "92";
     public final static String MOBILE_TEL_URI ="tel:";
+    public final static int MAX_LENGTH_CNIC = 13;
+    public final static int MAX_LENGTH_IBAN = 24;
+    public final static String BYKEA_SUPPORT_HELPLINE = "02138654444";
+    public final static String BYKEA_SUPPORT_CONTACT_NUMBER = "03111111700";
+    public final static String SEPERATOR ="/";
+
+    public final static int DIRECTION_API_MIX_THRESHOLD_METERS = 45; //meters
+    public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 7; //70 seconds
+    public final static int DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME = 30; //300 seconds
 }

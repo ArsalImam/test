@@ -11,6 +11,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
@@ -33,10 +36,12 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.APP
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
 import com.bykea.pk.partner.utils.Constants.Extras.FROM
+import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
+import com.bykea.pk.partner.utils.Utils.LocationAddressCallback
 import com.bykea.pk.partner.widgets.FontTextView
 import kotlinx.android.synthetic.main.activity_ride_code_verification.*
 import kotlinx.android.synthetic.main.fragment_offline_rides.*
@@ -56,8 +61,8 @@ class OfflineRidesFragment : Fragment() {
 
         binding.listener = object : OfflineFragmentListener {
             override fun onDropOffClicked() {
-                if (StringUtils.isEmpty(eTMobileNumber.text?.trim()))
-                    eTMobileNumber.clearFocus()
+                eTMobileNumber.clearFocus()
+                eTCustomerName.clearFocus()
                 val returndropoffIntent = Intent(mCurrentActivity, SelectPlaceActivity::class.java)
                 returndropoffIntent.putExtra(FROM, Constants.CONFIRM_DROPOFF_REQUEST_CODE)
                 returndropoffIntent.putExtra(FLOW_FOR, Constants.Extras.OFFLINE_RIDE)
@@ -65,23 +70,26 @@ class OfflineRidesFragment : Fragment() {
             }
 
             override fun onReceiveCodeClicked() {
-                if (Utils.isValidNumber(mCurrentActivity, eTMobileNumber)) {
-                    Dialogs.INSTANCE.showLoader(mCurrentActivity)
-                    jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
-                            object : JobsDataSource.OtpGenerateCallback {
-                                override fun onSuccess(verifyNumberResponse: VerifyNumberResponse) {
-                                    Dialogs.INSTANCE.dismissDialog()
-                                    ActivityStackManager
-                                            .getInstance()
-                                            .startWaitingActivity(mCurrentActivity, createRequestBody(),
-                                                    binding.eTMobileNumber.text.toString())
-                                }
+                if ((rBSawari.isChecked && validateMobileNumber()) ||
+                        (rBDelivery.isChecked && validateMobileNumber() && validateCustomerName())) {
+                    val requestBody: RideCreateRequestObject = createRequestBody()
+                    requestBody.pickup_info.address = Utils.getLocationAddress(AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(), mCurrentActivity)
 
-                                override fun onFail(code: Int, subCode: Int?, message: String?) {
-                                    Dialogs.INSTANCE.dismissDialog()
-                                    displayErrorToast(code, subCode, message)
-                                }
-                            })
+                    if (requestBody.pickup_info.address.isNullOrEmpty()) {
+                        Utils.getLocationAddress(
+                                AppPreferences.getLatitude().toString(),
+                                AppPreferences.getLongitude().toString(), mCurrentActivity,
+                                object : LocationAddressCallback {
+                                    override fun onSuccess(reverseGeoCodeAddress: String?) {
+                                        requestBody.pickup_info.address = reverseGeoCodeAddress
+                                        navigateToVerifyCode(requestBody)
+                                    }
+
+                                    override fun onFail() = navigateToVerifyCode(requestBody)
+                                })
+                    } else {
+                        navigateToVerifyCode(requestBody)
+                    }
                 }
             }
         }
@@ -89,6 +97,16 @@ class OfflineRidesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().settings != null &&
+                AppPreferences.getSettings().settings.isOfflineDeliveryEnable) {
+            rGOfflineRide.visibility = View.VISIBLE
+            ViewCompat.setLayoutDirection(rGOfflineRide, ViewCompat.LAYOUT_DIRECTION_RTL)
+            rBSawari.text = FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.sawari), Constants.FontNames.JAMEEL_NASTALEEQI)
+            rBDelivery.text = FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.delivery), Constants.FontNames.JAMEEL_NASTALEEQI)
+        } else {
+            rGOfflineRide.visibility = View.GONE
+        }
+
         val spannableStringBuilder = SpannableStringBuilder()
         spannableStringBuilder.append(FontUtils.getStyledTitle(mCurrentActivity, mCurrentActivity?.getString(R.string.offline_rides_en),
                 "roboto_medium.ttf"))
@@ -110,25 +128,77 @@ class OfflineRidesFragment : Fragment() {
             override fun afterTextChanged(p0: Editable?) {}
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                validateNumberSetButtonColor()
+                if (validateMobileNumber()) {
+                    setBackgroundColor(R.color.colorAccent)
+                } else {
+                    setBackgroundColor(R.color.color_A7A7A7)
+                }
+            }
+        })
+
+        eTCustomerName.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (rBDelivery.isChecked)
+                    if (validateCustomerName()) {
+                        setBackgroundColor(R.color.colorAccent)
+                    } else {
+                        setBackgroundColor(R.color.color_A7A7A7)
+                    }
+            }
+        })
+        rGOfflineRide.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener {
+            override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+                when (checkedId) {
+                    rBSawari.id -> {
+                        eTCustomerName.error = null
+                        eTCustomerName.clearFocus()
+                        if (Utils.isValidNumber(eTMobileNumber)) {
+                            setBackgroundColor(R.color.colorAccent)
+                        } else {
+                            setBackgroundColor(R.color.color_A7A7A7)
+                        }
+                    }
+                    rBDelivery.id -> {
+                        if (Utils.isValidNumber(eTMobileNumber) && validateCustomerName(false)) {
+                            setBackgroundColor(R.color.colorAccent)
+                        } else {
+                            setBackgroundColor(R.color.color_A7A7A7)
+                        }
+                    }
+                }
             }
         })
     }
 
     /**
-     * Set Button Background According To The Validation Of Mobile Number
+     * Validate Mobile Number (Valid Number or Not)
      */
-    private fun validateNumberSetButtonColor() {
-        if (Utils.isValidNumber(eTMobileNumber)) {
-            setBackgroundColor(R.color.colorAccent)
-        } else {
-            setBackgroundColor(R.color.color_A7A7A7)
+    private fun validateMobileNumber(): Boolean {
+        return if (rBSawari.isChecked)
+            Utils.isValidNumber(mCurrentActivity, eTMobileNumber)
+        else
+            Utils.isValidNumber(mCurrentActivity, eTMobileNumber) && validateCustomerName()
+    }
+
+    /**
+     * Validate Customer Field (Empty or Not)
+     */
+    private fun validateCustomerName(showError: Boolean = true): Boolean {
+        if (eTCustomerName.text.toString().isEmpty()) {
+            if (showError) {
+                eTCustomerName.error = context?.getString(R.string.enter_correct_customer_name);
+                eTCustomerName.requestFocus()
+            }
+            return false
         }
+        return Utils.isValidNumber(eTMobileNumber)
     }
 
     /**
      * Set Background Color For Bottom Button
-     * @param co
+     * @param colorId
      */
     private fun setBackgroundColor(colorId: Int) {
         mCurrentActivity.let {
@@ -138,12 +208,6 @@ class OfflineRidesFragment : Fragment() {
                 tVReceiveCode.setBackgroundColor(mCurrentActivity!!.resources.getColor(colorId))
             }
         }
-    }
-
-    override fun onDestroyView() {
-        mCurrentActivity?.showToolbar()
-        mCurrentActivity?.hideUrduTitle()
-        super.onDestroyView()
     }
 
     /**
@@ -226,16 +290,23 @@ class OfflineRidesFragment : Fragment() {
             _id = AppPreferences.getDriverId()
             token_id = AppPreferences.getAccessToken()
 
+            if (!eTCustomerName.text.toString().isEmpty())
+                customer_name = eTCustomerName.text.toString()
+
             trip = RideCreateTripData()
             trip.creator = APP
-            trip.service_code = OFFLINE_RIDE
+
+            if (rBSawari.isChecked)
+                trip.service_code = OFFLINE_RIDE
+            else
+                trip.service_code = OFFLINE_DELIVERY
+
             trip.lat = AppPreferences.getLatitude().toString()
             trip.lng = AppPreferences.getLongitude().toString()
 
             pickup_info = RideCreateLocationInfoData()
             pickup_info.lat = AppPreferences.getLatitude().toString()
             pickup_info.lng = AppPreferences.getLongitude().toString()
-            pickup_info.address = Utils.getLocationAddress(AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(), mCurrentActivity)
 
             if (mDropOffResult != null) {
                 dropoff_info = RideCreateLocationInfoData()
@@ -244,6 +315,28 @@ class OfflineRidesFragment : Fragment() {
                 dropoff_info?.address = mDropOffResult?.address
             }
         }
+    }
+
+    /**
+     * Navigate To Verify Code Screen
+     */
+    private fun navigateToVerifyCode(requestBody: RideCreateRequestObject) {
+        Dialogs.INSTANCE.showLoader(mCurrentActivity)
+        jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
+                object : JobsDataSource.OtpGenerateCallback {
+                    override fun onSuccess(verifyNumberResponse: VerifyNumberResponse) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        ActivityStackManager
+                                .getInstance()
+                                .startWaitingActivity(mCurrentActivity, requestBody,
+                                        binding.eTMobileNumber.text.toString())
+                    }
+
+                    override fun onFail(code: Int, subCode: Int?, message: String?) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        displayErrorToast(code, subCode, message)
+                    }
+                })
     }
 
     /**
@@ -273,4 +366,11 @@ class OfflineRidesFragment : Fragment() {
             }
         }
     }
+
+    override fun onDestroyView() {
+        mCurrentActivity?.showToolbar()
+        mCurrentActivity?.hideUrduTitle()
+        super.onDestroyView()
+    }
+
 }

@@ -38,6 +38,7 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -64,6 +65,12 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView startAddressTv;
     @BindView(R.id.invoiceMsgTv)
     FontTextView invoiceMsgTv;
+    @BindView(R.id.ic_pin)
+    View ic_pin;
+    @BindView(R.id.addressDivider)
+    View addressDivider;
+    @BindView(R.id.dotted_line)
+    View dotted_line;
     @BindView(R.id.endAddressTv)
     FontTextView endAddressTv;
     //    @BindView(R.id.callerNameTv)
@@ -103,6 +110,8 @@ public class FeedbackActivity extends BaseActivity {
     FontTextView tvCOD;
     @BindView(R.id.tvAmountToGetLable)
     FontTextView tvAmountToGetLable;
+    @BindView(R.id.tvPayment)
+    FontTextView tvPayment;
     @BindView(R.id.totalAmountTvLable)
     FontTextView totalAmountTvLable;
     @BindView(R.id.rlCOD)
@@ -138,6 +147,7 @@ public class FeedbackActivity extends BaseActivity {
     private JobsRepository repo;
 
     int driverWallet;
+    private boolean isJobSuccessful = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,15 +205,17 @@ public class FeedbackActivity extends BaseActivity {
         if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
                 if (driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT
-                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE)) {
+                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
+                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
                     //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
                 } else if ((driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
-                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE)) {
+                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE) &&
+                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
                     //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
                     //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
-                } else if (driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                } else if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT) &&
                         Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT + Constants.DIGIT_ONE)) {
                     //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
                     //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
@@ -217,15 +229,16 @@ public class FeedbackActivity extends BaseActivity {
         }
     }
 
-    private boolean isDeliveryType, isPurchaseType;
+    private boolean isBykeaCashType, isDeliveryType, isPurchaseType;
     private NormalCallData callData;
 
     private void initViews() {
         mCurrentActivity = this;
 
         callData = AppPreferences.getCallData();
+        isBykeaCashType = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
-        isPurchaseType = Utils.isPurchaseService(callData.getCallType(),callData.getServiceCode());
+        isPurchaseType = Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode());
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
@@ -259,8 +272,10 @@ public class FeedbackActivity extends BaseActivity {
             rlDropOffDiscount.setVisibility(View.VISIBLE);
             tvDropOffDiscount.setText(callData.getDropoff_discount());
         }
-        if (isDeliveryType) {
 
+        if (isBykeaCashType) {
+            updateUIBykeaCash();
+        } else if (isDeliveryType) {
             updateUIICODelivery();
         } else if (isPurchaseType) {
             updateUIforPurcahseService();
@@ -327,13 +342,37 @@ public class FeedbackActivity extends BaseActivity {
         etReceiverName.requestFocus();
     }
 
+    private void updateUIBykeaCash() {
+        endAddressTv.setVisibility(View.GONE);
+        dotted_line.setVisibility(View.GONE);
+        ic_pin.setVisibility(View.GONE);
+        tvTotalTime.setVisibility(View.GONE);
+        tvTotalDistance.setVisibility(View.GONE);
+        addressDivider.setVisibility(View.GONE);
+
+        rlDeliveryStatus.setVisibility(View.VISIBLE);
+        ivRight0.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.polygon, R.color.blue_dark));
+        initAdapter(callData);
+
+        if (StringUtils.isNotBlank(callData.getCodAmount())) {
+            rlCOD.setVisibility(View.VISIBLE);
+            tvCOD.setText(callData.getCodAmount());
+            tvPayment.setText(R.string.payment);
+        } else {
+            rlCOD.setVisibility(View.GONE);
+        }
+        receivedAmountEt.requestFocus();
+    }
+
     private int selectedMsgPosition = 0;
 
     private void initAdapter(final NormalCallData callData) {
 
-        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity,
-                Utils.getDeliveryMsgsList(mCurrentActivity));
+        String[] list;
+        if (isBykeaCashType) list = Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
+        else list = Utils.getDeliveryMsgsList(mCurrentActivity);
 
+        final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, list);
 
         spDeliveryStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -355,15 +394,17 @@ public class FeedbackActivity extends BaseActivity {
                     });
                 }
                 selectedMsgPosition = position;
-                if (StringUtils.isNotBlank(callData.getCodAmount()) && callData.isCod()) {
+                if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashType)) {
                     if (position == 0) {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                         totalCharges = "" + (Integer.parseInt(callData.getTotalFare()) + Integer.parseInt(callData.getCodAmountNotFormatted()));
+                        isJobSuccessful = true;
                     } else {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit();
                         tvCOD.setPaintFlags(tvCOD.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         totalCharges = callData.getTotalFare();
+                        isJobSuccessful = false;
                     }
                     tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
                 }
@@ -423,7 +464,36 @@ public class FeedbackActivity extends BaseActivity {
             if (isLoadboardJob)
                 repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
-            if (isDeliveryType) {
+            if (isBykeaCashType) {
+                if (isLoadboardJob) {
+                    String name = callData.getSenderName() != null ? callData.getSenderName() : callData.getPassName();
+                    String number = callData.getSenderPhone() != null ? callData.getSenderPhone() : callData.getPhoneNo();
+
+
+                    repo.concludeJob(
+                            callData.getTripId(),
+                            (int) callerRb.getRating(),
+                            Integer.parseInt(receivedAmountEt.getText().toString()),
+                            jobCallback,
+                            Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
+                            selectedMsgPosition == 0,
+                            null,
+                            name,
+                            number
+                    );
+                } else
+                    new UserRepository().requestFeedback(
+                            mCurrentActivity,
+                            handler,
+                            "",
+                            callerRb.getRating() + "",
+                            receivedAmountEt.getText().toString(),
+                            selectedMsgPosition == 0,
+                            Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
+                            etReceiverName.getText().toString(),
+                            etReceiverMobileNo.getText().toString()
+                    );
+            } else if (isDeliveryType) {
                 if (isLoadboardJob)
                     repo.concludeJob(
                             callData.getTripId(),
@@ -570,24 +640,27 @@ public class FeedbackActivity extends BaseActivity {
             setEtError(getString(R.string.error_invalid_amount));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
-                && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)) {
+                && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)
+                && (!isBykeaCashType || isJobSuccessful)) {
             setEtError(getString(R.string.error_amount_greater_than_total));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT &&
-                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE)) {
+                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
+                !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
             //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 (driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
-                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE)) {
+                Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE) &&
+                !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
             //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
             //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
             setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
             return false;
         } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
-                driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT &&
+                (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT) &&
                 Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT + Constants.DIGIT_ONE)) {
             //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
             //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)

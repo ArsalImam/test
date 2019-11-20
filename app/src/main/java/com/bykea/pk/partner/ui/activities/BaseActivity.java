@@ -368,7 +368,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    private void dismissProgressDialog() {
+    protected void dismissProgressDialog() {
         try {
             if (progressDialog != null) {
                 progressDialog.dismiss();
@@ -862,10 +862,14 @@ public class BaseActivity extends AppCompatActivity {
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            String name = componentName.getClassName();
+            if (name.endsWith("LocationTrackingService")) {
+                LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
+//                TrackingService.LocalBinder binder = (TrackingService.LocalBinder) service;
+                mService = binder.getService();
+                mBound = true;
+            }
         }
 
         @Override

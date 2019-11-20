@@ -56,6 +56,8 @@ import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
 import com.bykea.pk.partner.tracking.Routing;
 import com.bykea.pk.partner.tracking.RoutingListener;
+import com.bykea.pk.partner.ui.bykeacash.BykeaCashDetailsListener;
+import com.bykea.pk.partner.ui.bykeacash.BykeaCashFormFragment;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -67,6 +69,7 @@ import com.bykea.pk.partner.utils.MapUtil;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.TripStatus;
+import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontTextView;
@@ -113,11 +116,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
 
-public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener {
+public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener, BykeaCashDetailsListener {
 
     private final String TAG = BookingActivity.class.getSimpleName();
 
@@ -177,10 +181,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     ImageView ivTopUp;
     @BindView(R.id.llDetails)
     LinearLayout llDetails;
+    @BindView(R.id.llBykeaSupportContactInfo)
+    LinearLayout llBykeaSupportContactInfo;
     @BindView(R.id.tvDetailsNotEntered)
     FontTextView tvDetailsNotEntered;
+    @BindView(R.id.tvDetailsBanner)
+    FontTextView tvDetailsBanner;
     @BindView(R.id.tvCustomerName)
     FontTextView tvCustomerName;
+    @BindView(R.id.tvBykeaSupportContactNumber)
+    FontTextView tvBykeaSupportContactNumber;
     @BindView(R.id.tvCustomerPhone)
     FontTextView tvCustomerPhone;
     @BindView(R.id.tvDetailsAddress)
@@ -217,12 +227,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean lastPickUpFlagOnLeft, lastDropOffFlagOnLeft = false;
     boolean shouldRefreshPickupMarker = false, shouldRefreshDropOffMarker = false;
     private boolean allowTripStatusCall = true;
+    boolean isBykeaCashJob = false;
     CountDownTimer countDownTimer;
 
     private boolean shouldCameraFollowCurrentLocation = false;
     private boolean isFinishedRetried = false;
     private boolean IS_CALLED_FROM_LOADBOARD_VALUE = false;
     private int requestTripCounter = 0;
+
+    BykeaCashFormFragment bykeaCashFormFragment;
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -493,15 +506,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 checkGps();
             } else {
                 if (Connectivity.isConnectedFast(context)) {
-                    if (null != progressDialogJobActivity && !isFirstTime) {
+                    if (null != progressDialogJobActivity) {
                         progressDialogJobActivity.dismiss();
                         if (allowTripStatusCall)
                             dataRepository.requestRunningTrip(mCurrentActivity, handler);
-                    } else {
-                        isFirstTime = false;
                     }
                 } else {
-                    if (progressDialogJobActivity != null) progressDialogJobActivity.show();
+                    if (progressDialogJobActivity != null) {
+                        dismissProgressDialog();
+                        progressDialogJobActivity.dismiss();
+                        progressDialogJobActivity.show();
+                    }
                 }
             }
         }
@@ -516,6 +531,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         mCurrentActivity = this;
         dataRepository = new UserRepository();
         jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+
+        if (progressDialogJobActivity == null) {
+            progressDialogJobActivity = new ProgressDialog(mCurrentActivity);
+            progressDialogJobActivity.setCancelable(false);
+            progressDialogJobActivity.setIndeterminate(true);
+            progressDialogJobActivity.setMessage(getString(R.string.internet_error));
+        }
 
         // FOR CHAT NOTIFCATION BADGE ICON HANDLING
         if (AppPreferences.getReceivedMessageCount() != null) {
@@ -575,7 +597,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @Override
     public void onBackPressed() {
-
     }
 
     @Override
@@ -664,16 +685,19 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections,
-            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone})
+            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone, R.id.tvDetailsBanner, R.id.tvBykeaSupportContactNumber})
     public void onClick(View view) {
 
         switch (view.getId()) {
             case R.id.chatBtn:
-                if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
-                    Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
-                } else {
-                    ActivityStackManager.getInstance()
-                            .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
+                if (callData != null) {
+                    if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
+                        Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                    } else {
+                        ActivityStackManager.getInstance()
+                                .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
+                    }
                 }
                 break;
             case R.id.ivAddressEdit:
@@ -691,32 +715,46 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.tvCustomerPhone:
-                if (StringUtils.isNotBlank(tvCustomerPhone.getText().toString())) {
-                    Utils.callingIntent(mCurrentActivity, tvCustomerPhone.getText().toString());
+                String phoneNumber = tvCustomerPhone.getText().toString();
+                if (StringUtils.isNotBlank(phoneNumber)) {
+                    if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                        Utils.openCallDialog(mCurrentActivity, callData, phoneNumber);
+                    } else {
+                        Utils.callingIntent(mCurrentActivity, phoneNumber);
+                    }
+                }
+                break;
+            case R.id.tvBykeaSupportContactNumber:
+                if (StringUtils.isNotBlank(tvBykeaSupportContactNumber.getText().toString())) {
+                    Utils.callingIntent(mCurrentActivity, tvBykeaSupportContactNumber.getText().toString());
                 }
                 break;
             case R.id.cancelBtn:
-                if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
-                    String msg = "پہنچنے کے " + AppPreferences.getSettings()
-                            .getSettings().getCancel_time() +
-                            " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
-                    Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            cancelReasonDialog();
-                        }
-                    }, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Dialogs.INSTANCE.dismissDialog();
-                        }
-                    }, "Cancel Trip", msg);
-                } else {
-                    cancelReasonDialog();
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
+                if (callData != null) {
+                    if (Utils.isCancelAfter5Min(AppPreferences.getCallData().getSentTime())) {
+                        String msg = "پہنچنے کے " + AppPreferences.getSettings()
+                                .getSettings().getCancel_time() +
+                                " منٹ کے اندر کینسل کرنے پر کینسیلیشن فی لگے گی";
+                        Dialogs.INSTANCE.showAlertDialogWithTickCross(mCurrentActivity, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Dialogs.INSTANCE.dismissDialog();
+                                cancelReasonDialog();
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Dialogs.INSTANCE.dismissDialog();
+                            }
+                        }, "Cancel Trip", msg);
+                    } else {
+                        cancelReasonDialog();
+                    }
                 }
                 break;
             case R.id.jobBtn:
+                if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
@@ -822,6 +860,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         }
                     }
                 });
+                break;
+            case R.id.tvDetailsBanner:
+                bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
+                bykeaCashFormFragment.setCancelable(false);
+                bykeaCashFormFragment.show(getSupportFragmentManager(), BykeaCashFormFragment.class.getSimpleName());
                 break;
         }
     }
@@ -1159,12 +1202,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * METHODS FOR SETTING CALL DATA ACCORDING TO THE TRIP STATE
      ****************************************************************************************/
     private void setInitialData() {
-        if (progressDialogJobActivity == null) {
-            progressDialogJobActivity = new ProgressDialog(mCurrentActivity);
-            progressDialogJobActivity.setCancelable(false);
-            progressDialogJobActivity.setIndeterminate(true);
-            progressDialogJobActivity.setMessage(getString(R.string.internet_error));
-        }
         AppPreferences.setIsOnTrip(true);
         ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
         mLocBearing = AppPreferences.getBearing() + "";
@@ -1180,6 +1217,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             AppPreferences.setTripStatus(callData.getStatus());
 //        setCallData();
             tvTripId.setText(callData.getTripNo());
+
+            isBykeaCashJob = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
+
+            if (isBykeaCashJob) {
+                tvDetailsBanner.setVisibility(View.VISIBLE);
+                setAddressDetailsVisible();
+            }
 
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
@@ -1242,14 +1286,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void setAcceptedState() {
         callerNameTv.setText(callData.getPassName());
-        setTimeDistance(Utils.formatETA(callData.getArivalTime()),
-                callData.getDistance());
+        setTimeDistance(Utils.formatETA(callData.getArivalTime()), callData.getDistance());
         setPickUpAddress();
 
-        if (callData != null && callData.getServiceCode() != null && callData.getServiceCode() == MART
-                && StringUtils.isEmpty(callData.getReceiverAddress())
+        if (StringUtils.isEmpty(callData.getReceiverAddress())
                 && StringUtils.isEmpty(callData.getReceiverName())
-                && StringUtils.isEmpty(callData.getReceiverPhone()))
+                && StringUtils.isEmpty(callData.getReceiverPhone())
+                && ((callData.getServiceCode() != null && callData.getServiceCode() == MART) || isBykeaCashJob))
             setAddressDetailsVisible();
     }
 
@@ -1258,22 +1301,25 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void setArrivedState() {
         jobBtn.setText(getString(R.string.button_text_start));
-        showDropOffAddress();
         llStartAddress.setVisibility(View.GONE);
+        showDropOffAddress();
         cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
+
+        if (isBykeaCashJob) setAddressDetailsVisible();
     }
 
     /**
      * Set and Configure Accordingly For The Started State
      */
     private void setStartedState() {
+        jobBtn.setText(getString(R.string.button_text_finish));
         llStartAddress.setVisibility(View.GONE);
         showDropOffAddress();
         cvDirections.setVisibility(View.VISIBLE);
-        jobBtn.setText(getString(R.string.button_text_finish));
         setOnStartData();
 
+        if (isBykeaCashJob) setAddressDetailsVisible();
     }
 
     /**
@@ -1281,8 +1327,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void showDropOffAddress() {
         if (Utils.isCourierService(callData.getCallType())) {
+            llStartAddress.setVisibility(View.GONE);
+            llEndAddress.setVisibility(View.GONE);
+        } else if (isBykeaCashJob) {
+            llStartAddress.setVisibility(View.VISIBLE);
             llEndAddress.setVisibility(View.GONE);
         } else {
+            llStartAddress.setVisibility(View.GONE);
             llEndAddress.setVisibility(View.VISIBLE);
         }
     }
@@ -1305,7 +1356,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         } else {
             int cashKiWasooliValue = callData.getCashKiWasooli();
-            if (callData.isCod() && StringUtils.isNotBlank(callData.getCodAmount())) {
+            if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashJob)) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
@@ -1630,7 +1681,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
         } else {
-            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))
+            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) &&
+                    !isBykeaCashJob)
                 pickUpMarker.remove();
             if (callData.getDropoffStop() != null && callData.getEndLat() != null && !callData.getEndLat().isEmpty() && callData.getEndLng() != null && !callData.getEndLng().isEmpty())
                 updateDropOffMarker();
@@ -1823,8 +1875,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private boolean isDirectionApiCallRequired(LatLng currentApiCallLatLng) {
-        if (lastApiCallLatLng != null && (lastApiCallLatLng.equals(currentApiCallLatLng)
-                || Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude, lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < 15)) {
+        if ((lastApiCallLatLng != null)
+                && (lastApiCallLatLng.equals(currentApiCallLatLng)
+                || (Utils.calculateDistance(currentApiCallLatLng.latitude, currentApiCallLatLng.longitude,
+                lastApiCallLatLng.latitude, lastApiCallLatLng.longitude) < DIRECTION_API_MIX_THRESHOLD_METERS))) {
             return false;
         }
         return true;
@@ -1900,7 +1954,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
-        if (StringUtils.isNotBlank(callData.getStartLat())
+        if (isBykeaCashJob) {
+            drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
+                    null,
+                    new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
+                    Routing.pickupRoute);
+        } else if (StringUtils.isNotBlank(callData.getStartLat())
                 && StringUtils.isNotBlank(callData.getStartLng())
                 && StringUtils.isNotBlank(callData.getEndLat())
                 && StringUtils.isNotBlank(callData.getEndLng())
@@ -2065,7 +2124,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else */
         if (StringUtils.isBlank(callData.getReceiverPhone())) {
             isAdded = false;
-        } else if (!Utils.isLoadboardService(callData.getCallType()) && StringUtils.isBlank(callData.getCodAmount())) {
+        } else if (!Utils.isModernService(callData.getServiceCode()) && StringUtils.isBlank(callData.getCodAmount())) {
             isAdded = false;
         }
         return isAdded;
@@ -2171,8 +2230,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
 
                 @Override
-                public void onJobStartFailed() {
-                    onStatusChangedFailed("Failed to mark started");
+                public void onJobStartFailed(@Nullable String message) {
+                    onStatusChangedFailed(message);
                 }
             });
         } else {
@@ -2294,7 +2353,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     callData.setStatus(TripStatus.ON_ARRIVED_TRIP);
                     AppPreferences.setCallData(callData);
                     showDropOffAddress();
-                    llStartAddress.setVisibility(View.GONE);
                     AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
                     setOnArrivedData();
                     // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
@@ -2517,12 +2575,44 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Entered by user for creation of booking
      */
     private void setAddressDetailsVisible() {
+        String senderAddress = callData.getSenderAddress() != null ? callData.getSenderAddress() : "";
+        String senderName = callData.getSenderName() != null ? callData.getSenderName() : "";
+        String senderPhone = Utils.phoneNumberToShow(callData.getSenderPhone());
+
         llDetails.setVisibility(View.VISIBLE);
         tvDetailsNotEntered.setVisibility(View.GONE);
 
-        setAddressDetailEitherSenderOrReceiver(tvCustomerName, callData.getSenderName(), callData.getReceiverName());
-        setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, Utils.phoneNumberToShow(callData.getSenderPhone()), Utils.phoneNumberToShow(callData.getReceiverPhone()));
-        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, callData.getSenderAddress(), callData.getReceiverAddress());
+        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress());
+        setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName());
+        setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, senderPhone, Utils.phoneNumberToShow(callData.getReceiverPhone()));
+
+        if (isBykeaCashJob) {
+            tvDetailsBanner.setVisibility(View.VISIBLE);
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                String supportContact = AppPreferences.getSettings().getSettings().getBykeaSupportContact();
+                if (StringUtils.isNotBlank(supportContact))
+                    tvBykeaSupportContactNumber.setText(supportContact);
+                else tvBykeaSupportContactNumber.setText(Constants.BYKEA_SUPPORT_CONTACT_NUMBER);
+                llBykeaSupportContactInfo.setVisibility(View.VISIBLE);
+                llDetails.setVisibility(View.GONE);
+                tvDetailsNotEntered.setVisibility(View.GONE);
+            } else {
+                llBykeaSupportContactInfo.setVisibility(View.GONE);
+                if (senderAddress.equalsIgnoreCase(callData.getStartAddress()) && senderName.equalsIgnoreCase(callData.getPassName()) && senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
+                    llDetails.setVisibility(View.GONE);
+                    tvDetailsNotEntered.setVisibility(View.GONE);
+                }
+                if (senderAddress.equalsIgnoreCase(callData.getStartAddress())) {
+                    tvDetailsAddress.setVisibility(View.GONE);
+                }
+                if (senderName.equalsIgnoreCase(callData.getPassName())) {
+                    tvCustomerName.setVisibility(View.GONE);
+                }
+                if (senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
+                    tvCustomerPhone.setVisibility(View.GONE);
+                }
+            }
+        }
     }
 
     /**
@@ -2542,5 +2632,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             textField.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onBykeaCashAmountUpdated(int amount) {
+        tvCodAmount.setText(String.format(getString(R.string.amount_rs_int), amount));
+        AppPreferences.setCallData(callData);
     }
 }
