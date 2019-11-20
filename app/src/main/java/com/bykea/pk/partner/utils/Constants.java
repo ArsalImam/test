@@ -11,7 +11,6 @@ public class Constants {
 
     public static final String APP = "APP";
     public static final String GCM_PROJECT_NO = "764640458585";
-    public static final String MIX_PANEL_API_KEY = BuildConfig.DEBUG ? "ccfff911cf68c43185f8fe35c1efb964" : "b97eeebca45ee4e90b79b470ae28f2da";
     public static final String APP_NAME = "BYKEA PARTNER";
     public static final String OS_NAME = "android";
 

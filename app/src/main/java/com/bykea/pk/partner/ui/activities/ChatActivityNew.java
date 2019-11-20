@@ -206,7 +206,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("chat_msg", Utils.getConcatenatedTransalation(chatMessagesTranslated));
                 Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
-                        Constants.AnalyticsEvents.ON_CHAT_TEMPLATE_TAPPED, jsonObject, true);
+                        Constants.AnalyticsEvents.ON_CHAT_TEMPLATE_TAPPED, jsonObject);
             } catch (Exception e) {
 
             }
