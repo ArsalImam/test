@@ -1460,8 +1460,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (mapPolylines != null) mapPolylines.remove();
             }
         }
-
-
+        shouldRefreshDropOffMarker = true;
     }
 
     /******************************************************************************************
