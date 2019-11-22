@@ -755,12 +755,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.jobBtn:
                 if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
-                //TODO: Why do we need fast connection?
-                // Should not check and let the networking module deal with no connection
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                    //TODO: Instead of string comparision for determining with booking state
-                    // use booking state variable
                     if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
                             callData != null) {
                         int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
@@ -787,8 +783,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }, " پہنچ گئے؟");
                         }
                     }
-                    //TODO: Instead of string comparision for determining with booking state
-                    // use booking state variable
                     //CHECK FOR BEGIN TRIP BUTTON CLICK
                     else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start)) && callData != null) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
@@ -802,10 +796,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 Dialogs.INSTANCE.dismissDialog();
                             }
                         }, " اسٹارٹ؟");
-                    }
-                    //TODO: Instead of string comparision for determining with booking state
-                    // use booking state variable
-                    else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
+                    } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
