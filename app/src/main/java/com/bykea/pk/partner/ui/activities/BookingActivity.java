@@ -1920,12 +1920,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
-        LatLng currentLocation = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
-        LatLng pickUp = new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
-        LatLng dropOff = new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng()));
-
         if (isBykeaCashJob) {
-            drawRoute(currentLocation, pickUp, Routing.pickupRoute);
+            drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
+                    new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
+                    Routing.pickupRoute);
         } else if (StringUtils.isNotBlank(callData.getStartLat())
                 && StringUtils.isNotBlank(callData.getStartLng())
                 && StringUtils.isNotBlank(callData.getEndLat())
@@ -1934,9 +1932,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 && StringUtils.isNotBlank(AppPreferences.getLongitude() + "")) {
 
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-                drawRoute(currentLocation, pickUp, Routing.pickupRoute);
+                drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
+                        new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
+                        Routing.pickupRoute);
             } else {
-                drawRoute(currentLocation, dropOff, Routing.pickupRoute);
+                drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
+                        new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng())),
+                        Routing.pickupRoute);
             }
         } else {
             if (mapPolylines != null) mapPolylines.remove();
