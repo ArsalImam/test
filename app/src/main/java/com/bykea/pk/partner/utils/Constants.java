@@ -662,7 +662,7 @@ public class Constants {
     public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 7; //70 seconds
     public final static int DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME = 30; //300 seconds
 
-    public static final long SET_SCALE_ANIMATION_DURATION = 750;
+    public static final long SET_SCALE_ANIMATION_DURATION = 500;
     public static final int SET_SCALE_ANIMATION_REPEAT_COUNT = 7;
     public static final float SET_SCALE_ANIMATION_FROM_X = 1.0f;
     public static final float SET_SCALE_ANIMATION_FROM_Y = 1.0f;
