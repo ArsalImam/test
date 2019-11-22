@@ -759,12 +759,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.jobBtn:
                 if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
-                //TODO: Why do we need fast connection?
-                // Should not check and let the networking module deal with no connection
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                    //TODO: Instead of string comparision for determining with booking state
-                    // use booking state variable
                     if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_arrived)) &&
                             callData != null) {
                         int distance = (int) Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
@@ -791,8 +787,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }, " پہنچ گئے؟");
                         }
                     }
-                    //TODO: Instead of string comparision for determining with booking state
-                    // use booking state variable
                     //CHECK FOR BEGIN TRIP BUTTON CLICK
                     else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_start)) && callData != null) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
@@ -806,10 +800,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 Dialogs.INSTANCE.dismissDialog();
                             }
                         }, " اسٹارٹ؟");
-                    }
-                    //TODO: Instead of string comparision for determining with booking state
-                    // use booking state variable
-                    else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
+                    } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
                         Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -1437,7 +1428,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mRouteLatLng.clear();
         }
         if (isResume) {
-//            drawRouteToDropOff();
+            if (!Utils.isRideService(callData.getCallType())) drawRouteToDropOff();
             callerNameTv.setText(callData.getPassName());
         }
 
@@ -1935,11 +1926,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void drawRoutes() {
         if (null == mGoogleMap || null == callData) return;
 
-        LatLng currentLocation = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
-        LatLng pickUp = new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
-
         if (isBykeaCashJob) {
-            drawRoute(currentLocation, pickUp, Routing.pickupRoute);
+            drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
+                    new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
+                    Routing.pickupRoute);
         } else if (StringUtils.isNotBlank(callData.getStartLat())
                 && StringUtils.isNotBlank(callData.getStartLng())
                 && StringUtils.isNotBlank(callData.getEndLat())
@@ -1948,10 +1938,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 && StringUtils.isNotBlank(AppPreferences.getLongitude() + "")) {
 
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-                drawRoute(currentLocation, pickUp, Routing.pickupRoute);
-            } else if (callData.getServiceCode() != Constants.ServiceCode.RIDE) {
-                LatLng dropOff = new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng()));
-                drawRoute(currentLocation, dropOff, Routing.pickupRoute);
+                drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
+                        new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
+                        Routing.pickupRoute);
+            } else if (!Utils.isRideService(callData.getCallType())) {
+                drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
+                        new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng())),
+                        Routing.pickupRoute);
             }
         } else {
             if (mapPolylines != null) mapPolylines.remove();
