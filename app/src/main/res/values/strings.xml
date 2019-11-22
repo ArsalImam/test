@@ -537,4 +537,5 @@
     <string name="enter_customer_name">Customer Name</string>
     <string name="enter_customer_name_hint">Customer Name</string>
     <string name="enter_correct_customer_name">Please enter correct customer name</string>
+    <string name="muntakhib_manzil">منزل</string>
 </resources>
