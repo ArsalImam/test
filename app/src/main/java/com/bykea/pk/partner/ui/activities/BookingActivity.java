@@ -1422,7 +1422,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mRouteLatLng.clear();
         }
         if (isResume) {
-//            drawRouteToDropOff();
+            if (!Utils.isRideService(callData.getCallType())) drawRouteToDropOff();
             callerNameTv.setText(callData.getPassName());
         }
 
@@ -1935,7 +1935,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
                         new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng())),
                         Routing.pickupRoute);
-            } else if (callData.getServiceCode() != Constants.ServiceCode.RIDE) {
+            } else if (!Utils.isRideService(callData.getCallType())) {
                 drawRoute(new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude()),
                         new LatLng(Double.parseDouble(callData.getEndLat()), Double.parseDouble(callData.getEndLng())),
                         Routing.pickupRoute);
