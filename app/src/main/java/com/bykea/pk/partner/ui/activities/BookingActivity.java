@@ -236,6 +236,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private int requestTripCounter = 0;
 
     BykeaCashFormFragment bykeaCashFormFragment;
+    private boolean isMapLoaded = false;
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -412,6 +413,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     if (callData != null) {
                         updateMarkers(true);
                     }
+                    isMapLoaded = true;
+                    if (!TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()))
+                        Utils.setScaleAnimation(cvDirections);
                 }
             });
         }
@@ -1317,6 +1321,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         llStartAddress.setVisibility(View.GONE);
         showDropOffAddress();
         cvDirections.setVisibility(View.VISIBLE);
+        if (isMapLoaded)
+            Utils.setScaleAnimation(cvDirections);
         setOnStartData();
 
         if (isBykeaCashJob) setAddressDetailsVisible();

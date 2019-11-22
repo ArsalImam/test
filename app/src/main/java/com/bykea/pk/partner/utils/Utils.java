@@ -60,6 +60,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -3566,5 +3567,21 @@ public class Utils {
         mBinding.iVCallOnMobile.setImageResource(R.drawable.ic_mobile_call);
         mBinding.iVCallOnWhatsapp.setImageResource(R.drawable.ic_whatsapp_call);
         dialog.show();
+    }
+
+    /**
+     * Set Scale Animation (Zoom In and Zoom Out Animation)
+     * @param view : On Which Animation Has To Perform
+     */
+    public static void setScaleAnimation(View view) {
+        ScaleAnimation scaleAnimation = new ScaleAnimation(Constants.SET_SCALE_ANIMATION_FROM_X, Constants.SET_SCALE_ANIMATION_TO_X,
+                Constants.SET_SCALE_ANIMATION_FROM_Y, Constants.SET_SCALE_ANIMATION_TO_Y,
+                Animation.RELATIVE_TO_SELF, Constants.SET_SCALE_ANIMATION_PIVOT_X,
+                Animation.RELATIVE_TO_SELF, Constants.SET_SCALE_ANIMATION_PIVOT_Y);
+        scaleAnimation.setRepeatCount(Constants.SET_SCALE_ANIMATION_REPEAT_COUNT);
+        scaleAnimation.setDuration(Constants.SET_SCALE_ANIMATION_DURATION);
+        scaleAnimation.setRepeatMode(Animation.REVERSE);
+        scaleAnimation.setFillAfter(true);
+        view.setAnimation(scaleAnimation);
     }
 }
