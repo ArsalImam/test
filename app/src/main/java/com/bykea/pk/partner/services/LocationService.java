@@ -568,6 +568,9 @@ public class LocationService extends Service {
      * indicates that API will be called after 300 sec
      */
     private void updateETAIfRequired() {
+        if (counter > Constants.DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME) {
+            counter = 0;
+        }
         counter++;
         if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground()) {
             Utils.redLogLocation("Direction -> Trip Status ", AppPreferences.getTripStatus());
