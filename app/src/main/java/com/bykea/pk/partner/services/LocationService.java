@@ -571,30 +571,38 @@ public class LocationService extends Service {
         counter++;
         if (AppPreferences.isOnTrip() && !AppPreferences.isJobActivityOnForeground()) {
             Utils.redLogLocation("Direction -> Trip Status ", AppPreferences.getTripStatus());
+
             if (counter == Constants.DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME
                     && TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
                 counter = 0;
                 NormalCallData callData = AppPreferences.getCallData();
-                if (callData != null && StringUtils.isNotBlank(callData.getEndLat()) &&
-                        StringUtils.isNotBlank(callData.getEndLng())) {
-                    String destination = callData.getEndLat() + "," + callData.getEndLng();
-                    callDistanceMatrixApi(destination);
-                    Log.v(TAG, "Distance Matrix called with start state");
-                } else {
-                    //in case when there is no drop off add distance covered and time taken
-                    updateETA(Utils.getTripTime(), Utils.getTripDistance());
+                if (callData != null && !Utils.isRideService(callData.getCallType())) {
+                    if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
+                        String destination = callData.getStartLat() + "," + callData.getStartLng();
+                        callDistanceMatrixApi(destination);
+                        Log.v(TAG, "Distance Matrix called with start state");
+                    } else {
+                        //in case when there is no drop off add distance covered and time taken
+                        updateETA(Utils.getTripTime(), Utils.getTripDistance());
+                    }
                 }
-
-            } else if (counter == Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME &&
-                    (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus()) ||
-                            TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()))) {
-                counter = 0;
-                NormalCallData callData = AppPreferences.getCallData();
-                if (callData != null && StringUtils.isNotBlank(callData.getStartLat()) &&
-                        StringUtils.isNotBlank(callData.getStartLng())) {
-                    String destination = callData.getStartLat() + "," + callData.getStartLng();
-                    callDistanceMatrixApi(destination);
-                    Log.v(TAG, "Distance Matrix called with non start state");
+            } else if (counter == Constants.DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME) {
+                if (TripStatus.ON_ACCEPT_CALL.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+                    counter = 0;
+                    NormalCallData callData = AppPreferences.getCallData();
+                    if (callData != null && StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
+                        String destination = callData.getStartLat() + "," + callData.getStartLng();
+                        callDistanceMatrixApi(destination);
+                        Log.v(TAG, "Distance Matrix called with accept state");
+                    }
+                } else if (TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus())) {
+                    counter = 0;
+                    NormalCallData callData = AppPreferences.getCallData();
+                    if (callData != null && !Utils.isRideService(callData.getCallType()) && StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
+                        String destination = callData.getStartLat() + "," + callData.getStartLng();
+                        callDistanceMatrixApi(destination);
+                        Log.v(TAG, "Distance Matrix called with arrive state");
+                    }
                 }
             }
         }
