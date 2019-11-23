@@ -42,7 +42,6 @@ import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -147,7 +146,6 @@ public class FeedbackActivity extends BaseActivity {
     private int PARTNER_TOP_UP_NEGATIVE_LIMIT, AMOUNT_LIMIT, PARTNER_TOP_UP_POSITIVE_LIMIT;
     private JobsRepository repo;
 
-    private MixpanelAPI mixpanelAPI;
     int driverWallet;
     private boolean isJobSuccessful = true;
 
@@ -167,7 +165,6 @@ public class FeedbackActivity extends BaseActivity {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
-        mixpanelAPI = MixpanelAPI.getInstance(mCurrentActivity, Constants.MIX_PANEL_API_KEY);
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
         updateScroll();
     }
@@ -537,18 +534,6 @@ public class FeedbackActivity extends BaseActivity {
     private void logMPEvent() {
         try {
             NormalCallData callData = AppPreferences.getCallData();
-            mixpanelAPI.identify(callData.getPassId());
-            mixpanelAPI.getPeople().identify(callData.getPassId());
-            JSONObject revenue = new JSONObject();
-            revenue.put("$time", Utils.getUTCCurrentDate());
-            revenue.put("TripID", callData.getTripId());
-            revenue.put("TripNo", callData.getTripNo());
-            revenue.put("PassengerID", callData.getPassId());
-            revenue.put("DriverID", AppPreferences.getPilotData().getId());
-            mixpanelAPI.getPeople().trackCharge(Double.parseDouble(callData.getTrip_charges()), revenue);
-            mixpanelAPI.getPeople().increment("Total Trips", 1L);
-
-
             JSONObject properties = new JSONObject();
             properties.put("TripID", callData.getTripId());
             properties.put("TripNo", callData.getTripNo());
@@ -575,7 +560,7 @@ public class FeedbackActivity extends BaseActivity {
                 properties.put("WalletDeduction", "0");
             }
             Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_FARE.replace(
-                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), properties, true);
+                    Constants.AnalyticsEvents.REPLACE, callData.getCallType()), properties);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -724,7 +709,6 @@ public class FeedbackActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-//        Utils.flushMixPanelEvent(mCurrentActivity);
         super.onDestroy();
 
     }
