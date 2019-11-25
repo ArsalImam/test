@@ -1552,7 +1552,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         boolean showOnLeft;
         double proposedDistance = 30;
 
-        LatLng latLng = new LatLng(Double.parseDouble(callData.getStartLat()), Double.parseDouble(callData.getStartLng()));
+        LatLng latLng = new LatLng(Double.valueOf(callData.getStartLat()), Double.valueOf(callData.getStartLng()));
         boolean isLeftAreaVisible = MapUtil.isVisibleOnMap(mGoogleMap, MapUtil.movePoint(latLng, proposedDistance, 270));
 
         if (!isLeftAreaVisible) {
