@@ -133,14 +133,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.sql.Timestamp;
 import java.text.Format;
 import java.text.NumberFormat;
@@ -154,11 +150,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -2096,7 +2087,7 @@ public class Utils {
     }
 
     public static boolean isRideService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Ride");
+        return StringUtils.containsIgnoreCase(callType, "Sawari");
     }
 
     public static boolean isCourierService(String callType) {
