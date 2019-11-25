@@ -1296,8 +1296,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         llStartAddress.setVisibility(View.GONE);
         showDropOffAddress();
         cvDirections.setVisibility(View.VISIBLE);
-        if (isMapLoaded)
-            Utils.setScaleAnimation(cvDirections);
+        if (isMapLoaded) Utils.setScaleAnimation(cvDirections);
         setOnStartData();
 
         if (isBykeaCashJob) setAddressDetailsVisible();
