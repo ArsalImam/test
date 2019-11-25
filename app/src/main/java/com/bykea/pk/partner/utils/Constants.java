@@ -651,14 +651,23 @@ public class Constants {
 
     public final static int MAP_AUTO_ZOOM_IN_OUT_DELAY = 5 * 60 * 1000; /*Five Minutes*/
     public final static String MOBILE_COUNTRY_STANDARD = "92";
-    public final static String MOBILE_TEL_URI ="tel:";
+    public final static String MOBILE_TEL_URI = "tel:";
     public final static int MAX_LENGTH_CNIC = 13;
     public final static int MAX_LENGTH_IBAN = 24;
     public final static String BYKEA_SUPPORT_HELPLINE = "02138654444";
     public final static String BYKEA_SUPPORT_CONTACT_NUMBER = "03111111700";
-    public final static String SEPERATOR ="/";
+    public final static String SEPERATOR = "/";
 
     public final static int DIRECTION_API_MIX_THRESHOLD_METERS = 45; //meters
     public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 7; //70 seconds
     public final static int DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME = 30; //300 seconds
+
+    public static final long SET_SCALE_ANIMATION_DURATION = 500;
+    public static final int SET_SCALE_ANIMATION_REPEAT_COUNT = 7;
+    public static final float SET_SCALE_ANIMATION_FROM_X = 1.0f;
+    public static final float SET_SCALE_ANIMATION_FROM_Y = 1.0f;
+    public static final float SET_SCALE_ANIMATION_TO_X = 0.7f;
+    public static final float SET_SCALE_ANIMATION_TO_Y = 0.7f;
+    public static final float SET_SCALE_ANIMATION_PIVOT_X = 0.5f;
+    public static final float SET_SCALE_ANIMATION_PIVOT_Y = 0.5f;
 }
