@@ -132,7 +132,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
                             NormalCallData callData = acceptCallResponse.getData();
                             callData.setStatus(TripStatus.ON_ACCEPT_CALL);
                             AppPreferences.setCallData(callData);
-                            logMixPanelEvent(callData);
+                            logEvent(callData);
 
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 
@@ -171,7 +171,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
      *
      * @param callData Call response data which was received from API server.
      */
-    private void logMixPanelEvent(NormalCallData callData) {
+    private void logEvent(NormalCallData callData) {
         try {
 
             JSONObject data = new JSONObject();
@@ -194,7 +194,7 @@ public class DeliveryScheduleDetailActivity extends BaseActivity {
 
             Utils.logEvent(mCurrentActivity, callData.getPassId(),
                     Constants.AnalyticsEvents.ON_ACCEPT.replace(
-                            Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
+                            Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
         } catch (JSONException e) {
             e.printStackTrace();
         }

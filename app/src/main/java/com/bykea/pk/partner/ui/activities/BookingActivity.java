@@ -1102,7 +1102,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         return false;
     }
 
-    private void logMixPanelEvent(String status) {
+    private void logEvent(String status) {
         try {
 
             JSONObject data = new JSONObject();
@@ -1126,13 +1126,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             if (TripStatus.ON_FINISH_TRIP.equalsIgnoreCase(status)) {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.RIDE_COMPLETE.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             } else if (TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(status)) {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ARRIVED.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             } else if (TripStatus.ON_START_TRIP.equalsIgnoreCase(status)) {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_START.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -2171,7 +2171,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             dataRepository.requestArrived(mCurrentActivity, driversDataHandler);
         }
-        logMixPanelEvent(TripStatus.ON_ARRIVED_TRIP);
+        logEvent(TripStatus.ON_ARRIVED_TRIP);
     }
 
     /**
@@ -2198,7 +2198,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             dataRepository.requestBeginRide(mCurrentActivity, driversDataHandler,
                     callData.getEndLat(), callData.getEndLng(), callData.getEndAddress());
         }
-        logMixPanelEvent(TripStatus.ON_START_TRIP);
+        logEvent(TripStatus.ON_START_TRIP);
     }
 
     /**
@@ -2232,7 +2232,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         AppPreferences.removeReceivedMessageCount();
         Dialogs.INSTANCE.dismissDialog();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        logMixPanelEvent(TripStatus.ON_FINISH_TRIP);
+        logEvent(TripStatus.ON_FINISH_TRIP);
 
         if (Utils.isModernService(callData.getServiceCode())) {
             finishJobRestApi();
@@ -2411,7 +2411,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         data.put("CancelReason", cancelReason);
                         data.put("SignUpCity", AppPreferences.getPilotData().getCity().getName());
 
-                        Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data, true);
+                        Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.CANCEL_TRIP, data);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

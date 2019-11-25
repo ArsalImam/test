@@ -82,7 +82,6 @@ import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.databinding.DialogCallBookingBinding;
 import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
-import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.SettingsData;
 import com.bykea.pk.partner.models.data.SignUpCity;
@@ -122,7 +121,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.onesignal.OneSignal;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -134,14 +132,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.sql.Timestamp;
 import java.text.Format;
 import java.text.NumberFormat;
@@ -155,11 +149,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -398,7 +387,6 @@ public class Utils {
      * @param context Calling context.
      */
     public static void clearData(Context context) {
-//        Utils.resetMixPanel(context, false);
         FirebaseAnalytics.getInstance(context).resetAnalyticsData();
         String regId = AppPreferences.getRegId();
         double currentLat = AppPreferences.getLatitude();
@@ -1967,84 +1955,15 @@ public class Utils {
         }
     }
 
-
-    private static void setMixPanelPeople(MixpanelAPI mMixpanel) {
-        final MixpanelAPI.People people = mMixpanel.getPeople();
-
-// Update the basic data in the user's People Analytics record.
-// Unlike events, People Analytics always stores the most recent value
-// provided.
-        PilotData user = AppPreferences.getPilotData();
-        if (user.getFullName().contains(" ") && user.getFullName().split(" ").length > 1) {
-            people.setOnce("$first_name", user.getFullName().split(" ")[0]);
-            people.setOnce("$last_name", user.getFullName().split(" ")[1]);
-        } else {
-            people.setOnce("$first_name", user.getFullName());
-        }
-        if (StringUtils.isNotBlank(user.getEmail())) {
-            people.setOnce("$email", user.getEmail());
-        }
-        people.setOnce("$phone", user.getPhonePlusSign());
-    }
-
-    public static void resetMixPanel(Context context, boolean isFromSplash) {
-        MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
-        if (isFromSplash) {
-            if (!mixpanel.getDistinctId().equalsIgnoreCase(AppPreferences.getLastMixPanelDistId())) {
-                mixpanel.reset();
-                AppPreferences.setLastMixPanelDistId(mixpanel.getDistinctId());
-            }
-        } else {
-            mixpanel.reset();
-        }
-    }
-
-    public static void setMixPanelUserId(Context context) {
-        if (AppPreferences.isLoggedIn()) {
-            MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
-            if (StringUtils.isBlank(mixpanel.getDistinctId())
-                    || !mixpanel.getDistinctId().equalsIgnoreCase(AppPreferences.getPilotData().getId())) {
-//                mixpanel.alias(AppPreferences.getUser().getId(), null);
-                mixpanel.identify(AppPreferences.getPilotData().getId());
-                mixpanel.getPeople().identify(AppPreferences.getPilotData().getId());
-                mixpanel.getPeople().initPushHandling(Constants.GCM_PROJECT_NO);
-                setMixPanelPeople(mixpanel);
-                AppPreferences.setLastMixPanelDistId(mixpanel.getDistinctId());
-            }
-            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
-            mFirebaseAnalytics.setUserId(AppPreferences.getPilotData().getId());
-            mFirebaseAnalytics.setUserProperty("name", AppPreferences.getPilotData().getFullName());
-            mFirebaseAnalytics.setUserProperty("phone", AppPreferences.getPilotData().getPhonePlusSign());
-        }
-    }
-
-    public static MixpanelAPI getMixPanelInstance(Context context) {
-        return MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
-    }
-
-
     /***
-     * Flush Mixpanel Event in onDestroy()
+     * Common method to log event on analytics services
      * @param context Calling context.
      * @param userID User id which is currently logged in.
      * @param EVENT Event name which needs to be flush.
      * @param data Json data which needs to be emitted.
-     * @param shouldLogToMixpanel whether the log event is triggered for mixpanel or not
      */
-    public static void logEvent(Context context, String userID, String EVENT, JSONObject data,
-                                boolean shouldLogToMixpanel) {
-        if (shouldLogToMixpanel) {
-            MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY);
-            mixpanelAPI.identify(userID);
-            mixpanelAPI.getPeople().identify(userID);
-            mixpanelAPI.track(EVENT, data);
-        }
-
+    public static void logEvent(Context context, String userID, String EVENT, JSONObject data) {
         logFireBaseEvent(context, userID, EVENT, data);
-    }
-
-    public static void flushMixPanelEvent(Context context) {
-        MixpanelAPI.getInstance(context, Constants.MIX_PANEL_API_KEY).flush();
     }
 
     public static void animateHeight(final View v, int duration, int targetHeight) {
@@ -2167,7 +2086,7 @@ public class Utils {
     }
 
     public static boolean isRideService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Ride");
+        return StringUtils.containsIgnoreCase(callType, "Sawari");
     }
 
     public static boolean isCourierService(String callType) {
@@ -2272,6 +2191,7 @@ public class Utils {
         String callType = callData.getCallType().replace(" ", StringUtils.EMPTY).toLowerCase();
         switch (callType) {
             case "parcel":
+            case "offlineparcel":
             case "send":
             case "delivery":
             case "cod":
@@ -3589,7 +3509,7 @@ public class Utils {
             if (callData != null) {
                 jsonObject.put("category", callData.getServiceCode());
                 jsonObject.put("booking_id", callData.getTripId());
-                Utils.logEvent(context, callData.getPassId(), eventName, jsonObject, true);
+                Utils.logEvent(context, callData.getPassId(), eventName, jsonObject);
             }
         } catch (Exception e) {
             e.printStackTrace();
