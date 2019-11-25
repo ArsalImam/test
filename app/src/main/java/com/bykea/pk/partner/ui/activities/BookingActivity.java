@@ -236,6 +236,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private int requestTripCounter = 0;
 
     BykeaCashFormFragment bykeaCashFormFragment;
+    private boolean isMapLoaded = false;
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -412,6 +413,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     if (callData != null) {
                         updateMarkers(true);
                     }
+                    isMapLoaded = true;
+                    if (!TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()))
+                        Utils.setScaleAnimation(cvDirections);
                 }
             });
         }
@@ -1292,6 +1296,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         llStartAddress.setVisibility(View.GONE);
         showDropOffAddress();
         cvDirections.setVisibility(View.VISIBLE);
+        if (isMapLoaded) Utils.setScaleAnimation(cvDirections);
         setOnStartData();
 
         if (isBykeaCashJob) setAddressDetailsVisible();
@@ -1445,8 +1450,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (mapPolylines != null) mapPolylines.remove();
             }
         }
-
-
+        shouldRefreshDropOffMarker = true;
     }
 
     /******************************************************************************************
@@ -1588,23 +1592,33 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         lastDropOffFlagOnLeft = showOnLeft;
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        View mCustomMarkerView = MapUtil.getDropOffMarkerLayout(mCurrentActivity, showOnLeft);
+        View mCustomMarkerView;
+        boolean isTripStatusStarted = TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus());
 
-        TextView tvDistance = mCustomMarkerView.findViewById(R.id.tvDistance);
-        TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
-        TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
+        if (isTripStatusStarted) {
+            mCustomMarkerView = MapUtil.getDropOffMarkerLayoutForStartedState(mCurrentActivity, showOnLeft);
+            TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
+            Stop dropOffStop = callData.getDropoffStop();
+            if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty())
+                tvRegionName.setText(getString(R.string.pick_drop_name_ur, dropOffStop.getZoneNameUr()));
+            else tvRegionName.setText(getString(R.string.drop_ur));
+        } else {
+            mCustomMarkerView = MapUtil.getDropOffMarkerLayout(mCurrentActivity, showOnLeft);
+            TextView tvDistance = mCustomMarkerView.findViewById(R.id.tvDistance);
+            TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
+            TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
-        Stop dropOffStop = callData.getDropoffStop();
-        if (dropOffStop.getDistance() != null)
-            tvDistance.setText(Utils.formatDecimalPlaces((dropOffStop.getDistance() / 1000F) + "", 1));
-        else tvDistance.setText(R.string.dash);
-        if (dropOffStop.getDuration() != null)
-            tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(dropOffStop.getDuration())));
-        else tvDuration.setText(R.string.dash);
-        if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty())
-            tvRegionName.setText(getString(R.string.pick_drop_name_ur, dropOffStop.getZoneNameUr()));
-        else tvRegionName.setText(getString(R.string.drop_ur));
-
+            Stop dropOffStop = callData.getDropoffStop();
+            if (dropOffStop.getDistance() != null)
+                tvDistance.setText(Utils.formatDecimalPlaces((dropOffStop.getDistance() / 1000F) + "", 1));
+            else tvDistance.setText(R.string.dash);
+            if (dropOffStop.getDuration() != null)
+                tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(dropOffStop.getDuration())));
+            else tvDuration.setText(R.string.dash);
+            if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty())
+                tvRegionName.setText(getString(R.string.pick_drop_name_ur, dropOffStop.getZoneNameUr()));
+            else tvRegionName.setText(getString(R.string.drop_ur));
+        }
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
         return markerOptions;
     }
