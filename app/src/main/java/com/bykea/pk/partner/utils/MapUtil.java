@@ -52,7 +52,7 @@ public class MapUtil {
     }
 
     /**
-     *
+     * Get Marker Layout For Trip Started State
      * @param context : Calling context
      * @param showOnLeft : Decide to show left or right, mirror layout
      * @return view : Marker To Display
