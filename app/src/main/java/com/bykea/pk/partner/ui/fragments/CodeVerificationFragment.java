@@ -8,10 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Telephony;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.telephony.SmsMessage;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
@@ -24,6 +20,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
@@ -495,7 +495,6 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
         ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
         // Connect socket
         DriverApp.getApplication().connect();
-//                            Utils.setMixPanelUserId(mCurrentActivity);
 
         logAnalyticsEvent(Constants.AnalyticsEvents.ON_LOGIN_SUCCESS);
     }

@@ -8,12 +8,10 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 
-import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
@@ -223,7 +221,7 @@ public class CallingActivity extends BaseActivity {
         mCurrentActivity.finish();
     }
 
-    private void logMixpanelEvent(NormalCallData callData, boolean isOnAccept) {
+    private void logEvent(NormalCallData callData, boolean isOnAccept) {
         try {
 
             JSONObject data = new JSONObject();
@@ -247,10 +245,10 @@ public class CallingActivity extends BaseActivity {
             if (isOnAccept) {
                 data.put("AcceptSeconds", acceptSeconds);
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_ACCEPT.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             } else {
                 Utils.logEvent(mCurrentActivity, callData.getPassId(), Constants.AnalyticsEvents.ON_RECEIVE_NEW_JOB.replace(
-                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data, true);
+                        Constants.AnalyticsEvents.REPLACE, callData.getCallType()), data);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -331,7 +329,7 @@ public class CallingActivity extends BaseActivity {
         tripId = callData.getTripId();
         serviceCode = callData.getServiceCode();
         Utils.redLog(TAG, "Call Data: " + new Gson().toJson(callData));
-        logMixpanelEvent(callData, false);
+        logEvent(callData, false);
         counterTv.setText("20");
 
         String icon = StringUtils.EMPTY;
@@ -440,7 +438,7 @@ public class CallingActivity extends BaseActivity {
                             AppPreferences.setCallData(callData);
                             AppPreferences.setTripAcceptTime(System.currentTimeMillis());
                             AppPreferences.setEstimatedFare(callData.getKraiKiKamai());
-                            logMixpanelEvent(callData, true);
+                            logEvent(callData, true);
 
                             AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude());
 

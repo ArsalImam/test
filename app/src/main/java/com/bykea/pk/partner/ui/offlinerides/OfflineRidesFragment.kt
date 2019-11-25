@@ -11,6 +11,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -68,7 +70,8 @@ class OfflineRidesFragment : Fragment() {
             }
 
             override fun onReceiveCodeClicked() {
-                if (validateMobileNumber() && validateCustomerName()) {
+                if ((rBSawari.isChecked && validateMobileNumber()) ||
+                        (rBDelivery.isChecked && validateMobileNumber() && validateCustomerName())) {
                     val requestBody: RideCreateRequestObject = createRequestBody()
                     requestBody.pickup_info.address = Utils.getLocationAddress(AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(), mCurrentActivity)
 
@@ -137,10 +140,33 @@ class OfflineRidesFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (validateCustomerName()) {
-                    setBackgroundColor(R.color.colorAccent)
-                } else {
-                    setBackgroundColor(R.color.color_A7A7A7)
+                if (rBDelivery.isChecked)
+                    if (validateCustomerName()) {
+                        setBackgroundColor(R.color.colorAccent)
+                    } else {
+                        setBackgroundColor(R.color.color_A7A7A7)
+                    }
+            }
+        })
+        rGOfflineRide.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener {
+            override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+                when (checkedId) {
+                    rBSawari.id -> {
+                        eTCustomerName.error = null
+                        eTCustomerName.clearFocus()
+                        if (Utils.isValidNumber(eTMobileNumber)) {
+                            setBackgroundColor(R.color.colorAccent)
+                        } else {
+                            setBackgroundColor(R.color.color_A7A7A7)
+                        }
+                    }
+                    rBDelivery.id -> {
+                        if (Utils.isValidNumber(eTMobileNumber) && validateCustomerName(false)) {
+                            setBackgroundColor(R.color.colorAccent)
+                        } else {
+                            setBackgroundColor(R.color.color_A7A7A7)
+                        }
+                    }
                 }
             }
         })
@@ -150,16 +176,21 @@ class OfflineRidesFragment : Fragment() {
      * Validate Mobile Number (Valid Number or Not)
      */
     private fun validateMobileNumber(): Boolean {
-        return Utils.isValidNumber(mCurrentActivity, eTMobileNumber) && validateCustomerName()
+        return if (rBSawari.isChecked)
+            Utils.isValidNumber(mCurrentActivity, eTMobileNumber)
+        else
+            Utils.isValidNumber(mCurrentActivity, eTMobileNumber) && validateCustomerName()
     }
 
     /**
      * Validate Customer Field (Empty or Not)
      */
-    private fun validateCustomerName(): Boolean {
+    private fun validateCustomerName(showError: Boolean = true): Boolean {
         if (eTCustomerName.text.toString().isEmpty()) {
-            eTCustomerName.setError(context?.getString(R.string.enter_correct_customer_name));
-            eTCustomerName.requestFocus()
+            if (showError) {
+                eTCustomerName.error = context?.getString(R.string.enter_correct_customer_name);
+                eTCustomerName.requestFocus()
+            }
             return false
         }
         return Utils.isValidNumber(eTMobileNumber)
@@ -258,7 +289,9 @@ class OfflineRidesFragment : Fragment() {
             user_type = USER_TYPE
             _id = AppPreferences.getDriverId()
             token_id = AppPreferences.getAccessToken()
-            customer_name = eTCustomerName.text.toString()
+
+            if (!eTCustomerName.text.toString().isEmpty())
+                customer_name = eTCustomerName.text.toString()
 
             trip = RideCreateTripData()
             trip.creator = APP
