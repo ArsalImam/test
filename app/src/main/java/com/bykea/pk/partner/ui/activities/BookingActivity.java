@@ -1012,6 +1012,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                 @Override
                 public void onDropOffChanged() {
+                    shouldRefreshDropOffMarker = true;
                     onDropOffUpdate("Drop-off updated");
                 }
 
@@ -1663,7 +1664,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private synchronized void updateMarkers(boolean shouldUpdateCamera) {
         if (null == mGoogleMap || null == callData) return;
 
-        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
+                callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
             if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng()))
                 updatePickupMarker();
             if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng()))
