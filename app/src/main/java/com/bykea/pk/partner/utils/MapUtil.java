@@ -51,6 +51,17 @@ public class MapUtil {
         return ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(layoutId, null);
     }
 
+    /**
+     * Get Marker Layout For Trip Started State
+     * @param context : Calling context
+     * @param showOnLeft : Decide to show left or right, mirror layout
+     * @return view : Marker To Display
+     */
+    public static View getDropOffMarkerLayoutForStartedState(Context context, boolean showOnLeft) {
+        int layoutId = showOnLeft ? R.layout.info_window_drop_start_left : R.layout.info_window_drop_start_right;
+        return ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(layoutId, null);
+    }
+
     public static BitmapDescriptor getMarkerBitmapDescriptorFromView(View view) {
 
         // TODO: Single views have trouble with measure.
