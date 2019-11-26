@@ -988,6 +988,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         callData = AppPreferences.getCallData();
                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
+                        shouldRefreshDropOffMarker = true;
                         if (Utils.isDeliveryService(callData.getCallType()) || Utils.isDescriptiveAddressRequired(callData.getServiceCode()))
                             showDropOffPersonInfo();
                         showWalletAmount();
