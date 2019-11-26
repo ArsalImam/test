@@ -1012,6 +1012,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
                 @Override
                 public void onDropOffChanged() {
+                    shouldRefreshDropOffMarker = true;
                     onDropOffUpdate("Drop-off updated");
                 }
 
