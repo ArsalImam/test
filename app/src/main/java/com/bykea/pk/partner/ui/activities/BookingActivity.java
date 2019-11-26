@@ -979,6 +979,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         playNotificationSound();
                         Utils.appToast("Drop Off has been Updated by Passenger.");
 //                        callData = AppPreferences.getCallData();
+                        shouldRefreshDropOffMarker = true;
                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
 //                        updateDropOff();
                     }
