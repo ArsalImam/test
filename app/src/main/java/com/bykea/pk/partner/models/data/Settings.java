@@ -60,6 +60,9 @@ public class Settings {
     @SerializedName("withdrawal_display")
     private boolean withdrawalDisplay;
 
+    /**
+     * trip fees percentage taken by bykea
+     */
     @SerializedName("admin_fee")
     private String admin_fee;
 

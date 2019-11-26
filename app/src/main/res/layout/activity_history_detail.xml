@@ -519,50 +519,59 @@
                 android:layout_height="@dimen/_1sdp"
                 android:background="@color/divider" />
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/margin.small"
-                android:layout_marginRight="@dimen/margin.small"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/_7sdp"
-                android:paddingBottom="@dimen/_7sdp">
+                android:id="@+id/commission_layout"
+                android:orientation="vertical">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/totalCommissionTv"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.5"
-                    android:background="@color/windowBackground"
-                    android:gravity="left|center_vertical"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="roboto_regular.ttf" />
-
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/windowBackground"
-                    android:gravity="right|center_vertical"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/margin.small"
+                    android:layout_marginRight="@dimen/margin.small"
+                    android:gravity="center"
+                    android:orientation="horizontal"
                     android:paddingTop="@dimen/_7sdp"
-                    android:paddingRight="@dimen/_4sdp"
-                    android:paddingBottom="@dimen/_7sdp"
-                    android:text="@string/commission_text_urdu"
-                    android:id="@+id/textview_admin_percentage"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/textsize.normal"
-                    app:fontName="jameel_noori_nastaleeq.ttf" />
+                    android:paddingBottom="@dimen/_7sdp">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/totalCommissionTv"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5"
+                        android:background="@color/windowBackground"
+                        android:gravity="left|center_vertical"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.normal"
+                        app:fontName="roboto_regular.ttf" />
+
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/textview_admin_percentage"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/windowBackground"
+                        android:gravity="right|center_vertical"
+                        android:paddingTop="@dimen/_7sdp"
+                        android:paddingRight="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_7sdp"
+                        android:text="@string/commission_text_urdu"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/textsize.normal"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/divider" />
+
             </LinearLayout>
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_1sdp"
-                android:background="@color/divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"

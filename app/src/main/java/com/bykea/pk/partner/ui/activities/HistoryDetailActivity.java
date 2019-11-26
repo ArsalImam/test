@@ -108,6 +108,9 @@ public class HistoryDetailActivity extends BaseActivity {
     @BindView(R.id.totalCommissionTv)
     FontTextView totalCommissionTv;
 
+    @BindView(R.id.commission_layout)
+    LinearLayout totalCommissionLayout;
+
     @BindView(R.id.rvComments)
     RecyclerView rvComments;
     private CommentsAdapter mAdapter;
@@ -157,13 +160,17 @@ public class HistoryDetailActivity extends BaseActivity {
                     totalAmountTv.setText(getString(R.string.display_string_value, data.getInvoice().getTotal()));
                     promoTv.setText(data.getInvoice().getPromo_deduction());
                     dropOffDiscTv.setText(data.getInvoice().getDropoff_discount());
-                    totalCommissionTv.setText(data.getInvoice().getAdmin_fee());
-
-                    SpannableStringBuilder stringBuilder = new SpannableStringBuilder(StringUtils.EMPTY)
-                            .append(FontUtils.getStyledTitle(mCurrentActivity, getString(R.string.commission_text_urdu), "jameel_noori_nastaleeq.ttf"))
-                            .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, "roboto_medium.ttf"))
-                            .append(FontUtils.getStyledTitle(mCurrentActivity, String.format(getString(R.string.braces_percent), AppPreferences.getSettings().getSettings().getAdmin_fee()), "roboto_medium.ttf"));
-                    adminPercentageTextView.setText(stringBuilder.toString());
+//
+                    if (StringUtils.isEmpty(data.getInvoice().getAdmin_fee())) {
+                        totalCommissionLayout.setVisibility(View.GONE);
+                    } else {
+                        totalCommissionTv.setText(data.getInvoice().getAdmin_fee());
+                        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(StringUtils.EMPTY)
+                                .append(FontUtils.getStyledTitle(mCurrentActivity, getString(R.string.commission_text_urdu), Constants.FONT_NASTALIQ))
+                                .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, Constants.FONT_ROBOTO_MED))
+                                .append(FontUtils.getStyledTitle(mCurrentActivity, String.format(getString(R.string.braces_percent), AppPreferences.getSettings().getSettings().getAdmin_fee()), "roboto_medium.ttf"));
+                        adminPercentageTextView.setText(stringBuilder.toString());
+                    }
 
 //                    if(StringUtils.isNotBlank(data.getInvoice().getWaitMins())){
 //                        float wait_min = Math.round(Float.parseFloat(data.getInvoice().getWaitMins()));
