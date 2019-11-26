@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -15,6 +16,7 @@ import com.bykea.pk.partner.models.data.Predefine_rating;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.FontUtils;
 import com.bykea.pk.partner.ui.helpers.adapters.CommentsAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
@@ -103,6 +105,11 @@ public class HistoryDetailActivity extends BaseActivity {
 
     @BindView(R.id.tvWaitPrice)
     FontTextView tvWaitPrice;
+    @BindView(R.id.totalCommissionTv)
+    FontTextView totalCommissionTv;
+
+    @BindView(R.id.commission_layout)
+    LinearLayout totalCommissionLayout;
 
     @BindView(R.id.rvComments)
     RecyclerView rvComments;
@@ -110,6 +117,8 @@ public class HistoryDetailActivity extends BaseActivity {
 
     @BindView(R.id.flCommentsRv)
     FrameLayout flCommentsRv;
+    @BindView(R.id.textview_admin_percentage)
+    FontTextView adminPercentageTextView;
 //    private String tripNo;
 
     ArrayList<Predefine_rating> ratingToShow = new ArrayList<>();
@@ -151,6 +160,17 @@ public class HistoryDetailActivity extends BaseActivity {
                     totalAmountTv.setText(getString(R.string.display_string_value, data.getInvoice().getTotal()));
                     promoTv.setText(data.getInvoice().getPromo_deduction());
                     dropOffDiscTv.setText(data.getInvoice().getDropoff_discount());
+//
+                    if (StringUtils.isEmpty(data.getInvoice().getAdmin_fee())) {
+                        totalCommissionLayout.setVisibility(View.GONE);
+                    } else {
+                        totalCommissionTv.setText(data.getInvoice().getAdmin_fee());
+                        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(StringUtils.EMPTY)
+                                .append(FontUtils.getStyledTitle(mCurrentActivity, getString(R.string.commission_text_urdu), Constants.FONT_NASTALIQ))
+                                .append(FontUtils.getStyledTitle(mCurrentActivity, StringUtils.SPACE, Constants.FONT_ROBOTO_MED))
+                                .append(FontUtils.getStyledTitle(mCurrentActivity, String.format(getString(R.string.braces_percent), AppPreferences.getSettings().getSettings().getAdmin_fee()), "roboto_medium.ttf"));
+                        adminPercentageTextView.setText(stringBuilder.toString());
+                    }
 
 //                    if(StringUtils.isNotBlank(data.getInvoice().getWaitMins())){
 //                        float wait_min = Math.round(Float.parseFloat(data.getInvoice().getWaitMins()));
