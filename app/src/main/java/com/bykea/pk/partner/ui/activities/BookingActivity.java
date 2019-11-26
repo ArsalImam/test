@@ -1595,7 +1595,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         View mCustomMarkerView;
         boolean isTripStatusStarted = TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus());
 
-        if (isTripStatusStarted) {
+        if (isTripStatusStarted && Utils.isRideService(callData.getCallType())) {
             mCustomMarkerView = MapUtil.getDropOffMarkerLayoutForStartedState(mCurrentActivity, showOnLeft);
             TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
             Stop dropOffStop = callData.getDropoffStop();
