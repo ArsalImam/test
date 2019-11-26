@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.models.data;
 
+import com.bykea.pk.partner.utils.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +59,9 @@ public class Settings {
 
     @SerializedName("withdrawal_display")
     private boolean withdrawalDisplay;
+
+    @SerializedName("admin_fee")
+    private String admin_fee;
 
     public boolean isOfflineDeliveryEnable() {
         return offlineDeliveryEnable;
@@ -235,5 +239,13 @@ public class Settings {
 
     public void setBykeaSupportContact(String bykeaSupportContact) {
         BykeaSupportContact = bykeaSupportContact;
+    }
+
+    public String getAdmin_fee() {
+        return StringUtils.isEmpty(admin_fee) ? Constants.DEFAULT_ADMIN_FEE : admin_fee;
+    }
+
+    public void setAdmin_fee(String admin_fee) {
+        this.admin_fee = admin_fee;
     }
 }

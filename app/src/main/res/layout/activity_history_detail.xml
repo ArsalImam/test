@@ -26,9 +26,9 @@
                 android:background="@color/secondaryColorLight"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingBottom="@dimen/padding.tiny"
                 android:paddingLeft="@dimen/padding.normal"
-                android:paddingTop="@dimen/padding.tiny">
+                android:paddingTop="@dimen/padding.tiny"
+                android:paddingBottom="@dimen/padding.tiny">
 
 
                 <include layout="@layout/inline_pickup_dropoff_signs" />
@@ -125,7 +125,6 @@
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical">
-
 
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -297,7 +296,6 @@
                 android:gravity="center_vertical">
 
 
-
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/basefareTv"
                     android:layout_width="0dp"
@@ -329,9 +327,8 @@
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical"
-                android:paddingBottom="@dimen/_7sdp"
-                android:paddingTop="@dimen/_7sdp">
-
+                android:paddingTop="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_7sdp">
 
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -364,8 +361,8 @@
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical"
-                android:paddingBottom="@dimen/_7sdp"
-                android:paddingTop="@dimen/_7sdp">
+                android:paddingTop="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_7sdp">
 
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -399,9 +396,8 @@
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical"
-                android:paddingBottom="@dimen/_7sdp"
-                android:paddingTop="@dimen/_7sdp">
-
+                android:paddingTop="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_7sdp">
 
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -414,6 +410,7 @@
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.normal"
                     app:fontName="roboto_light.ttf" />
+
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -434,9 +431,8 @@
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical"
-                android:paddingBottom="@dimen/_7sdp"
-                android:paddingTop="@dimen/_7sdp">
-
+                android:paddingTop="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_7sdp">
 
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -496,9 +492,9 @@
                     android:layout_weight="1"
                     android:background="@color/windowBackground"
                     android:gravity="right|center_vertical"
+                    android:paddingTop="@dimen/_7sdp"
                     android:paddingRight="@dimen/_4sdp"
                     android:paddingBottom="@dimen/_7sdp"
-                    android:paddingTop="@dimen/_7sdp"
                     android:text="@string/total_urdu"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/textsize.large"
@@ -511,11 +507,57 @@
                 android:layout_marginLeft="@dimen/margin.small"
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center_vertical"
-                android:paddingBottom="@dimen/_7sdp"
-                android:paddingTop="@dimen/_7sdp">
+                android:paddingTop="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_7sdp">
 
 
             </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin.small"
+                android:layout_marginRight="@dimen/margin.small"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_7sdp">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/totalCommissionTv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    android:background="@color/windowBackground"
+                    android:gravity="left|center_vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="roboto_regular.ttf" />
+
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/windowBackground"
+                    android:gravity="right|center_vertical"
+                    android:paddingTop="@dimen/_7sdp"
+                    android:paddingRight="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_7sdp"
+                    android:text="@string/commission_text_urdu"
+                    android:id="@+id/textview_admin_percentage"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.normal"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+            </LinearLayout>
+
 
             <View
                 android:layout_width="match_parent"
@@ -530,9 +572,8 @@
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingBottom="@dimen/_7sdp"
-                android:paddingTop="@dimen/_7sdp">
-
+                android:paddingTop="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_7sdp">
 
 
                 <RatingBar
@@ -575,9 +616,8 @@
                 android:layout_marginRight="@dimen/margin.small"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingBottom="@dimen/_7sdp"
-                android:paddingTop="@dimen/_7sdp">
-
+                android:paddingTop="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_7sdp">
 
 
                 <RatingBar
@@ -592,6 +632,7 @@
                     android:progressDrawable="@drawable/custom_rating_bar"
                     android:rating="0"
                     android:stepSize="0.1" />
+
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -631,8 +672,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/margin.small"
                 android:layout_marginTop="@dimen/margin.small"
+                android:layout_marginBottom="@dimen/margin.small"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -656,10 +697,10 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:paddingLeft="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:text="Comfort"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -674,10 +715,10 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:paddingLeft="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:text="Driving"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -693,10 +734,10 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:paddingLeft="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:text="Navigation"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -725,10 +766,10 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:paddingLeft="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:text="احتیاط"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -744,10 +785,10 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:paddingLeft="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:text="Navigation"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -763,10 +804,10 @@
                         android:background="@drawable/bg_unselected_feedback_comment"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:paddingLeft="@dimen/feedback_padding"
-                        android:paddingRight="@dimen/feedback_padding"
                         android:paddingTop="@dimen/feedback_padding"
+                        android:paddingRight="@dimen/feedback_padding"
+                        android:paddingBottom="@dimen/feedback_padding_bottom"
                         android:text="Navigation"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_feedback"
@@ -782,8 +823,8 @@
                 android:layout_width="@dimen/_230sdp"
                 android:layout_height="@dimen/_55sdp"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
                 android:background="@drawable/button_gray_round"
                 android:gravity="center"
                 android:text="@string/masla_darj_karain"

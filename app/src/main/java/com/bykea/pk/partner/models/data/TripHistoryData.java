@@ -166,7 +166,6 @@ public class TripHistoryData implements Serializable {
         this.dd = dd;
     }
 
-
     public static class Driver implements Serializable {
         private String plate_no;
 
@@ -212,6 +211,7 @@ public class TripHistoryData implements Serializable {
         private String promo_deduction;
         private String dropoff_discount;
         private String wallet_deduction;
+        private String admin_fee;
 
         private boolean dd;
 
@@ -293,6 +293,14 @@ public class TripHistoryData implements Serializable {
 
         public void setDd(boolean dd) {
             this.dd = dd;
+        }
+
+        public String getAdmin_fee() {
+            return admin_fee;
+        }
+
+        public void setAdmin_fee(String admin_fee) {
+            this.admin_fee = admin_fee;
         }
     }
 

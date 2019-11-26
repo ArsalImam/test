@@ -73,6 +73,7 @@ public class Constants {
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
     public static final String EVENT_ACTION_UPDATE_WITHDRAW = "EVENT_ACTION_UPDATE_WITHDRAW";
+    public static final String DEFAULT_ADMIN_FEE = "10";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
