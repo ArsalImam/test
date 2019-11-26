@@ -3575,7 +3575,6 @@ public class Utils {
         scaleAnimation.setDuration(Constants.SET_SCALE_ANIMATION_DURATION);
         scaleAnimation.setStartOffset(Constants.SET_SCALE_DELAY);
         scaleAnimation.setRepeatMode(Animation.REVERSE);
-//        scaleAnimation.setFillAfter(true);
         scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
