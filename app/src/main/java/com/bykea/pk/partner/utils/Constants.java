@@ -670,4 +670,6 @@ public class Constants {
     public static final float SET_SCALE_ANIMATION_TO_Y = 0.7f;
     public static final float SET_SCALE_ANIMATION_PIVOT_X = 0.5f;
     public static final float SET_SCALE_ANIMATION_PIVOT_Y = 0.5f;
+    public static final long SET_SCALE_DELAY = 2000;
+    public static final long SET_SCALE_DELAY_ZERO = 0;
 }

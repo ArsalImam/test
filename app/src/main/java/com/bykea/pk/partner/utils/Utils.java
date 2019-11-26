@@ -59,6 +59,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -160,6 +161,7 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
@@ -3571,8 +3573,25 @@ public class Utils {
                 Animation.RELATIVE_TO_SELF, Constants.SET_SCALE_ANIMATION_PIVOT_Y);
         scaleAnimation.setRepeatCount(Constants.SET_SCALE_ANIMATION_REPEAT_COUNT);
         scaleAnimation.setDuration(Constants.SET_SCALE_ANIMATION_DURATION);
+        scaleAnimation.setStartOffset(Constants.SET_SCALE_DELAY);
         scaleAnimation.setRepeatMode(Animation.REVERSE);
-        scaleAnimation.setFillAfter(true);
+//        scaleAnimation.setFillAfter(true);
+        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                scaleAnimation.setStartOffset(DIGIT_ZERO);
+            }
+        });
         view.setAnimation(scaleAnimation);
     }
 }
