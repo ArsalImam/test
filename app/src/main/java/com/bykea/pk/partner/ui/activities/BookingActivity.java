@@ -1918,23 +1918,23 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private LatLngBounds getCurrentLatLngBounds() {
-        int count = 0;
+        int numberOfBounds = 0;
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
         if (pickUpMarker != null) {
             builder.include(pickUpMarker.getPosition());
-            count++;
+            numberOfBounds++;
         }
         if (dropOffMarker != null) {
             builder.include(dropOffMarker.getPosition());
-            count++;
+            numberOfBounds++;
         }
         if (driverMarker != null) {
             builder.include(driverMarker.getPosition());
-            count++;
+            numberOfBounds++;
         }
 
-        if (count == 0)
+        if (numberOfBounds == 0)
             return null;
 
         LatLngBounds tmpBounds = builder.build();
