@@ -379,7 +379,11 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     }
 
     public String getDistance() {
-        return "" + (Math.round(Double.parseDouble(distance) * 10.0) / 10.0);
+        if (StringUtils.isNotEmpty(distance)) {
+            return "" + (Math.round(Double.valueOf(distance) * 10.0) / 10.0);
+        } else {
+            return "0";
+        }
     }
 
     @Deprecated
