@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 57
-        versionName "7.24"
+        versionCode 58
+        versionName "7.25"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -80,7 +80,7 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging.bykea.xyz:3000\""
+                buildConfigField "String", "FLAVOR_URL", "\"https://staging-lb-talos.bykea.net\""
             }
             livetesting {
                 dimension "env"

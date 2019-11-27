@@ -626,6 +626,7 @@ public class WebIORequestHandler {
                  * */
 
                 if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    AppPreferences.removeReceivedMessageCount();
                     Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
                     intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
                     intent.putExtra("msg", normalCallData.getMessage());

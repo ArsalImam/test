@@ -212,6 +212,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (StringUtils.isNotBlank(callData.getStatus())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                 if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    AppPreferences.removeReceivedMessageCount();
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                     Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
                     intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
