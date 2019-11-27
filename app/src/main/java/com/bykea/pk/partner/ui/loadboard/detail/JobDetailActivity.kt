@@ -145,6 +145,7 @@ class JobDetailActivity : BaseActivity() {
                 setMarkersForPickUpAndDropOff(p0)
             }
         }
+        AppPreferences.removeReceivedMessageCount();
     }
 
     /**

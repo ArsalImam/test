@@ -2414,6 +2414,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             public void run() {
                 Dialogs.INSTANCE.dismissDialog();
                 if (success) {
+                    AppPreferences.removeReceivedMessageCount();
                     try {
                         JSONObject data = new JSONObject();
                         data.put("DriverLocation", AppPreferences.getLatitude() + "," + AppPreferences.getLongitude());
