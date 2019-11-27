@@ -228,9 +228,9 @@ public class Utils {
      * @return Helpline number
      */
     public static String getSupportHelplineNumber() {
-        String supportContact = AppPreferences.getSettings().getSettings().getBykeaSupportHelpline();
-        if (StringUtils.isNotBlank(supportContact))
-            return supportContact;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                StringUtils.isNotEmpty(AppPreferences.getSettings().getSettings().getBykeaSupportHelpline()))
+            return AppPreferences.getSettings().getSettings().getBykeaSupportHelpline();
         else
             return Constants.BYKEA_SUPPORT_HELPLINE;
     }
