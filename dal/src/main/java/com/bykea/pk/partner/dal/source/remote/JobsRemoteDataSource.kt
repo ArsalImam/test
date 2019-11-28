@@ -299,4 +299,12 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, subCode: Int?, message: String?) = callbackBykeaCash.onFail(code, subCode, message)
         })
     }
+
+    fun getJobComplainReasons(userType: String, messageType: String, lang: String, callback: JobsDataSource.ComplainReasonsCallback) {
+        Backend.talos.getJobComplainReasons(userType, messageType, lang).enqueue(object : Callback<ComplainReasonResponse> {
+            override fun onSuccess(complainReasonResponse: ComplainReasonResponse) = callback.onSuccess(complainReasonResponse)
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onFail(code, subCode, message)
+        })
+    }
+
 }

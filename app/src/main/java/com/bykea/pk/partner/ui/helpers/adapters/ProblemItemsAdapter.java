@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.remote.data.ComplainReason;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
@@ -21,11 +22,11 @@ import butterknife.ButterKnife;
 public class ProblemItemsAdapter extends RecyclerView.Adapter<ProblemItemsAdapter.ItemHolder> {
 
     private final boolean isUrdu;
-    private ArrayList<String> mProblemList;
+    private ArrayList<ComplainReason> mProblemList;
     private MyOnItemClickListener myOnItemClickListener;
     private Context context;
 
-    public ProblemItemsAdapter(ArrayList<String> list, Context context) {
+    public ProblemItemsAdapter(ArrayList<ComplainReason> list, Context context) {
         mProblemList = list;
         this.context = context;
         isUrdu = context instanceof ComplaintSubmissionActivity;
@@ -41,7 +42,7 @@ public class ProblemItemsAdapter extends RecyclerView.Adapter<ProblemItemsAdapte
 
     @Override
     public void onBindViewHolder(ItemHolder holder, int position) {
-        holder.tv_problem_item.setText(context.getString(R.string.problem_item, mProblemList.get(position)));
+        holder.tv_problem_item.setText(context.getString(R.string.problem_item, mProblemList.get(position).getMessage()));
         if (isUrdu) {
             holder.tv_problem_item.setTypeface(FontUtils.getFonts( "jameel_noori_nastaleeq.ttf"));
         } else {
@@ -78,7 +79,7 @@ public class ProblemItemsAdapter extends RecyclerView.Adapter<ProblemItemsAdapte
     }
 
     public interface MyOnItemClickListener {
-        void onItemClickListener(int position, View view, String reason);
+        void onItemClickListener(int position, View view, ComplainReason reason);
     }
 }
 

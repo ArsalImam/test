@@ -8,15 +8,18 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.util.COMPLAIN_WRONGE_FARE_CALCULATION
 import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
+import com.bykea.pk.partner.widgets.FontEditText
 import com.google.android.gms.common.util.Strings.isEmptyOrWhitespace
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
 import kotlinx.android.synthetic.main.fragment_complain_detail.*
+import org.apache.commons.lang3.StringUtils
 import zendesk.support.*
 import java.util.*
 
@@ -49,7 +52,16 @@ class ComplainDetailFragment : Fragment() {
             //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
             ticketSubject = AppPreferences.getPilotData().id
         }
-
+        if (mCurrentActivity?.selectedReason?.code != null) {
+            val code = mCurrentActivity?.selectedReason?.code!!
+            binding.wrongFareLayout.visibility = if (StringUtils.isEmpty(code) || code != COMPLAIN_WRONGE_FARE_CALCULATION) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        } else {
+            binding.wrongFareLayout.visibility = View.GONE
+        }
         return binding.root
     }
 
@@ -63,12 +75,16 @@ class ComplainDetailFragment : Fragment() {
      */
     private val isValid: Boolean
         get() {
-            if (isEmptyOrWhitespace(etDetails.text.toString().trim())) {
-                etDetails.error = getString(R.string.enter_some_details)
-                etDetails.requestFocus()
-                return false
+            var isValid = isFilledEditText(etDetails)
+            if (StringUtils.isNotEmpty(mCurrentActivity?.selectedReason?.code)) {
+                if (mCurrentActivity?.selectedReason?.code == COMPLAIN_WRONGE_FARE_CALCULATION) {
+                    isValid = isFilledEditText(editTextPickUpAddress) && isFilledEditText(edittextDropOffAddress)
+                            && isFilledEditText(editTextStops) && isFilledEditText(editTextKilometersTravelled)
+                            && isFilledEditText(editTextBookingTime) && isFilledEditText(editTextPaidAmount)
+                            && isFilledEditText(editTextPaidAmount)
+                }
             }
-            return true
+            return isValid
         }
 
     /**
@@ -98,6 +114,20 @@ class ComplainDetailFragment : Fragment() {
     }
 
     /**
+     * this method can be used to check whether any edit text has value or not
+     * @param editText [FontEditText] of which text needs to be validate
+     * @return [true] if contains text else [false]
+     */
+    private fun isFilledEditText(editText: FontEditText): Boolean {
+        if (isEmptyOrWhitespace(editText.text.toString().trim())) {
+            editText.error = getString(R.string.enter_some_details)
+            editText.requestFocus()
+            return false
+        }
+        return true
+    }
+
+    /**
      * Genereate Create Request Body For Zendesk
      */
     private fun buildCreateRequest(): CreateRequest {
@@ -118,7 +148,16 @@ class ComplainDetailFragment : Fragment() {
             add(CustomField(Constants.ZendeskCustomFields.Partner_Number, AppPreferences.getPilotData().phoneNo))
             add(CustomField(Constants.ZendeskCustomFields.Partner_Name, AppPreferences.getPilotData().fullName))
             add(CustomField(Constants.ZendeskCustomFields.Partner_Email, AppPreferences.getDriverEmail()))
-            add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, mCurrentActivity?.selectedReason))
+            add(CustomField(Constants.ZendeskCustomFields.Problem_Topic_Selected, mCurrentActivity?.selectedReason?.message!!))
+
+            if (mCurrentActivity?.selectedReason?.code!! == COMPLAIN_WRONGE_FARE_CALCULATION) {
+                add(CustomField(Constants.ZendeskCustomFields.Wrong_Fare_Pick_Up_Address, editTextPickUpAddress.text.toString()))
+                add(CustomField(Constants.ZendeskCustomFields.Wrong_Fare_Drop_Off_Address, edittextDropOffAddress.text.toString()))
+                add(CustomField(Constants.ZendeskCustomFields.Wrong_Fare_Stops, editTextStops.text.toString()))
+                add(CustomField(Constants.ZendeskCustomFields.Wrong_Fare_Kilometers_Travelled, editTextKilometersTravelled.text.toString()))
+                add(CustomField(Constants.ZendeskCustomFields.Wrong_Fare_Booking_Time, editTextBookingTime.text.toString()))
+                add(CustomField(Constants.ZendeskCustomFields.Wrong_Fare_Paid_Amount, editTextPaidAmount.text.toString()))
+            }
 
             mCurrentActivity?.tripHistoryDate.let {
                 add(CustomField(Constants.ZendeskCustomFields.Booking_Type, mCurrentActivity?.tripHistoryDate?.trip_type))

@@ -148,6 +148,11 @@ interface JobsDataSource {
     fun checkEmailUpdate(callback: EmailUpdateCheckCallback)
 
     /**
+     * Get Job Complain Reasons
+     */
+    fun getJobComplainReasons(callback: ComplainReasonsCallback)
+
+    /**
      * Get fair estimation
      * @param callback to get results in case of failure or success
      */
@@ -331,6 +336,15 @@ interface JobsDataSource {
         fun onSuccess(isEmailUpdated: Boolean)
 
         fun onFail(message: String?)
+    }
+
+    /**
+     * Callback interface to get fair estimation
+     */
+    interface ComplainReasonsCallback {
+        fun onSuccess(complainReasonResponse: ComplainReasonResponse)
+
+        fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
 
     /**

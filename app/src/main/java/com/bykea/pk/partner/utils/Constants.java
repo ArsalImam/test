@@ -624,6 +624,13 @@ public class Constants {
         public static long Type = 360020675514L;
         public static long Wait_Time = 360023230974L;
         public static long Wallet_Deduction = 360023253753L;
+
+        public static long Wrong_Fare_Pick_Up_Address = 360029983133L;
+        public static long Wrong_Fare_Drop_Off_Address = 360029983153L;
+        public static long Wrong_Fare_Stops = 360029983173L;
+        public static long Wrong_Fare_Kilometers_Travelled = 360029993514L;
+        public static long Wrong_Fare_Booking_Time = 360029983193L;
+        public static long Wrong_Fare_Paid_Amount = 360029983213L;
     }
 
     public static class ZendeskTicketStatus {

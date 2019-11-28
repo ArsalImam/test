@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
+import com.bykea.pk.partner.dal.source.remote.data.ComplainReason
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
@@ -39,7 +40,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private val RC_SIGN_IN = 9001
 
-    var selectedReason: String? = null
+    var selectedReason: ComplainReason? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
