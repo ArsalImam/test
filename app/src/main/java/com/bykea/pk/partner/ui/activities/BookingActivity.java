@@ -1163,10 +1163,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Sets map's camera to view whole trip route
      */
     private void setCameraToTripView() {
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getCurrentLatLngBounds(), 30);
-        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
-        mGoogleMap.setPadding(0, padding, 0, padding);
-        mGoogleMap.animateCamera(cu);
+        LatLngBounds builder = getCurrentLatLngBounds();
+        if (builder != null) {
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(builder, 30);
+            int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._50sdp);
+            mGoogleMap.setPadding(0, padding, 0, padding);
+            mGoogleMap.animateCamera(cu);
+        }
     }
 
     private void cancelReasonDialog() {
@@ -1915,11 +1918,24 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private LatLngBounds getCurrentLatLngBounds() {
+        int numberOfBounds = 0;
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        if (pickUpMarker != null) builder.include(pickUpMarker.getPosition());
-        if (dropOffMarker != null) builder.include(dropOffMarker.getPosition());
-        if (driverMarker != null) builder.include(driverMarker.getPosition());
 
+        if (pickUpMarker != null) {
+            builder.include(pickUpMarker.getPosition());
+            numberOfBounds++;
+        }
+        if (dropOffMarker != null) {
+            builder.include(dropOffMarker.getPosition());
+            numberOfBounds++;
+        }
+        if (driverMarker != null) {
+            builder.include(driverMarker.getPosition());
+            numberOfBounds++;
+        }
+
+        if (numberOfBounds == 0)
+            return null;
 
         LatLngBounds tmpBounds = builder.build();
         /* Add 2 points 1000m northEast and southWest of the center.

@@ -369,7 +369,9 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             public void onClick(View v) {
                 Dialogs.INSTANCE.dismissDialog();
                 try {
-                    mAdapter.getItem(mAdapter.getSelectedItemIndex()).setImageUri(Utils.startCameraByIntent(mCurrentActivity, createImageFile()));
+                    if (checkPermissions()) {
+                        mAdapter.getItem(mAdapter.getSelectedItemIndex()).setImageUri(Utils.startCameraByIntent(mCurrentActivity, createImageFile()));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
