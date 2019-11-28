@@ -79,6 +79,10 @@ class ComplainReasonFragment : Fragment() {
         }
     }
 
+    /**
+     * this map will map string list of reasons to the [ComplainReason] list
+     * @param messages to convert into it
+     */
     private fun mapStringListToComplainReasons(messages: Array<String>): List<ComplainReason> {
         return messages.map { ComplainReason(StringUtils.EMPTY_STRING, it, StringUtils.EMPTY_STRING) }
     }

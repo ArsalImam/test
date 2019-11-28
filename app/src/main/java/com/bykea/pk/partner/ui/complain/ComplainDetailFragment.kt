@@ -52,15 +52,11 @@ class ComplainDetailFragment : Fragment() {
             //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
             ticketSubject = AppPreferences.getPilotData().id
         }
-        if (mCurrentActivity?.selectedReason?.code != null) {
-            val code = mCurrentActivity?.selectedReason?.code!!
-            binding.wrongFareLayout.visibility = if (StringUtils.isEmpty(code) || code != COMPLAIN_WRONGE_FARE_CALCULATION) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
+        val code = mCurrentActivity?.selectedReason?.code!!
+        binding.wrongFareLayout.visibility = if (StringUtils.isEmpty(code) || code != COMPLAIN_WRONGE_FARE_CALCULATION) {
+            View.GONE
         } else {
-            binding.wrongFareLayout.visibility = View.GONE
+            View.VISIBLE
         }
         return binding.root
     }
