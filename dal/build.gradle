@@ -74,6 +74,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
+    implementation 'org.apache.commons:commons-lang3:3.7'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Testing dependencies

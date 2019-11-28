@@ -9,13 +9,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.util.COMPLAIN_WRONGE_FARE_CALCULATION
+import com.bykea.pk.partner.dal.util.isFilledEditText
 import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
-import com.bykea.pk.partner.widgets.FontEditText
-import com.google.android.gms.common.util.Strings.isEmptyOrWhitespace
 import com.zendesk.service.ErrorResponse
 import com.zendesk.service.ZendeskCallback
 import kotlinx.android.synthetic.main.fragment_complain_detail.*
@@ -71,13 +70,19 @@ class ComplainDetailFragment : Fragment() {
      */
     private val isValid: Boolean
         get() {
-            var isValid = isFilledEditText(etDetails)
+            val errorToShow = getString(R.string.enter_some_details)
+
+            var isValid = etDetails.isFilledEditText(errorToShow)
             if (StringUtils.isNotEmpty(mCurrentActivity?.selectedReason?.code)) {
                 if (mCurrentActivity?.selectedReason?.code == COMPLAIN_WRONGE_FARE_CALCULATION) {
-                    isValid = isFilledEditText(editTextPickUpAddress) && isFilledEditText(edittextDropOffAddress)
-                            && isFilledEditText(editTextStops) && isFilledEditText(editTextKilometersTravelled)
-                            && isFilledEditText(editTextBookingTime) && isFilledEditText(editTextPaidAmount)
-                            && isFilledEditText(editTextPaidAmount)
+                    isValid =
+                            editTextPickUpAddress.isFilledEditText(errorToShow) &&
+                                    edittextDropOffAddress.isFilledEditText(errorToShow) &&
+                                    editTextStops.isFilledEditText(errorToShow) &&
+                                    editTextKilometersTravelled.isFilledEditText(errorToShow) &&
+                                    editTextBookingTime.isFilledEditText(errorToShow) &&
+                                    editTextPaidAmount.isFilledEditText(errorToShow) &&
+                                    editTextPaidAmount.isFilledEditText(errorToShow)
                 }
             }
             return isValid
@@ -107,20 +112,6 @@ class ComplainDetailFragment : Fragment() {
             Dialogs.INSTANCE.dismissDialog()
             Utils.appToast(getString(R.string.error_try_again))
         }
-    }
-
-    /**
-     * this method can be used to check whether any edit text has value or not
-     * @param editText [FontEditText] of which text needs to be validate
-     * @return [true] if contains text else [false]
-     */
-    private fun isFilledEditText(editText: FontEditText): Boolean {
-        if (isEmptyOrWhitespace(editText.text.toString().trim())) {
-            editText.error = getString(R.string.enter_some_details)
-            editText.requestFocus()
-            return false
-        }
-        return true
     }
 
     /**

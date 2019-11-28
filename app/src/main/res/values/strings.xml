@@ -540,4 +540,11 @@
     <string name="muntakhib_manzil">منزل</string>
     <string name="commission_text_urdu">بائیکیاکمیشن</string>
     <string name="braces_percent">(%%%s)</string>
+    <string name="pickup_address">Pickup Address</string>
+    <string name="dropoff_address">Dropoff Address</string>
+    <string name="stops_if_any">Stops (if any)</string>
+    <string name="kilometer_travel">Kilometers Travelled</string>
+    <string name="booking_time_min">Booking Time (Minutes)</string>
+    <string name="paid_amount">Paid Amount</string>
+    <string name="enter_details">Enter Details</string>
 </resources>
