@@ -51,7 +51,7 @@ class ComplainDetailFragment : Fragment() {
             //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
             ticketSubject = AppPreferences.getPilotData().id
         }
-        val code = mCurrentActivity?.selectedReason?.code!!
+        val code = mCurrentActivity?.selectedReason?.code
         binding.wrongFareLayout.visibility = if (StringUtils.isEmpty(code) || code != COMPLAIN_WRONGE_FARE_CALCULATION) {
             View.GONE
         } else {
