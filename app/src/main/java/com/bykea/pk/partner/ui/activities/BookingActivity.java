@@ -2630,8 +2630,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     @Override
-    public void onBykeaCashAmountUpdated(int amount) {
-        tvCodAmount.setText(String.format(getString(R.string.amount_rs_int), amount));
+    public void onBykeaCashAmountUpdated() {
         AppPreferences.setCallData(callData);
+        int cashKiWasooliValue = callData.getCashKiWasooli();
+        cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
+        tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
     }
 }
