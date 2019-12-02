@@ -547,4 +547,6 @@
     <string name="booking_time_min">Booking Time (Minutes)</string>
     <string name="paid_amount">Paid Amount</string>
     <string name="enter_details">Enter Details</string>
+    <string name="error_kilometres_msg">Kilometres should not more than 50</string>
+    <string name="error_booking_time_msg">Booking time should not more than 160 minutes</string>
 </resources>

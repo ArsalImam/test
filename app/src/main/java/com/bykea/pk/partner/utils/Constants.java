@@ -128,6 +128,8 @@ public class Constants {
 
     public static final int TRIP_STATUS_CODE_DELIVERY = 10;
     public static final int TRIP_STATUS_CODE_RIDE = 7;
+    public static final int MAX_COMPLAIN_KILOMETRES_TRAVELLED = 50;
+    public static final int MAX_COMPLAIN_MINIUTES_TRAVELLED = 120;
 
     public static class CallType {
         public static final String SINGLE = "single";

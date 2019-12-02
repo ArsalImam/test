@@ -83,6 +83,21 @@ class ComplainDetailFragment : Fragment() {
                                     editTextBookingTime.isFilledEditText(errorToShow) &&
                                     editTextPaidAmount.isFilledEditText(errorToShow) &&
                                     editTextPaidAmount.isFilledEditText(errorToShow)
+                    try {
+                        if (editTextKilometersTravelled.text.toString().toInt() > Constants.MAX_COMPLAIN_KILOMETRES_TRAVELLED) {
+                            editTextKilometersTravelled.error = getString(R.string.error_kilometres_msg)
+                            editTextKilometersTravelled.requestFocus()
+                            isValid = false
+                        }
+
+                        if (editTextBookingTime.text.toString().toInt() > Constants.MAX_COMPLAIN_MINIUTES_TRAVELLED) {
+                            editTextBookingTime.error = getString(R.string.error_booking_time_msg)
+                            editTextBookingTime.requestFocus()
+                            isValid = false
+                        }
+                    } catch (e: NumberFormatException) {
+                        isValid = false
+                    }
                 }
             }
             return isValid
