@@ -1674,9 +1674,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
                 // ALWAYS UPDATE PICKUP MARKER FOR ACCEPT OR ARRIVED STATE
                 updatePickupMarker();
-            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP) && !isBykeaCashJob) {
+            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 // DO NOT REMOVE PICKUP MARKER FOR START STATE AS WELL FOR BYKEA CASH
-                if (pickUpMarker != null) {
+                if (pickUpMarker == null && isBykeaCashJob) {
+                    updatePickupMarker();
+                } else if (pickUpMarker != null && !isBykeaCashJob) {
                     pickUpMarker.remove();
                 }
             }
