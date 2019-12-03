@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
@@ -638,7 +639,7 @@ public class WebIORequestHandler {
                     } else {
                         EventBus.getDefault().post(intent);
 //                                DriverApp.getContext().sendBroadcast(intent);
-                        Notifications.createCancelNotification(DriverApp.getContext(), "Passenger has cancelled the Trip", 23);
+                        Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
                     }
                     getInstance().unRegisterChatListener();
                 }
