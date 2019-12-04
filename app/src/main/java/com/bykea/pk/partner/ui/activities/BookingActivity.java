@@ -119,6 +119,7 @@ import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
 
 public class BookingActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, RoutingListener, BykeaCashDetailsListener {
@@ -279,7 +280,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
                                 callData = normalCallData;
                                 if (callData != null && callData.getServiceCode() != null &&
-                                        callData.getServiceCode() == OFFLINE_RIDE) {
+                                        (callData.getServiceCode() == OFFLINE_RIDE ||
+                                                callData.getServiceCode() == OFFLINE_DELIVERY)) {
                                     chatBtn.setVisibility(View.GONE);
                                 }
                                 updateDropOff();
