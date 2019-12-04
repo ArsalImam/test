@@ -302,8 +302,9 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onDrawerOpened(View drawerView) {
+                Utils.hideKeyboard(mCurrentActivity);
+                getWindow().getDecorView().clearFocus();
                 super.onDrawerOpened(drawerView);
-
             }
 
             @Override
