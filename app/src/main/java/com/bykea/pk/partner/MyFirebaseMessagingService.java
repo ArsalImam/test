@@ -224,7 +224,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         EventBus.getDefault().post(intent);
                     } else {
                         EventBus.getDefault().post(intent);
-                        Notifications.createCancelNotification(mContext, callData.getMessage(), 23);
+                        Notifications.createCancelNotification(mContext, callData.getMessage());
                     }
                 }
             } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) && AppPreferences.getAvailableStatus()) {

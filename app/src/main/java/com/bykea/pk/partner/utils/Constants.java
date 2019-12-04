@@ -7,7 +7,7 @@ public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
     public static final int DIGIT_TWO = 2;
-
+    public static final int NEGATIVE_DIGIT_ONE = -1;
 
     public static final String APP = "APP";
     public static final String GCM_PROJECT_NO = "764640458585";
