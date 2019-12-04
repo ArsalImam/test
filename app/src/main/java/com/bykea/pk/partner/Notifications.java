@@ -169,7 +169,7 @@ public class Notifications {
         nManager.notify(id, builder.build());
     }
 
-    public static void createCancelNotification(Context context, String message, int id) {
+    public static void createCancelNotification(Context context, String message) {
 
         NotificationManager nManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -194,7 +194,7 @@ public class Notifications {
                         PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(contentIntent);
 
-        nManager.notify(id, builder.build());
+        nManager.notify(0, builder.build());
     }
 
 
