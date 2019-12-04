@@ -1669,19 +1669,24 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private synchronized void updateMarkers(boolean shouldUpdateCamera) {
         if (null == mGoogleMap || null == callData) return;
 
-        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
-                callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-            if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng()))
+        if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng())) {
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
+                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+                // ALWAYS UPDATE PICKUP MARKER FOR ACCEPT OR ARRIVED STATE
                 updatePickupMarker();
-            if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng()))
-                updateDropOffMarker();
-        } else {
-            if (pickUpMarker != null && !callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) && !isBykeaCashJob)
-                pickUpMarker.remove();
-            if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng()))
-                updateDropOffMarker();
+            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
+                // DO NOT REMOVE PICKUP MARKER FOR START STATE AS WELL FOR BYKEA CASH
+                if (pickUpMarker == null && isBykeaCashJob) {
+                    updatePickupMarker();
+                } else if (pickUpMarker != null && !isBykeaCashJob) {
+                    pickUpMarker.remove();
+                }
+            }
         }
 
+        if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng())) {
+            updateDropOffMarker();
+        }
         if (shouldUpdateCamera) setCameraToTripView();
         else if (shouldCameraFollowCurrentLocation) setCameraToDriverLocation();
     }
@@ -2522,7 +2527,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         });
     }
 
-    //region
+//region
 
     /**
      * Broadcast Receiver to updated the message badge count.
@@ -2548,7 +2553,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             cartBadge.setVisibility(View.GONE);
         }
     }
-    //endregion
+//endregion
 
     /**
      * Set PickUpAddress
