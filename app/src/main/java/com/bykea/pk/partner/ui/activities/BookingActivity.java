@@ -118,6 +118,7 @@ import butterknife.OnClick;
 import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
+import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
@@ -1617,7 +1618,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
             Stop dropOffStop = callData.getDropoffStop();
-            if (dropOffStop.getDistance() != null)
+            if (dropOffStop.getDistance() != NEGATIVE_DIGIT_ONE)
                 tvDistance.setText(Utils.formatDecimalPlaces((dropOffStop.getDistance() / 1000F) + "", 1));
             else tvDistance.setText(R.string.dash);
             if (dropOffStop.getDuration() != null)
@@ -1649,7 +1650,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
 
         Stop pickupStop = callData.getPickupStop();
-        if (pickupStop.getDistance() != null)
+        if (pickupStop.getDistance() != NEGATIVE_DIGIT_ONE)
             tvDistance.setText(Utils.formatDecimalPlaces((pickupStop.getDistance() / 1000F) + "", 1));
         else tvDistance.setText(R.string.dash);
         if (pickupStop.getDuration() != null)
