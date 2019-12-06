@@ -659,6 +659,10 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                         chatAdapter.notifyDataSetChanged();
                         scrollDown();
                     }
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
+                            || intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
+                        cancelRide();
+                    }
                 }
             });
         }
@@ -979,5 +983,11 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             return Constants.RIDE_TYPE_FOOD_DELIVERY.equalsIgnoreCase(callData.getCallType());
         }
         return false;
+    }
+
+    private void cancelRide() {
+        Utils.setCallIncomingState();
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
+        finish();
     }
 }
