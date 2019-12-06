@@ -561,6 +561,27 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * Check If Drop Of Update Is Required Or Not
+     * @return  True/False
+     */
+    public static boolean isDropOffUpdateRequired() {
+        return mSharedPreferences.getBoolean(Keys.DROP_OFF_UPDATE_REQUIRED, false);
+    }
+
+    /**
+     * Set Drop Off Update Required
+     * If Application Is Running But Booking Activity Is In Background or Chat Activity Is In Foreground
+     * Set To False After Execution Of True
+     * @param value : True/False (On Behalf Of Above Decision)
+     */
+    public static void setDropOffUpdateRequired(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.DROP_OFF_UPDATE_REQUIRED, value)
+                .apply();
+    }
+
     public static boolean isChatActivityOnForeground() {
         return mSharedPreferences.getBoolean(Keys.CHAT_ACTIVITY_FOREGROUND, false);
     }

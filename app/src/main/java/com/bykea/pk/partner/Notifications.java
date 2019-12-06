@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.models.ReceivedMessage;
 import com.bykea.pk.partner.models.ReceivedMessageCount;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -38,6 +39,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static com.bykea.pk.partner.utils.Constants.ANDROID_RESOURCE_URI;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.SEPERATOR;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 public class Notifications {
@@ -257,15 +261,15 @@ public class Notifications {
                 String messageToDisplay = StringUtils.EMPTY;
                 String[] strings = receivedMessage.getData().getMessage().split(TRANSALATION_SEPERATOR);
 
-                if (strings.length == 2 && strings[Constants.DIGIT_ZERO] != null && strings[Constants.DIGIT_ONE] != null &&
-                        StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO]) && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
-                    messageToDisplay = messageToDisplay.concat(strings[Constants.DIGIT_ZERO]);
+                if (strings.length == 2 && strings[DIGIT_ZERO] != null && strings[Constants.DIGIT_ONE] != null &&
+                        StringUtils.isNotEmpty(strings[DIGIT_ZERO]) && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
+                    messageToDisplay = messageToDisplay.concat(strings[DIGIT_ZERO]);
                     messageToDisplay = messageToDisplay.concat(newLineEscape);
                     messageToDisplay = messageToDisplay.concat(strings[Constants.DIGIT_ONE]);
                     messageToDisplay = Utils.getTextFromHTML(messageToDisplay);
                     receivedMessage.getData().setMessage(messageToDisplay);
-                } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ZERO])) {
-                    messageToDisplay = messageToDisplay.concat(strings[Constants.DIGIT_ZERO]);
+                } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[DIGIT_ZERO])) {
+                    messageToDisplay = messageToDisplay.concat(strings[DIGIT_ZERO]);
                     receivedMessage.getData().setMessage(messageToDisplay);
                 } else if (strings.length <= 2 && StringUtils.isNotEmpty(strings[Constants.DIGIT_ONE])) {
                     messageToDisplay = messageToDisplay.concat(strings[Constants.DIGIT_ONE]);
@@ -320,6 +324,29 @@ public class Notifications {
         builder.setContentIntent(contentIntent);
 
         nManager.notify(0, builder.build());
+    }
+
+    /**
+     * Create Drop Off Update Notification
+     */
+    public static void createDropOffUpdateNotification() {
+        NotificationManager nManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        ReceivedMessage receivedMessage = new ReceivedMessage();
+        receivedMessage.setMessage(DriverApp.getContext().getString(R.string.drop_off_update_by_passenger));
+        receivedMessage.setData(receivedMessage);
+
+        Uri soundUri = Uri.parse(ANDROID_RESOURCE_URI
+                + DriverApp.getContext().getPackageName() + SEPERATOR
+                + R.raw.notification_sound);
+        NotificationCompat.Builder builder;
+        builder = createNotificationForMessage(DriverApp.getContext(), receivedMessage, soundUri);
+
+        Intent targetIntent = new Intent(DriverApp.getContext(), BookingActivity.class);
+        targetIntent.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(DriverApp.getContext(), DIGIT_ZERO, targetIntent, DIGIT_ZERO);
+        builder.setContentIntent(contentIntent);
+        nManager.notify(DIGIT_ZERO, builder.build());
     }
 
     /**
