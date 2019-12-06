@@ -453,7 +453,9 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         } else if (linLayoutChatMessages != null && linLayoutChatMessages.getVisibility() == View.VISIBLE) {
             hideChatMessageVisibleKeyboard();
         } else {
-            super.onBackPressed();
+            final Intent upIntent = new Intent(this, BookingActivity.class);
+            upIntent.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(upIntent);
         }
     }
 
