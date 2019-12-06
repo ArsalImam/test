@@ -290,7 +290,7 @@ class OfflineRidesFragment : Fragment() {
             _id = AppPreferences.getDriverId()
             token_id = AppPreferences.getAccessToken()
 
-            if (eTCustomerName.text.toString().isNotEmpty())
+            if (eTCustomerName.text.toString().trim().isNotEmpty())
                 customer_name = eTCustomerName.text?.trim().toString()
 
             trip = RideCreateTripData()
