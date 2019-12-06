@@ -186,7 +186,7 @@ class OfflineRidesFragment : Fragment() {
      * Validate Customer Field (Empty or Not)
      */
     private fun validateCustomerName(showError: Boolean = true): Boolean {
-        if (eTCustomerName.text.toString().isEmpty()) {
+        if (eTCustomerName.text.toString().trim().isEmpty()) {
             if (showError) {
                 eTCustomerName.error = context?.getString(R.string.enter_correct_customer_name);
                 eTCustomerName.requestFocus()
@@ -290,8 +290,8 @@ class OfflineRidesFragment : Fragment() {
             _id = AppPreferences.getDriverId()
             token_id = AppPreferences.getAccessToken()
 
-            if (!eTCustomerName.text.toString().isEmpty())
-                customer_name = eTCustomerName.text.toString()
+            if (eTCustomerName.text.toString().isNotEmpty())
+                customer_name = eTCustomerName.text?.trim().toString()
 
             trip = RideCreateTripData()
             trip.creator = APP
