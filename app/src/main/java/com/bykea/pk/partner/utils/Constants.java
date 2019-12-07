@@ -675,4 +675,6 @@ public class Constants {
     public static final float SET_SCALE_ANIMATION_PIVOT_Y = 0.5f;
     public static final long SET_SCALE_DELAY = 2000;
     public static final long SET_SCALE_DELAY_ZERO = 0;
+
+    public static final String ANDROID_RESOURCE_URI = "android.resource://";
 }

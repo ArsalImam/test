@@ -599,6 +599,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         isJobActivityLive = true;
         AppPreferences.setJobActivityOnForeground(true);
         setNotificationChatBadge();
+
+        if (AppPreferences.isDropOffUpdateRequired()) {
+            AppPreferences.setDropOffUpdateRequired(false);
+            // EXECUTE IF CALL DATA IS NOT NULL (SCENARIO HANDLE FOR DROP OFF NOTICATION)
+            if (callData != null) {
+                shouldRefreshDropOffMarker = true;
+                dataRepository.requestRunningTrip(mCurrentActivity, handler);
+            }
+        }
         super.onResume();
     }
 
@@ -980,11 +989,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
                         playNotificationSound();
-                        Utils.appToast("Drop Off has been Updated by Passenger.");
-//                        callData = AppPreferences.getCallData();
+                        Utils.appToast(getString(R.string.drop_off_update_by_passenger));
                         shouldRefreshDropOffMarker = true;
                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
-//                        updateDropOff();
                     }
                     if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
                         playNotificationSound();
