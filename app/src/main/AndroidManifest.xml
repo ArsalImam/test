@@ -275,6 +275,9 @@
             android:name=".ui.activities.MultiDeliveryFeedbackActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.booking.BookingDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.loadboard.detail.JobDetailActivity"
             android:launchMode="singleTop" />
         <activity
