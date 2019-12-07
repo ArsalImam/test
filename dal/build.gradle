@@ -30,8 +30,8 @@ android {
         productFlavors {
             local {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://54.72.216.8:3000\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://54.72.216.8:4000\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://192.168.1.118:3000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://192.168.1.118:4000\""
             }
             develop {
                 dimension "env"
@@ -60,6 +60,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
 
     }
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
@@ -75,6 +78,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation ('commons-validator:commons-validator:1.5.0') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
     // Testing dependencies
     androidTestImplementation 'androidx.test:runner:1.1.1'
