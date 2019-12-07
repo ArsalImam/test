@@ -299,4 +299,12 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, subCode: Int?, message: String?) = callbackBykeaCash.onFail(code, subCode, message)
         })
     }
+
+    fun getBookingDetailsById(bookingId: String, callback: JobsDataSource.GetBookingDetailCallback) {
+        /*String.format("http://192.168.1.118:4600/v1/bookings/%s", bookingId)*/
+        Backend.talos.getBookingDetailsById().enqueue(object : Callback<BookingDetailResponse> {
+            override fun onSuccess(responseBykeaCash: BookingDetailResponse) = callback.onSuccess(responseBykeaCash)
+            override fun onFail(code: Int, message: String?) = callback.onFail(code, message)
+        })
+    }
 }
