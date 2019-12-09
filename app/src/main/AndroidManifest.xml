@@ -132,7 +132,7 @@
         <activity
             android:name=".ui.activities.BookingActivity"
             android:excludeFromRecents="false"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTop"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated" />
         <activity android:name=".ui.activities.FeedbackActivity" /> <!-- CROPPING ACTIVITY -->
         <activity
