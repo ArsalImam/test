@@ -9,6 +9,7 @@ import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
+import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
@@ -225,10 +226,17 @@ public class UserRepository {
         mRestRequestHandler.checkActiveTrip(mContext, mDataCallback);
     }
 
-    public void requestTripHistory(Context context, IUserDataHandler handler, String pageNo) {
+    public void requestTripHistory(Context context, IUserDataHandler handler, String pageNo, String tripHistoryId) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.getTripHistory(mContext, mDataCallback, pageNo);
+        mRestRequestHandler.getTripHistory(mContext, mDataCallback, pageNo, tripHistoryId);
+    }
+
+
+    public void requestBookingListing(Context context, IUserDataHandler handler, String pageNo, String limit) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestBookingListing(mContext, mDataCallback, pageNo, limit);
     }
 
     public void requestMissedTripHistory(Context context, IUserDataHandler handler, String pageNo) {
@@ -1702,6 +1710,9 @@ public class UserRepository {
                         mUserCallback.onMultiDeliveryDriverCancelBatch(
                                 (MultiDeliveryCancelBatchResponse) object
                         );
+                        break;
+                    case "BookingListingResponse":
+                        mUserCallback.onBookingListingResponse((BookingListingResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

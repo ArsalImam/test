@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.Predefine_rating;
 import com.bykea.pk.partner.models.data.TripHistoryData;
+import com.bykea.pk.partner.ui.booking.BookingDetailActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.FontUtils;
@@ -252,8 +253,8 @@ public class HistoryDetailActivity extends BaseActivity {
 //                        "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
 //                Utils.startCustomWebViewActivity(mCurrentActivity,
 //                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
-
-                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, data);
+//                BookingDetailActivity.Companion.openActivity(HistoryDetailActivity.this, "5dd3c08df680703d57a36e77");
+                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, data, null);
                 break;
         }
     }
