@@ -263,7 +263,7 @@ interface Backend {
             @Body bodyObject: UpdateBykeaCashBookingRequest): Call<UpdateBykeaCashBookingResponse>
 
     @GET
-    fun getBookingDetailsById(@Url bookingUrl: String = ""): Call<BookingDetailResponse>
+    fun getBookingDetailsById(@Url bookingUrl: String): Call<BookingDetailResponse>
 
     companion object {
 
