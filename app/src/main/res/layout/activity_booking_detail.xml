@@ -5,6 +5,7 @@
     <data>
 
         <import type="com.bykea.pk.partner.utils.Utils" />
+
         <import type="android.view.View" />
 
         <import type="com.bykea.pk.partner.ui.helpers.AppPreferences" />
@@ -203,6 +204,41 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height.large"
+                        android:visibility="@{viewModel.bookingDetailData.status == `cancelled` ? View.VISIBLE : View.GONE}"
+                        android:layout_marginLeft="@dimen/margin.small"
+                        android:layout_marginRight="@dimen/margin.small"
+                        android:gravity="center_vertical">
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/cancelTypeTv"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.5"
+                            android:background="@color/windowBackground"
+                            android:gravity="left|center_vertical"
+                            android:text="@{viewModel.bookingDetailData.cancelBy}"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="roboto_light.ttf" />
+
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/windowBackground"
+                            android:gravity="right|center_vertical"
+                            android:paddingRight="@dimen/_4sdp"
+                            android:text="@string/cancel_karne_wala"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    </LinearLayout>
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_1sdp"
@@ -225,13 +261,13 @@
                     android:layout_marginBottom="@dimen/_12sdp"
                     android:background="@drawable/button_gray_round"
                     android:gravity="center"
+                    android:onClick="onComplainButtonClicked"
                     android:text="@string/masla_darj_karain"
                     android:textColor="@color/white"
-                    android:onClick="onComplainButtonClicked"
-                    tools:visibility="visible"
-                    android:visibility="@{viewModel.showComplainButton ? View.VISIBLE : View.GONE}"
                     android:textSize="@dimen/_20sdp"
-                    app:fontName="jameel_noori_nastaleeq.ttf" />
+                    android:visibility="@{viewModel.showComplainButton ? View.VISIBLE : View.GONE}"
+                    app:fontName="jameel_noori_nastaleeq.ttf"
+                    tools:visibility="visible" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
