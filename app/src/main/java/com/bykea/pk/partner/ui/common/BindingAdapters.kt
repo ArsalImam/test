@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.common
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
@@ -12,9 +13,9 @@ import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.REQUIRED_DATE_FORMAT
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
+import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.FontTextView
 import org.apache.commons.lang3.StringUtils
-import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,6 +41,16 @@ object BindingAdapters {
         with(listView.adapter as JobListAdapter) {
             replaceData(items)
         }
+    }
+
+    @BindingAdapter("app:loadUrl")
+    @JvmStatic
+    fun loadImageUrl(imageView: ImageView, url: String) {
+        Utils.loadImgPicasso(imageView, R.color.grey, url)
+
+//        with(imageView.adapter as JobListAdapter) {
+//            replaceData(items)
+//        }
     }
 
     @BindingAdapter("app:serviceCode")
