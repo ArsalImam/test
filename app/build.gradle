@@ -72,7 +72,7 @@ android {
         productFlavors {
             local {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.1.118:3000\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://192.168.3.50:3000\""
             }
             develop {
                 dimension "env"
