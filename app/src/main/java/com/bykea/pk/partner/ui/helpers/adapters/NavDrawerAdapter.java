@@ -1,29 +1,27 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.booking.BookingListingFragment;
 import com.bykea.pk.partner.ui.fragments.ContactUsFragment;
 import com.bykea.pk.partner.ui.fragments.HomeFragment;
-import com.bykea.pk.partner.ui.fragments.HowItWorksFragment;
 import com.bykea.pk.partner.ui.fragments.ProfileFragment;
 import com.bykea.pk.partner.ui.fragments.TripHistoryFragment;
 import com.bykea.pk.partner.ui.fragments.WalletFragment;
-import com.bykea.pk.partner.ui.fragments.WebViewFragment;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.offlinerides.OfflineRidesFragment;
 import com.bykea.pk.partner.utils.Connectivity;
@@ -128,7 +126,14 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                         }
                         break;
                     case Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S:
-                        updateCurrentFragment(new TripHistoryFragment(), Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S);
+                        //TODO need to add backward compatibility here
+                        String screenFlag = Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
+                        if (AppPreferences.getSettings().getSettings().getBookingLisitingForDriverUrl() == null) {
+                            updateCurrentFragment(new TripHistoryFragment(), screenFlag);
+                        } else {
+                            updateCurrentFragment(new BookingListingFragment(), screenFlag);
+                        }
+
                         break;
                     case Constants.ScreenRedirections.WALLET_SCREEN_S:
                         updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN_S);
