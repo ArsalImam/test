@@ -59,7 +59,7 @@ class BookingDetailActivity : BaseActivity() {
 
     public fun onComplainButtonClicked(view: View) {
         ActivityStackManager.getInstance()
-                .startComplainSubmissionActivity(this, null)
+                .startComplainSubmissionActivity(this, null, viewModel?.bookingDetailData?.value?.bookingId!!)
     }
 
     private fun updateToolbar() {
@@ -82,7 +82,8 @@ class BookingDetailActivity : BaseActivity() {
         viewModel?.bookingDetailData?.observe(this, Observer {
             if (it == null) return@Observer
             setToolbarTitle(it.bookingCode?.toUpperCase())
-            invoiceAdapter.items = it.invoice!!
+            if (it.invoice != null)
+                invoiceAdapter.items = it.invoice!!
         })
         viewModel?.updateBookingDetailById(intent.extras[EXTRA_BOOKING_DETAIL_ID].toString())
         invoiceAdapter = LastAdapter(R.layout.adapter_booking_detail_invoice, object : LastAdapter.OnItemClickListener<Invoice> {

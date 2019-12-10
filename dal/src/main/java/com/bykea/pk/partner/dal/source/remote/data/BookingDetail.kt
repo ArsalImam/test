@@ -2,6 +2,7 @@ package com.bykea.pk.partner.dal.source.remote.data
 
 import android.os.Parcelable
 import com.bykea.pk.partner.dal.util.BOOKING_CURRENT_DATE_FORMAT
+import com.bykea.pk.partner.dal.util.BOOKING_LIST_REQUIRED_DATE_FORMAT
 import com.bykea.pk.partner.dal.util.BOOKING_REQUIRED_DATE_FORMAT
 import com.bykea.pk.partner.dal.util.DateUtils
 import com.google.gson.annotations.SerializedName
@@ -40,7 +41,21 @@ data class BookingDetail(
 ) : Parcelable {
     val formattedDate: String
         get() {
-            return DateUtils.getFormattedDate(dt, BOOKING_CURRENT_DATE_FORMAT, BOOKING_REQUIRED_DATE_FORMAT)
+            return DateUtils.getFormattedDate(dt, BOOKING_CURRENT_DATE_FORMAT, BOOKING_LIST_REQUIRED_DATE_FORMAT)
+        }
+
+    val cancelBy: String
+        get() {
+            tags?.forEach {
+                if (it?.name == "cancel_by_admin") {
+                    return "Admin"
+                } else if (it.name == "cancel_by_partner") {
+                    return "Partner"
+                } else if (it.name == "cancel_by_customer") {
+                    return "Customer"
+                }
+            }
+            return org.apache.commons.lang3.StringUtils.EMPTY
         }
 }
 
