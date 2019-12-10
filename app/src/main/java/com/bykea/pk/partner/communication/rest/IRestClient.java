@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.communication.rest;
 
 
+import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -120,7 +121,18 @@ interface IRestClient {
     Call<TripHistoryResponse> getTripHistory(@Query(Fields.id) String Id,
                                              @Query(Fields.tokenId) String tokenId,
                                              @Query(Fields.USER_TYPE) String userType,
-                                             @Query("page") String pageNo);
+                                             @Query("page") String pageNo,
+                                             @Query("trip_id") String trip_id);
+
+    @GET
+    Call<BookingListingResponse> getBookingListing(
+            @Url String url,
+            @Header("x-kr-user-id") String driverId,
+            @Header("x-kr-user-token") String driverToken,
+            @Query("state") String state,
+            @Query("page") String page,
+            @Query("limit") String limit,
+            @Query("sort") String sort);
 
     @GET(ApiTags.GET_MISSED_TRIPS_HISTORY_LIST)
     Call<TripMissedHistoryResponse> getMissedTripHistory(@Query(Fields.id) String Id,
@@ -421,11 +433,12 @@ interface IRestClient {
 
     /**
      * Accept a booking
+     *
      * @param bookingId selected booking Id
      * @param driver_id driver's id
-     * @param token_id driver's access token
-     * @param lat driver's current lat
-     * @param lng driver's current lng
+     * @param token_id  driver's access token
+     * @param lat       driver's current lat
+     * @param lng       driver's current lng
      * @return Booking accept response
      */
     @FormUrlEncoded
@@ -438,6 +451,7 @@ interface IRestClient {
 
     /**
      * Driver cancel booking picked from load board
+     *
      * @param body Body having details of Booking
      * @return Server response
      */

@@ -60,6 +60,13 @@ public class Settings {
     @SerializedName("withdrawal_display")
     private boolean withdrawalDisplay;
 
+    @SerializedName("get_bookings_for_driver")
+    private String bookingLisitingForDriverUrl;
+
+    @SerializedName("get_bookings_by_id")
+    private String bookingDetailByIdUrl;
+
+
     /**
      * trip fees percentage taken by bykea
      */
@@ -250,5 +257,21 @@ public class Settings {
 
     public void setAdmin_fee(String admin_fee) {
         this.admin_fee = admin_fee;
+    }
+
+    public String getBookingLisitingForDriverUrl() {
+        return bookingLisitingForDriverUrl;
+    }
+
+    public void setBookingLisitingForDriverUrl(String bookingLisitingForDriverUrl) {
+        this.bookingLisitingForDriverUrl = bookingLisitingForDriverUrl;
+    }
+
+    public String getBookingDetailByIdUrl() {
+        return bookingDetailByIdUrl;
+    }
+
+    public void setBookingDetailByIdUrl(String bookingDetailByIdUrl) {
+        this.bookingDetailByIdUrl = bookingDetailByIdUrl;
     }
 }

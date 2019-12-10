@@ -1,12 +1,14 @@
 package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
+import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -83,6 +85,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -405,12 +408,12 @@ public class RestRequestHandler {
 
     }
 
-    public void getTripHistory(Context context, final IResponseCallback onResponseCallBack, String pageNo) {
+    public void getTripHistory(Context context, final IResponseCallback onResponseCallBack, String pageNo, String tripHistoryId) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
         Call<TripHistoryResponse> restCall = mRestClient.getTripHistory(AppPreferences.getDriverId(),
-                AppPreferences.getAccessToken(), Constants.USER_TYPE, pageNo);
+                AppPreferences.getAccessToken(), Constants.USER_TYPE, pageNo, tripHistoryId);
         restCall.enqueue(new Callback<TripHistoryResponse>() {
             @Override
             public void onResponse(Call<TripHistoryResponse> call, Response<TripHistoryResponse> response) {
@@ -424,6 +427,38 @@ public class RestRequestHandler {
 
             @Override
             public void onFailure(Call<TripHistoryResponse> call, Throwable t) {
+                mResponseCallBack.onError(0, getErrorMessage(t));
+            }
+        });
+    }
+
+    public void requestBookingListing(Context context, final IResponseCallback onResponseCallBack, String pageNo, String limit) {
+        mContext = context;
+        this.mResponseCallBack = onResponseCallBack;
+        mRestClient = RestClient.getClient(mContext);
+
+        Call<BookingListingResponse> restCall = mRestClient.getBookingListing(
+                AppPreferences.getSettings().getSettings().getBookingLisitingForDriverUrl(),
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                Constants.BookingFetchingStates.END,
+                pageNo,
+                limit,
+                Constants.SORT_BY_NEWEST);
+
+        restCall.enqueue(new Callback<BookingListingResponse>() {
+            @Override
+            public void onResponse(Call<BookingListingResponse> call, Response<BookingListingResponse> response) {
+                // Got success from server
+                if (null != response.body()) {
+                    mResponseCallBack.onResponse(response.body());
+                } else {
+                    mResponseCallBack.onError(response.code(), response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BookingListingResponse> call, Throwable t) {
                 mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
