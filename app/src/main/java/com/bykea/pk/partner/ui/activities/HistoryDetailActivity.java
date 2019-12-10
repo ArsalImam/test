@@ -249,11 +249,6 @@ public class HistoryDetailActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnProblem:
-//                String params = "name=" + AppPreferences.getPilotData().getFullName() +
-//                        "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
-//                Utils.startCustomWebViewActivity(mCurrentActivity,
-//                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
-//                BookingDetailActivity.Companion.openActivity(HistoryDetailActivity.this, "5dd3c08df680703d57a36e77");
                 ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, data, null);
                 break;
         }

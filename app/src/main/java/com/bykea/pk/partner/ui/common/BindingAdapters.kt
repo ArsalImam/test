@@ -47,10 +47,6 @@ object BindingAdapters {
     @JvmStatic
     fun loadImageUrl(imageView: ImageView, url: String) {
         Utils.loadImgPicasso(imageView, R.color.grey, url)
-
-//        with(imageView.adapter as JobListAdapter) {
-//            replaceData(items)
-//        }
     }
 
     @BindingAdapter("app:serviceCode")

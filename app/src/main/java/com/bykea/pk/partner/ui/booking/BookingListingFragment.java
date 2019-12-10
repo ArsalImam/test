@@ -142,8 +142,8 @@ public class BookingListingFragment extends Fragment {
             loader.setVisibility(View.VISIBLE);
         }
         repository.requestBookingListing(mCurrentActivity,
-                callbackHandler, page + "",
-                "100"/*String.valueOf(Constants.MAX_RECORDS_PER_PAGE)*/);
+                callbackHandler, page + StringUtils.EMPTY,
+                /*"100"*/String.valueOf(Constants.MAX_RECORDS_PER_PAGE));
     }
 
     private void setMissedCallsIcon() {

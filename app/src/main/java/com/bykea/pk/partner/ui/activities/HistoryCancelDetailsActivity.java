@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.TripHistoryData;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
@@ -142,10 +141,7 @@ public class HistoryCancelDetailsActivity extends BaseActivity {
 //                    String params = "name=" + AppPreferences.getPilotData().getFullName() + "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
 //                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
 
-
-
-                    //TODO move into booking activity
-//                    ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity,data);
+                    ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, data, null);
                 }
                 break;
 
