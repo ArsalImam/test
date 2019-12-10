@@ -300,9 +300,8 @@ class JobsRemoteDataSource {
         })
     }
 
-    fun getBookingDetailsById(bookingId: String, callback: JobsDataSource.GetBookingDetailCallback) {
-        /*String.format("http://192.168.1.118:4600/v1/bookings/%s", bookingId)*/
-        Backend.talos.getBookingDetailsById().enqueue(object : Callback<BookingDetailResponse> {
+    fun getBookingDetailsById(bookingUrl: String, callback: JobsDataSource.GetBookingDetailCallback) {
+        Backend.talos.getBookingDetailsById(bookingUrl).enqueue(object : Callback<BookingDetailResponse> {
             override fun onSuccess(responseBykeaCash: BookingDetailResponse) = callback.onSuccess(responseBykeaCash)
             override fun onFail(code: Int, message: String?) = callback.onFail(code, message)
         })

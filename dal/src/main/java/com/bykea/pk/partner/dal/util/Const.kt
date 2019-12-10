@@ -29,3 +29,19 @@ val SUB_CODE_1019 = 1019
 val SUB_CODE_1052_MSG = "Invalid phone number"
 val SUB_CODE_1054_MSG = "Driver has an active trip"
 val SUB_CODE_1055_MSG = "Customer has an active trip"
+
+val BOOKING_CURRENT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+val BOOKING_REQUIRED_DATE_FORMAT = "HH:mm:ss MM-dd-yyyy"
+val BOOKING_LIST_REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a"
+val BOOKING_ID_TO_REPLACE = ":id"
+
+val LABEL_NOT_AVAILABLE = "N/A"
+val DIGIT_ZERO = 0
+
+
+object AvailableTripStatus {
+    val STATUS_COMPLETED: String = "completed"
+    val STATUS_MISSED: String = "missed"
+    val STATUS_CANCELLED: String = "cancelled"
+    val STATUS_FEEDBACK: String = "feedback"
+}
