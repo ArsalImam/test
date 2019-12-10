@@ -3,6 +3,8 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
@@ -76,6 +78,9 @@ public class Constants {
     public static final String DEFAULT_ADMIN_FEE = "10";
     public static final String FONT_NASTALIQ = "jameel_noori_nastaleeq.ttf";
     public static final String FONT_ROBOTO_MED = "roboto_medium.ttf";
+    public static final String INTENT_TRIP_HISTORY_ID = "INTENT_TRIP_HISTORY_ID";
+    public static final int MAX_RECORDS_PER_PAGE = 20;
+    public static final String SORT_BY_NEWEST = "newest";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
@@ -128,6 +133,9 @@ public class Constants {
 
     public static final int TRIP_STATUS_CODE_DELIVERY = 10;
     public static final int TRIP_STATUS_CODE_RIDE = 7;
+    public static final String SEPERATOR_ABOVE = "above";
+    @Nullable
+    public static final String BOOKING_DETAIL_VIEW_TYPE_RATING = "rating";
 
     public static class CallType {
         public static final String SINGLE = "single";
@@ -487,6 +495,10 @@ public class Constants {
 
     }
 
+    public class BookingFetchingStates {
+        public static final String END = "end";
+        public static final String START = "start";
+    }
 
     /**
      * Inner class for Font Names
@@ -675,4 +687,5 @@ public class Constants {
     public static final float SET_SCALE_ANIMATION_PIVOT_Y = 0.5f;
     public static final long SET_SCALE_DELAY = 2000;
     public static final long SET_SCALE_DELAY_ZERO = 0;
+
 }

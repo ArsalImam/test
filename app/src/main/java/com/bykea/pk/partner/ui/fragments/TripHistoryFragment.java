@@ -148,7 +148,7 @@ public class TripHistoryFragment extends Fragment {
         if (loader != null) {
             loader.setVisibility(View.VISIBLE);
         }
-        repository.requestTripHistory(mCurrentActivity, callbackHandler, page + "");
+        repository.requestTripHistory(mCurrentActivity, callbackHandler, page + "", null);
     }
 
     private void setMissedCallsIcon() {
