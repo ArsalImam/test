@@ -980,7 +980,7 @@ public class HomeFragment extends Fragment {
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
+                                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null, null);
                             }
                         });
                 break;
