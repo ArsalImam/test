@@ -89,4 +89,5 @@ class BookingDetailViewModel
 
         _bookingDetailData.value = data
     }
+
 }
