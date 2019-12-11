@@ -16,10 +16,10 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
-import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.GeocodeStrategyManager;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
@@ -32,7 +32,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -76,6 +75,7 @@ public class SavePlaceActivity extends BaseActivity {
     ProgressBar loader;
 
     private SavedPlaces mSavedPlaceToServer;
+    private GeocodeStrategyManager geocodeStrategyManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +84,8 @@ public class SavePlaceActivity extends BaseActivity {
         setContentView(R.layout.activity_save_place);
         ButterKnife.bind(this);
         mCurrentActivity = this;
+
+        geocodeStrategyManager = new GeocodeStrategyManager(this, mPlacesDataHandler, "Near ");
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setTitleCustomToolbarUrdu("ڈائریکٹری میں شامل کریں");
         setInitMap(savedInstanceState);
@@ -202,8 +204,7 @@ public class SavePlaceActivity extends BaseActivity {
     };
 
     private void reverseGeoCoding(double targetLat, double targetLng) {
-        PlacesRepository mPlacesRepository = new PlacesRepository();
-        mPlacesRepository.getGoogleGeoCoder(mPlacesDataHandler, targetLat + "", "" + targetLng, mCurrentActivity);
+        geocodeStrategyManager.fetchLocation(targetLat, targetLng);
     }
 
     private IPlacesDataHandler mPlacesDataHandler = new PlacesDataHandler() {

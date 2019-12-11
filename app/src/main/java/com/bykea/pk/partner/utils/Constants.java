@@ -3,6 +3,8 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
@@ -128,6 +130,8 @@ public class Constants {
 
     public static final int TRIP_STATUS_CODE_DELIVERY = 10;
     public static final int TRIP_STATUS_CODE_RIDE = 7;
+    @NotNull
+    public static final String COMMA = ",";
 
     public static class CallType {
         public static final String SINGLE = "single";

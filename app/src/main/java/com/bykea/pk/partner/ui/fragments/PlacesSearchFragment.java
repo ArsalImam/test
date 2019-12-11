@@ -42,6 +42,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.GeocodeStrategyManager;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
@@ -66,6 +67,7 @@ import butterknife.OnClick;
 
 public class PlacesSearchFragment extends Fragment {
 
+    private boolean isMapLoaded;
     private GoogleMap mGoogleMap;
     private CustomMapView mapView;
     private boolean firstTime = true, isSearchedLoc;
@@ -124,6 +126,7 @@ public class PlacesSearchFragment extends Fragment {
     private SelectPlaceActivity mCurrentActivity;
 
     private UserRepository mRepository;
+    private GeocodeStrategyManager geocodeStrategyManager;
 
     public PlacesSearchFragment() {
         // Required empty public constructor
@@ -136,6 +139,7 @@ public class PlacesSearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_places_search, container, false);
         ButterKnife.bind(this, view);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        geocodeStrategyManager = new GeocodeStrategyManager(getActivity(), mPlacesDataHandler, "Near ");
         return view;
     }
 
@@ -166,14 +170,6 @@ public class PlacesSearchFragment extends Fragment {
         ivStar.setImageDrawable(Utils.changeDrawableColor(mCurrentActivity, R.drawable.ic_star_grey, isSavedPlace ? R.color.yellowStar : R.color.secondaryColorLight));
     }
 
-    private boolean isMapLoaded;
-
-//    @Override
-//    public void setUserVisibleHint(boolean isVisibleToUser) {
-//        super.setUserVisibleHint(isVisibleToUser);
-//        if (isVisibleToUser && !isMapLoaded) {
-//        }
-//    }
 
     public void setInitMap() {
         if (!isMapLoaded && getView() != null) {
@@ -292,15 +288,7 @@ public class PlacesSearchFragment extends Fragment {
     };
 
     private void reverseGeoCoding(double targetLat, double targetLng) {
-        PlacesRepository mPlacesRepository = new PlacesRepository();
-        mPlacesRepository.getGoogleGeoCoder(mPlacesDataHandler, targetLat + "", "" + targetLng, mCurrentActivity);
-//        mPlacesRepository.getNearbyPlaces(mPlacesDataHandler,targetLat + "," + targetLng,500,mCurrentActivity);
-        /*if (requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE) {
-            String origin = AppPreferences.getPickUpLoc(mCurrentActivity).latitude + "," + AppPreferences.getPickUpLoc(mCurrentActivity).longitude;
-            String destination = String.valueOf(targetLat) + "," + String.valueOf(targetLng);
-            mPlacesRepository.getDistanceMatrix(mPlacesDataHandler, origin, destination, mCurrentActivity);
-            startLoadingAnimation();
-        }*/
+        geocodeStrategyManager.fetchLocation(targetLat, targetLng);
     }
 
     private void setSearchAdapter() {

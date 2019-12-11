@@ -907,15 +907,11 @@ public class UserRepository {
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
-    public void requestMultiDeliveryDriverStarted(Activity activity, IUserDataHandler handler) {
+    public void requestMultiDeliveryDriverStarted(Activity activity, IUserDataHandler handler, String address) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         try {
             setMultiDeliveryData(jsonObject);
-            String address = Utils.getLocationAddress(
-                    AppPreferences.getLatitude() + "",
-                    AppPreferences.getLongitude() + "",
-                    activity).split(",")[0];
             jsonObject.put("start_address", address);
         } catch (Exception e) {
             e.printStackTrace();
