@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -1857,6 +1858,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 && (Utils.isDirectionApiCallRequired()) && mGoogleMap != null) {
             AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
             if (isDirectionApiCallRequired(start)) {
+                Log.v(TAG, "Direction API Called");
                 lastApiCallLatLng = start;
                 if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
                     mRouteLatLng.clear();

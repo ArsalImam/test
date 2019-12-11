@@ -1498,10 +1498,18 @@ public class Utils {
 
     /***
      * Validate where we should call Direction API on screen.
-     * @return Returns true if Last API call was more than 1 min ago
+     * @return Returns true if Last API call was equal or more than 1 min ago
      */
     public static boolean isDirectionApiCallRequired() {
-        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 60000;
+    }
+
+    /***
+     * Validate where we should call Direction API on screen. (For MultiDelivery)
+     * @return Returns true if Last API call was equal or more than 1.5 min ago
+     */
+    public static boolean isDirectionApiCallRequiredForMultiDelivery() {
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 150000;
     }
 
     public static boolean isStatsApiCallRequired() {

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -68,11 +69,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY;
+
 /***
  * MultiDelivery Booking Activity.
  */
 public class MultipleDeliveryBookingActivity extends BaseActivity implements RoutingListener {
-
+    private final String TAG = MultipleDeliveryBookingActivity.class.getSimpleName();
     private static final float ZOOM_LEVEL = 14.0f;
     private MultipleDeliveryBookingActivity mCurrentActivity;
     private UserRepository dataRepository;
@@ -272,9 +275,10 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private synchronized void drawRoute(LatLng start, LatLng end, int routeType) {
         if (Connectivity.isConnected(mCurrentActivity)
-                && (Utils.isDirectionApiCallRequired()) && mGoogleMap != null) {
+                && (Utils.isDirectionApiCallRequiredForMultiDelivery()) && mGoogleMap != null) {
             AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
             if (isDirectionApiCallRequired(start)) {
+                Log.v(TAG, "Direction API Called");
                 lastApiCallLatLng = start;
                 if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
                     mRouteLatLng.clear();
@@ -306,7 +310,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (lastApiCallLatLng != null && (lastApiCallLatLng.equals(currentApiCallLatLng)
                 || Utils.calculateDistance(currentApiCallLatLng.latitude,
                 currentApiCallLatLng.longitude, lastApiCallLatLng.latitude,
-                lastApiCallLatLng.longitude) < 15)) {
+                lastApiCallLatLng.longitude) < DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY)) {
             return false;
         }
         return true;

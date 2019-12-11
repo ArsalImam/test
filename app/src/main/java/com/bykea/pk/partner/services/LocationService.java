@@ -62,7 +62,7 @@ public class LocationService extends Service {
     private final int LOCATION_INTERVAL = 5000;
     private final int LOCATION_DISTANCE = 100;
     private final int NOTIF_ID = 877;
-    private final float DIRECTION_API_CALL_DISTANCE = 15; //meter
+    private final float DIRECTION_API_CALL_DISTANCE = 45; //meter
 
     private String STATUS = StringUtils.EMPTY;
     private Context mContext;

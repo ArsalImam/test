@@ -662,7 +662,8 @@ public class Constants {
     public final static String SEPERATOR = "/";
 
     public final static int DIRECTION_API_MIX_THRESHOLD_METERS = 45; //meters
-    public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 7; //70 seconds
+    public final static int DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY = 150; //meters
+    public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 8; //80 seconds
     public final static int DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME = 30; //300 seconds
 
     public static final long SET_SCALE_ANIMATION_DURATION = 500;
