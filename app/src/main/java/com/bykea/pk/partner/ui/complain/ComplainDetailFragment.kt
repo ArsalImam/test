@@ -63,6 +63,9 @@ class ComplainDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         editText_lay.setOnClickListener { }
+        Utils.enableScroll(edittextDropOffAddress)
+        Utils.enableScroll(editTextPickUpAddress)
+        Utils.enableScroll(editTextStops)
     }
 
     /**
