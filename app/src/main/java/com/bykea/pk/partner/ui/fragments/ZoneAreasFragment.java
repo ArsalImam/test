@@ -195,9 +195,12 @@ public class ZoneAreasFragment extends Fragment {
                 Fragment fragment = new PlacesSearchFragment();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(Constants.Extras.HIDE_SEARCH, true);
-                PlacesResult placesResult = new PlacesResult(item.getName() + ", " + mSelectedZone.getEnglishName() + ", " + mSelectedCity.getName(), item.getName() + ", " + mSelectedZone.getEnglishName() + ", " + mSelectedCity.getName(),
+                PlacesResult placesResult = new PlacesResult(item.getName() + ", " +
+                        mSelectedZone.getEnglishName() + ", " + mSelectedCity.getName(),
+                        item.getName() + ", " + mSelectedZone.getEnglishName() + ", " + mSelectedCity.getName(),
                         Double.parseDouble(item.getLoc().get(0)), Double.parseDouble(item.getLoc().get(1)));
                 bundle.putParcelable(Constants.Extras.SELECTED_ITEM, placesResult);
+                bundle.putString(Constants.Extras.SELECTED_CITY, mSelectedCity.getName());
                 fragment.setArguments(bundle);
                 parentFragment.replaceFragment(fragment);
             }

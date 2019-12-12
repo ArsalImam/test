@@ -26,6 +26,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
@@ -39,6 +40,7 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.GeocodeStrategyManager;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -128,6 +130,15 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     @BindView(R.id.serviceImageView)
     AppCompatImageView serviceImageView;
 
+    private GeocodeStrategyManager geocodeStrategyManager;
+
+    private PlacesDataHandler placesDataHandler = new PlacesDataHandler() {
+        @Override
+        public void onPlacesResponse(String response) {
+            super.onPlacesResponse(response);
+            repository.requestMultiDeliveryDriverStarted(mCurrentActivity, handler, response);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +152,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+        geocodeStrategyManager = new GeocodeStrategyManager(this, placesDataHandler, Constants.NEAR_LBL);
     }
 
     /***
@@ -929,7 +941,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void requestDriverStarted() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        repository.requestMultiDeliveryDriverStarted(mCurrentActivity, handler);
+        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude());
     }
 
     /***
