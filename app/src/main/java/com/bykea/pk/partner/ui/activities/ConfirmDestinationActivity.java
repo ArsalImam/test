@@ -63,7 +63,7 @@ public class ConfirmDestinationActivity extends BaseActivity {
         hideToolbarLogo();
 
         setInitMap(savedInstanceState);
-        geocodeStrategyManager = new GeocodeStrategyManager(this, placeHandler, "Near ");
+        geocodeStrategyManager = new GeocodeStrategyManager(this, placeHandler, Constants.NEAR_LBL);
     }
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {

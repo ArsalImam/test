@@ -62,7 +62,7 @@ class OfflineRidesFragment : Fragment() {
 
         mCurrentActivity = activity as HomeActivity?
         jobsRepository = Injection.provideJobsRepository(mCurrentActivity!!)
-        geocodeStrategyManager = GeocodeStrategyManager(mCurrentActivity!!, placesDataHandler, "Near ")
+        geocodeStrategyManager = GeocodeStrategyManager(mCurrentActivity!!, placesDataHandler, Constants.NEAR_LBL)
 
         binding.listener = object : OfflineFragmentListener {
             override fun onDropOffClicked() {

@@ -132,6 +132,8 @@ public class Constants {
     public static final int TRIP_STATUS_CODE_RIDE = 7;
     @NotNull
     public static final String COMMA = ",";
+    @NotNull
+    public static final String NEAR_LBL = "Near ";
 
     public static class CallType {
         public static final String SINGLE = "single";

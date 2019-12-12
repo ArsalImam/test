@@ -85,7 +85,7 @@ public class SavePlaceActivity extends BaseActivity {
         ButterKnife.bind(this);
         mCurrentActivity = this;
 
-        geocodeStrategyManager = new GeocodeStrategyManager(this, mPlacesDataHandler, "Near ");
+        geocodeStrategyManager = new GeocodeStrategyManager(this, mPlacesDataHandler, Constants.NEAR_LBL);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setTitleCustomToolbarUrdu("ڈائریکٹری میں شامل کریں");
         setInitMap(savedInstanceState);

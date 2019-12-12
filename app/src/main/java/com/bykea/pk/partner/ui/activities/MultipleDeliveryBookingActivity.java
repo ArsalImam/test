@@ -152,7 +152,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
-        geocodeStrategyManager = new GeocodeStrategyManager(this, placesDataHandler, "Near ");
+        geocodeStrategyManager = new GeocodeStrategyManager(this, placesDataHandler, Constants.NEAR_LBL);
     }
 
     /***

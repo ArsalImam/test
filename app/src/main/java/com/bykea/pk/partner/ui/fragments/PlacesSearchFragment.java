@@ -139,7 +139,7 @@ public class PlacesSearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_places_search, container, false);
         ButterKnife.bind(this, view);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        geocodeStrategyManager = new GeocodeStrategyManager(getActivity(), mPlacesDataHandler, "Near ");
+        geocodeStrategyManager = new GeocodeStrategyManager(getActivity(), mPlacesDataHandler, Constants.NEAR_LBL);
         return view;
     }
 

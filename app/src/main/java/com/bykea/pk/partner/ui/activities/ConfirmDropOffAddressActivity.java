@@ -90,7 +90,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
         setContentView(R.layout.activity_confirm_drop_off_address);
         ButterKnife.bind(this);
         mCurrentActivity = this;
-        geocodeStrategyManager = new GeocodeStrategyManager(this, mPlacesDataHandler, "Near ");
+        geocodeStrategyManager = new GeocodeStrategyManager(this, mPlacesDataHandler, Constants.NEAR_LBL);
         setInitMap(savedInstanceState);
         setSearchAdapter();
     }
