@@ -105,6 +105,14 @@ class GeocodeStrategyManager
                                 strAddress = "$strAddress $it"
                         }
                     }
+
+                    if (strAddress.contains(Constants.COMMA)) {
+                        var commaSeperatedAddress = strAddress.split(Constants.COMMA)
+                        if (commaSeperatedAddress.size > Constants.DIGIT_TWO) {
+                            strAddress = commaSeperatedAddress.take(Constants.DIGIT_TWO).joinToString()
+                        }
+                    }
+
                     address = strAddress
                 }
                 address
