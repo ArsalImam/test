@@ -127,6 +127,7 @@ public class PlacesSearchFragment extends Fragment {
 
     private UserRepository mRepository;
     private GeocodeStrategyManager geocodeStrategyManager;
+    private String selectedCity;
 
     public PlacesSearchFragment() {
         // Required empty public constructor
@@ -164,6 +165,7 @@ public class PlacesSearchFragment extends Fragment {
         if (getArguments() == null || !getArguments().getBoolean(Constants.Extras.IS_FROM_VIEW_PAGER)) {
             setInitMap();
         }
+        selectedCity = getArguments().getString(Constants.Extras.SELECTED_CITY);
     }
 
     private void updateStarColor() {
@@ -255,7 +257,10 @@ public class PlacesSearchFragment extends Fragment {
             } else {
                 addressTv.setText(result);
                 tvPlaceName.setText(result);
-                tvPlaceAddress.setText(result);
+                if (selectedCity != null)
+                    tvPlaceAddress.setText(selectedCity);
+                else
+                    tvPlaceAddress.setText(result);
             }
         }
     }
