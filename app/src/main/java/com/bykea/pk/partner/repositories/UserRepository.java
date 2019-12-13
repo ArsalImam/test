@@ -903,19 +903,17 @@ public class UserRepository {
     /**
      * Emit Driver Started data.
      *
+     * @param activity context of the activity
      * @param handler The Callback that will be invoked when driver started response received.
+     * @param address address received
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
-    public void requestMultiDeliveryDriverStarted(Activity activity, IUserDataHandler handler) {
+    public void requestMultiDeliveryDriverStarted(Activity activity, IUserDataHandler handler, String address) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         try {
             setMultiDeliveryData(jsonObject);
-            String address = Utils.getLocationAddress(
-                    AppPreferences.getLatitude() + "",
-                    AppPreferences.getLongitude() + "",
-                    activity).split(",")[0];
             jsonObject.put("start_address", address);
         } catch (Exception e) {
             e.printStackTrace();

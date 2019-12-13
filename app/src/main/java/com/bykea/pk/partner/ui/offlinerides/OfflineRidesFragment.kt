@@ -11,7 +11,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
@@ -27,6 +26,8 @@ import com.bykea.pk.partner.dal.source.remote.response.VerifyNumberResponse
 import com.bykea.pk.partner.dal.util.*
 import com.bykea.pk.partner.databinding.FragmentOfflineRidesBinding
 import com.bykea.pk.partner.models.data.PlacesResult
+import com.bykea.pk.partner.repositories.places.IPlacesDataHandler
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler
 import com.bykea.pk.partner.ui.activities.HomeActivity
 import com.bykea.pk.partner.ui.activities.SelectPlaceActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
@@ -40,14 +41,16 @@ import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.GeocodeStrategyManager
 import com.bykea.pk.partner.utils.Utils
-import com.bykea.pk.partner.utils.Utils.LocationAddressCallback
 import com.bykea.pk.partner.widgets.FontTextView
 import kotlinx.android.synthetic.main.activity_ride_code_verification.*
 import kotlinx.android.synthetic.main.fragment_offline_rides.*
 import org.apache.commons.lang3.StringUtils
 
 class OfflineRidesFragment : Fragment() {
+
+    private var geocodeStrategyManager: GeocodeStrategyManager? = null
     private var mCurrentActivity: HomeActivity? = null
     lateinit var binding: FragmentOfflineRidesBinding
     var mDropOffResult: PlacesResult? = null
@@ -56,8 +59,10 @@ class OfflineRidesFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_offline_rides, container, false)
+
         mCurrentActivity = activity as HomeActivity?
         jobsRepository = Injection.provideJobsRepository(mCurrentActivity!!)
+        geocodeStrategyManager = GeocodeStrategyManager(mCurrentActivity!!, placesDataHandler, Constants.NEAR_LBL)
 
         binding.listener = object : OfflineFragmentListener {
             override fun onDropOffClicked() {
@@ -72,28 +77,20 @@ class OfflineRidesFragment : Fragment() {
             override fun onReceiveCodeClicked() {
                 if ((rBSawari.isChecked && validateMobileNumber()) ||
                         (rBDelivery.isChecked && validateMobileNumber() && validateCustomerName())) {
-                    val requestBody: RideCreateRequestObject = createRequestBody()
-                    requestBody.pickup_info.address = Utils.getLocationAddress(AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(), mCurrentActivity)
-
-                    if (requestBody.pickup_info.address.isNullOrEmpty()) {
-                        Utils.getLocationAddress(
-                                AppPreferences.getLatitude().toString(),
-                                AppPreferences.getLongitude().toString(), mCurrentActivity,
-                                object : LocationAddressCallback {
-                                    override fun onSuccess(reverseGeoCodeAddress: String?) {
-                                        requestBody.pickup_info.address = reverseGeoCodeAddress
-                                        navigateToVerifyCode(requestBody)
-                                    }
-
-                                    override fun onFail() = navigateToVerifyCode(requestBody)
-                                })
-                    } else {
-                        navigateToVerifyCode(requestBody)
-                    }
+                    geocodeStrategyManager?.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 }
             }
         }
         return binding.root
+    }
+
+    private val placesDataHandler: IPlacesDataHandler = object : PlacesDataHandler() {
+        override fun onPlacesResponse(response: String?) {
+            super.onPlacesResponse(response)
+            val requestBody: RideCreateRequestObject = createRequestBody()
+            requestBody.pickup_info.address = response
+            navigateToVerifyCode(requestBody)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

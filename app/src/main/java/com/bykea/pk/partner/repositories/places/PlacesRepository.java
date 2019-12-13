@@ -92,6 +92,4 @@ public class PlacesRepository {
         mUserCallback = handler;
         mRestRequestHandler.callGeoCodeApiWithPlaceId(placeId, context, mGeoCoderPlaces);
     }
-
-
 }
