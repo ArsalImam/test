@@ -207,7 +207,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height.large"
-                        android:visibility="@{viewModel.bookingDetailData.status == `cancelled` ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}"
                         android:layout_marginLeft="@dimen/margin.small"
                         android:layout_marginRight="@dimen/margin.small"
                         android:gravity="center_vertical">
