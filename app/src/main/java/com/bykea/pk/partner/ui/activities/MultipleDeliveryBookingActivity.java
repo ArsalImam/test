@@ -176,6 +176,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         setTripStates();
         checkConnectivity(mCurrentActivity);
         AppPreferences.setJobActivityOnForeground(true);
+        AppPreferences.setMultiDeliveryJobActivityOnForeground(true);
         Utils.loadImgURL(serviceImageView, callDriverData.getImageURL());
     }
 
@@ -1203,6 +1204,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     @Override
     protected void onDestroy() {
+        AppPreferences.setMultiDeliveryJobActivityOnForeground(false);
         //unregister the location receiver to stop receiving location when activity has destroyed.
         unregisterReceiver(locationReceiver);
         //unregister the network change receiver to stop receiving when activity has destroyed.
@@ -1212,6 +1214,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AppPreferences.setMultiDeliveryJobActivityOnForeground(false);
+    }
 
     @Override
     public void onBackPressed() {

@@ -53,6 +53,9 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.DISTANCE_MATRIX_API_MULTIDELIVERY_THRESHOLD_COUNT;
+
 public class LocationService extends Service {
 
     private final String TAG = LocationService.class.getSimpleName();
@@ -70,6 +73,7 @@ public class LocationService extends Service {
     private LocationRequest mLocationRequest;
     private boolean shouldCallLocApi = true;
     private int counter = 0;
+    private int counterForMultiDelivery = 0;
     private EventBus mBus = EventBus.getDefault();
     private LocationListener mLocationListener;
     private LocationManager mLocationManager;
@@ -103,8 +107,15 @@ public class LocationService extends Service {
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                                 //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
                                 //validateDriverOfflineStatus();
-                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
 
+                                if (AppPreferences.isOnTrip() && AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.BATCH)) {
+                                    counterForMultiDelivery++;
+                                }
+                                if (counterForMultiDelivery >= DISTANCE_MATRIX_API_MULTIDELIVERY_THRESHOLD_COUNT) {
+                                    counterForMultiDelivery = DIGIT_ZERO;
+                                    AppPreferences.setMultiDeliveryDistanceMatrixCalledRequired(true);
+                                }
+                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                             } else {
                                 Utils.redLogLocation("request failed", "WiFi -> " +
                                         Connectivity.isConnectedFast(mContext)

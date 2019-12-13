@@ -365,7 +365,14 @@ public class UserRepository {
             } else {
                 //In Batch Trip
                 setupLocationRequestUpdate(lat, lon, locationRequest, tripStatus);
-                calculateDistanceFromDirectionAPI(locationRequest);
+                if (AppPreferences.isMultiDeliveryJobActivityOnForeground()) {
+                    mRestRequestHandler.sendDriverLocationUpdate(mContext,
+                            mDataCallback, locationRequest);
+                } else if (!AppPreferences.isMultiDeliveryJobActivityOnForeground() && AppPreferences.isMultiDeliveryDistanceMatrixCalledRequired()) {
+                    AppPreferences.setMultiDeliveryDistanceMatrixCalledRequired(false);
+                    Log.v(TAG, "Distance Matrix - Multidelivery");
+                    calculateDistanceFromDirectionAPI(locationRequest);
+                }
             }
         } else {
             if (StringUtils.isBlank(tripStatus)) {
