@@ -1509,7 +1509,7 @@ public class Utils {
      * @return Returns true if Last API call was equal or more than 1.5 min ago
      */
     public static boolean isDirectionApiCallRequiredForMultiDelivery() {
-        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 150000;
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 90000;
     }
 
     public static boolean isStatsApiCallRequired() {

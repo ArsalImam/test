@@ -240,6 +240,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     BykeaCashFormFragment bykeaCashFormFragment;
     private boolean isMapLoaded = false;
+    private boolean isDirectionApiTimeResetRequired = true;
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -286,7 +287,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                                 callData.getServiceCode() == OFFLINE_DELIVERY)) {
                                     chatBtn.setVisibility(View.GONE);
                                 }
-                                updateDropOff();
+                                updateDropOff(isDirectionApiTimeResetRequired);
+                                isDirectionApiTimeResetRequired = false;
                                 showWalletAmount();
                             }
 
@@ -1019,7 +1021,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void updateDropOffToServer() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        updateDropOff();
+        updateDropOff(true);
         if (Utils.isModernService(callData.getServiceCode())) {
             jobsRepo.changeDropOff(callData.getTripId(), new ChangeDropOffRequest.Stop(Double.valueOf(callData.getEndLat()), Double.valueOf(callData.getEndLng()), callData.getEndAddress()), new JobsDataSource.DropOffChangeCallback() {
 
@@ -1041,7 +1043,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     }
 
-    private void updateDropOff() {
+    private void updateDropOff(boolean isTimeResetRequired) {
         if (callData.getDropoffStop() != null
                 && StringUtils.isNotBlank(callData.getEndAddress())
                 && StringUtils.isNotBlank(callData.getEndLat())
@@ -1050,7 +1052,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             configCountDown();
 //            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
             lastApiCallLatLng = null;
-            AppPreferences.setLastDirectionsApiCallTime(0);
+            if (isTimeResetRequired) {
+                AppPreferences.setLastDirectionsApiCallTime(0);
+            }
             if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
                 mRouteLatLng.clear();
             }
@@ -2425,7 +2429,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
                     changeDriverMarker();
                     showEstimatedDistTime();
-                    updateDropOff();
+                    updateDropOff(true);
                     configCountDown();
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);

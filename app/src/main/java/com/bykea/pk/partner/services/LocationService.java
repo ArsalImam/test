@@ -54,6 +54,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY;
 import static com.bykea.pk.partner.utils.Constants.DISTANCE_MATRIX_API_MULTIDELIVERY_THRESHOLD_COUNT;
 
 public class LocationService extends Service {
@@ -113,7 +114,11 @@ public class LocationService extends Service {
                                 }
                                 if (counterForMultiDelivery >= DISTANCE_MATRIX_API_MULTIDELIVERY_THRESHOLD_COUNT) {
                                     counterForMultiDelivery = DIGIT_ZERO;
-                                    AppPreferences.setMultiDeliveryDistanceMatrixCalledRequired(true);
+                                    LatLng newLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                                    if (isDistanceMatrixApiCallRequiredForMultiDelivery(newLatLng)) {
+                                        lastApiCallLatLng = newLatLng;
+                                        AppPreferences.setMultiDeliveryDistanceMatrixCalledRequired(true);
+                                    }
                                 }
                                 mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                             } else {
@@ -685,6 +690,21 @@ public class LocationService extends Service {
         } else {
             return true;
         }
+    }
+
+    /**
+     * check if last start latlng and current start latlng has at least 150 m difference
+     *
+     * @param currentApiCallLatLng current Latitude and Longitude returned from API
+     * @return True is current lat/lng and start lat/lng have 15m difference else return false
+     */
+    private boolean isDistanceMatrixApiCallRequiredForMultiDelivery(LatLng currentApiCallLatLng) {
+        return lastApiCallLatLng == null ||
+                !(Utils.calculateDistance(currentApiCallLatLng.latitude,
+                        currentApiCallLatLng.longitude,
+                        lastApiCallLatLng.latitude,
+                        lastApiCallLatLng.longitude
+                ) < DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY);
     }
 
     /**
