@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:background="@color/divider"
-            android:visibility="@{item.separator == `above` ? View.VISIBLE : View.GONE}"
+            android:visibility="@{item.separator.equalsIgnoreCase(`above`)? View.VISIBLE : View.GONE}"
             tools:visibility="visible" />
 
         <LinearLayout
@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:background="@color/divider"
-            android:visibility="@{item.separator == `below` ? View.VISIBLE : View.GONE}"
+            android:visibility="@{item.separator.equalsIgnoreCase(`below`) ? View.VISIBLE : View.GONE}"
             tools:visibility="visible" />
     </LinearLayout>
 </layout>
