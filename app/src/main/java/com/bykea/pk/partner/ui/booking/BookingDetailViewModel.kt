@@ -72,7 +72,7 @@ class BookingDetailViewModel
     private fun updateBookingDetailObject(data: BookingDetail) {
 
         _showComplainButton.value = Utils.getDaysInBetween(System.currentTimeMillis(),
-                SimpleDateFormat(BOOKING_CURRENT_DATE_FORMAT).parse(data.dt).time) >=
+                SimpleDateFormat(BOOKING_CURRENT_DATE_FORMAT).parse(data.dt).time) <=
                 AppPreferences.getSettings().settings.trip_support_max_days
 
         data.invoice?.apply {
