@@ -2097,7 +2097,7 @@ public class Utils {
     }
 
     public static boolean isRideService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Sawari");
+        return StringUtils.containsIgnoreCase(callType, "Sawari") || StringUtils.containsIgnoreCase(callType, "Offline Ride");
     }
 
     public static boolean isCourierService(String callType) {
