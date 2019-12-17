@@ -668,6 +668,8 @@ public class Constants {
     public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 8; //80 seconds
     public final static int DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME = 30; //300 seconds
     public final static int DISTANCE_MATRIX_API_MULTIDELIVERY_THRESHOLD_COUNT = 5; //5x2=100 seconds
+    public final static int DIRECTION_API_TIME_IN_MILLISECONDS = 60000; //60 seconds
+    public final static int DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY = 90000; //90 seconds
 
     public static final long SET_SCALE_ANIMATION_DURATION = 500;
     public static final int SET_SCALE_ANIMATION_REPEAT_COUNT = 7;

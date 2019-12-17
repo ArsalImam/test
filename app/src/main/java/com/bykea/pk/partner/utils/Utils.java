@@ -162,6 +162,8 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
@@ -1503,7 +1505,7 @@ public class Utils {
      * @return Returns true if Last API call was equal or more than 1 min ago
      */
     public static boolean isDirectionApiCallRequired() {
-        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 60000;
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= DIRECTION_API_TIME_IN_MILLISECONDS;
     }
 
     /***
@@ -1511,7 +1513,7 @@ public class Utils {
      * @return Returns true if Last API call was equal or more than 1.5 min ago
      */
     public static boolean isDirectionApiCallRequiredForMultiDelivery() {
-        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 90000;
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
     }
 
     public static boolean isStatsApiCallRequired() {
