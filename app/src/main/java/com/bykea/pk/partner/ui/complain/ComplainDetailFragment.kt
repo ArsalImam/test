@@ -92,7 +92,13 @@ class ComplainDetailFragment : Fragment() {
                             editTextKilometersTravelled.requestFocus()
                             isValid = false
                         }
+                    } catch (e: NumberFormatException) {
+                        isValid = false
+                        editTextKilometersTravelled.error = getString(R.string.error_kilometres_invalid_msg)
+                        editTextKilometersTravelled.requestFocus()
+                    }
 
+                    try {
                         if (editTextBookingTime.text.toString().toInt() > Constants.MAX_COMPLAIN_MINIUTES_TRAVELLED) {
                             editTextBookingTime.error = getString(R.string.error_booking_time_msg)
                             editTextBookingTime.requestFocus()
@@ -100,6 +106,21 @@ class ComplainDetailFragment : Fragment() {
                         }
                     } catch (e: NumberFormatException) {
                         isValid = false
+                        editTextBookingTime.error = getString(R.string.error_booking_time_invalid_msg)
+                        editTextBookingTime.requestFocus()
+                    }
+
+
+                    try {
+                        if (editTextPaidAmount.text.toString().toInt() > Constants.MAX_COMPLAIN_PAY_AMOUNT) {
+                            editTextPaidAmount.error = getString(R.string.error_complain_pay_amount_msg)
+                            editTextPaidAmount.requestFocus()
+                            isValid = false
+                        }
+                    } catch (e: NumberFormatException) {
+                        isValid = false
+                        editTextPaidAmount.error = getString(R.string.error_complain_pay_amount_invalid_msg)
+                        editTextPaidAmount.requestFocus()
                     }
                 }
             }

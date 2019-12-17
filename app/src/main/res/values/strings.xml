@@ -548,5 +548,9 @@
     <string name="paid_amount">Paid Amount</string>
     <string name="enter_details">Enter Details</string>
     <string name="error_kilometres_msg">Kilometres should not more than 50</string>
-    <string name="error_booking_time_msg">Booking time should not more than 160 minutes</string>
+    <string name="error_booking_time_msg">Booking time should not more than 120 minutes</string>
+    <string name="error_kilometres_invalid_msg">Please enter valid kilometres</string>
+    <string name="error_booking_time_invalid_msg">please provide a valid booking time</string>
+    <string name="error_complain_pay_amount_invalid_msg">please provide a valid paid amount</string>
+    <string name="error_complain_pay_amount_msg" >Paid amount should not more than 35000</string>
 </resources>
