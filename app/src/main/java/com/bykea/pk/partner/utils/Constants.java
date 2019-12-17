@@ -484,6 +484,8 @@ public class Constants {
         public static final String BILL_TYPE = "Utility Bill";
 
         public static final String BATCH_TYPE = "batch";
+        public static final String SAWARI = "Sawari";
+        public static final String OFFLINE_RIDE = "Offline Ride";
 
     }
 

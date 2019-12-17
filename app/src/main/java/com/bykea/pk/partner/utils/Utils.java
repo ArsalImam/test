@@ -174,6 +174,8 @@ import static com.bykea.pk.partner.utils.Constants.ServiceCode.UTILITY;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.OFFLINE_RIDE;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.SAWARI;
 
 
 public class Utils {
@@ -2097,7 +2099,7 @@ public class Utils {
     }
 
     public static boolean isRideService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Sawari") || StringUtils.containsIgnoreCase(callType, "Offline Ride");
+        return StringUtils.containsIgnoreCase(callType, SAWARI) || StringUtils.containsIgnoreCase(callType, OFFLINE_RIDE);
     }
 
     public static boolean isCourierService(String callType) {
