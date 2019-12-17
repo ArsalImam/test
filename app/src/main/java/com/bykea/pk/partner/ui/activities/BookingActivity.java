@@ -1443,7 +1443,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             showDropOffPersonInfo();
         hideButtonOnArrived();
         lastApiCallLatLng = null;
-        AppPreferences.setLastDirectionsApiCallTime(0);
+        if (isDirectionApiTimeResetRequired) {
+            AppPreferences.setLastDirectionsApiCallTime(0);
+            isDirectionApiTimeResetRequired = false;
+        }
         if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
             mRouteLatLng.clear();
         }
