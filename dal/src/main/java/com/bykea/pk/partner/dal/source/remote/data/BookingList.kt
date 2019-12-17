@@ -18,24 +18,22 @@ data class BookingList(
         val bookingId: String?,
         @SerializedName("dt")
         val dt: String?,
-        @SerializedName("invoice")
-        val invoice: InvoiceBookingList?,
+        @SerializedName("fare")
+        val fare: String?,
         @SerializedName("cancel_by")
         val cancel_by: String?,
-        @SerializedName("cancel_fee")
-        val cancel_fee: String?,
         @SerializedName("status")
         val status: String?,
-        @SerializedName("tag")
-        val tag: ArrayList<Tag>
+        @SerializedName("tags")
+        val tags: ArrayList<Tag>
 ) : Parcelable {
 
     val priorTag: String
         get() {
-            if (tag.size > DIGIT_ZERO) {
-                tag.sortByDescending { it.priority }
-                if (tag[DIGIT_ZERO]?.icon != null) {
-                    return tag[DIGIT_ZERO].icon!!
+            if (tags.size > DIGIT_ZERO) {
+                tags.sortByDescending { it.priority }
+                if (tags[DIGIT_ZERO]?.icon != null) {
+                    return tags[DIGIT_ZERO].icon!!
                 }
             }
             return StringUtils.EMPTY
@@ -44,19 +42,20 @@ data class BookingList(
     val manipulatedAmount: String
         get() {
             when (status) {
-                AvailableTripStatus.STATUS_CANCELLED -> {
-                    return if (cancel_fee == null) {
-                        LABEL_NOT_AVAILABLE
-                    } else {
-                        cancel_fee
-                    }
-                }
+//                 -> {
+//                    return if (cancel_fee == null) {
+//                        LABEL_NOT_AVAILABLE
+//                    } else {
+//                        cancel_fee
+//                    }
+//                }
+                AvailableTripStatus.STATUS_CANCELLED,
                 AvailableTripStatus.STATUS_FEEDBACK,
                 AvailableTripStatus.STATUS_COMPLETED ->
-                    return if (invoice?.fare == null) {
+                    return if (fare == null) {
                         LABEL_NOT_AVAILABLE
                     } else {
-                        invoice?.fare.toString()
+                        fare.toString()
                     }
                 AvailableTripStatus.STATUS_MISSED -> StringUtils.EMPTY
             }
@@ -95,8 +94,8 @@ data class BookingList(
 
 }
 
-@Parcelize
-data class InvoiceBookingList(
-        @SerializedName("fare")
-        val fare: Int? = 0
-) : Parcelable
+//@Parcelize
+//data class InvoiceBookingList(
+//        @SerializedName("fare")
+//        val fare: Int? = 0
+//) : Parcelable
