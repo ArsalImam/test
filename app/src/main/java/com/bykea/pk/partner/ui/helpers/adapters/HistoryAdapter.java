@@ -55,7 +55,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         if (data.isDd() || data.is_verified()) {
             holder.ivDriverDestination.setVisibility(View.VISIBLE);
             Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_DD_ICON_URL);
-//            holder.ivDriverDestination.setImageResource(R.drawable.ic_driver_destination);
         } else if (data.getTrip_status_code() != null
                 && data.getTrip_status_code().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.OFFLINE_RIDE))) {
             holder.ivDriverDestination.setVisibility(View.VISIBLE);
