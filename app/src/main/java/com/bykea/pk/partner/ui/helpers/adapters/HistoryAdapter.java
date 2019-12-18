@@ -52,14 +52,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         } else {
             holder.tripNoTv.setText(data.getTripNo());
         }
-        if (data.isDd() || data.is_verified() || data.getTrip_status_code().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.OFFLINE_RIDE))) {
+        if (data.isDd() || data.is_verified()) {
             holder.ivDriverDestination.setVisibility(View.VISIBLE);
             Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_DD_ICON_URL);
 //            holder.ivDriverDestination.setImageResource(R.drawable.ic_driver_destination);
-            if (data.getTrip_status_code().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.OFFLINE_RIDE))) {
-                Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_OFFLINE_RIDE_ICON_URL);
-//                holder.ivDriverDestination.setImageResource(R.drawable.offline_ride_trip_detail);
-            }
+        } else if (data.getTrip_status_code() != null
+                && data.getTrip_status_code().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.OFFLINE_RIDE))) {
+            holder.ivDriverDestination.setVisibility(View.VISIBLE);
+            Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_OFFLINE_RIDE_ICON_URL);
         } else {
             holder.ivDriverDestination.setVisibility(View.GONE);
         }
