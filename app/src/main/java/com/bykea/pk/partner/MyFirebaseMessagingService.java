@@ -194,9 +194,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 EventBus.getDefault().post(Keys.MULTIDELIVERY_MISSED_EVENT);
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
                     .equalsIgnoreCase(BOOKING_UPDATED_DROP_OFF))) {
-                Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-                intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
-                EventBus.getDefault().post(intent);
+                if (AppPreferences.isJobActivityOnForeground()) {
+                    Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
+                    intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                    EventBus.getDefault().post(intent);
+                } else {
+                    AppPreferences.setDropOffUpdateRequired(true);
+                    Notifications.createDropOffUpdateNotification();
+                }
             }
         }
     }
@@ -212,6 +217,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (StringUtils.isNotBlank(callData.getStatus())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
                 if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    AppPreferences.removeReceivedMessageCount();
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                     Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
                     intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
@@ -223,7 +229,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         EventBus.getDefault().post(intent);
                     } else {
                         EventBus.getDefault().post(intent);
-                        Notifications.createCancelNotification(mContext, callData.getMessage(), 23);
+                        Notifications.createCancelNotification(mContext, callData.getMessage());
                     }
                 }
             } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) && AppPreferences.getAvailableStatus()) {

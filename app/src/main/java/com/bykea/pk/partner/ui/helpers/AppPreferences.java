@@ -561,6 +561,66 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * Set Mutlidelivery activity is visible or not
+     * Return true if visible else false
+     */
+    public static boolean isMultiDeliveryJobActivityOnForeground() {
+        return mSharedPreferences.getBoolean(Keys.MULTIDELIVERY_JOB_ACTIVITY_FOREGROUND, false);
+    }
+
+    /**
+     * Set Mutlidelivery activity is visible or not
+     * @param value : True or False
+     */
+    public static void setMultiDeliveryJobActivityOnForeground(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.MULTIDELIVERY_JOB_ACTIVITY_FOREGROUND, value)
+                .apply();
+    }
+
+
+    /**
+     * Check If Distance Matrix Is Required To Call For Mutlidelivery Or Not
+     * @return true if required else false
+     */
+    public static boolean isMultiDeliveryDistanceMatrixCalledRequired() {
+        return mSharedPreferences.getBoolean(Keys.MULTIDELIVERY_DISTANCE_MATRIX_CALLED_REQUIRED, false);
+    }
+
+    /**
+     * Set Distance Matrix Is Required To Call For Mutlidelivery Or Not
+     * @param value : True or False
+     */
+    public static void setMultiDeliveryDistanceMatrixCalledRequired(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.MULTIDELIVERY_DISTANCE_MATRIX_CALLED_REQUIRED, value)
+                .apply();
+    }
+
+    /**
+     * Check If Drop Of Update Is Required Or Not
+     * @return  True/False
+     */
+    public static boolean isDropOffUpdateRequired() {
+        return mSharedPreferences.getBoolean(Keys.DROP_OFF_UPDATE_REQUIRED, false);
+    }
+
+    /**
+     * Set Drop Off Update Required
+     * If Application Is Running But Booking Activity Is In Background or Chat Activity Is In Foreground
+     * Set To False After Execution Of True
+     * @param value : True/False (On Behalf Of Above Decision)
+     */
+    public static void setDropOffUpdateRequired(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.DROP_OFF_UPDATE_REQUIRED, value)
+                .apply();
+    }
+
     public static boolean isChatActivityOnForeground() {
         return mSharedPreferences.getBoolean(Keys.CHAT_ACTIVITY_FOREGROUND, false);
     }

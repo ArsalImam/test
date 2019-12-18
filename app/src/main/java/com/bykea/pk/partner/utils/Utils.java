@@ -165,6 +165,8 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
@@ -177,6 +179,8 @@ import static com.bykea.pk.partner.utils.Constants.ServiceCode.UTILITY;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.OFFLINE_RIDE;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.SAWARI;
 
 
 public class Utils {
@@ -231,9 +235,9 @@ public class Utils {
      * @return Helpline number
      */
     public static String getSupportHelplineNumber() {
-        String supportContact = AppPreferences.getSettings().getSettings().getBykeaSupportHelpline();
-        if (StringUtils.isNotBlank(supportContact))
-            return supportContact;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
+                StringUtils.isNotEmpty(AppPreferences.getSettings().getSettings().getBykeaSupportHelpline()))
+            return AppPreferences.getSettings().getSettings().getBykeaSupportHelpline();
         else
             return Constants.BYKEA_SUPPORT_HELPLINE;
     }
@@ -1521,10 +1525,18 @@ public class Utils {
 
     /***
      * Validate where we should call Direction API on screen.
-     * @return Returns true if Last API call was more than 1 min ago
+     * @return Returns true if Last API call was equal or more than 1 min ago
      */
     public static boolean isDirectionApiCallRequired() {
-        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= 30000;
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= DIRECTION_API_TIME_IN_MILLISECONDS;
+    }
+
+    /***
+     * Validate where we should call Direction API on screen. (For MultiDelivery)
+     * @return Returns true if Last API call was equal or more than 1.5 min ago
+     */
+    public static boolean isDirectionApiCallRequiredForMultiDelivery() {
+        return (System.currentTimeMillis() - AppPreferences.getLastDirectionsApiCallTime()) >= DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
     }
 
     public static boolean isStatsApiCallRequired() {
@@ -2112,7 +2124,7 @@ public class Utils {
     }
 
     public static boolean isRideService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, "Sawari");
+        return StringUtils.containsIgnoreCase(callType, SAWARI) || StringUtils.containsIgnoreCase(callType, OFFLINE_RIDE);
     }
 
     public static boolean isCourierService(String callType) {

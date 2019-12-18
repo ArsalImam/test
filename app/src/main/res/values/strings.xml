@@ -553,4 +553,6 @@
     <string name="error_booking_time_invalid_msg">please provide a valid booking time</string>
     <string name="error_complain_pay_amount_invalid_msg">please provide a valid paid amount</string>
     <string name="error_complain_pay_amount_msg" >Paid amount should not more than 35000</string>
+    <string name="passenger_has_cancelled_the_trip">Passenger has cancelled the Trip</string>
+    <string name="drop_off_update_by_passenger">Drop Off has been Updated by Passenger.</string>
 </resources>

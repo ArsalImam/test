@@ -26,6 +26,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.PlaceAutocompleteAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.GeocodeStrategyManager;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.CustomMapView;
@@ -80,6 +81,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
     RelativeLayout rlFrom;
     private ArrayList<PlacesResult> cities;
     private String primaryText;
+    private GeocodeStrategyManager geocodeStrategyManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +90,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
         setContentView(R.layout.activity_confirm_drop_off_address);
         ButterKnife.bind(this);
         mCurrentActivity = this;
-
+        geocodeStrategyManager = new GeocodeStrategyManager(this, mPlacesDataHandler, Constants.NEAR_LBL);
         setInitMap(savedInstanceState);
         setSearchAdapter();
     }
@@ -287,8 +289,11 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
     };
 
     private void reverseGeoCoding(double targetLat, double targetLng) {
-        PlacesRepository mPlacesRepository = new PlacesRepository();
-        mPlacesRepository.getGoogleGeoCoder(mPlacesDataHandler, targetLat + "", "" + targetLng, mCurrentActivity);
+//        PlacesRepository mPlacesRepository = new PlacesRepository();
+//        mPlacesRepository.getGoogleGeoCoder(mPlacesDataHandler, targetLat + "", "" + targetLng, mCurrentActivity);
+
+        geocodeStrategyManager.fetchLocation(targetLat, targetLng);
+
         /*if (requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE) {
             String origin = AppPreferences.getPickUpLoc(mCurrentActivity).latitude + "," + AppPreferences.getPickUpLoc(mCurrentActivity).longitude;
             String destination = String.valueOf(targetLat) + "," + String.valueOf(targetLng);

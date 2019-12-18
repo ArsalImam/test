@@ -7,7 +7,7 @@ public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
     public static final int DIGIT_TWO = 2;
-
+    public static final int NEGATIVE_DIGIT_ONE = -1;
 
     public static final String APP = "APP";
     public static final String GCM_PROJECT_NO = "764640458585";
@@ -131,6 +131,8 @@ public class Constants {
     public static final int MAX_COMPLAIN_KILOMETRES_TRAVELLED = 50;
     public static final int MAX_COMPLAIN_MINIUTES_TRAVELLED = 120;
     public static final int MAX_COMPLAIN_PAY_AMOUNT = 35000;
+    public static final String COMMA = ",";
+    public static final String NEAR_LBL = "Near ";
 
     public static class CallType {
         public static final String SINGLE = "single";
@@ -487,6 +489,8 @@ public class Constants {
         public static final String BILL_TYPE = "Utility Bill";
 
         public static final String BATCH_TYPE = "batch";
+        public static final String SAWARI = "Sawari";
+        public static final String OFFLINE_RIDE = "Offline Ride";
 
     }
 
@@ -672,8 +676,12 @@ public class Constants {
     public final static String SEPERATOR = "/";
 
     public final static int DIRECTION_API_MIX_THRESHOLD_METERS = 45; //meters
-    public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 7; //70 seconds
+    public final static int DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY = 150; //meters
+    public final static int DISTANCE_MATRIX_API_CALL_THRESHOLD_TIME = 8; //80 seconds
     public final static int DISTANCE_MATRIX_API_CALL_START_STATE_THRESHOLD_TIME = 30; //300 seconds
+    public final static int DISTANCE_MATRIX_API_MULTIDELIVERY_THRESHOLD_COUNT = 5; //5x2=100 seconds
+    public final static int DIRECTION_API_TIME_IN_MILLISECONDS = 60000; //60 seconds
+    public final static int DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY = 90000; //90 seconds
 
     public static final long SET_SCALE_ANIMATION_DURATION = 500;
     public static final int SET_SCALE_ANIMATION_REPEAT_COUNT = 7;
@@ -685,4 +693,6 @@ public class Constants {
     public static final float SET_SCALE_ANIMATION_PIVOT_Y = 0.5f;
     public static final long SET_SCALE_DELAY = 2000;
     public static final long SET_SCALE_DELAY_ZERO = 0;
+
+    public static final String ANDROID_RESOURCE_URI = "android.resource://";
 }
