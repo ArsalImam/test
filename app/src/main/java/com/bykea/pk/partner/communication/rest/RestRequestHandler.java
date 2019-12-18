@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.communication.rest;
 
 import android.content.Context;
-import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
@@ -85,7 +84,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -408,6 +406,17 @@ public class RestRequestHandler {
 
     }
 
+    /**
+     * this method can be used to get all trips history from driver id
+     * this is a legacy function and is replaced with {@link #requestBookingListing(Context, IResponseCallback, String, String)}
+     * and will be removed in the future release
+     *
+     * @param context            component which requires data
+     * @param onResponseCallBack callback to receive data on task completed
+     * @param pageNo             param needs to send for pagination
+     * @param tripHistoryId      (optional) if any specific trip details needed
+     */
+    @Deprecated
     public void getTripHistory(Context context, final IResponseCallback onResponseCallBack, String pageNo, String tripHistoryId) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
@@ -432,6 +441,14 @@ public class RestRequestHandler {
         });
     }
 
+    /**
+     * this method can be used to get all booking listing by driver id from kronos
+     *
+     * @param context context component which requires data
+     * @param onResponseCallBack onResponseCallBack callback to receive data on task completed
+     * @param pageNo param needs to send for pagination
+     * @param limit number of records per page
+     */
     public void requestBookingListing(Context context, final IResponseCallback onResponseCallBack, String pageNo, String limit) {
         mContext = context;
         this.mResponseCallBack = onResponseCallBack;
@@ -524,7 +541,8 @@ public class RestRequestHandler {
 
     /**
      * USE WHEN YOU WANT TO DISMISS WHEN THE SUCCESSFUL DATA IS RETRIEVE FOR THE ACTIVE TRIP
-     * @param context : Calling Activity
+     *
+     * @param context            : Calling Activity
      * @param onResponseCallBack : Override in Calling Acitivity
      */
 

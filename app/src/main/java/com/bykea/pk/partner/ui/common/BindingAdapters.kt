@@ -43,6 +43,9 @@ object BindingAdapters {
         }
     }
 
+    /**
+     * this binding adapter can be used to load image from url directly from xml
+     */
     @BindingAdapter("app:loadUrl")
     @JvmStatic
     fun loadImageUrl(imageView: ImageView, url: String) {

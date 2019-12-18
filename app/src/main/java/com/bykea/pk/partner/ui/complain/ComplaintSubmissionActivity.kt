@@ -75,6 +75,14 @@ class ComplaintSubmissionActivity : BaseActivity() {
         updateUi()
     }
 
+
+    /**
+     * this method can be used to get all trips history from driver id
+     * this is a legacy function and is replaced with {@link #requestBookingListing(Context, IUserDataHandler, String, String)}
+     * and will be removed in the future release
+     *
+     * @param tripHistoryId (optional) if any specific trip details needed
+     */
     private fun updateTripDetailsById(tripHistoryId: String) {
         Dialogs.INSTANCE.showLoader(this@ComplaintSubmissionActivity)
         UserRepository().requestTripHistory(this@ComplaintSubmissionActivity, object : UserDataHandler() {

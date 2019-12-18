@@ -40,6 +40,11 @@ import butterknife.Unbinder;
 
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
 
+/**
+ * this class is created in legacy style to give support to the home activity
+ * and will be updated after server sides updates
+ * @author ArsalImam
+ */
 public class BookingListingFragment extends Fragment {
 
     //no_data

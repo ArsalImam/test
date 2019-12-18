@@ -226,13 +226,31 @@ public class UserRepository {
         mRestRequestHandler.checkActiveTrip(mContext, mDataCallback);
     }
 
+    /**
+     * this method can be used to get all trips history from driver id
+     * this is a legacy function and is replaced with {@link #requestBookingListing(Context, IUserDataHandler, String, String)}
+     * and will be removed in the future release
+     *
+     * @param context       component which requires data
+     * @param handler       callback to receive data on task completed
+     * @param pageNo        param needs to send for pagination
+     * @param tripHistoryId (optional) if any specific trip details needed
+     */
+    @Deprecated
     public void requestTripHistory(Context context, IUserDataHandler handler, String pageNo, String tripHistoryId) {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.getTripHistory(mContext, mDataCallback, pageNo, tripHistoryId);
     }
 
-
+    /**
+     * this method can be used to get all booking listing by driver id from kronos
+     *
+     * @param context context component which requires data
+     * @param handler onResponseCallBack callback to receive data on task completed
+     * @param pageNo  param needs to send for pagination
+     * @param limit   number of records per page
+     */
     public void requestBookingListing(Context context, IUserDataHandler handler, String pageNo, String limit) {
         mContext = context;
         mUserCallback = handler;

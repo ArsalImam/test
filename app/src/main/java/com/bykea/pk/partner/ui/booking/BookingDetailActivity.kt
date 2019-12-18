@@ -17,12 +17,15 @@ import com.bykea.pk.partner.utils.Dialogs
 
 
 /**
- * This class will responsible to manage the complete withdrawal process
+ * This class will responsible to manage partner booking detail journey
  *
- * @author Arsal Imam
+ * @author ArsalImam
  */
 class BookingDetailActivity : BaseActivity() {
 
+    /**
+     * data source for invoice list
+     */
     private lateinit var invoiceAdapter: LastAdapter<Invoice>
     /**
      * Binding object between activity and xml file, it contains all objects
@@ -57,11 +60,17 @@ class BookingDetailActivity : BaseActivity() {
         setupObservers()
     }
 
+    /**
+     * this method is binded with complain submit button and will trigger on its click
+     */
     public fun onComplainButtonClicked(view: View) {
         ActivityStackManager.getInstance()
                 .startComplainSubmissionActivity(this, null, viewModel?.bookingDetailData?.value?.bookingId!!)
     }
 
+    /**
+     * this will update toolbar for the booking detail activity
+     */
     private fun updateToolbar() {
         setBackNavigation()
         hideToolbarLogo()

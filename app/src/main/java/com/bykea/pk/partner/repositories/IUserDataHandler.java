@@ -291,5 +291,11 @@ public interface IUserDataHandler {
 
     void onUpdateAppVersionResponse(UpdateAppVersionResponse response);
 
+    /**
+     * this method will be invoked when booking listing received from kronos
+     *
+     * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
+     * @param bookingListingResponse callback to send data to the controller on complete
+     */
     void onBookingListingResponse(BookingListingResponse bookingListingResponse);
 }

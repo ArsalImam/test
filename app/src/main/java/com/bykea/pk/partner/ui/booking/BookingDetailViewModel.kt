@@ -19,7 +19,7 @@ import com.zendesk.util.StringUtils
 import java.text.SimpleDateFormat
 
 /**
- * This is the view model class of {WithdrawalActivity}
+ * This is the view model class for [BookingDetailActivity]
  *
  * @author Arsal Imam
  */
@@ -37,6 +37,9 @@ class BookingDetailViewModel
     val bookingDetailData: LiveData<BookingDetail>
         get() = _bookingDetailData
 
+    /**
+     * tis observer is responsible to show/hide complain button
+     */
     private val _showComplainButton = MutableLiveData<Boolean>().apply { value = true }
     val showComplainButton: LiveData<Boolean>
         get() = _showComplainButton
@@ -48,6 +51,10 @@ class BookingDetailViewModel
     val showLoader: LiveData<Boolean>
         get() = _showLoader
 
+    /**
+     * this method will hit server to get/update [bookingDetailData] by id
+     * @param bookingId id of the booking
+     */
     fun updateBookingDetailById(bookingId: String) {
         _showLoader.value = true
 
@@ -68,9 +75,11 @@ class BookingDetailViewModel
         })
     }
 
-
+    /**
+     * this method will update UI on [bookingDetailData] gets updated
+     * @param data newly received data
+     */
     private fun updateBookingDetailObject(data: BookingDetail) {
-
         _showComplainButton.value = Utils.getDaysInBetween(System.currentTimeMillis(),
                 SimpleDateFormat(BOOKING_CURRENT_DATE_FORMAT).parse(data.dt).time) <=
                 AppPreferences.getSettings().settings.trip_support_max_days
@@ -91,5 +100,4 @@ class BookingDetailViewModel
 
         _bookingDetailData.value = data
     }
-
 }
