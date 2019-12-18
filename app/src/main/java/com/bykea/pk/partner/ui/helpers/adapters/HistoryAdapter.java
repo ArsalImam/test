@@ -62,7 +62,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         }else if (data.getTrip_status_code() != null
                 && data.getTrip_status_code().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.OFFLINE_DELIVERY))) {
             holder.ivDriverDestination.setVisibility(View.VISIBLE);
-            Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_OFFLINE_RIDE_ICON_URL);
+            Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_OFFLINE_DELIVERY_ICON_URL);
         } else {
             holder.ivDriverDestination.setVisibility(View.GONE);
         }
