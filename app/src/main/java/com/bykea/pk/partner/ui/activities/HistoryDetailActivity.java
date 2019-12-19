@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.Predefine_rating;
 import com.bykea.pk.partner.models.data.TripHistoryData;
+import com.bykea.pk.partner.ui.booking.BookingDetailActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.FontUtils;
@@ -248,12 +249,7 @@ public class HistoryDetailActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnProblem:
-//                String params = "name=" + AppPreferences.getPilotData().getFullName() +
-//                        "&booking=" + data.getTripNo() + "&phone=" + AppPreferences.getPilotData().getPhoneNo();
-//                Utils.startCustomWebViewActivity(mCurrentActivity,
-//                        AppPreferences.getSettings().getSettings().getTrip_support_link() + params, data.getTripNo());
-
-                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, data);
+                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, data, null);
                 break;
         }
     }

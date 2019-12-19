@@ -163,6 +163,15 @@ class JobsRepository(
     override fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: JobsDataSource.CreateTripCallback) {
         jobsRemoteDataSource.createTrip(rideCreateRequestObject, callback)
     }
+    /**
+     * Get Booking Details By Id
+     *
+     * @param bookingId id of the booking
+     * @param callback to return data after API call succeed
+     */
+    override fun getBookingDetailsById(bookingId: String, callback: JobsDataSource.GetBookingDetailCallback) {
+        jobsRemoteDataSource.getBookingDetailsById(bookingId, callback)
+    }
 
     private fun getJobFromRemote(jobRequestId: Long, callback: JobsDataSource.GetJobRequestCallback) {
         jobsRemoteDataSource.getJob(jobRequestId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : JobsDataSource.GetJobRequestCallback {

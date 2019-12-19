@@ -43,6 +43,7 @@ import com.bykea.pk.partner.ui.activities.RegistrationActivity;
 import com.bykea.pk.partner.ui.activities.RideCodeVerificationActivity;
 import com.bykea.pk.partner.ui.activities.SavePlaceActivity;
 import com.bykea.pk.partner.ui.activities.ShahkarActivity;
+import com.bykea.pk.partner.ui.booking.BookingDetailActivity;
 import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.calling.JobCallActivity;
 import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
@@ -58,6 +59,7 @@ import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
+import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_ID;
 
 public class ActivityStackManager {
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
@@ -443,6 +445,16 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /**
+     * this method will open the booking detail screen by id
+     *
+     * @param mContext from which activity needs to open
+     * @param bookingId of the trip for which the data required
+     */
+    public void startBookingDetail(Activity mContext, String bookingId) {
+        BookingDetailActivity.Companion.openActivity(mContext, bookingId);
+    }
+
 
     public void startProblemPostActivity(Context context, String tripId, String reason) {
         Intent intent = new Intent(context, PostProblemActivity.class);
@@ -461,10 +473,12 @@ public class ActivityStackManager {
      * @param context         Calling Activity
      * @param tripHistoryData Model Send For Intent
      */
-    public void startComplainSubmissionActivity(Context context, TripHistoryData tripHistoryData) {
+    public void startComplainSubmissionActivity(Context context, TripHistoryData tripHistoryData, String bookingId) {
         Intent intent = new Intent(context, ComplaintSubmissionActivity.class);
         if (tripHistoryData != null)
             intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripHistoryData);
+        if (bookingId != null)
+            intent.putExtra(INTENT_TRIP_HISTORY_ID, bookingId);
         context.startActivity(intent);
     }
 
@@ -571,6 +585,7 @@ public class ActivityStackManager {
 
     /**
      * Ride Create Code Verification Activity
+     *
      * @param phoneNumber : Phone Number For OTP Code Message and Call
      */
     public void startWaitingActivity(Context context, RideCreateRequestObject createRequestBody, String phoneNumber) {
