@@ -2,6 +2,8 @@ package com.bykea.pk.partner.models.data;
 
 import com.google.gson.annotations.SerializedName;
 
+import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
+
 /**
  * Model class to represent pick, drop or any other stop of driver
  */
@@ -11,7 +13,7 @@ public class Stop {
     private Integer duration;
 
     @SerializedName("distance_est")
-    private Integer distance;
+    private float distance = NEGATIVE_DIGIT_ONE;
 
     @SerializedName(value = "zone_name_en", alternate = {"zone_en"})
     private String zoneNameEn;
@@ -31,11 +33,11 @@ public class Stop {
         this.duration = duration;
     }
 
-    public Integer getDistance() {
-        return distance;
+    public int getDistance() {
+        return (int) distance;
     }
 
-    public void setDistance(Integer distance) {
+    public void setDistance(float distance) {
         this.distance = distance;
     }
 

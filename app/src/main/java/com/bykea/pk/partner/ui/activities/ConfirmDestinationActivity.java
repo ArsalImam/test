@@ -3,7 +3,17 @@ package com.bykea.pk.partner.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.models.response.GeocoderApi;
+import com.bykea.pk.partner.repositories.UserDataHandler;
+import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Constants;
+import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.GeocodeStrategyManager;
+import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -11,14 +21,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.response.GeocoderApi;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.utils.Dialogs;
-import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,6 +40,14 @@ public class ConfirmDestinationActivity extends BaseActivity {
     private MapView mapView;
 
     private boolean firstTime = true;
+    private GeocodeStrategyManager geocodeStrategyManager;
+    private IPlacesDataHandler placeHandler = new PlacesDataHandler() {
+        @Override
+        public void onPlacesResponse(String response) {
+            super.onPlacesResponse(response);
+            addressTv.setText(response);
+        }
+    };
 
 
     @Override
@@ -53,7 +63,7 @@ public class ConfirmDestinationActivity extends BaseActivity {
         hideToolbarLogo();
 
         setInitMap(savedInstanceState);
-
+        geocodeStrategyManager = new GeocodeStrategyManager(this, placeHandler, Constants.NEAR_LBL);
     }
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
@@ -177,10 +187,7 @@ public class ConfirmDestinationActivity extends BaseActivity {
     }
 
     private void reverseGeoCoding(double targetLat, double targetLng) {
-        UserRepository repository = new UserRepository();
-        repository.requestReverseGeocoding(mCurrentActivity, handler, targetLat + "," + targetLng,
-                Utils.getApiKeyForGeoCoder());
-
+        geocodeStrategyManager.fetchLocation(targetLat, targetLng);
     }
 
     private void setInitMap(Bundle savedInstanceState) {

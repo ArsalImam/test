@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 59
-        versionName "7.26"
+        versionCode 63
+        versionName "7.30"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -80,7 +80,7 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging-lb-talos.bykea.net\""
+                buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.xyz\""
             }
             livetesting {
                 dimension "env"
@@ -210,6 +210,9 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':dal')
 
+
+    implementation "io.reactivex.rxjava2:rxjava:2.2.3"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
 //    implementation project(path: ':loadboard')
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"

@@ -53,6 +53,10 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY;
+import static com.bykea.pk.partner.utils.Constants.DISTANCE_MATRIX_API_MULTIDELIVERY_THRESHOLD_COUNT;
+
 public class LocationService extends Service {
 
     private final String TAG = LocationService.class.getSimpleName();
@@ -62,7 +66,7 @@ public class LocationService extends Service {
     private final int LOCATION_INTERVAL = 5000;
     private final int LOCATION_DISTANCE = 100;
     private final int NOTIF_ID = 877;
-    private final float DIRECTION_API_CALL_DISTANCE = 15; //meter
+    private final float DIRECTION_API_CALL_DISTANCE = 45; //meter
 
     private String STATUS = StringUtils.EMPTY;
     private Context mContext;
@@ -70,6 +74,7 @@ public class LocationService extends Service {
     private LocationRequest mLocationRequest;
     private boolean shouldCallLocApi = true;
     private int counter = 0;
+    private int counterForMultiDelivery = 0;
     private EventBus mBus = EventBus.getDefault();
     private LocationListener mLocationListener;
     private LocationManager mLocationManager;
@@ -103,8 +108,19 @@ public class LocationService extends Service {
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
                                 //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
                                 //validateDriverOfflineStatus();
-                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
 
+                                if (AppPreferences.isOnTrip() && AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.BATCH)) {
+                                    counterForMultiDelivery++;
+                                }
+                                if (counterForMultiDelivery >= DISTANCE_MATRIX_API_MULTIDELIVERY_THRESHOLD_COUNT) {
+                                    counterForMultiDelivery = DIGIT_ZERO;
+                                    LatLng newLatLng = new LatLng(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+                                    if (isDistanceMatrixApiCallRequiredForMultiDelivery(newLatLng)) {
+                                        lastApiCallLatLng = newLatLng;
+                                        AppPreferences.setMultiDeliveryDistanceMatrixCalledRequired(true);
+                                    }
+                                }
+                                mUserRepository.requestLocationUpdate(mContext, handler, lat, lon);
                             } else {
                                 Utils.redLogLocation("request failed", "WiFi -> " +
                                         Connectivity.isConnectedFast(mContext)
@@ -674,6 +690,21 @@ public class LocationService extends Service {
         } else {
             return true;
         }
+    }
+
+    /**
+     * check if last start latlng and current start latlng has at least 150 m difference
+     *
+     * @param currentApiCallLatLng current Latitude and Longitude returned from API
+     * @return True is current lat/lng and start lat/lng have 15m difference else return false
+     */
+    private boolean isDistanceMatrixApiCallRequiredForMultiDelivery(LatLng currentApiCallLatLng) {
+        return lastApiCallLatLng == null ||
+                !(Utils.calculateDistance(currentApiCallLatLng.latitude,
+                        currentApiCallLatLng.longitude,
+                        lastApiCallLatLng.latitude,
+                        lastApiCallLatLng.longitude
+                ) < DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY);
     }
 
     /**

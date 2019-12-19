@@ -88,7 +88,7 @@ class BykeaCashFormFragment : DialogFragment() {
                             }
                         }
                         normalCallData?.codAmount = eTAmount.text.toString()
-                        mCallback?.onBykeaCashAmountUpdated(normalCallData?.codAmountNotFormatted?.toInt()!!)
+                        mCallback?.onBykeaCashAmountUpdated()
                     }
                 }
             })

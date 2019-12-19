@@ -2,14 +2,14 @@ package com.bykea.pk.partner.communication.socket;
 
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.pref.AppPref;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCallPayload;
 import com.bykea.pk.partner.dal.util.Injection;
@@ -46,6 +46,7 @@ import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
@@ -638,7 +639,7 @@ public class WebIORequestHandler {
                     } else {
                         EventBus.getDefault().post(intent);
 //                                DriverApp.getContext().sendBroadcast(intent);
-                        Notifications.createCancelNotification(DriverApp.getContext(), "Passenger has cancelled the Trip", 23);
+                        Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
                     }
                     getInstance().unRegisterChatListener();
                 }
@@ -722,10 +723,15 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("DROP OFF CHANGED (Socket) ", serverResponse);
-            Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-            intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
-            EventBus.getDefault().post(intent);
+            if (AppPreferences.isJobActivityOnForeground()) {
+                Utils.redLog("DROP OFF CHANGED (Socket) ", serverResponse);
+                Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
+                intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                EventBus.getDefault().post(intent);
+            } else {
+                AppPreferences.setDropOffUpdateRequired(true);
+                Notifications.createDropOffUpdateNotification();
+            }
         }
     }
 
