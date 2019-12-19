@@ -45,3 +45,15 @@ object AvailableTripStatus {
     val STATUS_CANCELLED: String = "cancelled"
     val STATUS_FEEDBACK: String = "feedback"
 }
+
+object CancelByStatus {
+    val CANCEL_BY_ADMIN: String = "cancel_by_admin"
+    val CANCEL_BY_PARTNER: String = "cancel_by_partner"
+    val CANCEL_BY_CUSTOMER: String = "cancel_by_customer"
+}
+
+object RolesByName {
+    val CANCEL_BY_ADMIN: String = "Admin"
+    val CANCEL_BY_PARTNER: String = "Partner"
+    val CANCEL_BY_CUSTOMER: String = "Customer"
+}

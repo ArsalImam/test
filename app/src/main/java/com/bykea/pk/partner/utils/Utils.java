@@ -1555,7 +1555,7 @@ public class Utils {
     }
 
     public static void loadImgPicasso(ImageView imageView, int placeHolder, String link) {
-        if (imageView != null && !link.equalsIgnoreCase(StringUtils.EMPTY)) {
+        if (imageView != null && StringUtils.isNotEmpty(link)) {
             Picasso.get().load(link)
                     .fit().centerInside()
                     .placeholder(placeHolder)

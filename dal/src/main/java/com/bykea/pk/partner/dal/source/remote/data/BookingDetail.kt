@@ -1,10 +1,7 @@
 package com.bykea.pk.partner.dal.source.remote.data
 
 import android.os.Parcelable
-import com.bykea.pk.partner.dal.util.BOOKING_CURRENT_DATE_FORMAT
-import com.bykea.pk.partner.dal.util.BOOKING_LIST_REQUIRED_DATE_FORMAT
-import com.bykea.pk.partner.dal.util.BOOKING_REQUIRED_DATE_FORMAT
-import com.bykea.pk.partner.dal.util.DateUtils
+import com.bykea.pk.partner.dal.util.*
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
@@ -51,12 +48,10 @@ data class BookingDetail(
     val cancelBy: String
         get() {
             tags?.forEach {
-                if (it?.name == "cancel_by_admin") {
-                    return "Admin"
-                } else if (it.name == "cancel_by_partner") {
-                    return "Partner"
-                } else if (it.name == "cancel_by_customer") {
-                    return "Customer"
+                when {
+                    it?.name == CancelByStatus.CANCEL_BY_ADMIN -> return RolesByName.CANCEL_BY_ADMIN
+                    it?.name == CancelByStatus.CANCEL_BY_PARTNER -> return RolesByName.CANCEL_BY_PARTNER
+                    it?.name == CancelByStatus.CANCEL_BY_CUSTOMER -> return RolesByName.CANCEL_BY_CUSTOMER
                 }
             }
             return org.apache.commons.lang3.StringUtils.EMPTY

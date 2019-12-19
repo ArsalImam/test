@@ -6,6 +6,13 @@ public class Fields {
     public static final String id = "_id";
     public static final String tokenId = "token_id";
     public static final String USER_TYPE = "user_type";
+    public static final String PAGE = "page";
+    public static final String TRIP_ID = "trip_id";
+    public static final String HEADER_X_USER_ID = "x-kr-user-id";
+    public static final String HEADER_X_TOKEN = "x-kr-user-token";
+    public static final String STATE = "state";
+    public static final String LIMIT = "limit";
+    public static final String SORT = "sort";
 
     public static class AcceptCall {
         public static final String PHONE_NUMBER = "phone";
