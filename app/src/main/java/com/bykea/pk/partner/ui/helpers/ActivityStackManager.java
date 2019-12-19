@@ -445,6 +445,12 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /**
+     * this method will open the booking detail screen by id
+     *
+     * @param mContext from which activity needs to open
+     * @param bookingId of the trip for which the data required
+     */
     public void startBookingDetail(Activity mContext, String bookingId) {
         BookingDetailActivity.Companion.openActivity(mContext, bookingId);
     }

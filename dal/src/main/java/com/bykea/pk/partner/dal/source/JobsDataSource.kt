@@ -173,6 +173,12 @@ interface JobsDataSource {
      */
     fun updateBykeaCashBookingDetails(tripId: String, requestObjBykeaCash: UpdateBykeaCashBookingRequest, callbackBykeaCash: UpdateBykeaCashBookingCallback)
 
+    /**
+     * Get Booking Details By Id
+     *
+     * @param bookingId id of the booking
+     * @param callback to return data after API call succeed
+     */
     fun getBookingDetailsById(bookingId: String, callback: GetBookingDetailCallback)
 
     /**

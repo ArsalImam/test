@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.dal.source.remote.data
 
-
 import android.os.Parcelable
 import com.bykea.pk.partner.dal.R
 import com.bykea.pk.partner.dal.util.*
@@ -42,13 +41,6 @@ data class BookingList(
     val manipulatedAmount: String
         get() {
             when (status) {
-//                 -> {
-//                    return if (cancel_fee == null) {
-//                        LABEL_NOT_AVAILABLE
-//                    } else {
-//                        cancel_fee
-//                    }
-//                }
                 AvailableTripStatus.STATUS_CANCELLED,
                 AvailableTripStatus.STATUS_FEEDBACK,
                 AvailableTripStatus.STATUS_COMPLETED ->
@@ -91,11 +83,4 @@ data class BookingList(
         get() {
             return DateUtils.getFormattedDate(dt.toString(), BOOKING_CURRENT_DATE_FORMAT, BOOKING_LIST_REQUIRED_DATE_FORMAT)
         }
-
 }
-
-//@Parcelize
-//data class InvoiceBookingList(
-//        @SerializedName("fare")
-//        val fare: Int? = 0
-//) : Parcelable

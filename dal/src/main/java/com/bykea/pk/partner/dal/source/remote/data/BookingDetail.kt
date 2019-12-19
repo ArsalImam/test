@@ -8,6 +8,10 @@ import com.bykea.pk.partner.dal.util.DateUtils
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
+/**
+ * response model for booking detail
+ * @author ArsalImam
+ */
 @Parcelize
 data class BookingDetail(
         @SerializedName("booking_code")
