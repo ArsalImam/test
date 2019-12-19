@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".ui.complain.ProblemActivityFinal">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -34,7 +35,10 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include layout="@layout/content_problem_activity_final" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <!--<include layout="@layout/content_problem_activity_final" />-->
+        <RelativeLayout
+            android:id="@+id/containerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
 </layout>
