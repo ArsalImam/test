@@ -540,4 +540,6 @@
     <string name="muntakhib_manzil">منزل</string>
     <string name="commission_text_urdu">بائیکیاکمیشن</string>
     <string name="braces_percent">(%%%s)</string>
+    <string name="passenger_has_cancelled_the_trip">Passenger has cancelled the Trip</string>
+    <string name="drop_off_update_by_passenger">Drop Off has been Updated by Passenger.</string>
 </resources>

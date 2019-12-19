@@ -9,6 +9,7 @@ import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
+import com.bykea.pk.partner.ui.helpers.AppPreferences;
 
 public class PlacesRepository {
 
@@ -90,8 +91,7 @@ public class PlacesRepository {
      */
     public void geoCodeWithPlaceId(String placeId, Context context, IPlacesDataHandler handler) {
         mUserCallback = handler;
+        AppPreferences.setGeoCoderApiKeyRequired(true);
         mRestRequestHandler.callGeoCodeApiWithPlaceId(placeId, context, mGeoCoderPlaces);
     }
-
-
 }
