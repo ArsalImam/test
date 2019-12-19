@@ -81,9 +81,11 @@ public class Constants {
     public static final String INTENT_TRIP_HISTORY_ID = "INTENT_TRIP_HISTORY_ID";
     public static final int MAX_RECORDS_PER_PAGE = 20;
     public static final String SORT_BY_NEWEST = "newest";
-    public static final String S3_DD_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/banners/ic_driver_destination.png";
-    public static final String S3_OFFLINE_RIDE_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/banners/ic_offline.png";
-    public static final String S3_OFFLINE_DELIVERY_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/banners/ic_offline_delivery.png";
+
+    public static final String S3_DD_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_driver_destination.png";
+    public static final String S3_OFFLINE_RIDE_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline.png";
+    public static final String S3_OFFLINE_DELIVERY_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline_delivery.png";
+
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
